@@ -11,7 +11,6 @@ const {
   pluginSitemap,
   pluginAnalytics,
   pluginManifest,
-  pluginGraphql,
   pluginCanonicalUrls,
 } = config
 
@@ -48,10 +47,6 @@ module.exports = {
   },
   `gatsby-plugin-sharp`,
   `gatsby-transformer-sharp`,
-  {
-    resolve: 'gatsby-source-graphql',
-    options: pluginGraphql
-  },
   `gatsby-plugin-react-helmet`,
   {
     resolve: `gatsby-transformer-remark`,

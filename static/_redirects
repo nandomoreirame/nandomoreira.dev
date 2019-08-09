@@ -19,16 +19,18 @@ https://nandomoreiradev.netlify.com/*    https://nandomoreira.dev/:splat?ref=net
 /styleguide   /sobre        301
 /cv           /sobre        301
 /resume       /sobre        301
-/sobre/now    /now          301
-/about/now    /now          301
+/sobre/now    /sobre        301
+/about/now    /sobre        301
+/now          /sobre        301
 /contact      /contato      301
 
-/experiments     /lab       301
-/experiment/*    /lab       301
-/experimentos    /lab       301
-/experimentos/*  /lab       301
-/pen-*           /lab       301
-/open-source     /lab       301
+/experiments     https://github.com/nandomoreirame       301
+/experiment/*    https://github.com/nandomoreirame       301
+/experimentos    https://github.com/nandomoreirame       301
+/experimentos/*  https://github.com/nandomoreirame       301
+/pen-*           https://github.com/nandomoreirame       301
+/open-source     https://github.com/nandomoreirame       301
+/lab             https://github.com/nandomoreirame       301
 
 # ============================================================================================= #
 #                       Redirects pages to nandomoreirame.github.io

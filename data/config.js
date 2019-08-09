@@ -9,20 +9,18 @@ const {
   version
 } = require('../package.json')
 
-const dotenv = require('dotenv')
 const services = require('./services')
 const skills = require('./skills')
-const now = require('./now')
-const recommendations = require('./recommendations')
 
 const isProduction = process.env.NODE_ENV === 'production'
 const siteUrl = isProduction ? homepage : 'http://localhost:8000'
 
 if (!isProduction) {
-  dotenv.config({ path: `.env` })
+  require('dotenv').config({
+    path: `.env.${process.env.NODE_ENV}`,
+  })
 }
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || 'foo-bar'
 const subTitle = `· Desenvolvedor front-end e WordPress em Curitiba/PR`
 const title = `${ author.name } ${ subTitle }`
 
@@ -47,17 +45,11 @@ const navLinks = [{
   name: 'Sobre',
   path: '/sobre'
 }, {
-  name: 'Agora',
-  path: '/now'
-}, {
   name: 'Blog',
   path: '/blog'
 }, {
   name: 'Portfolio',
   path: '/portfolio'
-}, {
-  name: 'Lab',
-  path: '/lab'
 }, {
   name: 'Contato',
   path: '/contato'
@@ -83,8 +75,6 @@ const siteMetadata = {
   navLinks,
   services,
   skills,
-  now,
-  recommendations,
 }
 
 const pluginFonts = {
@@ -120,7 +110,6 @@ const remarkImages = {
   quality: 90,
   withWebp: true,
   linkImagesToOriginal: false,
-  sizeByPixelDensity: true,
   showCaptions: true,
 }
 
@@ -152,16 +141,6 @@ const pluginManifest = {
   icon: 'static/icon.png'
 }
 
-const pluginGraphql = {
-  typeName: 'GitHub',
-  fieldName: 'github',
-  url: 'https://api.github.com/graphql',
-  headers: {
-    Authorization: `bearer ${ GITHUB_TOKEN }`
-  },
-  fetchOptions: {}
-}
-
 const pluginCanonicalUrls = { siteUrl }
 
 module.exports = {
@@ -173,6 +152,5 @@ module.exports = {
   remarkPrismjs,
   pluginSitemap,
   pluginManifest,
-  pluginGraphql,
   pluginCanonicalUrls
 }
