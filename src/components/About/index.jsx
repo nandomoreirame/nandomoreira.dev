@@ -6,7 +6,6 @@ import {
   Right,
   Me,
   History,
-  Now,
   Today,
   ThisProject,
   More
@@ -38,7 +37,6 @@ const About = ({ data }) => {
           <Right data={data} classes={classes}>
             <Me age={_age} classes={classes} />
             <History classes={classes} />
-            <Now classes={classes} />
             <Today classes={classes} />
             <ThisProject classes={classes} />
             <More data={data} classes={classes} />

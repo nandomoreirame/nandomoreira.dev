@@ -11,7 +11,7 @@ category:
 tags: ["workspace", "ambiente", "desenvolvimento"]
 ---
 
-![Meu ambiente de trabalho em 7 itens](../../images/meu-ambiente-de-trabalho-em-7-itens.png)
+![Meu ambiente de trabalho em 7 itens](./meu-ambiente-de-trabalho-em-7-itens.png)
 
 ### 1. Sistema Operacional - Hoje sou livre!
 
