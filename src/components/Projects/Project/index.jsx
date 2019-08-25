@@ -16,9 +16,12 @@ export const Project = ({ project, mod }) => (
           <small>{project.date}</small>
           <h1>{project.title}</h1>
         </header>
-        <p className={classes.description}>
-          {project.description}
-        </p>
+        <p
+          className={classes.description}
+          dangerouslySetInnerHTML={{
+            __html: `${project.description}`
+          }}
+        />
         <div className={`Project__view ${ classes.view }`}>
           <span>Ver projeto </span>
           <Icon id="arrow-right" />

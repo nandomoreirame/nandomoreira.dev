@@ -1,8 +1,6 @@
 import React from 'react'
 import Link from 'gatsby-link'
 import kebabCase from 'lodash.kebabcase'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 
 import { SEO, Icon, Image, SocialShare, ListTags, ScrollProgress } from 'components/Common'
 import { Main, Container } from 'components/Layout'
@@ -13,7 +11,6 @@ import './projectSingle.styl'
 export const ProjectSingle = ({ data }) => {
   const post = data.markdownRemark
   const { siteUrl } = data.site.siteMetadata
-  const dateFormated = moment(post.frontmatter.date).format('MMM/YYYY')
 
   return (
     <Main className={`projectSingle ${ classes.projectSingle }`}>
@@ -32,7 +29,7 @@ export const ProjectSingle = ({ data }) => {
           </header>
 
           <h4 className={classes.sectionTitle}>Data</h4>
-          <p className={classes.sectionText}>{dateFormated}</p>
+          <p className={classes.sectionText}>{post.frontmatter.date}</p>
 
           <h4 className={classes.sectionTitle}>Categoria</h4>
           <p className={classes.sectionText}>
@@ -46,7 +43,12 @@ export const ProjectSingle = ({ data }) => {
           </p>
 
           <h4 className={classes.sectionTitle}>Descrição</h4>
-          <p className={classes.sectionText}>{post.frontmatter.description}</p>
+          <p
+            className={classes.sectionText}
+            dangerouslySetInnerHTML={{
+              __html: `${post.frontmatter.description}`
+            }}
+          />
 
           <h4 className={classes.sectionTitle}>Links do projeto</h4>
           <p className={classes.sectionText}>
@@ -104,6 +106,25 @@ export const ProjectSingle = ({ data }) => {
               </span>
             )}
           </p>
+
+          {post.frontmatter.designedby && (
+            <>
+              <h4 className={classes.sectionTitle}>Designer</h4>
+              <p className={classes.sectionText}>
+                <span style={{ display: 'block' }}>
+                  <a
+                    href={`${ post.frontmatter.designedby[0] }?ref=${ siteUrl }${
+                      post.frontmatter.path
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {post.frontmatter.designedby[1]}
+                  </a>
+                </span>
+              </p>
+            </>
+          )}
         </div>
 
         <Image

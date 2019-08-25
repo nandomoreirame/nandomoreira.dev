@@ -26,6 +26,7 @@ export const projectQuery = graphql`
         category
         repo
         url
+        designedby
         image {
           childImageSharp {
             sizes(maxWidth: 1300, quality: 75) {
