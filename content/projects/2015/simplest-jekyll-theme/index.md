@@ -1,7 +1,7 @@
 ---
 layout: project
-path: '/projeto/site-remerterapias.com.br'
-category: ['Clientes']
+path: '/projeto/simplest-jekyll-theme'
+category: ['Open-source']
 title: 'Simplest - Jekyll theme'
 date: 2015-12-10
 online: true
