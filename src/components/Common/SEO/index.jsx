@@ -56,10 +56,12 @@ export const SEO = ({
         appId: facebookAppID
       }
 
+      const cleanDescription = data.description.replace(/<[^>]*>/g, '')
+
       return (
         <Helmet title={data.title} titleTemplate={titleTemplate}>
           <meta httpEquiv="content-language" content="pt-br" />
-          <meta name="description" content={data.description} />
+          <meta name="description" content={cleanDescription} />
           <meta name="image" content={data.image} />
           <meta name="robots" content="index,follow,noodp" />
           <meta name="country" content="Brazil" />
@@ -71,24 +73,18 @@ export const SEO = ({
           <meta property="og:locale" content="pt_BR" />
           <meta property="og:title" content={data.title} />
           <meta property="og:type" content={data.fbType} />
-          <meta property="og:description" content={data.description} />
+          <meta property="og:description" content={cleanDescription} />
           <meta property="og:image" content={data.image} />
           <meta property="og:image:type" content="image/jpeg" />
           <meta property="og:image:width" content="600" />
           <meta property="og:image:height" content="315" />
-          <meta property="og:image:alt" content={siteUrl + defaultImage} />
-          <meta
-            property="og:site_name"
-            content={data.name}
-          />
+          <meta property="og:image:alt" content={`${siteUrl}${defaultImage}`} />
+          <meta property="og:site_name" content={data.name} />
           {article.title && (
             <meta property="article:author" content={author.name} />
           )}
           {article.category && (
-            <meta
-              property="article:section"
-              content={article.category.join(',')}
-            />
+            <meta property="article:section" content={article.category.join(',')} />
           )}
           {article && article.tags &&
             article.tags.map((tag, i) => {
@@ -103,7 +99,7 @@ export const SEO = ({
           <meta name="twitter:site" content={twitterUsername} />
           <meta name="twitter:creator" content={twitterUsername} />
           <meta name="twitter:title" content={data.title} />
-          <meta name="twitter:description" content={data.description} />
+          <meta name="twitter:description" content={cleanDescription} />
           <meta name="twitter:image" content={data.image} />
           <meta name="twitter:domain" content={`${ siteUrl.replace(/(https?|http):\/\//i, '') }`} />
           {/* <link rel="canonical" href={data.url} /> */}

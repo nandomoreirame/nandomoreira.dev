@@ -54,7 +54,7 @@ export const pageQuery = graphql`
             path
             image {
               childImageSharp {
-                fluid(maxWidth: 1075, quality: 60) {
+                fluid(maxWidth: 1300, quality: 90) {
                   src
                   srcSet
                   base64

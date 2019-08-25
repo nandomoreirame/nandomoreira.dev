@@ -106,7 +106,7 @@ const favicon = {
 }
 
 const remarkImages = {
-  maxWidth: 1200,
+  maxWidth: 1300,
   quality: 90,
   withWebp: true,
   linkImagesToOriginal: false,
