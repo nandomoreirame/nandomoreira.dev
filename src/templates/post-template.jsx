@@ -33,7 +33,7 @@ export const postQuery = graphql`
     }
     file(relativePath: { eq: "sobre/avatar.png" }) {
       childImageSharp {
-        fixed(width: 220, height: 220, quality: 75) {
+        fixed(width: 220, height: 220, quality: 90) {
           src
           srcSet
           base64
@@ -54,7 +54,7 @@ export const postQuery = graphql`
         tags
         image {
           childImageSharp {
-            fluid(maxWidth: 1075, quality: 60) {
+            fluid(maxWidth: 1300, quality: 90) {
               src
             }
           }

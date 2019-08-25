@@ -29,7 +29,7 @@ export const projectQuery = graphql`
         designedby
         image {
           childImageSharp {
-            sizes(maxWidth: 1300, quality: 75) {
+            sizes(maxWidth: 1300, quality: 90) {
               ...GatsbyImageSharpSizes
             }
           }

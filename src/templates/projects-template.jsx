@@ -76,7 +76,7 @@ export const projectsQuery = graphql`
             image {
               publicURL
               childImageSharp {
-                sizes(maxWidth: 800, quality: 75) {
+                sizes(maxWidth: 1300, quality: 90) {
                   ...GatsbyImageSharpSizes
                 }
               }

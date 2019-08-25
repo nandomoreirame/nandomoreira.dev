@@ -14,7 +14,7 @@ export const indexQuery = graphql`
   query IndexQuery {
     file(relativePath: { eq: "sobre/avatar.jpg" }) {
       childImageSharp {
-        fixed(width: 300, height: 300, quality: 75) {
+        fixed(width: 300, height: 300, quality: 90) {
           src
           srcSet
           base64
