@@ -16,12 +16,9 @@ export const Project = ({ project, mod }) => (
           <small>{project.date}</small>
           <h1>{project.title}</h1>
         </header>
-        <p
-          className={classes.description}
-          dangerouslySetInnerHTML={{
-            __html: `${project.description}`
-          }}
-        />
+        <p className={classes.description}>
+          {project.description.replace(/<[^>]*>/g, '')}
+        </p>
         <div className={`Project__view ${ classes.view }`}>
           <span>Ver projeto </span>
           <Icon id="arrow-right" />
