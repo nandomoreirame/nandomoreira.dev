@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'gatsby-link'
-import { SocialIcons, DarkSwitcher } from 'components/Common'
+import { SocialIcons, DarkSwitcher, Newjobs } from 'components/Common'
 import { Nav } from 'components/Layout'
 import classes from './hero.module.styl'
 import './hero.styl'
@@ -23,6 +23,7 @@ export const Hero = ({ navLinks, socialIcons, avatar }) => (
           <img src={avatar.src} itemProp="image" alt={`Foto de Fernando Moreira`} style={{ display: 'none' }} />
         }
       </h1>
+      <Newjobs isAvailable={false} />
       <p
         className={classes.presentation}
         role="presentation"

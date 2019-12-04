@@ -1,0 +1,38 @@
+@import '~stylus/index.styl'
+
+.newjobs
+  padding .1875rem /* 3/16 */ .625rem /* 10/16 */ .1875rem /* 3/16 */ .9375rem /* 15/16 */
+  border 1px solid $danger-color
+  background $danger-color
+  margin 0
+  width 100%
+  text-align center
+  p
+    margin 0
+    font-weight 700
+    position relative
+    display inline-block
+    padding 0 .9375rem /* 15/16 */
+    font-size .75rem /* 12/16 */
+    &::before
+      content ''
+      width .5rem /* 8/16 */
+      height .5rem /* 8/16 */
+      border-radius 50%
+      display block
+      position relative
+      margin 0 .625rem /* 10/16 */ 0 0
+      position absolute
+      left 0
+      top 50%
+      transform translate3d(0, -50%, 0)
+
+.notAvailable > p
+  color darken($danger-color, 50%)
+  &::before
+    background-color darken($danger-color, 50%)
+
+.available > p
+  color darken($info-color, 50%)
+  &::before
+    background-color darken($success-color, 50%)
