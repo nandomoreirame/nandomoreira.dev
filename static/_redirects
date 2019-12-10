@@ -8,6 +8,12 @@ http://nandomoreiradev.netlify.com/*     https://nandomoreira.dev/:splat?ref=net
 https://nandomoreiradev.netlify.com      https://nandomoreira.dev/?ref=netlify.com            301
 https://nandomoreiradev.netlify.com/*    https://nandomoreira.dev/:splat?ref=netlify.com      301
 
+# ========================= #
+#   Blog Redirects
+# ========================= #
+/blog     https://blog.nandomoreira.dev/?ref=netlify.com            301!
+/blog/*   https://blog.nandomoreira.dev/:splat?ref=netlify.com      301!
+
 # =========================== #
 #       Redirects pages
 # =========================== #
@@ -147,8 +153,3 @@ https://nandomoreiradev.netlify.com/*    https://nandomoreira.dev/:splat?ref=net
 /2012    /          301
 /2012/*  /          301
 /wp/v2/* /          301
-
-# ========================= #
-#   Blog Redirects
-# ========================= #
-/blog/*  https://blog.nandomoreira.dev/:splat?ref=netlify.com          301
