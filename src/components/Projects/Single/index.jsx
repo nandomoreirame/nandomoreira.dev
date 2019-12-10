@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'gatsby-link'
 import kebabCase from 'lodash.kebabcase'
 
-import { SEO, Icon, Image, SocialShare, ListTags, ScrollProgress } from 'components/Common'
+import { SEO, Icon, Image, SocialShare } from 'components/Common'
 import { Main, Container } from 'components/Layout'
 
 import classes from './projectSingle.module.styl'
@@ -21,7 +21,6 @@ export const ProjectSingle = ({ data }) => {
         pathname={post.frontmatter.path}
         article={post.frontmatter}
       />
-      <ScrollProgress />
       <Container>
         <div className={classes.container}>
           <header className={classes.header}>
@@ -35,9 +34,9 @@ export const ProjectSingle = ({ data }) => {
           <p className={classes.sectionText}>
             {post.frontmatter.category.map((category, index) => {
               return (
-                <Link key={index} to={`/categoria/${ kebabCase(category) }`}>
+                <span key={index}>
                   {category}
-                </Link>
+                </span>
               )
             })}
           </p>
@@ -139,15 +138,6 @@ export const ProjectSingle = ({ data }) => {
               dangerouslySetInnerHTML={{ __html: post.html }}
             />
           )}
-
-          <ListTags
-            tags={post.frontmatter.tags}
-            style={{
-              marginTop: '1.875rem',
-              paddingTop: '1.875rem',
-              borderTop: '1px solid rgba(0, 0, 0, 0.1)'
-            }}
-          />
         </div>
       </Container>
 
