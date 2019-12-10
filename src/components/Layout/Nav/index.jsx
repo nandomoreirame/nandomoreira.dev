@@ -52,14 +52,23 @@ export class Nav extends React.Component {
           {this.props.navLinks.map(item => {
             return (
               <li className={`nav__item ${ classes.item }`} key={item.path}>
-                <Link
-                  className={`nav__link ${ classes.link }`}
-                  activeClassName={`nav__link--active ${ classes.linkActive }`}
-                  to={item.path}
-                  itemProp="url"
-                >
-                  {item.name}
-                </Link>
+                {item.name === 'Blog' ?
+                  (<a
+                    className={`nav__link ${ classes.link }`}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    itemProp="url"
+                  >
+                    {item.name}
+                  </a>) : (<Link
+                    className={`nav__link ${ classes.link }`}
+                    activeClassName={`nav__link--active ${ classes.linkActive }`}
+                    to={item.path}
+                    itemProp="url"
+                  >
+                    {item.name}
+                  </Link>)}
               </li>
             )
           })}
