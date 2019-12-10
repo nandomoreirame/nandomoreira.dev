@@ -37,8 +37,7 @@
     "linkedin": "nandomoreirame",
     "behance": "umdevux",
     "dribbble": "umdevux",
-    "npm": "~nandomoreira.me",
-    "disqus": "fernandomoreira"
+    "npm": "~nandomoreira.me"
   },
   "bugs": {
     "url": "https://github.com/nandomoreirame/nandomoreira.dev/issues"
@@ -63,7 +62,6 @@
   },
   "dependencies": {
     "@raae/gatsby-remark-oembed": "^0.0.7",
-    "disqus-react": "^1.0.6",
     "dotenv": "^8.0.0",
     "formik": "^1.5.8",
     "gatsby": "^2.13.56",

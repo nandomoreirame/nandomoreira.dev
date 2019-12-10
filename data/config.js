@@ -45,14 +45,14 @@ const navLinks = [{
   name: 'Sobre',
   path: '/sobre'
 }, {
-  name: 'Blog',
-  path: '/blog'
-}, {
   name: 'Portfolio',
   path: '/portfolio'
 }, {
   name: 'Contato',
   path: '/contato'
+}, {
+  name: 'Blog',
+  path: 'https://blog.nandomoreira.dev'
 }]
 
 const siteMetadata = {
@@ -66,7 +66,6 @@ const siteMetadata = {
   description,
   defaultDescription: description,
   author,
-  disqusShortname: author.disqus,
   twitterUsername: `@${ author.twitter }`,
   facebookAppID: '585852118228520',
   keywords,

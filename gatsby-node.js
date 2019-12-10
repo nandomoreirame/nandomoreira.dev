@@ -147,7 +147,6 @@ exports.createPages = ({
                   title
                   date
                   category
-                  tags
                 }
               }
             }
@@ -165,7 +164,6 @@ exports.createPages = ({
                   title
                   date
                   category
-                  tags
                 }
               }
             }
@@ -198,12 +196,9 @@ exports.createPages = ({
         allMarkdownRemark.edges.forEach(({
           node
         }) => {
-          createTagPages(createPage, node.frontmatter.tags)
-          createCategoryPages(createPage, node.frontmatter.category)
           createSinglePages(createPage, node.frontmatter)
         })
 
-        contentPaginate(createPage, postsQuery, '/blog', 'blog')
         contentPaginate(createPage, projectsQuery, '/portfolio', 'projects', 10)
       })
     )
@@ -244,52 +239,10 @@ exports.onCreateWebpackConfig = ({
   })
 }
 
-function createTagPages (createPage, tags) {
-  const tagSet = new Set()
-  const basePath = '/tag'
-
-  if (tags) {
-    tags.forEach(tag => tagSet.add(tag))
-
-    Array.from(tagSet).forEach(tag => {
-      createPage({
-        path: `${ basePath }/${ kebabCase(tag) }/`,
-        component: join(templatePath, `tag-template.jsx`),
-        context: {
-          tag
-        }
-      })
-    })
-  }
-}
-
-function createCategoryPages (createPage, category) {
-  const categorySet = new Set()
-  const basePath = '/categoria'
-
-  if (category) {
-    category.forEach(category => categorySet.add(category))
-
-    Array.from(categorySet).forEach(category => {
-      createPage({
-        path: `${ basePath }/${ kebabCase(category) }/`,
-        component: join(templatePath, `category-template.jsx`),
-        context: {
-          category
-        }
-      })
-    })
-  }
-}
-
 function createSinglePages (createPage, frontmatter) {
   const _layout = frontmatter.layout ? String(frontmatter.layout) : `project`
   const _slug = slugify(frontmatter.title, slugifySettings)
   let _path = `/${ _slug }`
-
-  if (_layout === 'post') {
-    _path = `/blog/${ _slug }`
-  }
 
   if (_layout === 'project') {
     _path = `/projeto${ _path }`
@@ -309,8 +262,8 @@ function createSinglePages (createPage, frontmatter) {
 function contentPaginate (
   createPage,
   posts,
-  path = '/blog',
-  template = 'blog',
+  path = '/projeto',
+  template = 'project',
   totalPerPage = 12
 ) {
   const totalPages = Math.ceil(posts.edges.length / totalPerPage)
@@ -330,9 +283,3 @@ function contentPaginate (
     })
   })
 }
-
-// function paginate (array, pageSize, pageNumber) {
-//   return array
-//     .slice(0)
-//     .slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
-// }

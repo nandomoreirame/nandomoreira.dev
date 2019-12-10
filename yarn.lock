@@ -4298,11 +4298,6 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-disqus-react@^1.0.6:
-  version "1.0.7"
-  resolved "https://registry.npmjs.org/disqus-react/-/disqus-react-1.0.7.tgz#61061d3b6237b956baa9c5d96780fd311cdbecfc"
-  integrity sha512-7sPHIauS5mUxkZtGtik/ELZ38kOGH3N+YFNt7U4ncczNdAVmWNmAetDE+dHYnrL1Xx+Pgueh1uKpvfUIeu7WuQ==
-
 dns-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/dns-equal/-/dns-equal-1.0.0.tgz#b39e7f1da6eb0a75ba9c17324b34753c47e0654d"
@@ -5350,9 +5345,9 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.0"
 
-"favicons-webpack-plugin@git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf":
+"favicons-webpack-plugin@https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf":
   version "0.0.9"
-  resolved "git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf"
+  resolved "https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf"
   dependencies:
     core-js "^2.5.7"
     favicons "^5.1.1"
