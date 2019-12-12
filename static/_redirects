@@ -13,6 +13,11 @@ https://nandomoreiradev.netlify.com/*    https://nandomoreira.dev/:splat?ref=net
 # ========================= #
 /blog     https://blog.nandomoreira.dev/?ref=netlify.com            301!
 /blog/*   https://blog.nandomoreira.dev/:splat?ref=netlify.com      301!
+/2        https://blog.nandomoreira.dev/page/2/?ref=netlify.com     301!
+/3        https://blog.nandomoreira.dev/page/3/?ref=netlify.com     301!
+/4        https://blog.nandomoreira.dev/page/4/?ref=netlify.com     301!
+/5        https://blog.nandomoreira.dev/page/5/?ref=netlify.com     301!
+/6        https://blog.nandomoreira.dev/page/6/?ref=netlify.com     301!
 
 # =========================== #
 #       Redirects pages
