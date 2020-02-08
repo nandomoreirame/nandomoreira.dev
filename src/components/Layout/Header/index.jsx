@@ -6,7 +6,7 @@ import './header.styl'
 
 export const Header = ({ navLinks, donateLink }) => (
   <header className={`header ${ classes.header }`}>
-    <Newjobs isAvailable={false} />
+    <Newjobs isAvailable={true} />
     <div className={`headerInner ${classes.headerInner}`}>
       <Container>
         <div className={classes.inner}>

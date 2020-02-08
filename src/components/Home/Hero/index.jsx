@@ -23,7 +23,7 @@ export const Hero = ({ navLinks, socialIcons, avatar }) => (
           <img src={avatar.src} itemProp="image" alt={`Foto de Fernando Moreira`} style={{ display: 'none' }} />
         }
       </h1>
-      <Newjobs isAvailable={false} />
+      <Newjobs isAvailable={true} />
       <p
         className={classes.presentation}
         role="presentation"
