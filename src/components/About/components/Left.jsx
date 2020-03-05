@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
+import ErrorBoundary from 'components/ErrorBoundary'
 import { SocialIcons, Image } from 'components/Common'
 import { Feed } from 'components/Instagram'
 import { Skills } from 'components/About/Skills'
+
+const Newjobs = lazy(() => import('components/Common/Alerts/newjobs'))
 
 export const Left = ({ data, classes }) => (
   <div className={`about__left ${ classes.left }`}>
@@ -12,6 +15,9 @@ export const Left = ({ data, classes }) => (
         title="Foto de Fernando Moreira Costa"
         alt="Foto de Fernando Moreira Costa"
       />
+      {typeof window !== 'undefined' && <ErrorBoundary>
+        <Suspense fallback={<span />}><Newjobs /></Suspense>
+      </ErrorBoundary>}
       <SocialIcons icons={data.site.siteMetadata.social} />
       <Feed
         show={data.site.siteMetadata.isProduction}

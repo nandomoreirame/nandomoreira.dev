@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import Link from 'gatsby-link'
-import { SocialIcons, DarkSwitcher, Newjobs } from 'components/Common'
+import ErrorBoundary from 'components/ErrorBoundary'
+import { SocialIcons, DarkSwitcher } from 'components/Common'
 import { Nav } from 'components/Layout'
 import classes from './hero.module.styl'
 import './hero.styl'
+
+const Newjobs = lazy(() => import('components/Common/Alerts/newjobs'))
 
 export const Hero = ({ navLinks, socialIcons, avatar }) => (
   <div className={'hero ' + classes.hero}>
@@ -23,7 +26,9 @@ export const Hero = ({ navLinks, socialIcons, avatar }) => (
           <img src={avatar.src} itemProp="image" alt={`Foto de Fernando Moreira`} style={{ display: 'none' }} />
         }
       </h1>
-      <Newjobs isAvailable={true} />
+      <ErrorBoundary>
+        {typeof window !== 'undefined' && <Suspense fallback={<span />}><Newjobs /></Suspense>}
+      </ErrorBoundary>
       <p
         className={classes.presentation}
         role="presentation"

@@ -1,4 +1,25 @@
 {
+  "eslint.enable": true,
+  "eslint.alwaysShowStatus": true,
+  "px2rem-plus.leadingZero": true,
+  "px2rem-plus.comments": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.format.enable": true,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
   "search.exclude": {
     "public": true,
     ".cache": true

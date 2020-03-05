@@ -230,6 +230,7 @@ exports.onCreateWebpackConfig = ({
         resolve(__dirname),
         resolve(__dirname, 'src'),
         resolve(__dirname, 'src', 'stylus'),
+        resolve(__dirname, 'src', 'hooks'),
         'node_modules'
       ],
       alias: {

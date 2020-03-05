@@ -14,6 +14,7 @@
     display inline-block
     padding 0 .9375rem /* 15/16 */
     font-size .75rem /* 12/16 */
+    text-transform lowercase
     &::before
       content ''
       width .5rem /* 8/16 */
@@ -27,12 +28,12 @@
       top 50%
       transform translate3d(0, -50%, 0)
 
-.notAvailable > p
+.notHireable > p
   color darken($danger-color, 50%)
   &::before
     background-color darken($danger-color, 50%)
 
-.available > p
+.hireable > p
   color darken($info-color, 50%)
   &::before
     background-color darken($success-color, 50%)

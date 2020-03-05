@@ -80,7 +80,7 @@ export const SEO = ({
           <meta property="og:image:height" content="315" />
           <meta property="og:image:alt" content={`${siteUrl}${defaultImage}`} />
           <meta property="og:site_name" content={data.name} />
-          {article.title && (
+          {article.name && (
             <meta property="article:author" content={author.name} />
           )}
           {article.category && (
