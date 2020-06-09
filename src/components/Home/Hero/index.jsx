@@ -40,7 +40,7 @@ export const Hero = ({ navLinks, socialIcons, avatar }) => (
           target="_blank"
           rel="noopener noreferrer"
         >Ajudo ONGs e pequenas empresas</a> a criar projetos web personalizados de alta
-        qualidade. No meu tempo livre eu <Link to="/blog">escrevo em meu blog</Link> e contribuo com projetos <a href={socialIcons.github} target="_blank">open source</a>.
+        qualidade. No meu tempo livre eu <a href="https://blog.nandomoreira.dev" target="_blank">escrevo em meu blog</a> e contribuo com projetos <a href={socialIcons.github} target="_blank">open source</a>.
       </p>
       <Nav navLinks={navLinks} />
       <SocialIcons icons={socialIcons} />
