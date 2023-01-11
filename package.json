@@ -88,7 +88,7 @@
     "gatsby-remark-responsive-iframe": "^2.2.32",
     "gatsby-source-filesystem": "^2.1.48",
     "gatsby-source-mailchimp": "^0.7.0",
-    "gatsby-transformer-remark": "^2.6.53",
+    "gatsby-transformer-remark": "^5.25.1",
     "gatsby-transformer-sharp": "^2.3.16",
     "lodash": "^4.17.15",
     "lodash-webpack-plugin": "^0.11.5",
