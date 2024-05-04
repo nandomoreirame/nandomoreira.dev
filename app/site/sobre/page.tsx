@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: `Sobre page`,
-  description: `This is a description for Sobre page!`,
+  description: `nem cozinheiro nem rockstar programador!`,
 };
 
 export default function AboutPage() {

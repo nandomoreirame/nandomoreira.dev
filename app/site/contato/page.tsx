@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: `Contato page`,
-  description: `This is a description for Contato page!`,
+  description: `Me mande um email e fala pra mim como você tá!`,
 };
 
 export default function ContactPage() {
