@@ -9,7 +9,7 @@ export type IconProps = Omit<LucideProps, 'ref'> & {
   className?: string;
 };
 
-export function Icon({ name, className, ...props }: IconProps) {
+const Icon = ({ name, className, ...props }: IconProps) => {
   // @ts-ignore - TS doesn't know about the icons object
   const LucideIcon = icons[name];
 
@@ -21,4 +21,7 @@ export function Icon({ name, className, ...props }: IconProps) {
       <LucideIcon aria-hidden="true" className={cn('size-full')} {...props} />
     </span>
   );
-}
+};
+
+Icon.displayName = 'Icon';
+export { Icon };

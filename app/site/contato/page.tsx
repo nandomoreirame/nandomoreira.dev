@@ -4,8 +4,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: `Contato page`,
-  description: `Me mande um email e fala pra mim como você tá!`,
+  title: 'Contato',
+  description: 'Me mande um email e fala pra mim como você tá!',
 };
 
 export default function ContactPage() {
@@ -16,7 +16,7 @@ export default function ContactPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <h1 className="font-bold pt-5 text-4xl md:text-5xl">
+        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
           E ai? bão <span className="text-primary">ou não?</span>
         </h1>
         <p className="text-xl font-light mb-6">
@@ -29,8 +29,12 @@ export default function ContactPage() {
           </a>{' '}
           e fala pra mim como você tá!
         </p>
-        <div className="block sm:flex w-full md:w-auto items-center">
-          <Button variant={'outline'} asChild>
+        <div className="block xs:flex w-full md:w-auto items-center">
+          <Button
+            variant={'outline'}
+            className="w-full xs:w-auto mb-4 xs:mb-0"
+            asChild
+          >
             <Link href="/">Voltar para home</Link>
           </Button>
           <SocialIcons />

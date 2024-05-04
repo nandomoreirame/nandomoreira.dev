@@ -1,11 +1,11 @@
 import { cn } from '@/lib/utils';
-import { Button, SocialIcons } from '@components';
+import { Button, Icon, SocialIcons } from '@components';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: `Sobre page`,
-  description: `nem cozinheiro nem rockstar programador!`,
+  title: 'Sobre mim',
+  description: 'nem cozinheiro nem rockstar programador!',
 };
 
 export default function AboutPage() {
@@ -16,14 +16,23 @@ export default function AboutPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <h1 className="font-bold pt-5 text-4xl md:text-5xl">sobre mim</h1>
+        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
+          sobre mim
+        </h1>
         <p className="text-xl font-light mb-6">
           nem cozinheiro nem rockstar{' '}
           <span className="text-primary font-bold">programador</span>!
         </p>
-        <div className="block sm:flex w-full md:w-auto items-center">
-          <Button variant={'outline'} asChild>
-            <Link href="/contato">Entre em contato</Link>
+        <div className="block xs:flex w-full md:w-auto items-center">
+          <Button
+            variant={'outline'}
+            className="w-full xs:w-auto mb-4 xs:mb-0"
+            asChild
+          >
+            <Link href="/contato">
+              <Icon name="Mail" className="size-4" />
+              contato
+            </Link>
           </Button>
           <SocialIcons />
         </div>

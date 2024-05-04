@@ -1,11 +1,16 @@
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { Inter as FontSans } from 'next/font/google';
+import { Montserrat as FontDisplay, Inter as FontSans } from 'next/font/google';
 import './globals.css';
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
+});
+
+const fontDisplay = FontDisplay({
+  subsets: ['latin'],
+  variable: '--font-display',
 });
 
 export const metadata: Metadata = {
@@ -23,7 +28,11 @@ export default function RootLayout({
   return (
     <html
       lang="pt-br"
-      className={cn('scroll-smooth antialiased size-full', fontSans.variable)}
+      className={cn(
+        'scroll-smooth antialiased size-full',
+        fontSans.variable,
+        fontDisplay.variable,
+      )}
     >
       <body
         className={cn(
