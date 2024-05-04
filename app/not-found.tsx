@@ -23,7 +23,7 @@ export default function NotFoundPage() {
         >
           404
         </h1>
-        <h2 className="font-heading leading-tight mb-6 text-2xl sm:text-3xl font-medium">
+        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl font-medium">
           Oops! A página que vocês acessou não foi encontrada ou não existe.
         </h2>
         <Button variant={'outline'} asChild>

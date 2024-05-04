@@ -19,12 +19,12 @@ export default function HomePage() {
         <h1 className="mb-3 text-xl md:text-2xl font-bold">
           Olá, eu sou o <span className="text-yellow-300">Fernando.</span>
         </h1>
-        <h2 className="font-heading leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
+        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
           E eu ajudo empresas a criarem projetos web personalizados, de alta
           qualidade e com tecnologias criativas.
         </h2>
         <Button variant={'outline'} asChild>
-          <Link href="/contato">Entre em contato</Link>
+          <Link href="/sobre">Saiba mais sobre mim</Link>
         </Button>
       </div>
     </main>
