@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { env } from './environments';
 
 export const config = {
   matcher: [
@@ -13,61 +14,45 @@ export const config = {
   ],
 };
 
-export async function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-
+export async function middleware(request: NextRequest) {
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
-  let hostname = req.headers
+  let hostname = request.headers
     .get('host')!
-    .replace('.localhost:3000', `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    .replace('.localhost:3000', `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
   // special case for Vercel preview deployment URLs
   if (
     hostname.includes('---') &&
     hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
   ) {
-    hostname = `${hostname.split('---')[0]}.${
-      process.env.NEXT_PUBLIC_ROOT_DOMAIN
-    }`;
+    hostname = `${hostname.split('---')[0]}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   }
 
-  const searchParams = req.nextUrl.searchParams.toString();
-  const path = `${url.pathname}${
+  let baseFolder = '/site';
+
+  switch (hostname) {
+    // rewrite root application to `/api` folder
+    case `api.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
+      baseFolder = '/api';
+      break;
+
+    // rewrite root application to `/blog` folder
+    case `blog.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
+      baseFolder = '/blog';
+      break;
+
+    // rewrite root application to `/lab` folder
+    case `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
+      baseFolder = '/lab';
+      break;
+  }
+
+  const searchParams = request.nextUrl.searchParams.toString();
+  const path = `${request.nextUrl.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ''
   }`;
 
-  // rewrite root application to `/api` folder
-  if (
-    hostname === 'api.localhost:3000' ||
-    hostname === `api.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-  ) {
-    return NextResponse.rewrite(
-      new URL(`/api${path === '/' ? '' : path}`, req.url),
-    );
-  }
-
-  // rewrite root application to `/blog` folder
-  if (
-    hostname === 'blog.localhost:3000' ||
-    hostname === `blog.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-  ) {
-    return NextResponse.rewrite(
-      new URL(`/blog${path === '/' ? '' : path}`, req.url),
-    );
-  }
-
-  // rewrite root application to `/lab` folder
-  if (
-    hostname === 'lab.localhost:3000' ||
-    hostname === `lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-  ) {
-    return NextResponse.rewrite(
-      new URL(`/lab${path === '/' ? '' : path}`, req.url),
-    );
-  }
-
-  // rewrite everything else to `/[domain]/[slug] dynamic route
   return NextResponse.rewrite(
-    new URL(`/site${path === '/' ? '' : path}`, req.url),
+    new URL(`${baseFolder}${path === '/' ? '' : path}`, request.url),
   );
 }
