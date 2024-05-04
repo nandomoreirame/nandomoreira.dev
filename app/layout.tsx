@@ -28,19 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="pt-br"
-      className={cn(
-        'scroll-smooth antialiased size-full',
-        fontSans.variable,
-        fontDisplay.variable,
-      )}
+      className={cn('dark', fontSans.variable, fontDisplay.variable)}
     >
-      <body
-        className={cn(
-          'vsc-initialized size-full',
-          'bg-zinc-900 text-zinc-100',
-          'selection:bg-primary selection:text-primary-foreground',
-        )}
-      >
+      <body>
         <>{children}</>
       </body>
     </html>

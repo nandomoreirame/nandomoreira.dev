@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
-import { Button, Icon, SocialIcons } from '@components';
+import { Avatar, AvatarImage, Button, Icon, SocialIcons } from '@components';
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -16,6 +17,21 @@ export default function AboutPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
+        <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
+          <AvatarImage
+            src="/images/photo.png"
+            className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
+            asChild
+          >
+            <Image
+              src="/images/photo.png"
+              alt="foto de Fernando Moreira"
+              className="rounded-full"
+              width={100}
+              height={100}
+            />
+          </AvatarImage>
+        </Avatar>
         <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
           sobre mim
         </h1>
