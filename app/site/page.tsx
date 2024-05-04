@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Button } from '@components';
+import { Button, SocialIcons } from '@components';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -23,9 +23,16 @@ export default function HomePage() {
           E eu ajudo empresas a criarem projetos web personalizados, de alta
           qualidade e com tecnologias criativas.
         </h2>
-        <Button variant={'outline'} asChild>
-          <Link href="/sobre">Saiba mais sobre mim</Link>
-        </Button>
+        <div className="block sm:flex w-full md:w-auto items-center">
+          <Button
+            variant={'outline'}
+            className="w-full sm:w-auto mb-4 sm:mb-0"
+            asChild
+          >
+            <Link href="/sobre">Saiba mais sobre mim</Link>
+          </Button>
+          <SocialIcons />
+        </div>
       </div>
     </main>
   );

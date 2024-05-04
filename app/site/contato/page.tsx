@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Button } from '@components';
+import { Button, SocialIcons } from '@components';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -29,9 +29,12 @@ export default function ContactPage() {
           </a>{' '}
           e fala pra mim como você tá!
         </p>
-        <Button variant={'outline'} asChild>
-          <Link href="/">Voltar para home</Link>
-        </Button>
+        <div className="block sm:flex w-full md:w-auto items-center">
+          <Button variant={'outline'} asChild>
+            <Link href="/">Voltar para home</Link>
+          </Button>
+          <SocialIcons />
+        </div>
       </div>
     </main>
   );

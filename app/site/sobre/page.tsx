@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Button } from '@components';
+import { Button, SocialIcons } from '@components';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -21,9 +21,12 @@ export default function AboutPage() {
           nem cozinheiro nem rockstar{' '}
           <span className="text-primary font-bold">programador</span>!
         </p>
-        <Button variant={'outline'} asChild>
-          <Link href="/contato">Entre em contato</Link>
-        </Button>
+        <div className="block sm:flex w-full md:w-auto items-center">
+          <Button variant={'outline'} asChild>
+            <Link href="/contato">Entre em contato</Link>
+          </Button>
+          <SocialIcons />
+        </div>
       </div>
     </main>
   );
