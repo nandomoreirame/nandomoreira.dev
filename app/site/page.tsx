@@ -16,8 +16,8 @@ export default function HomePage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <h1 className="mb-3 text-xl md:text-2xl font-bold">
-          Olá, eu sou o <span className="text-yellow-300">Fernando.</span>
+        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-bold">
+          Olá, eu sou o <span className="text-primary">Fernando.</span>
         </h1>
         <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
           E eu ajudo empresas a criarem projetos web personalizados, de alta

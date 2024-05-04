@@ -29,7 +29,7 @@ export default function RootLayout({
         className={cn(
           'vsc-initialized size-full',
           'bg-zinc-900 text-zinc-100',
-          'selection:bg-yellow-300 selection:text-zinc-950',
+          'selection:bg-primary selection:text-primary-foreground',
         )}
       >
         <>{children}</>
