@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main
+    <div
       className={cn(
         'flex flex-col items-center justify-between md:min-h-screen pt-36 px-8 md:pt-0 md:px-12 lg:px-24',
       )}
@@ -41,6 +41,6 @@ export default function AboutPage() {
           <SocialIcons />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

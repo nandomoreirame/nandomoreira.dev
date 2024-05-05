@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <main
+    <div
       className={cn(
         'flex flex-col items-center justify-between md:min-h-screen pt-36 px-8 md:pt-0 md:px-12 lg:px-24',
       )}
@@ -30,6 +30,6 @@ export default function BlogPage() {
           <a href={env.SITE_BASE_URL}>Ir para o site</a>
         </Button>
       </div>
-    </main>
+    </div>
   );
 }

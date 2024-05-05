@@ -3,6 +3,9 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.string(),
   NEXT_PUBLIC_ROOT_DOMAIN: z.string(),
+  GA4_SITE_ID: z.string(),
+  GA4_LAB_ID: z.string(),
+  GA4_BLOG_ID: z.string(),
 });
 
 const parseEnv = envSchema.parse(process.env);
