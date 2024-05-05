@@ -5,9 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Olá, eu sou o Fernando',
+  title:
+    'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer!',
   description:
-    'Desenvolvedor front-end, full-stack e web designer. Eu ajudo empresas a criarem projetos web personalizados, de alta qualidade e com tecnologias criativas.',
+    'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
 };
 
 export default function HomePage() {
@@ -35,11 +36,13 @@ export default function HomePage() {
             </AvatarImage>
           </Avatar>
         </Link>
-        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-bold font-display">
-          Olá, eu sou o <span className="text-primary">Fernando.</span>
+        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-display">
+          Olá, eu sou o{' '}
+          <span className="text-primary font-semibold">Fernando</span>, indie
+          hacker, desenvolvedor full-stack e web designer!
         </h1>
         <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display">
-          E eu ajudo empresas a criarem projetos web personalizados, de alta
+          E eu ajudo empresas a criarem SAAS e MicroSAAS personalizados, de alta
           qualidade e com tecnologias criativas.
         </h2>
         <div className="block xs:flex w-full md:w-auto items-center">
