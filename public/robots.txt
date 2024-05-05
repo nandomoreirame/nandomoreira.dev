@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: */tags/
-Allow: /
-sitemap: https://nandomoreira.dev/sitemap.xml

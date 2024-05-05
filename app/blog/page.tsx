@@ -7,6 +7,24 @@ export const metadata: Metadata = {
   title: 'Blog do Nando, indie hacker, desenvolvedor full-stack e web designer',
   description:
     'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
+  openGraph: {
+    title:
+      'Blog do Nando, indie hacker, desenvolvedor full-stack e web designer',
+    description:
+      'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
+    url: env.LAB_BASE_URL,
+    siteName: 'blog.nandomoreira.dev',
+    images: [
+      {
+        url: `${env.SITE_BASE_URL}/images/share.jpg`,
+        width: 1200,
+        height: 675,
+        alt: 'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
 };
 
 export default function BlogPage() {

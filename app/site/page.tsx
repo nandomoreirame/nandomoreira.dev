@@ -1,3 +1,4 @@
+import { env } from '@/environments';
 import { cn } from '@/lib/utils';
 import { AboutAvatar, Button, Icon, SocialIcons } from '@components';
 import { Metadata } from 'next';
@@ -8,6 +9,24 @@ export const metadata: Metadata = {
     'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer!',
   description:
     'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
+  openGraph: {
+    title:
+      'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer!',
+    description:
+      'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
+    url: env.SITE_BASE_URL,
+    siteName: 'nandomoreira.dev',
+    images: [
+      {
+        url: `${env.SITE_BASE_URL}/images/share.jpg`,
+        width: 1200,
+        height: 675,
+        alt: 'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
 };
 
 export default function HomePage() {
@@ -25,8 +44,8 @@ export default function HomePage() {
           hacker, desenvolvedor full-stack e web designer!
         </h1>
         <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
-          E eu ajudo empresas a criarem SAAS e MicroSAAS personalizados, de alta
-          qualidade e com tecnologias criativas.
+          E eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de
+          alta qualidade e com tecnologias criativas.
         </h2>
         <div className="block xs:flex w-full md:w-auto items-center">
           <Button

@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     template: '%s | Fernando Moreira',
     default: 'Fernando Moreira',
   },
+  keywords:
+    'indie hacker, indie, hacker, desenvolvedor, developer, front-end, back-end, full-stack, web designer, saas, micro-saas, tecnologia, tech',
 };
 
 export default function RootLayout({
