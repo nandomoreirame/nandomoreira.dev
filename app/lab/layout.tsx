@@ -8,8 +8,10 @@ export default function LabLayout({
 }>) {
   return (
     <>
-      <main className="size-full">{children}</main>
-      <GoogleAnalytics gaId={env.GA4_LAB_ID} />
+      {children}
+      {env.NODE_ENV !== 'development' && (
+        <GoogleAnalytics gaId={env.GA4_LAB_ID} />
+      )}
     </>
   );
 }

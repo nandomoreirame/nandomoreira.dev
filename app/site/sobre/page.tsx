@@ -17,9 +17,7 @@ export default function AboutPage() {
     >
       <div className="max-w-screen-xl m-auto relative">
         <AboutAvatar tooltip="Eu sou o Fernando Moreira, prazer!" />
-        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
-          Sobre mim
-        </h1>
+        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold">Sobre mim</h1>
         <p className="text-xl font-light mb-6">
           <span className="text-primary">{'{`'}</span>
           <strong className="text-primary font-medium">

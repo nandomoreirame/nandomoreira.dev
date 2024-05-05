@@ -1,16 +1,11 @@
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { Montserrat as FontDisplay, Inter as FontSans } from 'next/font/google';
+import { Inter as FontSans } from 'next/font/google';
 import './globals.css';
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
-});
-
-const fontDisplay = FontDisplay({
-  subsets: ['latin'],
-  variable: '--font-display',
 });
 
 export const metadata: Metadata = {
@@ -26,10 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt-br"
-      className={cn('dark', fontSans.variable, fontDisplay.variable)}
-    >
+    <html lang="pt-br" className={cn('dark', fontSans.variable)}>
       <body>
         <>{children}</>
       </body>

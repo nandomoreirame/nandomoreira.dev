@@ -60,6 +60,14 @@
 
   html,
   body {
-    @apply bg-zinc-800 text-foreground size-full selection:bg-primary selection:text-primary-foreground;
+    @apply size-full selection:bg-primary selection:text-primary-foreground;
+  }
+
+  html.dark {
+    @apply bg-zinc-800 text-foreground;
+  }
+
+  html.light {
+    @apply bg-gray-100 text-primary-foreground;
   }
 }

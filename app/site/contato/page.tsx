@@ -16,7 +16,7 @@ export default function ContactPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
+        <h1 className="pt-5 text-4xl md:text-5xl font-extrabold">
           E ai? bão <span className="text-primary">ou não?</span>
         </h1>
         <p className="text-xl font-light mb-6">

@@ -19,12 +19,12 @@ export default function HomePage() {
     >
       <div className="max-w-screen-xl m-auto relative">
         <AboutAvatar link="/sobre" />
-        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-display">
+        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl">
           Olá, eu sou o{' '}
           <span className="text-primary font-semibold">Fernando</span>, indie
           hacker, desenvolvedor full-stack e web designer!
         </h1>
-        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display">
+        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
           E eu ajudo empresas a criarem SAAS e MicroSAAS personalizados, de alta
           qualidade e com tecnologias criativas.
         </h2>
