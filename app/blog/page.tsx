@@ -1,11 +1,10 @@
 import { env } from '@/environments';
 import { cn } from '@/lib/utils';
-import { Button } from '@components';
+import { AboutAvatar, Button } from '@components';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title:
-    'Blog do Fernando, indie hacker, desenvolvedor full-stack e web designer',
+  title: 'Blog do Nando, indie hacker, desenvolvedor full-stack e web designer',
   description:
     'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
 };
@@ -18,13 +17,17 @@ export default function BlogPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <h1 className={cn('text-4xl font-sans font-extrabold mb-6')}>
+        <AboutAvatar link={`${env.SITE_BASE_URL}/sobre`} />
+        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-display">
+          Blog do <span className="text-primary font-semibold">Nando</span>
+        </h1>
+        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold font-display">
           Olá, eu sou o{' '}
           <span className="text-primary font-semibold">Fernando</span>, indie
           hacker, desenvolvedor full-stack e web designer!
-        </h1>
+        </h2>
         <Button variant={'outline'} asChild>
-          <a href={env.SITE_BASE_URL}>ir para o site</a>
+          <a href={env.SITE_BASE_URL}>Ir para o site</a>
         </Button>
       </div>
     </main>

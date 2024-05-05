@@ -1,17 +1,6 @@
 import { cn } from '@/lib/utils';
-import {
-  Avatar,
-  AvatarImage,
-  Button,
-  Icon,
-  SocialIcons,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@components';
+import { AboutAvatar, Button, Icon, SocialIcons } from '@components';
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -27,30 +16,7 @@ export default function AboutPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
-                <AvatarImage
-                  src="/images/photo.png"
-                  className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
-                  asChild
-                >
-                  <Image
-                    src="/images/photo.png"
-                    alt="foto de Fernando Moreira"
-                    className="rounded-full"
-                    width={100}
-                    height={100}
-                  />
-                </AvatarImage>
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Prazer, eu sou o Fernando Moreira!</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <AboutAvatar tooltip="Eu sou o Fernando Moreira, prazer!" />
         <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
           Sobre mim
         </h1>
