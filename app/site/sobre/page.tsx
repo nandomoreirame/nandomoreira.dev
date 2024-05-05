@@ -1,5 +1,15 @@
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarImage, Button, Icon, SocialIcons } from '@components';
+import {
+  Avatar,
+  AvatarImage,
+  Button,
+  Icon,
+  SocialIcons,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@components';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,27 +27,39 @@ export default function AboutPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
-          <AvatarImage
-            src="/images/photo.png"
-            className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
-            asChild
-          >
-            <Image
-              src="/images/photo.png"
-              alt="foto de Fernando Moreira"
-              className="rounded-full"
-              width={100}
-              height={100}
-            />
-          </AvatarImage>
-        </Avatar>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
+                <AvatarImage
+                  src="/images/photo.png"
+                  className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
+                  asChild
+                >
+                  <Image
+                    src="/images/photo.png"
+                    alt="foto de Fernando Moreira"
+                    className="rounded-full"
+                    width={100}
+                    height={100}
+                  />
+                </AvatarImage>
+              </Avatar>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Prazer, eu sou o Fernando Moreira!</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <h1 className="pt-5 text-4xl md:text-5xl font-extrabold font-display">
-          sobre mim
+          Sobre mim
         </h1>
         <p className="text-xl font-light mb-6">
-          nem cozinheiro nem rockstar{' '}
-          <span className="text-primary font-bold">programador</span>!
+          <span className="text-primary">{'{`'}</span>
+          <strong className="text-primary font-medium">
+            indie hacker, desenvolvedor front-end/full-stack e web designer.
+          </strong>
+          {'`}'}
         </p>
         <div className="block xs:flex w-full md:w-auto items-center">
           <Button

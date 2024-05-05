@@ -4,8 +4,10 @@ import { Button } from '@components';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: `Blog page`,
-  description: `This is a description for Blog page!`,
+  title:
+    'Blog do Fernando, indie hacker, desenvolvedor full-stack e web designer',
+  description:
+    'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
 };
 
 export default function BlogPage() {
@@ -17,7 +19,9 @@ export default function BlogPage() {
     >
       <div className="max-w-screen-xl m-auto relative">
         <h1 className={cn('text-4xl font-sans font-extrabold mb-6')}>
-          blog.nandomoreira.dev
+          Olá, eu sou o{' '}
+          <span className="text-primary font-semibold">Fernando</span>, indie
+          hacker, desenvolvedor full-stack e web designer!
         </h1>
         <Button variant={'outline'} asChild>
           <a href={env.SITE_BASE_URL}>ir para o site</a>

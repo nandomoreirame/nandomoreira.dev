@@ -1,5 +1,15 @@
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarImage, Button, Icon, SocialIcons } from '@components';
+import {
+  Avatar,
+  AvatarImage,
+  Button,
+  Icon,
+  SocialIcons,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@components';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,23 +29,32 @@ export default function HomePage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <Link href="/sobre">
-          <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
-            <AvatarImage
-              src="/images/photo.png"
-              className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
-              asChild
-            >
-              <Image
-                src="/images/photo.png"
-                alt="foto de Fernando Moreira"
-                className="rounded-full"
-                width={100}
-                height={100}
-              />
-            </AvatarImage>
-          </Avatar>
-        </Link>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Link href="/sobre">
+                <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
+                  <AvatarImage
+                    src="/images/photo.png"
+                    className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
+                    asChild
+                  >
+                    <Image
+                      src="/images/photo.png"
+                      alt="foto de Fernando Moreira"
+                      className="rounded-full"
+                      width={100}
+                      height={100}
+                    />
+                  </AvatarImage>
+                </Avatar>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Saiba mais sobre mim!</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl font-display">
           Olá, eu sou o{' '}
           <span className="text-primary font-semibold">Fernando</span>, indie
