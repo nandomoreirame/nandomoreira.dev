@@ -23,9 +23,9 @@ export default function ContactPage() {
           Mande um email para{' '}
           <a
             className="text-yellow-100 transition duration-150 ease-in-out underline underline-offset-4 hover:text-yellow-500"
-            href="mailto:hi@nandomoreira.dev"
+            href="mailto:oi@nandomoreira.dev?subject=Contato do site&body=Olá Fernando! Vim através do seu site e gostaria de saber mais sobre os seus serviços."
           >
-            hi@nandomoreira.dev
+            oi@nandomoreira.dev
           </a>{' '}
           e fala pra mim como você tá!
         </p>

@@ -2,7 +2,7 @@
   Title: Fernando Moreira
   Name: Fernando Moreira | Desenvolvedor front-end e WordPress em Curitiba/PR
   Site: https://nandomoreira.dev
-  Contact: hi@nandomoreira.dev
+  Contact: oi@nandomoreira.dev
   Twitter: @oseunando
   Location: Curitiba, Paraná, Brazil
 
