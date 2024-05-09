@@ -4,6 +4,11 @@
 
 @layer base {
   :root {
+    --radius: 0.5rem;
+    --radius-blob: 63% 37% 37% 63% / 43% 37% 63% 57%;
+  }
+
+  .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
     --card: 20 14.3% 4.1%;
@@ -23,7 +28,6 @@
     --border: 12 6.5% 15.1%;
     --input: 12 6.5% 15.1%;
     --ring: 35.5 91.7% 32.9%;
-    --radius: 0.5rem;
   }
 
   .light {
