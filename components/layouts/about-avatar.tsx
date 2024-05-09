@@ -1,3 +1,4 @@
+import { cn } from '@lib';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from '../shadcn/avatar';
@@ -23,16 +24,20 @@ export function AboutAvatar({
         <Tooltip>
           <TooltipTrigger>
             <Link href={link}>
-              <Avatar className="size-32 group bg-yellow-500/10 hover:bg-yellow-500/30 transition-all p-1 mb-4">
-                <AvatarImage
-                  src="/images/photo.png"
-                  className="bg-yellow-500/10 group-hover:bg-yellow-500/20 transition-all p-1"
-                  asChild
-                >
+              <Avatar
+                className={cn(
+                  'group rounded-blob mb-4 bg-yellow-500/10 p-2 size-40',
+                  'hover:p-1 transition-all duration-200 ease-in-out',
+                )}
+              >
+                <AvatarImage src="/images/photo.png" asChild>
                   <Image
                     src="/images/photo.png"
                     alt="foto de Fernando Moreira"
-                    className="rounded-full"
+                    className={cn(
+                      'rounded-blob bg-yellow-500/20 p-2',
+                      'group-hover:p-1 transition-all duration-200 ease-in-out',
+                    )}
                     width={100}
                     height={100}
                   />
