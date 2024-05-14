@@ -1,14 +1,14 @@
+import { Button } from './button';
 import { Icon } from './icon';
-import { Button } from './shadcn/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './shadcn/tooltip';
+} from './tooltip';
 
-function SocialIcons() {
-  const socialIcons = [
+function SocialLinks() {
+  const SocialLinks = [
     // {
     //   name: 'WhatsApp',
     //   url: 'https://wa.me/5541984401163?text=Olá+Fernando!+Vim+através+do+seu+site+e+gostaria+de+saber+mais+sobre+os+seus+serviços.',
@@ -32,8 +32,8 @@ function SocialIcons() {
   ];
 
   return (
-    <div className="inline-flex items-center justify-around xs:justify-start w-full px-0 xs:px-4">
-      {socialIcons.map((icon) => (
+    <div className="inline-flex gap-2 items-center justify-around xs:justify-start w-full px-0 xs:px-4">
+      {SocialLinks.map((icon) => (
         <TooltipProvider key={icon.name}>
           <Tooltip>
             <TooltipTrigger>
@@ -63,5 +63,5 @@ function SocialIcons() {
   );
 }
 
-SocialIcons.displayName = 'SocialIcons';
-export { SocialIcons };
+SocialLinks.displayName = 'SocialLinks';
+export { SocialLinks };

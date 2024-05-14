@@ -1,4 +1,4 @@
-import { cn } from '@lib';
+import { cn } from '@/lib';
 import { type LucideProps } from 'lucide-react';
 // https://lucide.dev/guide/packages/lucide-react
 import { icons } from 'lucide-react';
@@ -22,6 +22,5 @@ const Icon = ({ name, className, ...props }: IconProps) => {
     </span>
   );
 };
-
 Icon.displayName = 'Icon';
 export { Icon };

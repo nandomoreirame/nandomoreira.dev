@@ -1,13 +1,13 @@
-import { cn } from '@lib';
+import { cn } from '@/lib';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Avatar, AvatarImage } from '../shadcn/avatar';
+import { Avatar, AvatarImage } from './avatar';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../shadcn/tooltip';
+} from './tooltip';
 
 type AboutAvatarProps = {
   link?: string;
@@ -26,7 +26,7 @@ export function AboutAvatar({
             <Link href={link}>
               <Avatar
                 className={cn(
-                  'group rounded-blob mb-4 bg-yellow-500/10 p-2 size-40',
+                  'group rounded-blob mb-4 bg-yellow-500/10 p-2 size-full max-w-64 md:max-w-lg md:size-60',
                   'hover:p-1 transition-all duration-200 ease-in-out',
                 )}
               >
@@ -38,8 +38,8 @@ export function AboutAvatar({
                       'rounded-blob bg-yellow-500/20 p-2',
                       'group-hover:p-1 transition-all duration-200 ease-in-out',
                     )}
-                    width={100}
-                    height={100}
+                    width={500}
+                    height={500}
                   />
                 </AvatarImage>
               </Avatar>
