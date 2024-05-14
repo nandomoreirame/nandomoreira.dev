@@ -12,11 +12,11 @@ const parseEnv = envSchema.parse(process.env);
 
 const IS_DEV = parseEnv.NODE_ENV === 'development';
 
-const http = `http${!IS_DEV ? 's' : ''}://`;
-const SITE_BASE_URL = `${http}${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
-const API_BASE_URL = `${http}api.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
-const BLOG_BASE_URL = `${http}blog.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
-const LAB_BASE_URL = `${http}lab.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
+const HTTP = `http${!IS_DEV ? 's' : ''}://`;
+const SITE_BASE_URL = `${HTTP}${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
+const API_BASE_URL = `${HTTP}api.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
+const BLOG_BASE_URL = `${HTTP}blog.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
+const LAB_BASE_URL = `${HTTP}lab.${parseEnv.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
 export const env = {
   ...parseEnv,

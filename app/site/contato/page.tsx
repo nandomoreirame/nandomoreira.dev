@@ -1,5 +1,6 @@
+import { Button } from '@/components/button';
+import { SocialLinks } from '@/components/social-links';
 import { cn } from '@/lib/utils';
-import { Button, SocialIcons } from '@components';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -37,7 +38,7 @@ export default function ContactPage() {
           >
             <Link href="/">Voltar para home</Link>
           </Button>
-          <SocialIcons />
+          <SocialLinks />
         </div>
       </div>
     </div>

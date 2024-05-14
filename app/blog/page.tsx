@@ -1,7 +1,9 @@
+import { AboutAvatar } from '@/components/about-avatar';
+import { Button } from '@/components/button';
 import { env } from '@/environments';
 import { cn } from '@/lib/utils';
-import { AboutAvatar, Button } from '@components';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Blog do Nando, indie hacker, desenvolvedor full-stack e web designer',
@@ -44,8 +46,8 @@ export default function BlogPage() {
           <span className="text-primary font-semibold">Fernando</span>, indie
           hacker, desenvolvedor full-stack e web designer!
         </h2>
-        <Button variant={'outline'} asChild>
-          <a href={env.SITE_BASE_URL}>Ir para o site</a>
+        <Button asChild>
+          <Link href={env.SITE_BASE_URL}>Ir para o site</Link>
         </Button>
       </div>
     </div>

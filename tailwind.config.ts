@@ -62,6 +62,9 @@ const config = {
         sm: 'calc(var(--radius) - 4px)',
         blob: 'var(--radius-blob)',
       },
+      backgroundImage: {
+        '404': "url('/images/travolta.gif')",
+      },
       keyframes: {
         'accordion-down': {
           from: { height: '0' },
