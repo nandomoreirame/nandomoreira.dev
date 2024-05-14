@@ -60,6 +60,8 @@
 
   html {
     @apply scroll-smooth antialiased;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
   }
 
   html,

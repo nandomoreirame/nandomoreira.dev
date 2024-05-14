@@ -1,3 +1,4 @@
+import { CustomCursor } from '@/components/custom-cursor';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br" className={cn('dark', fontSans.variable)}>
       <body>
+        <CustomCursor />
         <>{children}</>
       </body>
     </html>
