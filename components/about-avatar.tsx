@@ -1,13 +1,16 @@
-import { cn } from '@/lib';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Avatar, AvatarImage } from './avatar';
+'use client';
+
+import { Avatar, AvatarImage } from '@/components/avatar';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip';
+} from '@/components/tooltip';
+import { cn } from '@/lib';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 
 type AboutAvatarProps = {
   link?: string;
@@ -18,6 +21,8 @@ export function AboutAvatar({
   link = '/',
   tooltip = 'Saiba mais sobre mim!',
 }: AboutAvatarProps): JSX.Element {
+  const [isLoading, setLoading] = useState(true);
+
   return (
     <>
       <TooltipProvider>
@@ -26,7 +31,7 @@ export function AboutAvatar({
             <Link href={link}>
               <Avatar
                 className={cn(
-                  'group rounded-blob mb-4 bg-yellow-500/10 p-2 size-full max-w-64 md:max-w-lg md:size-60',
+                  'group rounded-blob mb-4 bg-primary/10 p-2 size-full max-w-64 md:max-w-lg md:size-64',
                   'hover:p-1 transition-all duration-200 ease-in-out',
                 )}
               >
@@ -34,10 +39,14 @@ export function AboutAvatar({
                   <Image
                     src="/images/photo.png"
                     alt="foto de Fernando Moreira"
+                    quality={100}
+                    loading="lazy"
                     className={cn(
-                      'rounded-blob bg-yellow-500/20 p-2',
+                      'rounded-blob bg-primary/20 p-2',
                       'group-hover:p-1 transition-all duration-200 ease-in-out',
+                      isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0',
                     )}
+                    onLoad={() => setLoading(false)}
                     width={500}
                     height={500}
                   />

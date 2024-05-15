@@ -1,6 +1,6 @@
+import { Header } from '@/components/header';
 import { env } from '@/environments';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import { Header } from './_components/header';
 
 export default function SiteLayout({
   children,
@@ -11,7 +11,7 @@ export default function SiteLayout({
     <>
       <Header />
       {children}
-      {env.NODE_ENV !== 'development' && (
+      {env.IS_PROD && env.GA4_SITE_ID && (
         <GoogleAnalytics gaId={env.GA4_SITE_ID} />
       )}
     </>

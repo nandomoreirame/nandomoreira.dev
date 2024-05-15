@@ -31,7 +31,7 @@ export const CustomCursor = () => {
         translateX: cursorXSpring,
         translateY: cursorYSpring,
       }}
-      className="size-12 rounded-full border-2 border-primary fixed z-cursor flex items-center justify-center pointer-events-none"
+      className="hidden size-12 rounded-full border-2 border-primary fixed z-cursor lg:flex items-center justify-center pointer-events-none"
     />
   );
 };

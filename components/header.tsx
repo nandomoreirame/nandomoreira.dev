@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ComponentProps } from 'react';
+import { ThemeToggle } from './theme-toggle';
 
 type HeaderProps = ComponentProps<'header'>;
 
@@ -20,7 +21,7 @@ export function Header({
           className="text-2xl font-bold group hover:text-primary transition-colors duration-150"
         >
           nando
-          <strong className="text-primary group-hover:text-white transition-colors duration-150">
+          <strong className="text-primary group-hover:text-foreground transition-colors duration-150">
             moreira
           </strong>
         </Link>
@@ -39,6 +40,7 @@ export function Header({
             Contato
           </Link>
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );

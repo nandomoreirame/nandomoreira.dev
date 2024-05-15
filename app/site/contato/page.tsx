@@ -1,12 +1,18 @@
 import { Button } from '@/components/button';
 import { SocialLinks } from '@/components/social-links';
+import { env } from '@/environments';
 import { cn } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Contato',
+  title: 'Contato | Fernando Moreira',
   description: 'Me mande um email e fala pra mim como você tá!',
+  openGraph: {
+    title: 'Contato | Fernando Moreira',
+    description: 'Me mande um email e fala pra mim como você tá!',
+    url: `${env.SITE_BASE_URL}/contato`,
+  },
 };
 
 export default function ContactPage() {
@@ -23,7 +29,7 @@ export default function ContactPage() {
         <p className="text-xl font-light mb-6">
           Mande um email para{' '}
           <a
-            className="text-yellow-100 transition duration-150 ease-in-out underline underline-offset-4 hover:text-yellow-500"
+            className="text-primary/90 hover:text-primary/50 focus:text-primary/50 transition duration-150 ease-in-out underline underline-offset-4"
             href="mailto:oi@nandomoreira.dev?subject=Contato do site&body=Olá Fernando! Vim através do seu site e gostaria de saber mais sobre os seus serviços."
           >
             oi@nandomoreira.dev

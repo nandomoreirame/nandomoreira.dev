@@ -1,11 +1,11 @@
-import { Button } from './button';
-import { Icon } from './icon';
+import { Button } from '@/components/button';
+import { Icon } from '@/components/icon';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip';
+} from '@/components/tooltip';
 
 function SocialLinks() {
   const SocialLinks = [

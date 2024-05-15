@@ -7,28 +7,9 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title:
-    'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer!',
+  title: 'Fernando Moreira, indie hacker, desenvolvedor e web designer',
   description:
-    'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
-  openGraph: {
-    title:
-      'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer!',
-    description:
-      'Eu ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
-    url: env.SITE_BASE_URL,
-    siteName: 'nandomoreira.dev',
-    images: [
-      {
-        url: `${env.SITE_BASE_URL}/images/share.jpg`,
-        width: 1200,
-        height: 675,
-        alt: 'Olá, eu sou o Fernando, indie hacker, desenvolvedor full-stack e web designer',
-      },
-    ],
-    locale: 'pt_BR',
-    type: 'website',
-  },
+    'Ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
 };
 
 export default function HomePage() {
@@ -45,7 +26,7 @@ export default function HomePage() {
             Olá, eu sou o <span className="text-primary">Fernando</span>.
           </h1>
           <h2 className="mb-3 text-xl md:text-3xl">
-            Marketeiro, Indie Hacker, Desenvolvedor Full-Stack e Web Designer!
+            Indie Hacker, Desenvolvedor Full-Stack, Marketeiro e Web Designer!
           </h2>
           <p className="mb-4">
             Ajudo empresas a criarem{' '}
