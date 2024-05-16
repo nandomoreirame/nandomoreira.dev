@@ -30,10 +30,7 @@ export function AboutAvatar({
           <TooltipTrigger>
             <Link href={link}>
               <Avatar
-                className={cn(
-                  'group rounded-blob mb-4 bg-primary/10 p-2 size-full max-w-64 md:max-w-lg md:size-64',
-                  'hover:p-1 transition-all duration-200 ease-in-out',
-                )}
+                className={cn('mb-4 size-full max-w-64 md:max-w-lg md:size-64')}
               >
                 <AvatarImage src="/images/photo.png" asChild>
                   <Image
@@ -42,8 +39,7 @@ export function AboutAvatar({
                     quality={100}
                     loading="lazy"
                     className={cn(
-                      'rounded-blob bg-primary/20 p-2',
-                      'group-hover:p-1 transition-all duration-200 ease-in-out',
+                      'animate-image-morph bg-primary/20 p-2',
                       isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0',
                     )}
                     onLoad={() => setLoading(false)}
