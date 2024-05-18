@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/providers/theme-provider';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 const fontSans = FontSans({
@@ -53,6 +54,19 @@ export default function RootLayout({
         >
           <CustomCursor />
           <>{children}</>
+          <Script
+            id="crisp-chat"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.$crisp=[];window.CRISP_WEBSITE_ID="086d6655-90ca-4696-aa32-6e31fabfef57";
+                (function(){
+                  d=document;s=d.createElement("script");
+                  s.src="https://client.crisp.chat/l.js";
+                  s.async=1;d.getElementsByTagName("head")[0].appendChild(s);
+                })();
+              `,
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>
