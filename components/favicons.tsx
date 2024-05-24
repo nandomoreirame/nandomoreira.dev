@@ -1,7 +1,7 @@
 export const Favicons = (): JSX.Element => {
   return (
     <>
-      <link rel="icon" href="/icons/icon.png" sizes="any" />
+      <link rel="icon" href="/icons/favicon.png" sizes="any" />
       <link
         rel="apple-touch-icon"
         sizes="57x57"
