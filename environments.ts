@@ -6,6 +6,7 @@ const envSchema = z.object({
   GA4_SITE_ID: z.string(),
   GA4_LAB_ID: z.string(),
   GA4_BLOG_ID: z.string(),
+  CRISP_WEBSITE_ID: z.string(),
 });
 
 const parseEnv = envSchema.parse(process.env);

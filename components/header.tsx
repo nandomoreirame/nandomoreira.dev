@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ComponentProps } from 'react';
+import { LogoIcon } from './logo-icon';
 import { ThemeToggle } from './theme-toggle';
 
 type HeaderProps = ComponentProps<'header'>;
@@ -18,12 +19,15 @@ export function Header({
       <div className="w-full gap-2 flex flex-col md:flex-row text-center items-center justify-between p-4 md:px-8">
         <Link
           href="/"
-          className="text-2xl font-bold group hover:text-primary transition-colors duration-150"
+          className="flex items-center gap-2 text-2xl font-bold group hover:text-primary transition duration-150"
         >
-          nando
-          <strong className="text-primary group-hover:text-foreground transition-colors duration-150">
-            moreira
-          </strong>
+          <LogoIcon />
+          <span>
+            nando
+            <strong className="text-primary transition duration-150">
+              moreira
+            </strong>
+          </span>
         </Link>
 
         <nav className="md:ml-auto flex items-center gap-0 md:gap-2">

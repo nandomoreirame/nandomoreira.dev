@@ -1,4 +1,4 @@
-import { CustomCursor } from '@/components/custom-cursor';
+import { Favicons } from '@/components/favicons';
 import { env } from '@/environments';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/providers/theme-provider';
@@ -45,6 +45,9 @@ export default function RootLayout({
       className={cn('dark', fontSans.variable)}
       suppressHydrationWarning
     >
+      <head>
+        <Favicons />
+      </head>
       <body suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
@@ -52,13 +55,15 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          <CustomCursor />
           <>{children}</>
+        </ThemeProvider>
+        {env.IS_PROD && env.CRISP_WEBSITE_ID && (
           <Script
             id="crisp-chat"
             dangerouslySetInnerHTML={{
               __html: `
-                window.$crisp=[];window.CRISP_WEBSITE_ID="086d6655-90ca-4696-aa32-6e31fabfef57";
+                window.$crisp=[];
+                window.CRISP_WEBSITE_ID="${env.CRISP_WEBSITE_ID}";
                 (function(){
                   d=document;s=d.createElement("script");
                   s.src="https://client.crisp.chat/l.js";
@@ -67,7 +72,7 @@ export default function RootLayout({
               `,
             }}
           />
-        </ThemeProvider>
+        )}
       </body>
     </html>
   );

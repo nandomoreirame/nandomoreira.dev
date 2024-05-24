@@ -37,7 +37,6 @@ export function AboutAvatar({
                     src="/images/photo.png"
                     alt="foto de Fernando Moreira"
                     quality={100}
-                    loading="lazy"
                     className={cn(
                       'animate-image-morph bg-primary/20 p-2',
                       isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0',
@@ -45,6 +44,7 @@ export function AboutAvatar({
                     onLoad={() => setLoading(false)}
                     width={500}
                     height={500}
+                    priority
                   />
                 </AvatarImage>
               </Avatar>
