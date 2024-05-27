@@ -1,4 +1,4 @@
-import { env } from '@/environments';
+import { getDomain } from '@/lib';
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       // disallow: '/private/',
     },
-    sitemap: `${env.SITE_BASE_URL}/sitemap.xml`,
+    sitemap: `${getDomain()}/sitemap.xml`,
   };
 }

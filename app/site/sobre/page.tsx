@@ -2,8 +2,7 @@ import { AboutAvatar } from '@/components/about-avatar';
 import { Button } from '@/components/button';
 import { Icon } from '@/components/icon';
 import { SocialLinks } from '@/components/social-links';
-import { env } from '@/environments';
-import { cn } from '@/lib/utils';
+import { cn, getDomain } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Sobre | Fernando Moreira',
     description: 'indie hacker, desenvolvedor full-stack e web designer.',
-    url: `${env.SITE_BASE_URL}/sobre`,
+    url: `${getDomain()}/sobre`,
   },
 };
 

@@ -1,6 +1,6 @@
 import { Favicons } from '@/components/favicons';
 import { env } from '@/environments';
-import { cn } from '@/lib/utils';
+import { cn, getDomain } from '@/lib/utils';
 import { ThemeProvider } from '@/providers/theme-provider';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: 'Fernando Moreira, indie hacker, desenvolvedor e web designer',
     description:
       'Ajudo empresas a criarem SaaS e Micro-SaaS personalizados, de alta qualidade e com tecnologias criativas.',
-    url: env.SITE_BASE_URL,
+    url: getDomain(),
     siteName: 'nandomoreira.dev',
     images: [
       {
-        url: `${env.SITE_BASE_URL}/images/share.jpg`,
+        url: `${getDomain()}/images/share.jpg`,
         width: 1200,
         height: 675,
         alt: 'Fernando Moreira, indie hacker, desenvolvedor e web designer',
@@ -57,7 +57,7 @@ export default function RootLayout({
         >
           <>{children}</>
         </ThemeProvider>
-        {env.IS_PROD && env.CRISP_WEBSITE_ID && (
+        {env.NODE_ENV === 'production' && env.CRISP_WEBSITE_ID && (
           <Script
             id="crisp-chat"
             dangerouslySetInnerHTML={{

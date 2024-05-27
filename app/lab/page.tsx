@@ -2,7 +2,7 @@ import { AboutAvatar } from '@/components/about-avatar';
 import { Button } from '@/components/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { env } from '@/environments';
-import { cn } from '@/lib/utils';
+import { cn, getDomain } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Laboratório do Nando',
   openGraph: {
     title: 'Laboratório do Nando, indie hacker, desenvolvedor e web designer',
-    url: env.LAB_BASE_URL,
+    url: getDomain('lab'),
     siteName: `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
   },
 };
@@ -23,7 +23,7 @@ export default function LabPage() {
       )}
     >
       <div className="max-w-screen-xl m-auto relative">
-        <AboutAvatar link={`${env.SITE_BASE_URL}/sobre`} />
+        <AboutAvatar link={`${getDomain()}/sobre`} />
         <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl">
           Laboratório do <span className="text-primary">Nando</span>
         </h1>
@@ -33,7 +33,7 @@ export default function LabPage() {
         </h2>
         <div className="flex flex-col gap-4 md:flex-row">
           <Button asChild>
-            <Link href={env.SITE_BASE_URL}>ir para o site</Link>
+            <Link href={getDomain()}>ir para o site</Link>
           </Button>
           <ThemeToggle />
         </div>

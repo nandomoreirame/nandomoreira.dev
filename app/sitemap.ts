@@ -1,26 +1,26 @@
-import { env } from '@/environments';
+import { getDomain } from '@/lib';
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: `${env.SITE_BASE_URL}`,
+      url: `${getDomain()}`,
       lastModified: new Date(),
     },
     {
-      url: `${env.SITE_BASE_URL}/sobre`,
+      url: `${getDomain()}/sobre`,
       lastModified: new Date(),
     },
     {
-      url: `${env.SITE_BASE_URL}/contato`,
+      url: `${getDomain()}/contato`,
       lastModified: new Date(),
     },
     {
-      url: `${env.BLOG_BASE_URL}`,
+      url: `${getDomain('blog')}`,
       lastModified: new Date(),
     },
     {
-      url: `${env.LAB_BASE_URL}`,
+      url: `${getDomain('lab')}`,
       lastModified: new Date(),
     },
   ];

@@ -1,8 +1,7 @@
 import { AboutAvatar } from '@/components/about-avatar';
 import { Button } from '@/components/button';
 import { Icon } from '@/components/icon';
-import { env } from '@/environments';
-import { cn } from '@/lib/utils';
+import { cn, getDomain } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -42,24 +41,14 @@ export default function HomePage() {
               </Link>
             </Button>
             <Button variant={'ghost'} asChild>
-              <Link
-                href={env.LAB_BASE_URL}
-                className="w-full xs:w-auto"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon name="ExternalLink" className="size-4" />
+              <Link href={getDomain('lab')} className="w-full xs:w-auto">
+                <Icon name="FlaskConical" className="size-4" />
                 <span>labs</span>
               </Link>
             </Button>
             <Button variant={'ghost'} asChild>
-              <Link
-                href={env.BLOG_BASE_URL}
-                className="w-full xs:w-auto"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon name="ExternalLink" className="size-4" />
+              <Link href={getDomain('blog')} className="w-full xs:w-auto">
+                <Icon name="NotebookText" className="size-4" />
                 <span>blog</span>
               </Link>
             </Button>

@@ -1,7 +1,6 @@
 import { Button } from '@/components/button';
 import { SocialLinks } from '@/components/social-links';
-import { env } from '@/environments';
-import { cn } from '@/lib/utils';
+import { cn, getDomain } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Contato | Fernando Moreira',
     description: 'Me mande um email e fala pra mim como você tá!',
-    url: `${env.SITE_BASE_URL}/contato`,
+    url: `${getDomain()}/contato`,
   },
 };
 

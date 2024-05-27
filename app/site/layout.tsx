@@ -11,7 +11,7 @@ export default function SiteLayout({
     <>
       <Header />
       {children}
-      {env.IS_PROD && env.GA4_SITE_ID && (
+      {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
         <GoogleAnalytics gaId={env.GA4_SITE_ID} />
       )}
     </>
