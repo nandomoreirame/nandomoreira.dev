@@ -23,8 +23,8 @@ const nextConfig = {
         destination: 'https://lab.nandomoreira.dev',
         permanent: true,
       },
-    ];
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
