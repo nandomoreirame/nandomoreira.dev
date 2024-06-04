@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { ComponentProps } from 'react';
+import { cn } from '@/lib/utils'
+import { ComponentProps } from 'react'
 
 export function LogoIcon({
   className,
@@ -7,13 +7,13 @@ export function LogoIcon({
 }: ComponentProps<'svg'>): JSX.Element {
   return (
     <span
-      className={cn('flex p-1 items-center justify-center size-12', className)}
+      className={cn('flex size-12 items-center justify-center p-1', className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 65 61"
-        className={'size-full flex p-0 m-0 transition duration-150'}
+        className={'m-0 flex size-full p-0 transition duration-150'}
         {...props}
       >
         <path
@@ -26,5 +26,5 @@ export function LogoIcon({
         />
       </svg>
     </span>
-  );
+  )
 }

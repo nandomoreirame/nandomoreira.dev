@@ -1,11 +1,11 @@
-import { Button } from '@/components/button';
-import { Icon } from '@/components/icon';
+import { Button } from '@/components/button'
+import { Icon } from '@/components/icon'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/tooltip';
+} from '@/components/tooltip'
 
 function SocialLinks() {
   const SocialLinks = [
@@ -29,10 +29,10 @@ function SocialLinks() {
       name: 'Twitter',
       url: 'https://twitter.com/oseunando',
     },
-  ];
+  ]
 
   return (
-    <div className="inline-flex gap-2 items-center justify-around xs:justify-start w-full px-0 xs:px-4">
+    <div className="inline-flex w-full items-center justify-around gap-2 px-0 xs:justify-start xs:px-4">
       {SocialLinks.map((icon) => (
         <TooltipProvider key={icon.name}>
           <Tooltip>
@@ -45,7 +45,7 @@ function SocialLinks() {
                 <a href={icon.url} target="_blank" rel="noopener noreferrer">
                   <Icon
                     name={icon.name}
-                    className="size-5 xs:size-4 group-hover:text-primary group-hover:transform group-hover:scale-110 transition-transform"
+                    className="size-5 transition-transform group-hover:scale-110 group-hover:transform group-hover:text-primary xs:size-4"
                   />
                   <span className="hidden text-sm font-medium md:inline-flex">
                     {icon.name}
@@ -60,8 +60,8 @@ function SocialLinks() {
         </TooltipProvider>
       ))}
     </div>
-  );
+  )
 }
 
-SocialLinks.displayName = 'SocialLinks';
-export { SocialLinks };
+SocialLinks.displayName = 'SocialLinks'
+export { SocialLinks }

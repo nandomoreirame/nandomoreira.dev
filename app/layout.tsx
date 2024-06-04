@@ -1,16 +1,16 @@
-import { Favicons } from '@/components/favicons';
-import { env } from '@/environments';
-import { cn, getDomain } from '@/lib/utils';
-import { ThemeProvider } from '@/providers/theme-provider';
-import type { Metadata } from 'next';
-import { Inter as FontSans } from 'next/font/google';
-import Script from 'next/script';
-import './globals.css';
+import { Favicons } from '@/components/favicons'
+import { env } from '@/environments'
+import { cn, getDomain } from '@/lib/utils'
+import { ThemeProvider } from '@/providers/theme-provider'
+import type { Metadata } from 'next'
+import { Inter as FontSans } from 'next/font/google'
+import Script from 'next/script'
+import './globals.css'
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
-});
+})
 
 export const metadata: Metadata = {
   keywords:
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     type: 'website',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -75,5 +75,5 @@ export default function RootLayout({
         )}
       </body>
     </html>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { env } from '@/environments';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { env } from '@/environments'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export default function BlogLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <>
@@ -13,5 +13,5 @@ export default function BlogLayout({
         <GoogleAnalytics gaId={env.GA4_BLOG_ID} />
       )}
     </>
-  );
+  )
 }

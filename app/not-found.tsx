@@ -1,30 +1,30 @@
-import { Button } from '@/components/button';
-import { Icon } from '@/components/icon';
-import { cn } from '@/lib/utils';
-import { Metadata } from 'next';
-import Link from 'next/link';
+import { Button } from '@/components/button'
+import { Icon } from '@/components/icon'
+import { cn } from '@/lib/utils'
+import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: `NotFound page`,
   description: `This is a description for NotFound page!`,
-};
+}
 
 export default function NotFoundPage() {
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-between h-full md:min-h-screen pt-36 px-8 md:pt-0 md:px-12 lg:px-24 bg-repeat bg-404',
+        'flex h-full flex-col items-center justify-between bg-404 bg-repeat px-8 pt-36 md:min-h-screen md:px-12 md:pt-0 lg:px-24',
       )}
     >
-      <div className="max-w-screen-md m-auto relative text-center">
+      <div className="relative m-auto max-w-screen-md text-center">
         <h1
           className={cn(
-            'text-8xl text-primary md:text-9xl lg:text-[10rem] font-sans font-black mb-4',
+            'mb-4 font-sans text-8xl font-black text-primary md:text-9xl lg:text-[10rem]',
           )}
         >
           404
         </h1>
-        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl font-medium">
+        <h2 className="mb-6 text-2xl font-medium leading-tight sm:text-3xl">
           Oops! A página que vocês acessou não foi encontrada ou não existe.
         </h2>
         <Button variant={'secondary'} asChild>
@@ -35,5 +35,5 @@ export default function NotFoundPage() {
         </Button>
       </div>
     </div>
-  );
+  )
 }

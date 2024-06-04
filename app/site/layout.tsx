@@ -1,11 +1,11 @@
-import { Header } from '@/components/header';
-import { env } from '@/environments';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { Header } from '@/components/header'
+import { env } from '@/environments'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export default function SiteLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <>
@@ -15,5 +15,5 @@ export default function SiteLayout({
         <GoogleAnalytics gaId={env.GA4_SITE_ID} />
       )}
     </>
-  );
+  )
 }

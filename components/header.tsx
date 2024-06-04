@@ -1,10 +1,10 @@
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import { ComponentProps } from 'react';
-import { LogoIcon } from './logo-icon';
-import { ThemeToggle } from './theme-toggle';
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import { ComponentProps } from 'react'
+import { LogoIcon } from './logo-icon'
+import { ThemeToggle } from './theme-toggle'
 
-type HeaderProps = ComponentProps<'header'>;
+type HeaderProps = ComponentProps<'header'>
 
 export function Header({
   children,
@@ -13,13 +13,13 @@ export function Header({
 }: HeaderProps): JSX.Element {
   return (
     <header
-      className={cn('flex md:fixed md:top-0 md:left-0 md:right-0', className)}
+      className={cn('flex md:fixed md:left-0 md:right-0 md:top-0', className)}
       {...props}
     >
-      <div className="w-full gap-2 flex flex-col md:flex-row text-center items-center justify-between p-4 md:px-8">
+      <div className="flex w-full flex-col items-center justify-between gap-2 p-4 text-center md:flex-row md:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2 text-2xl font-bold group hover:text-primary transition duration-150"
+          className="group flex items-center gap-2 text-2xl font-bold transition duration-150 hover:text-primary"
         >
           <LogoIcon />
           <span>
@@ -30,15 +30,15 @@ export function Header({
           </span>
         </Link>
 
-        <nav className="md:ml-auto flex items-center gap-0 md:gap-2">
+        <nav className="flex items-center gap-0 md:ml-auto md:gap-2">
           <Link
-            className="font-semibold hover:text-primary transition-colors duration-150 py-2 px-2 md:px-4 rounded-md hover:bg-gray-100/5"
+            className="rounded-md px-2 py-2 font-semibold transition-colors duration-150 hover:bg-gray-100/5 hover:text-primary md:px-4"
             href="/sobre"
           >
             Sobre
           </Link>
           <Link
-            className="font-semibold hover:text-primary transition-colors duration-150 py-2 px-2 md:px-4 rounded-md hover:bg-gray-100/5"
+            className="rounded-md px-2 py-2 font-semibold transition-colors duration-150 hover:bg-gray-100/5 hover:text-primary md:px-4"
             href="/contato"
           >
             Contato
@@ -47,5 +47,5 @@ export function Header({
         <ThemeToggle />
       </div>
     </header>
-  );
+  )
 }

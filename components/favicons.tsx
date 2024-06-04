@@ -78,5 +78,5 @@ export const Favicons = (): JSX.Element => {
       />
       <meta name="theme-color" content="#ffffff"></meta>
     </>
-  );
-};
+  )
+}

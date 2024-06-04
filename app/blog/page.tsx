@@ -1,10 +1,10 @@
-import { AboutAvatar } from '@/components/about-avatar';
-import { Button } from '@/components/button';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { env } from '@/environments';
-import { cn, getDomain } from '@/lib/utils';
-import { Metadata } from 'next';
-import Link from 'next/link';
+import { AboutAvatar } from '@/components/about-avatar'
+import { Button } from '@/components/button'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { env } from '@/environments'
+import { cn, getDomain } from '@/lib/utils'
+import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Blog do Nando',
@@ -13,21 +13,21 @@ export const metadata: Metadata = {
     url: getDomain('blog'),
     siteName: `blog.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
   },
-};
+}
 
 export default function BlogPage() {
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-between md:min-h-screen pt-36 px-8 md:pt-0 md:px-12 lg:px-24',
+        'flex flex-col items-center justify-between px-8 pt-36 md:min-h-screen md:px-12 md:pt-0 lg:px-24',
       )}
     >
-      <div className="max-w-screen-xl m-auto relative">
+      <div className="relative m-auto max-w-screen-xl">
         <AboutAvatar link={`${getDomain()}/sobre`} />
         <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl">
           Blog do <span className="text-primary">Nando</span>
         </h1>
-        <h2 className="leading-tight mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
+        <h2 className="mb-6 text-2xl font-extrabold leading-tight sm:text-3xl md:text-4xl lg:text-5xl">
           Olá, eu sou o <span className="text-primary">Fernando</span>, indie
           hacker, desenvolvedor full-stack, marketeiro e web designer!
         </h2>
@@ -39,5 +39,5 @@ export default function BlogPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

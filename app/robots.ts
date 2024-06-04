@@ -1,5 +1,5 @@
-import { getDomain } from '@/lib';
-import { MetadataRoute } from 'next';
+import { getDomain } from '@/lib'
+import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,5 +9,5 @@ export default function robots(): MetadataRoute.Robots {
       // disallow: '/private/',
     },
     sitemap: `${getDomain()}/sitemap.xml`,
-  };
+  }
 }

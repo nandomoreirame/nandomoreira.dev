@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { Avatar, AvatarImage } from '@/components/avatar';
+import { Avatar, AvatarImage } from '@/components/avatar'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/tooltip';
-import { cn } from '@/lib';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+} from '@/components/tooltip'
+import { cn } from '@/lib'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
 
 type AboutAvatarProps = {
-  link?: string;
-  tooltip?: string;
-};
+  link?: string
+  tooltip?: string
+}
 
 export function AboutAvatar({
   link = '/',
   tooltip = 'Saiba mais sobre mim!',
 }: AboutAvatarProps): JSX.Element {
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true)
 
   return (
     <>
@@ -30,7 +30,7 @@ export function AboutAvatar({
           <TooltipTrigger>
             <Link href={link}>
               <Avatar
-                className={cn('mb-4 size-full max-w-64 md:max-w-lg md:size-64')}
+                className={cn('mb-4 size-full max-w-64 md:size-64 md:max-w-lg')}
               >
                 <AvatarImage src="/images/photo.png" asChild>
                   <Image
@@ -56,5 +56,5 @@ export function AboutAvatar({
         </Tooltip>
       </TooltipProvider>
     </>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { getDomain } from '@/lib';
-import { MetadataRoute } from 'next';
+import { getDomain } from '@/lib'
+import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -23,5 +23,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${getDomain('lab')}`,
       lastModified: new Date(),
     },
-  ];
+  ]
 }

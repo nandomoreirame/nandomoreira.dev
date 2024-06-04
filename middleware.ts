@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { env } from './environments';
+import { NextResponse, type NextRequest } from 'next/server'
+import { env } from './environments'
 
 export const config = {
   matcher: [
@@ -12,47 +12,47 @@ export const config = {
      */
     '/((?!api/|_next/|_static/|_vercel|images|icons|robots.txt|[\\w-]+\\.\\w+).*)',
   ],
-};
+}
 
 export async function middleware(request: NextRequest) {
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   let hostname = request.headers
     .get('host')!
-    .replace('.localhost:3000', `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    .replace('.localhost:3000', `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`)
 
   // special case for Vercel preview deployment URLs
   if (
     hostname.includes('---') &&
     hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
   ) {
-    hostname = `${hostname.split('---')[0]}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+    hostname = `${hostname.split('---')[0]}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`
   }
 
-  let baseFolder = '/site';
+  let baseFolder = '/site'
 
   switch (hostname) {
     // rewrite root application to `/api` folder
     case `api.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
-      baseFolder = '/api';
-      break;
+      baseFolder = '/api'
+      break
 
     // rewrite root application to `/blog` folder
     case `blog.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
-      baseFolder = '/blog';
-      break;
+      baseFolder = '/blog'
+      break
 
     // rewrite root application to `/lab` folder
     case `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
-      baseFolder = '/lab';
-      break;
+      baseFolder = '/lab'
+      break
   }
 
-  const searchParams = request.nextUrl.searchParams.toString();
+  const searchParams = request.nextUrl.searchParams.toString()
   const path = `${request.nextUrl.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ''
-  }`;
+  }`
 
   return NextResponse.rewrite(
     new URL(`${baseFolder}${path === '/' ? '' : path}`, request.url),
-  );
+  )
 }
