@@ -2,13 +2,13 @@
 
 import { buttonVariants } from '@/components/button'
 import { Container } from '@/components/container'
+import { LogoIcon, LogoName } from '@/components/logo'
 import { Nav, NavLink } from '@/components/nav'
 import { cn, getDomain, getSubDomain } from '@/lib/utils'
 import { FlaskConical, Home, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ComponentProps, useEffect, useState } from 'react'
-import { LogoIcon, LogoName } from './logo'
 
 type HeaderProps = ComponentProps<'header'>
 

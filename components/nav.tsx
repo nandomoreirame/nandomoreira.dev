@@ -1,11 +1,12 @@
 'use client'
 
 import { Button, buttonVariants } from '@/components/button'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/sheet'
 import { cn } from '@/lib'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import type { PropsWithChildren } from 'react'
-import { Sheet, SheetContent, SheetTrigger } from './sheet'
+import { ThemeToggle } from './theme-toggle'
 
 type NavLinkProps = PropsWithChildren<{
   href: string
@@ -30,21 +31,25 @@ export function Nav({ children }: PropsWithChildren): JSX.Element {
     <>
       <nav className="ml-auto hidden items-center gap-4 lg:flex">
         {children}
+        <ThemeToggle />
       </nav>
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button className="lg:hidden" size="icon" variant="ghost">
-            <MenuIcon className="size-8" />
-            <span className="sr-only">Abrir menu de navegação</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent className="overflow-auto border-none lg:hidden">
-          <nav className="flex w-full flex-col items-center gap-12">
-            {children}
-          </nav>
-        </SheetContent>
-      </Sheet>
+      <div className="ml-auto flex gap-4 lg:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="lg:hidden" size="icon" variant="ghost">
+              <MenuIcon className="size-8" />
+              <span className="sr-only">Abrir menu de navegação</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="overflow-auto border-none lg:hidden">
+            <nav className="flex w-full flex-col items-center gap-12">
+              {children}
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <ThemeToggle />
+      </div>
     </>
   )
 }

@@ -21,12 +21,12 @@ export default async function BlogPage() {
               <AuthorAvatar size="lg" />
             </Link>
           </div>
-          <div className="w-full max-w-[593px] text-center md:text-left">
-            <h1 className="mb-2 text-2xl sm:text-4xl lg:text-3xl xl:text-4xl">
+          <div className="flex w-full flex-col gap-4 text-center md:max-w-[593px] md:text-left">
+            <h1 className="text-2xl sm:text-4xl lg:text-3xl xl:text-4xl">
               Blog do{' '}
               <strong className="font-extrabold text-primary">Nando</strong>
             </h1>
-            <p className="mb-6 leading-tight text-muted-foreground md:text-lg">
+            <p className="leading-tight text-muted-foreground md:text-lg">
               Olá, me chamo{' '}
               <strong className="font-extrabold text-primary">
                 Fernando Moreira
@@ -34,7 +34,9 @@ export default async function BlogPage() {
               , e nesse blog escrevo sobre programação, AI, front-end, back-end
               e tecnologias web no geral.
             </p>
-            <SocialLinks />
+            <span className="flex w-full">
+              <SocialLinks />
+            </span>
           </div>
         </div>
       </Container>

@@ -89,13 +89,4 @@
   body h5 {
     @apply font-heading;
   }
-
-  .scroll-to-top {
-    @apply fixed bottom-24 right-4 z-50 flex items-center justify-end p-2 transition duration-150 ease-in-out md:right-6;
-  }
-
-  .scroll-to-top .-btn {
-    @apply flex size-10 items-center justify-center rounded bg-gray-300/40 backdrop-blur-md hover:bg-gray-500/40;
-    @apply fill-white p-2 opacity-80 shadow-lg transition duration-150 ease-in-out hover:opacity-100 focus:opacity-100 md:size-12;
-  }
 }

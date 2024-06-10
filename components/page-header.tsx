@@ -1,6 +1,6 @@
+import { Container } from '@/components/container'
 import { cn } from '@/lib/utils'
 import { ComponentProps } from 'react'
-import { Container } from './container'
 
 export function PageTitle({
   children,

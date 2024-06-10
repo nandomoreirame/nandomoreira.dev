@@ -3,7 +3,6 @@ import '@/styles/blog.css'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Newsletter } from '@/components/newsletter'
-import { ScrollToTop } from '@/components/scroll-to-top'
 import { env } from '@/env'
 import { getDomain } from '@/lib/utils'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -39,7 +38,6 @@ export default function BlogLayout({
       {children}
       <Newsletter />
       <Footer />
-      <ScrollToTop />
 
       {env.NODE_ENV !== 'development' && (
         <GoogleAnalytics gaId={env.GA4_BLOG_ID} />

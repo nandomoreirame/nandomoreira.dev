@@ -27,21 +27,21 @@ import type {
   VideoBlock,
   VideoBlockResponse,
 } from '@/types/notion'
+import { Suspense } from 'react'
+import type { BundledLanguage } from 'shiki'
 
+import { H2, H3, H4 } from '@/components/anchor-heading'
 import { NotionBlockquote } from '@/components/blockquote'
 import { NotionCallout } from '@/components/callout'
+import { NotionCode } from '@/components/code'
+import { Container } from '@/components/container'
 import { NotionEmbed } from '@/components/embed'
 import { NotionImage } from '@/components/image'
 import { Separator } from '@/components/separator'
+import { Skeleton } from '@/components/skeleton'
 import { NotionText } from '@/components/text'
 import { NotionVideo } from '@/components/video'
 import { getBlockText } from '@/lib/notion'
-import { Suspense } from 'react'
-import type { BundledLanguage } from 'shiki'
-import { H2, H3, H4 } from './anchor-heading'
-import { NotionCode } from './code'
-import { Container } from './container'
-import { Skeleton } from './skeleton'
 
 function getTitleId(block: Block) {
   return titleToSlug(getBlockText(block))

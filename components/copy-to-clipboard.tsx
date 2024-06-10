@@ -1,14 +1,14 @@
 'use client'
 
-import { Clipboard } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from './button'
+import { Button } from '@/components/button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip'
+} from '@/components/tooltip'
+import { Clipboard } from 'lucide-react'
+import { toast } from 'sonner'
 
 export function CopyToClipboard({ code }: { code: string }): JSX.Element {
   const copyToClipboard = async () => {

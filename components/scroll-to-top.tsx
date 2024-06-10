@@ -1,12 +1,15 @@
 'use client'
 
-import { cn } from '@/lib/utils'
-import { ArrowUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Button } from '@/components/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/tooltip'
+import { ChevronUp } from 'lucide-react'
 
 export const ScrollToTop = () => {
-  const [isVisible, setIsVisible] = useState(false)
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -14,34 +17,17 @@ export const ScrollToTop = () => {
     })
   }
 
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 500) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(false)
-      }
-    }
-
-    window.addEventListener('scroll', toggleVisibility)
-
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility)
-    }
-  }, [])
-
   return (
-    <div
-      className={cn(
-        'scroll-to-top',
-        isVisible
-          ? 'pointer-events-auto opacity-100'
-          : 'pointer-events-none opacity-0',
-      )}
-    >
-      <button type="button" onClick={scrollToTop} className="-btn">
-        <ArrowUp className="size-12" />
-      </button>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size={'icon'} variant={'outline'} onClick={scrollToTop}>
+            <ChevronUp className="size-6" />
+            <span className="sr-only">Ir para o topo</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Ir para o topo</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
