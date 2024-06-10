@@ -1,4 +1,6 @@
-import { Button } from '@/components/button'
+'use client'
+
+import { buttonVariants } from '@/components/button'
 import { Icon } from '@/components/icon'
 import {
   Tooltip,
@@ -6,6 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/tooltip'
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 function SocialLinks() {
   const SocialLinks = [
@@ -32,30 +36,28 @@ function SocialLinks() {
   ]
 
   return (
-    <div className="inline-flex w-full items-center justify-around gap-2 px-0 xs:justify-start xs:px-4">
+    <div className="inline-flex w-full items-center justify-around gap-2 xs:justify-start">
       {SocialLinks.map((icon) => (
         <TooltipProvider key={icon.name}>
           <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant={'ghost'}
-                className="px-0 xs:px-2 md:px-4 lg:px-6"
-                asChild
+            <TooltipTrigger asChild>
+              <Link
+                href={icon.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: 'ghost', size: 'icon' }),
+                  'group',
+                )}
               >
-                <a href={icon.url} target="_blank" rel="noopener noreferrer">
-                  <Icon
-                    name={icon.name}
-                    className="size-5 transition-transform group-hover:scale-110 group-hover:transform group-hover:text-primary xs:size-4"
-                  />
-                  <span className="hidden text-sm font-medium md:inline-flex">
-                    {icon.name}
-                  </span>
-                </a>
-              </Button>
+                <Icon
+                  name={icon.name}
+                  className="size-5 transition-all duration-150 group-hover:scale-125 group-hover:text-primary xs:size-4"
+                />
+                <span className="sr-only">{icon.name}</span>
+              </Link>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Abrir {icon.name}</p>
-            </TooltipContent>
+            <TooltipContent>Abrir {icon.name}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ))}

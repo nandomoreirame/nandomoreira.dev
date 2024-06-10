@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .blocks h2,
+  .blocks h3,
+  .blocks h4,
+  .blocks p,
+  .blocks ul,
+  .blocks ol,
+  .blocks li,
+  .blocks .callout,
+  .blocks .code-highlighting {
+    @apply container max-w-[860px];
+  }
+
+  .blocks p,
+  .blocks li,
+  .blocks .code-highlighting {
+    @apply mb-5;
+  }
+
+  .blocks .figure,
+  .blocks .video-wrapper {
+    @apply mb-5 w-full overflow-hidden rounded-lg text-center;
+  }
+
+  .blocks .cover {
+    @apply mb-12 max-h-[460px] overflow-hidden object-cover;
+  }
+
+  .blocks .cover,
+  .blocks .cover .image,
+  .blocks .figure .image,
+  .blocks .video-wrapper .video,
+  .blocks .iframe {
+    @apply w-full rounded-md;
+  }
+
+  .blocks .iframe {
+    @apply md:min-h-[600px];
+  }
+
+  .blocks .caption {
+    @apply py-2 text-center text-sm;
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .blocks .space {
+    @apply block w-full py-6;
+  }
+  .blocks blockquote {
+    @apply my-8 text-center;
+  }
+  .blocks blockquote svg {
+    @apply mx-auto mb-4 h-8 w-8 text-gray-400 dark:text-gray-600;
+  }
+  .blocks blockquote span {
+    @apply text-lg font-semibold italic text-gray-900 dark:text-white md:text-xl;
+  }
+
+  .blocks .external-link {
+    @apply inline-flex items-center gap-1 text-primary;
+    @apply hover:underline hover:underline-offset-4 hover:opacity-80;
+  }
+
+  .blocks .callout {
+    @apply mb-5 w-full rounded-md border-l-8 border-gray-500/50 bg-gray-200 px-6 py-4 dark:bg-gray-900/50;
+  }
+
+  .blocks .callout span {
+    @apply m-0 text-lg text-foreground;
+  }
+
+  .code-highlighting {
+    @apply bg-gray-800 !p-0 text-gray-300 dark:bg-gray-900/50;
+    @apply mb-6 w-full overflow-hidden rounded-lg;
+    @apply border border-gray-500/50;
+  }
+
+  .code-highlighting pre,
+  .code-highlighting .shiki {
+    @apply overflow-auto p-4;
+    @apply border-t border-gray-500/50;
+    @apply shadow-sm;
+  }
+
+  .code-highlighting .line {
+    @apply before:inline-block before:content-[attr(data-line-number)];
+    @apply before:mr-4 before:min-w-8 before:text-right before:text-gray-200/50;
+  }
+
+  .code-highlighting .shiki {
+    @apply !bg-transparent !text-foreground dark:!text-muted-foreground;
+  }
+
+  .code-highlighting .caption {
+    @apply block px-4 text-left;
+    @apply border-t border-gray-500/50;
+  }
+
+  .code-highlighting .language {
+    @apply block w-full px-4 py-2 text-sm font-bold;
+    @apply flex items-center justify-between gap-2;
+  }
+
+  .blocks .divider {
+    @apply mx-auto my-16 h-[2px] max-w-[60px];
+  }
+
+  .blocks .columns {
+    @apply grid grid-cols-2 items-start gap-8;
+  }
+
+  .blocks .column {
+    @apply flex flex-col space-y-4;
+  }
+
+  .blocks .columns h2,
+  .blocks .columns h3,
+  .blocks .columns h4,
+  .blocks .columns p,
+  .blocks .columns ul,
+  .blocks .columns ol,
+  .blocks .columns li,
+  .blocks .columns .callout {
+    @apply p-0;
+  }
+}

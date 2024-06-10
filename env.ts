@@ -13,6 +13,11 @@ export const env = createEnv({
     GA4_BLOG_ID: z.string(),
     CRISP_WEBSITE_ID: z.string(),
     ROOT_DOMAIN: z.string(),
+    NOTION_ACCESS_TOKEN: z.string(),
+    BLOG_DATABASE_ID: z.string(),
+    PAGES_DATABASE_ID: z.string(),
+    RESEND_API_KEY: z.string(),
+    RESEND_AUDIENCE_ID: z.string(),
   },
 
   /**
@@ -36,6 +41,12 @@ export const env = createEnv({
     GA4_LAB_ID: process.env.GA4_LAB_ID,
     GA4_BLOG_ID: process.env.GA4_BLOG_ID,
     CRISP_WEBSITE_ID: process.env.CRISP_WEBSITE_ID,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_AUDIENCE_ID: process.env.RESEND_AUDIENCE_ID,
+
+    NOTION_ACCESS_TOKEN: process.env.NOTION_ACCESS_TOKEN,
+    BLOG_DATABASE_ID: process.env.BLOG_DATABASE_ID,
+    PAGES_DATABASE_ID: process.env.PAGES_DATABASE_ID,
 
     NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,

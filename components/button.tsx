@@ -8,26 +8,26 @@ import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 
 const buttonVariants = cva(
-  'flex xs:inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'flex xs:inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 lowercase',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default:
+          'bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary hover:ring-2 hover:ring-offset-2',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
           'border border-input bg-transparent hover:border-primary focus:border-primary',
         secondary:
           'text-white bg-gray-950 hover:bg-gray-900 dark:bg-gray-100 dark:text-gray-950 dark:hover:bg-gray-200 dark:focus-visible:ring-gray-100',
-        ghost:
-          'bg-gray-800/5 hover:bg-gray-800/10 dark:bg-gray-100/10 dark:hover:bg-gray-100/20',
+        ghost: 'bg-transparent hover:bg-gray-800/10 dark:hover:bg-gray-100/20',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-4 py-2',
         sm: 'h-9 px-3',
         lg: 'h-11 px-8',
-        icon: 'h-10 w-10',
+        icon: 'size-10 p-0',
       },
     },
     defaultVariants: {

@@ -1,43 +1,49 @@
-import { AboutAvatar } from '@/components/about-avatar'
-import { Button } from '@/components/button'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { env } from '@/environments'
-import { cn, getDomain } from '@/lib/utils'
-import { Metadata } from 'next'
+import { AuthorAvatar } from '@/components/author-avatar'
+import { BlogArticle } from '@/components/blog-article'
+import { Container } from '@/components/container'
+import { SocialLinks } from '@/components/social-links'
+import { env } from '@/env'
+import { notion } from '@/lib/notion'
+import { getDomain } from '@/lib/utils'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'Blog do Nando',
-  openGraph: {
-    title: 'Blog do Nando, indie hacker, desenvolvedor e web designer',
-    url: getDomain('blog'),
-    siteName: `blog.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-  },
-}
+export default async function BlogPage() {
+  const { posts } = await notion.getPosts({
+    database_id: env.BLOG_DATABASE_ID,
+  })
 
-export default function BlogPage() {
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-between px-8 pt-36 md:min-h-screen md:px-12 md:pt-0 lg:px-24',
-      )}
-    >
-      <div className="relative m-auto max-w-screen-xl">
-        <AboutAvatar link={`${getDomain()}/sobre`} />
-        <h1 className="mb-3 text-xl md:text-2xl lg:text-3xl">
-          Blog do <span className="text-primary">Nando</span>
-        </h1>
-        <h2 className="mb-6 text-2xl font-extrabold leading-tight sm:text-3xl md:text-4xl lg:text-5xl">
-          Olá, eu sou o <span className="text-primary">Fernando</span>, indie
-          hacker, desenvolvedor full-stack, marketeiro e web designer!
-        </h2>
-        <div className="flex flex-col gap-4 md:flex-row">
-          <Button asChild>
-            <Link href={getDomain()}>Ir para o site</Link>
-          </Button>
-          <ThemeToggle />
+    <div className="blog-list">
+      <div className="relative z-1 mx-auto max-w-[880px] px-4 py-6 sm:px-8 sm:py-10 lg:px-0 lg:py-12">
+        <div className="lg:gap-15 flex flex-col items-center gap-4 sm:flex-row lg:gap-6">
+          <div className="flex h-[277px] w-full max-w-[277px] items-center justify-center rounded-full">
+            <Link href={`${getDomain()}/sobre`}>
+              <AuthorAvatar size="lg" />
+            </Link>
+          </div>
+          <div className="w-full max-w-[593px]">
+            <h1 className="mb-2 text-2xl sm:text-4xl lg:text-3xl xl:text-4xl">
+              Blog do{' '}
+              <strong className="font-extrabold text-primary">Nando</strong>
+            </h1>
+            <p className="mb-6 leading-tight text-muted-foreground md:text-lg">
+              Olá, me chamo{' '}
+              <strong className="font-extrabold text-primary">
+                Fernando Moreira
+              </strong>
+              , e nesse blog escrevo sobre programação, AI, front-end, back-end
+              e tecnologias web no geral.
+            </p>
+            <SocialLinks />
+          </div>
         </div>
       </div>
+
+      <Container className="mt-12 flex flex-col gap-y-12 lg:gap-y-24">
+        {posts.map((post) => (
+          <BlogArticle key={post.id} post={post} />
+        ))}
+      </Container>
     </div>
   )
 }

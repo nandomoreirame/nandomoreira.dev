@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .blog-article {
+    @apply flex flex-col items-center gap-10 lg:flex-row lg:gap-12;
+  }
+
+  .cover,
+  .figure,
+  .cover .image,
+  .figure .image {
+    @apply w-full overflow-hidden rounded-lg text-center;
+  }
+
+  .blog-list,
+  .blog-single {
+    @apply pb-12 pt-28;
+  }
+
+  .blog-single-title {
+    @apply mb-6 text-2xl font-bold sm:text-4xl lg:text-5xl;
+  }
+
+  .blog-single .cover {
+    @apply mb-12;
+  }
+}

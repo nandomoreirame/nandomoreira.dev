@@ -19,7 +19,7 @@ export default function NotFoundPage() {
       <div className="relative m-auto max-w-screen-md text-center">
         <h1
           className={cn(
-            'mb-4 font-sans text-8xl font-black text-primary md:text-9xl lg:text-[10rem]',
+            'mb-4 font-heading text-8xl font-black text-primary md:text-9xl lg:text-[10rem]',
           )}
         >
           404

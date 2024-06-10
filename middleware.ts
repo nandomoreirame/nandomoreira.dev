@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { env } from './environments'
+import { env } from './env'
 
 export const config = {
   matcher: [
