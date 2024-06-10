@@ -1,4 +1,5 @@
 import type {
+  DateResponse,
   FileBlock,
   MultiSelect,
   People,
@@ -12,6 +13,7 @@ export type Post = {
   slug: RichText
   title: Title
   description: RichText
+  date: DateResponse
   category: Select
   tags: MultiSelect
   author: People

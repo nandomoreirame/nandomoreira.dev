@@ -1,17 +1,29 @@
 import { Badge } from '@/components/badge'
 import { PageCover } from '@/components/page-cover'
-import { cn, getFileUrl } from '@/lib/utils'
+import { cn, formatDate, getFileUrl } from '@/lib/utils'
 import type { Post } from '@/types/blog'
-import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-export function BlogArticle({ post }: { post: Post }): JSX.Element {
+export function BlogArticle({
+  post,
+  mod,
+}: {
+  post: Post
+  mod: number
+}): JSX.Element {
   const [title] = post.title.title
   const [slug] = post.slug.rich_text
+  const [author] = post.author.people
   const category = post.category
+  const { date } = post.date
 
   return (
-    <article className="blog-article">
+    <article
+      className={cn(
+        'flex flex-col items-center gap-10 lg:gap-12',
+        mod === 1 ? 'lg:flex-row-reverse lg:text-right' : 'lg:flex-row',
+      )}
+    >
       {post.cover && (
         <Link
           href={`/${slug.plain_text}`}
@@ -27,32 +39,49 @@ export function BlogArticle({ post }: { post: Post }): JSX.Element {
         </Link>
       )}
 
-      <div className={cn('w-full', post.cover ? 'max-w-[540px]' : '')}>
-        {category.select !== null && (
-          <Badge variant={'default'} className="inline-flex">
-            {category.select.name}
-          </Badge>
-        )}
-        <h2 className="group mb-2 mt-3 text-xl font-bold text-foreground sm:text-2xl xl:text-3xl">
-          <Link
-            href={`/${slug.plain_text}`}
-            className="hover:underline hover:underline-offset-4 hover:opacity-80"
-          >
-            {title.plain_text}
-          </Link>
-        </h2>
-        {post.description.rich_text[0]?.plain_text && (
-          <p className="font-normal text-muted-foreground">
-            {post.description.rich_text[0]?.plain_text}{' '}
+      <div
+        className={cn('grid w-full gap-4', post.cover ? 'max-w-[540px]' : '')}
+      >
+        <header>
+          <h2 className="group text-xl font-bold text-foreground sm:text-2xl xl:text-3xl">
             <Link
               href={`/${slug.plain_text}`}
-              className="group inline-flex items-center gap-1 text-primary underline underline-offset-4 hover:no-underline hover:opacity-75"
+              className="hover:underline hover:underline-offset-4 hover:opacity-80"
             >
-              <span>leia mais</span>
-              <ArrowRight className="size-4 -rotate-45 transform transition-all duration-200 ease-in-out group-hover:rotate-0" />
+              {title.plain_text}
+            </Link>
+          </h2>
+        </header>
+
+        {post.description.rich_text[0]?.plain_text && (
+          <p className="font-normal text-muted-foreground">
+            <Link
+              href={`/${slug.plain_text}`}
+              className="hover:underline hover:underline-offset-4 hover:opacity-75"
+            >
+              {post.description.rich_text[0]?.plain_text}{' '}
             </Link>
           </p>
         )}
+
+        <footer
+          className={cn('flex items-center gap-2', {
+            'justify-end': mod === 1,
+          })}
+        >
+          <time
+            dateTime={date.start}
+            title={formatDate(date.start)}
+            className="text-sm text-gray-500 dark:text-gray-500"
+          >
+            {formatDate(date.start)}
+          </time>
+          {category.select !== null && (
+            <Badge variant={'default'} className="inline-flex">
+              {category.select.name}
+            </Badge>
+          )}
+        </footer>
       </div>
     </article>
   )

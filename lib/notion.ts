@@ -7,6 +7,7 @@ import type {
   BulletedListItemBlock,
   BulletedListItemResponse,
   CalloutResponse,
+  DateResponse,
   EmbedBlock,
   EmbedBlockResponse,
   FileBlock,
@@ -54,10 +55,19 @@ const getDatabasePosts = async (
       client.databases
         .query({
           ...args,
+          page_size: 100,
+          sorts: [
+            {
+              property: 'date',
+              direction: 'ascending',
+            },
+          ],
           filter: {
             and: [
-              { property: 'published', checkbox: { equals: true } },
+              { property: 'status', status: { equals: 'Publicado' } },
               { property: 'title', rich_text: { is_not_empty: true } },
+              { property: 'slug', rich_text: { is_not_empty: true } },
+              { property: 'date', date: { is_not_empty: true } },
             ],
           },
         })
@@ -77,6 +87,7 @@ const getDatabasePosts = async (
               slug: properties.slug as RichText,
               title: properties.title as Title,
               description: properties.description as RichText,
+              date: properties.date as DateResponse,
               category: properties.category as Select,
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
@@ -109,11 +120,14 @@ const getDatabasePost = async ({
       client.databases
         .query({
           ...args,
+          page_size: 1,
           filter: {
             and: [
-              { property: 'published', checkbox: { equals: true } },
-              { property: 'slug', formula: { string: { equals: slug } } },
+              { property: 'status', status: { equals: 'Publicado' } },
+              { property: 'slug', rich_text: { is_not_empty: true } },
               { property: 'title', rich_text: { is_not_empty: true } },
+              { property: 'date', date: { is_not_empty: true } },
+              { property: 'slug', rich_text: { equals: slug } },
             ],
           },
         })
@@ -134,6 +148,7 @@ const getDatabasePost = async ({
               slug: properties.slug as RichText,
               title: properties.title as Title,
               description: properties.description as RichText,
+              date: properties.date as DateResponse,
               category: properties.category as Select,
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
@@ -259,6 +274,7 @@ const getBlocksResult = async (args: ListBlockChildrenParameters) => {
       const blocks = await client.blocks.children.list({
         ...args,
         block_id: args.block_id.split('-').join(''),
+        page_size: 100,
       })
 
       return await Promise.all(

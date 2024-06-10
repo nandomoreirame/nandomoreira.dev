@@ -1,6 +1,26 @@
 import { cn } from '@/lib/utils'
 import { ComponentProps } from 'react'
 
+export function LogoName({
+  className,
+  ...props
+}: ComponentProps<'span'>): JSX.Element {
+  return (
+    <span
+      className={cn(
+        'text-2xl font-bold transition duration-150 group-hover:text-primary',
+        className,
+      )}
+      {...props}
+    >
+      nando
+      <span className="text-primary transition duration-150 group-hover:text-foreground">
+        moreira
+      </span>
+    </span>
+  )
+}
+
 export function LogoIcon({
   className,
   ...props

@@ -2,11 +2,11 @@ import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { ComponentProps } from 'react'
 
-const containerVariants = cva('container', {
+const containerVariants = cva('container px-6 md:px-12', {
   variants: {
     size: {
-      default: 'max-w-[1180px]',
-      sm: 'max-w-[860px]',
+      default: 'max-w-7xl',
+      sm: 'max-w-4xl',
     },
   },
   defaultVariants: {

@@ -59,18 +59,18 @@ export function Newsletter(): JSX.Element {
 
   return (
     <section className="mt-12 w-full">
-      <Container className="rounded-md bg-gray-300/50 py-12 text-center dark:bg-gray-900/50 md:text-left">
+      <Container className="bg-gray-300/50 py-12 text-center dark:bg-gray-900/50 md:rounded-md md:text-left">
         <h3 className="mb-3 text-3xl font-semibold uppercase text-foreground">
           Newsletter
         </h3>
-        <div className="flex flex-wrap items-center justify-center gap-10 md:justify-between">
-          <div className="w-full max-w-[430px]">
+        <div className="md:grid-auto-columns-1/2 grid gap-10 md:grid-cols-2">
+          <div className="w-full">
             <p className="text-lg">
               Cadastre-se para receber notificações de lançamento de novos
               produtos ou novos artigos.
             </p>
           </div>
-          <div className="w-full max-w-[630px]">
+          <div className="w-full">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -80,7 +80,7 @@ export function Newsletter(): JSX.Element {
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="relative pb-6">
+                    <FormItem className="relative w-full pb-6">
                       <FormControl>
                         <Input
                           type="text"
@@ -98,7 +98,7 @@ export function Newsletter(): JSX.Element {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="relative pb-6">
+                    <FormItem className="relative w-full pb-6">
                       <FormControl>
                         <Input
                           type="email"

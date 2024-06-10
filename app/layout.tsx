@@ -3,6 +3,7 @@ import '@/styles/globals.css'
 
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { env } from '@/env'
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
@@ -42,9 +43,13 @@ export default function RootLayout({
           enableSystem
         >
           {children}
-        </ThemeProvider>
 
-        <Toaster position="bottom-center" />
+          <div className="fixed bottom-4 left-4 z-50">
+            <ThemeToggle />
+          </div>
+
+          <Toaster position="bottom-center" />
+        </ThemeProvider>
 
         {env.NODE_ENV === 'production' && env.CRISP_WEBSITE_ID && (
           <Script

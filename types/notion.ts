@@ -137,6 +137,17 @@ export type PartialSelect = {
   color: SelectColor
 }
 
+export type DateResponse = {
+  type: 'date'
+  date: {
+    start: string
+    end: string | null
+    time_zone: string
+  }
+  object: 'property_item'
+  id: string
+}
+
 export type Select = {
   id: string
   type: 'select'

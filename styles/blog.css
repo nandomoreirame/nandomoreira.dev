@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  .blog-article {
-    @apply flex flex-col items-center gap-10 lg:flex-row lg:gap-12;
-  }
-
   .cover,
   .figure,
   .cover .image,

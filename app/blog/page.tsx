@@ -13,15 +13,15 @@ export default async function BlogPage() {
   })
 
   return (
-    <div className="blog-list">
-      <div className="relative z-1 mx-auto max-w-[880px] px-4 py-6 sm:px-8 sm:py-10 lg:px-0 lg:py-12">
+    <>
+      <Container size={'sm'} className="relative sm:px-8 sm:py-10 md:pt-32">
         <div className="lg:gap-15 flex flex-col items-center gap-4 sm:flex-row lg:gap-6">
           <div className="flex h-[277px] w-full max-w-[277px] items-center justify-center rounded-full">
             <Link href={`${getDomain()}/sobre`}>
               <AuthorAvatar size="lg" />
             </Link>
           </div>
-          <div className="w-full max-w-[593px]">
+          <div className="w-full max-w-[593px] text-center md:text-left">
             <h1 className="mb-2 text-2xl sm:text-4xl lg:text-3xl xl:text-4xl">
               Blog do{' '}
               <strong className="font-extrabold text-primary">Nando</strong>
@@ -37,13 +37,13 @@ export default async function BlogPage() {
             <SocialLinks />
           </div>
         </div>
-      </div>
+      </Container>
 
-      <Container className="mt-12 flex flex-col gap-y-12 lg:gap-y-24">
-        {posts.map((post) => (
-          <BlogArticle key={post.id} post={post} />
+      <Container className="flex flex-col gap-y-12 py-20 lg:gap-y-24">
+        {posts.map((post, index) => (
+          <BlogArticle key={post.id} post={post} mod={index % 2} />
         ))}
       </Container>
-    </div>
+    </>
   )
 }

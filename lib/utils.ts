@@ -64,11 +64,9 @@ export const getFileUrl = (block: FileBlock) => {
 
 export function formatDate(date: string) {
   return new Date(date).toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'long',
+    day: '2-digit',
+    month: 'short',
     year: 'numeric',
-    // hour: '2-digit',
-    // minute: '2-digit',
   })
 }
 

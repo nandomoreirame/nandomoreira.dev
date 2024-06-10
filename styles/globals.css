@@ -91,7 +91,7 @@
   }
 
   .scroll-to-top {
-    @apply fixed bottom-20 right-4 z-50 flex items-center justify-end p-2 transition duration-150 ease-in-out;
+    @apply fixed bottom-24 right-4 z-50 flex items-center justify-end p-2 transition duration-150 ease-in-out md:right-6;
   }
 
   .scroll-to-top .-btn {
