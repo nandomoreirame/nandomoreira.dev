@@ -135,3 +135,21 @@ export function metadata({
     alternates: { canonical: `/${slug}` },
   }
 }
+
+export function objectToUrlParams(obj: Record<string, any>): string {
+  const pairs: string[] = []
+  for (const prop in obj) {
+    if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
+      continue
+    }
+
+    if (Object.prototype.toString.call(obj[prop]) == '[object Object]') {
+      pairs.push(objectToUrlParams(obj[prop]))
+      continue
+    }
+
+    pairs.push(prop + '=' + obj[prop])
+  }
+
+  return pairs.join('&')
+}

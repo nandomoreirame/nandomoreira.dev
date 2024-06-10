@@ -45,6 +45,11 @@ export async function middleware(request: NextRequest) {
     case `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
       baseFolder = '/lab'
       break
+
+    // rewrite root application to `/links` folder
+    case `links.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
+      baseFolder = '/links'
+      break
   }
 
   const searchParams = request.nextUrl.searchParams.toString()

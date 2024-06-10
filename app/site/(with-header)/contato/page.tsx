@@ -51,7 +51,7 @@ export default async function ContactPage() {
           {/* <NotionText richText={page.metaDescription.rich_text} /> */}
         </PageTitle>
         <PageDescription>
-          <NotionText richText={page.metaDescription.rich_text} />
+          <NotionText richText={page.description.rich_text} />
         </PageDescription>
         <SocialLinks />
       </PageHeader>

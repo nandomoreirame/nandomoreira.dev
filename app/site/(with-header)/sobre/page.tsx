@@ -51,7 +51,11 @@ export default async function AboutPage() {
         <PageDescription>
           <NotionText richText={page.metaDescription.rich_text} />
         </PageDescription>
-        <SocialLinks />
+        <SocialLinks className="justify-center md:justify-start">
+          <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
+            Minhas redes {'->'}
+          </span>
+        </SocialLinks>
       </PageHeader>
 
       <Container className="page-content blocks pb-12">

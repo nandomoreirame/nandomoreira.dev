@@ -13,7 +13,6 @@ export function BlogArticle({
 }): JSX.Element {
   const [title] = post.title.title
   const [slug] = post.slug.rich_text
-  const [author] = post.author.people
   const category = post.category
   const { date } = post.date
 

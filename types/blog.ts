@@ -6,6 +6,7 @@ import type {
   RichText,
   Select,
   Title,
+  Url,
 } from './notion'
 
 export type Post = {
@@ -18,10 +19,17 @@ export type Post = {
   tags: MultiSelect
   author: People
   cover: FileBlock
-  createdAt: string
-  editedAt: string
 }
 
 export type MediaResponse = {
   media: string
+}
+
+export type Link = {
+  id: string
+  slug: RichText
+  title: Title
+  description: RichText
+  link: Url
+  image: FileBlock
 }

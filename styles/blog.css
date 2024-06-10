@@ -12,7 +12,7 @@
 
   .blog-list,
   .blog-single {
-    @apply pb-12 pt-28;
+    @apply pb-8 md:pb-12 md:pt-28;
   }
 
   .blog-single-title {

@@ -34,9 +34,12 @@ export default async function BlogPage() {
               , e nesse blog escrevo sobre programação, AI, front-end, back-end
               e tecnologias web no geral.
             </p>
-            <span className="flex w-full">
-              <SocialLinks />
-            </span>
+
+            <SocialLinks className="justify-center md:justify-start">
+              <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
+                Minhas redes {'->'}
+              </span>
+            </SocialLinks>
           </div>
         </div>
       </Container>

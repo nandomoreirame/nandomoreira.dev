@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import type { Post } from '@/types/blog'
+import type { Link, Post } from '@/types/blog'
 import type {
   Block,
   BlockResponse,
@@ -33,6 +33,7 @@ import type {
   RichText,
   Select,
   Title,
+  Url,
   VideoBlockResponse,
 } from '@/types/notion'
 import type { Page } from '@/types/page'
@@ -50,6 +51,8 @@ const client = new Client({
 const getDatabasePosts = async (
   args: GetDatabaseParameters,
 ): Promise<{ posts: Array<Post> }> => {
+  const _cacheTag = `${args.database_id}-database`
+
   return unstable_cache(
     async () =>
       client.databases
@@ -77,8 +80,6 @@ const getDatabasePosts = async (
               id,
               cover,
               properties,
-              created_time: createdAt,
-              last_edited_time: editedAt,
               // ...rest
             } = post as PageObjectResponse
 
@@ -92,8 +93,6 @@ const getDatabasePosts = async (
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
               cover: cover as FileBlock,
-              createdAt,
-              editedAt,
             } satisfies Post
           })
 
@@ -103,10 +102,62 @@ const getDatabasePosts = async (
           console.error('[Error retrieving database]', e)
           throw new Error(e)
         }),
-    [`--${args.database_id}-db-posts`],
+    [_cacheTag],
     {
       revalidate: 900,
-      tags: [`--${args.database_id}-db-posts`],
+      tags: [_cacheTag],
+    },
+  )()
+}
+
+const getDatabaseLinks = async (
+  args: GetDatabaseParameters,
+): Promise<{ links: Array<Link> }> => {
+  const _cacheTag = `${args.database_id}-database`
+
+  return unstable_cache(
+    async () =>
+      client.databases
+        .query({
+          ...args,
+          page_size: 100,
+          filter: {
+            and: [
+              { property: 'title', rich_text: { is_not_empty: true } },
+              { property: 'slug', rich_text: { is_not_empty: true } },
+              { property: 'published', checkbox: { equals: true } },
+            ],
+          },
+        })
+        .then(({ results }) => {
+          const links = results.map((link) => {
+            const {
+              id,
+              icon,
+              properties,
+              // ...rest
+            } = link as PageObjectResponse
+
+            return {
+              id,
+              slug: properties.slug as RichText,
+              title: properties.title as Title,
+              description: properties.description as RichText,
+              link: properties.title as Url,
+              image: icon as FileBlock,
+            } satisfies Link
+          })
+
+          return { links }
+        })
+        .catch((e) => {
+          console.error('[Error retrieving database]', e)
+          throw new Error(e)
+        }),
+    [_cacheTag],
+    {
+      revalidate: 900,
+      tags: [_cacheTag],
     },
   )()
 }
@@ -115,6 +166,8 @@ const getDatabasePost = async ({
   slug,
   ...args
 }: GetDatabasePostParameters): Promise<Post | undefined> => {
+  const _cacheTag = `${args.database_id}-${slug}-database-slug`
+
   return unstable_cache(
     async () =>
       client.databases
@@ -134,14 +187,8 @@ const getDatabasePost = async ({
         .then(({ results }) => {
           if (!results) return
           const [post] = results.map((post) => {
-            const {
-              id,
-              properties,
-              created_time: createdAt,
-              last_edited_time: editedAt,
-              cover,
-              ...rest
-            } = post as PageObjectResponse
+            const { id, properties, cover, ...rest } =
+              post as PageObjectResponse
 
             return {
               id,
@@ -153,8 +200,6 @@ const getDatabasePost = async ({
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
               cover: cover as FileBlock,
-              createdAt,
-              editedAt,
               ...rest,
             } satisfies Post
           })
@@ -165,10 +210,10 @@ const getDatabasePost = async ({
           console.error('[Error retrieving database]', e)
           throw new Error(e)
         }),
-    [`--${args.database_id}-${slug}-blog-single`],
+    [_cacheTag],
     {
       revalidate: 900,
-      tags: [`--${args.database_id}-${slug}-blog-single`],
+      tags: [_cacheTag],
     },
   )()
 }
@@ -190,6 +235,7 @@ const getDatabasePages = async (
               id,
               slug: properties.slug as RichText,
               title: properties.title as Title,
+              description: properties.description as RichText,
               metaTitle: properties['meta-title'] as RichText,
               metaDescription: properties['meta-description'] as RichText,
               cover: cover as FileBlock,
@@ -214,7 +260,7 @@ const getDatabasePage = async ({
   slug,
   ...args
 }: GetDatabasePagesParameters): Promise<{ page: Page }> => {
-  const _cacheTag = `--${args.database_id}-database-page-${slug}`
+  const _cacheTag = `--${args.database_id}-${slug}-database-page`
 
   return unstable_cache(
     async () =>
@@ -231,6 +277,7 @@ const getDatabasePage = async ({
               id,
               slug: properties.slug as RichText,
               title: properties.title as Title,
+              description: properties.description as RichText,
               metaTitle: properties['meta-title'] as RichText,
               metaDescription: properties['meta-description'] as RichText,
               cover: cover as FileBlock,
@@ -364,6 +411,10 @@ export const notion = {
     return await getDatabasePosts(params)
   },
 
+  async getLinks(params: GetDatabaseParameters) {
+    return await getDatabaseLinks(params)
+  },
+
   async getPost(params: GetDatabasePostParameters) {
     const post = await getDatabasePost(params)
 
@@ -447,78 +498,3 @@ export function getBlockText(block: Block, type?: BlockTypes) {
 
   return ''
 }
-
-export const notionCodeLanguages = [
-  'abap',
-  'arduino',
-  'bash',
-  'basic',
-  'c',
-  'clojure',
-  'coffeescript',
-  'c++',
-  'c#',
-  'css',
-  'dart',
-  'diff',
-  'docker',
-  'elixir',
-  'elm',
-  'erlang',
-  'flow',
-  'fortran',
-  'f#',
-  'gherkin',
-  'glsl',
-  'go',
-  'graphql',
-  'groovy',
-  'haskell',
-  'html',
-  'java',
-  'javascript',
-  'json',
-  'julia',
-  'kotlin',
-  'latex',
-  'less',
-  'lisp',
-  'livescript',
-  'lua',
-  'makefile',
-  'markdown',
-  'markup',
-  'matlab',
-  'mermaid',
-  'nix',
-  'objective-c',
-  'ocaml',
-  'pascal',
-  'perl',
-  'php',
-  'plain text',
-  'powershell',
-  'prolog',
-  'protobuf',
-  'python',
-  'r',
-  'reason',
-  'ruby',
-  'rust',
-  'sass',
-  'scala',
-  'scheme',
-  'scss',
-  'shell',
-  'sql',
-  'swift',
-  'typescript',
-  'vb.net',
-  'verilog',
-  'vhdl',
-  'visual basic',
-  'webassembly',
-  'xml',
-  'yaml',
-  'java/c/c++/c#',
-]

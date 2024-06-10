@@ -92,7 +92,11 @@ export default async function SinglePage({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <SocialLinks />
+                <SocialLinks>
+                  <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
+                    Minhas redes {'->'}
+                  </span>
+                </SocialLinks>
               </div>
             </address>
           </Container>

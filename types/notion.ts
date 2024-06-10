@@ -131,6 +131,13 @@ export type RichText = {
   rich_text: Array<PlainText>
 }
 
+export type Url = {
+  type: 'url'
+  url: string
+  object: 'property_item'
+  id: string
+}
+
 export type PartialSelect = {
   id: string
   name: string

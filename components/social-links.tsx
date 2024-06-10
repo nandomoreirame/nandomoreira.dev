@@ -10,8 +10,9 @@ import {
 } from '@/components/tooltip'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import type { ComponentProps } from 'react'
 
-function SocialLinks() {
+export function SocialLinks({ className, children }: ComponentProps<'div'>) {
   const SocialLinks = [
     // {
     //   name: 'WhatsApp',
@@ -40,39 +41,36 @@ function SocialLinks() {
   ]
 
   return (
-    <div className="inline-flex w-full items-center justify-around gap-2 xs:justify-start">
-      <span className="flex-inline text-sm leading-tight text-muted-foreground">
-        Minhas redes {'->'}
-      </span>{' '}
-      {SocialLinks.map((icon) => (
-        <TooltipProvider key={icon.name}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href={icon.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'icon' }),
-                  'group',
-                )}
-              >
-                <Icon
-                  name={icon.name}
-                  className="size-5 transition-all duration-150 group-hover:scale-125 group-hover:text-primary xs:size-4"
-                />
-                <span className="sr-only">
-                  Abrir {icon.name} em uma nova janela
-                </span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>Abrir {icon.name}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ))}
+    <div className={cn('flex w-full items-center gap-2', className)}>
+      {children}
+      <div className="inline-flex items-center justify-around gap-2 xs:justify-start">
+        {SocialLinks.map((icon) => (
+          <TooltipProvider key={icon.name}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={icon.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ variant: 'ghost', size: 'icon' }),
+                    'group',
+                  )}
+                >
+                  <Icon
+                    name={icon.name}
+                    className="size-5 transition-all duration-150 group-hover:scale-125 group-hover:text-primary xs:size-4"
+                  />
+                  <span className="sr-only">
+                    Abrir {icon.name} em uma nova janela
+                  </span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Abrir {icon.name}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
     </div>
   )
 }
-
-SocialLinks.displayName = 'SocialLinks'
-export { SocialLinks }

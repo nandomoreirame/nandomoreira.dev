@@ -59,7 +59,7 @@ export default function LabPage() {
               </Link>
             </Button>
 
-            <div className="xs:px-4">
+            <div>
               <SocialLinks />
             </div>
           </div>
