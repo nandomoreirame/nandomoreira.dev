@@ -169,7 +169,7 @@ const getDatabasePages = async (
         .query({ ...args })
         .then(({ results }) => {
           const pages = results.map((page) => {
-            const { id, properties } = page as PageObjectResponse
+            const { id, properties, cover } = page as PageObjectResponse
 
             return {
               id,
@@ -177,6 +177,7 @@ const getDatabasePages = async (
               title: properties.title as Title,
               metaTitle: properties['meta-title'] as RichText,
               metaDescription: properties['meta-description'] as RichText,
+              cover: cover as FileBlock,
             } satisfies Page
           })
 
