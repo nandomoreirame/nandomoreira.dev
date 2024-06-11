@@ -38,8 +38,7 @@ export default function BlogLayout({
       {children}
       <Newsletter />
       <Footer />
-
-      {env.NODE_ENV !== 'development' && (
+      {env.NODE_ENV === 'production' && env.GA4_BLOG_ID && (
         <GoogleAnalytics gaId={env.GA4_BLOG_ID} />
       )}
     </>

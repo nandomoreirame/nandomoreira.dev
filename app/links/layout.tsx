@@ -28,7 +28,7 @@ export default function LabLayout({
       <div className="flex min-h-screen w-full flex-col items-center justify-center gap-12">
         {children}
       </div>
-      {env.NODE_ENV !== 'development' && (
+      {env.NODE_ENV === 'production' && env.GA4_LINKS_ID && (
         <GoogleAnalytics gaId={env.GA4_LINKS_ID} />
       )}
     </>

@@ -35,7 +35,7 @@ export default function LabLayout({
     <>
       <Header />
       {children}
-      {env.NODE_ENV !== 'development' && (
+      {env.NODE_ENV === 'production' && env.GA4_LAB_ID && (
         <GoogleAnalytics gaId={env.GA4_LAB_ID} />
       )}
     </>
