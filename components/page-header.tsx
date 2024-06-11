@@ -40,7 +40,7 @@ export function PageHeader({
   className,
 }: ComponentProps<'div'>): JSX.Element {
   return (
-    <Container size={'sm'} className={cn('mb-12 pt-32', className)}>
+    <Container size={'sm'} className={cn('mb-12', className)}>
       {children}
     </Container>
   )

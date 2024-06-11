@@ -26,8 +26,8 @@ const nextConfig = {
     remotePatterns: [
       { hostname: '*.amazonaws.com' },
       { hostname: '*.notion.so' },
-      { hostname: 'images.unsplash.com' },
-      { hostname: 'codepen.io' },
+      { hostname: '*.unsplash.com' },
+      { hostname: '*.codepen.io' },
     ],
   },
 }

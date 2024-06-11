@@ -9,8 +9,6 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.string(),
     GA4_SITE_ID: z.string().optional(),
-    GA4_LAB_ID: z.string().optional(),
-    GA4_BLOG_ID: z.string().optional(),
     GA4_LINKS_ID: z.string().optional(),
     CRISP_WEBSITE_ID: z.string().optional(),
     ROOT_DOMAIN: z.string(),
@@ -40,8 +38,6 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
     GA4_SITE_ID: process.env.GA4_SITE_ID,
-    GA4_LAB_ID: process.env.GA4_LAB_ID,
-    GA4_BLOG_ID: process.env.GA4_BLOG_ID,
     GA4_LINKS_ID: process.env.GA4_LINKS_ID,
     CRISP_WEBSITE_ID: process.env.CRISP_WEBSITE_ID,
     RESEND_API_KEY: process.env.RESEND_API_KEY,

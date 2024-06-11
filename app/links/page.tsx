@@ -20,19 +20,18 @@ import Link from 'next/link'
 export async function generateMetadata() {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
-    slug: 'links.nandomoreira.dev',
+    slug: 'links',
   })
 
   const [title] = page.metaTitle.rich_text
   const [description] = page.metaDescription.rich_text
-  const [slugText] = page.slug.rich_text
-  const slug = slugText.plain_text === '/' ? '' : slugText.plain_text
+  const [slug] = page.slug.rich_text
 
   return metadata({
     title: title.plain_text,
     description: description.plain_text,
     baseUrl: getDomain('links'),
-    slug,
+    slug: slug.plain_text,
   })
 }
 
@@ -47,7 +46,7 @@ export default async function LinksPage({ searchParams }: PageParams) {
   const [{ page }, { links }] = await Promise.all([
     notion.getPage({
       database_id: env.PAGES_DATABASE_ID,
-      slug: 'links.nandomoreira.dev',
+      slug: 'links',
     }),
     notion.getLinks({
       database_id: env.LINKS_DATABASE_ID,

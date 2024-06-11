@@ -14,6 +14,7 @@ type HeaderProps = ComponentProps<'header'>
 
 export function Header({ ...props }: HeaderProps): JSX.Element {
   const [isScrolling, setScrolling] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
   const currentPath = usePathname()
 
   useEffect(() => {
@@ -34,27 +35,32 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
 
   const navItems = [
     {
-      label: `Home`,
-      href: `${getDomain()}`,
+      label: 'Home',
+      href: '/',
       Icon: Home,
+      active: currentPath === '/',
     },
     {
-      label: `Sobre`,
-      href: `${getDomain()}/sobre`,
+      label: 'Sobre',
+      href: '/sobre',
       Icon: User,
-      active: currentPath.startsWith('/sobre'),
+      active: currentPath === '/sobre',
     },
     {
       label: `Blog`,
-      href: `${getDomain()}/blog`,
+      href: '/blog',
       Icon: NotebookText,
-      active: currentPath.startsWith('/blog'),
+      active:
+        currentPath !== '/' &&
+        currentPath !== '/sobre' &&
+        currentPath !== '/lab' &&
+        currentPath !== '/contato',
     },
     {
-      label: `Lab`,
-      href: `${getDomain()}/lab`,
+      label: 'Lab',
+      href: '/lab',
       Icon: FlaskConical,
-      active: currentPath.startsWith('/lab'),
+      active: currentPath === '/lab',
     },
   ]
 
@@ -76,9 +82,14 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
             <LogoName className="hidden md:flex" />
           </Link>
 
-          <Nav>
+          <Nav open={navOpen} onOpenChange={(open) => setNavOpen(!!open)}>
             {navItems.map(({ Icon, label, href, active }) => (
-              <NavLink key={href} href={href} active={active}>
+              <NavLink
+                key={href}
+                href={href}
+                active={active}
+                onClick={() => setNavOpen(false)}
+              >
                 <Icon className="size-4" />
                 <span>{label}</span>
               </NavLink>
@@ -86,7 +97,7 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
 
             <Link
               href={`${getDomain()}/contato`}
-              className={cn(buttonVariants(), 'w-full lg:w-auto')}
+              className={cn(buttonVariants(), 'w-full py-8 md:w-auto md:py-0')}
               role="button"
             >
               <Mail className="size-4" />

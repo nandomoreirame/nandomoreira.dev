@@ -10,6 +10,7 @@ import type {
   ColumnBlockResponse,
   ColumnListBlockResponse,
   EmbedBlockResponse,
+  FileEmojiBlock,
   Heading2Block,
   Heading2BlockResponse,
   Heading3Block,
@@ -32,7 +33,6 @@ import type { BundledLanguage } from 'shiki'
 
 import { H2, H3, H4 } from '@/components/anchor-heading'
 import { NotionBlockquote } from '@/components/blockquote'
-import { NotionCallout } from '@/components/callout'
 import { NotionCode } from '@/components/code'
 import { Container } from '@/components/container'
 import { NotionEmbed } from '@/components/embed'
@@ -42,6 +42,8 @@ import { Skeleton } from '@/components/skeleton'
 import { NotionText } from '@/components/text'
 import { NotionVideo } from '@/components/video'
 import { getBlockText } from '@/lib/notion'
+import Image from 'next/image'
+import { Alert, AlertDescription } from './alert'
 
 function getTitleId(block: Block) {
   return titleToSlug(getBlockText(block))
@@ -115,10 +117,38 @@ export async function RenderBlock({ block }: { block: Block }) {
         type
       ] as CalloutBlock
 
+      console.log('[ calloutBlock ]', calloutBlock)
+
+      const { icon } = calloutBlock
+
+      let iconUrl = null
+      if (icon && icon.type === 'external') {
+        iconUrl = icon.external?.url
+      } else if (icon && icon.type === 'file') {
+        iconUrl = icon.file?.url
+      }
+
+      let iconEmoji = null
+      if (icon && (icon as unknown as FileEmojiBlock).type === 'emoji') {
+        iconEmoji = (icon as unknown as FileEmojiBlock).emoji
+      }
+
       return (
-        <NotionCallout>
-          <NotionText richText={calloutBlock.rich_text} />
-        </NotionCallout>
+        <Alert className="callout">
+          {icon && iconUrl && (
+            <Image
+              src={iconUrl}
+              className="size-6"
+              alt="callout icon"
+              width={100}
+              height={100}
+            />
+          )}
+          {icon && iconEmoji && <span>{iconEmoji}</span>}
+          <AlertDescription>
+            <NotionText richText={calloutBlock.rich_text} />
+          </AlertDescription>
+        </Alert>
       )
     }
 

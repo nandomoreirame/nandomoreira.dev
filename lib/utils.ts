@@ -7,6 +7,7 @@ import type {
   VideoBlock,
 } from '@/types/notion'
 import { clsx, type ClassValue } from 'clsx'
+import type { Metadata } from 'next'
 import slugify from 'slugify'
 import { twMerge } from 'tailwind-merge'
 
@@ -104,7 +105,9 @@ export function metadata({
     publishedTime?: string
     authors?: string[]
   }
-}) {
+}): Metadata {
+  const path = slug === 'home' ? '/' : `/${slug}`
+
   return {
     title,
     description,
@@ -117,10 +120,10 @@ export function metadata({
       publishedTime: article ? article.publishedTime : undefined,
       authors: article ? article.authors : undefined,
       section: article ? article.section : undefined,
-      url: `${baseUrl}/${slug}`,
+      url: `${baseUrl}${path}`,
       images: [
         {
-          url: `${baseUrl}${article ? `/${slug}` : ''}/opengraph-image`,
+          url: `${baseUrl}${article ? path : `/og/${slug}`}/opengraph-image`,
           width: 1200,
           height: 600,
         },
@@ -132,7 +135,7 @@ export function metadata({
       description,
       creator: '@oseunando',
     },
-    alternates: { canonical: `/${slug}` },
+    alternates: { canonical: path },
   }
 }
 

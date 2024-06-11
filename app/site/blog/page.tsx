@@ -2,6 +2,7 @@ import { AuthorAvatar } from '@/components/author-avatar'
 import { BlogArticle } from '@/components/blog-article'
 import { Container } from '@/components/container'
 import { SocialLinks } from '@/components/social-links'
+import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain } from '@/lib/utils'
@@ -23,13 +24,21 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  const { posts } = await notion.getPosts({
-    database_id: env.BLOG_DATABASE_ID,
-  })
+  const [{ page }, { posts }] = await Promise.all([
+    notion.getPage({
+      database_id: env.PAGES_DATABASE_ID,
+      slug: 'blog',
+    }),
+    notion.getPosts({
+      database_id: env.BLOG_DATABASE_ID,
+    }),
+  ])
+
+  const [title] = page.title.title
 
   return (
     <>
-      <Container size={'sm'} className="relative sm:px-8 sm:py-10 md:pt-32">
+      <Container size={'sm'}>
         <div className="lg:gap-15 flex flex-col items-center gap-4 sm:flex-row lg:gap-6">
           <div className="flex h-[277px] w-full max-w-[277px] items-center justify-center rounded-full">
             <Link href={`${getDomain()}/sobre`}>
@@ -38,16 +47,10 @@ export default async function BlogPage() {
           </div>
           <div className="flex w-full flex-col gap-4 text-center md:max-w-[593px] md:text-left">
             <h1 className="text-2xl sm:text-4xl lg:text-3xl xl:text-4xl">
-              Blog do{' '}
-              <strong className="font-extrabold text-primary">Nando</strong>
+              {title.plain_text}
             </h1>
             <p className="leading-tight text-muted-foreground md:text-lg">
-              Olá, me chamo{' '}
-              <strong className="font-extrabold text-primary">
-                Fernando Moreira
-              </strong>
-              , e nesse blog escrevo sobre programação, AI, front-end, back-end
-              e tecnologias web no geral.
+              <NotionText richText={page.description.rich_text} />
             </p>
 
             <SocialLinks className="justify-center md:justify-start">

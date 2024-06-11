@@ -5,10 +5,14 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export default async function OpengraphImage() {
+export default async function OpengraphImage({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
-    slug: '/',
+    slug: params.slug,
   })
 
   const [title] = page.title.title

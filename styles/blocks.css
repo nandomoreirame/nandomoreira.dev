@@ -3,6 +3,26 @@
 @tailwind utilities;
 
 @layer base {
+  .cover,
+  .figure,
+  .video-wrapper {
+    @apply mb-5 grid w-full items-center justify-center overflow-hidden rounded-lg;
+  }
+
+  .cover .image,
+  .figure .image,
+  .video-wrapper .video {
+    @apply h-auto rounded-lg;
+  }
+
+  .blog-single-title {
+    @apply mb-6 text-2xl font-bold sm:text-4xl lg:text-5xl;
+  }
+
+  .blog-single .cover {
+    @apply mb-12;
+  }
+
   .blocks h2,
   .blocks h3,
   .blocks h4,
@@ -30,16 +50,12 @@
     @apply mb-12 max-h-[460px] overflow-hidden object-cover;
   }
 
-  .blocks .cover,
-  .blocks .cover .image,
-  .blocks .figure .image,
-  .blocks .video-wrapper .video,
-  .blocks .iframe {
-    @apply w-full rounded-md;
+  .blocks .embed {
+    @apply mb-5 overflow-hidden rounded-lg;
   }
-
+  .blocks .embed,
   .blocks .iframe {
-    @apply md:min-h-[600px];
+    @apply w-full md:min-h-[600px];
   }
 
   .blocks .caption {
@@ -67,6 +83,8 @@
 
   .blocks .callout {
     @apply mb-5 w-full rounded-md border-l-8 border-gray-500/50 bg-gray-200 px-6 py-4 dark:bg-gray-900/50;
+    @apply [&>img+div]:translate-y-[-3px] [&>img]:absolute [&>img]:left-4 [&>img]:top-4 [&>img~*]:pl-7;
+    @apply [&>span+div]:translate-y-[-3px] [&>span]:absolute [&>span]:left-4 [&>span]:top-4 [&>span~*]:pl-7;
   }
 
   .blocks .callout span {

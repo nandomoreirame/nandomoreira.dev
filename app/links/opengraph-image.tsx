@@ -8,7 +8,7 @@ export const runtime = 'edge'
 export default async function OpengraphImage() {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
-    slug: 'links.nandomoreira.dev',
+    slug: 'links',
   })
 
   const [title] = page.title.title

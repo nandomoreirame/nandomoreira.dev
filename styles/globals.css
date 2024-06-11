@@ -8,9 +8,7 @@
     --radius-blob: 63% 37% 37% 63% / 43% 37% 63% 57%;
 
     --primary-hex: #ffde59;
-    --primary-rgb: rgb(255, 222, 89);
     --secondary-hex: #2c3349;
-    --secondary-rgb: rgb(44, 51, 73);
   }
 
   .dark {
@@ -43,7 +41,7 @@
     --card-foreground: 251 0% 15%;
     --popover: 251 0% 100%;
     --popover-foreground: 251 95% 10%;
-    --primary: 251 100% 56%;
+    --primary: 251 100% 56%; /* #481fff */
     --primary-foreground: 0 0% 100%;
     --secondary: 251 10% 90%;
     --secondary-foreground: 0 0% 0%;
@@ -78,19 +76,11 @@
     @apply bg-background text-foreground;
   }
 
-  body a {
-    @apply rounded transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-  }
-
   body h1,
   body h2,
   body h3,
   body h4,
   body h5 {
     @apply font-heading;
-  }
-
-  .page-content {
-    @apply m-auto max-w-[880px];
   }
 }

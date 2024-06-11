@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import type { MediaResponse } from '@/types/blog'
 import NextImage from 'next/image'
+import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { DialogContent, DialogRoot, DialogTrigger } from './dialog'
 
@@ -54,25 +55,33 @@ export function NotionImage({
   }
 
   return (
-    <DialogRoot>
-      <DialogTrigger>
-        <figure id={`image${blockId}`} className="figure">
-          <Image {...props} />
-          {caption && <figcaption className="caption">{caption}</figcaption>}
-        </figure>
-      </DialogTrigger>
-      <DialogContent className="fixed inset-0 z-999 w-screen overflow-y-auto">
-        <div className="flex min-h-full w-full items-center justify-center p-4 text-center sm:p-0">
-          <div className="overflow-auto p-12 md:max-w-screen-xl">
-            <Image
-              {...props}
-              width={1200}
-              height={1200}
-              className="translate-y-[100%] transform animate-[appear_500ms_cubic-bezier(0.4,_0,_0.2,_1)_500ms_both] rounded-none opacity-0 transition-all"
-            />
+    <figure id={`image-${blockId}`} className="figure">
+      <DialogRoot open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Link
+            href={`#image-${blockId}`}
+            onClick={(e) => {
+              e.preventDefault()
+              setIsOpen(true)
+            }}
+          >
+            <Image {...props} />
+          </Link>
+        </DialogTrigger>
+        <DialogContent className="fixed inset-0 z-999 w-screen overflow-y-auto">
+          <div className="flex min-h-full w-full items-center justify-center p-4 text-center sm:p-0">
+            <div className="overflow-auto p-12 md:max-w-screen-xl">
+              <Image
+                {...props}
+                width={1200}
+                height={1200}
+                className="translate-y-[100%] transform animate-[appear_500ms_cubic-bezier(0.4,_0,_0.2,_1)_500ms_both] rounded-none opacity-0 transition-all"
+              />
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </DialogRoot>
+        </DialogContent>
+      </DialogRoot>
+      {caption && <figcaption className="caption">{caption}</figcaption>}
+    </figure>
   )
 }

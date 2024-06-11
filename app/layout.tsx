@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import { CookiesConsent } from '@/components/cookies-consent'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
+import { TopLoader } from '@/components/top-loader'
 import { env } from '@/env'
 import { cn, getDomain } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
@@ -70,8 +71,9 @@ export default function RootLayout({
           enableSystem
         >
           <CookiesProvider>
-            {children}
-            <CookiesConsent />
+            <TopLoader />
+            <>{children}</>
+            {env.NODE_ENV === 'production' && <CookiesConsent />}
           </CookiesProvider>
           <Toaster position="bottom-center" />
         </ThemeProvider>
