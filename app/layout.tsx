@@ -4,8 +4,9 @@ import '@/styles/globals.css'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
 import { env } from '@/env'
-import { cn } from '@/lib/utils'
+import { cn, getDomain } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
+import type { Metadata } from 'next'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import Script from 'next/script'
@@ -19,6 +20,29 @@ const fontHeading = localFont({
   src: '../styles/fonts/CalSans-SemiBold.woff2',
   variable: '--font-heading',
 })
+
+const title = 'Fernando Moreira - indie hacker e desenvolvedor full-stack'
+const description =
+  'Olá, me chamo Fernando Moreira, e nesse blog escrevo sobre programação, AI, front-end, back-end e tecnologias web no geral.'
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Fernando Moreira',
+    default: title,
+  },
+  description,
+  keywords:
+    'indie hacker, indie, hacker, desenvolvedor, developer, front-end, back-end, full-stack, web designer, web, designer, saas, micro-saas, tecnologia, marketing, tech',
+  openGraph: {
+    title,
+    description,
+    url: getDomain(),
+    siteName: 'nandomoreira.dev',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  manifest: '/manifest.json',
+}
 
 export default function RootLayout({
   children,
