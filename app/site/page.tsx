@@ -17,8 +17,8 @@ export async function generateMetadata() {
     slug: 'home',
   })
 
-  const [title] = page.metaTitle.rich_text
-  const [description] = page.metaDescription.rich_text
+  const [title] = page?.metaTitle.rich_text
+  const [description] = page?.metaDescription.rich_text
 
   return metadata({
     title: title.plain_text,
