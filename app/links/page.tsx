@@ -79,7 +79,7 @@ export default async function LinksPage({ searchParams }: PageParams) {
 
       <main>
         <Container size={'xs'}>
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-6 md:gap-8">
             {!links || links.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground">
                 Nenhum link encontrado
@@ -141,7 +141,7 @@ export default async function LinksPage({ searchParams }: PageParams) {
       <footer className="py-8">
         <Container
           size={'xs'}
-          className="flex flex-col items-center justify-center text-center"
+          className="flex flex-col items-center justify-center gap-2 text-center"
         >
           <ThemeToggle />
           <p className="text-sm text-muted-foreground">Feito com ♥️</p>

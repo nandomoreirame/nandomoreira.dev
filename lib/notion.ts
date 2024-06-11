@@ -121,6 +121,12 @@ const getDatabaseLinks = async (
         .query({
           ...args,
           page_size: 100,
+          sorts: [
+            {
+              property: 'title',
+              direction: 'ascending',
+            },
+          ],
           filter: {
             and: [
               { property: 'title', rich_text: { is_not_empty: true } },
