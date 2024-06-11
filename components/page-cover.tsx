@@ -34,17 +34,11 @@ export function PageCover({
           loading="lazy"
           onLoad={() => setLoading(false)}
           onError={async () => {
-            setLoading(true)
-
-            // eslint-disable-next-line no-console
-            console.error('[error loading page cover image]')
-
             if (!pageId) return
-
+            setLoading(true)
             const { media } = await fetch(
               `/api/page?pageId=${pageId}&type=cover`,
             ).then((res) => res.json() as unknown as MediaResponse)
-
             setImageSrc(media)
             setLoading(false)
           }}

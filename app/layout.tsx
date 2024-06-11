@@ -1,7 +1,7 @@
 import '@/styles/blocks.css'
 import '@/styles/globals.css'
 
-import { BookiesConsent } from '@/components/bookies-consent'
+import { CookiesConsent } from '@/components/cookies-consent'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
 import { env } from '@/env'
@@ -69,7 +69,7 @@ export default function RootLayout({
         >
           <CookiesProvider>
             {children}
-            <BookiesConsent />
+            <CookiesConsent />
           </CookiesProvider>
           <Toaster position="bottom-center" />
         </ThemeProvider>

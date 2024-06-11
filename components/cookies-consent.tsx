@@ -1,41 +1,24 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import * as SheetPrimitive from '@radix-ui/react-dialog'
 import { Check, Info } from 'lucide-react'
 import { useCookies } from 'next-client-cookies'
-import React, { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { Alert, AlertDescription, AlertTitle } from './alert'
 import { Button } from './button'
 import { Container } from './container'
+import { DialogOverlay, DialogPortal, DialogRoot } from './dialog'
 
-type BookiesConsentProps = ComponentProps<'div'>
+type CookiesConsentProps = ComponentProps<'div'>
 
 const cookieConsentKey = 'site-cookies'
 const cookieConsentValue = 'yes'
 
-const BookiesConsentRoot = SheetPrimitive.Root
-const BookiesConsentPortal = SheetPrimitive.Portal
-
-const BookiesConsentOverlay = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <SheetPrimitive.Overlay
-    className={cn(
-      'fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      className,
-    )}
-    {...props}
-    ref={ref}
-  />
-))
-
-export function BookiesConsent({
+export function CookiesConsent({
   children,
   className,
   ...props
-}: BookiesConsentProps) {
+}: CookiesConsentProps) {
   const [hasConsent, setHasConsent] = useState<string>()
   const [showCookiesBox, setShowCookiesBox] = useState(false)
   const cookies = useCookies()
@@ -56,9 +39,9 @@ export function BookiesConsent({
   if (hasConsent === cookieConsentValue) return <></>
 
   return (
-    <BookiesConsentRoot open={showCookiesBox}>
-      <BookiesConsentPortal>
-        <BookiesConsentOverlay />
+    <DialogRoot open={showCookiesBox}>
+      <DialogPortal>
+        <DialogOverlay />
         <div
           className={cn(
             'fixed bottom-2 left-0 right-0 z-99 flex items-center justify-center opacity-0 md:bottom-6',
@@ -89,7 +72,7 @@ export function BookiesConsent({
             </Alert>
           </Container>
         </div>
-      </BookiesConsentPortal>
-    </BookiesConsentRoot>
+      </DialogPortal>
+    </DialogRoot>
   )
 }

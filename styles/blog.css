@@ -7,7 +7,7 @@
   .figure,
   .cover .image,
   .figure .image {
-    @apply w-full overflow-hidden rounded-lg text-center;
+    @apply h-auto w-full overflow-hidden rounded-lg text-center;
   }
 
   .blog-list,

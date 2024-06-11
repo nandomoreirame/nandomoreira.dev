@@ -16,6 +16,7 @@ export const NotionVideo: React.FC<NotionVideoProps> = ({
   blockId,
   ...props
 }) => {
+  const [isLoading, setLoading] = useState(true)
   const [videoSrc, setVideoSrc] = useState(src)
 
   if (youtubeId) {
@@ -35,16 +36,13 @@ export const NotionVideo: React.FC<NotionVideoProps> = ({
       <video
         controls
         onError={async () => {
-          // eslint-disable-next-line no-console
-          console.error('[error loading video]')
-
           if (!blockId) return
-
+          setLoading(true)
           const { media } = await fetch(
             `/api/media?blockId=${blockId}&type=video`,
           ).then((res) => res.json() as unknown as MediaResponse)
-
           setVideoSrc(media)
+          setLoading(false)
         }}
         className="video"
         {...props}
