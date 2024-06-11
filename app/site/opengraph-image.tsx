@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain } from '@/lib/utils'
@@ -7,7 +5,7 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export default async function siteOG() {
+export default async function OpengraphImage() {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
     slug: '/',

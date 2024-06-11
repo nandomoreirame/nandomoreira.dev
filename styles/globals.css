@@ -89,4 +89,8 @@
   body h5 {
     @apply font-heading;
   }
+
+  .page-content {
+    @apply m-auto max-w-[880px];
+  }
 }

@@ -3,18 +3,22 @@ import { Badge } from '@/components/badge'
 import { Button } from '@/components/button'
 import { Container } from '@/components/container'
 import { SocialLinks } from '@/components/social-links'
-import { env } from '@/env'
 import { cn, getDomain } from '@/lib/utils'
 import { Mail, NotebookText } from 'lucide-react'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
+const title = 'Laboratório do Nando - indie hacker e desenvolvedor full-stack'
+const description =
+  'Aqui vou adicionar todos os meus experimentos e produtos que já desenvolvi.'
+
 export const metadata: Metadata = {
-  title: 'Laboratório do Nando',
+  title,
+  description,
   openGraph: {
-    title: 'Laboratório do Nando - indie hacker e desenvolvedor full-stack',
-    url: getDomain('lab'),
-    siteName: `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+    title,
+    description,
+    url: `${getDomain()}/blog`,
   },
 }
 
@@ -43,17 +47,14 @@ export default function LabPage() {
 
           <div className="flex flex-col gap-2 md:flex-row">
             <Button asChild>
-              <Link
-                href={`${getDomain()}/contato`}
-                className="w-full xs:w-auto"
-              >
+              <Link href="/contato" className="w-full xs:w-auto">
                 <Mail className="size-4" />
                 <span>contato</span>
               </Link>
             </Button>
 
             <Button variant={'ghost'} asChild>
-              <Link href={getDomain('blog')} className="w-full xs:w-auto">
+              <Link href="/blog" className="w-full xs:w-auto">
                 <NotebookText className="size-4" />
                 <span>blog</span>
               </Link>

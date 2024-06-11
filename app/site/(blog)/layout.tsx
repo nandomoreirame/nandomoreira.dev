@@ -1,4 +1,4 @@
-import '@/styles/site.css'
+import '@/styles/blog.css'
 
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'

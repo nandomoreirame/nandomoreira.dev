@@ -4,17 +4,13 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  keywords:
-    'indie hacker, indie, hacker, desenvolvedor, developer, front-end, back-end, full-stack, web designer, web, designer, saas, micro-saas, tecnologia, marketing, tech',
   title: {
     template: '%s | Links do Nando',
     default: 'Links do Nando',
   },
   openGraph: {
-    url: getDomain('blog'),
-    siteName: `lab.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-    locale: 'pt_BR',
-    type: 'website',
+    url: `${getDomain('links')}`,
+    siteName: `links.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
   },
 }
 

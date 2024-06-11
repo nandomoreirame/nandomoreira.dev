@@ -34,7 +34,7 @@ export async function generateMetadata({
     title: title.plain_text,
     slug: slug.plain_text,
     description: description.plain_text,
-    baseUrl: getDomain('blog'),
+    baseUrl: getDomain(),
     article: {
       authors: [author.name as string],
       section: post.category.select?.name ?? '',

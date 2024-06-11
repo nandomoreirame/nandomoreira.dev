@@ -4,7 +4,7 @@ import { buttonVariants } from '@/components/button'
 import { Container } from '@/components/container'
 import { LogoIcon, LogoName } from '@/components/logo'
 import { Nav, NavLink } from '@/components/nav'
-import { cn, getDomain, getSubDomain } from '@/lib/utils'
+import { cn, getDomain } from '@/lib/utils'
 import { FlaskConical, Home, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -14,7 +14,6 @@ type HeaderProps = ComponentProps<'header'>
 
 export function Header({ ...props }: HeaderProps): JSX.Element {
   const [isScrolling, setScrolling] = useState(false)
-  const [locationHref, setLocationHref] = useState('')
   const currentPath = usePathname()
 
   useEffect(() => {
@@ -33,10 +32,6 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
     }
   }, [])
 
-  useEffect(() => {
-    setLocationHref(window.location.href)
-  }, [currentPath])
-
   const navItems = [
     {
       label: `Home`,
@@ -47,19 +42,19 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
       label: `Sobre`,
       href: `${getDomain()}/sobre`,
       Icon: User,
-      active: currentPath === '/sobre',
+      active: currentPath.startsWith('/sobre'),
     },
     {
       label: `Blog`,
-      href: `${getDomain('blog')}`,
+      href: `${getDomain()}/blog`,
       Icon: NotebookText,
-      active: getSubDomain(locationHref, currentPath) === 'blog',
+      active: currentPath.startsWith('/blog'),
     },
     {
       label: `Lab`,
-      href: `${getDomain('lab')}`,
+      href: `${getDomain()}/lab`,
       Icon: FlaskConical,
-      active: getSubDomain(locationHref, currentPath) === 'lab',
+      active: currentPath.startsWith('/lab'),
     },
   ]
 

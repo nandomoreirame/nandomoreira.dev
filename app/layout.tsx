@@ -7,6 +7,7 @@ import { Toaster } from '@/components/sonner'
 import { env } from '@/env'
 import { cn, getDomain } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 import { CookiesProvider } from 'next-client-cookies/server'
 import { Inter as FontSans } from 'next/font/google'
@@ -28,6 +29,7 @@ const description =
   'Olá, me chamo Fernando Moreira, e nesse blog escrevo sobre programação, AI, front-end, back-end e tecnologias web no geral.'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getDomain()),
   title: {
     template: '%s | Fernando Moreira',
     default: title,
@@ -39,7 +41,7 @@ export const metadata: Metadata = {
     title,
     description,
     url: getDomain(),
-    siteName: 'nandomoreira.dev',
+    siteName: env.NEXT_PUBLIC_ROOT_DOMAIN,
     locale: 'pt_BR',
     type: 'website',
   },
@@ -89,6 +91,10 @@ export default function RootLayout({
               `,
             }}
           />
+        )}
+
+        {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
+          <GoogleAnalytics gaId={env.GA4_SITE_ID} />
         )}
       </body>
     </html>

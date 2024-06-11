@@ -5,7 +5,22 @@ import { SocialLinks } from '@/components/social-links'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain } from '@/lib/utils'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+const title = 'Blog do Nando - indie hacker e desenvolvedor full-stack'
+const description =
+  'Olá, me chamo Fernando Moreira, e nesse blog escrevo sobre programação, AI, front-end, back-end e tecnologias web no geral.'
+
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: `${getDomain()}/blog`,
+  },
+}
 
 export default async function BlogPage() {
   const { posts } = await notion.getPosts({
