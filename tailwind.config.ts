@@ -70,22 +70,16 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'image-morph': {
-          '0%': {
-            'border-radius': '60% 40% 30% 70%/60% 30% 70% 40%',
-          },
-          '50%': {
-            'border-radius': '30% 60% 70% 40%/50% 60% 30% 60%',
-          },
-          to: {
-            'border-radius': '60% 40% 30% 70%/60% 30% 70% 40%',
-          },
+        appear: {
+          '0%': { opacity: '0', transform: 'translateY(100%)' },
+          '33%': { opacity: '0.5', transform: 'translateY(-30%)' },
+          '66%': { opacity: '1', transform: 'translateY(-20%)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'image-morph': 'image-morph 15s ease-in-out infinite',
       },
       zIndex: {
         '1': '1',

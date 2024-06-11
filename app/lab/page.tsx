@@ -27,8 +27,8 @@ export default function LabPage() {
     >
       <Container size={'sm'}>
         <div className="grid gap-4">
-          <AuthorAvatar size="md" className="mb-5" />
-          <div>
+          <AuthorAvatar size="md" />
+          <div className="mt-6">
             <Badge variant={'outline'}>Em breve!</Badge>
             <h2 className="mt-2 text-xl md:text-2xl">
               Laboratório do <span className="text-primary">Nando</span>

@@ -1,12 +1,14 @@
 import '@/styles/blocks.css'
 import '@/styles/globals.css'
 
+import { BookiesConsent } from '@/components/bookies-consent'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
 import { env } from '@/env'
 import { cn, getDomain } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
 import type { Metadata } from 'next'
+import { CookiesProvider } from 'next-client-cookies/server'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import Script from 'next/script'
@@ -65,7 +67,10 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          {children}
+          <CookiesProvider>
+            {children}
+            <BookiesConsent />
+          </CookiesProvider>
           <Toaster position="bottom-center" />
         </ThemeProvider>
 

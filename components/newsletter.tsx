@@ -59,11 +59,35 @@ export function Newsletter(): JSX.Element {
 
   return (
     <section className="mt-12 w-full">
-      <Container className="bg-gray-300/50 py-12 text-center dark:bg-gray-900/50 md:rounded-md md:text-left">
-        <h3 className="mb-3 text-3xl font-semibold uppercase text-foreground">
+      <Container className="relative bg-gray-300/50 py-12 text-center dark:bg-gray-900/50 md:rounded-md md:text-left">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-1 -mt-72 sm:-mt-32 md:mt-0"
+        >
+          <svg
+            className="absolute inset-0 size-full"
+            preserveAspectRatio="xMidYMid slice"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 1463 360"
+          >
+            <path
+              className="text-gray-500 text-opacity-10"
+              fill="currentcolor"
+              d="M-82.673 72l1761.849 472.086-134.327 501.315-1761.85-472.086z"
+            />
+            <path
+              className="text-gray-500 text-opacity-10"
+              fill="currentcolor"
+              d="M-217.088 544.086 1544.761 72l134.327 501.316-1761.849 472.086z"
+            />
+          </svg>
+        </div>
+
+        <h3 className="relative z-5 mb-3 text-3xl font-semibold uppercase text-foreground">
           Newsletter
         </h3>
-        <div className="md:grid-auto-columns-1/2 grid gap-10 md:grid-cols-2">
+        <div className="md:grid-auto-columns-1/2 relative z-5 grid gap-10 md:grid-cols-2">
           <div className="w-full">
             <p className="text-lg">
               Cadastre-se para receber notificações de lançamento de novos

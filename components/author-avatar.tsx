@@ -34,15 +34,16 @@ export function AuthorAvatar({
   const [isLoading, setLoading] = useState(true)
 
   return (
-    <Avatar className={cn(avatarVariants({ size }), className)}>
+    <Avatar className={cn(avatarVariants({ size }))}>
       <AvatarImage src={src ?? '/images/photo.png'} asChild>
         <Image
           src={src ?? '/images/photo.png'}
           alt="foto de Fernando Moreira"
           quality={100}
           className={cn(
-            'animate-image-morph bg-primary/10 p-1',
+            'rounded-full bg-primary/10 p-2',
             isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0',
+            className,
           )}
           onLoad={() => setLoading(false)}
           width={500}
