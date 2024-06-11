@@ -41,6 +41,7 @@ export default async function ContactPage() {
   const { blocks } = await notion.getPageBlocks(page.id)
 
   const [title] = page.title.title
+  const description = page.description
 
   return (
     <>
@@ -50,9 +51,11 @@ export default async function ContactPage() {
           E ai! bão <span className="text-primary">ou não?</span>
           {/* <NotionText richText={page.metaDescription.rich_text} /> */}
         </PageTitle>
-        <PageDescription>
-          <NotionText richText={page.description.rich_text} />
-        </PageDescription>
+        {description && (
+          <PageDescription>
+            <NotionText richText={description?.rich_text} />
+          </PageDescription>
+        )}
         <SocialLinks />
       </PageHeader>
 

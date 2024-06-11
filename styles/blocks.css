@@ -60,7 +60,7 @@
     @apply text-lg font-semibold italic text-gray-900 dark:text-white md:text-xl;
   }
 
-  .blocks .external-link {
+  .external-link {
     @apply inline-flex items-center gap-1 text-primary;
     @apply hover:underline hover:underline-offset-4 hover:opacity-80;
   }
