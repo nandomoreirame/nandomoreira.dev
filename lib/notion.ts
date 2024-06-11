@@ -80,6 +80,8 @@ const getDatabasePosts = async (
               id,
               cover,
               properties,
+              created_time: createdAt,
+              last_edited_time: updatedAt,
               // ...rest
             } = post as PageObjectResponse
 
@@ -93,6 +95,8 @@ const getDatabasePosts = async (
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
               cover: cover as FileBlock,
+              createdAt,
+              updatedAt,
             } satisfies Post
           })
 
@@ -204,8 +208,14 @@ const getDatabasePost = async ({
         .then(({ results }) => {
           if (!results) return
           const [post] = results.map((post) => {
-            const { id, properties, cover, ...rest } =
-              post as PageObjectResponse
+            const {
+              id,
+              properties,
+              cover,
+              created_time: createdAt,
+              last_edited_time: updatedAt,
+              ...rest
+            } = post as PageObjectResponse
 
             return {
               id,
@@ -217,6 +227,8 @@ const getDatabasePost = async ({
               tags: properties.tags as MultiSelect,
               author: properties.author as People,
               cover: cover as FileBlock,
+              createdAt,
+              updatedAt,
               ...rest,
             } satisfies Post
           })
@@ -411,7 +423,7 @@ export async function getBlockMediaUrl(
 }
 
 export const notion = {
-  async getPages(params: GetDatabasePagesParameters) {
+  async getPages(params: GetDatabaseParameters) {
     return await getDatabasePages(params)
   },
 

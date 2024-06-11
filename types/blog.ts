@@ -19,6 +19,8 @@ export type Post = {
   tags: MultiSelect
   author: People
   cover: FileBlock
+  createdAt: string
+  updatedAt: string
 }
 
 export type MediaResponse = {
