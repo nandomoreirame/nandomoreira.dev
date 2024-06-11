@@ -1,9 +1,10 @@
+import { oldPagesRedirects } from './redirects'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
     optimizePackageImports: ['shiki'],
-    // serverComponentsExternalPackages: ['shiki'],
   },
 
   transpilePackages: ['lucide-react'],
@@ -37,28 +38,7 @@ const nextConfig = {
   },
 
   async redirects() {
-    return [
-      {
-        source: '/about',
-        destination: '/sobre',
-        permanent: true,
-      },
-      {
-        source: '/contact',
-        destination: '/contato',
-        permanent: true,
-      },
-      {
-        source: '/blog',
-        destination: 'https://blog.nandomoreira.dev',
-        permanent: true,
-      },
-      {
-        source: '/lab',
-        destination: 'https://lab.nandomoreira.dev',
-        permanent: true,
-      },
-    ]
+    return oldPagesRedirects
   },
 }
 

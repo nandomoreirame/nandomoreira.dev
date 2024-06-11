@@ -120,7 +120,9 @@ const getDatabaseLinks = async ({
 }: GetDatabaseParameters & { slug?: string }): Promise<{
   links: Array<Link>
 }> => {
-  const _cacheTag = `${args.database_id}-database`
+  const _cacheTag = slug
+    ? `${args.database_id}-${slug}-database`
+    : `${args.database_id}-database`
 
   // @ts-ignore
   const filters = []
