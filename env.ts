@@ -8,11 +8,11 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.string(),
-    GA4_SITE_ID: z.string(),
-    GA4_LAB_ID: z.string(),
-    GA4_BLOG_ID: z.string(),
-    GA4_LINKS_ID: z.string(),
-    CRISP_WEBSITE_ID: z.string(),
+    GA4_SITE_ID: z.string().optional(),
+    GA4_LAB_ID: z.string().optional(),
+    GA4_BLOG_ID: z.string().optional(),
+    GA4_LINKS_ID: z.string().optional(),
+    CRISP_WEBSITE_ID: z.string().optional(),
     ROOT_DOMAIN: z.string(),
     NOTION_ACCESS_TOKEN: z.string(),
     BLOG_DATABASE_ID: z.string(),
