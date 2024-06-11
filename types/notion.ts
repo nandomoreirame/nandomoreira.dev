@@ -245,6 +245,10 @@ export type FileExternalBlock = {
   caption: Array<PlainText>
   name: string
 }
+export type FileEmojiBlock = {
+  type: 'emoji'
+  emoji: string
+}
 
 export type ImageBlockResponse = ImageBlockObjectResponse
 export type ImageBlock = ImageBlockResponse['image']

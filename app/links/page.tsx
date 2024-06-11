@@ -1,6 +1,5 @@
 import { AuthorAvatar } from '@/components/author-avatar'
 import { Avatar, AvatarImage } from '@/components/avatar'
-import { Badge } from '@/components/badge'
 import {
   Card,
   CardContent,
@@ -15,6 +14,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain, metadata, objectToUrlParams } from '@/lib/utils'
+import type { FileEmojiBlock } from '@/types/notion'
 import Link from 'next/link'
 
 export async function generateMetadata() {
@@ -65,7 +65,6 @@ export default async function LinksPage({ searchParams }: PageParams) {
         >
           <AuthorAvatar size={'lg'} />
           <div>
-            <Badge variant={'outline'}>Em breve!</Badge>
             <h1 className="mt-2 text-2xl md:text-3xl lg:text-4xl">
               {title.plain_text}
             </h1>
@@ -92,11 +91,19 @@ export default async function LinksPage({ searchParams }: PageParams) {
                 const icon = link.image
 
                 let iconUrl = null
-
-                if (icon && icon.type === 'external')
+                if (icon && icon.type === 'external') {
                   iconUrl = icon.external?.url
+                } else if (icon && icon.type === 'file') {
+                  iconUrl = icon.file?.url
+                }
 
-                if (icon && icon.type === 'file') iconUrl = icon.file?.url
+                let iconEmoji = null
+                if (
+                  icon &&
+                  (icon as unknown as FileEmojiBlock).type === 'emoji'
+                ) {
+                  iconEmoji = (icon as unknown as FileEmojiBlock).emoji
+                }
 
                 return (
                   <Link
@@ -117,6 +124,11 @@ export default async function LinksPage({ searchParams }: PageParams) {
                               className="h-auto w-24 object-cover"
                             />
                           </Avatar>
+                        )}
+                        {icon && iconEmoji && (
+                          <div className="flex size-24 items-center justify-center text-center">
+                            <span className="text-6xl">{iconEmoji}</span>
+                          </div>
                         )}
                         <div className="grid w-full gap-2 text-center md:text-left">
                           <CardHeader className="m-0 p-0">

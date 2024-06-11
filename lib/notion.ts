@@ -110,10 +110,19 @@ const getDatabasePosts = async (
   )()
 }
 
-const getDatabaseLinks = async (
-  args: GetDatabaseParameters,
-): Promise<{ links: Array<Link> }> => {
+const getDatabaseLinks = async ({
+  slug,
+  ...args
+}: GetDatabaseParameters & { slug?: string }): Promise<{
+  links: Array<Link>
+}> => {
   const _cacheTag = `${args.database_id}-database`
+
+  // @ts-ignore
+  const filters = []
+  if (slug) {
+    filters.push({ property: 'slug', rich_text: { equals: slug } })
+  }
 
   return unstable_cache(
     async () =>
@@ -132,6 +141,8 @@ const getDatabaseLinks = async (
               { property: 'title', rich_text: { is_not_empty: true } },
               { property: 'slug', rich_text: { is_not_empty: true } },
               { property: 'published', checkbox: { equals: true } },
+              // @ts-ignore
+              ...filters,
             ],
           },
         })
@@ -149,7 +160,7 @@ const getDatabaseLinks = async (
               slug: properties.slug as RichText,
               title: properties.title as Title,
               description: properties.description as RichText,
-              link: properties.title as Url,
+              link: properties.link as Url,
               image: icon as FileBlock,
             } satisfies Link
           })
@@ -417,7 +428,7 @@ export const notion = {
     return await getDatabasePosts(params)
   },
 
-  async getLinks(params: GetDatabaseParameters) {
+  async getLinks(params: GetDatabaseParameters & { slug?: string }) {
     return await getDatabaseLinks(params)
   },
 
