@@ -58,7 +58,7 @@ export function Newsletter(): JSX.Element {
   }
 
   return (
-    <section className="mt-12 w-full">
+    <section className="mt-12 w-full animate-fade-in-up pb-12 animate-delay-800 animate-duration-slow">
       <Container className="relative bg-gray-300/50 py-12 text-center dark:bg-gray-900/50 md:rounded-md md:text-left">
         <div
           aria-hidden="true"

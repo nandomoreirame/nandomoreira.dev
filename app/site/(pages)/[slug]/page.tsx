@@ -67,12 +67,17 @@ export default async function SinglePage({
         <header className="mb-6 py-4">
           <Container size={'sm'}>
             {category.select !== null && (
-              <Badge variant={'default'} className="mb-4 inline-flex">
+              <Badge
+                variant={'default'}
+                className="mb-4 inline-flex animate-fade-in-up animate-delay-100 animate-duration-slow"
+              >
                 {category.select.name}
               </Badge>
             )}
-            <h1 className="blog-single-title">{title.plain_text}</h1>
-            <address className="mt-6 flex flex-col gap-8 not-italic sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="blog-single-title animate-fade-in-up animate-delay-200 animate-duration-slow">
+              {title.plain_text}
+            </h1>
+            <address className="mt-6 flex animate-fade-in-up flex-col gap-8 not-italic animate-delay-300 animate-duration-slow sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-4">
                 <Link href={`${getDomain()}/sobre`}>
                   <AuthorAvatar size="sm" src={author.avatar_url ?? ''} />
@@ -102,7 +107,7 @@ export default async function SinglePage({
           </Container>
         </header>
 
-        <div className="blocks">
+        <div className="blocks animate-fade-in-up animate-delay-500 animate-duration-slow">
           {post.cover && (
             <PageCover
               src={`${getFileUrl(post.cover)}`}

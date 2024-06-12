@@ -14,7 +14,7 @@ export default function SiteLayout({
         {children}
       </main>
       <Newsletter />
-      <Footer />
+      <Footer scroll />
     </>
   )
 }

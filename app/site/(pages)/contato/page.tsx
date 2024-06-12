@@ -55,14 +55,17 @@ export default async function ContactPage() {
             <NotionText richText={description?.rich_text} />
           </PageDescription>
         )}
-        <SocialLinks />
+        <SocialLinks className="animate-fade-in-up animate-delay-400 animate-duration-slow" />
       </PageHeader>
 
-      <Container size={'sm'} className="pb-12">
+      <Container
+        size={'sm'}
+        className="animate-fade-in-up pb-12 animate-delay-500 animate-duration-slow"
+      >
         {/* TODO: contact form */}[ TODO - contact form ]
       </Container>
 
-      <div className="blocks">
+      <div className="blocks animate-fade-in-up pb-12 animate-delay-700 animate-duration-slow">
         {blocks.map((b) => {
           const block = b as unknown as Block
           return <RenderBlock key={`block-${block.id}`} block={block} />

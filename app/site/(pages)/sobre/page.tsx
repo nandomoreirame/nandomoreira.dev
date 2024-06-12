@@ -50,7 +50,7 @@ export default async function AboutPage() {
         <PageDescription>
           <NotionText richText={page.metaDescription.rich_text} />
         </PageDescription>
-        <SocialLinks className="justify-center md:justify-start">
+        <SocialLinks className="animate-fade-in-up justify-center animate-delay-400 animate-duration-slow md:justify-start">
           <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
             Minhas redes {'->'}
           </span>
@@ -65,13 +65,16 @@ export default async function AboutPage() {
             alt={title.plain_text}
             width={1000}
             height={600}
+            className="animate-fade-in-up animate-delay-500 animate-duration-slow"
           />
         )}
 
-        {blocks.map((b) => {
-          const block = b as unknown as Block
-          return <RenderBlock key={`block-${block.id}`} block={block} />
-        })}
+        <div className="animate-fade-in-up animate-delay-700 animate-duration-slow">
+          {blocks.map((b) => {
+            const block = b as unknown as Block
+            return <RenderBlock key={`block-${block.id}`} block={block} />
+          })}
+        </div>
       </Container>
     </>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Check, Info } from 'lucide-react'
+import { Check, CookieIcon } from 'lucide-react'
 import { useCookies } from 'next-client-cookies'
 import { ComponentProps, useEffect, useState } from 'react'
 import { Alert, AlertDescription, AlertTitle } from './alert'
@@ -52,7 +52,7 @@ export function CookiesConsent({
         >
           <Container size={'xs'}>
             <Alert className="bg-gray-300 shadow-lg dark:bg-gray-900">
-              <Info className="size-4" />
+              <CookieIcon className="size-5" />
               <AlertTitle>Cookies</AlertTitle>
               <AlertDescription className="flex flex-col gap-2 md:flex-row">
                 <p>

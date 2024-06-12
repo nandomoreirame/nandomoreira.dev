@@ -9,7 +9,10 @@ export function PageTitle({
 }: ComponentProps<'h1'>): JSX.Element {
   return (
     <h1
-      className={cn('mb-4 mt-5 text-3xl font-extrabold md:text-4xl', className)}
+      className={cn(
+        'mb-4 mt-5 animate-fade-in-up text-3xl font-extrabold animate-delay-100 animate-duration-slow md:text-4xl',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -25,7 +28,7 @@ export function PageDescription({
   return (
     <p
       className={cn(
-        'mb-3 block text-lg font-normal text-muted-foreground md:text-xl',
+        'mb-3 block animate-fade-in-up text-lg font-normal text-muted-foreground animate-delay-200 animate-duration-slow md:text-xl',
         className,
       )}
       {...props}

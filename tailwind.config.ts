@@ -1,3 +1,4 @@
+import animations from '@midudev/tailwind-animations'
 import { fontFamily, screens } from 'tailwindcss/defaultTheme'
 
 const config = {
@@ -91,7 +92,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [animations],
   // @ts-ignore
 } satisfies Config
 
