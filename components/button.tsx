@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                       {loading && (
                         <Loader2
                           className={cn(
-                            'h-4 w-4 animate-spin',
+                            'animate-spin h-4 w-4',
                             children && 'mr-2',
                           )}
                         />
@@ -97,7 +97,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <>
           {loading && (
             <Loader2
-              className={cn('h-4 w-4 animate-spin', children && 'mr-2')}
+              className={cn('animate-spin h-4 w-4', children && 'mr-2')}
             />
           )}
           {children}
