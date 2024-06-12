@@ -12,11 +12,11 @@ export default function SiteLayout({
         <ThemeToggle />
       </div>
 
-      <main className="flex w-full flex-col items-center justify-center py-12 md:h-screen">
+      <main className="flex min-h-full w-full flex-col items-center justify-center py-12 md:h-screen">
         {children}
       </main>
 
-      <Footer className="mt-4 animate-fade-in-up px-6 animate-delay-700 animate-duration-slow md:fixed md:bottom-0 md:left-0 md:right-0 md:z-99 md:mt-0" />
+      <Footer className="mt-4 animate-fade-in-up px-8 animate-delay-700 animate-duration-slow md:fixed md:bottom-0 md:left-0 md:right-0 md:z-99 md:mt-0" />
     </>
   )
 }

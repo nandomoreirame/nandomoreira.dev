@@ -117,8 +117,6 @@ export async function RenderBlock({ block }: { block: Block }) {
         type
       ] as CalloutBlock
 
-      console.log('[ calloutBlock ]', calloutBlock)
-
       const { icon } = calloutBlock
 
       let iconUrl = null

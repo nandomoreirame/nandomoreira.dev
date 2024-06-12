@@ -49,7 +49,7 @@ const Anchor = ({
   )
 }
 
-const headingVariants = cva('text-foreground mb-5 mt-3 font-bold', {
+const headingVariants = cva('text-foreground my-8 font-bold', {
   variants: {
     variant: {
       h2: 'leading-14 text-3xl lg:text-4xl',
