@@ -1,5 +1,6 @@
 'use client'
 
+import { useBoolean } from '@/hooks/useBoolean'
 import { cn } from '@/lib/utils'
 import { Check, CookieIcon } from 'lucide-react'
 import { useCookies } from 'next-client-cookies'
@@ -20,7 +21,7 @@ export function CookiesConsent({
   ...props
 }: CookiesConsentProps) {
   const [hasConsent, setHasConsent] = useState<string>()
-  const [showCookiesBox, setShowCookiesBox] = useState(false)
+  const { value: showCookiesBox, setValue: setCookiesBox } = useBoolean(false)
   const cookies = useCookies()
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function CookiesConsent({
     }
 
     const toRef = setTimeout(() => {
-      setShowCookiesBox(true)
+      setCookiesBox(true)
       clearTimeout(toRef)
     }, 1000)
   }, [cookies])

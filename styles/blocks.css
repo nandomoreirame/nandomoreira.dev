@@ -6,13 +6,13 @@
   .cover,
   .figure,
   .video-wrapper {
-    @apply grid w-full items-center justify-center overflow-hidden rounded-lg;
+    @apply relative grid w-full items-center justify-center;
   }
 
   .cover .image,
   .figure .image,
   .video-wrapper .video {
-    @apply h-auto rounded-lg;
+    @apply inline-flex size-auto rounded-lg;
   }
 
   .blog-single-title {
@@ -23,24 +23,28 @@
     @apply mb-12;
   }
 
-  .blocks h2,
-  .blocks h3,
-  .blocks h4,
-  .blocks p,
-  .blocks ul,
-  .blocks ol,
-  .blocks li,
-  .blocks .callout,
-  .blocks .code-highlighting,
-  .blocks blockquote {
+  .blocks:not(.p-0) h2,
+  .blocks:not(.p-0) h3,
+  .blocks:not(.p-0) h4,
+  .blocks:not(.p-0) p,
+  .blocks:not(.p-0) ul,
+  .blocks:not(.p-0) ol,
+  .blocks:not(.p-0) .callout,
+  .blocks:not(.p-0) .code-highlighting,
+  .blocks:not(.p-0) blockquote {
     @apply container max-w-4xl px-6 md:px-12;
+  }
+
+  .blocks .list-decimal,
+  .blocks .list-disc {
+    @apply pl-20;
   }
 
   .blocks li {
     @apply mb-2;
   }
 
-  .blocks p,
+  .blocks:not(.m-0) p,
   .blocks .code-highlighting,
   .blocks .embed,
   .blocks .callout,
@@ -51,7 +55,11 @@
     @apply my-8;
   }
 
-  .blocks p {
+  .blocks.blocks-base p {
+    @apply text-base;
+  }
+
+  .blocks.blocks-lg p {
     @apply text-lg;
   }
 

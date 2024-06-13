@@ -1,23 +1,26 @@
 import { Badge } from '@/components/badge'
+import { Blocks } from '@/components/blocks'
 import { Container } from '@/components/container'
+import { Loader } from '@/components/loader'
 import {
   PageDescription,
   PageHeader,
   PageTitle,
 } from '@/components/page-header'
-import { RenderBlock } from '@/components/render-block'
 import { SocialLinks } from '@/components/social-links'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { getDomain, metadata } from '@/lib'
 import { notion } from '@/lib/notion'
-import type { Block } from '@/types/notion'
+import { Suspense } from 'react'
 
 export async function generateMetadata() {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
     slug: 'contato',
   })
+
+  if (!page) return {}
 
   const [title] = page.metaTitle.rich_text
   const [description] = page.metaDescription.rich_text
@@ -36,8 +39,6 @@ export default async function ContactPage() {
     database_id: env.PAGES_DATABASE_ID,
     slug: 'contato',
   })
-
-  const { blocks } = await notion.getPageBlocks(page.id)
 
   const [title] = page.title.title
   const description = page.description
@@ -65,12 +66,12 @@ export default async function ContactPage() {
         {/* TODO: contact form */}[ TODO - contact form ]
       </Container>
 
-      <div className="blocks animate-fade-in-up pb-12 animate-delay-700 animate-duration-slow">
-        {blocks.map((b) => {
-          const block = b as unknown as Block
-          return <RenderBlock key={`block-${block.id}`} block={block} />
-        })}
-      </div>
+      <Suspense fallback={<Loader />}>
+        <Blocks
+          blockId={page.id}
+          className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+        />
+      </Suspense>
     </>
   )
 }

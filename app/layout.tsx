@@ -1,5 +1,6 @@
 import '@/styles/blocks.css'
 import '@/styles/globals.css'
+import '@/styles/image-zoom.css'
 
 import { CookiesConsent } from '@/components/cookies-consent'
 import { Favicons } from '@/components/favicons'

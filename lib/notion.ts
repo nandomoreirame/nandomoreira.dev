@@ -2,6 +2,7 @@ import { env } from '@/env'
 import type { Link, Post } from '@/types/blog'
 import type {
   Block,
+  BlockList,
   BlockResponse,
   BlockTypes,
   BulletedListItemBlock,
@@ -216,7 +217,7 @@ const getDatabasePost = async ({
               cover,
               created_time: createdAt,
               last_edited_time: updatedAt,
-              ...rest
+              // ...rest
             } = post as PageObjectResponse
 
             return {
@@ -231,7 +232,7 @@ const getDatabasePost = async ({
               cover: cover as FileBlock,
               createdAt,
               updatedAt,
-              ...rest,
+              // ...rest,
             } satisfies Post
           })
 
@@ -425,35 +426,16 @@ export async function getBlockMediaUrl(
 }
 
 export const notion = {
-  async getPages(params: GetDatabaseParameters) {
-    return await getDatabasePages(params)
-  },
-
-  async getPage(params: GetDatabasePagesParameters) {
-    return await getDatabasePage(params)
-  },
+  getPages: getDatabasePages,
+  getPage: getDatabasePage,
+  getPosts: getDatabasePosts,
+  getLinks: getDatabaseLinks,
+  getSinglePost: getDatabasePost,
+  getBlocks: getBlocksResult,
 
   async getPageBlocks(pageId: string, params?: GetDatabaseParameters) {
     const blocks = await getBlocksResult({ block_id: pageId, ...params })
     return { blocks }
-  },
-
-  async getPosts(params: GetDatabaseParameters) {
-    return await getDatabasePosts(params)
-  },
-
-  async getLinks(params: GetDatabaseParameters & { slug?: string }) {
-    return await getDatabaseLinks(params)
-  },
-
-  async getPost(params: GetDatabasePostParameters) {
-    const post = await getDatabasePost(params)
-
-    if (!post) return
-
-    const blocks = await getBlocksResult({ block_id: post.id, ...params })
-
-    return { post, blocks }
   },
 }
 
@@ -528,4 +510,41 @@ export function getBlockText(block: Block, type?: BlockTypes) {
   }
 
   return ''
+}
+
+export function groupBlocksList(blocks: Block[]): Array<Block> {
+  const blocksListGroup = [] as unknown as Block[]
+  let blockList: Partial<BlockList> = { items: [] }
+  let countLists = blocks.filter(
+    (b) => b.type === 'numbered_list_item' || b.type === 'bulleted_list_item',
+  ).length
+
+  for (const b of blocks) {
+    const block = b as unknown as Block
+
+    if (
+      block.type === 'numbered_list_item' ||
+      block.type === 'bulleted_list_item'
+    ) {
+      blockList.id = block.id
+      blockList.type = block.type
+
+      if (blockList.items) blockList.items.push(block)
+
+      countLists = countLists - 1
+      if (countLists === 0) {
+        blocksListGroup.push(blockList as unknown as Block)
+        blockList = { items: [] }
+      }
+    } else {
+      if (blockList.items && blockList.items?.length > 0) {
+        blocksListGroup.push(blockList as unknown as Block)
+        blockList = { items: [] }
+      }
+
+      blocksListGroup.push(block)
+    }
+  }
+
+  return blocksListGroup
 }

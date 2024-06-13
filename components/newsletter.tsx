@@ -10,10 +10,10 @@ import {
   FormMessage,
 } from '@/components/form'
 import { Input } from '@/components/input'
+import { useBoolean } from '@/hooks/useBoolean'
 import type { ApiResultType } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Mail } from 'lucide-react'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -24,7 +24,7 @@ const formSchema = z.object({
 })
 
 export function Newsletter(): JSX.Element {
-  const [loading, setLoading] = useState(false)
+  const { value: loading, setValue: setLoading } = useBoolean(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

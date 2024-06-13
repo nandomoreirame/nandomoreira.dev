@@ -1,7 +1,10 @@
 'use client'
 
+import { useBoolean } from '@/hooks/useBoolean'
+import { cn } from '@/lib/utils'
 import type { MediaResponse } from '@/types/blog'
 import React, { ComponentProps, useState } from 'react'
+import { Loader } from './loader'
 
 type NotionVideoProps = ComponentProps<'video'> & {
   caption?: string
@@ -16,15 +19,24 @@ export const NotionVideo: React.FC<NotionVideoProps> = ({
   blockId,
   ...props
 }) => {
-  const [isLoading, setLoading] = useState(true)
+  const { value: isLoading, setValue: setLoading } = useBoolean(false)
   const [videoSrc, setVideoSrc] = useState(src)
 
   if (youtubeId) {
     return (
       <div className="video-wrapper">
+        <div
+          className={cn(
+            'fixed bottom-0 top-0 z-999 flex size-full items-center justify-center bg-slate-900',
+            isLoading ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          <Loader>carregando video, aguarde...</Loader>
+        </div>
         <iframe
           className="iframe"
           src={`https://youtube.com/embed/${youtubeId}`}
+          onLoad={async () => setLoading(false)}
         />
         {caption && <span className="caption">{caption}</span>}
       </div>
@@ -33,8 +45,17 @@ export const NotionVideo: React.FC<NotionVideoProps> = ({
 
   return (
     <div className="video-wrapper">
+      <div
+        className={cn(
+          'fixed bottom-0 top-0 z-999 flex size-full items-center justify-center bg-slate-900',
+          isLoading ? 'opacity-100' : 'opacity-0',
+        )}
+      >
+        <Loader>carregando video, aguarde...</Loader>
+      </div>
       <video
         controls
+        onLoad={async () => setLoading(false)}
         onError={async () => {
           if (!blockId) return
           setLoading(true)
@@ -44,7 +65,7 @@ export const NotionVideo: React.FC<NotionVideoProps> = ({
           setVideoSrc(media)
           setLoading(false)
         }}
-        className="video"
+        className={cn('video', isLoading ? 'opacity-0' : 'opacity-100')}
         {...props}
       >
         <source src={videoSrc} type="video/mp4" />

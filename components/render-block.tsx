@@ -1,8 +1,6 @@
 import { extractYoutubeId, getMediaProperties, titleToSlug } from '@/lib'
 import type {
   Block,
-  BulletedListItemBlock,
-  BulletedListItemResponse,
   CalloutBlock,
   CalloutResponse,
   CodeBlock,
@@ -19,8 +17,6 @@ import type {
   Heading4BlockResponse,
   ImageBlock,
   ImageBlockResponse,
-  NumberedListItemBlock,
-  NumberedListItemResponse,
   ParagraphBlock,
   ParagraphResponse,
   QuoteBlock,
@@ -36,13 +32,12 @@ import { NotionBlockquote } from '@/components/blockquote'
 import { NotionCode } from '@/components/code'
 import { Container } from '@/components/container'
 import { NotionEmbed } from '@/components/embed'
-import { NotionImage } from '@/components/image'
+import { Image } from '@/components/image'
 import { Separator } from '@/components/separator'
 import { Skeleton } from '@/components/skeleton'
 import { NotionText } from '@/components/text'
 import { NotionVideo } from '@/components/video'
 import { getBlockText } from '@/lib/notion'
-import Image from 'next/image'
 import { Alert, AlertDescription } from './alert'
 
 function getTitleId(block: Block) {
@@ -150,27 +145,6 @@ export async function RenderBlock({ block }: { block: Block }) {
       )
     }
 
-    case 'bulleted_list_item':
-      const bulletedListItem = (unknownBlock as BulletedListItemResponse)
-        .bulleted_list_item as BulletedListItemBlock
-
-      return (
-        <li>
-          <NotionText richText={bulletedListItem.rich_text} />
-        </li>
-      )
-
-    case 'numbered_list_item': {
-      const numberedListItem = (unknownBlock as NumberedListItemResponse)
-        .numbered_list_item as NumberedListItemBlock
-
-      return (
-        <li>
-          <NotionText richText={numberedListItem.rich_text} />
-        </li>
-      )
-    }
-
     case 'code': {
       const {
         language,
@@ -199,7 +173,7 @@ export async function RenderBlock({ block }: { block: Block }) {
       if (!source.startsWith('https://')) return <></>
 
       return (
-        <NotionImage
+        <Image
           src={source}
           alt={caption}
           caption={caption}

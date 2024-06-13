@@ -4,17 +4,18 @@ import { buttonVariants } from '@/components/button'
 import { Container } from '@/components/container'
 import { LogoIcon, LogoName } from '@/components/logo'
 import { Nav, NavLink } from '@/components/nav'
+import { useBoolean } from '@/hooks/useBoolean'
 import { cn, getDomain } from '@/lib/utils'
 import { FlaskConical, Home, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useEffect } from 'react'
 
 type HeaderProps = ComponentProps<'header'>
 
 export function Header({ ...props }: HeaderProps): JSX.Element {
-  const [isScrolling, setScrolling] = useState(false)
-  const [navOpen, setNavOpen] = useState(false)
+  const { value: isScrolling, setValue: setScrolling } = useBoolean(false)
+  const { value: navOpen, setValue: setNavOpen } = useBoolean(false)
   const currentPath = usePathname()
 
   useEffect(() => {

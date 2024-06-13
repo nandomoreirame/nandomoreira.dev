@@ -1,10 +1,11 @@
 'use client'
 
 import { Avatar, AvatarImage } from '@/components/avatar'
+import { useBoolean } from '@/hooks/useBoolean'
 import { cn } from '@/lib'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Image from 'next/image'
-import { useState, type ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 
 const avatarVariants = cva('size-full md:max-w-lg', {
   variants: {
@@ -31,21 +32,22 @@ export function AuthorAvatar({
   size,
   src,
 }: AuthorAvatarProps): JSX.Element {
-  const [isLoading, setLoading] = useState(true)
+  const { value: isLoading, setFalse } = useBoolean(false)
 
   return (
-    <Avatar className={cn(avatarVariants({ size }))}>
+    <Avatar className={cn(avatarVariants({ size }), 'group')}>
       <AvatarImage src={src ?? '/images/photo.png'} asChild>
         <Image
           src={src ?? '/images/photo.png'}
-          alt="foto de Fernando Moreira"
+          alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
           quality={100}
           className={cn(
-            'rounded-full bg-primary/10 p-2',
+            'rounded-full bg-primary/10 p-2 transition-all duration-300 ease-in-out',
+            'group-hover:bg-primary group-hover:p-1',
             isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0',
             className,
           )}
-          onLoad={() => setLoading(false)}
+          onLoad={() => setFalse()}
           width={500}
           height={500}
           priority

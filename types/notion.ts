@@ -42,6 +42,12 @@ export type Block = {
 } & BlockObjectRequest &
   BlockWithChildren
 
+export type BlockList = {
+  id: string
+  type: BlockTypes | null
+  items: Block[]
+}
+
 export type BlockWithChildren = {
   children: Array<Block>
 }

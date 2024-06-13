@@ -1,8 +1,8 @@
 import { Badge } from '@/components/badge'
-import { PageCover } from '@/components/page-cover'
 import { cn, formatDate, getFileUrl } from '@/lib/utils'
 import type { Post } from '@/types/blog'
 import Link from 'next/link'
+import { Image } from './image'
 
 export function BlogArticle({
   post,
@@ -26,12 +26,13 @@ export function BlogArticle({
       {post.cover && (
         <Link
           href={`/${slug.plain_text}`}
-          className="w-full max-w-[570px] overflow-hidden rounded-lg"
+          className="w-full max-w-[570px] animate-fade-in-up overflow-hidden rounded-lg animate-delay-1000 animate-duration-slow"
         >
-          <PageCover
+          <Image
             src={`${getFileUrl(post.cover)}`}
             alt={title.plain_text}
-            pageId={post.id}
+            blockId={post.id}
+            type="cover"
             width={600}
             height={600}
           />

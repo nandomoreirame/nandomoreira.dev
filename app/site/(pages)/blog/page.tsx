@@ -5,22 +5,27 @@ import { SocialLinks } from '@/components/social-links'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
-import { getDomain } from '@/lib/utils'
-import type { Metadata } from 'next'
+import { getDomain, metadata } from '@/lib/utils'
 import Link from 'next/link'
 
-const title = 'Blog do Nando - indie hacker e desenvolvedor full-stack'
-const description =
-  'Olá, me chamo Fernando Moreira, e nesse blog escrevo sobre programação, AI, front-end, back-end e tecnologias web no geral.'
+export async function generateMetadata() {
+  const { page } = await notion.getPage({
+    database_id: env.PAGES_DATABASE_ID,
+    slug: 'blog',
+  })
 
-export const metadata: Metadata = {
-  title,
-  description,
-  openGraph: {
-    title,
-    description,
-    url: `${getDomain()}/blog`,
-  },
+  if (!page) return {}
+
+  const [title] = page.metaTitle.rich_text
+  const [description] = page.metaDescription.rich_text
+  const [slug] = page.slug.rich_text
+
+  return metadata({
+    title: title.plain_text,
+    description: description.plain_text,
+    baseUrl: getDomain(),
+    slug: slug.plain_text,
+  })
 }
 
 export default async function BlogPage() {

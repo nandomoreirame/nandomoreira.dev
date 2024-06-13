@@ -1,24 +1,27 @@
 import { Badge } from '@/components/badge'
+import { Blocks } from '@/components/blocks'
 import { Container } from '@/components/container'
-import { PageCover } from '@/components/page-cover'
+import { Image } from '@/components/image'
+import { Loader } from '@/components/loader'
 import {
   PageDescription,
   PageHeader,
   PageTitle,
 } from '@/components/page-header'
-import { RenderBlock } from '@/components/render-block'
 import { SocialLinks } from '@/components/social-links'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain, getFileUrl, metadata } from '@/lib/utils'
-import type { Block } from '@/types/notion'
+import { Suspense } from 'react'
 
 export async function generateMetadata() {
   const { page } = await notion.getPage({
     database_id: env.PAGES_DATABASE_ID,
     slug: 'sobre',
   })
+
+  if (!page) return {}
 
   const [title] = page.metaTitle.rich_text
   const [description] = page.metaDescription.rich_text
@@ -37,8 +40,6 @@ export default async function AboutPage() {
     database_id: env.PAGES_DATABASE_ID,
     slug: 'sobre',
   })
-
-  const { blocks } = await notion.getPageBlocks(page.id)
 
   const [title] = page.title.title
 
@@ -59,22 +60,25 @@ export default async function AboutPage() {
 
       <Container className="blocks">
         {page.cover && (
-          <PageCover
-            src={`${getFileUrl(page.cover)}`}
-            pageId={page.id}
-            alt={title.plain_text}
-            width={1000}
-            height={600}
-            className="animate-fade-in-up animate-delay-500 animate-duration-slow"
-          />
+          <div className="animate-fade-in-up animate-delay-500 animate-duration-slow">
+            <Image
+              src={`${getFileUrl(page.cover)}`}
+              blockId={page.id}
+              type="cover"
+              alt={title.plain_text}
+              width={1000}
+              height={600}
+            />
+          </div>
         )}
 
-        <div className="animate-fade-in-up animate-delay-700 animate-duration-slow">
-          {blocks.map((b) => {
-            const block = b as unknown as Block
-            return <RenderBlock key={`block-${block.id}`} block={block} />
-          })}
-        </div>
+        <Suspense fallback={<Loader />}>
+          <Blocks
+            size={'lg'}
+            blockId={page.id}
+            className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+          />
+        </Suspense>
       </Container>
     </>
   )

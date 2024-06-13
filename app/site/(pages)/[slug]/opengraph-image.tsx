@@ -10,18 +10,18 @@ export default async function OpengraphImage({
 }: {
   params: { slug: string }
 }) {
-  const result = await notion.getPost({
+  const post = await notion.getSinglePost({
     database_id: env.BLOG_DATABASE_ID,
     slug: params.slug,
   })
 
-  if (!result) {
+  if (!post) {
     return new Response('Not found', { status: 404 })
   }
 
-  const [title] = result.post.title.title
-  const [description] = result.post.description.rich_text
-  const [author] = result.post.author.people
+  const [title] = post.title.title
+  const [description] = post.description.rich_text
+  const [author] = post.author.people
 
   const clashData = await fetch(
     new URL('@/styles/fonts/CalSans-SemiBold.otf', import.meta.url),
@@ -47,7 +47,7 @@ export default async function OpengraphImage({
           </div>
           <img
             tw="mt-4 w-5/6 rounded-2xl border border-gray-200 shadow-md"
-            src={getFileUrl(result.post.cover)}
+            src={getFileUrl(post.cover)}
             alt={title.plain_text}
           />
         </div>

@@ -1,29 +1,29 @@
 import { AuthorAvatar } from '@/components/author-avatar'
 import { Badge } from '@/components/badge'
+import { Blocks } from '@/components/blocks'
 import { Container } from '@/components/container'
-import { PageCover } from '@/components/page-cover'
-import { RenderBlock } from '@/components/render-block'
+import { Image } from '@/components/image'
+import { Loader } from '@/components/loader'
 import { SocialLinks } from '@/components/social-links'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { formatDate, getDomain, getFileUrl, metadata } from '@/lib/utils'
-import type { Block } from '@/types/notion'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string }
 }) {
-  const result = await notion.getPost({
+  const post = await notion.getSinglePost({
     database_id: env.BLOG_DATABASE_ID,
-    slug: decodeURIComponent(params.slug),
+    slug: params.slug,
   })
 
-  if (!result) return notFound()
+  if (!post) return {}
 
-  const { post } = result
   const [title] = post.title.title
   const [description] = post.description.rich_text
   const [author] = post.author.people
@@ -48,14 +48,13 @@ export default async function SinglePage({
 }: {
   params: { slug: string }
 }) {
-  const result = await notion.getPost({
+  const post = await notion.getSinglePost({
     database_id: env.BLOG_DATABASE_ID,
-    slug: decodeURIComponent(params.slug),
+    slug: params.slug,
   })
 
-  if (!result) return notFound()
+  if (!post) return notFound()
 
-  const { post, blocks } = result
   const [title] = post.title.title
   const [author] = post.author.people
   const category = post.category
@@ -107,24 +106,24 @@ export default async function SinglePage({
           </Container>
         </header>
 
-        <div className="blocks animate-fade-in-up animate-delay-500 animate-duration-slow">
-          {post.cover && (
-            <PageCover
+        {post.cover && (
+          <div className="animate-fade-in-up animate-delay-500 animate-duration-slow">
+            <Image
               src={`${getFileUrl(post.cover)}`}
-              pageId={post.id}
+              blockId={post.id}
+              type="cover"
               alt={title.plain_text}
-              width={1000}
-              height={600}
             />
-          )}
-
-          <div className="blog-single-content">
-            {blocks.map((b) => {
-              const block = b as unknown as Block
-              return <RenderBlock key={`block-${block.id}`} block={block} />
-            })}
           </div>
-        </div>
+        )}
+
+        <Suspense fallback={<Loader />}>
+          <Blocks
+            size={'lg'}
+            blockId={post.id}
+            className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+          />
+        </Suspense>
       </Container>
     </article>
   )
