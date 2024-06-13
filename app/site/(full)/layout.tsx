@@ -8,7 +8,7 @@ export default function SiteLayout({
 }>) {
   return (
     <>
-      <div className="absolute right-2 top-2 z-99">
+      <div className="absolute right-2 top-2 z-10">
         <ThemeToggle />
       </div>
 
@@ -16,7 +16,7 @@ export default function SiteLayout({
         {children}
       </main>
 
-      <Footer className="mt-4 animate-fade-in-up px-8 animate-delay-700 animate-duration-slow md:fixed md:bottom-0 md:left-0 md:right-0 md:z-99 md:mt-0" />
+      <Footer className="mt-4 animate-fade-in-up px-8 animate-delay-700 animate-duration-slow md:fixed md:bottom-0 md:left-0 md:right-0 md:z-10 md:mt-0" />
     </>
   )
 }
