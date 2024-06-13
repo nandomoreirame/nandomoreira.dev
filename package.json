@@ -10,7 +10,7 @@
     "ui:add": "pnpm dlx shadcn-ui@latest add",
     "ts-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{mjs,cjs,js,jsx,ts,tsx}\"",
-    "prepare": "husky install"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.5.0",

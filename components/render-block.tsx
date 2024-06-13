@@ -38,6 +38,7 @@ import { Skeleton } from '@/components/skeleton'
 import { NotionText } from '@/components/text'
 import { NotionVideo } from '@/components/video'
 import { getBlockText } from '@/lib/notion'
+import NextImage from 'next/image'
 import { Alert, AlertDescription } from './alert'
 
 function getTitleId(block: Block) {
@@ -129,12 +130,12 @@ export async function RenderBlock({ block }: { block: Block }) {
       return (
         <Alert className="callout">
           {icon && iconUrl && (
-            <Image
+            <NextImage
               src={iconUrl}
               className="size-6"
               alt="callout icon"
-              width={100}
-              height={100}
+              width={25}
+              height={25}
             />
           )}
           {icon && iconEmoji && <span>{iconEmoji}</span>}
@@ -181,6 +182,7 @@ export async function RenderBlock({ block }: { block: Block }) {
           blockId={block?.id}
           height={1000}
           width={1000}
+          zoom
         />
       )
     }

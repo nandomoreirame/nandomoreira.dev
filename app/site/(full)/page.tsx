@@ -7,7 +7,7 @@ import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { getDomain, metadata } from '@/lib/utils'
-import { Mail, NotebookText, User } from 'lucide-react'
+import { FlaskConical, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -87,7 +87,7 @@ export default async function HomePage() {
 
             <Button variant={'ghost'} asChild>
               <Link href="/lab" className="w-full xs:w-auto">
-                <NotebookText className="size-4" />
+                <FlaskConical className="size-4" />
                 <span>lab</span>
               </Link>
             </Button>

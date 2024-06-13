@@ -12,6 +12,7 @@ type ImageProps = ComponentProps<typeof NextImage> & {
   caption?: string
   blockId?: string
   type?: 'cover' | 'image'
+  zoom?: boolean
 }
 
 export function Image({
@@ -19,6 +20,7 @@ export function Image({
   blockId,
   className,
   type = 'image',
+  zoom = false,
   ...props
 }: ImageProps): JSX.Element {
   const { value: isLoading, setValue: setLoading } = useBoolean(false)
@@ -38,31 +40,40 @@ export function Image({
     setLoading(false)
   }
 
+  function ImageComp() {
+    return (
+      <NextImage
+        {...props}
+        src={src}
+        alt={props.alt}
+        quality={60}
+        width={props?.width ?? 100}
+        height={props?.height ?? 100}
+        className={cn(
+          type,
+          className,
+          isLoading
+            ? 'scale-105 opacity-50 blur-[2px]'
+            : 'scale-100 opacity-100 blur-0',
+          'transform transition-all duration-700 ease-in-out',
+        )}
+        onLoadingComplete={() => setLoading(false)}
+        onError={async () => handleError()}
+        priority={type === 'cover'}
+        loading={type === 'image' ? 'lazy' : undefined}
+        unoptimized
+      />
+    )
+  }
+
   return (
     <figure id={`image-${blockId}`} className="figure">
-      <ImageZoom>
-        <NextImage
-          {...props}
-          src={src}
-          alt={props.alt}
-          quality={60}
-          width={props?.width ?? 100}
-          height={props?.height ?? 100}
-          className={cn(
-            type,
-            className,
-            isLoading
-              ? 'scale-105 opacity-50 blur-[2px]'
-              : 'scale-100 opacity-100 blur-0',
-            'transform transition-all duration-700 ease-in-out',
-          )}
-          onLoadingComplete={() => setLoading(false)}
-          onError={async () => handleError()}
-          priority={type === 'cover'}
-          loading={type === 'image' ? 'lazy' : undefined}
-          unoptimized
-        />
-      </ImageZoom>
+      {zoom && (
+        <ImageZoom>
+          <ImageComp />
+        </ImageZoom>
+      )}
+      {!zoom && <ImageComp />}
       <Loader
         className={cn(
           'absolute bottom-0 left-0 right-0 top-0 z-5 items-center justify-center bg-gray-900/80',
