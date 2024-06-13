@@ -74,7 +74,7 @@ export default function RootLayout({
           <CookiesProvider>
             <TopLoader />
             <>{children}</>
-            {env.NODE_ENV !== 'production' && <CookiesConsent />}
+            {env.NODE_ENV === 'production' && <CookiesConsent />}
           </CookiesProvider>
           <Toaster position="top-center" />
         </ThemeProvider>
