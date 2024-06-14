@@ -26,6 +26,7 @@ export async function middleware(request: NextRequest) {
   const [redir] = redirects.filter(({ source }) => {
     return request.nextUrl.pathname.startsWith(source)
   })
+
   if (redir && redir.destination) {
     const sourcePath = request.nextUrl.pathname.replace(redir.source, '')
     const destinationUrl = `${redir.destination}${sourcePath}`.replaceAll(
@@ -61,7 +62,12 @@ export async function middleware(request: NextRequest) {
   const path = `${request.nextUrl.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ''
   }`
+
+  const headers = new Headers(request.headers)
+  headers.set('x-current-path', request.nextUrl.pathname)
+
   return NextResponse.rewrite(
     new URL(`${baseFolder}${path === '/' ? '' : path}`, request.url),
+    { headers },
   )
 }

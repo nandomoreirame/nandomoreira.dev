@@ -2,8 +2,24 @@ import { env } from '@/env'
 import { getDomain } from '@/lib'
 import { notion } from '@/lib/notion'
 import { MetadataRoute } from 'next'
+import { headers } from 'next/headers'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const headerList = headers()
+  const subdomain = headerList
+    .get('host')!
+    .replace(`${env.NEXT_PUBLIC_ROOT_DOMAIN}`, '')
+    .replace('.', '')
+
+  if (subdomain === 'links') {
+    return [
+      {
+        url: `${getDomain(subdomain)}`,
+        lastModified: new Date(),
+      },
+    ]
+  }
+
   const { posts } = await notion.getPosts({
     database_id: env.BLOG_DATABASE_ID,
   })
@@ -36,9 +52,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(updatedAt),
       }
     }),
-    {
-      url: `${getDomain('links')}`,
-      lastModified: new Date(),
-    },
   ]
 }
