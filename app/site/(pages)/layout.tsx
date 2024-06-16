@@ -10,9 +10,7 @@ export default function SiteLayout({
   return (
     <>
       <Header />
-      <main className="pb-4 pt-8 md:pb-8 md:pt-24 lg:pb-12 lg:pt-32">
-        {children}
-      </main>
+      {children}
       <Newsletter />
       <Footer scroll />
     </>

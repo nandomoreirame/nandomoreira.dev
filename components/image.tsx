@@ -50,7 +50,7 @@ export function Image({
         width={props?.width ?? 100}
         height={props?.height ?? 100}
         className={cn(
-          type,
+          'image',
           className,
           isLoading
             ? 'scale-105 opacity-50 blur-[2px]'
@@ -67,19 +67,23 @@ export function Image({
   }
 
   return (
-    <figure id={`image-${blockId}`} className="figure">
+    <figure
+      id={`image-${blockId}`}
+      className={cn(type === 'cover' ? type : 'figure')}
+    >
       {zoom && (
         <ImageZoom>
           <ImageComp />
         </ImageZoom>
       )}
       {!zoom && <ImageComp />}
-      <Loader
-        className={cn(
-          'absolute bottom-0 left-0 right-0 top-0 z-5 items-center justify-center bg-gray-900/80',
-          isLoading ? 'flex' : 'hidden',
-        )}
-      />
+      {isLoading && (
+        <Loader
+          className={cn(
+            'absolute bottom-0 left-0 right-0 top-0 z-5 flex items-center justify-center bg-gray-900/80',
+          )}
+        />
+      )}
       {caption && <figcaption className="caption">{caption}</figcaption>}
     </figure>
   )

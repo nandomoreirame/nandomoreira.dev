@@ -519,9 +519,7 @@ export function groupBlocksList(blocks: Block[]): Array<Block> {
     (b) => b.type === 'numbered_list_item' || b.type === 'bulleted_list_item',
   ).length
 
-  for (const b of blocks) {
-    const block = b as unknown as Block
-
+  blocks.forEach((block) => {
     if (
       block.type === 'numbered_list_item' ||
       block.type === 'bulleted_list_item'
@@ -544,7 +542,7 @@ export function groupBlocksList(blocks: Block[]): Array<Block> {
 
       blocksListGroup.push(block)
     }
-  }
+  })
 
   return blocksListGroup
 }

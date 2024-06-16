@@ -5,7 +5,7 @@ import { SocialLinks } from '@/components/social-links'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
-import { getDomain, metadata } from '@/lib/utils'
+import { cn, getDomain, metadata } from '@/lib/utils'
 import Link from 'next/link'
 
 export async function generateMetadata() {
@@ -42,7 +42,7 @@ export default async function BlogPage() {
   const [title] = page.title.title
 
   return (
-    <>
+    <main className={cn('pb-4 pt-8 md:pt-24 lg:pt-32')}>
       <Container size={'sm'}>
         <div className="lg:gap-15 flex flex-col items-center gap-4 sm:flex-row lg:gap-6">
           <div className="flex h-[277px] w-full max-w-[277px] items-center justify-center rounded-full">
@@ -75,6 +75,6 @@ export default async function BlogPage() {
           <BlogArticle key={post.id} post={post} mod={index % 2} />
         ))}
       </Container>
-    </>
+    </main>
   )
 }

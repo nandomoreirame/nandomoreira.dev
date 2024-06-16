@@ -1,67 +1,62 @@
-import { EmailNewsletter } from '@/components/email-newsletter'
+import { EmailContact } from '@/components/email-contact'
 import { env } from '@/env'
+import { contactFormSchema, type ContactFormSchema } from '@/lib/validations'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
 export const dynamic = 'force-dynamic'
 const resend = new Resend(env.RESEND_API_KEY)
 
-interface RequestData {
-  email: string
-  name: string
-}
-
 export async function POST(request: Request) {
-  const { email, name }: Partial<RequestData> = await request.json()
+  const formData: Partial<ContactFormSchema> = await request.json()
+  const validateData = contactFormSchema.safeParse(formData)
 
-  if (!email || !name) {
-    const message = 'O nome e email são obrigatórios'
-    return NextResponse.json({ message, error: true }, { status: 500 })
+  if (!validateData.success) {
+    return NextResponse.json(
+      {
+        message: 'Nome, Email, Telefone, Assunto e Mensagem são obrigatórios',
+        error: true,
+      },
+      { status: 500 },
+    )
   }
 
   try {
     const { data, error } = await resend.emails.send({
       from: 'Fernando Moreira <fer@nandomoreira.dev>',
       to: ['contato@nandomoreira.dev'],
-      subject: 'Novo email cadastrado no site',
-      text: `Novo email cadastrado no site: Nome: ${name} - Email: ${email}`,
-      react: EmailNewsletter({ name, email }),
+      subject: `Novo contato: ${validateData.data.subject}`,
+      text: `Novo contato: ${validateData.data.subject}`,
+      react: EmailContact(validateData.data),
     })
 
     if (error) {
-      console.error('[ error ]', error)
-      return NextResponse.json(
-        { message: 'Error', error: true },
-        { status: 500 },
-      )
+      // eslint-disable-next-line no-console
+      console.error('[ email error ]', error)
     }
 
-    const fullName = name.split(/(\s).+\s/).join('')
-    let firstName = fullName.split(' ').slice(-1).join(' ')
-    let lastName = ''
-
-    const fullNameSplit = name.split(' ')
-    if (fullNameSplit.length > 1) {
-      firstName = fullName.split(' ').slice(0, -1).join(' ')
-      lastName = fullName.split(' ').slice(-1).join(' ')
+    if (data) {
+      return NextResponse.json({
+        message: 'Email enviado com sucesso, em breve entrarei em contato :)',
+        error: false,
+      })
     }
 
-    resend.contacts.create({
-      email,
-      firstName,
-      lastName,
-      unsubscribed: false,
-      audienceId: env.RESEND_AUDIENCE_ID,
-    })
-
-    console.log('[ data ]', data)
-
-    return NextResponse.json({
-      message: 'Email cadastrado com sucesso',
-      error: false,
-    })
+    return NextResponse.json(
+      {
+        message: 'Oops! Algo deu errado. Tente novamente mais tarde.',
+        error: true,
+      },
+      { status: 500 },
+    )
   } catch (err) {
-    console.error('[ error ]', err)
-    return NextResponse.json({ message: 'Error', error: true }, { status: 500 })
+    console.error('[ email error ]', err)
+    return NextResponse.json(
+      {
+        message: 'Oops! Algo deu errado. Tente novamente mais tarde.',
+        error: true,
+      },
+      { status: 500 },
+    )
   }
 }

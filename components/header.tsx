@@ -52,10 +52,11 @@ export function Header({ ...props }: HeaderProps): JSX.Element {
       href: '/blog',
       Icon: NotebookText,
       active:
-        currentPath !== '/' &&
-        currentPath !== '/sobre' &&
-        currentPath !== '/lab' &&
-        currentPath !== '/contato',
+        currentPath === '/blog' ||
+        (currentPath !== '/' &&
+          currentPath !== '/sobre' &&
+          currentPath !== '/lab' &&
+          currentPath !== '/contato'),
     },
     {
       label: 'Lab',

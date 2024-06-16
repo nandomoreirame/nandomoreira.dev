@@ -7,7 +7,7 @@ import { Loader } from '@/components/loader'
 import { SocialLinks } from '@/components/social-links'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
-import { formatDate, getDomain, getFileUrl, metadata } from '@/lib/utils'
+import { cn, formatDate, getDomain, getFileUrl, metadata } from '@/lib/utils'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -61,70 +61,68 @@ export default async function SinglePage({
   const { date } = post.date
 
   return (
-    <article className="blog-single">
-      <Container>
-        <header className="mb-6 py-4">
-          <Container size={'sm'}>
-            {category.select !== null && (
-              <Badge
-                variant={'default'}
-                className="mb-4 inline-flex animate-fade-in-up animate-delay-100 animate-duration-slow"
-              >
-                {category.select.name}
-              </Badge>
-            )}
-            <h1 className="blog-single-title animate-fade-in-up animate-delay-200 animate-duration-slow">
-              {title.plain_text}
-            </h1>
-            <address className="mt-6 flex animate-fade-in-up flex-col gap-8 not-italic animate-delay-300 animate-duration-slow sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-4">
-                <Link href={`${getDomain()}/sobre`}>
-                  <AuthorAvatar size="sm" src={author.avatar_url ?? ''} />
-                </Link>
-                <div>
-                  <h4 className="text-xl font-semibold">
-                    <Link href={`${getDomain()}/sobre`} rel="author">
-                      {author.name}
-                    </Link>
-                  </h4>
-                  <div className="grid">
-                    <span>Dev FullStack & Indie Hacker</span>
-                    <time dateTime={date.start} title={formatDate(date.start)}>
-                      {formatDate(date.start)}
-                    </time>
-                  </div>
+    <article className={cn('pb-4 pt-8 md:pt-24 lg:pt-32')}>
+      <header className="mb-6 py-4">
+        <Container size={'sm'}>
+          {category.select !== null && (
+            <Badge
+              variant={'default'}
+              className="mb-4 inline-flex animate-fade-in-up animate-delay-100 animate-duration-slow"
+            >
+              {category.select.name}
+            </Badge>
+          )}
+          <h1 className="mb-6 animate-fade-in-up text-2xl font-bold animate-delay-200 animate-duration-slow sm:text-4xl lg:text-5xl">
+            {title.plain_text}
+          </h1>
+          <address className="mt-6 flex animate-fade-in-up flex-col gap-8 not-italic animate-delay-300 animate-duration-slow sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-4">
+              <Link href={`${getDomain()}/sobre`}>
+                <AuthorAvatar size="sm" src={author.avatar_url ?? ''} />
+              </Link>
+              <div>
+                <h4 className="text-xl font-semibold">
+                  <Link href={`${getDomain()}/sobre`} rel="author">
+                    {author.name}
+                  </Link>
+                </h4>
+                <div className="grid">
+                  <span>Dev FullStack & Indie Hacker</span>
+                  <time dateTime={date.start} title={formatDate(date.start)}>
+                    {formatDate(date.start)}
+                  </time>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <SocialLinks>
-                  <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
-                    Minhas redes {'->'}
-                  </span>
-                </SocialLinks>
-              </div>
-            </address>
-          </Container>
-        </header>
+            </div>
+            <div className="flex items-center gap-3">
+              <SocialLinks>
+                <span className="hidden text-sm leading-tight text-muted-foreground md:inline-flex">
+                  Minhas redes {'->'}
+                </span>
+              </SocialLinks>
+            </div>
+          </address>
+        </Container>
+      </header>
 
-        {post.cover && (
-          <div className="animate-fade-in-up animate-delay-500 animate-duration-slow">
-            <Image
-              src={`${getFileUrl(post.cover)}`}
-              blockId={post.id}
-              type="cover"
-              alt={title.plain_text}
-            />
-          </div>
-        )}
-
-        <Suspense fallback={<Loader />}>
-          <Blocks
-            size={'lg'}
+      {post.cover && (
+        <div className="blocks animate-fade-in-up animate-delay-500 animate-duration-slow">
+          <Image
+            src={`${getFileUrl(post.cover)}`}
             blockId={post.id}
-            className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+            type="cover"
+            alt={title.plain_text}
           />
-        </Suspense>
-      </Container>
+        </div>
+      )}
+
+      <Suspense fallback={<Loader />}>
+        <Blocks
+          size={'lg'}
+          blockId={post.id}
+          className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+        />
+      </Suspense>
     </article>
   )
 }

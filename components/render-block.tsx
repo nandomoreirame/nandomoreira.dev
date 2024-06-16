@@ -128,7 +128,7 @@ export async function RenderBlock({ block }: { block: Block }) {
       }
 
       return (
-        <Alert className="callout">
+        <Alert className="callout justify-start gap-3">
           {icon && iconUrl && (
             <NextImage
               src={iconUrl}
