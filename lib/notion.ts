@@ -38,15 +38,16 @@ import type {
   VideoBlockResponse,
 } from '@/types/notion'
 import type { Page } from '@/types/page'
-import { Client } from '@notionhq/client'
+import { LogLevel, Client as NotionClient } from '@notionhq/client'
 import type {
   ListBlockChildrenParameters,
   PageObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints'
 import { unstable_cache } from 'next/cache'
 
-const client = new Client({
+const client = new NotionClient({
   auth: env.NOTION_ACCESS_TOKEN,
+  logLevel: env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.ERROR,
 })
 
 const getDatabasePosts = async (
