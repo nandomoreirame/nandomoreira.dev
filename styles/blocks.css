@@ -6,37 +6,18 @@
   .cover,
   .figure,
   .video-wrapper {
-    @apply container relative mb-12 grid w-full max-w-7xl items-center justify-center rounded-lg;
+    @apply relative mb-12 flex w-full flex-col overflow-hidden rounded-lg;
   }
 
   .cover .image,
   .figure .image,
   .video-wrapper .video {
-    @apply inline-flex size-auto rounded-lg;
-  }
-
-  .cover {
-    @apply flex max-h-[560px] overflow-hidden;
-  }
-  .cover .image {
-    @apply w-full rounded-lg opacity-80;
-  }
-
-  .blocks:not(.p-0) h2,
-  .blocks:not(.p-0) h3,
-  .blocks:not(.p-0) h4,
-  .blocks:not(.p-0) p,
-  .blocks:not(.p-0) ul,
-  .blocks:not(.p-0) ol,
-  .blocks:not(.p-0) .callout,
-  .blocks:not(.p-0) .code-highlighting,
-  .blocks:not(.p-0) blockquote {
-    @apply container max-w-4xl px-6 md:px-12;
+    @apply inline-flex h-auto w-full rounded-lg;
   }
 
   .blocks:not(.p-0) .list-decimal,
   .blocks:not(.p-0) .list-disc {
-    @apply pl-20;
+    @apply pl-8;
   }
 
   .blocks li {

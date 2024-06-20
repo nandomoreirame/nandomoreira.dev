@@ -38,6 +38,7 @@ import { Skeleton } from '@/components/skeleton'
 import { NotionText } from '@/components/text'
 import { NotionVideo } from '@/components/video'
 import { getBlockText } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import NextImage from 'next/image'
 import { Alert, AlertDescription } from './alert'
 
@@ -170,14 +171,17 @@ export async function RenderBlock({ block }: { block: Block }) {
     case 'image': {
       const image = (unknownBlock as ImageBlockResponse)[type] as ImageBlock
       const { source, caption } = getMediaProperties(image)
+      const { src, placeholder } = await getPlaceholderImage(source)
 
       if (!source.startsWith('https://')) return <></>
 
       return (
         <Image
-          src={source}
+          src={src}
           alt={caption}
           caption={caption}
+          placeholder="blur"
+          blurDataURL={placeholder}
           // @ts-ignore blockId is not defined
           blockId={block?.id}
           height={1000}

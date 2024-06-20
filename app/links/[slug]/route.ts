@@ -25,6 +25,11 @@ export async function GET(
   const [link] = links
   const url = link.link.url ?? '/'
 
+  // eslint-disable-next-line no-console
+  console.log('[ title ]', link.title.title[0])
+  console.log('[ slug ]', link.slug.rich_text[0])
+  console.log('[ url ]', url)
+
   return redirect(
     `${url}${_searchParams.length > 0 ? `?${_searchParams}` : ''}`,
   )

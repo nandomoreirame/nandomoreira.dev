@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import type { Block, BlockList } from '@/types/notion'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { ComponentProps } from 'react'
+import { Container } from './container'
 import { RenderBlockList } from './render-block-list'
 
 const blocksVariants = cva('blocks', {
@@ -36,7 +37,11 @@ export async function Blocks({
   const blocksWithLists = groupBlocksList(blocks as unknown as Block[])
 
   return (
-    <div className={cn(blocksVariants({ size }), className)} {...props}>
+    <Container
+      size={'sm'}
+      className={cn(blocksVariants({ size }), className)}
+      {...props}
+    >
       {blocksWithLists.map((block) => {
         if (
           block.type === 'numbered_list_item' ||
@@ -53,6 +58,6 @@ export async function Blocks({
 
         return <RenderBlock key={`block-${block.id}`} block={block} />
       })}
-    </div>
+    </Container>
   )
 }

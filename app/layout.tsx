@@ -14,7 +14,6 @@ import type { Metadata } from 'next'
 import { CookiesProvider } from 'next-client-cookies/server'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
-import Script from 'next/script'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -79,7 +78,7 @@ export default function RootLayout({
           <Toaster position="top-center" />
         </ThemeProvider>
 
-        {env.NODE_ENV === 'production' && env.CRISP_WEBSITE_ID && (
+        {/* {env.NODE_ENV === 'production' && env.CRISP_WEBSITE_ID && (
           <Script
             id="crisp-chat"
             dangerouslySetInnerHTML={{
@@ -94,7 +93,7 @@ export default function RootLayout({
               `,
             }}
           />
-        )}
+        )} */}
 
         {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
           <GoogleAnalytics gaId={env.GA4_SITE_ID} />

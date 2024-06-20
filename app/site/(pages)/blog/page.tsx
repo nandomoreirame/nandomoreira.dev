@@ -5,6 +5,7 @@ import { SocialLinks } from '@/components/social-links'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import { cn, getDomain, metadata } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -41,6 +42,9 @@ export default async function BlogPage() {
 
   const [title] = page.title.title
 
+  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const { src, placeholder } = await getPlaceholderImage(image)
+
   return (
     <main className={cn('pb-4 pt-8 md:pt-24 lg:pt-32')}>
       <Container size={'sm'}>
@@ -50,7 +54,13 @@ export default async function BlogPage() {
               href={`${getDomain()}/sobre`}
               className="animate-fade-in-up animate-delay-100 animate-duration-slow"
             >
-              <AuthorAvatar size="lg" />
+              <AuthorAvatar
+                src={src}
+                alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+                placeholder="blur"
+                blurDataURL={placeholder}
+                size="lg"
+              />
             </Link>
           </div>
           <div className="flex w-full flex-col gap-4 text-center md:max-w-[593px] md:text-left">

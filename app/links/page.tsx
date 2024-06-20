@@ -13,6 +13,7 @@ import { NotionText } from '@/components/text'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import { getDomain, metadata, objectToUrlParams } from '@/lib/utils'
 import type { FileEmojiBlock } from '@/types/notion'
 import Link from 'next/link'
@@ -54,6 +55,8 @@ export default async function LinksPage({ searchParams }: PageParams) {
   ])
 
   const [title] = page.title.title
+  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const { src, placeholder } = await getPlaceholderImage(image)
 
   return (
     <>
@@ -62,7 +65,13 @@ export default async function LinksPage({ searchParams }: PageParams) {
           size={'xs'}
           className="flex flex-col items-center justify-center gap-4 text-center"
         >
-          <AuthorAvatar size={'lg'} />
+          <AuthorAvatar
+            src={src}
+            alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+            placeholder="blur"
+            blurDataURL={placeholder}
+            size="lg"
+          />
           <div>
             <h1 className="mt-2 text-2xl md:text-3xl lg:text-4xl">
               {title.plain_text}
@@ -112,15 +121,18 @@ export default async function LinksPage({ searchParams }: PageParams) {
                       '/'
                     }
                     target="_blank"
+                    className="transform rounded-lg bg-white shadow-sm ring-offset-background transition-all duration-150 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:ring-2 hover:ring-primary hover:ring-offset-2 focus:-translate-y-2 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 dark:bg-slate-800"
                   >
-                    <Card className="transform bg-white shadow-sm duration-150 ease-in-out hover:-translate-y-2 hover:border-slate-300 hover:shadow-lg dark:bg-slate-800">
+                    <Card className="border-none bg-transparent shadow-none">
                       <CardContent className="flex flex-col items-center justify-center gap-6 p-6 md:flex-row">
                         {icon && iconUrl && (
                           <Avatar className="size-24">
                             <AvatarImage
                               src={`${iconUrl}`}
                               alt={`${title.plain_text}`}
-                              className="h-auto w-24 object-cover"
+                              className="h-auto w-24 rounded-full object-cover"
+                              height={96}
+                              width={96}
                             />
                           </Avatar>
                         )}

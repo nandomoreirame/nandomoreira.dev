@@ -5,6 +5,7 @@ import { Container } from '@/components/container'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import { getDomain, metadata } from '@/lib/utils'
 import { Home, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
@@ -34,6 +35,8 @@ export default async function LabPage() {
   })
 
   const [title] = page.title.title
+  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const { src, placeholder } = await getPlaceholderImage(image)
 
   return (
     <Container size={'sm'}>
@@ -42,7 +45,13 @@ export default async function LabPage() {
           href="/sobre"
           className="animate-fade-in-up animate-delay-100 animate-duration-slow"
         >
-          <AuthorAvatar size="md" />
+          <AuthorAvatar
+            src={src}
+            alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+            placeholder="blur"
+            blurDataURL={placeholder}
+            size="md"
+          />
         </Link>
 
         <div className="grid gap-2">

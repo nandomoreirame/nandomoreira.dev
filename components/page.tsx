@@ -59,27 +59,27 @@ export async function Page({
       </PageHeader>
 
       {page.cover && (
-        <Image
-          src={`${getFileUrl(page.cover)}`}
-          blockId={page.id}
-          type="cover"
-          alt={title.plain_text}
-          width={1000}
-          height={600}
-          className="animate-fade-in-up animate-delay-500 animate-duration-slow"
-        />
+        <Container size={'sm'}>
+          <Image
+            src={`${getFileUrl(page.cover)}`}
+            blockId={page.id}
+            type="cover"
+            alt={title.plain_text}
+            width={1000}
+            height={600}
+            className="animate-fade-in-up animate-delay-500 animate-duration-slow"
+          />
+        </Container>
       )}
 
       {children}
 
-      <Container size={'sm'}>
-        <Suspense fallback={<Loader />}>
-          <Blocks
-            blockId={page.id}
-            className="animate-fade-in-up p-0 animate-delay-700 animate-duration-slow"
-          />
-        </Suspense>
-      </Container>
+      <Suspense fallback={<Loader />}>
+        <Blocks
+          blockId={page.id}
+          className="animate-fade-in-up animate-delay-700 animate-duration-slow"
+        />
+      </Suspense>
     </main>
   )
 }

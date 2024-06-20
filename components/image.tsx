@@ -6,7 +6,6 @@ import type { MediaResponse } from '@/types/blog'
 import NextImage from 'next/image'
 import { ComponentProps, useEffect, useState } from 'react'
 import ImageZoom from 'react-medium-image-zoom'
-import { Loader } from './loader'
 
 type ImageProps = ComponentProps<typeof NextImage> & {
   caption?: string
@@ -32,10 +31,12 @@ export function Image({
   async function handleError() {
     if (!blockId) return
     setLoading(true)
+
     const urlType = type === 'cover' ? `/page?pageId` : `/media?blockId`
     const { media } = await fetch(
       `/api${urlType}=${blockId}&type=${type}`,
     ).then((res) => res.json() as unknown as MediaResponse)
+
     setSrc(media)
     setLoading(false)
   }
@@ -51,14 +52,14 @@ export function Image({
         height={props?.height ?? 100}
         className={cn(
           'image',
-          className,
           isLoading
-            ? 'scale-105 opacity-50 blur-[2px]'
+            ? 'scale-110 opacity-50 blur-[2px]'
             : 'scale-100 opacity-100 blur-0',
           'transform transition-all duration-700 ease-in-out',
+          className,
         )}
-        onLoadingComplete={() => setLoading(false)}
-        onError={async () => handleError()}
+        onLoad={() => setLoading(false)}
+        onError={async () => await handleError()}
         priority={type === 'cover'}
         loading={type === 'image' ? 'lazy' : undefined}
         unoptimized
@@ -77,13 +78,6 @@ export function Image({
         </ImageZoom>
       )}
       {!zoom && <ImageComp />}
-      {isLoading && (
-        <Loader
-          className={cn(
-            'absolute bottom-0 left-0 right-0 top-0 z-5 flex items-center justify-center bg-gray-900/80',
-          )}
-        />
-      )}
       {caption && <figcaption className="caption">{caption}</figcaption>}
     </figure>
   )

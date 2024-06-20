@@ -6,6 +6,7 @@ import { Loader } from '@/components/loader'
 import { NotionText } from '@/components/text'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import { getDomain, metadata } from '@/lib/utils'
 import { FlaskConical, Mail, NotebookText, User } from 'lucide-react'
 import Link from 'next/link'
@@ -38,6 +39,9 @@ export default async function HomePage() {
 
   const [title] = page.title.title
 
+  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const { src, placeholder } = await getPlaceholderImage(image)
+
   return (
     <Container size={'sm'}>
       <div className="relative m-auto mb-6 flex max-w-4xl flex-col items-center gap-12 text-center md:flex-row md:text-left">
@@ -45,7 +49,13 @@ export default async function HomePage() {
           href="/sobre"
           className="animate-fade-in-up animate-delay-100 animate-duration-slow"
         >
-          <AuthorAvatar size="lg" />
+          <AuthorAvatar
+            src={src}
+            alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+            placeholder="blur"
+            blurDataURL={placeholder}
+            size="lg"
+          />
         </Link>
         <div className="grid gap-2">
           <h1 className="animate-fade-in-up text-3xl font-extrabold leading-tight animate-delay-200 animate-duration-slow md:text-4xl">
@@ -59,11 +69,11 @@ export default async function HomePage() {
           <Suspense fallback={<Loader />}>
             <Blocks
               blockId={page.id}
-              className="m-0 animate-fade-in-up p-0 animate-delay-700 animate-duration-slow"
+              className="m-0 animate-fade-in-up !p-0 animate-delay-700 animate-duration-slow"
             />
           </Suspense>
 
-          <div className="mt-2 flex animate-fade-in-up flex-col justify-center gap-4 animate-delay-800 animate-duration-slow md:mt-0 md:flex-row md:justify-start md:gap-2">
+          <div className="mt-2 flex animate-fade-in-up flex-col justify-center gap-4 animate-delay-800 animate-duration-slow md:flex-row md:justify-start md:gap-2">
             <Button asChild>
               <Link href="/contato" className="w-full xs:w-auto">
                 <Mail className="size-4" />

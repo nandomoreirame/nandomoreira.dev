@@ -7,6 +7,7 @@ import { Loader } from '@/components/loader'
 import { SocialLinks } from '@/components/social-links'
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
+import { getPlaceholderImage } from '@/lib/sharp'
 import { cn, formatDate, getDomain, getFileUrl, metadata } from '@/lib/utils'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -60,6 +61,15 @@ export default async function SinglePage({
   const category = post.category
   const { date } = post.date
 
+  const cover = post.cover ? getFileUrl(post.cover) : null
+  const { src: coverSrc, placeholder: coverPlaceholder } =
+    await getPlaceholderImage(cover)
+
+  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const { src, placeholder } = await getPlaceholderImage(
+    author.avatar_url ?? image,
+  )
+
   return (
     <article className={cn('pb-4 pt-8 md:pt-24 lg:pt-32')}>
       <header className="mb-6 py-4">
@@ -78,7 +88,13 @@ export default async function SinglePage({
           <address className="mt-6 flex animate-fade-in-up flex-col gap-8 not-italic animate-delay-300 animate-duration-slow sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-4">
               <Link href={`${getDomain()}/sobre`}>
-                <AuthorAvatar size="sm" src={author.avatar_url ?? ''} />
+                <AuthorAvatar
+                  src={src}
+                  alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+                  placeholder="blur"
+                  blurDataURL={placeholder}
+                  size="sm"
+                />
               </Link>
               <div>
                 <h4 className="text-xl font-semibold">
@@ -105,15 +121,17 @@ export default async function SinglePage({
         </Container>
       </header>
 
-      {post.cover && (
-        <div className="blocks animate-fade-in-up animate-delay-500 animate-duration-slow">
+      {coverSrc && (
+        <Container className="blocks animate-fade-in-up animate-delay-500 animate-duration-slow">
           <Image
-            src={`${getFileUrl(post.cover)}`}
+            src={coverSrc}
             blockId={post.id}
             type="cover"
+            placeholder="blur"
+            blurDataURL={coverPlaceholder}
             alt={title.plain_text}
           />
-        </div>
+        </Container>
       )}
 
       <Suspense fallback={<Loader />}>
