@@ -53,7 +53,7 @@ export function Image({
         className={cn(
           'image',
           isLoading
-            ? 'scale-110 opacity-50 blur-[2px]'
+            ? 'scale-110 opacity-50 blur-sm'
             : 'scale-100 opacity-100 blur-0',
           'transform transition-all duration-700 ease-in-out',
           className,

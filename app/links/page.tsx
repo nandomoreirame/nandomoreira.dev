@@ -56,7 +56,7 @@ export default async function LinksPage({ searchParams }: PageParams) {
   ])
 
   const [title] = page.title.title
-  const image = '/images/fernando-moreira-linhas-amarelas.webp'
+  const image = '/images/fernando-moreira-linhas-brancas.webp'
   const { src, placeholder } = await getPlaceholderImage(image)
 
   return (
@@ -71,7 +71,8 @@ export default async function LinksPage({ searchParams }: PageParams) {
             alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
             placeholder="blur"
             blurDataURL={placeholder}
-            size="lg"
+            className="bg-black/50 p-[4px] group-hover:bg-black dark:bg-white/50 dark:group-hover:bg-white"
+            size="md"
           />
           <div>
             <h1 className="mt-2 text-2xl md:text-3xl lg:text-4xl">

@@ -1,11 +1,12 @@
 import { env } from '@/env'
 import { notion } from '@/lib/notion'
 import { redirect } from 'next/navigation'
+import { type NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   {
     params,
   }: {
@@ -20,15 +21,10 @@ export async function GET(
     slug: params.slug,
   })
 
-  if (!links || links.length === 0) redirect('/')
+  if (!links || links.length === 0) return redirect('/')
 
   const [link] = links
   const url = link.link.url ?? '/'
-
-  // eslint-disable-next-line no-console
-  console.log('[ title ]', link.title.title[0])
-  console.log('[ slug ]', link.slug.rich_text[0])
-  console.log('[ url ]', url)
 
   return redirect(
     `${url}${_searchParams.length > 0 ? `?${_searchParams}` : ''}`,
