@@ -28,6 +28,9 @@ export function ThemeToggle() {
           >
             <Sun className="hidden h-[1.2rem] w-[1.2rem] transform transition-all duration-500 ease-in-out group-hover:rotate-90 dark:flex" />
             <Moon className="flex h-[1.2rem] w-[1.2rem] transform transition-all duration-500 ease-in-out group-hover:rotate-90 dark:hidden" />
+            <span className="sr-only">
+              Mudar para o tema {resolvedTheme === 'light' ? 'dark' : 'light'}
+            </span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
