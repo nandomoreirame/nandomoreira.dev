@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { Check, CookieIcon } from 'lucide-react'
 import { useCookies } from 'next-client-cookies'
 import { ComponentProps, useEffect, useState } from 'react'
-import { Alert, AlertDescription, AlertTitle } from './alert'
+import { Alert, AlertDescription } from './alert'
 import { Button } from './button'
 import { Container } from './container'
 
@@ -50,7 +50,6 @@ export function CookiesConsent({
       <Container size={'xs'}>
         <Alert className="bg-gray-300 shadow-lg dark:bg-gray-900">
           <CookieIcon className="mt- size-6" />
-          <AlertTitle className="ml-2 text-xl">Cookies</AlertTitle>
           <AlertDescription className="ml-2 flex flex-col items-center gap-2 md:flex-row">
             <p>
               Este site utiliza cookies, ao continuar a utiliza-lo você concorda
