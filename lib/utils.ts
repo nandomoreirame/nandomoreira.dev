@@ -107,6 +107,7 @@ export function metadata({
   }
 }): Metadata {
   const path = slug === 'home' ? '/' : `/${slug}`
+  const ogImage = `${`/${article ? 'article' : 'page'}/${slug}`}/opengraph-image`
 
   return {
     title,
@@ -123,7 +124,7 @@ export function metadata({
       url: `${baseUrl}${path}`,
       images: [
         {
-          url: `${baseUrl}${article ? path : `/og/${slug}`}/opengraph-image`,
+          url: `${baseUrl}${ogImage}?v=${new Date().getTime()}`,
           width: 1200,
           height: 600,
         },

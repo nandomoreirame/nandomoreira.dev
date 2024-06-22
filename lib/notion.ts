@@ -47,7 +47,8 @@ import { unstable_cache } from 'next/cache'
 
 const client = new NotionClient({
   auth: env.NOTION_ACCESS_TOKEN,
-  logLevel: env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.ERROR,
+  // logLevel: env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.ERROR,
+  logLevel: LogLevel.ERROR,
 })
 
 const getDatabasePosts = async (
@@ -189,9 +190,14 @@ const getDatabaseLinks = async ({
 
 const getDatabasePost = async ({
   slug,
+  revalidateTag,
   ...args
-}: GetDatabasePostParameters): Promise<Post | undefined> => {
-  const _cacheTag = `${args.database_id}-${slug}-database-slug`
+}: GetDatabasePostParameters & {
+  revalidateTag?: string
+}): Promise<Post | undefined> => {
+  const _cacheTag = revalidateTag
+    ? revalidateTag
+    : `${args.database_id}-${slug}-database-slug`
 
   return unstable_cache(
     async () =>
@@ -251,10 +257,15 @@ const getDatabasePost = async ({
   )()
 }
 
-const getDatabasePages = async (
-  args: GetDatabaseParameters,
-): Promise<{ pages: Page[] }> => {
-  const _cacheTag = `--${args.database_id}-database-pages`
+const getDatabasePages = async ({
+  revalidateTag,
+  ...args
+}: GetDatabaseParameters & {
+  revalidateTag?: string
+}): Promise<{ pages: Page[] }> => {
+  const _cacheTag = revalidateTag
+    ? revalidateTag
+    : `--${args.database_id}-database-pages`
 
   return unstable_cache(
     async () =>
@@ -291,9 +302,14 @@ const getDatabasePages = async (
 
 const getDatabasePage = async ({
   slug,
+  revalidateTag,
   ...args
-}: GetDatabasePagesParameters): Promise<{ page: Page }> => {
-  const _cacheTag = `--${args.database_id}-${slug}-database-page`
+}: GetDatabasePagesParameters & {
+  revalidateTag?: string
+}): Promise<{ page: Page }> => {
+  const _cacheTag = revalidateTag
+    ? revalidateTag
+    : `--${args.database_id}-${slug}-database-page`
 
   return unstable_cache(
     async () =>

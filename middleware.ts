@@ -51,11 +51,10 @@ export async function middleware(request: NextRequest) {
 
   let baseFolder = '/site'
 
-  switch (hostname) {
-    // rewrite root application to `/links` folder
-    case `links.${env.NEXT_PUBLIC_ROOT_DOMAIN}`:
-      baseFolder = '/links'
-      break
+  if (request.nextUrl.pathname.includes('/opengraph-image')) {
+    baseFolder = '/og'
+  } else if (`links.${env.NEXT_PUBLIC_ROOT_DOMAIN}` === hostname) {
+    baseFolder = '/links'
   }
 
   const searchParams = request.nextUrl.searchParams.toString()

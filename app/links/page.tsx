@@ -31,6 +31,7 @@ export async function generateMetadata() {
   return metadata({
     title: title.plain_text,
     description: description.plain_text,
+    siteName: 'links.nandomoreira.dev',
     baseUrl: getDomain('links'),
     slug: slug.plain_text,
   })
