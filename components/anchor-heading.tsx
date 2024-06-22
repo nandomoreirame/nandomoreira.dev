@@ -10,12 +10,14 @@ import { toast } from 'sonner'
 
 type AnchorProps = {
   anchor?: string
+  label?: string | React.ReactNode
   anchorVisibility?: 'hover' | 'always' | 'never'
   disableCopyToClipboard?: boolean
 }
 
 const Anchor = ({
   anchor,
+  label,
   disableCopyToClipboard = false,
   anchorVisibility = 'always',
 }: AnchorProps) => {
@@ -44,6 +46,7 @@ const Anchor = ({
     >
       <Link href={`#${anchor}`} onClick={copyToClipboard}>
         <LinkIcon className="text-gray-600 hover:text-gray-400" />
+        {label && <span className="sr-only">{label}</span>}
       </Link>
     </span>
   )
@@ -101,6 +104,7 @@ const BaseHeading = ({
       {anchor && (
         <Anchor
           anchor={anchor}
+          label={children}
           anchorVisibility={anchorVisibility}
           disableCopyToClipboard={disableCopyToClipboard}
         />
