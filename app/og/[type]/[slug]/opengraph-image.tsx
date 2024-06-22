@@ -20,7 +20,7 @@ export default async function OpengraphImage({
   let author
   let cover
 
-  const revalidateTag = `opengraph-image--${new Date().getTime().toString()}`
+  const revalidateTag = `opengraph-${type}-${new Date().getTime().toString()}`
 
   if (type === 'page') {
     const { page } = await notion.getPage({
