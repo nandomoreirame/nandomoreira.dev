@@ -63,6 +63,14 @@ export default function RootLayout({
     >
       <head>
         <Favicons />
+        {env.NODE_ENV === 'production' && (
+          <Script
+            id="umami-analytics"
+            src="https://cloud.umami.is/script.js"
+            data-website-id="b92cd797-2bb9-4a46-8af1-e2e7262ed489"
+            defer
+          />
+        )}
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider
@@ -98,15 +106,6 @@ export default function RootLayout({
 
         {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
           <GoogleAnalytics gaId={env.GA4_SITE_ID} />
-        )}
-
-        {env.NODE_ENV === 'production' && (
-          <Script
-            id="umami-analytics"
-            src="https://cloud.umami.is/script.js"
-            data-website-id="b92cd797-2bb9-4a46-8af1-e2e7262ed489"
-            defer
-          />
         )}
       </body>
     </html>
