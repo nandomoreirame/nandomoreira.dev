@@ -64,12 +64,22 @@ export default function RootLayout({
       <head>
         <Favicons />
         {env.NODE_ENV === 'production' && (
-          <Script
-            id="umami-analytics"
-            src="https://cloud.umami.is/script.js"
-            data-website-id="b92cd797-2bb9-4a46-8af1-e2e7262ed489"
-            defer
-          />
+          <>
+            <Script
+              id="umami-analytics"
+              src="https://cloud.umami.is/script.js"
+              data-website-id="b92cd797-2bb9-4a46-8af1-e2e7262ed489"
+              crossOrigin="anonymous"
+              defer
+            />
+            <Script
+              async
+              id="ackee-analytics"
+              src="https://nandomoreira-analytics-ackee.jndo6r.easypanel.host/tracker.js"
+              data-ackee-server="https://nandomoreira-analytics-ackee.jndo6r.easypanel.host"
+              data-ackee-domain-id="b456c781-a126-4546-97e7-510ac9afd53d"
+            />
+          </>
         )}
       </head>
       <body suppressHydrationWarning>
