@@ -27,6 +27,8 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_ROOT_DOMAIN: z.string(),
     NEXT_PUBLIC_NODE_ENV: z.string(),
+    NEXT_PUBLIC_ACKEE_SERVER: z.string(),
+    NEXT_PUBLIC_ACKEE_ID: z.string(),
   },
 
   /**
@@ -48,6 +50,8 @@ export const env = createEnv({
 
     NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_ACKEE_SERVER: process.env.NEXT_PUBLIC_ACKEE_SERVER,
+    NEXT_PUBLIC_ACKEE_ID: process.env.NEXT_PUBLIC_ACKEE_ID,
   },
 
   /**

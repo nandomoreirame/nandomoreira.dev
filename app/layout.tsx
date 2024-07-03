@@ -2,6 +2,7 @@ import '@/styles/blocks.css'
 import '@/styles/globals.css'
 import '@/styles/image-zoom.css'
 
+import { AckeeTracker } from '@/components/ackee-tracker'
 import { CookiesConsent } from '@/components/cookies-consent'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
@@ -9,7 +10,6 @@ import { TopLoader } from '@/components/top-loader'
 import { env } from '@/env'
 import { cn, getDomain } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
-import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 import { CookiesProvider } from 'next-client-cookies/server'
 import { Inter as FontSans } from 'next/font/google'
@@ -72,14 +72,10 @@ export default function RootLayout({
               crossOrigin="anonymous"
               defer
             />
-            <Script
-              async
-              id="ackee-analytics"
-              src="https://nandomoreira-analytics-ackee.jndo6r.easypanel.host/tracker.js"
-              data-ackee-server="https://nandomoreira-analytics-ackee.jndo6r.easypanel.host"
-              data-ackee-domain-id="b456c781-a126-4546-97e7-510ac9afd53d"
-            />
           </>
+        )}
+        {env.NEXT_PUBLIC_ACKEE_ID && env.NEXT_PUBLIC_ACKEE_SERVER && (
+          <AckeeTracker />
         )}
       </head>
       <body suppressHydrationWarning>
@@ -114,9 +110,9 @@ export default function RootLayout({
           />
         )} */}
 
-        {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
+        {/* {env.NODE_ENV === 'production' && env.GA4_SITE_ID && (
           <GoogleAnalytics gaId={env.GA4_SITE_ID} />
-        )}
+        )} */}
       </body>
     </html>
   )
