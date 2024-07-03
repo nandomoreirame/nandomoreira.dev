@@ -10,7 +10,7 @@ export function AckeeTracker() {
   const searchParams = useSearchParams()
 
   useAckee(
-    `${pathname}${searchParams.toString()}`,
+    `${pathname}?${searchParams.toString()}`,
     {
       server: env.NEXT_PUBLIC_ACKEE_SERVER,
       domainId: env.NEXT_PUBLIC_ACKEE_ID,
