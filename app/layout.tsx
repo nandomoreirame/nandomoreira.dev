@@ -15,6 +15,7 @@ import { CookiesProvider } from 'next-client-cookies/server'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import Script from 'next/script'
+import { Suspense } from 'react'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -75,7 +76,9 @@ export default function RootLayout({
           </>
         )}
         {env.NEXT_PUBLIC_ACKEE_ID && env.NEXT_PUBLIC_ACKEE_SERVER && (
-          <AckeeTracker />
+          <Suspense>
+            <AckeeTracker />
+          </Suspense>
         )}
       </head>
       <body suppressHydrationWarning>
