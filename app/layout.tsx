@@ -27,7 +27,7 @@ const fontHeading = localFont({
   variable: '--font-heading',
 })
 
-const title = 'Fernando Moreira - indie hacker e desenvolvedor full-stack'
+const title = 'Fernando Moreira - front-end e desenvolvedor full-stack'
 const description =
   'Olá, me chamo Fernando Moreira, e nesse blog escrevo sobre programação, AI, front-end, back-end e tecnologias web no geral.'
 
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   description,
   keywords:
-    'indie hacker, indie, hacker, desenvolvedor, developer, front-end, back-end, full-stack, web designer, web, designer, saas, micro-saas, tecnologia, marketing, tech',
+    'desenvolvedor, developer, front-end, back-end, full-stack, web designer, web, designer, saas, micro-saas, tecnologia, marketing, tech',
   openGraph: {
     title,
     description,

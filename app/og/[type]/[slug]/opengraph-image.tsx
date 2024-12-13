@@ -95,7 +95,7 @@ export default async function OpengraphImage({
             <img
               tw="mt-4 w-5/6 rounded-2xl border border-gray-200 shadow-md"
               src={`${getDomain()}/images/site.png`}
-              alt="Fernando Moreira - indie hacker e desenvolvedor full-stack"
+              alt="Fernando Moreira - front-end e desenvolvedor full-stack"
             />
           )}
         </div>

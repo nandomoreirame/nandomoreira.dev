@@ -56,7 +56,7 @@ export default async function BlogPage() {
             >
               <AuthorAvatar
                 src={src}
-                alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+                alt="foto de Fernando Moreira - front-end e desenvolvedor full-stack"
                 placeholder="blur"
                 blurDataURL={placeholder}
                 size="lg"

@@ -47,7 +47,7 @@ export default async function LabPage() {
         >
           <AuthorAvatar
             src={src}
-            alt="foto de Fernando Moreira - indie hacker e desenvolvedor full-stack"
+            alt="foto de Fernando Moreira - front-end e desenvolvedor full-stack"
             placeholder="blur"
             blurDataURL={placeholder}
             size="md"

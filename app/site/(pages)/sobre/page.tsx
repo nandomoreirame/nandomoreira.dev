@@ -31,7 +31,7 @@ export default function AboutPage() {
       <Page
         slug="sobre"
         pageBadge={'sobre'}
-        pageTitle={<>indie hacker e desenvolvedor full-stack</>}
+        pageTitle={<>front-end e desenvolvedor full-stack</>}
       />
     </Suspense>
   )
