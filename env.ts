@@ -17,6 +17,7 @@ export const env = createEnv({
     PAGES_DATABASE_ID: z.string(),
     RESEND_API_KEY: z.string(),
     RESEND_AUDIENCE_ID: z.string(),
+    IS_OFFLINE: z.boolean().optional(),
   },
 
   /**
@@ -36,6 +37,8 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    IS_OFFLINE: process.env.IS_OFFLINE === 'true',
+
     NODE_ENV: process.env.NODE_ENV,
     ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
     GA4_SITE_ID: process.env.GA4_SITE_ID,

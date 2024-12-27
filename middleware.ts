@@ -15,6 +15,10 @@ export const config = {
 }
 
 export async function middleware(request: NextRequest) {
+  if (!!env.IS_OFFLINE) {
+    return NextResponse.rewrite(new URL(`/offline`, request.url))
+  }
+
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   let hostname = request.headers
     .get('host')!
