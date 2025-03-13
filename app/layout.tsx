@@ -2,7 +2,7 @@ import '@/styles/blocks.css'
 import '@/styles/globals.css'
 import '@/styles/image-zoom.css'
 
-import { AckeeTracker } from '@/components/ackee-tracker'
+// import { AckeeTracker } from '@/components/ackee-tracker'
 import { CookiesConsent } from '@/components/cookies-consent'
 import { Favicons } from '@/components/favicons'
 import { Toaster } from '@/components/sonner'
@@ -75,11 +75,11 @@ export default function RootLayout({
             />
           </>
         )}
-        {env.NEXT_PUBLIC_ACKEE_ID && env.NEXT_PUBLIC_ACKEE_SERVER && (
+        {/* {env.NEXT_PUBLIC_ACKEE_ID && env.NEXT_PUBLIC_ACKEE_SERVER && (
           <Suspense>
             <AckeeTracker />
           </Suspense>
-        )}
+        )} */}
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider

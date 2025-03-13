@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development next dev",
+    "dev": "NODE_ENV=development next dev -H 0.0.0.0 --port 3003",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -66,6 +66,12 @@
   "lint-staged": {
     "*": [
       "prettier --write \"**/*.{mjs,cjs,js,jsx,ts,tsx}\" --list-different"
+    ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
     ]
   }
 }
