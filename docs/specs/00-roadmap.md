@@ -1,8 +1,9 @@
 ---
 project: nandomoreira-dev
 generated_at: 2026-08-08
-current_sprint: 1
-completed_features: []
+current_sprint: 2
+completed_features:
+  - infra-deploy-spike
 total_sprints: 6
 source_docs:
   - docs/BRIEF.md
@@ -104,7 +105,7 @@ reescritos se o plano B for acionado.
 
 | Slug | Sprint | SPEC | Plano |
 |------|--------|------|-------|
-| `infra-deploy-spike` | 1 | `docs/specs/infra-deploy-spike/SPEC.md` | `docs/plans/2026-08-08-infra-deploy-spike.md` |
+| `infra-deploy-spike` | 1 | `docs/specs/infra-deploy-spike/SPEC.md` | `docs/plans/2026-08-08-infra-deploy-spike.md` — **concluída** |
 | `design-system-foundation` | 2 | `docs/specs/design-system-foundation/SPEC.md` | `docs/plans/2026-08-08-design-system-foundation.md` |
 | `content-data-layer` | 2 | `docs/specs/content-data-layer/SPEC.md` | `docs/plans/2026-08-08-content-data-layer.md` |
 | `project-catalog` | 2 | `docs/specs/project-catalog/SPEC.md` | `docs/plans/2026-08-08-project-catalog.md` |
@@ -129,6 +130,16 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-08-08: Sprint 1 concluída. Plano A confirmado em `docs/adr/001-hosting-platform.md`:
+  Astro 7 SSR com `@astrojs/node` standalone está no ar no App Hosting. O gate F8.1
+  fechou e a sprint 2 está liberada. O plano B não foi acionado.
+- 2026-08-08: Região corrigida de `us-east1` para `us-east4` em BRIEF, PRD, MVP-SCOPE,
+  spec e plano. O App Hosting nunca ofereceu `us-east1`; as regiões disponíveis são
+  `asia-east1`, `asia-southeast1`, `europe-west4`, `us-central1`, `us-east4` e
+  `us-east5`. O Firestore de F7 fica co-locado em `us-east4`.
+- 2026-08-08: Deploy a partir do fonte local (`alwaysDeployFromSource`), não de
+  repositório GitHub conectado. Conectar o GitHub fica recomendado antes do cutover da
+  sprint 6, para rastrear qual commit está servindo.
 - 2026-08-08: Specs e planos gerados até a fronteira do spike (sprints 1 a 4). As
   quatro features de sprint 4b em diante ficam sem spec até o ADR
   `docs/adr/001-hosting-platform.md` existir, porque plano A e plano B produzem
