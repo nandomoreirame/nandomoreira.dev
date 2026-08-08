@@ -4,7 +4,7 @@
 
 **Goal:** Provar em produção que um Astro 7 SSR com `@astrojs/node` standalone sobe e responde no Firebase App Hosting, ou acionar o plano B com o motivo registrado.
 **Architecture:** Projeto Astro mínimo em `output: 'server'` com adapter Node em modo standalone. O entrypoint gerado (`dist/server/entry.mjs`) escuta em `0.0.0.0:$PORT` e é iniciado pelo `runCommand` declarado em `apphosting.yaml`. Uma única rota de API (`/api/health`) devolve o instante da requisição com `cache-control: no-store`, o que torna impossível confundir SSR com conteúdo pré-renderizado ou cacheado na borda.
-**Tech Stack:** Astro 7.2.0, `@astrojs/node` 11.1.0, TypeScript 5.x, Vitest, Firebase App Hosting (`nandomoreira-dev`, `us-east1`).
+**Tech Stack:** Astro 7.2.0, `@astrojs/node` 11.1.0, TypeScript 5.x, Vitest, Firebase App Hosting (`nandomoreira-dev`, `us-east4`).
 **Total Tasks:** 10
 **Estimated Complexity:** large (9+ tasks)
 
@@ -15,7 +15,7 @@
 Estas três coisas não são tarefas do implementador porque envolvem git, console e
 conta. Precisam estar prontas antes da Task 9.
 
-1. Repositório git inicializado no diretório e publicado como `github.com/nandomoreirame/nandomoreira.dev`. O App Hosting constrói a partir de um repositório GitHub conectado, não de um upload local.
+1. Repositório git inicializado e publicado como `github.com/nandomoreirame/nandomoreira.dev`. Serve ao versionamento; o deploy em si sai do fonte local (ver Task 9 e ADR-001).
 2. Projeto `nandomoreira-dev` no plano Blaze.
 3. `firebase login` válido. Se a CLI retornar erro de autenticação, a Rule 13 autoriza rodar o login sem perguntar.
 
@@ -679,37 +679,48 @@ pública. É o único teste que fecha o spike, porque só ele toca a plataforma.
 
 **Step 2: Run test to verify it fails**
 
-Run: `bash scripts/verify-deployed.sh https://<backend>.us-east1.hosted.app`
+Run: `bash scripts/verify-deployed.sh https://<backend>.us-east4.hosted.app`
 Expected: FAIL, o backend ainda não existe.
 
 **Step 3: Write minimal implementation**
 
-Criar o backend, uma vez:
+Criar o backend, uma vez. **A região é `us-east4`**: o App Hosting oferece apenas
+`asia-east1`, `asia-southeast1`, `europe-west4`, `us-central1`, `us-east4` e
+`us-east5`. A `us-east1` declarada nos documentos estratégicos até 2026-08-08 nunca
+existiu para este serviço, e `us-east4` é a mais próxima disponível.
 
 ```bash
 firebase apphosting:backends:create \
   --project nandomoreira-dev \
-  --location us-east1
+  --primary-region us-east4
 ```
 
-Disparar o rollout. **Sempre em background**, nunca em foreground com timeout curto:
-`apphosting:rollouts:create` bloqueia de 2 a 3 minutos esperando o build, e um
-timeout mata a CLI depois de o build já ter sido criado no servidor. Um retry cego
-nesse estado devolve `HTTP 409, unable to queue the operation`.
+Este projeto usa **deploy a partir do fonte local**, não de repositório GitHub
+conectado (ver ADR-001). `firebase.json` declara `"alwaysDeployFromSource": true`, e o
+deploy é:
 
 ```bash
-firebase apphosting:rollouts:create <backend-id> \
-  --project nandomoreira-dev \
-  --git-commit "$(git rev-parse HEAD)" \
-  --force
+firebase deploy --only apphosting --project nandomoreira-dev
 ```
 
-Se a CLI expirar, **não repetir o comando**. Consultar o estado real antes:
+O comando **bloqueia de 2 a 3 minutos** esperando o build no servidor. Rode sempre em
+background, nunca em foreground com timeout curto: um timeout mata a CLI depois de o
+build já ter sido criado, e um retry cego nesse estado devolve
+`HTTP 409, unable to queue the operation`.
+
+Se a CLI expirar, **não repita o comando**. Consulte o estado real antes:
 
 ```bash
 curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-  "https://firebaseapphosting.googleapis.com/v1beta/projects/nandomoreira-dev/locations/us-east1/backends/<backend-id>/traffic"
+  "https://firebaseapphosting.googleapis.com/v1beta/projects/nandomoreira-dev/locations/us-east4/backends/<backend-id>/traffic"
 ```
+
+`firebase.json` e `.firebaserc` fazem parte do contrato de deploy e **precisam estar
+versionados**: sem eles, um clone limpo não reproduz o deploy e REQ-005 não se sustenta.
+
+Se algum dia o repositório GitHub for conectado ao backend, o rollout passa a aceitar
+`firebase apphosting:rollouts:create <backend-id> --git-commit "$(git rev-parse HEAD)"`.
+Esse comando **não funciona** sem repositório conectado, que é a configuração atual.
 
 `traffic.current.splits[].build` é a autoridade sobre o que está servindo. A lista de
 `rollouts` pode vir vazia mesmo com o deploy no ar.
@@ -729,6 +740,9 @@ curl -s -o /dev/null -w '%{http_code}\n' "${BASE}/" | grep -qx 200
 echo "== REQ-003: /api/health responds 200 as JSON =="
 curl -s -D - -o /tmp/deployed-1.json "${BASE}/api/health" | grep -qi 'content-type: application/json'
 
+echo "== REQ-003: the platform is not allowed to cache it =="
+curl -s -D - -o /dev/null "${BASE}/api/health" | grep -qi 'cache-control: no-store'
+
 echo "== REQ-004: a second call returns a different payload =="
 sleep 2
 curl -s -o /tmp/deployed-2.json "${BASE}/api/health"
@@ -743,7 +757,7 @@ echo "SPIKE PASSED: Astro SSR is live on App Hosting"
 
 **Step 4: Run test to verify it passes**
 
-Run: `bash scripts/verify-deployed.sh https://<backend>.us-east1.hosted.app`
+Run: `bash scripts/verify-deployed.sh https://<backend>.us-east4.hosted.app`
 Expected: PASS, termina com `SPIKE PASSED: Astro SSR is live on App Hosting`.
 
 Nunca declarar o spike verde pelo código de saída de um comando com pipe: o status de

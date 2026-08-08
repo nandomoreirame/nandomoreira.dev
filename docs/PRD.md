@@ -478,7 +478,7 @@ Com `hreflang`. Primeiro item da v1.1 se H3 se confirmar.
 | Validação | Zod | 3.x | Valida payload de `/api/hire` e schema das collections |
 | MCP | `@modelcontextprotocol/sdk` | 1.30.0 | 194M downloads/mês. Escrever JSON-RPC à mão não se justifica e a negociação de versão sai de graça |
 | Currículo | JSON Resume schema | 1.3.1 | Padrão aberto que agentes já sabem ler |
-| Hosting | Firebase App Hosting | — | Projeto `nandomoreira-dev`, região `us-east1`. Autor já opera Firebase em três produtos |
+| Hosting | Firebase App Hosting | — | Projeto `nandomoreira-dev`, região `us-east4`. Autor já opera Firebase em três produtos |
 | Persistência | Firestore | — | Registro dos briefings recebidos |
 | Fontes | JetBrains Mono + Inter | — | Continuidade com a identidade atual |
 

@@ -221,7 +221,7 @@ que não existir, porque o agente responde errado com confiança.
 | Validação | Zod | Payload e collections |
 | MCP | `@modelcontextprotocol/sdk` 1.30.0 | Padrão de fato |
 | Currículo | JSON Resume 1.3.1 mais extensão | Padrão aberto |
-| Hosting | Firebase App Hosting, projeto `nandomoreira-dev`, `us-east1` | Já operado pelo autor |
+| Hosting | Firebase App Hosting, projeto `nandomoreira-dev`, `us-east4` | Já operado pelo autor |
 | Persistência | Firestore | Briefings recebidos |
 
 ### O que NÃO usar

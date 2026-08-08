@@ -30,7 +30,7 @@ O repositório está vazio: só existe `docs/`. Não há `package.json`, não h�
 `astro.config.mjs`, não há repositório git inicializado. Este spike é literalmente a
 primeira linha de código do projeto.
 
-O projeto Firebase `nandomoreira-dev` já existe, região `us-east1`, e hoje serve o
+O projeto Firebase `nandomoreira-dev` já existe, região `us-east4`, e hoje serve o
 site antigo (`svelte-nandomoreira.dev`, arquivado) via Firebase Hosting clássico. O
 App Hosting exige plano Blaze. O domínio `nandomoreira.dev` permanece apontado para o
 site antigo durante todo o spike: nada aqui toca produção do domínio.
@@ -114,7 +114,7 @@ são as decisões desta feature em particular.
 ## Constraints
 
 - Astro 7.2.0, `@astrojs/node` 11.1.0, TypeScript 5.x. Versões aferidas em 2026-08-07.
-- Firebase App Hosting, projeto `nandomoreira-dev`, região `us-east1`, plano Blaze.
+- Firebase App Hosting, projeto `nandomoreira-dev`, região `us-east4`, plano Blaze. O App Hosting suporta apenas `asia-east1`, `asia-southeast1`, `europe-west4`, `us-central1`, `us-east4` e `us-east5`; `us-east1`, declarada nos documentos estratégicos até 2026-08-08, nunca esteve disponível.
 - Tempo de caixa de 2 dias, com 10 a 15 horas disponíveis por semana.
 - O domínio `nandomoreira.dev` não pode ser tocado nesta feature.
 - Nenhuma feature de produto pode começar antes que este spike feche (F8.1).

@@ -173,7 +173,7 @@ Detalhamento em `MVP-SCOPE.md`.
 
 - Repositório: `github.com/nandomoreirame/nandomoreira.dev` (a criar)
 - Produção atual: `https://nandomoreira.dev` (Firebase Hosting, congelado desde 26/01/2026)
-- Projeto Firebase: `nandomoreira-dev`, região `us-east1`
+- Projeto Firebase: `nandomoreira-dev`, região `us-east4` (o App Hosting não oferece `us-east1`; ver ADR-001)
 - Projeto anterior: `github.com/nandomoreirame/nandomoreira.dev-chat`
 - Referência de objetivo: `https://www.rubenmarcus.dev` e `github.com/rubenmarcus/portfolio`
 
