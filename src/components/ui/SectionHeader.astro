@@ -1,0 +1,24 @@
+---
+interface Props {
+  title: string;
+  level?: 2 | 3;
+  index?: number;
+  description?: string;
+}
+
+const { title, level = 2, index, description } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+const sizes = { 2: 'text-h2', 3: 'text-h3' } as const;
+---
+
+<header class="mb-lg flex flex-col gap-xs">
+  <Heading class={`${sizes[level]} font-semibold text-foreground`}>
+    {index !== undefined && (
+      <span class="mr-sm font-mono text-small text-primary" aria-hidden="true">
+        {String(index).padStart(2, '0')}
+      </span>
+    )}
+    {title}
+  </Heading>
+  {description && <p class="text-body text-muted-foreground">{description}</p>}
+</header>
