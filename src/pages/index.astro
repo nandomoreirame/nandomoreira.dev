@@ -1,20 +1,19 @@
 ---
-const buildTarget = 'infra-deploy-spike';
+import Button from '../components/ui/Button.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>nandomoreira.dev</title>
-  </head>
-  <body>
-    <main>
-      <h1>nandomoreira.dev</h1>
-      <p>Spike de infraestrutura: {buildTarget}.</p>
-      <p><a href="/api/health">/api/health</a></p>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title="nandomoreira.dev"
+  description="Engenheiro de produto com agentes de IA."
+  noindex
+>
+  <SectionHeader
+    title="nandomoreira.dev"
+    level={2}
+    description="Fundação do design system no ar. O conteúdo entra na sprint 3."
+  />
+
+  <Button href="/api/health" variant="secondary">Ver /api/health</Button>
+</BaseLayout>
