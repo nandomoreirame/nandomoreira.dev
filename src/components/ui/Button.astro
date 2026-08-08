@@ -1,0 +1,40 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  disabled?: boolean;
+  label?: string;
+}
+
+const { href, variant = 'primary', disabled = false, label } = Astro.props;
+
+const base = [
+  'inline-flex items-center justify-center gap-xs',
+  'min-h-11 min-w-11 px-md py-sm',
+  'rounded-md text-body font-medium',
+  'transition-[transform,opacity,background-color,border-color]',
+  'duration-[--duration-fast] ease-[--ease-out]',
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+  'disabled:cursor-not-allowed disabled:opacity-60',
+].join(' ');
+
+const variants = {
+  primary: 'bg-primary text-primary-foreground hover:opacity-90 active:opacity-80',
+  secondary:
+    'border border-border-strong bg-surface text-foreground hover:border-primary active:bg-surface-elevated',
+  ghost: 'text-foreground hover:text-primary active:opacity-80',
+} as const;
+
+const className = `${base} ${variants[variant]}`;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class={className}
+  href={href}
+  aria-label={label}
+  aria-disabled={disabled ? 'true' : undefined}
+  disabled={!href && disabled ? true : undefined}
+>
+  <slot />
+</Tag>
