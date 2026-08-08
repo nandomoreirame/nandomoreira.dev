@@ -118,4 +118,21 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }
+
+  .motion-safe-default {
+    transition-property: transform, opacity;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
