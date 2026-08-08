@@ -1,0 +1,16 @@
+---
+interface Props {
+  language: string;
+}
+
+const { language } = Astro.props;
+---
+
+<figure class="my-lg overflow-hidden rounded-lg border border-border bg-surface">
+  <figcaption
+    class="border-b border-border px-md py-sm font-mono text-small text-muted-foreground"
+  >
+    {language}
+  </figcaption>
+  <pre class="overflow-x-auto p-md font-mono text-mono text-foreground"><code><slot /></code></pre>
+</figure>
