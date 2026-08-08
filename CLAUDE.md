@@ -4,12 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado atual
 
-**Não existe código.** O repositório contém apenas `docs/`. A primeira linha de código
-é a Task 1 de `docs/plans/2026-08-08-infra-deploy-spike.md`.
+**Sprint 1 concluída.** O spike de infraestrutura fechou em 2026-08-08 com o plano A
+confirmado: Astro 7 SSR com `@astrojs/node` standalone está no ar no App Hosting
+(`docs/adr/001-hosting-platform.md`). A sprint 2 está liberada e nada dela foi
+implementado ainda.
 
 Antes de escrever qualquer coisa, leia a spec e o plano da feature em que vai mexer. As
 decisões já foram tomadas e estão registradas; reabri-las sem motivo custa mais do que
 segui-las.
+
+Commits deste repositório usam **gitmoji** (`✨ feat(...)`, `🔧 chore(...)`). É convenção
+do projeto e sobrepõe a regra global de não usar emoji.
 
 ## Idioma
 
@@ -19,17 +24,21 @@ segui-las.
 
 ## Comandos
 
-Definidos pelos planos; passam a existir conforme as sprints rodam.
-
 ```bash
 npm run dev            # astro dev
 npm run build          # astro build
 npm start              # node ./dist/server/entry.mjs (o build de produção)
 npm run check          # astro check (type-check)
-npm test               # vitest run
+npm test               # vitest run — só a suíte unitária
 npm run test:watch     # vitest
-npm run verify         # check + build + test, o portão completo
+npm run test:build     # asserções sobre a saída do build (exige build antes)
+npm run verify         # check + test + build + test:build, o portão completo
 ```
+
+**`npm test` roda apenas `tests/**/*.test.ts` e precisa passar em clone limpo.**
+Asserção que lê `dist/` vai em `tests/**/*.build-test.ts`, que roda por
+`npm run test:build` com `vitest.build.config.ts`. Misturar as duas deixa a suíte
+vermelha logo depois de um `git clone`, porque `dist/` é gitignored.
 
 Um arquivo de teste só:
 
@@ -47,10 +56,15 @@ Scripts de verificação que exercitam o build real por HTTP (cada um sobe o ser
 testa e derruba):
 
 ```bash
-bash scripts/verify-local-server.sh   # SSR de fato, antes de gastar um deploy
-bash scripts/verify-schema-gate.sh    # conteúdo inválido quebra o build
-bash scripts/verify-aeo-routes.sh     # as quatro rotas de máquina, status e content-type
+bash scripts/verify-local-server.sh                  # SSR de fato, antes de gastar um deploy
+bash scripts/verify-deployed.sh <url-do-backend>     # fecha o spike contra produção
+bash scripts/verify-schema-gate.sh                   # conteúdo inválido quebra o build (sprint 2)
+bash scripts/verify-aeo-routes.sh                    # rotas de máquina, status e content-type (sprint 4)
 ```
+
+`verify-local-server.sh` usa `PORT=8080` por padrão. Se a porta estiver ocupada ele
+falha com `FAIL: the server died on startup` em vez de validar o processo alheio;
+passe `PORT=<livre>` para contornar.
 
 Todos terminam com uma linha de marca (`ALL LOCAL CHECKS PASSED`, `SCHEMA GATE PASSED`,
 `AEO ROUTES PASSED`). **A evidência é essa linha, nunca o código de saída**: o status de
@@ -61,7 +75,7 @@ um pipeline é o do último estágio, então um `cmd | grep` no fim mascara a fa
 ### Stack
 
 Astro 7.2.0 em `output: 'server'` com `@astrojs/node` em modo standalone, publicado no
-Firebase App Hosting (`nandomoreira-dev`, `us-east1`) via `apphosting.yaml` próprio.
+Firebase App Hosting (`nandomoreira-dev`, `us-east4`) via `apphosting.yaml` próprio.
 Tailwind CSS 4 com o tema em `@theme` no CSS. Zod para schema de conteúdo e de payload.
 Vitest, com renderização de componente por `experimental_AstroContainer`.
 
@@ -170,14 +184,27 @@ arquitetura diferente para as quatro.
 
 ## Deploy
 
-O App Hosting constrói a partir do repositório GitHub conectado, não de upload local.
+Backend `nandomoreira-dev` em `us-east4`, servindo em
+`https://nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app`. **`us-east1` não existe
+no App Hosting**; as regiões disponíveis são `asia-east1`, `asia-southeast1`,
+`europe-west4`, `us-central1`, `us-east4` e `us-east5`.
 
-`firebase apphosting:rollouts:create` **bloqueia de 2 a 3 minutos** esperando o build.
-Rode em background, nunca em foreground com timeout curto: um timeout mata a CLI depois
-de o build já existir no servidor, e o retry cego devolve `HTTP 409`. Antes de qualquer
-retry, consulte o estado real: `traffic.current.splits[].build` da REST API do App
-Hosting é a autoridade sobre o que está servindo, e a lista de `rollouts` pode vir vazia
-mesmo com o deploy no ar.
+O deploy sai do **fonte local**, não de repositório GitHub conectado
+(`"alwaysDeployFromSource": true` no `firebase.json`):
+
+```bash
+firebase deploy --only apphosting --project nandomoreira-dev
+```
+
+Ele **bloqueia de 2 a 3 minutos** esperando o build. Rode em background, nunca em
+foreground com timeout curto: um timeout mata a CLI depois de o build já existir no
+servidor, e o retry cego devolve `HTTP 409`. Antes de qualquer retry, consulte o estado
+real: `traffic.current.splits[].build` da REST API do App Hosting é a autoridade sobre o
+que está servindo, e a lista de `rollouts` pode vir vazia mesmo com o deploy no ar.
+
+`firebase apphosting:rollouts:create --git-commit <sha>` **não funciona** aqui, porque
+exige repositório conectado. Conectar o GitHub é o caminho recomendado antes do cutover
+(sprint 6), para que dê para responder qual commit está servindo.
 
 ## Importar config de outros agentes
 
