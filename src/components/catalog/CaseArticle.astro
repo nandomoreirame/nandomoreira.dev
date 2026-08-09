@@ -10,6 +10,8 @@ interface Props {
 }
 
 const { project } = Astro.props;
+const evidenceIsPrivate =
+  project.confidential && !project.repoUrl && !project.liveUrl;
 ---
 
 <article class="mt-2xl mb-3xl flex flex-col gap-xl">
@@ -26,7 +28,15 @@ const { project } = Astro.props;
       ))}
     </ul>
 
-    <LinkList repoUrl={project.repoUrl} liveUrl={project.liveUrl} />
+    {
+      evidenceIsPrivate ? (
+        <p class="font-mono text-small text-muted-foreground">
+          Trabalho sob confidencialidade: o código e a URL não são públicos.
+        </p>
+      ) : (
+        <LinkList repoUrl={project.repoUrl} liveUrl={project.liveUrl} />
+      )
+    }
   </header>
 
   <section>
