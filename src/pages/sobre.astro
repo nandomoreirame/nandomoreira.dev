@@ -1,0 +1,51 @@
+---
+import Button from '../components/ui/Button.astro';
+import Prose from '../components/ui/Prose.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import TechBadge from '../components/ui/TechBadge.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getProfile } from '../lib/content';
+
+const profile = await getProfile();
+const email = profile.contacts.find((contact) => contact.kind === 'email');
+---
+
+<BaseLayout
+  title={`Sobre | ${profile.name}`}
+  description={profile.headline}
+>
+  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
+    <SectionHeader title="Sobre" level={2} />
+
+    <h1 class="text-display font-semibold text-foreground">{profile.name}</h1>
+    <p class="text-h3 text-muted-foreground">{profile.headline}</p>
+
+    <Prose>
+      <p>{profile.bio}</p>
+      <p>{profile.positioning}</p>
+    </Prose>
+
+    <section aria-labelledby="stack-heading">
+      <h2 id="stack-heading" class="mb-md font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        Stack
+      </h2>
+      <ul class="flex flex-wrap gap-sm">
+        {profile.stack.map((item) => (
+          <li>
+            <TechBadge name={item} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {
+      email && (
+        <div>
+          <Button href={`mailto:${email.value}`} variant="primary">
+            Entrar em contato
+          </Button>
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>
