@@ -66,7 +66,7 @@ tinta e no acento**, nunca no papel. Sem creme, sem areia.
 | `background` | `#110f0d` | `0.17 0.006 80` | Fundo da página |
 | `surface` | `#191714` | `0.205 0.006 80` | Cards, painéis |
 | `surface-elevated` | `#211f1c` | `0.24 0.007 80` | Popovers, elementos flutuantes |
-| `border` | `#45423e` | `0.38 0.008 80` | Divisores e contornos |
+| `border` | `#332f2c` | `0.31 0.007 80` | Divisores e contornos |
 | `border-strong` | `#6c6863` | `0.52 0.01 82` | Contorno de elemento em foco ou hover |
 | `foreground` | `#efebe2` | `0.94 0.012 85` | Texto primário |
 | `muted-foreground` | `#a29e96` | `0.7 0.012 82` | Texto secundário, metadados |
@@ -110,14 +110,15 @@ Calculado sobre `background` (`#110f0d`), fórmula de luminância relativa WCAG 
 | `warning` sobre `background` | 13,19:1 | Aprova AA e AAA |
 | `destructive` sobre `background` | 11,52:1 | Aprova AA e AAA |
 | `border-strong` sobre `background` | 3,46:1 | Aprova 3:1 para componente gráfico |
-| `border` sobre `background` | **1,91:1** | **Reprova.** Ver regra abaixo |
+| `border` sobre `background` | **1,44:1** | **Reprova.** Ver regra abaixo |
 
-**Regra decorrente:** `border` (`#45423e`) tem contraste de 1,91:1 e portanto
+**Regra decorrente:** `border` (`#332f2c`) tem contraste de 1,44:1 e portanto
 **nunca pode ser o único meio de transmitir informação ou delimitar um alvo
 interativo**. Serve como separador decorativo. Contorno que precisa ser percebido
 (campo de formulário, elemento em foco) usa `border-strong` ou `primary`. A troca
-de paleta subiu esse valor de 1,31:1 para 1,91:1, o que torna o fio mais visível
-mas **não** muda a regra: 1,91 continua abaixo dos 3:1 exigidos.
+de paleta subiu esse valor para 1,91:1 e o fio passou a competir com o conteúdo
+nos divisores de cabeçalho, título e rodapé; foi recuado para 1,44:1, entre o
+1,31:1 original e o pico do tema. A regra não muda: 1,44 continua abaixo de 3:1.
 
 ### Regras de uso
 

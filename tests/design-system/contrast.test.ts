@@ -1,11 +1,26 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { contrastRatio } from '../../src/lib/contrast';
 
 // Exquisitus palette, converted from OKLCH to sRGB hex. Hex is kept as the
 // authored form so this gate can parse it: the ratios below are the ones the
 // browser actually renders, not an approximation of the OKLCH source.
-const BACKGROUND = '#110f0d';
-const SURFACE = '#191714';
+//
+// Read from the stylesheet, never copied into this file. Hardcoding the hexes
+// made the gate decorative: a palette change in global.css kept every ratio
+// green because the test was measuring colours the site no longer used.
+const CSS = readFileSync('src/styles/global.css', 'utf8');
+
+const token = (name: string): string => {
+  const match = new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`).exec(CSS);
+  if (!match) {
+    throw new Error(`--color-${name} not found in global.css, or not authored as hex`);
+  }
+  return match[1]!;
+};
+
+const BACKGROUND = token('background');
+const SURFACE = token('surface');
 
 describe('contrastRatio', () => {
   it('matches the WCAG 2.1 reference for black on white', () => {
@@ -13,8 +28,8 @@ describe('contrastRatio', () => {
   });
 
   it('is symmetric', () => {
-    expect(contrastRatio('#f0c36f', BACKGROUND)).toBeCloseTo(
-      contrastRatio(BACKGROUND, '#f0c36f'),
+    expect(contrastRatio(token('primary'), BACKGROUND)).toBeCloseTo(
+      contrastRatio(BACKGROUND, token('primary')),
       5,
     );
   });
@@ -22,14 +37,14 @@ describe('contrastRatio', () => {
 
 describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
   const PASSING: Array<[string, string, string, number]> = [
-    ['foreground', '#efebe2', BACKGROUND, 16.08],
-    ['muted-foreground', '#a29e96', BACKGROUND, 7.17],
-    ['muted-foreground on surface', '#a29e96', SURFACE, 6.7],
-    ['primary', '#f0c36f', BACKGROUND, 11.6],
-    ['primary on surface', '#f0c36f', SURFACE, 10.85],
-    ['success', '#a9ddb2', BACKGROUND, 12.45],
-    ['warning', '#facf9e', BACKGROUND, 13.19],
-    ['destructive', '#ffb7b0', BACKGROUND, 11.52],
+    ['foreground', token('foreground'), BACKGROUND, 16.08],
+    ['muted-foreground', token('muted-foreground'), BACKGROUND, 7.17],
+    ['muted-foreground on surface', token('muted-foreground'), SURFACE, 6.7],
+    ['primary', token('primary'), BACKGROUND, 11.6],
+    ['primary on surface', token('primary'), SURFACE, 10.85],
+    ['success', token('success'), BACKGROUND, 12.45],
+    ['warning', token('warning'), BACKGROUND, 13.19],
+    ['destructive', token('destructive'), BACKGROUND, 11.52],
   ];
 
   it.each(PASSING)('%s hits the documented ratio', (_name, fg, bg, expected) => {
@@ -45,14 +60,15 @@ describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
   });
 
   it('confirms border still fails AA, so it can never delimit a target alone', () => {
-    // The Exquisitus hairline lifts this from 1.31 to 1.91, which is more
-    // visible but still short of 3:1. The rule it protects does not change.
-    const ratio = contrastRatio('#45423e', BACKGROUND);
-    expect(ratio).toBeCloseTo(1.91, 1);
+    // Softened from the Exquisitus 1.91 back towards the original 1.31: the
+    // dividers on header, section titles and footer read as rules, not as
+    // structure. Still nowhere near 3:1, so the rule it protects is unchanged.
+    const ratio = contrastRatio(token('border'), BACKGROUND);
+    expect(ratio).toBeCloseTo(1.44, 1);
     expect(ratio).toBeLessThan(3);
   });
 
   it('clears 3:1 on border-strong, which does delimit interactive targets', () => {
-    expect(contrastRatio('#6c6863', BACKGROUND)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(token('border-strong'), BACKGROUND)).toBeGreaterThanOrEqual(3);
   });
 });

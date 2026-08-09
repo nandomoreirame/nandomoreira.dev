@@ -9,7 +9,7 @@ const COLOR_TOKENS = {
   '--color-background': '#110f0d',
   '--color-surface': '#191714',
   '--color-surface-elevated': '#211f1c',
-  '--color-border': '#45423e',
+  '--color-border': '#332f2c',
   '--color-border-strong': '#6c6863',
   '--color-foreground': '#efebe2',
   '--color-muted-foreground': '#a29e96',

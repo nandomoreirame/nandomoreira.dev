@@ -77,7 +77,7 @@
   --color-background: #110f0d; /* oklch(0.17 0.006 80) */
   --color-surface: #191714; /* oklch(0.205 0.006 80) */
   --color-surface-elevated: #211f1c; /* oklch(0.24 0.007 80) */
-  --color-border: #45423e; /* oklch(0.38 0.008 80) — hairline */
+  --color-border: #332f2c; /* oklch(0.31 0.007 80) — hairline, 1.44:1 */
   --color-border-strong: #6c6863; /* oklch(0.52 0.01 82) */
   --color-foreground: #efebe2; /* oklch(0.94 0.012 85) */
   --color-muted-foreground: #a29e96; /* oklch(0.7 0.012 82) */
