@@ -1,0 +1,95 @@
+---
+import type { Project } from '../../content/schemas/project';
+import {
+  COLLECTION_LABELS,
+  collectionOfBlock,
+  type CatalogCollection,
+} from '../../lib/catalog/groups';
+import { toCompactStamp } from '../../lib/format/date';
+import ListRow from '../ui/ListRow.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+interface Props {
+  collection: CatalogCollection;
+  projects: Project[];
+  totalCount: number;
+  index?: number;
+}
+
+const { collection, projects, totalCount, index } = Astro.props;
+
+// Title and destination both derive from the collection, so the section can
+// never advertise one grouping and link to the other.
+const title = COLLECTION_LABELS[collection];
+const href = `/${collection}`;
+
+// Because the row href is built from the section, a case from the other
+// grouping would render a link to a route that does not exist: /portfolio/forja
+// when forja lives at /lab/forja. Fail loudly instead of shipping a dead link.
+const foreign = projects.find((project) => collectionOfBlock(project.block) !== collection);
+if (foreign) {
+  throw new Error(
+    `CollectionSection "${collection}" received "${foreign.slug}" (block ${foreign.block}, ` +
+      `collection ${collectionOfBlock(foreign.block)}). Its row would link to ` +
+      `/${collection}/${foreign.slug}, which does not exist.`,
+  );
+}
+
+const DESCRIPTIONS: Record<CatalogCollection, string> = {
+  portfolio: 'Trabalho entregue, com o problema, a decisão técnica e o resultado.',
+  lab: 'Ferramental e experimentos, com o mesmo recorte.',
+};
+
+const EMPTY: Record<CatalogCollection, string> = {
+  portfolio: 'Nenhum case de portfólio publicado ainda.',
+  lab: 'Nenhum experimento publicado ainda.',
+};
+
+const shown = projects.slice(0, 5);
+const hasMore = totalCount > shown.length;
+---
+
+<section id={collection} class="py-2xl lg:py-3xl">
+  <SectionHeader
+    title={title}
+    level={2}
+    count={shown.length}
+    index={index}
+    description={DESCRIPTIONS[collection]}
+  />
+
+  {
+    shown.length === 0 ? (
+      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+        {EMPTY[collection]}
+      </p>
+    ) : (
+      <ul class="list-none p-0">
+        {shown.map((project) => (
+          <li>
+            <ListRow
+              href={`${href}/${project.slug}`}
+              title={project.title}
+              summary={project.summary}
+              markers={project.tech}
+              stamp={toCompactStamp(project.date)}
+            />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    hasMore && (
+      <p class="mt-lg">
+        <a
+          href={href}
+          class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Ver todos ({String(totalCount).padStart(2, '0')})
+        </a>
+      </p>
+    )
+  }
+</section>

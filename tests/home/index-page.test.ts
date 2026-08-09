@@ -12,7 +12,7 @@ describe('home page assembly', () => {
   });
 
   it('places the six sections in the order the PRD declares', () => {
-    const order = ['Hero', 'FeaturedProjects', 'Trajectory', 'Services', 'About', 'Contact'];
+    const order = ['Hero', 'CollectionSection', 'Trajectory', 'Services', 'About', 'Contact'];
     const positions = order.map((name) => page.lastIndexOf(`<${name}`));
 
     expect(positions.every((position) => position > -1)).toBe(true);

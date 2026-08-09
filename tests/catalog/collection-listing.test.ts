@@ -59,7 +59,7 @@ describe('CollectionListing', () => {
       collection: 'portfolio',
       projects: [
         project({ block: 'professional', slug: 'a', date: '2026-01-01' }),
-        project({ block: 'ai-product', slug: 'b', date: '2026-02-01' }),
+        project({ block: 'professional', slug: 'b', date: '2026-02-01' }),
       ],
     });
 
