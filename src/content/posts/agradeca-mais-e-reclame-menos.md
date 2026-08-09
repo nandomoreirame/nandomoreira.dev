@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/thanks.gif
-  alt: "Reflexão: agradeça mais e reclame menos"
+  alt: "Mulher ruiva de cabelos ondulados olhando por cima do ombro, em cena de filme com luz quente."
 ---
 
 Você já parou pra pensar quantas vezes você reclama por dia, ou quantas vezes você reclamou hoje? Vamos lá, faça um teste! Você vai ficar surpreso em saber que reclamações fazem parte do nosso dia-a-dia e nem percebemos.

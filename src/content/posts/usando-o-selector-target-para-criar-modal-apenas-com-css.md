@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/css3.jpg
-  alt: "Usando o pseudo selector :target para criar modal apenas com CSS"
+  alt: "Escudo azul do CSS3 com o número 3, sobre fundo azul-claro, com a palavra CSS acima."
 ---
 
 ![Usando o pseudo selector :target para criar modal apenas com CSS](../../assets/posts/2016/usando-o-selector-target-para-criar-modal-apenas-com-css.png)

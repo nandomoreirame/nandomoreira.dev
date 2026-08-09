@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/wp-cli-help.png
-  alt: "WP-CLI: Uma interface de linha de comando para WordPress"
+  alt: "Saída do terminal com a ajuda do WP-CLI, listando os subcomandos do comando wp e a descrição de cada um."
 ---
 
 Nesse artigo vou mostrar como instalar a [WP-CLI](http://wp-cli.org/), uma interface de linha de comando para WordPress.

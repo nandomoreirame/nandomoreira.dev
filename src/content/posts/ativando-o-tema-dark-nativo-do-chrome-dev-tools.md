@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/chrome-devtools-dark.png
-  alt: Ativando o tema Dark nativo do Chrome DevTools e indo para o lado negro da força
+  alt: "Chrome DevTools no tema escuro, com o painel Elements exibindo a árvore HTML do blog e o painel Styles à direita."
 ---
 
 O [Google Chrome](https://www.google.com/chrome/) em uma de suas atualizações implementou o tema _"Dark"_ para o _Chrome DevTools_. Isso já faz uns 7 a 8 meses mais ou menos (eu acho), mas estou escrevendo esse pequeno artigo pra avisar os que ainda estão desavisados.

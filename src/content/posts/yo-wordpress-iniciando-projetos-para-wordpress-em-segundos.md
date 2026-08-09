@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/yo-wordpress-command.png
-  alt: "YeoPress, iniciando projetos WordPress em segundos"
+  alt: "Terminal executando sudo yo wordpress, com uma caveira em arte ASCII verde e a legenda A Yeoman Generator For WordPress."
 ---
 
 Esse é o meu primeiro artigo do ano de **2016**, então eu vou falar sobre **[Yeoman](http://yeoman.io/)** e o <abbr title="Content Management System">CMS</abbr> mais usado do mundo, o **[WordPress](https://wordpress.org/)**.

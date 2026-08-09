@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/get-started-with-jekyll.jpg
-  alt: Como incluir vídeos do youtube no seu blog Jekyll de forma fácil
+  alt: "Banner vermelho com a frase Get started with Jekyll ao lado de um tubo de ensaio cheio de líquido vermelho."
 ---
 
 Criar plugins para **[Jekyll](http://jekyllrb.com/)** é bem simples e fácil, basta criar seu arquivo `.rb` dentro do diretório `_plugins`.

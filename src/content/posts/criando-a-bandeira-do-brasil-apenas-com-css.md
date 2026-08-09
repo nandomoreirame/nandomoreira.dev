@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/bandeira-do-brasil-com-css.png
-  alt: Criando a bandeira do Brasil 🇧🇷 apenas com CSS
+  alt: "Editor do CodePen com o HTML e o SCSS da bandeira do Brasil à esquerda e a bandeira renderizada em CSS no painel de resultado."
 ---
 
 Olá terráqueo, como vai?

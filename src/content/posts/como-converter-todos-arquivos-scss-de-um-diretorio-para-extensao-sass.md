@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/xx-conhecendo-o-pre-processador-sass.jpg
-  alt: Como converter todos arquivos .scss de um diretório para extensão .sass
+  alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
 Iremos usar o comando `sass-convert` do próprio SASS para realizar a conversão dos arquivos, mas já sabemos que ele converte apenas um único arquivo, então vamos usar o terminal e com um simples loop iremos converter todos os arquivos de um diretório (ou vários diretórios) de uma só vez.

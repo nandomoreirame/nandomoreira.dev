@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/lojaskd-team-it.jpeg
-  alt: Como um time
+  alt: "Foto do time de tecnologia posando no escritório, todos de camiseta preta da Black Friday, entre mesas com monitores ligados."
 ---
 
 **TRABALHAR COMO UM TIME...**

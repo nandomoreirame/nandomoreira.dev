@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2016/painel-browsersync-io.png
-  alt: Usando Browsersync em uma aplicação Ruby on Rails
+  alt: "Painel de controle do Browsersync no navegador, mostrando os endereços local e externo e o menu lateral com Sync Options, History e Plugins."
 ---
 
 ![Usando Browsersync em uma aplicação Ruby on Rails](../../assets/posts/2016/painel-browsersync-io.png)
