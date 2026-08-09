@@ -1,0 +1,20 @@
+---
+import BlockSection from '../../components/catalog/BlockSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjectsByBlock } from '../../lib/content';
+
+const groups = await getProjectsByBlock();
+---
+
+<BaseLayout
+  title="Projetos e experimentos | nandomoreira.dev"
+  description="Cases com problema, decisão técnica e resultado, agrupados pelos quatro blocos do acervo."
+>
+  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">
+    Projetos e experimentos
+  </h1>
+
+  {groups.map((group, position) => (
+    <BlockSection block={group.block} projects={group.projects} index={position + 1} />
+  ))}
+</BaseLayout>
