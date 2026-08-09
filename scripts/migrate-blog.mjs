@@ -112,13 +112,39 @@ const pathFromImageField = (image) => {
  * Tries: absolute resolve from post dir, then assets root for ../../../assets/… tails.
  */
 const resolveSourceImage = (postDir, ref) => {
-  const cleaned = ref.replace(/^['"]|['"]$/g, '').trim();
+  let cleaned = ref.replace(/^['"]|['"]$/g, '').trim();
   if (!cleaned || cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
     return { path: null, reason: 'remote-or-empty' };
   }
 
+  // Notion export encodes spaces and accents in markdown links.
+  try {
+    cleaned = decodeURIComponent(cleaned);
+  } catch {
+    // keep original
+  }
+
   const fromPost = resolve(postDir, cleaned);
   if (existsSync(fromPost)) return { path: fromPost };
+
+  // Notion sometimes truncates the folder name in the link; search by basename.
+  const base = basename(cleaned);
+  if (base && base !== cleaned) {
+    const walkFind = (dir, depth = 0) => {
+      if (depth > 4 || !existsSync(dir)) return null;
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const p = join(dir, entry.name);
+        if (entry.isFile() && entry.name === base) return p;
+        if (entry.isDirectory()) {
+          const hit = walkFind(p, depth + 1);
+          if (hit) return hit;
+        }
+      }
+      return null;
+    };
+    const found = walkFind(postDir);
+    if (found) return { path: found };
+  }
 
   // ../../../assets/<rest> or ./foo when assets live in the Gatsby tree
   const assetsTail = cleaned.match(/(?:^|\/)assets\/(.+)$/);
@@ -269,7 +295,7 @@ const writePost = ({ slug, title, summary, date, markers, archived, body, cover 
   lines.push(`archived: ${archived ? 'true' : 'false'}`);
   if (cover) {
     lines.push('cover:');
-    lines.push(`  src: ${cover.src}`);
+    lines.push(`  src: ${yamlQuote(cover.src)}`);
     lines.push(`  alt: ${yamlQuote(cover.alt)}`);
   }
   lines.push('---', '', body.replace(/^\n+/, '').replace(/\n+$/, ''), '');
