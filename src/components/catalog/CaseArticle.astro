@@ -1,0 +1,72 @@
+---
+import { BLOCK_LABELS } from '../../content/blocks';
+import type { Project } from '../../content/schemas/project';
+import Prose from '../ui/Prose.astro';
+import TechBadge from '../ui/TechBadge.astro';
+import LinkList from './LinkList.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="mt-2xl mb-3xl flex flex-col gap-xl">
+  <header class="flex flex-col gap-md">
+    <p class="font-mono text-small text-primary">{BLOCK_LABELS[project.block]}</p>
+    <h1 class="text-h1 font-semibold text-foreground">{project.title}</h1>
+    <p class="text-body text-muted-foreground">{project.summary}</p>
+
+    <ul class="flex flex-wrap gap-sm">
+      {project.tech.map((item) => (
+        <li>
+          <TechBadge name={item} />
+        </li>
+      ))}
+    </ul>
+
+    <LinkList repoUrl={project.repoUrl} liveUrl={project.liveUrl} />
+  </header>
+
+  <section>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">O problema</h2>
+    <Prose>
+      <p class="whitespace-pre-wrap">{project.problem}</p>
+    </Prose>
+  </section>
+
+  <section>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">Decisões técnicas</h2>
+    <Prose>
+      <p class="whitespace-pre-wrap">{project.decisions}</p>
+    </Prose>
+  </section>
+
+  <section>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">Resultado</h2>
+    <Prose>
+      <p class="whitespace-pre-wrap">{project.outcome}</p>
+    </Prose>
+  </section>
+
+  {
+    project.images && project.images.length > 0 && (
+      <section>
+        <h2 class="mb-md text-h2 font-semibold text-foreground">Imagens</h2>
+        <div class="flex flex-col gap-lg">
+          {project.images.map((image) => (
+            <img
+              src={image.src}
+              alt={image.alt}
+              width="1200"
+              height="675"
+              loading="lazy"
+              class="w-full rounded-md border border-border"
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</article>
