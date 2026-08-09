@@ -21,6 +21,16 @@ describe('SiteNav', () => {
     expect(html).toContain('href="/#contato"');
   });
 
+  it('shows Notas only when at least one note is published', async () => {
+    const withNotes = await render({ hasNotes: true });
+    expect(withNotes).toContain('Notas');
+    expect(withNotes).toContain('href="/notas"');
+
+    const without = await render({ hasNotes: false });
+    expect(without).not.toContain('href="/notas"');
+    expect(without).not.toContain('Notas');
+  });
+
   it('marks the current page for assistive technology', async () => {
     expect(await render({ current: '/portfolio' })).toContain('aria-current="page"');
   });
