@@ -5,6 +5,10 @@ current_sprint: 2
 completed_features:
   - infra-deploy-spike
   - design-system-foundation
+  - content-data-layer
+  - project-catalog
+  - home-page
+  - aeo-base
 total_sprints: 6
 source_docs:
   - docs/BRIEF.md
@@ -105,11 +109,11 @@ Atualizado em 2026-08-08.
 |------|--------|------|-------|----------|
 | `infra-deploy-spike` | 1 | `infra-deploy-spike/SPEC.md` | `2026-08-08-infra-deploy-spike.md` | **Concluída** |
 | `design-system-foundation` | 2 | `design-system-foundation/SPEC.md` | `2026-08-08-design-system-foundation.md` | **Concluída** |
-| `content-data-layer` | 2 | `content-data-layer/SPEC.md` | `2026-08-08-content-data-layer.md` | Plano pronto, não implementado |
-| `project-catalog` | 2 | `project-catalog/SPEC.md` | `2026-08-08-project-catalog.md` | Plano pronto, não implementado |
+| `content-data-layer` | 2 | `content-data-layer/SPEC.md` | `2026-08-08-content-data-layer.md` | **Concluída** |
+| `project-catalog` | 2 | `project-catalog/SPEC.md` | `2026-08-08-project-catalog.md` | **Concluída** |
 | `case-content` | 3 | — (conteúdo) | — | Não escrito |
-| `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | Plano pronto, não implementado |
-| `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | Plano pronto, não implementado |
+| `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | **Concluída** (1 case real; 7 cases pendentes) |
+| `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | **Concluída** |
 | `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `hire-endpoint` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
