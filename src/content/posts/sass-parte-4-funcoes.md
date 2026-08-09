@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/conhecendo-o-pre-processador-sass.jpg
-  alt: "#4 - Conhecendo o pré processador SASS | Funções"
+  alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
 Esse artigo será bem rápido, vou falar sobre o recurso que deixa o **SASS** ainda mais com cara de linguagem de programação, são as **funções**.

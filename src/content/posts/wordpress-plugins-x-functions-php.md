@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/wordpress-plugins-x-functions-php.jpg
-  alt: Wordpress - plugins x functions.php
+  alt: "Logotipo do WordPress em fundo azul, entre dois plugues elétricos brancos prestes a se conectarem."
 ---
 
 Muitos amigos e colegas de trabalho sempre me perguntam porque eu sou contra o uso de plugins no Wordpress.

@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/yeoman.jpg
-  alt: Yeoman Generator Gulp Boilerplate
+  alt: "Mascote do Yeoman, um personagem de cartola e bigode segurando caixas com os logotipos de jQuery e Ember, ao lado da palavra YEOMAN."
 ---
 
 Eu criei um [repositório](https://github.com/nandomoreirame/gulp-boilerplate) no [Github](https://github.com/) onde mantenho atualizado com um **boilerplate** para Gulp, o repositório era pra ser pessoal mas eu resolvi compartilhar.

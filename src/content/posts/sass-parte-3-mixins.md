@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/conhecendo-o-pre-processador-sass.jpg
-  alt: "#3 - Conhecendo o pré processador SASS | Mixins"
+  alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
 **Mixin** foi definitivamente algo novo para mim, você consegue passar valores por parâmetros assim como funções, a diferença é que uma função retorna apenas 1 único valor e mixin retorna um bloco inteiro de CSS.

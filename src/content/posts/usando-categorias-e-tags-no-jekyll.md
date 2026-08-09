@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/get-started-with-jekyll.jpg
-  alt: Usando categorias e tags no Jekyll
+  alt: "Banner vermelho com a frase Get started with Jekyll ao lado de um tubo de ensaio cheio de líquido vermelho."
 ---
 
 > Esse artigo foi traduzido de: [How to use tags and categories on github pages without plugins](http://www.minddust.com/post/tags-and-categories-on-github-pages/)

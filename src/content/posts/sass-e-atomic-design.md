@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/xx-conhecendo-o-pre-processador-sass.jpg
-  alt: SASS + Atomic design
+  alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
 **SASS** é um pré-processador incrível não acha? Mas muitos não sabem como organizar seus projetos com ele, nesse artigo vou lhe mostrar como organizar uma estrutura _"foda"_ usando **[SASS](http://sass-lang.com/)** e _**[Atomic Design](http://patternlab.io/about.html)**_, vem comigo.

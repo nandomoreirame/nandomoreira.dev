@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/conhecendo-o-pre-processador-sass.jpg
-  alt: "#5 - Conhecendo o pré-processador SASS | Placeholder"
+  alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
 Nos artigos anteriores eu falei sobre _[Funções](/sass-parte-4-funcoes/)_ e sobre _[Mixins](/sass-parte-3-mixins/)_ do **SASS**, mas sem sombra de dúvidas, uma das funcionalidades mais legais do SASS (na minha opinião) é você poder criar _[placeholders](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#placeholder_selectors_)\_ para agrupamento de códigos repetidos.
