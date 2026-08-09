@@ -1,17 +1,16 @@
 # Blog migration report
 
-- Mode: images-only
-- Source: `/home/nandomoreira/dev/projects/blog-import-gatsby`
+- Mode: full
+- Source: `/home/nandomoreira/Downloads/posts`
 - Assets: `/tmp/blog-gatsby-tarball/content/assets`
-- Posts written: 0
-- Images copied: 65
-- Missing images: 1
-- Skipped: 1
+- Posts written: 2
+- Images copied: 8
+- Missing images: 0
+- Skipped: 0
 
 ## Missing images
 
-- `Meu ambiente de trabalho em 7 itens`: `../../../assets/eu-ambiente-gulpjs.png` → removed
+_None._
 
 ## Skipped
 
-- `calendario-rapido-direto-no-terminal`: superseded-by-notion
