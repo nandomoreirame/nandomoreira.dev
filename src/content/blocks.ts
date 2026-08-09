@@ -14,7 +14,7 @@ export type Block = (typeof BLOCKS)[number];
 
 export const BLOCK_LABELS: Record<Block, string> = {
   'ai-tooling': 'Ferramental de AI coding',
-  'ai-product': 'Produtos SaaS com IA',
+  'ai-product': 'Produtos SaaS',
   'systems-cli': 'Sistemas e CLI em Rust e Go',
   professional: 'Trabalho profissional e de cliente',
 };
