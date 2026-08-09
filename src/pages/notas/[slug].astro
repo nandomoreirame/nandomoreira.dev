@@ -4,6 +4,7 @@ import Prose from '../../components/ui/Prose.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getAllNoteEntries, getNoteEntry } from '../../lib/content';
 import type { NoteEntry } from '../../lib/content';
+import { jsonLdForNote, serialiseJsonLd } from '../../lib/notes/note-ld';
 
 export const prerender = true;
 
@@ -30,9 +31,13 @@ if (!live) {
 
 const note = live.data;
 const { Content } = await render(live);
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = serialiseJsonLd(jsonLdForNote(note, site));
 ---
 
 <BaseLayout title={`${note.title} | nandomoreira.dev`} description={note.summary}>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
   <nav class="mt-lg" aria-label="Trilha de navegação">
     <a
       href="/notas"
