@@ -44,8 +44,9 @@ const stamp = toCompactStamp(post.date);
   <nav class="mt-lg" aria-label="Trilha de navegação">
     <a
       href={post.archived ? '/posts/arquivo' : '/posts'}
-      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
+      <span aria-hidden="true">←</span>
       {post.archived ? 'Voltar ao arquivo' : 'Voltar aos posts'}
     </a>
   </nav>
