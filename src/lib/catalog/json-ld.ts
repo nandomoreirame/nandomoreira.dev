@@ -1,4 +1,5 @@
 import type { Project } from '../../content/schemas/project';
+import { serialiseJsonLd as sharedSerialise } from '../aeo/json-ld';
 
 export interface ProjectJsonLd {
   '@context': 'https://schema.org';
@@ -31,6 +32,5 @@ export const jsonLdForProject = (project: Project, site: string): ProjectJsonLd 
   };
 };
 
-/** Escapes `<` so user content can never break out of the script tag. */
-export const serialiseJsonLd = (ld: ProjectJsonLd): string =>
-  JSON.stringify(ld).replaceAll('<', '\\u003c');
+/** Shared escape; re-exported so catalogue callers keep a single import path. */
+export const serialiseJsonLd = sharedSerialise;

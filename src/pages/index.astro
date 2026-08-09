@@ -6,6 +6,7 @@ import Hero from '../components/home/Hero.astro';
 import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { getAllProjects, getFeaturedProjects, getProfile } from '../lib/content';
 import { personLd } from '../lib/home/person-ld';
 
@@ -17,7 +18,7 @@ const [profile, featuredProjects, allProjects] = await Promise.all([
 
 const knownSlugs = allProjects.map((project) => project.slug);
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const jsonLd = JSON.stringify(personLd(profile, site)).replaceAll('<', '\\u003c');
+const jsonLd = serialiseJsonLd(personLd(profile, site));
 ---
 
 <BaseLayout title={`${profile.name} | ${profile.headline}`} description={profile.bio}>
