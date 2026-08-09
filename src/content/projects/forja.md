@@ -16,7 +16,7 @@ tech:
   - Tauri
   - TypeScript
 repoUrl: https://github.com/nandomoreirame/forja
-liveUrl: null
+liveUrl: https://forja.web.app
 featured: true
 confidential: false
 date: "2026-01-15"
