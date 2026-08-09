@@ -19,10 +19,10 @@ const current = Astro.url?.pathname;
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
 const canonical = new URL(Astro.url?.pathname ?? '/', site).toString();
 const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
-const [profile, notes] = await Promise.all([getProfile(), getAllPosts()]);
+const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
 const year = new Date().getUTCFullYear();
-const hasNotes = notes.length > 0;
+const hasPosts = posts.length > 0;
 ---
 
 <!doctype html>
@@ -67,7 +67,7 @@ const hasNotes = notes.length > 0;
     <SiteHeader
       name={profile.wordmark ?? profile.name}
       current={current}
-      hasNotes={hasNotes}
+      hasPosts={hasPosts}
     />
 
     <div class="mx-auto w-full max-w-page px-lg">

@@ -4,10 +4,10 @@ import SiteNav from './SiteNav.astro';
 interface Props {
   name: string;
   current?: string;
-  hasNotes?: boolean;
+  hasPosts?: boolean;
 }
 
-const { name, current, hasNotes = false } = Astro.props;
+const { name, current, hasPosts = false } = Astro.props;
 ---
 
 {/* The rule sits on <header> so it spans the viewport; the container is the row
@@ -27,6 +27,6 @@ const { name, current, hasNotes = false } = Astro.props;
       {name}
     </a>
 
-    <SiteNav current={current} hasNotes={hasNotes} />
+    <SiteNav current={current} hasPosts={hasPosts} />
   </div>
 </header>

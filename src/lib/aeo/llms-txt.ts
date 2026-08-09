@@ -8,7 +8,7 @@ interface Input {
   site: URL;
   profile: Profile;
   projects: readonly Project[];
-  notes?: readonly Post[];
+  posts?: readonly Post[];
 }
 
 const MACHINE_ROUTES = [
@@ -20,7 +20,7 @@ const MACHINE_ROUTES = [
 ] as const;
 
 /** Format follows the llms.txt convention: H1, blockquote summary, H2 sections. */
-export const buildLlmsTxt = ({ site, profile, projects, notes = [] }: Input): string => {
+export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): string => {
   const lines: string[] = [
     `# ${profile.name}`,
     '',
@@ -41,11 +41,11 @@ export const buildLlmsTxt = ({ site, profile, projects, notes = [] }: Input): st
     lines.push('- No case published yet.');
   }
 
-  if (notes.length > 0) {
-    lines.push('', '## Notes', '');
-    for (const note of notes) {
+  if (posts.length > 0) {
+    lines.push('', '## Posts', '');
+    for (const post of posts) {
       lines.push(
-        `- [${note.title}](${absoluteUrl(site, `/notas/${note.slug}`)}): ${note.summary}`,
+        `- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`,
       );
     }
   }

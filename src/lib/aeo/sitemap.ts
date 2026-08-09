@@ -6,7 +6,7 @@ import { absoluteUrl } from './urls';
 interface Input {
   site: URL;
   projects: readonly Project[];
-  notes?: readonly Post[];
+  posts?: readonly Post[];
 }
 
 const escapeXml = (value: string): string =>
@@ -23,7 +23,7 @@ interface Entry {
 }
 
 /** Machine routes and error pages are deliberately absent (REQ-012). */
-export const buildSitemap = ({ site, projects, notes = [] }: Input): string => {
+export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
   const entries: Entry[] = [
     { path: '/' },
     { path: '/portfolio' },
@@ -36,12 +36,23 @@ export const buildSitemap = ({ site, projects, notes = [] }: Input): string => {
     })),
   ];
 
-  if (notes.length > 0) {
-    entries.push({ path: '/notas' });
-    for (const note of notes) {
+  if (posts.length > 0) {
+    entries.push({ path: '/posts' });
+
+    const years = new Set(
+      posts.filter((post) => post.archived).map((post) => post.date.slice(0, 4)),
+    );
+    if (years.size > 0) {
+      entries.push({ path: '/posts/arquivo' });
+      for (const year of [...years].sort().reverse()) {
+        entries.push({ path: `/posts/arquivo/${year}` });
+      }
+    }
+
+    for (const post of posts) {
       entries.push({
-        path: `/notas/${note.slug}`,
-        lastmod: note.date,
+        path: `/${post.slug}`,
+        lastmod: post.date,
       });
     }
   }

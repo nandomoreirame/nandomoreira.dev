@@ -1,18 +1,18 @@
 import type { APIRoute } from 'astro';
 import { requireSite } from '../lib/aeo/urls';
 import { getAllPosts } from '../lib/content';
-import { buildRss } from '../lib/notes/rss';
+import { buildRss } from '../lib/posts/rss';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const notes = await getAllPosts();
+  const posts = await getAllPosts();
 
   const body = buildRss({
     site: requireSite(site),
-    notes,
-    title: 'Notas — nandomoreira.dev',
-    description: 'Notas curtas sobre engenharia, tooling e agentes.',
+    posts,
+    title: 'Posts — nandomoreira.dev',
+    description: 'Textos sobre engenharia, tooling e agentes.',
   });
 
   return new Response(body, {

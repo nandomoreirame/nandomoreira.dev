@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getPostEntry } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { toCompactStamp } from '../lib/format/date';
-import { jsonLdForPost, serialiseJsonLd } from '../lib/notes/note-ld';
+import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 
 export const prerender = true;
 

@@ -6,9 +6,9 @@ import { getAllPosts, getAllProjects } from '../lib/content';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const [projects, notes] = await Promise.all([getAllProjects(), getAllPosts()]);
+  const [projects, posts] = await Promise.all([getAllProjects(), getAllPosts()]);
 
-  return new Response(buildSitemap({ site: requireSite(site), projects, notes }), {
+  return new Response(buildSitemap({ site: requireSite(site), projects, posts }), {
     status: 200,
     headers: { 'content-type': 'application/xml; charset=utf-8' },
   });

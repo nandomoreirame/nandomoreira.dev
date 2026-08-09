@@ -51,10 +51,10 @@ describe('SiteHeader', () => {
     expect(html).not.toContain('client:');
   });
 
-  it('forwards the notes flag and the current route to the navigation', async () => {
-    const html = await render({ hasNotes: true, current: '/portfolio' });
+  it('forwards the posts flag and the current route to the navigation', async () => {
+    const html = await render({ hasPosts: true, current: '/portfolio' });
 
-    expect(html).toContain('href="/notas"');
+    expect(html).toContain('href="/posts"');
     expect(html).toContain('aria-current="page"');
   });
 });

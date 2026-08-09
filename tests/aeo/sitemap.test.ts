@@ -43,6 +43,7 @@ describe('buildSitemap', () => {
     const xml = output();
 
     expect(xml).not.toContain('/projetos');
+    expect(xml).not.toContain('/notas');
   });
 
   it('excludes machine routes and error pages', () => {
@@ -81,28 +82,58 @@ describe('buildSitemap', () => {
     expect(xml).toContain('</urlset>');
   });
 
-  it('lists published notes with lastmod from frontmatter, never drafts', () => {
+  it('lists posts at the root path, matching the real route', () => {
     const xml = buildSitemap({
       site,
       projects: [],
-      notes: [
+      posts: [
         {
-          slug: 'tailwind-parens',
-          title: 'Parens',
+          slug: 'como-instalar-o-gulp-4',
+          title: 'Gulp 4',
           summary: 's',
-          date: '2026-08-09',
+          date: '2015-09-26',
           draft: false,
+          archived: true,
         },
       ] as never[],
     });
 
-    expect(xml).toContain('<loc>https://nandomoreira.dev/notas</loc>');
-    expect(xml).toContain('<loc>https://nandomoreira.dev/notas/tailwind-parens</loc>');
-    expect(xml).toContain('<lastmod>2026-08-09</lastmod>');
+    expect(xml).toContain('<loc>https://nandomoreira.dev/como-instalar-o-gulp-4</loc>');
+    expect(xml).toContain('<loc>https://nandomoreira.dev/posts</loc>');
+    expect(xml).not.toContain('/notas/');
   });
 
-  it('omits the notes section entirely when none are published', () => {
-    const xml = buildSitemap({ site, projects: [], notes: [] });
-    expect(xml).not.toContain('/notas');
+  it('includes the archive index and each year', () => {
+    const xml = buildSitemap({
+      site,
+      projects: [],
+      posts: [
+        {
+          slug: 'a',
+          title: 'A',
+          summary: 's',
+          date: '2015-01-01',
+          draft: false,
+          archived: true,
+        },
+        {
+          slug: 'b',
+          title: 'B',
+          summary: 's',
+          date: '2016-01-01',
+          draft: false,
+          archived: true,
+        },
+      ] as never[],
+    });
+
+    expect(xml).toContain('/posts/arquivo');
+    expect(xml).toContain('/posts/arquivo/2015');
+    expect(xml).toContain('/posts/arquivo/2016');
+  });
+
+  it('omits the posts section entirely when none are published', () => {
+    const xml = buildSitemap({ site, projects: [], posts: [] });
+    expect(xml).not.toContain('/posts');
   });
 });

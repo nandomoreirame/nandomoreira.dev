@@ -1,15 +1,15 @@
 ---
 interface Props {
   current?: string;
-  hasNotes?: boolean;
+  hasPosts?: boolean;
 }
 
-const { current, hasNotes = false } = Astro.props;
+const { current, hasPosts = false } = Astro.props;
 
 const items = [
   { href: '/portfolio', label: 'Portfólio' },
   { href: '/lab', label: 'Lab' },
-  ...(hasNotes ? [{ href: '/notas', label: 'Notas' }] : []),
+  ...(hasPosts ? [{ href: '/posts', label: 'Posts' }] : []),
   { href: '/sobre', label: 'Sobre' },
   { href: '/contato', label: 'Contato' },
 ];

@@ -30,14 +30,14 @@ describe('SiteNav', () => {
     expect(html).toContain('>Lab<');
   });
 
-  it('shows Notas only when at least one note is published', async () => {
-    const withNotes = await render({ hasNotes: true });
-    expect(withNotes).toContain('Notas');
-    expect(withNotes).toContain('href="/notas"');
+  it('shows Posts only when at least one post is published', async () => {
+    const withPosts = await render({ hasPosts: true });
+    expect(withPosts).toContain('Posts');
+    expect(withPosts).toContain('href="/posts"');
 
-    const without = await render({ hasNotes: false });
-    expect(without).not.toContain('href="/notas"');
-    expect(without).not.toContain('Notas');
+    const without = await render({ hasPosts: false });
+    expect(without).not.toContain('href="/posts"');
+    expect(without).not.toContain('>Posts<');
   });
 
   it('marks the current page for assistive technology', async () => {
