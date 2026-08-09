@@ -5,8 +5,13 @@ import { describe, expect, it } from 'vitest';
 
 const TOKEN_FILE = 'src/styles/global.css';
 
-/** Allowed Tailwind arbitrary values (relative units outside the spacing scale). */
-const ALLOWED_ARBITRARY = /\bmax-w-\[\d+ch\]/g;
+/**
+ * Allowed Tailwind arbitrary values:
+ * - max-w-[Nch]: relative unit outside the spacing scale
+ * - transition-[prop,prop,...]: property lists (not values), letters/hyphens/commas only
+ */
+const ALLOWED_ARBITRARY =
+  /\bmax-w-\[\d+ch\]|\btransition-\[[a-z]+(?:-[a-z]+)*(?:,[a-z]+(?:-[a-z]+)*)*\]/g;
 
 const collectSources = async (): Promise<string[]> => {
   const files: string[] = [];
@@ -36,7 +41,9 @@ describe('no ad-hoc values outside the scale', () => {
       const source = readFileSync(file, 'utf8');
       const withoutAllowed = source.replace(ALLOWED_ARBITRARY, '');
       const matches =
-        withoutAllowed.match(/\b(p|m|gap|w|h|text|rounded)[a-z]*-\[[^\]]+\]/g) ?? [];
+        withoutAllowed.match(
+          /\b(p|m|gap|w|h|text|rounded|duration|ease|transition)[a-z]*-\[[^\]]+\]/g,
+        ) ?? [];
       if (matches.length > 0) offenders.push(`${file}: ${matches.join(', ')}`);
     }
 

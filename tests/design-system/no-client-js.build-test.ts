@@ -9,7 +9,10 @@ describe('client bundle', () => {
   });
 
   it('ships no client-side JavaScript, per the P0 architecture decision', () => {
-    if (!existsSync(CLIENT_ASSETS)) return;
+    expect(
+      existsSync(CLIENT_ASSETS),
+      `expected client asset dir at ${CLIENT_ASSETS} after a build`,
+    ).toBe(true);
 
     const scripts = readdirSync(CLIENT_ASSETS).filter((file) => file.endsWith('.js'));
     expect(scripts).toEqual([]);
