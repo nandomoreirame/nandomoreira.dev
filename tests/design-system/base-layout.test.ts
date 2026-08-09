@@ -42,4 +42,13 @@ describe('BaseLayout', () => {
     // token generates a `max-w-page` utility directly.
     expect(await render()).toContain('max-w-page');
   });
+
+  it('renders the footer on every page', async () => {
+    expect(await render()).toContain('<footer');
+  });
+
+  it('keeps the footer outside the main landmark', async () => {
+    const html = await render();
+    expect(html.indexOf('</main>')).toBeLessThan(html.indexOf('<footer'));
+  });
 });
