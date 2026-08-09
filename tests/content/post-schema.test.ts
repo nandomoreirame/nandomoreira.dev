@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { noteSchema } from '../../src/content/schemas/note';
+import { postSchema } from '../../src/content/schemas/post';
 
 const valid = {
   slug: 'por-que-parenteses-no-tailwind',
@@ -9,37 +9,37 @@ const valid = {
   draft: false,
 };
 
-describe('noteSchema', () => {
-  it('accepts a complete note', () => {
-    expect(noteSchema.safeParse(valid).success).toBe(true);
+describe('postSchema', () => {
+  it('accepts a complete post', () => {
+    expect(postSchema.safeParse(valid).success).toBe(true);
   });
 
-  it.each(['slug', 'title', 'summary', 'date'])('rejects a note missing %s', (field) => {
+  it.each(['slug', 'title', 'summary', 'date'])('rejects a post missing %s', (field) => {
     const { [field as keyof typeof valid]: _dropped, ...incomplete } = valid;
-    expect(noteSchema.safeParse(incomplete).success).toBe(false);
+    expect(postSchema.safeParse(incomplete).success).toBe(false);
   });
 
   it('requires the slug to be kebab-case, since it is the route', () => {
-    expect(noteSchema.safeParse({ ...valid, slug: 'Nao Kebab' }).success).toBe(false);
+    expect(postSchema.safeParse({ ...valid, slug: 'Nao Kebab' }).success).toBe(false);
   });
 
   it('requires an ISO-8601 date, used only for ordering and machine routes', () => {
-    expect(noteSchema.safeParse({ ...valid, date: '09/08/2026' }).success).toBe(false);
+    expect(postSchema.safeParse({ ...valid, date: '09/08/2026' }).success).toBe(false);
   });
 
   it('defaults draft to false, so publishing is the explicit act', () => {
     const { draft: _dropped, ...withoutDraft } = valid;
-    const result = noteSchema.safeParse(withoutDraft);
+    const result = postSchema.safeParse(withoutDraft);
 
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.draft).toBe(false);
   });
 
   it('accepts optional subject markers', () => {
-    expect(noteSchema.safeParse({ ...valid, markers: ['Tailwind'] }).success).toBe(true);
+    expect(postSchema.safeParse({ ...valid, markers: ['Tailwind'] }).success).toBe(true);
   });
 
   it('rejects an empty marker', () => {
-    expect(noteSchema.safeParse({ ...valid, markers: [''] }).success).toBe(false);
+    expect(postSchema.safeParse({ ...valid, markers: [''] }).success).toBe(false);
   });
 });

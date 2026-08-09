@@ -8,40 +8,40 @@ import {
 const config = readFileSync('src/content.config.ts', 'utf8');
 
 describe('content collections', () => {
-  it('declares projects, notes and profile', () => {
+  it('declares projects, posts and profile', () => {
     expect(config).toContain('projects');
-    expect(config).toContain('notes');
+    expect(config).toContain('posts');
     expect(config).toContain('profile');
   });
 
   it('reuses the tested schemas instead of redeclaring them inline', () => {
     expect(config).toContain("from './content/schemas/project'");
     expect(config).toContain("from './content/schemas/profile'");
-    expect(config).toContain("from './content/schemas/note'");
+    expect(config).toContain("from './content/schemas/post'");
   });
 });
 
-describe('assertUniqueMarkdownSlugs for notes', () => {
-  it('accepts two notes with distinct slugs', () => {
+describe('assertUniqueMarkdownSlugs for posts', () => {
+  it('accepts two posts with distinct slugs', () => {
     expect(() =>
       assertUniqueMarkdownSlugs(
         [
           { path: 'a.md', source: '---\nslug: a\n---\n' },
           { path: 'b.md', source: '---\nslug: b\n---\n' },
         ],
-        'note',
+        'post',
       ),
     ).not.toThrow();
   });
 
-  it('rejects two notes that declare the same slug', () => {
+  it('rejects two posts that declare the same slug', () => {
     expect(() =>
       assertUniqueMarkdownSlugs(
         [
           { path: 'a.md', source: '---\nslug: same\n---\n' },
           { path: 'b.md', source: '---\nslug: same\n---\n' },
         ],
-        'note',
+        'post',
       ),
     ).toThrow(/same/);
   });

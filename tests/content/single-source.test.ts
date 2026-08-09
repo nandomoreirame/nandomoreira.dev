@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 const ALLOWED = [
   'src/lib/content/projects.ts',
   'src/lib/content/profile.ts',
-  'src/lib/content/notes.ts',
+  'src/lib/content/posts.ts',
 ];
 
 describe('single source of truth', () => {
