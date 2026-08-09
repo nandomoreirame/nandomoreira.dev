@@ -2,24 +2,29 @@
 interface Props {
   title: string;
   level?: 2 | 3;
-  index?: number;
+  count?: number;
   description?: string;
+  index?: number;
   id?: string;
 }
 
-const { title, level = 2, index, description, id } = Astro.props;
+const { title, level = 2, count, description, id } = Astro.props;
 const Heading = `h${level}` as 'h2' | 'h3';
-const sizes = { 2: 'text-h2', 3: 'text-h3' } as const;
 ---
 
-<header class="mb-lg flex flex-col gap-xs">
-  <Heading id={id} class={`${sizes[level]} font-semibold text-foreground`}>
-    {index !== undefined && (
-      <span class="mr-sm font-mono text-small text-primary" aria-hidden="true">
-        {String(index).padStart(2, '0')}
+<header class="mb-xl">
+  <div class="flex items-baseline justify-between border-b border-border pb-sm">
+    <Heading
+      id={id}
+      class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
+    >
+      {title}
+    </Heading>
+    {typeof count === 'number' && (
+      <span class="font-mono text-small text-muted-foreground">
+        ({String(count).padStart(2, '0')})
       </span>
     )}
-    {title}
-  </Heading>
-  {description && <p class="text-body text-muted-foreground">{description}</p>}
+  </div>
+  {description && <p class="mt-md text-body text-muted-foreground">{description}</p>}
 </header>

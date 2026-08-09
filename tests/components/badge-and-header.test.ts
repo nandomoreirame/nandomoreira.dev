@@ -29,9 +29,29 @@ describe('SectionHeader', () => {
     const html = await render(SectionHeader, { title: 'Projetos', level: 2 });
     expect(html).toContain('<h2');
   });
+});
 
-  it('hides the terminal-style numbering from assistive technology', async () => {
-    const html = await render(SectionHeader, { title: 'Projetos', level: 2, index: 1 });
-    expect(html).toContain('aria-hidden="true"');
+describe('SectionHeader restyled', () => {
+  it('renders the eyebrow in uppercase mono with the wide tracking token', async () => {
+    const html = await render(SectionHeader, { title: 'Trabalho selecionado', level: 2 });
+
+    expect(html).toContain('font-mono');
+    expect(html).toContain('uppercase');
+    expect(html).toContain('tracking-eyebrow');
+  });
+
+  it('pads the count to two digits', async () => {
+    const html = await render(SectionHeader, { title: 'X', level: 2, count: 3 });
+    expect(html).toContain('(03)');
+  });
+
+  it('omits the count when it is not given', async () => {
+    const html = await render(SectionHeader, { title: 'X', level: 2 });
+    expect(html).not.toMatch(/\(\d\d\)/);
+  });
+
+  it('renders a zero count rather than hiding it', async () => {
+    const html = await render(SectionHeader, { title: 'X', level: 2, count: 0 });
+    expect(html).toContain('(00)');
   });
 });
