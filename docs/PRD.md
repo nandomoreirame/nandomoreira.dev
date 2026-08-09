@@ -475,7 +475,7 @@ Com `hreflang`. Primeiro item da v1.1 se H3 se confirmar.
 | Linguagem | TypeScript | 5.x | Padrão do autor |
 | Estilização | Tailwind CSS | 4.x | Já dominado; tokens no CSS |
 | Conteúdo | Astro Content Collections | nativo | Schema validado em build atende F3.2 sem serviço externo |
-| Validação | Zod | 3.x | Valida payload de `/api/hire` e schema das collections |
+| Validação | Zod | 4.x | Valida payload de `/api/hire` e schema das collections (peer do Astro 7) |
 | MCP | `@modelcontextprotocol/sdk` | 1.30.0 | 194M downloads/mês. Escrever JSON-RPC à mão não se justifica e a negociação de versão sai de graça |
 | Currículo | JSON Resume schema | 1.3.1 | Padrão aberto que agentes já sabem ler |
 | Hosting | Firebase App Hosting | — | Projeto `nandomoreira-dev`, região `us-east4`. Autor já opera Firebase em três produtos |

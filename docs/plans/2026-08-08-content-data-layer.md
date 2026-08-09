@@ -4,7 +4,7 @@
 
 **Goal:** Uma única fonte de verdade em Astro Content Collections, com schema Zod que falha o build em dado inválido, e uma camada de acesso que é o único caminho para ler projeto e perfil.
 **Architecture:** Duas collections declaradas em `src/content.config.ts` — `projects` (glob de markdown, uma entrada por case) e `profile` (entrada única). Os schemas Zod vivem em `src/content/schemas/` para poderem ser exercitados em teste sem subir o Astro. A camada de acesso em `src/lib/content/` expõe consultas nomeadas (`getAllProjects`, `getProjectsByBlock`, `getFeaturedProjects`, `getProject`, `getProfile`) e é o único módulo autorizado a chamar `getCollection`, o que um teste de contrato garante.
-**Tech Stack:** Astro 7.2.0 Content Collections, Zod 3.x, TypeScript 5.x, Vitest.
+**Tech Stack:** Astro 7.2.0 Content Collections, Zod 4.x (Astro 7 peer), TypeScript 5.x, Vitest.
 **Total Tasks:** 11
 **Estimated Complexity:** large (9+ tasks)
 

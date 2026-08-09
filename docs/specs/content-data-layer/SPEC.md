@@ -66,7 +66,7 @@ declara que um case sem link encerra a avaliação ali.
 7. **[REQ-007]** QUANDO qualquer superfície precisa de dado de projeto ou de perfil ENTÃO ela DEVE obtê-lo pela camada de acesso desta feature, e NÃO PODE ler o conteúdo por outro caminho nem manter cópia própria.
 8. **[REQ-008]** QUANDO `images` é fornecido ENTÃO cada entrada DEVE conter caminho e texto alternativo não vazio.
 9. **[REQ-009]** QUANDO um projeto tem `confidential: true` ENTÃO a camada de acesso DEVE omitir nome de cliente e métrica sigilosa das superfícies públicas.
-10. **[REQ-010]** QUANDO dois projetos declaram o mesmo `slug` ENTÃO a validação DEVE falhar, porque o slug é a chave de rota e de referência cruzada.
+10. **[REQ-010]** QUANDO dois projetos declaram o mesmo `slug` ENTÃO a validação DEVE falhar no build, porque o slug é a chave de rota e de referência cruzada. A checagem roda no loader da collection (varredura dos arquivos), não só na camada de acesso: o glob do Astro colapsa ids iguais e silenciaria o duplicado.
 11. **[REQ-011]** QUANDO a disponibilidade é consultada ENTÃO a fonte DEVE fornecer também a data da última atualização desse campo, que `check_availability` do MCP precisa devolver.
 
 ### P2 (Should Have)
@@ -113,7 +113,7 @@ declara que um case sem link encerra a avaliação ali.
 
 ## Constraints
 
-- Astro Content Collections nativas, Zod 3.x, TypeScript 5.x.
+- Astro Content Collections nativas, Zod 4.x (peer do Astro 7), TypeScript 5.x.
 - Sem CMS, sem banco de dados para conteúdo. Firestore é só para `hire_requests` (F7).
 - Todo dado desta camada é público por natureza: nada aqui pode conter segredo, e a filtragem de confidencialidade protege terceiros, não credenciais.
 - Compartilha os 4 dias da sprint 2 com `design-system-foundation` e `project-catalog`.

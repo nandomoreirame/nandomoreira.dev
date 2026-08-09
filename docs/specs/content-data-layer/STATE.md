@@ -1,22 +1,25 @@
 ---
-phase: plan-complete
+phase: implemented
 spec_path: docs/specs/content-data-layer/SPEC.md
 plan_path: docs/plans/2026-08-08-content-data-layer.md
 started_at: 2026-08-08
 updated_at: 2026-08-08
 current_section: ""
 decisions:
-  - "Astro Content Collections com Zod, sem CMS"
+  - "Astro Content Collections com Zod 4.x (peer do Astro 7), sem CMS"
   - "Camada de acesso única em src/lib/content/, com portão contra getCollection fora dela"
-  - "Filtragem de confidencialidade na leitura, não na escrita"
+  - "Filtragem de confidencialidade na leitura, não na escrita; strip case-insensitive; images.alt incluso"
+  - "slug/liveUrl/repoUrl não são redigidos: case confidential não pode identificar o cliente nesses campos (refinamento Zod)"
   - "slug explícito no frontmatter, não derivado do nome do arquivo"
   - "Regra de integridade de link como refinamento Zod: build falha, não é convenção"
+  - "REQ-010: unique slug no loader (varredura de arquivos), porque o glob colapsa ids iguais"
   - "Ordem dos blocos em constante declarada, não alfabética"
-blockers:
-  - "Depende do ADR docs/adr/001-hosting-platform.md (sprint 1). A feature é de build e sobrevive ao plano B"
+  - "Sprint 3: os três services do profile apontam a forja por ser o único case; trocar caseSlug quando os 8 existirem"
+blockers: []
 transitions:
   - "2026-08-08: research (autônomo, derivado de PRD F3 + Data Models + Edge Cases)"
   - "2026-08-08: plan-complete"
+  - "2026-08-08: implemented (review findings REQ-009/REQ-010/Zod 4 aplicados)"
 ---
 
 # STATE — content-data-layer
