@@ -9,7 +9,8 @@ export const postSchema = ({ image }: { image: () => z.ZodType }) =>
     slug: z
       .string()
       .min(1)
-      .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug must be kebab-case'),
+      // Underscores allowed so historical Gatsby paths (e.g. wp_mail) stay intact.
+      .regex(/^[a-z0-9]+([_-][a-z0-9]+)*$/, 'slug must be kebab-case (underscores allowed)'),
     title: z.string().min(1),
     summary: z.string().min(1),
     date: z
