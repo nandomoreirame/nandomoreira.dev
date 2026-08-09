@@ -2,7 +2,11 @@ import { readFileSync } from 'node:fs';
 import { glob } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
-const ALLOWED = ['src/lib/content/projects.ts', 'src/lib/content/profile.ts'];
+const ALLOWED = [
+  'src/lib/content/projects.ts',
+  'src/lib/content/profile.ts',
+  'src/lib/content/notes.ts',
+];
 
 describe('single source of truth', () => {
   it('only the access layer may read a collection directly', async () => {
