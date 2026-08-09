@@ -36,7 +36,7 @@ describe('buildSitemap', () => {
     expect(xml).toContain('<loc>https://nandomoreira.dev/lab</loc>');
     expect(xml).toContain('<loc>https://nandomoreira.dev/sobre</loc>');
     expect(xml).toContain('<loc>https://nandomoreira.dev/lab/forja</loc>');
-    expect(xml).toContain('<loc>https://nandomoreira.dev/portfolio/bragstack</loc>');
+    expect(xml).toContain('<loc>https://nandomoreira.dev/lab/bragstack</loc>');
   });
 
   it('never lists a redirected legacy path, which would teach crawlers to distrust the file', () => {

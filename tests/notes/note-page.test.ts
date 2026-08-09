@@ -6,7 +6,7 @@ const source = readFileSync('src/pages/notas/[slug].astro', 'utf8');
 describe('/notas/[slug]', () => {
   it('derives getStaticPaths from the access layer', () => {
     expect(source).toContain('getStaticPaths');
-    expect(source).toContain('getAllNoteEntries');
+    expect(source).toContain('getAllPostEntries');
     expect(source).not.toContain('getCollection(');
   });
 

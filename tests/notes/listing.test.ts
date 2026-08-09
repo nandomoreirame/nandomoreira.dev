@@ -11,7 +11,7 @@ describe('/notas listing', () => {
   });
 
   it('reads notes through the access layer', () => {
-    expect(source).toContain('getAllNotes');
+    expect(source).toContain('getAllPosts');
     expect(source).not.toContain('getCollection(');
   });
 

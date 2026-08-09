@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildRss } from '../../src/lib/notes/rss';
-import type { Note } from '../../src/content/schemas/note';
+import type { Post } from '../../src/content/schemas/post';
 
 const site = new URL('https://nandomoreira.dev');
 
-const notes: Note[] = [
+const notes: Post[] = [
   {
     slug: 'a',
     title: 'Title A & Co',
