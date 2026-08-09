@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Prose from '../components/ui/Prose.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -51,6 +52,19 @@ const stamp = toCompactStamp(post.date);
 
   <article class="mt-2xl mb-3xl flex flex-col gap-xl">
     <header class="flex flex-col gap-md">
+      {
+        post.cover && (
+          <figure class="m-0 overflow-hidden rounded-md border border-border">
+            <Image
+              src={post.cover.src}
+              alt={post.cover.alt}
+              widths={[720, 1080]}
+              sizes="(min-width: 48rem) 45rem, 100vw"
+              class="h-auto w-full"
+            />
+          </figure>
+        )
+      }
       {
         post.archived && (
           <span class="inline-flex w-fit items-center rounded-sm border border-border-strong px-sm py-xs font-mono text-micro uppercase tracking-wide text-muted-foreground">

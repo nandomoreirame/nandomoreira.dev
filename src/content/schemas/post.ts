@@ -1,10 +1,11 @@
+import type { SchemaContext } from 'astro:content';
 import { z } from 'zod';
 
 /**
  * Schema factory for the posts collection. Declared as a function so Astro
  * can inject `image()`, which wires cover paths into the asset pipeline.
  */
-export const postSchema = ({ image }: { image: () => z.ZodType }) =>
+export const postSchema = ({ image }: SchemaContext) =>
   z.object({
     slug: z
       .string()
