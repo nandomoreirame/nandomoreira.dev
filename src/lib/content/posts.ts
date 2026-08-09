@@ -4,6 +4,11 @@ import { assertUniqueSlugs } from './validate';
 
 export type PostEntry = CollectionEntry<'posts'>;
 
+export type ArchiveYear = {
+  year: string;
+  count: number;
+};
+
 export const publishedPosts = (posts: readonly Post[]): Post[] =>
   posts.filter((post) => post.draft !== true);
 
@@ -16,6 +21,29 @@ export const sortPosts = (posts: readonly Post[]): Post[] =>
       return byDate !== 0 ? byDate : a.index - b.index;
     })
     .map(({ post }) => post);
+
+/** Published and not archived. Drafts never appear. */
+export const currentOf = (posts: readonly Post[]): Post[] =>
+  publishedPosts(posts).filter((post) => post.archived !== true);
+
+/** Published and archived. Drafts never appear. */
+export const archivedOf = (posts: readonly Post[]): Post[] =>
+  publishedPosts(posts).filter((post) => post.archived === true);
+
+/** Years that have at least one archived post, newest year first. */
+export const groupArchiveYears = (posts: readonly Post[]): ArchiveYear[] => {
+  const counts = new Map<string, number>();
+
+  for (const post of archivedOf(posts)) {
+    const year = post.date.slice(0, 4);
+    counts.set(year, (counts.get(year) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .map(([year, count]) => ({ year, count }))
+    .filter((entry) => entry.count > 0)
+    .sort((a, b) => b.year.localeCompare(a.year));
+};
 
 const loadEntries = async (): Promise<PostEntry[]> => {
   const entries = await getCollection('posts');
@@ -35,7 +63,17 @@ const loadEntries = async (): Promise<PostEntry[]> => {
 const load = async (): Promise<Post[]> =>
   sortPosts(publishedPosts((await getCollection('posts')).map((entry) => entry.data)));
 
+/** All published posts (current + archived). Used by sitemap, RSS, detail routes. */
 export const getAllPosts = async (): Promise<Post[]> => load();
+
+export const getCurrentPosts = async (): Promise<Post[]> => sortPosts(currentOf(await load()));
+
+export const getArchivedPosts = async (): Promise<Post[]> => sortPosts(archivedOf(await load()));
+
+export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveYears(await load());
+
+export const getArchivedPostsByYear = async (year: string): Promise<Post[]> =>
+  sortPosts(archivedOf(await load()).filter((post) => post.date.startsWith(year)));
 
 export const getPost = async (slug: string): Promise<Post | undefined> =>
   (await load()).find((post) => post.slug === slug);

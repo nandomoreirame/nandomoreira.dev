@@ -1,7 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Post } from '../../src/content/schemas/post';
-import { publishedPosts, sortPosts } from '../../src/lib/content/posts';
+import {
+  archivedOf,
+  currentOf,
+  groupArchiveYears,
+  publishedPosts,
+  sortPosts,
+} from '../../src/lib/content/posts';
 
 const post = (overrides: Partial<Post> = {}): Post =>
   ({
@@ -10,6 +16,7 @@ const post = (overrides: Partial<Post> = {}): Post =>
     summary: 's',
     date: '2026-01-01',
     draft: false,
+    archived: false,
     ...overrides,
   }) as Post;
 
@@ -52,10 +59,55 @@ describe('sortPosts', () => {
   });
 });
 
+describe('posts access layer', () => {
+  it('separates current from archived', () => {
+    const posts = [
+      post({ slug: 'now', archived: false }),
+      post({ slug: 'old', archived: true, date: '2015-01-01' }),
+      post({ slug: 'draft', draft: true, archived: false }),
+    ];
+
+    expect(currentOf(posts).every((p) => !p.archived)).toBe(true);
+    expect(archivedOf(posts).every((p) => p.archived)).toBe(true);
+    expect(currentOf(posts).map((p) => p.slug)).toEqual(['now']);
+    expect(archivedOf(posts).map((p) => p.slug)).toEqual(['old']);
+  });
+
+  it('groups the archive by year, newest first', () => {
+    const years = groupArchiveYears([
+      post({ slug: 'a', archived: true, date: '2015-06-01' }),
+      post({ slug: 'b', archived: true, date: '2017-01-01' }),
+      post({ slug: 'c', archived: true, date: '2015-12-01' }),
+      post({ slug: 'd', archived: false, date: '2024-01-01' }),
+    ]);
+
+    expect(years.map((y) => y.year)).toEqual([...years.map((y) => y.year)].sort().reverse());
+    // A year with no post must not become a route (edge case in the spec).
+    expect(years.every((y) => y.count > 0)).toBe(true);
+    expect(years).toEqual([
+      { year: '2017', count: 1 },
+      { year: '2015', count: 2 },
+    ]);
+  });
+
+  it('never returns a draft on any surface', () => {
+    const posts = [
+      post({ slug: 'live', draft: false }),
+      post({ slug: 'hidden', draft: true }),
+      post({ slug: 'old', draft: true, archived: true }),
+    ];
+    const all = [...currentOf(posts), ...archivedOf(posts)];
+    expect(all.some((p) => p.draft)).toBe(false);
+  });
+});
+
 describe('posts access barrel', () => {
-  it('exports getAllPosts and getPost', () => {
+  it('exports getAllPosts, getCurrentPosts and archive helpers', () => {
     expect(barrel).toContain('getAllPosts');
     expect(barrel).toContain('getPost');
+    expect(barrel).toContain('getCurrentPosts');
+    expect(barrel).toContain('getArchivedPosts');
+    expect(barrel).toContain('getArchiveYears');
   });
 
   it('allows posts.ts to call getCollection under the single-source gate', () => {
