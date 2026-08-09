@@ -1,0 +1,25 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import StatItem from '../ui/StatItem.astro';
+
+interface Props {
+  stats: Array<{ value: string; label: string; context: string }>;
+  narrative: string;
+}
+
+const { stats, narrative } = Astro.props;
+---
+
+<section id="trajetoria" class="py-2xl lg:py-3xl">
+  <SectionHeader title="Trajetória e números" level={2} index={2} />
+
+  <p class="mb-xl max-w-[68ch] text-body text-muted-foreground">{narrative}</p>
+
+  <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
+    {stats.map((stat) => (
+      <li>
+        <StatItem value={stat.value} label={stat.label} context={stat.context} />
+      </li>
+    ))}
+  </ul>
+</section>
