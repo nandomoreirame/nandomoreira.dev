@@ -5,12 +5,10 @@ interface Props {
 
 const { current } = Astro.props;
 
-// Until home-page and F9 land, point non-catalogue items at home anchors
-// so the nav never links to a 404.
+// /agents is F9 (v1.1). /sobre and /contato are home sections, not routes.
 const items = [
   { href: '/projetos', label: 'Projetos' },
   { href: '/#sobre', label: 'Sobre' },
-  { href: '/#agents', label: 'Agents' },
   { href: '/#contato', label: 'Contato' },
 ];
 ---

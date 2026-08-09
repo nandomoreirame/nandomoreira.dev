@@ -8,10 +8,11 @@ const render = async (props: Record<string, unknown> = {}) => {
 };
 
 describe('SiteNav', () => {
-  it('carries the four sections declared in the PRD', async () => {
+  it('carries the main sections that already exist as routes or anchors', async () => {
     const html = await render();
 
-    for (const label of ['Projetos', 'Sobre', 'Agents', 'Contato']) {
+    // Agents (F9) returns when that page ships; until then the nav must not 404.
+    for (const label of ['Projetos', 'Sobre', 'Contato']) {
       expect(html).toContain(label);
     }
   });
