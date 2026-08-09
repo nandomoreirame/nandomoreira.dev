@@ -21,11 +21,8 @@ interface Props {
 }
 
 const { year } = Astro.props as Props;
+// getStaticPaths only emits years with count > 0, so the list is never empty here.
 const posts = await getArchivedPostsByYear(year);
-
-if (posts.length === 0) {
-  return Astro.redirect('/404');
-}
 ---
 
 <BaseLayout

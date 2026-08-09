@@ -9,8 +9,7 @@ export type ArchiveYear = {
   count: number;
 };
 
-export const publishedPosts = (posts: readonly Post[]): Post[] =>
-  posts.filter((post) => post.draft !== true);
+export const publishedPosts = (posts: readonly Post[]): Post[] => posts.filter((post) => post.draft !== true);
 
 /** Newest first. Equal dates keep insertion order (stable sort). */
 export const sortPosts = (posts: readonly Post[]): Post[] =>
@@ -45,6 +44,11 @@ export const groupArchiveYears = (posts: readonly Post[]): ArchiveYear[] => {
     .sort((a, b) => b.year.localeCompare(a.year));
 };
 
+/**
+ * Single loader: fetch once, drop drafts once, assert unique slugs once.
+ * Both the Post[] and PostEntry[] views derive from this path so the
+ * uniqueness gate cannot be skipped by a route that only needs data.
+ */
 const loadEntries = async (): Promise<PostEntry[]> => {
   const entries = await getCollection('posts');
   const published = entries.filter((entry) => entry.data.draft !== true);
@@ -54,14 +58,12 @@ const loadEntries = async (): Promise<PostEntry[]> => {
     'post',
   );
 
-  return published.sort((a, b) => {
-    const byDate = b.data.date.localeCompare(a.data.date);
-    return byDate !== 0 ? byDate : 0;
-  });
+  const order = new Map(sortPosts(published.map((entry) => entry.data)).map((post, index) => [post.slug, index]));
+
+  return [...published].sort((a, b) => (order.get(a.data.slug) ?? 0) - (order.get(b.data.slug) ?? 0));
 };
 
-const load = async (): Promise<Post[]> =>
-  sortPosts(publishedPosts((await getCollection('posts')).map((entry) => entry.data)));
+const load = async (): Promise<Post[]> => (await loadEntries()).map((entry) => entry.data);
 
 /** All published posts (current + archived). Used by sitemap, RSS, detail routes. */
 export const getAllPosts = async (): Promise<Post[]> => load();
