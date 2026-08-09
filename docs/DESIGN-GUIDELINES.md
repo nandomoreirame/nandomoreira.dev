@@ -234,7 +234,10 @@ Duas durações apenas. Mais que isso ninguém aplica com consistência.
 
 **Regras:**
 
-- Animar somente `transform` e `opacity`. Alvo de 60fps.
+- Não animar propriedades que disparam layout ou reflow (`width`, `height`, `top`,
+  `left`, `margin`, `padding`). Permitido: `transform`, `opacity` e propriedades de
+  cor (`color`, `background-color`, `border-color`), que é o que o token `fast`
+  existe para cobrir. Alvo de 60fps.
 - `prefers-reduced-motion: reduce` remove o movimento e mantém a mudança de estado.
   Não é opcional: é requisito de acessibilidade e o site já se compromete com WCAG AA.
 - Nenhuma animação atrasa a leitura do conteúdo. Texto não entra com fade a partir

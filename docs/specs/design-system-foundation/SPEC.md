@@ -72,7 +72,7 @@ assumptions ancoradas no plano que as cria.
 7. **[REQ-007]** QUANDO um alvo de toque é renderizado ENTÃO sua área clicável DEVE ter no mínimo 44 por 44 pixels.
 8. **[REQ-008]** QUANDO o build conclui ENTÃO o sistema NÃO PODE enviar JavaScript de cliente ao navegador em nenhuma rota.
 9. **[REQ-009]** QUANDO `prefers-reduced-motion: reduce` está ativo ENTÃO o sistema DEVE suprimir o movimento e preservar a mudança de estado.
-10. **[REQ-010]** QUANDO uma animação é declarada ENTÃO ela DEVE animar apenas `transform` e `opacity`, com duração de 150ms (`fast`) ou 250ms (`base`) e easing `ease-out`.
+10. **[REQ-010]** QUANDO uma animação é declarada ENTÃO ela DEVE usar duração de 150ms (`fast`) ou 250ms (`base`) e easing `ease-out`, e NÃO PODE animar propriedades que disparam layout ou reflow (`width`, `height`, `top`, `left`, `margin`, `padding`); `transform`, `opacity` e propriedades de cor (`color`, `background-color`, `border-color`) SÃO permitidas.
 11. **[REQ-011]** QUANDO o layout base é renderizado ENTÃO ele DEVE expor um link de pular para o conteúdo como primeiro elemento focável e um marco `main` único.
 12. **[REQ-012]** QUANDO o site é renderizado em qualquer viewport a partir de 320px ENTÃO ele NÃO PODE produzir scroll horizontal no corpo da página.
 
@@ -160,7 +160,7 @@ assumptions ancoradas no plano que as cria.
 | REQ-007 | Alvo de toque mínimo de 44px | P1 | Pending |
 | REQ-008 | Zero JavaScript de cliente | P1 | Pending |
 | REQ-009 | `prefers-reduced-motion` respeitado | P1 | Pending |
-| REQ-010 | Só `transform` e `opacity`, 150ms ou 250ms | P1 | Pending |
+| REQ-010 | Sem layout/reflow; cor/transform/opacity ok; 150ms ou 250ms | P1 | Pending |
 | REQ-011 | Skip link e marco `main` único | P1 | Pending |
 | REQ-012 | Sem scroll horizontal a partir de 320px | P1 | Pending |
 | REQ-013 | Ícones com `aria-label`, importados individualmente | P2 | Pending |
