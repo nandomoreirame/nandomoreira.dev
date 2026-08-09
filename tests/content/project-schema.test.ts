@@ -155,3 +155,39 @@ describe('link requirement', () => {
     );
   });
 });
+
+describe('discontinued projects', () => {
+  const base = {
+    slug: 'exemplo',
+    title: 'Exemplo',
+    block: 'professional' as const,
+    summary: 's',
+    problem: 'p',
+    decisions: 'd',
+    outcome: 'o',
+    tech: ['TypeScript'],
+    featured: false,
+    confidential: false,
+    date: '2025-01-01',
+  };
+
+  it('accepts a discontinued case with no link', () => {
+    // A shut-down site has no live URL by definition, and a dead link is worse
+    // than none: it promises evidence and delivers a connection error.
+    const parsed = projectSchema.parse({ ...base, discontinued: true });
+    expect(parsed.discontinued).toBe(true);
+    expect(parsed.liveUrl ?? null).toBeNull();
+  });
+
+  it('defaults to false, so an ordinary case is unaffected', () => {
+    expect(projectSchema.parse({ ...base, liveUrl: 'https://x.example' }).discontinued).toBe(
+      false,
+    );
+  });
+
+  it('still rejects a live case with no link', () => {
+    // The exception must stay pinned to the two facts that justify it:
+    // confidentiality and shutdown. Nothing else may omit the link.
+    expect(() => projectSchema.parse(base)).toThrow(/verifiable evidence/);
+  });
+});

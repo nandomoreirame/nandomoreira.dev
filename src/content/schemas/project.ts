@@ -34,6 +34,12 @@ export const projectSchema = z
     images: z.array(imageSchema).optional(),
     featured: z.boolean(),
     confidential: z.boolean(),
+    /**
+     * The project is shut down: no live URL exists any more. Like `confidential`,
+     * it excuses the link requirement, but for the opposite reason — there is
+     * nothing left to link to, rather than nothing that may be shown.
+     */
+    discontinued: z.boolean().default(false),
     /** Shown as MM/YYYY in the leading column of the row pattern. */
     date: z
       .string()
@@ -50,10 +56,13 @@ export const projectSchema = z
   })
   .refine(
     (project) =>
-      project.confidential || Boolean(project.repoUrl) || Boolean(project.liveUrl),
+      project.confidential ||
+      project.discontinued ||
+      Boolean(project.repoUrl) ||
+      Boolean(project.liveUrl),
     {
       message:
-        'A case needs at least one of repoUrl or liveUrl: without a link there is no verifiable evidence. Only a confidential case may omit both, and it must say so on the page (REQ-005).',
+        'A case needs at least one of repoUrl or liveUrl: without a link there is no verifiable evidence. Only a confidential or a discontinued case may omit both, and each must say so on the page (REQ-005, REQ-017).',
       path: ['repoUrl'],
     },
   )
