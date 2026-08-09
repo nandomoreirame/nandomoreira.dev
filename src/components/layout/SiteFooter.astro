@@ -1,0 +1,45 @@
+---
+interface Props {
+  name: string;
+  year: number;
+  contacts: Array<{ kind: string; value: string }>;
+}
+
+const { name, year, contacts } = Astro.props;
+
+const LABELS: Record<string, string> = {
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  site: 'Site',
+};
+
+// Email is deliberately absent: the footer is on every page and gets scraped.
+const social = contacts.filter((contact) => contact.kind in LABELS);
+---
+
+<footer class="border-t border-border">
+  <div
+    class="flex flex-col gap-md py-xl font-mono text-small text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p>© {year} {name}. Construído com Astro.</p>
+
+    <nav class="flex items-center gap-lg" aria-label="Canais">
+      {social.map((contact) => (
+        <a
+          href={contact.value}
+          target="_blank"
+          rel="noopener noreferrer me"
+          class="inline-flex min-h-11 items-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {LABELS[contact.kind]}
+        </a>
+      ))}
+      <a
+        href="#main"
+        class="inline-flex min-h-11 items-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Topo ↑
+      </a>
+    </nav>
+  </div>
+</footer>
