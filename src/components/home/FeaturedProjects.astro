@@ -1,0 +1,51 @@
+---
+import type { Project } from '../../content/schemas/project';
+import ProjectCard from '../ui/ProjectCard.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section id="projetos" class="py-2xl lg:py-3xl">
+  <SectionHeader
+    title="Projetos e experimentos"
+    level={2}
+    index={1}
+    description="Cases com o problema, a decisão técnica e o resultado."
+  />
+
+  {
+    projects.length === 0 ? (
+      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+        Nenhum case em destaque ainda.
+      </p>
+    ) : (
+      <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <li>
+            <ProjectCard
+              slug={project.slug}
+              title={project.title}
+              summary={project.summary}
+              tech={project.tech}
+              image={project.images?.[0]}
+            />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <p class="mt-lg">
+    <a
+      href="/projetos"
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Ver todos os projetos
+    </a>
+  </p>
+</section>
