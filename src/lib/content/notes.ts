@@ -1,6 +1,8 @@
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Note } from '../../content/schemas/note';
 import { assertUniqueSlugs } from './validate';
+
+export type NoteEntry = CollectionEntry<'notes'>;
 
 export const publishedNotes = (notes: readonly Note[]): Note[] =>
   notes.filter((note) => note.draft !== true);
@@ -15,16 +17,31 @@ export const sortNotes = (notes: readonly Note[]): Note[] =>
     })
     .map(({ note }) => note);
 
-const load = async (): Promise<Note[]> => {
+const loadEntries = async (): Promise<NoteEntry[]> => {
   const entries = await getCollection('notes');
-  const notes = entries.map((entry) => entry.data);
+  const published = entries.filter((entry) => entry.data.draft !== true);
 
-  assertUniqueSlugs(notes, 'note');
+  assertUniqueSlugs(
+    published.map((entry) => entry.data),
+    'note',
+  );
 
-  return publishedNotes(notes);
+  return published.sort((a, b) => {
+    const byDate = b.data.date.localeCompare(a.data.date);
+    return byDate !== 0 ? byDate : 0;
+  });
 };
 
-export const getAllNotes = async (): Promise<Note[]> => sortNotes(await load());
+const load = async (): Promise<Note[]> =>
+  sortNotes(publishedNotes((await getCollection('notes')).map((entry) => entry.data)));
+
+export const getAllNotes = async (): Promise<Note[]> => load();
 
 export const getNote = async (slug: string): Promise<Note | undefined> =>
   (await load()).find((note) => note.slug === slug);
+
+/** Full collection entry for body rendering; drafts already excluded. */
+export const getAllNoteEntries = async (): Promise<NoteEntry[]> => loadEntries();
+
+export const getNoteEntry = async (slug: string): Promise<NoteEntry | undefined> =>
+  (await loadEntries()).find((entry) => entry.data.slug === slug);

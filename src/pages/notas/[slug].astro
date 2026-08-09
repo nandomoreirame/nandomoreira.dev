@@ -1,0 +1,51 @@
+---
+import { render } from 'astro:content';
+import Prose from '../../components/ui/Prose.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllNoteEntries, getNoteEntry } from '../../lib/content';
+import type { NoteEntry } from '../../lib/content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getAllNoteEntries();
+
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: NoteEntry;
+}
+
+const { entry } = Astro.props as Props;
+// Re-check at render time so a draft never slips through a stale path list.
+const live = await getNoteEntry(entry.data.slug);
+
+if (!live) {
+  return Astro.redirect('/404');
+}
+
+const note = live.data;
+const { Content } = await render(live);
+---
+
+<BaseLayout title={`${note.title} | nandomoreira.dev`} description={note.summary}>
+  <nav class="mt-lg" aria-label="Trilha de navegação">
+    <a
+      href="/notas"
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Voltar para notas
+    </a>
+  </nav>
+
+  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
+    <h1 class="text-h1 font-semibold text-foreground">{note.title}</h1>
+    <Prose>
+      <Content />
+    </Prose>
+  </article>
+</BaseLayout>
