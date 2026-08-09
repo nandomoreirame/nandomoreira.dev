@@ -17,8 +17,8 @@ describe('section anchors', () => {
   });
 
   it('never links to a route that does not exist yet', () => {
-    expect(nav).not.toContain('href="/sobre"');
     expect(nav).not.toContain('href="/contato"');
     expect(nav).not.toContain('href="/agents"');
+    expect(nav).not.toContain('href="/projetos"');
   });
 });
