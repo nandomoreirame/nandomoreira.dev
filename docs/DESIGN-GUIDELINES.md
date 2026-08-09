@@ -54,55 +54,70 @@ Tokens semânticos. Nenhuma cor solta em componente.
 
 ### Paleta base
 
-| Token | Valor | Uso |
-|-------|-------|-----|
-| `background` | `#0a0a0a` | Fundo da página |
-| `surface` | `#171717` | Cards, painéis |
-| `surface-elevated` | `#262626` | Popovers, elementos flutuantes |
-| `border` | `#262626` | Divisores e contornos |
-| `border-strong` | `#404040` | Contorno de elemento em foco ou hover |
-| `foreground` | `#fafafa` | Texto primário |
-| `muted-foreground` | `#a3a3a3` | Texto secundário, metadados |
+A paleta vem do tema `Exquisitus for Starlight` (OFL/MIT, `anaxite/starlight-theme-exquisitus`),
+adotada em 2026-08-09 no lugar dos cinzas neutros originais. A rampa é escrita
+em OKLCH na origem e convertida para hex sRGB aqui, porque o portão de contraste
+lê hex: a razão que ele calcula é a que o browser renderiza, não uma aproximação.
+A lógica da paleta é que **as superfícies são quase neutras e o calor mora na
+tinta e no acento**, nunca no papel. Sem creme, sem areia.
+
+| Token | Valor | OKLCH de origem | Uso |
+|-------|-------|-----------------|-----|
+| `background` | `#110f0d` | `0.17 0.006 80` | Fundo da página |
+| `surface` | `#191714` | `0.205 0.006 80` | Cards, painéis |
+| `surface-elevated` | `#211f1c` | `0.24 0.007 80` | Popovers, elementos flutuantes |
+| `border` | `#45423e` | `0.38 0.008 80` | Divisores e contornos |
+| `border-strong` | `#6c6863` | `0.52 0.01 82` | Contorno de elemento em foco ou hover |
+| `foreground` | `#efebe2` | `0.94 0.012 85` | Texto primário |
+| `muted-foreground` | `#a29e96` | `0.7 0.012 82` | Texto secundário, metadados |
 
 ### Acento
 
-| Token | Valor | Uso |
-|-------|-------|-----|
-| `primary` | `#f59e0b` | CTA, links, comandos, indicador de foco |
-| `primary-foreground` | `#0a0a0a` | Texto sobre o acento |
+| Token | Valor | OKLCH de origem | Uso |
+|-------|-------|-----------------|-----|
+| `primary` | `#f0c36f` | `0.84 0.115 82` | CTA, links, comandos, indicador de foco |
+| `primary-foreground` | `#110f0d` | `0.17 0.006 80` | Texto sobre o acento |
 
-**Por que âmbar:** continuidade com a identidade atual, e legibilidade alta sobre
-fundo quase preto. **É ajustável**, e é a decisão mais barata de trocar em todo o
-projeto, já que existe num único token. Q3 do PRD.
+**Por que âmbar:** continuidade com a identidade original. O tom mudou do âmbar
+saturado (`#f59e0b`) para o mel do Exquisitus, que é mais claro e sobe o contraste
+sobre o fundo quase preto de 9,22:1 para 11,60:1. **É ajustável**, e continua sendo
+a decisão mais barata de trocar em todo o projeto, já que existe num único token.
+Q3 do PRD.
 
 ### Semânticas
 
-| Token | Valor | Uso |
-|-------|-------|-----|
-| `success` | `#22c55e` | Estado disponível, build passando |
-| `warning` | `#eab308` | Aviso, projeto arquivado |
-| `destructive` | `#ef4444` | Erro de formulário, estado de falha |
+Vêm das rampas `-high` do Exquisitus, que são as calibradas para superfície escura.
+
+| Token | Valor | OKLCH de origem | Uso |
+|-------|-------|-----------------|-----|
+| `success` | `#a9ddb2` | `0.85 0.08 150` | Estado disponível, build passando |
+| `warning` | `#facf9e` | `0.88 0.08 70` | Aviso, projeto arquivado |
+| `destructive` | `#ffb7b0` | `0.85 0.09 25` | Erro de formulário, estado de falha |
 
 ### Contraste verificado
 
-Calculado sobre `background` (`#0a0a0a`), fórmula de luminância relativa WCAG 2.1.
+Calculado sobre `background` (`#110f0d`), fórmula de luminância relativa WCAG 2.1.
 
 | Par | Razão | Situação |
 |-----|-------|----------|
-| `foreground` sobre `background` | 18,97:1 | Aprova AA e AAA |
-| `muted-foreground` sobre `background` | 7,85:1 | Aprova AA e AAA |
-| `muted-foreground` sobre `surface` | 7,11:1 | Aprova AA e AAA |
-| `primary` sobre `background` | 9,22:1 | Aprova AA e AAA |
-| `primary` sobre `surface` | 8,35:1 | Aprova AA e AAA |
-| `primary-foreground` sobre `primary` | 9,22:1 | Aprova AA e AAA (texto do botão) |
-| `success` sobre `background` | 8,69:1 | Aprova AA |
-| `destructive` sobre `background` | 5,26:1 | Aprova AA |
-| `border` sobre `background` | **1,31:1** | **Reprova.** Ver regra abaixo |
+| `foreground` sobre `background` | 16,08:1 | Aprova AA e AAA |
+| `muted-foreground` sobre `background` | 7,17:1 | Aprova AA e AAA |
+| `muted-foreground` sobre `surface` | 6,70:1 | Aprova AA e AAA |
+| `primary` sobre `background` | 11,60:1 | Aprova AA e AAA |
+| `primary` sobre `surface` | 10,85:1 | Aprova AA e AAA |
+| `primary-foreground` sobre `primary` | 11,60:1 | Aprova AA e AAA (texto do botão) |
+| `success` sobre `background` | 12,45:1 | Aprova AA e AAA |
+| `warning` sobre `background` | 13,19:1 | Aprova AA e AAA |
+| `destructive` sobre `background` | 11,52:1 | Aprova AA e AAA |
+| `border-strong` sobre `background` | 3,46:1 | Aprova 3:1 para componente gráfico |
+| `border` sobre `background` | **1,91:1** | **Reprova.** Ver regra abaixo |
 
-**Regra decorrente:** `border` (`#262626`) tem contraste de 1,31:1 e portanto
+**Regra decorrente:** `border` (`#45423e`) tem contraste de 1,91:1 e portanto
 **nunca pode ser o único meio de transmitir informação ou delimitar um alvo
 interativo**. Serve como separador decorativo. Contorno que precisa ser percebido
-(campo de formulário, elemento em foco) usa `border-strong` ou `primary`.
+(campo de formulário, elemento em foco) usa `border-strong` ou `primary`. A troca
+de paleta subiu esse valor de 1,31:1 para 1,91:1, o que torna o fio mais visível
+mas **não** muda a regra: 1,91 continua abaixo dos 3:1 exigidos.
 
 ### Regras de uso
 
@@ -118,14 +133,29 @@ interativo**. Serve como separador decorativo. Contorno que precisa ser percebid
 
 ### Famílias
 
-| Papel | Fonte | Fallback | Pesos |
-|-------|-------|----------|-------|
-| Interface e corpo | Inter | system-ui, sans-serif | 400, 500, 600 |
-| Código, comando, dado | JetBrains Mono | ui-monospace, monospace | 400, 500 |
+| Papel | Fonte | Token | Fallback | Pesos |
+|-------|-------|-------|----------|-------|
+| Leitura e títulos de peso | Literata | `--font-serif` | Georgia, Times New Roman, serif | 400, 600 |
+| Interface, corpo e registro | Alegreya Sans | `--font-sans` | system-ui, sans-serif | 400, 500, 700 |
+| Código, comando, dado | JetBrains Mono | `--font-mono` | ui-monospace, monospace | 400, 500 |
 
-Duas famílias, sem display separada. Os títulos usam Inter em peso alto, e o
-monoespaçado carrega a identidade técnica onde ele tem função (comando, endpoint,
-nome de pacote, número).
+Três famílias desde 2026-08-09, adotadas do tema `Exquisitus for Starlight`, que
+substituiu a Inter. **Uma fonte por trabalho**: a serifada carrega a leitura e o
+peso editorial, a sem serifa carrega o registro e o chrome, a monoespaçada carrega
+a voz de máquina. As duas primeiras são humanistas e compartilham DNA caligráfico,
+então contrastam no eixo serifa/sem-serifa sem colidir.
+
+**Atenção ao peso 600:** Alegreya Sans não tem corte 600. Ênfase em texto sem
+serifa mapeia para 500 ou 700, nunca 600, sob pena de o browser sintetizar o peso.
+A Literata tem 600 e é onde ele é usado.
+
+**Onde cada uma aparece:**
+
+| Superfície | Família |
+|------------|---------|
+| Marca do cabeçalho, `h1` do hero, título de case na listagem, corpo de nota e de case | Literata |
+| Parágrafos de apoio, resumos, rótulos de botão, texto de interface | Alegreya Sans |
+| Navegação, sobrescrito de seção, data, tecnologias, contador, código | JetBrains Mono |
 
 **Carregamento:** fontes servidas localmente com `font-display: swap` e subset
 latino. Nenhuma requisição a host externo, tanto por performance quanto por não
@@ -286,10 +316,34 @@ Duas durações apenas. Mais que isso ninguém aplica com consistência.
 | base | 320px+ | Coluna única, navegação recolhida |
 | sm | 640px | Catálogo em 2 colunas |
 | lg | 1024px | Catálogo em 3 colunas, navegação horizontal completa |
-| xl | 1280px | Container com largura máxima de 1200px |
+| xl | 1280px | Container já no teto de 768px, margens crescem sozinhas |
+
+**Container em 768px (`--container-page: 48rem`).** Substituiu os 1200px originais
+em 2026-08-09, junto com o restyle. A medida de 1200px produzia uma linha de
+leitura 1,62 vez mais larga que a da referência visual do projeto, o que fazia o
+site parecer outro layout mesmo com paleta, tipografia e componentes corretos. O
+cabeçalho e o rodapé mantêm a régua atravessando a viewport inteira, com o
+container aplicado à linha interna, e não ao elemento que carrega a borda.
 
 Mobile-first. Nenhum scroll horizontal em nenhum viewport suportado, verificado a
 partir de 320px.
+
+**A trava é `overflow-x: clip`, nunca `hidden`.** As duas proíbem o mesmo scroll
+horizontal, mas `hidden` transforma o elemento num contêiner de rolagem, e a partir
+daí `position: sticky` gruda nele em vez de grudar na viewport. O cabeçalho fixo
+simplesmente para de funcionar, sem erro e sem aviso. `clip` proíbe o overflow sem
+criar o contêiner, então o requisito e o cabeçalho convivem. Há portão em
+`tests/design-system/global-tags.test.ts` rejeitando `overflow-x-hidden` na camada
+base pela razão escrita no próprio teste.
+
+**Cabeçalho fixo.** `sticky top-0 z-40` com `bg-background/90` e `backdrop-blur`. É
+CSS puro, sem ilha. A translucidez pede o blur junto: transparente sem blur deixa
+texto colidir com texto por baixo.
+
+**Âncoras rolam suave.** `scroll-behavior: smooth` no `html`, com
+`scroll-padding-top: var(--spacing-3xl)` para o alvo não parar embaixo do cabeçalho
+fixo. O bloco `prefers-reduced-motion` já existente força `scroll-behavior: auto`,
+então quem pediu menos movimento continua com salto instantâneo.
 
 **Tabelas dentro dos cases** rolam dentro do próprio container com
 `overflow-x: auto`. O corpo da página nunca rola na horizontal.

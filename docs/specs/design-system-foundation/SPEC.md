@@ -81,7 +81,7 @@ assumptions ancoradas no plano que as cria.
 
  1. **[REQ-013]** QUANDO um ícone é renderizado sem texto acompanhante ENTÃO ele DEVE receber `aria-label`, e os ícones DEVEM ser importados individualmente da Lucide, nunca o pacote inteiro.
  2. **[REQ-014]** QUANDO uma listagem é renderizada sem itens ENTÃO o sistema DEVE apresentar um estado vazio explícito em vez de área em branco.
- 3. **[REQ-015]** QUANDO o container principal é renderizado acima de 1280px ENTÃO sua largura DEVE ser limitada a 1200px.
+ 3. **[REQ-015]** QUANDO o container principal é renderizado acima de seu teto ENTÃO sua largura DEVE ser limitada a 768px. *(Emendado em 2026-08-09: o valor original era 1200px. Ver REQ-023 de `theme-restyle` para a razão.)*
 
 ### P3 (Nice to Have)
 
@@ -166,5 +166,5 @@ assumptions ancoradas no plano que as cria.
 | REQ-012 | Sem scroll horizontal a partir de 320px | P1 | Done |
 | REQ-013 | Ícones com `aria-label`, importados individualmente | P2 | Pending (fora do plano das 14 tarefas) |
 | REQ-014 | Estado vazio explícito em listagem | P2 | Pending (fora do plano das 14 tarefas) |
-| REQ-015 | Container limitado a 1200px | P2 | Done |
+| REQ-015 | Container limitado a 768px (era 1200px) | P2 | Done |
 | REQ-016 | Página interna de referência visual | P3 | Pending (P3) |

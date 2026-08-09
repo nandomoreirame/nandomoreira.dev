@@ -492,7 +492,7 @@ Com `hreflang`. Primeiro item da v1.1 se H3 se confirmar.
 | Currículo | JSON Resume schema | 1.3.1 | Padrão aberto que agentes já sabem ler |
 | Hosting | Firebase App Hosting | — | Projeto `nandomoreira-dev`, região `us-east4`. Autor já opera Firebase em três produtos |
 | Persistência | Firestore | — | Registro dos briefings recebidos |
-| Fontes | JetBrains Mono + Inter | — | Continuidade com a identidade atual |
+| Fontes | Literata + Alegreya Sans + JetBrains Mono | — | Trio do tema `Exquisitus for Starlight`, adotado em 2026-08-09 no lugar da Inter. Uma família por trabalho: leitura, registro, máquina |
 
 **Versões verificadas em:** 2026-08-07, via npm registry (`dist-tags.latest` mais data de publicação e downloads no último mês).
 
