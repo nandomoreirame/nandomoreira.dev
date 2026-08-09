@@ -1,6 +1,6 @@
 ---
 name: Fernando Moreira Costa
-wordmark: Nando Moreira
+wordmark: NandoMoreira
 headline: Engenheiro de produto com agentes de IA
 bio: |
   Construo ferramental de agentes de IA e produtos com IA em produção.
