@@ -4,6 +4,7 @@ generated_at: 2026-08-08
 current_sprint: 2
 completed_features:
   - infra-deploy-spike
+  - design-system-foundation
 total_sprints: 6
 source_docs:
   - docs/BRIEF.md
@@ -96,26 +97,43 @@ Permanecem no PRD e entram depois do lançamento, sem sprint alocada neste roadm
 | RISK-002 | `/api/hire` sem rate limit nativo na plataforma | Sprint 5 | Contador em memória por instância, aceito como aproximado. Cloud Armor fica como escalada |
 | RISK-004 | Prova social exibida é legado Jekyll de 2018 | Sprint 3 | Narrativa de trajetória assumida na home, em vez de número agregado sem contexto |
 
-## Status de planejamento
+## Status
 
-Specs e planos das sprints 1 a 4 já existem. As quatro features restantes ficaram de
-fora porque dependem do resultado do spike: `structured-resume`, `mcp-server` e
-`hire-endpoint` são rotas de servidor, e `launch-hardening` é o cutover, os quatro
-reescritos se o plano B for acionado.
+Atualizado em 2026-08-08.
 
-| Slug | Sprint | SPEC | Plano |
-|------|--------|------|-------|
-| `infra-deploy-spike` | 1 | `docs/specs/infra-deploy-spike/SPEC.md` | `docs/plans/2026-08-08-infra-deploy-spike.md` — **concluída** |
-| `design-system-foundation` | 2 | `docs/specs/design-system-foundation/SPEC.md` | `docs/plans/2026-08-08-design-system-foundation.md` |
-| `content-data-layer` | 2 | `docs/specs/content-data-layer/SPEC.md` | `docs/plans/2026-08-08-content-data-layer.md` |
-| `project-catalog` | 2 | `docs/specs/project-catalog/SPEC.md` | `docs/plans/2026-08-08-project-catalog.md` |
-| `case-content` | 3 | — (conteúdo) | — |
-| `home-page` | 3 | `docs/specs/home-page/SPEC.md` | `docs/plans/2026-08-08-home-page.md` |
-| `aeo-base` | 4 | `docs/specs/aeo-base/SPEC.md` | `docs/plans/2026-08-08-aeo-base.md` |
-| `structured-resume` | 4 | pendente do spike | pendente do spike |
-| `mcp-server` | 5 | pendente do spike | pendente do spike |
-| `hire-endpoint` | 5 | pendente do spike | pendente do spike |
-| `launch-hardening` | 6 | pendente do spike | pendente do spike |
+| Slug | Sprint | SPEC | Plano | Situação |
+|------|--------|------|-------|----------|
+| `infra-deploy-spike` | 1 | `infra-deploy-spike/SPEC.md` | `2026-08-08-infra-deploy-spike.md` | **Concluída** |
+| `design-system-foundation` | 2 | `design-system-foundation/SPEC.md` | `2026-08-08-design-system-foundation.md` | **Concluída** |
+| `content-data-layer` | 2 | `content-data-layer/SPEC.md` | `2026-08-08-content-data-layer.md` | Plano pronto, não implementado |
+| `project-catalog` | 2 | `project-catalog/SPEC.md` | `2026-08-08-project-catalog.md` | Plano pronto, não implementado |
+| `case-content` | 3 | — (conteúdo) | — | Não escrito |
+| `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | Plano pronto, não implementado |
+| `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | Plano pronto, não implementado |
+| `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
+| `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
+| `hire-endpoint` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
+| `launch-hardening` | 6 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
+
+Specs e planos vivem em `docs/specs/<slug>/` e `docs/plans/`.
+
+As quatro últimas ficaram sem spec porque plano A e plano B produziriam arquiteturas
+diferentes para rota de servidor e para cutover. **Esse bloqueio caiu:** o ADR-001
+confirmou o plano A, então elas podem ser especificadas quando convier.
+
+### O que está em produção
+
+O deploy **não é automático**: o backend não tem repositório GitHub conectado, então
+push não dispara rollout. Publicar exige
+`firebase deploy --only apphosting --project nandomoreira-dev`.
+
+Em 2026-08-08 a produção ainda servia o placeholder do spike: nada da sprint 2 tinha
+subido.
+
+### Próximo passo
+
+`content-data-layer`, por dependência: é pré-requisito de F1, F2, F4, F5 e F6, e
+`project-catalog` não começa sem ela.
 
 ## Como usar este roadmap
 
@@ -130,6 +148,18 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-08-08: `design-system-foundation` concluída, após revisão que achou 6 defeitos
+  (um bloqueante: o portão `npm run verify` estava vermelho no main). Todos corrigidos.
+  REQ-013 e REQ-014 ficaram pendentes por estarem fora das 14 tarefas do plano; REQ-014
+  (estado vazio) entra naturalmente em `project-catalog`.
+- 2026-08-08: REQ-010 do design system reescrito. `DESIGN-GUIDELINES.md` se contradizia:
+  proibia animar o que não fosse `transform`/`opacity` enquanto definia o token `fast`
+  como "hover, mudança de cor". Resolvido em favor de proibir propriedade que dispara
+  layout, e permitir cor.
+- 2026-08-08: Tags globais (`html`, `body`) passam a ser estilizadas por `@apply` no
+  `global.css`, nunca por `class` na marcação. A regra vale só para tag pura e global,
+  sem variante; componente segue compondo utilitário na marcação. Portão em
+  `tests/design-system/global-tags.test.ts`.
 - 2026-08-08: Sprint 1 concluída. Plano A confirmado em `docs/adr/001-hosting-platform.md`:
   Astro 7 SSR com `@astrojs/node` standalone está no ar no App Hosting. O gate F8.1
   fechou e a sprint 2 está liberada. O plano B não foi acionado.

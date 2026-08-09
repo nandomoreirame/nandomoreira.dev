@@ -2,8 +2,9 @@
 
 > **Roadmap:** `docs/specs/00-roadmap.md` — sprint 2
 > **PRD:** sem ID próprio. Derivada de `DESIGN-GUIDELINES.md`; sustenta F1 e F2
-> **Status:** draft
+> **Status:** implemented
 > **Criado:** 2026-08-08
+> **Concluído:** 2026-08-08 — P1 e P2 atendidos, salvo REQ-013 e REQ-014 (fora do plano das 14 tarefas)
 
 ## Problem Statement
 
@@ -151,19 +152,19 @@ assumptions ancoradas no plano que as cria.
 
 | ID | Description | Priority | Status |
 |----|-------------|----------|--------|
-| REQ-001 | Todos os tokens declarados no CSS | P1 | Pending |
-| REQ-002 | Nenhum literal fora da escala em `src/` | P1 | Pending |
-| REQ-003 | Tema escuro único, sem alternância | P1 | Pending |
-| REQ-004 | Contraste mínimo 4,5:1; `border` nunca como único delimitador | P1 | Pending |
-| REQ-005 | Fontes locais, `font-display: swap`, subset latino | P1 | Pending |
-| REQ-006 | Cinco estados obrigatórios, foco em `primary` | P1 | Pending |
-| REQ-007 | Alvo de toque mínimo de 44px | P1 | Pending |
-| REQ-008 | Zero JavaScript de cliente | P1 | Pending |
-| REQ-009 | `prefers-reduced-motion` respeitado | P1 | Pending |
-| REQ-010 | Sem layout/reflow; cor/transform/opacity ok; 150ms ou 250ms | P1 | Pending |
-| REQ-011 | Skip link e marco `main` único | P1 | Pending |
-| REQ-012 | Sem scroll horizontal a partir de 320px | P1 | Pending |
-| REQ-013 | Ícones com `aria-label`, importados individualmente | P2 | Pending |
-| REQ-014 | Estado vazio explícito em listagem | P2 | Pending |
-| REQ-015 | Container limitado a 1200px | P2 | Pending |
-| REQ-016 | Página interna de referência visual | P3 | Pending |
+| REQ-001 | Todos os tokens declarados no CSS | P1 | Done |
+| REQ-002 | Nenhum literal fora da escala em `src/` | P1 | Done |
+| REQ-003 | Tema escuro único, sem alternância | P1 | Done |
+| REQ-004 | Contraste mínimo 4,5:1; `border` nunca como único delimitador | P1 | Done |
+| REQ-005 | Fontes locais, `font-display: swap`, subset latino | P1 | Done |
+| REQ-006 | Cinco estados obrigatórios, foco em `primary` | P1 | Done |
+| REQ-007 | Alvo de toque mínimo de 44px | P1 | Done |
+| REQ-008 | Zero JavaScript de cliente | P1 | Done |
+| REQ-009 | `prefers-reduced-motion` respeitado | P1 | Done |
+| REQ-010 | Sem layout/reflow; cor/transform/opacity ok; 150ms ou 250ms | P1 | Done |
+| REQ-011 | Skip link e marco `main` único | P1 | Done |
+| REQ-012 | Sem scroll horizontal a partir de 320px | P1 | Done |
+| REQ-013 | Ícones com `aria-label`, importados individualmente | P2 | Pending (fora do plano das 14 tarefas) |
+| REQ-014 | Estado vazio explícito em listagem | P2 | Pending (fora do plano das 14 tarefas) |
+| REQ-015 | Container limitado a 1200px | P2 | Done |
+| REQ-016 | Página interna de referência visual | P3 | Pending (P3) |

@@ -2,8 +2,9 @@
 
 > **Roadmap:** `docs/specs/00-roadmap.md` — sprint 1
 > **PRD:** F8 (F8.1, F8.2, F8.3)
-> **Status:** draft
+> **Status:** implemented
 > **Criado:** 2026-08-08
+> **Concluído:** 2026-08-08 — plano A confirmado em [ADR-001](../../adr/001-hosting-platform.md)
 
 ## Problem Statement
 
@@ -26,9 +27,9 @@ fecha, qualquer feature construída está apostando numa arquitetura não verifi
 
 ## Context
 
-O repositório está vazio: só existe `docs/`. Não há `package.json`, não há
-`astro.config.mjs`, não há repositório git inicializado. Este spike é literalmente a
-primeira linha de código do projeto.
+*No momento em que esta spec foi escrita:* o repositório estava vazio, só com `docs/`.
+Não havia `package.json`, `astro.config.mjs` nem repositório git inicializado. Este
+spike foi literalmente a primeira linha de código do projeto.
 
 O projeto Firebase `nandomoreira-dev` já existe, região `us-east4`, e hoje serve o
 site antigo (`svelte-nandomoreira.dev`, arquivado) via Firebase Hosting clássico. O
@@ -42,19 +43,20 @@ porta indicada por `PORT`.
 
 ## Verified Claims
 
-O repositório não tem código. Toda afirmação técnica abaixo é **assumption**, e é
-exatamente isso que o spike existe para converter em fato ou refutar. Nenhuma delas
-pode ser tratada como verificada antes da Task 8.
+Quando esta spec foi escrita, toda afirmação abaixo era **assumption** — converter cada
+uma em fato ou refutá-la era exatamente o propósito do spike. A coluna `Verified`
+registra o resultado.
 
 | Claim | Source (file:line) | Verified |
 |-------|--------------------|----------|
-| O repositório contém apenas `docs/`, sem `package.json` nem git inicializado | n/a | assumption (confirmado por inspeção do diretório em 2026-08-08) |
-| `astro@7.2.0` e `@astrojs/node@11.1.0` são as versões correntes e saudáveis | `docs/PRD.md:491` (tabela "Dependências verificadas", aferida em 2026-08-07) | assumption |
-| O adapter Node standalone gera o entrypoint em `dist/server/entry.mjs` | n/a | assumption |
-| O servidor standalone respeita as variáveis `HOST` e `PORT` do ambiente | n/a | assumption |
-| O App Hosting injeta `PORT` no contêiner e exige bind em `0.0.0.0` | n/a | assumption |
-| `apphosting.yaml` aceita `scripts.buildCommand` e `scripts.runCommand` próprios | n/a | assumption |
-| O projeto `nandomoreira-dev` está em plano Blaze | n/a | assumption |
+| O repositório contém apenas `docs/`, sem `package.json` nem git inicializado | n/a | yes (inspeção do diretório em 2026-08-08, antes da Task 1) |
+| `astro@7.2.0` e `@astrojs/node@11.1.0` são as versões correntes e saudáveis | `docs/PRD.md:491` (tabela "Dependências verificadas", aferida em 2026-08-07) | yes (instaladas e pinadas em `package.json`) |
+| O adapter Node standalone gera o entrypoint em `dist/server/entry.mjs` | `tests/config/adapter.build-test.ts` | yes |
+| O servidor standalone respeita as variáveis `HOST` e `PORT` do ambiente | `scripts/verify-local-server.sh` | yes |
+| O App Hosting injeta `PORT` no contêiner e exige bind em `0.0.0.0` | `apphosting.yaml` | yes (deploy responde em produção) |
+| `apphosting.yaml` aceita `scripts.buildCommand` e `scripts.runCommand` próprios | `apphosting.yaml` | yes |
+| O projeto `nandomoreira-dev` está em plano Blaze | n/a | yes (backend criado com sucesso) |
+| A região do App Hosting é `us-east4` | `docs/adr/001-hosting-platform.md` | yes (`us-east1`, declarada nos documentos estratégicos, não existe no serviço) |
 
 ## Requirements
 
@@ -142,14 +144,14 @@ são as decisões desta feature em particular.
 
 | ID | Description | Priority | Status |
 |----|-------------|----------|--------|
-| REQ-001 | Build Astro 7 com adapter Node standalone | P1 | Pending |
-| REQ-002 | Servidor escuta em `0.0.0.0` e na porta de `PORT` | P1 | Pending |
-| REQ-003 | `/api/health` responde 200 JSON com o instante da requisição | P1 | Pending |
-| REQ-004 | Duas chamadas a `/api/health` retornam corpos distintos | P1 | Pending |
-| REQ-005 | Deploy reproduzível por comando documentado | P1 | Pending |
-| REQ-006 | `/` e `/api/health` respondem 200 na URL do App Hosting | P1 | Pending |
-| REQ-007 | Resultado registrado em ADR | P1 | Pending |
-| REQ-008 | Plano B acionado em caso de falha | P1 | Pending |
-| REQ-009 | Encerramento gracioso em `SIGTERM` | P2 | Pending |
-| REQ-010 | `minInstances: 0` e teto de instâncias | P2 | Pending |
-| REQ-011 | Lint e type-check antes do build em CI | P3 | Pending |
+| REQ-001 | Build Astro 7 com adapter Node standalone | P1 | Done |
+| REQ-002 | Servidor escuta em `0.0.0.0` e na porta de `PORT` | P1 | Done |
+| REQ-003 | `/api/health` responde 200 JSON com o instante da requisição | P1 | Done |
+| REQ-004 | Duas chamadas a `/api/health` retornam corpos distintos | P1 | Done |
+| REQ-005 | Deploy reproduzível por comando documentado | P1 | Done |
+| REQ-006 | `/` e `/api/health` respondem 200 na URL do App Hosting | P1 | Done |
+| REQ-007 | Resultado registrado em ADR | P1 | Done |
+| REQ-008 | Plano B acionado em caso de falha | P1 | N/A (plano B não acionado) |
+| REQ-009 | Encerramento gracioso em `SIGTERM` | P2 | Done |
+| REQ-010 | `minInstances: 0` e teto de instâncias | P2 | Done |
+| REQ-011 | Lint e type-check antes do build em CI | P3 | Pending (P3, coberto localmente por `npm run verify`) |
