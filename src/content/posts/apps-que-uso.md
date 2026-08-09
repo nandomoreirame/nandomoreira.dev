@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2018/apps-que-uso-google-chrome-canary.png
-  alt: Aplicativos que uso
+  alt: "Página de download do Chrome Canary no navegador, com o título Versão Nightly para desenvolvedores e o botão amarelo de download."
 ---
 
 ### Navegadores

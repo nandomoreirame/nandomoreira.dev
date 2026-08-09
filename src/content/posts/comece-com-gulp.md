@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2017/comece-com-gulp.png
-  alt: "Comece com Gulp!"
+  alt: "Ilustração de copos de refrigerante com canudo em fundo vermelho, cada um estampado com a palavra Gulp em letra cursiva."
 ---
 
 Automatizadores de tarefas ou como são conhecidos pelo termo em inglês [Task Runners](https://goo.gl/Zugcvt), tem a capacidade de fazer muita coisa, facilitam muito não só no desenvolvimento dos projetos mas também nos builds e deploys, cara é simplesmente lindo.

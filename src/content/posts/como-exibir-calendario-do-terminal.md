@@ -6,7 +6,7 @@ date: "2018-01-17"
 archived: false
 cover:
   src: ../../assets/posts/2018/Untitled.png
-  alt: "Comando `cal`direto do terminal"
+  alt: "Terminal exibindo a saída do comando cal com o calendário de junho de 2024 e o dia 9 destacado."
 ---
 
 Você tá focado no código, apenas com algumas ferramentas abertas e não quer procurar o calendário na listagem de programas instalados no seu computador, ou ir até a barra de ferramentas e clicar na data pra poder ver o calendário completo do mês ou do ano?

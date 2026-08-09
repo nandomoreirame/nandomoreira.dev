@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2017/retro-2016-planing-2017.jpg
-  alt: Retro 2016 Planing 2017
+  alt: "MacBook Air aberto com a tela apagada sobre uma mesa de madeira, ao lado de um caderno com caneta, um celular e uma xícara de café."
 ---
 
 ## Retrospectiva 2016

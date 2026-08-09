@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2019/hidethepainharold.jpg
-  alt: "Como está você agora e como estará daqui 30 anos?"
+  alt: "Meme do senhor de barba branca segurando o telefone e sorrindo com expressão de desconforto contido."
 ---
 
 ## Introdução

@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2018/2018-10-05-hoje-o-momento-e-de-ser-e-estar.jpg
-  alt: "Hoje o momento é de SER e ESTAR e não de TER!"
+  alt: "Pessoa de casaco amarelo no alto de uma montanha, de costas e com o braço erguido, contra o nascer do sol."
 ---
 
 Música para esse artigo é: **"Deriram" de Natiruts**, [ouça aqui](https://open.spotify.com/track/7tOXrVF1kPuf8lLXCfBywn).

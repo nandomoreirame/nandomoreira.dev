@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2017/criando-um-blog-com-javascript-vuejs.jpg
-  alt: Criando um blog com Vue.js e Nuxt.js
+  alt: "Logotipo do Vue.js, um V verde e azul-escuro, sobre fundo branco texturizado."
 ---
 
 ## Introdução

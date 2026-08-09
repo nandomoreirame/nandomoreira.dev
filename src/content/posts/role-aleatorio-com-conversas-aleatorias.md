@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2018/role-aleatorio-ronaldinho.jpeg
-  alt: Role aleatório com conversas aleatórias gerou pensamentos aleatórios
+  alt: "Três fotos de Ronaldinho Gaúcho lado a lado: abraçando o Papa, de jaleco e touca ao lado de dois homens, e dançando num programa de TV."
 ---
 
 ## Música

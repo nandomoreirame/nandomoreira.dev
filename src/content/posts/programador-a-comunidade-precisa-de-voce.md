@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2017/programador-a-comunidade-precisa-de-voce.jpeg
-  alt: "Programador a comunidade precisa de você!"
+  alt: "Meme do Steve Ballmer gesticulando em fundo azul, ao lado da palavra DEVELOPERS repetida quatro vezes."
 ---
 
 ## Prólogo

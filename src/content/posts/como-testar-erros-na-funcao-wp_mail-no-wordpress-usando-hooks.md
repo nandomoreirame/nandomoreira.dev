@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2018/wp_mail_faild-hook-function.png
-  alt: Como testar erros na função wp_mail() no WordPress usando hooks
+  alt: "Editor de código com o arquivo functions.php aberto, mostrando o hook wp_mail_failed e a função onMailError que imprime o erro."
 ---
 
 Sabemos que da pra fazer bastante coisa no WordPress usando os famosos hooks e sabemos também que é impossível saber o retorno de um erro ao tentar enviar um email usando a função wp_mail(), pois ela só retorna valores booleanos (true ou false).

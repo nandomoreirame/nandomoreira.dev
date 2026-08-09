@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2019/customizando-a-mensagem-noscript-no-gatsby.png
-  alt: Customizando mensagem da tag noscript no Gatsby
+  alt: "VS Code com o arquivo html.js de um projeto Gatsby aberto, exibindo a constante noscriptStyle com o CSS da mensagem noscript."
 ---
 
 ## Introdução
