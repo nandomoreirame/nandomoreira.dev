@@ -1,3 +1,4 @@
+import type { Note } from '../../content/schemas/note';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock } from '../catalog/groups';
@@ -7,6 +8,7 @@ interface Input {
   site: URL;
   profile: Profile;
   projects: readonly Project[];
+  notes?: readonly Note[];
 }
 
 const MACHINE_ROUTES = [
@@ -18,7 +20,7 @@ const MACHINE_ROUTES = [
 ] as const;
 
 /** Format follows the llms.txt convention: H1, blockquote summary, H2 sections. */
-export const buildLlmsTxt = ({ site, profile, projects }: Input): string => {
+export const buildLlmsTxt = ({ site, profile, projects, notes = [] }: Input): string => {
   const lines: string[] = [
     `# ${profile.name}`,
     '',
@@ -39,13 +41,22 @@ export const buildLlmsTxt = ({ site, profile, projects }: Input): string => {
     lines.push('- No case published yet.');
   }
 
+  if (notes.length > 0) {
+    lines.push('', '## Notes', '');
+    for (const note of notes) {
+      lines.push(
+        `- [${note.title}](${absoluteUrl(site, `/notas/${note.slug}`)}): ${note.summary}`,
+      );
+    }
+  }
+
   lines.push('', '## Machine routes', '');
 
   for (const [route, description] of MACHINE_ROUTES) {
     lines.push(`- [${route}](${absoluteUrl(site, route)}): ${description}`);
   }
 
-  lines.push('', '## Notes', '');
+  lines.push('', '## Language', '');
   lines.push('- Human-facing pages are written in Brazilian Portuguese.');
   lines.push('- Machine-facing routes are written in English.');
   lines.push('');

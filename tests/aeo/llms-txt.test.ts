@@ -69,4 +69,29 @@ describe('buildLlmsTxt', () => {
   it('survives an empty catalogue', () => {
     expect(() => buildLlmsTxt({ site, profile, projects: [] })).not.toThrow();
   });
+
+  it('lists published notes with absolute urls', () => {
+    const text = buildLlmsTxt({
+      site,
+      profile,
+      projects,
+      notes: [
+        {
+          slug: 'tailwind-parens',
+          title: 'Why parens in Tailwind 4',
+          summary: 'Brackets emit invalid CSS.',
+          date: '2026-08-09',
+          draft: false,
+        },
+      ] as never[],
+    });
+
+    expect(text).toContain('## Notes');
+    expect(text).toContain('https://nandomoreira.dev/notas/tailwind-parens');
+    expect(text).toContain('Why parens in Tailwind 4');
+  });
+
+  it('omits the notes section when none are published', () => {
+    expect(output()).not.toMatch(/## Notes\n/);
+  });
 });

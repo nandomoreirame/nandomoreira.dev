@@ -80,4 +80,29 @@ describe('buildSitemap', () => {
     expect(xml).toContain('<loc>https://nandomoreira.dev/</loc>');
     expect(xml).toContain('</urlset>');
   });
+
+  it('lists published notes with lastmod from frontmatter, never drafts', () => {
+    const xml = buildSitemap({
+      site,
+      projects: [],
+      notes: [
+        {
+          slug: 'tailwind-parens',
+          title: 'Parens',
+          summary: 's',
+          date: '2026-08-09',
+          draft: false,
+        },
+      ] as never[],
+    });
+
+    expect(xml).toContain('<loc>https://nandomoreira.dev/notas</loc>');
+    expect(xml).toContain('<loc>https://nandomoreira.dev/notas/tailwind-parens</loc>');
+    expect(xml).toContain('<lastmod>2026-08-09</lastmod>');
+  });
+
+  it('omits the notes section entirely when none are published', () => {
+    const xml = buildSitemap({ site, projects: [], notes: [] });
+    expect(xml).not.toContain('/notas');
+  });
 });
