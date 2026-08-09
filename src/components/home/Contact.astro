@@ -1,0 +1,49 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+
+interface Props {
+  contacts: Array<{ kind: string; value: string }>;
+}
+
+const { contacts } = Astro.props;
+
+if (contacts.length === 0) {
+  throw new Error(
+    'The home needs at least one direct contact channel: US-005 requires it.',
+  );
+}
+
+const hrefFor = (contact: { kind: string; value: string }): string =>
+  contact.kind === 'email' ? `mailto:${contact.value}` : contact.value;
+
+const LABELS: Record<string, string> = {
+  email: 'E-mail',
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  site: 'Site',
+};
+---
+
+<section id="contato" class="py-2xl lg:py-3xl">
+  <SectionHeader
+    title="Contato"
+    level={2}
+    index={5}
+    description="Sem formulário. Escreva direto."
+  />
+
+  <ul class="flex flex-wrap gap-md">
+    {contacts.map((contact) => (
+      <li>
+        <a
+          href={hrefFor(contact)}
+          target={contact.kind === 'email' ? undefined : '_blank'}
+          rel={contact.kind === 'email' ? undefined : 'noopener noreferrer'}
+          class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {LABELS[contact.kind] ?? contact.kind}
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

@@ -1,0 +1,14 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+
+interface Props {
+  bio: string;
+}
+
+const { bio } = Astro.props;
+---
+
+<section id="sobre" class="py-2xl lg:py-3xl">
+  <SectionHeader title="Sobre" level={2} index={4} />
+  <p class="max-w-[68ch] text-body text-foreground">{bio}</p>
+</section>
