@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/galera-do-porao-malapronta.jpg
-  alt: 8 meses de MalaPronta e o fim.
+  alt: "Selfie de onze colegas de trabalho sorrindo em volta de uma mesa de bar, com balões de fala em tom de piada sobre o fim da empresa."
 ---
 
 Esse post não poderia começar melhor, com um "_I love U_" para MalaPronta.com, um ambiente descontraído com piadas ruins (mas que são boas) e uma sala que não é nem quente nem fria e nem escura ou clara(entendedores entenderão).

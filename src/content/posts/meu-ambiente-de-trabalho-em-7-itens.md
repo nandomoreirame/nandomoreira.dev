@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/meu-ambiente-de-trabalho-em-7-itens.png
-  alt: Meu ambiente de trabalho em 7 itens
+  alt: "Área de trabalho do Ubuntu com o Chrome aberto num post do blog, o Sublime Text editando um arquivo markdown e um gerenciador de arquivos, com a barra de aplicativos à esquerda."
 ---
 
 ![Meu ambiente de trabalho em 7 itens](../../assets/posts/2015/meu-ambiente-de-trabalho-em-7-itens.png)

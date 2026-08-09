@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/wprosdocimo.jpg
-  alt: Blog Wilson Luiz Prosdocimo com Jekyll
+  alt: "Foto de um lago escuro entre montanhas ao entardecer, sob um céu arroxeado."
 ---
 
 Meu amigo Wilson gostou muito da ideia de poder publicar o blog dele no github usando Jekyll. Pode-se dizer que eu sou um “Evangelista do Jekyll” porque ele é um convertido da minha palavra. (huehuehue)

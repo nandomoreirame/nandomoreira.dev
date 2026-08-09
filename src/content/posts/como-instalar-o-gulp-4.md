@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/gulp.png
-  alt: Como instalar o Gulp 4
+  alt: "Ilustração de copos de refrigerante com canudo em fundo vermelho, cada um estampado com a palavra Gulp em letra cursiva."
 ---
 
 Gulp 4 não foi liberado ainda e se você não pode esperar para colocar suas mãos sobre ele, aqui vai como instalar o Gulp 4.

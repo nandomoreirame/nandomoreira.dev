@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/angularjs.png
-  alt: Fazendo um sistema de busca simples no Jekyll usando AngularJS
+  alt: "Logotipo do AngularJS: escudo vermelho com a letra A ao lado da palavra AngularJS, em fundo preto."
 ---
 
 Por alguns meses eu usei o plugin [Simple Jekyll Search](https://github.com/christian-fei/Simple-Jekyll-Search) que funcionou muito bem no meu blog, mas agora ele foi totalmente feito em angular e ficou uma maravilha.

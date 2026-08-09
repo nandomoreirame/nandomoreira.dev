@@ -8,7 +8,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/skate.gif
-  alt: "Não seja apenas um recortador de PSD!"
+  alt: "Menino de óculos sentado à mesa, empurrando um skate de dedo por uma rampa de brinquedo."
 ---
 
 > **Nota:** Eu pensei muito antes de escrever esse artigo, sério! Não sou muito bom em passar sermão ou dicas por textos, mas vamos lá...

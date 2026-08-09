@@ -9,7 +9,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/panda-app-chrome-extension.png
-  alt: "Ei front-end! Você conhece o Panda? 🐼"
+  alt: "Página da extensão Panda 4 na Chrome Web Store, com a captura do painel mostrando colunas do Product Hunt, TechCrunch e GitHub."
 ---
 
 Essa é uma dica rápida para os amantes da web, quem gosta, ama e trabalha com desenvolvimento de interfaces para o usuário.

@@ -10,7 +10,7 @@ markers:
 archived: true
 cover:
   src: ../../assets/posts/2015/madruga.gif
-  alt: "Faço front-end de graça, saiba como!"
+  alt: "Seu Madruga, do seriado Chaves, em preto e branco, olhando de lado com expressão desconfiada."
 ---
 
 Você deve estar se perguntando: _**"Front-end de graça? Como assim?"**_
