@@ -11,14 +11,23 @@ describe('SiteNav', () => {
   it('carries the main sections that already exist as routes or anchors', async () => {
     const html = await render();
 
-    for (const label of ['Portfólio', 'Laboratório', 'Sobre', 'Contato']) {
+    for (const label of ['Portfólio', 'Lab', 'Sobre', 'Contato']) {
       expect(html).toContain(label);
     }
 
     expect(html).toContain('href="/portfolio"');
     expect(html).toContain('href="/lab"');
     expect(html).toContain('href="/sobre"');
-    expect(html).toContain('href="/#contato"');
+    expect(html).toContain('href="/contato"');
+  });
+
+  it('shortens the lab label so five items fit the 768px measure', async () => {
+    const html = await render();
+
+    expect(html).not.toContain('Laboratório');
+    // Uppercase is applied in CSS, so the accessible name stays "Lab" and does
+    // not read as an acronym to a screen reader.
+    expect(html).toContain('>Lab<');
   });
 
   it('shows Notas only when at least one note is published', async () => {
@@ -51,6 +60,8 @@ describe('SiteNav', () => {
 
     expect(html).not.toContain('href="/projetos"');
     expect(html).not.toContain('href="/agents"');
-    expect(html).not.toContain('href="/contato"');
+    // `/contato` used to be listed here as a non-existent route. It is a real
+    // page now, so the anchor it replaced is what must not come back.
+    expect(html).not.toContain('href="/#contato"');
   });
 });
