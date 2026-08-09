@@ -10,7 +10,7 @@
  */
 
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { basename, dirname, extname, join, relative, resolve } from 'node:path';
+import { basename, dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -104,7 +104,9 @@ const parseFrontmatter = (raw) => {
 
 const pathFromImageField = (image) => {
   if (!image) return null;
-  return String(image).replace(/^['"]|['"]$/g, '').trim();
+  return String(image)
+    .replace(/^['"]|['"]$/g, '')
+    .trim();
 };
 
 /**
@@ -167,7 +169,7 @@ const resolveSourceImage = (postDir, ref) => {
 };
 
 /** Destination filename under src/assets/posts/<year>/, with month prefix on collision. */
-const destNameFor = (year, sourcePath, monthHint, usedNames) => {
+const destNameFor = (_year, sourcePath, monthHint, usedNames) => {
   let name = basename(sourcePath);
   const key = name.toLowerCase();
   if (usedNames.has(key)) {
@@ -213,7 +215,7 @@ const copyImage = (sourcePath, year, monthHint) => {
 };
 
 const rewriteBodyImages = (body, postDir, year, title) => {
-  // ![alt](path) — rewrite local image refs; drop missing ones
+  // ![alt](path): rewrite local image refs, drop missing ones
   return body.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (full, alt, rawPath) => {
     const path = rawPath.trim();
     if (path.startsWith('http://') || path.startsWith('https://')) {
@@ -240,7 +242,9 @@ const rewriteBodyImages = (body, postDir, year, title) => {
 
 const slugFromPath = (pathField, fallbackDir) => {
   if (pathField) {
-    return String(pathField).replace(/^\/+|\/+$/g, '').replace(/^['"]|['"]$/g, '');
+    return String(pathField)
+      .replace(/^\/+|\/+$/g, '')
+      .replace(/^['"]|['"]$/g, '');
   }
   return fallbackDir;
 };
@@ -276,7 +280,10 @@ const toIsoDate = (value) => {
 const markersFromTags = (tags) => {
   if (!tags) return undefined;
   const list = Array.isArray(tags) ? tags : [tags];
-  const cleaned = list.map((t) => String(t).trim()).filter(Boolean).slice(0, 3);
+  const cleaned = list
+    .map((t) => String(t).trim())
+    .filter(Boolean)
+    .slice(0, 3);
   return cleaned.length ? cleaned : undefined;
 };
 
@@ -443,9 +450,7 @@ const migrateNotionPost = (file) => {
 
   // Prefer first local image as cover if any was rewritten
   const coverMatch = /!\[([^\]]*)\]\((\.\.\/\.\.\/assets\/posts\/[^)]+)\)/.exec(body);
-  const cover = coverMatch
-    ? { src: coverMatch[2], alt: coverMatch[1] || title }
-    : undefined;
+  const cover = coverMatch ? { src: coverMatch[2], alt: coverMatch[1] || title } : undefined;
 
   writePost({
     slug,
@@ -460,10 +465,16 @@ const migrateNotionPost = (file) => {
 };
 
 const writeReport = () => {
+  const mode = dryRun ? 'dry-run' : imagesOnly ? 'images-only' : 'full';
+  const sourceKind = notionMode ? 'notion' : 'gatsby';
+  const runId = new Date().toISOString();
+
+  // One section per run so a later batch never erases an earlier record (REQ-017).
   const lines = [
-    '# Blog migration report',
+    `## Run ${runId}, mode=${mode}, source=${sourceKind}`,
     '',
-    `- Mode: ${dryRun ? 'dry-run' : imagesOnly ? 'images-only' : 'full'}`,
+    `- Mode: ${mode}`,
+    `- Source kind: ${sourceKind}`,
     `- Source: \`${sourceRoot}\``,
     `- Assets: \`${assetsRoot}\``,
     `- Posts written: ${report.postsWritten}`,
@@ -471,7 +482,7 @@ const writeReport = () => {
     `- Missing images: ${report.missingImages.length}`,
     `- Skipped: ${report.skipped.length}`,
     '',
-    '## Missing images',
+    '### Missing images',
     '',
   ];
   if (report.missingImages.length === 0) {
@@ -482,13 +493,32 @@ const writeReport = () => {
     }
     lines.push('');
   }
-  lines.push('## Skipped', '');
-  for (const s of report.skipped) {
-    lines.push(`- \`${s.slug}\`: ${s.reason}`);
+  lines.push('### Skipped', '');
+  if (report.skipped.length === 0) {
+    lines.push('_None._', '');
+  } else {
+    for (const s of report.skipped) {
+      lines.push(`- \`${s.slug}\`: ${s.reason}`);
+    }
+    lines.push('');
   }
-  lines.push('');
-  if (!dryRun) writeFileSync(REPORT_PATH, lines.join('\n'), 'utf8');
-  else console.log(lines.join('\n'));
+
+  const section = lines.join('\n');
+
+  if (dryRun) {
+    console.log(section);
+    return;
+  }
+
+  const previous = existsSync(REPORT_PATH) ? readFileSync(REPORT_PATH, 'utf8').trimEnd() : '';
+  const header = '# Blog migration report';
+  const body = previous
+    ? previous.startsWith(header)
+      ? `${previous}\n\n${section}\n`
+      : `${header}\n\n${previous}\n\n${section}\n`
+    : `${header}\n\n${section}\n`;
+
+  writeFileSync(REPORT_PATH, body, 'utf8');
 };
 
 // --- main ---
