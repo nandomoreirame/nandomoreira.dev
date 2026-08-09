@@ -2,14 +2,15 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Hero from '../../src/components/home/Hero.astro';
 
-const render = async () => {
+const render = async (
+  props: Record<string, unknown> = {
+    headline: 'Engenheiro de produto com agentes de IA',
+    positioning: 'Construo ferramental de agentes e produtos com IA em produção.',
+    availability: { status: 'open', detail: 'Aberto a consultoria.', updatedAt: '2026-08-08' },
+  },
+) => {
   const container = await AstroContainer.create();
-  return container.renderToString(Hero, {
-    props: {
-      headline: 'Engenheiro de produto com agentes de IA',
-      positioning: 'Construo ferramental de agentes e produtos com IA em produção.',
-    },
-  });
+  return container.renderToString(Hero, { props });
 };
 
 describe('Hero', () => {
@@ -29,8 +30,8 @@ describe('Hero', () => {
     expect(html.match(/bg-primary\b/g)).toHaveLength(1);
   });
 
-  it('points the call to action at the catalogue', async () => {
-    expect(await render()).toContain('href="/projetos"');
+  it('points the call to action at the portfolio listing', async () => {
+    expect(await render()).toContain('href="/portfolio"');
   });
 
   it('never animates the text in from invisible', async () => {
@@ -38,5 +39,13 @@ describe('Hero', () => {
 
     expect(html).not.toContain('opacity-0');
     expect(html).not.toContain('animate-');
+  });
+
+  it('shows availability as a visual marker accompanied by a text label', async () => {
+    const html = await render();
+
+    expect(html).toMatch(/dispon[ií]vel/i);
+    // Colour alone is forbidden: the status text must be present.
+    expect(html).toMatch(/bg-success|text-success|rounded-full/);
   });
 });

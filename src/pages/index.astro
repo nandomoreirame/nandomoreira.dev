@@ -7,27 +7,41 @@ import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
-import { getAllProjects, getFeaturedProjects, getProfile } from '../lib/content';
+import { getAllProjects, getProfile } from '../lib/content';
 import { personLd } from '../lib/home/person-ld';
 
-const [profile, featuredProjects, allProjects] = await Promise.all([
-  getProfile(),
-  getFeaturedProjects(),
-  getAllProjects(),
-]);
+const [profile, allProjects] = await Promise.all([getProfile(), getAllProjects()]);
 
 const knownSlugs = allProjects.map((project) => project.slug);
+
+// Featured first, then the rest by date, capped at five for the home list.
+const selected = [
+  ...allProjects.filter((project) => project.featured),
+  ...allProjects.filter((project) => !project.featured),
+]
+  .sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    return b.date.localeCompare(a.date);
+  })
+  .slice(0, 5);
+
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
+// One-line teaser: first sentence of the bio, without dumping the full page.
+const aboutSummary = profile.bio.split(/(?<=\.)\s+/)[0] ?? profile.positioning;
 ---
 
 <BaseLayout title={`${profile.name} | ${profile.headline}`} description={profile.bio}>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
-  <Hero headline={profile.headline} positioning={profile.positioning} />
-  <FeaturedProjects projects={featuredProjects} />
+  <Hero
+    headline={profile.headline}
+    positioning={profile.positioning}
+    availability={profile.availability}
+  />
+  <FeaturedProjects projects={selected} totalCount={allProjects.length} />
   <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
   <Services services={profile.services} knownSlugs={knownSlugs} />
-  <About bio={profile.bio} />
+  <About summary={aboutSummary} />
   <Contact contacts={profile.contacts} />
 </BaseLayout>

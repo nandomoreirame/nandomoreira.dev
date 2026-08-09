@@ -1,22 +1,45 @@
 ---
+import type { Availability } from '../../lib/content';
 import Button from '../ui/Button.astro';
 
 interface Props {
   headline: string;
   positioning: string;
+  availability: Availability;
 }
 
-const { headline, positioning } = Astro.props;
+const { headline, positioning, availability } = Astro.props;
+
+const STATUS_LABEL: Record<Availability['status'], string> = {
+  open: 'Disponível para novos projetos',
+  limited: 'Disponibilidade limitada',
+  closed: 'Indisponível no momento',
+};
+
+const STATUS_DOT: Record<Availability['status'], string> = {
+  open: 'bg-success',
+  limited: 'bg-warning',
+  closed: 'bg-destructive',
+};
 ---
 
 <section id="inicio" class="flex flex-col gap-lg py-2xl lg:py-3xl">
+  <p class="flex items-center gap-sm font-mono text-small text-muted-foreground">
+    <span
+      class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
+      aria-hidden="true"
+    ></span>
+    <span>{STATUS_LABEL[availability.status]}</span>
+  </p>
+
   <h1 class="text-display font-semibold text-foreground lg:text-[3.75rem]">
     {headline}
   </h1>
 
   <p class="max-w-[68ch] text-body text-muted-foreground">{positioning}</p>
 
-  <div>
-    <Button href="/projetos" variant="primary">Ver o que eu construí</Button>
+  <div class="flex flex-wrap items-center gap-md">
+    <Button href="/portfolio" variant="primary">Ver o que eu construí</Button>
+    <Button href="/#contato" variant="ghost">Dizer olá</Button>
   </div>
 </section>

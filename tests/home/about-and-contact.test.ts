@@ -14,9 +14,10 @@ const contacts = [
 ];
 
 describe('About', () => {
-  it('renders the bio it receives, with no copy duplicated in code', async () => {
-    const html = await render(About, { bio: 'Construo ferramental de agentes.' });
+  it('renders the summary it receives and links to the full about page', async () => {
+    const html = await render(About, { summary: 'Construo ferramental de agentes.' });
     expect(html).toContain('Construo ferramental de agentes.');
+    expect(html).toContain('href="/sobre"');
   });
 });
 

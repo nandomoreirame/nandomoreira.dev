@@ -2,13 +2,21 @@
 import SectionHeader from '../ui/SectionHeader.astro';
 
 interface Props {
-  bio: string;
+  summary: string;
 }
 
-const { bio } = Astro.props;
+const { summary } = Astro.props;
 ---
 
 <section id="sobre" class="py-2xl lg:py-3xl">
-  <SectionHeader title="Sobre" level={2} index={4} />
-  <p class="max-w-[68ch] text-body text-foreground">{bio}</p>
+  <SectionHeader title="Sobre" level={2} />
+  <p class="max-w-[68ch] text-body text-foreground">{summary}</p>
+  <p class="mt-md">
+    <a
+      href="/sobre"
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Ler mais sobre mim
+    </a>
+  </p>
 </section>
