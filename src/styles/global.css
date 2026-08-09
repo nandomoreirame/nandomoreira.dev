@@ -4,9 +4,10 @@
 @source not "../../docs";
 @source not "../../tests";
 
+/* Reading surfaces — Literata (humanist serif). */
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin-400.woff2") format("woff2");
+  font-family: "Literata";
+  src: url("/fonts/literata-latin-400.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -14,8 +15,28 @@
 }
 
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin-500.woff2") format("woff2");
+  font-family: "Literata";
+  src: url("/fonts/literata-latin-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
+}
+
+/* Register and UI chrome — Alegreya Sans (humanist sans). No 600 cut exists,
+   so emphasis maps to 500 and 700, never 600. */
+@font-face {
+  font-family: "Alegreya Sans";
+  src: url("/fonts/alegreya-sans-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  src: url("/fonts/alegreya-sans-latin-500.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -23,9 +44,9 @@
 }
 
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin-600.woff2") format("woff2");
-  font-weight: 600;
+  font-family: "Alegreya Sans";
+  src: url("/fonts/alegreya-sans-latin-700.woff2") format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
@@ -50,26 +71,29 @@
 }
 
 @theme {
-  /* Base palette */
-  --color-background: #0a0a0a;
-  --color-surface: #171717;
-  --color-surface-elevated: #262626;
-  --color-border: #262626;
-  --color-border-strong: #404040;
-  --color-foreground: #fafafa;
-  --color-muted-foreground: #a3a3a3;
+  /* Base palette — Exquisitus dark ramp, authored in OKLCH and converted to
+     sRGB hex so the contrast gate can parse it. Surfaces stay near-neutral;
+     the warmth lives in the ink and in the honey accent, never in the paper. */
+  --color-background: #110f0d; /* oklch(0.17 0.006 80) */
+  --color-surface: #191714; /* oklch(0.205 0.006 80) */
+  --color-surface-elevated: #211f1c; /* oklch(0.24 0.007 80) */
+  --color-border: #45423e; /* oklch(0.38 0.008 80) — hairline */
+  --color-border-strong: #6c6863; /* oklch(0.52 0.01 82) */
+  --color-foreground: #efebe2; /* oklch(0.94 0.012 85) */
+  --color-muted-foreground: #a29e96; /* oklch(0.7 0.012 82) */
 
-  /* Accent */
-  --color-primary: #f59e0b;
-  --color-primary-foreground: #0a0a0a;
+  /* Accent — honey, brightened for dark surfaces */
+  --color-primary: #f0c36f; /* oklch(0.84 0.115 82) */
+  --color-primary-foreground: #110f0d;
 
-  /* Semantic */
-  --color-success: #22c55e;
-  --color-warning: #eab308;
-  --color-destructive: #ef4444;
+  /* Semantic — the theme's own -high ramps, which read on near-black */
+  --color-success: #a9ddb2; /* oklch(0.85 0.08 150) */
+  --color-warning: #facf9e; /* oklch(0.88 0.08 70) */
+  --color-destructive: #ffb7b0; /* oklch(0.85 0.09 25) */
 
-  /* Families */
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Families — one per job. Serif reads, sans registers, mono speaks machine. */
+  --font-serif: "Literata", Georgia, "Times New Roman", serif;
+  --font-sans: "Alegreya Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* Type scale */
@@ -114,17 +138,26 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
 
   /* Layout */
-  --container-page: 1200px;
+  /* Matches the reference theme's max-w-3xl. The former 1200px produced a
+     measure 1.62x wider, which is what made the restyle read as a different
+     layout instead of the same one. */
+  --container-page: 48rem;
 }
 
 @layer base {
   html {
-    @apply scheme-dark;
+    /* scroll-pt clears the sticky header, which would otherwise cover the
+       anchor target. The reduce-motion block below turns the smoothness off. */
+    @apply scheme-dark scroll-smooth scroll-pt-3xl;
   }
 
   html,
   body {
-    @apply min-h-dvh font-sans overflow-x-hidden bg-background text-foreground;
+    /* `clip`, not `hidden`: overflow:hidden turns the element into a scroll
+       container, and the sticky header would then stick to it instead of to
+       the viewport. `clip` forbids the same horizontal overflow (REQ-012)
+       without creating that container. */
+    @apply min-h-dvh font-sans overflow-x-clip bg-background text-foreground;
   }
 
   .motion-safe-default {
