@@ -1,27 +1,43 @@
 import { readFileSync } from 'node:fs';
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
+import { getArchivedPosts, getCurrentPosts } from '../../src/lib/content';
+import { toCompactStamp } from '../../src/lib/format/date';
+import PostsPage from '../../src/pages/posts/index.astro';
 
-const source = () => readFileSync('src/pages/posts/index.astro', 'utf8');
+const source = readFileSync('src/pages/posts/index.astro', 'utf8');
+
+const render = async () => {
+  const container = await AstroContainer.create();
+  return container.renderToString(PostsPage);
+};
 
 describe('/posts listing', () => {
-  it('lists current posts and links each to the root', () => {
-    const html = source();
-    expect(html).toContain('getCurrentPosts');
-    // Detail lives at /<slug>, not under /posts/<slug>.
-    expect(html).toContain('href={`/${post.slug}`}');
-    expect(html).not.toContain('/posts/${post.slug}');
+  it('reads through the access layer, never through getCollection', () => {
+    expect(source).toContain('getCurrentPosts');
+    expect(source).not.toContain('getCollection(');
   });
 
-  it('shows the date, which the old gate used to forbid', () => {
-    expect(source()).toContain('toCompactStamp');
-    expect(source()).toContain('stamp=');
+  it('renders exactly the current posts, each linked at the root', async () => {
+    const [html, current, archived] = await Promise.all([render(), getCurrentPosts(), getArchivedPosts()]);
+
+    expect(current.length).toBeGreaterThan(0);
+    expect(html).toContain(`(${String(current.length).padStart(2, '0')})`);
+
+    for (const post of current) {
+      expect(html).toContain(`href="/${post.slug}"`);
+      expect(html).toContain(post.title);
+      expect(html).toContain(toCompactStamp(post.date));
+      expect(html).not.toContain(`href="/posts/${post.slug}"`);
+    }
+
+    for (const post of archived) {
+      expect(html).not.toContain(post.title);
+    }
   });
 
-  it('offers the archive without listing archived posts inline', () => {
-    const html = source();
+  it('links to the archive index', async () => {
+    const html = await render();
     expect(html).toContain('href="/posts/arquivo"');
-    expect(html).toContain('getCurrentPosts');
-    expect(html).not.toContain('getArchivedPosts');
-    expect(html).not.toContain('getAllPosts');
   });
 });
