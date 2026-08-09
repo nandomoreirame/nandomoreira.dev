@@ -1,7 +1,6 @@
 ---
 import Button from '../components/ui/Button.astro';
 import Prose from '../components/ui/Prose.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getProfile } from '../lib/content';
@@ -14,22 +13,30 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
   title={`Sobre | ${profile.name}`}
   description={profile.headline}
 >
-  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
-    <SectionHeader title="Sobre" level={2} />
+  <article class="mt-2xl mb-3xl">
+    {
+      /* Eyebrow, then the claim. The name is already the wordmark on every
+         page, so spending the display size on it again says nothing. No rule
+         under the eyebrow: two horizontal lines that close read as a box. */
+    }
+    <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">Sobre</p>
 
-    <h1 class="text-display font-semibold text-foreground">{profile.name}</h1>
-    <p class="text-h3 text-muted-foreground">{profile.headline}</p>
+    <h1 class="mt-sm text-display font-semibold text-balance text-foreground">
+      {profile.headline}
+    </h1>
 
-    <Prose>
-      <p>{profile.bio}</p>
-      <p>{profile.positioning}</p>
-    </Prose>
+    <div class="mt-lg">
+      <Prose>
+        <p>{profile.bio}</p>
+        <p>{profile.positioning}</p>
+      </Prose>
+    </div>
 
-    <section aria-labelledby="stack-heading">
-      <h2 id="stack-heading" class="mb-md font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+    <section class="mt-xl" aria-labelledby="stack-heading">
+      <h2 id="stack-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
         Stack
       </h2>
-      <ul class="flex flex-wrap gap-sm">
+      <ul class="mt-md flex flex-wrap gap-sm">
         {profile.stack.map((item) => (
           <li>
             <TechBadge name={item} />
@@ -40,7 +47,7 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
 
     {
       email && (
-        <div>
+        <div class="mt-xl">
           <Button href={`mailto:${email.value}`} variant="primary">
             Entrar em contato
           </Button>
