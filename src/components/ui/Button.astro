@@ -8,33 +8,54 @@ interface Props {
 
 const { href, variant = 'primary', disabled = false, label } = Astro.props;
 
+const isLink = Boolean(href);
+const isDisabledLink = isLink && disabled;
+
 const base = [
   'inline-flex items-center justify-center gap-xs',
   'min-h-11 min-w-11 px-md py-sm',
   'rounded-md text-body font-medium',
   'transition-[transform,opacity,background-color,border-color]',
-  'duration-[--duration-fast] ease-[--ease-out]',
+  'duration-(--duration-fast) ease-out',
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+  // Real <button disabled> picks these up; disabled links need the unconditional pair below.
   'disabled:cursor-not-allowed disabled:opacity-60',
-].join(' ');
+  isDisabledLink ? 'cursor-not-allowed opacity-60' : '',
+]
+  .filter(Boolean)
+  .join(' ');
 
 const variants = {
-  primary: 'bg-primary text-primary-foreground hover:opacity-90 active:opacity-80',
-  secondary:
-    'border border-border-strong bg-surface text-foreground hover:border-primary active:bg-surface-elevated',
-  ghost: 'text-foreground hover:text-primary active:opacity-80',
+  primary: {
+    base: 'bg-primary text-primary-foreground',
+    interactive: 'hover:opacity-90 active:opacity-80',
+  },
+  secondary: {
+    base: 'border border-border-strong bg-surface text-foreground',
+    interactive: 'hover:border-primary active:bg-surface-elevated',
+  },
+  ghost: {
+    base: 'text-foreground',
+    interactive: 'hover:text-primary active:opacity-80',
+  },
 } as const;
 
-const className = `${base} ${variants[variant]}`;
-const Tag = href ? 'a' : 'button';
+const selected = variants[variant];
+// Disabled links never match :disabled, so omit hover/active entirely.
+const variantClasses = isDisabledLink
+  ? selected.base
+  : `${selected.base} ${selected.interactive}`;
+const className = `${base} ${variantClasses}`;
+const Tag = isLink ? 'a' : 'button';
 ---
 
 <Tag
   class={className}
-  href={href}
+  href={isDisabledLink ? undefined : href}
+  role={isDisabledLink ? 'link' : undefined}
   aria-label={label}
   aria-disabled={disabled ? 'true' : undefined}
-  disabled={!href && disabled ? true : undefined}
+  disabled={!isLink && disabled ? true : undefined}
 >
   <slot />
 </Tag>

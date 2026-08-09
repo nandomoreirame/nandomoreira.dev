@@ -43,4 +43,43 @@ describe('Button', () => {
     expect(html).toContain('disabled');
     expect(html).toContain('aria-disabled="true"');
   });
+
+  it('drops href on a disabled link so it is not navigable', async () => {
+    const html = await render({ href: '/projetos', disabled: true });
+    expect(html).toMatch(/<a\b/);
+    expect(html).toContain('aria-disabled="true"');
+    expect(html).toContain('role="link"');
+    expect(html).not.toMatch(/\bhref=/);
+    expect(html).toContain('cursor-not-allowed');
+    expect(html).toContain('opacity-60');
+  });
+
+  it('keeps href on an enabled link', async () => {
+    const html = await render({ href: '/projetos' });
+    expect(html).toContain('href="/projetos"');
+    expect(html).not.toContain('aria-disabled');
+  });
+
+  it.each(['primary', 'secondary', 'ghost'] as const)(
+    'emits no hover: or active: class on a disabled %s link',
+    async (variant) => {
+      const html = await render({ href: '/projetos', disabled: true, variant });
+      const classes = html.match(/class="([^"]*)"/)?.[1] ?? '';
+      expect(classes).not.toContain('hover:');
+      expect(classes).not.toContain('active:');
+    },
+  );
+
+  it('still emits hover: classes on an enabled link', async () => {
+    const html = await render({ href: '/projetos' });
+    const classes = html.match(/class="([^"]*)"/)?.[1] ?? '';
+    expect(classes).toContain('hover:');
+  });
+
+  it('keeps native disabled and disabled: variants on a disabled button', async () => {
+    const html = await render({ disabled: true });
+    expect(html).toMatch(/<button\b[^>]*\bdisabled(?:\s|>|=)/);
+    const classes = html.match(/class="([^"]*)"/)?.[1] ?? '';
+    expect(classes).toContain('disabled:');
+  });
 });
