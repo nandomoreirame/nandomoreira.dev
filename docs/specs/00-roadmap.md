@@ -110,7 +110,7 @@ Atualizado em 2026-08-08.
 | `design-system-foundation` | 2 | `design-system-foundation/SPEC.md` | `2026-08-08-design-system-foundation.md` | **Concluída** |
 | `content-data-layer` | 2 | `content-data-layer/SPEC.md` | `2026-08-08-content-data-layer.md` | **Concluída** |
 | `project-catalog` | 2 | `project-catalog/SPEC.md` | `2026-08-08-project-catalog.md` | **Concluída** |
-| `case-content` | 3 | — (conteúdo) | — | Não escrito |
+| `case-content` | 3 | `case-content/SPEC.md` | `2026-08-09-case-content.md` | **Concluída** (8 cases, 2 por bloco; mousai no lugar de portfoliosnap) |
 | `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | **Concluída** (1 case real; 7 cases pendentes) |
 | `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | **Concluída** |
 | `theme-restyle` | — | `theme-restyle/SPEC.md` | `2026-08-09-theme-restyle.md` | **Concluída** |
@@ -153,6 +153,10 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-08-09: `case-content` concluída. Oito cases no ar, dois por bloco.
+  `portfoliosnap.app` respondeu 525; o segundo case de `ai-product` é
+  `mousai.gallery`, e o rótulo do bloco passou a "Produtos SaaS" para não
+  inflar IA (REQ-008). Cases confidenciais sem link exigem aviso na página.
 - 2026-08-09: F14 promovida de "Blog" P2 para "Notas" P0. A objeção que a promoção
   vence é a de volume: notas curtas sem data visível, sem periodicidade e sem arquivo
   por período não competem com os 8 cases. A estrutura entra agora; o conteúdo
