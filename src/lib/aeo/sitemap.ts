@@ -29,6 +29,7 @@ export const buildSitemap = ({ site, projects, notes = [] }: Input): string => {
     { path: '/portfolio' },
     { path: '/lab' },
     { path: '/sobre' },
+    { path: '/contato' },
     ...projects.map((project) => ({
       path: `/${collectionOfBlock(project.block)}/${project.slug}`,
       lastmod: project.updatedAt,

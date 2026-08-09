@@ -25,11 +25,13 @@ const LABELS: Record<string, string> = {
 ---
 
 <section id="contato" class="py-2xl lg:py-3xl">
+  {/* The direct channels stay first here: the PRD requires at least one direct
+      contact with no mandatory form. /contato offers the form as an option. */}
   <SectionHeader
     title="Contato"
     level={2}
     index={5}
-    description="Sem formulário. Escreva direto."
+    description="Escreva direto, ou use o formulário em /contato."
   />
 
   <ul class="flex flex-wrap gap-md">

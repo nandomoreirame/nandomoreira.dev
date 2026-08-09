@@ -1,0 +1,100 @@
+---
+import Button from '../components/ui/Button.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getProfile } from '../lib/content';
+
+const profile = await getProfile();
+const email = profile.contacts.find((contact) => contact.kind === 'email');
+
+const field =
+  'w-full rounded-md border border-border-strong bg-surface px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const labelClass = 'mb-sm block font-mono text-small text-muted-foreground';
+---
+
+<BaseLayout
+  title={`Contato | ${profile.name}`}
+  description="Fale comigo sobre um projeto, uma dúvida ou uma proposta."
+>
+  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
+    <SectionHeader
+      title="Contato"
+      level={2}
+      description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
+    />
+
+    <h1 class="font-serif text-display font-semibold text-foreground">
+      Vamos conversar
+    </h1>
+
+    {/* The form is not wired to anything yet. It is laid out in full so the
+        shape can be reviewed, with the submit control disabled and the reason
+        stated, rather than a button that silently does nothing. */}
+    <form class="flex max-w-[52ch] flex-col gap-lg" novalidate>
+      <div>
+        <label for="contato-nome" class={labelClass}>Nome</label>
+        <input
+          id="contato-nome"
+          name="nome"
+          type="text"
+          autocomplete="name"
+          maxlength="120"
+          required
+          class={field}
+        />
+      </div>
+
+      <div>
+        <label for="contato-email" class={labelClass}>E-mail</label>
+        <input
+          id="contato-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          maxlength="254"
+          required
+          class={field}
+        />
+      </div>
+
+      <div>
+        <label for="contato-mensagem" class={labelClass}>Mensagem</label>
+        <textarea
+          id="contato-mensagem"
+          name="mensagem"
+          rows="6"
+          maxlength="2000"
+          required
+          class={field}></textarea>
+      </div>
+
+      <div class="flex flex-col gap-sm">
+        <div>
+          <Button disabled>Enviar</Button>
+        </div>
+        <p class="text-small text-muted-foreground" id="contato-aviso">
+          O envio ainda não está ligado. Enquanto isso, o e-mail abaixo chega
+          direto em mim.
+        </p>
+      </div>
+    </form>
+
+    {
+      email && (
+        <section aria-labelledby="direto-heading" class="flex flex-col gap-md">
+          <h2
+            id="direto-heading"
+            class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
+          >
+            Canal direto
+          </h2>
+          <div>
+            <Button href={`mailto:${email.value}`} variant="secondary">
+              Escrever um e-mail
+            </Button>
+          </div>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
