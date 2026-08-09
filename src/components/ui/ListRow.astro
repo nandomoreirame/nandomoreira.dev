@@ -1,0 +1,51 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  summary?: string;
+  markers?: string[];
+  stamp?: string;
+}
+
+const { href, title, summary, markers = [], stamp } = Astro.props;
+
+// The leading column only exists when there is something to put in it: an
+// empty fixed column would leave a hole in the notes listing (REQ-022).
+const columns = stamp
+  ? 'grid-cols-[3.5rem_1fr_auto] sm:grid-cols-[4.5rem_1fr_auto]'
+  : 'grid-cols-[1fr_auto]';
+---
+
+<a
+  href={href}
+  class={`group grid ${columns} items-center gap-md border-b border-border py-lg transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+>
+  {stamp && <span class="font-mono text-small text-muted-foreground">{stamp}</span>}
+
+  <span class="min-w-0">
+    <span
+      class="block truncate text-h3 text-foreground transition-colors group-hover:text-primary"
+    >
+      {title}
+    </span>
+    {summary && (
+      <span class="hidden sm:block truncate text-small text-muted-foreground">
+        {summary}
+      </span>
+    )}
+  </span>
+
+  <span class="flex items-center gap-md">
+    {markers.length > 0 && (
+      <span class="hidden md:block font-mono text-micro text-muted-foreground">
+        {markers.slice(0, 2).join(' · ')}
+      </span>
+    )}
+    <span
+      aria-hidden="true"
+      class="text-muted-foreground transition-transform group-hover:translate-x-xs group-hover:text-primary"
+    >
+      →
+    </span>
+  </span>
+</a>
