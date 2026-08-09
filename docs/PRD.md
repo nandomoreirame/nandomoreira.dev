@@ -45,7 +45,7 @@ congelado desde dezembro de 2025.
 
 ### Non-Goals
 
-- **Não é um blog.** Não há acervo de artigos e escrever volume não cabe no prazo. Os cases assumem o papel de conteúdo indexável.
+- **Não opera como blog.** Notas curtas existem sob `/notas`, sem periodicidade, sem arquivo por período e sem categorias. Volume de artigo longo e calendário editorial continuam fora; os cases seguem como o conteúdo indexável de peso.
 - **Não é bilíngue na camada humana.** Manter duas versões de cada página dobra o custo de manutenção do conteúdo.
 - **Não é uma demo interativa de WebGL.** O impacto visual não compensa o risco de prazo e de performance.
 - **Não é um agente conversacional sobre o currículo.** Superfície de prompt injection sem demanda observada.
@@ -454,9 +454,21 @@ Métricas de audiência respeitando privacidade, mais log estruturado das chamad
 
 Experimentos rodando no browser dentro das páginas de case.
 
-### F14: Blog
+### F14: Notas
 
-- **Prioridade:** P2
+- **Prioridade:** P0
+
+Notas curtas em `/notas`, no mesmo padrão de linha das listagens de cases. A data existe no frontmatter só para ordenação, RSS e `lastmod`; nunca aparece na superfície humana.
+
+**Requisitos funcionais:**
+
+- QUANDO o visitante abre `/notas` ENTÃO o sistema DEVE listar as notas publicadas da mais recente para a mais antiga, sem exibir data.
+- QUANDO o visitante abre `/notas/<slug>` ENTÃO o sistema DEVE renderizar o título e o corpo da nota, com link de volta para a listagem, sem data.
+- QUANDO uma nota está marcada como rascunho ENTÃO o sistema DEVE omiti-la de listagem, página, navegação, sitemap, `llms.txt` e RSS.
+- QUANDO existem notas publicadas ENTÃO o sistema DEVE incluir o item "Notas" na navegação apontando para `/notas`.
+- QUANDO não há nota publicada ENTÃO o sistema DEVE omitir o item "Notas" da navegação.
+- QUANDO um agente consulta `llms.txt` ou `sitemap.xml` ENTÃO o sistema DEVE incluir as notas publicadas, com `lastmod` derivado da data de frontmatter no sitemap.
+- QUANDO um leitor assina o feed ENTÃO o sistema DEVE servir `/rss.xml` com as notas publicadas e `pubDate` derivado da data de frontmatter.
 
 ### F15: Versão em inglês das páginas humanas
 

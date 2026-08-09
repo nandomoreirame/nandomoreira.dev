@@ -8,7 +8,12 @@ markers:
 draft: true
 ---
 
-A sintaxe de variável no Tailwind 4 usa parênteses, não colchetes.
-`duration-(--token)` gera `var(--token)`; `duration-[--token]` gera CSS inválido.
+No Tailwind 4, a forma correta de referenciar um token de duração usa parênteses
+ao redor do nome da custom property. A forma com colchetes emite o identificador
+cru no CSS, e o browser descarta a declaração em silêncio.
+
+O build passa, o teste que só olha a classe no HTML passa, e a transição simplesmente
+não existe. Quando o token já está num namespace que gera utilitário (ease, container),
+prefira o utilitário direto.
 
 Essa nota existe como rascunho de exemplo até haver conteúdo publicado.

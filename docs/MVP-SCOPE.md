@@ -66,7 +66,6 @@ case e contato; um agente percorre descoberta, consulta estruturada e contato.
 | Feature | ID no PRD |
 |---------|-----------|
 | Demos interativas nos cases | F13 |
-| Blog | F14 |
 | Versão em inglês das páginas humanas | F15 |
 
 ---
@@ -77,7 +76,7 @@ case e contato; um agente percorre descoberta, consulta estruturada e contato.
 
 | Item | Justificativa |
 |------|---------------|
-| Blog com artigos | Zero acervo. Escrever volume de artigo e 8 cases no mesmo prazo garante que nenhum dos dois fica bom. Os cases cumprem o papel de conteúdo indexável |
+| Blog periódico com artigos longos | Notas curtas sob `/notas` entraram como F14 P0 (estrutura). Volume de artigo, calendário editorial e arquivo por período continuam fora. Os 8 cases têm precedência sobre qualquer nota |
 | Versão em inglês das páginas humanas | Dobra o custo de manutenção de todo o conteúdo. A camada de máquina em inglês recupera parte do alcance a custo marginal |
 | Three.js, WebGL, hero 3D | Risco de prazo e de performance desproporcional ao ganho, e conflita com o alvo de Lighthouse acima de 90 |
 | Demos interativas rodando no site | Cada demo é uma mini-feature com estado, erro e responsividade próprios. Multiplica prazo e superfície de bug |
@@ -98,7 +97,7 @@ case e contato; um agente percorre descoberta, consulta estruturada e contato.
 | Adicionar o nono, o décimo case | O retorno cai rápido depois do quarto bloco coberto, e cada case novo adia o lançamento | Publicar com 8 e adicionar depois, com o site no ar |
 | Migrar para a spec nova do MCP porque é mais moderna | Está em release candidate; nenhum cliente real conecta | Manter a estável e migrar quando sair de RC |
 | Trocar Firebase por Vercel no meio | Elimina RISK-001, mas reinicia a configuração de infraestrutura | Rodar o spike. Só trocar se ele falhar |
-| Escrever o blog "já que estou escrevendo os cases" | São formatos diferentes e o blog não tem fim definido | Cases têm contagem fechada; blog é P2 |
+| Escrever notas "já que estou escrevendo os cases" | A estrutura de notas existe, mas o acervo de cases ainda é o maior risco (RISK-003) | Os 8 cases têm precedência sobre qualquer nota; notas não têm contagem mínima no MVP |
 | Deixar os cases para o final | É exatamente como RISK-003 se materializa | Escrever case junto com a estrutura que o exibe |
 
 ---
@@ -113,9 +112,9 @@ case e contato; um agente percorre descoberta, consulta estruturada e contato.
 
 ### Conteúdo
 
-- **Decisão:** 8 cases escritos substituem o blog
-- **Descartado:** blog com 3 a 5 artigos de fundação — o custo de escrita é o gargalo real do prazo
-- **Consequência aceita:** menos superfície para answer engine citar. É exatamente o que H4 testa
+- **Decisão:** 8 cases escritos têm precedência; notas curtas existem como estrutura (F14), sem contagem mínima
+- **Descartado:** blog periódico com 3 a 5 artigos de fundação — o custo de escrita de volume continua o gargalo
+- **Consequência aceita:** menos superfície para answer engine citar até haver notas publicadas. H4 continua válida
 
 ### Idioma
 
@@ -267,6 +266,7 @@ O MVP está pronto quando **todas** as caixas estiverem marcadas.
 
 - [ ] Features F1 a F8 implementadas
 - [ ] **8 cases escritos e publicados, 2 por bloco** (a caixa que mais protege contra RISK-003)
+- [ ] Estrutura de notas no ar (`/notas`, schema, rotas de máquina); contagem de notas publicadas não é gate
 - [ ] `/llms.txt`, `/AGENTS.md`, `/robots.txt`, `/sitemap.xml` respondendo 200
 - [ ] `/api/resume.json` validando contra o schema JSON Resume
 - [ ] `/api/resume.txt` respondendo em texto puro

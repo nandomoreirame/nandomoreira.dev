@@ -89,7 +89,6 @@ Permanecem no PRD e entram depois do lançamento, sem sprint alocada neste roadm
 | `catalog-filter` | F11 | P1 | v1.2 (primeira ilha interativa) |
 | `english-pages` | F15 | P2 | v1.2, se H3 se confirmar |
 | `interactive-demos` | F13 | P2 | v2.0 |
-| `blog` | F14 | P2 | v2.0, se H4 for refutada |
 
 ## Riscos que atravessam o roadmap
 
@@ -114,6 +113,8 @@ Atualizado em 2026-08-08.
 | `case-content` | 3 | — (conteúdo) | — | Não escrito |
 | `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | **Concluída** (1 case real; 7 cases pendentes) |
 | `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | **Concluída** |
+| `theme-restyle` | — | `theme-restyle/SPEC.md` | `2026-08-09-theme-restyle.md` | **Concluída** |
+| `notes` | F14 | `notes/SPEC.md` | `2026-08-09-notes.md` | **Concluída** (estrutura; 0 notas publicadas, só rascunho de exemplo) |
 | `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `hire-endpoint` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
@@ -152,6 +153,11 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-08-09: F14 promovida de "Blog" P2 para "Notas" P0. A objeção que a promoção
+  vence é a de volume: notas curtas sem data visível, sem periodicidade e sem arquivo
+  por período não competem com os 8 cases. A estrutura entra agora; o conteúdo
+  continua subordinado a RISK-003. `theme-restyle` e `notes` saíram do plano e foram
+  implementadas.
 - 2026-08-08: `design-system-foundation` concluída, após revisão que achou 6 defeitos
   (um bloqueante: o portão `npm run verify` estava vermelho no main). Todos corrigidos.
   REQ-013 e REQ-014 ficaram pendentes por estarem fora das 14 tarefas do plano; REQ-014
