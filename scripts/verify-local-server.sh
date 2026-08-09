@@ -88,4 +88,43 @@ if [ -z "$CASE_PATH" ]; then
 fi
 assert_redirect "/projetos/${CASE_PATH##*/}" "$CASE_PATH"
 
+# `postbuild` deletes the source images Astro already optimised. A name-pattern
+# rule decides what goes, so the only honest check is asking the running server
+# for every image the routes actually reference.
+echo "== every image referenced by a route is still served =="
+ROUTES=$(curl -s "${BASE}/sitemap.xml" | grep -oE '<loc>[^<]+</loc>' | sed 's|<loc>https://nandomoreira.dev||;s|</loc>||')
+ROUTES="${ROUTES}
+/404
+/contato"
+
+RENDERED=$(mktemp)
+for route in $ROUTES; do
+  curl -s "${BASE}${route}" >> "$RENDERED"
+done
+cat dist/client/_astro/*.css >> "$RENDERED" 2>/dev/null || true
+
+IMAGES=$(grep -oE '/_astro/[A-Za-z0-9._-]+\.(webp|png|jpe?g|gif|avif)' "$RENDERED" | sort -u)
+rm -f "$RENDERED"
+
+if [ -z "$IMAGES" ]; then
+  echo "FAIL: no image references found across the routes; the check would be vacuous" >&2
+  exit 1
+fi
+
+broken=0
+total=0
+for image in $IMAGES; do
+  total=$((total + 1))
+  code=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}${image}")
+  if [ "$code" != "200" ]; then
+    echo "FAIL: ${image} answered ${code}, the prune removed a served image" >&2
+    broken=$((broken + 1))
+  fi
+done
+
+if [ "$broken" != 0 ]; then
+  exit 1
+fi
+echo "  ${total} images referenced, all 200"
+
 echo "ALL LOCAL CHECKS PASSED"

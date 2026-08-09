@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:build": "vitest run --config vitest.build.config.ts",
-    "verify": "npm run check && npm test && npm run build && npm run test:build"
+    "verify": "npm run check && npm test && npm run build && npm run test:build",
+    "postbuild": "node scripts/prune-optimised-originals.mjs"
   },
   "dependencies": {
     "@astrojs/node": "11.1.0",
