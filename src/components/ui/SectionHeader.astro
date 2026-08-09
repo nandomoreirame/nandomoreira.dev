@@ -4,15 +4,16 @@ interface Props {
   level?: 2 | 3;
   index?: number;
   description?: string;
+  id?: string;
 }
 
-const { title, level = 2, index, description } = Astro.props;
+const { title, level = 2, index, description, id } = Astro.props;
 const Heading = `h${level}` as 'h2' | 'h3';
 const sizes = { 2: 'text-h2', 3: 'text-h3' } as const;
 ---
 
 <header class="mb-lg flex flex-col gap-xs">
-  <Heading class={`${sizes[level]} font-semibold text-foreground`}>
+  <Heading id={id} class={`${sizes[level]} font-semibold text-foreground`}>
     {index !== undefined && (
       <span class="mr-sm font-mono text-small text-primary" aria-hidden="true">
         {String(index).padStart(2, '0')}
