@@ -1,0 +1,32 @@
+---
+import SiteNav from './SiteNav.astro';
+
+interface Props {
+  name: string;
+  current?: string;
+  hasNotes?: boolean;
+}
+
+const { name, current, hasNotes = false } = Astro.props;
+---
+
+{/* The rule sits on <header> so it spans the viewport; the container is the row
+    inside it, which keeps the content on the measure. Sticky is pure CSS and
+    depends on no ancestor being a scroll container — see the overflow-x-clip
+    note in global.css. */}
+<header
+  class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur"
+>
+  <div
+    class="mx-auto flex w-full max-w-page flex-wrap items-center justify-between gap-sm px-lg py-sm"
+  >
+    <a
+      href="/"
+      class="font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      {name}
+    </a>
+
+    <SiteNav current={current} hasNotes={hasNotes} />
+  </div>
+</header>

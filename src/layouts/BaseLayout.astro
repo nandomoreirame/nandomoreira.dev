@@ -1,6 +1,6 @@
 ---
 import SiteFooter from '../components/layout/SiteFooter.astro';
-import SiteNav from '../components/layout/SiteNav.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { requireSite } from '../lib/aeo/urls';
 import { websiteLd } from '../lib/aeo/website-ld';
@@ -39,9 +39,18 @@ const hasNotes = notes.length > 0;
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <script type="application/ld+json" is:inline set:html={websiteJsonLd} />
+    {/* Two preloads, one per visible-above-the-fold job: the serif paints the
+        headline (the LCP candidate), the sans paints the body around it. */}
     <link
       rel="preload"
-      href="/fonts/inter-latin-400.woff2"
+      href="/fonts/literata-latin-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/alegreya-sans-latin-400.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -55,12 +64,18 @@ const hasNotes = notes.length > 0;
       Pular para o conteúdo
     </a>
 
-    <div class="mx-auto w-full max-w-page px-md">
-      <SiteNav current={current} hasNotes={hasNotes} />
+    <SiteHeader
+      name={profile.wordmark ?? profile.name}
+      current={current}
+      hasNotes={hasNotes}
+    />
+
+    <div class="mx-auto w-full max-w-page px-lg">
       <main id="main" tabindex="-1">
         <slot />
       </main>
-      <SiteFooter name={profile.name} year={year} contacts={profile.contacts} />
     </div>
+
+    <SiteFooter name={profile.name} year={year} contacts={profile.contacts} />
   </body>
 </html>

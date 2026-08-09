@@ -17,11 +17,12 @@ const LABELS: Record<string, string> = {
 const social = contacts.filter((contact) => contact.kind in LABELS);
 ---
 
+{/* Same split as the header: rule on <footer>, container on the row inside. */}
 <footer class="border-t border-border">
   <div
-    class="flex flex-col gap-md py-xl font-mono text-small text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+    class="mx-auto flex w-full max-w-page flex-col gap-md px-lg py-xl font-mono text-small text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
   >
-    <p>© {year} {name}. Construído com Astro.</p>
+    <p>© {year} {name}.</p>
 
     <nav class="flex items-center gap-lg" aria-label="Canais">
       {social.map((contact) => (

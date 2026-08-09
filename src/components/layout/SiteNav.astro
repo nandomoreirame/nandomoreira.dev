@@ -8,21 +8,21 @@ const { current, hasNotes = false } = Astro.props;
 
 const items = [
   { href: '/portfolio', label: 'Portfólio' },
-  { href: '/lab', label: 'Laboratório' },
+  { href: '/lab', label: 'Lab' },
   ...(hasNotes ? [{ href: '/notas', label: 'Notas' }] : []),
   { href: '/sobre', label: 'Sobre' },
-  { href: '/#contato', label: 'Contato' },
+  { href: '/contato', label: 'Contato' },
 ];
 ---
 
-<nav aria-label="Navegação principal" class="border-b border-border py-md">
-  <ul class="flex flex-wrap gap-lg">
+<nav aria-label="Navegação principal">
+  <ul class="flex flex-wrap items-center gap-lg">
     {items.map((item) => (
       <li>
         <a
           href={item.href}
           aria-current={current === item.href ? 'page' : undefined}
-          class="inline-flex min-h-11 items-center text-body text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary"
+          class="inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary"
         >
           {item.label}
         </a>
