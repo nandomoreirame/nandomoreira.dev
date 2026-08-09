@@ -29,6 +29,12 @@ const contactSchema = z.object({
 
 export const profileSchema = z.object({
   name: z.string().min(1),
+  /**
+   * Brand shown in the header. Optional: falls back to `name`. Kept separate
+   * because `name` is the legal name that feeds Person JSON-LD, the resume,
+   * the machine routes and the copyright line, where a short brand is wrong.
+   */
+  wordmark: z.string().min(1).optional(),
   headline: z.string().min(1),
   bio: z.string().min(1),
   positioning: z.string().min(1),

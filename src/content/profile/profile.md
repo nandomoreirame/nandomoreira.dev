@@ -1,5 +1,6 @@
 ---
 name: Fernando Moreira Costa
+wordmark: Nando Moreira
 headline: Engenheiro de produto com agentes de IA
 bio: |
   Construo ferramental de agentes de IA e produtos com IA em produção.
@@ -41,6 +42,6 @@ contacts:
     value: fernando@nandomoreira.dev
   - kind: github
     value: https://github.com/nandomoreirame
-  - kind: site
-    value: https://nandomoreira.dev
+  - kind: linkedin
+    value: https://www.linkedin.com/in/nandomoreirame/
 ---
