@@ -29,11 +29,18 @@ describe('BaseLayout', () => {
     expect(html.match(/<main[\s>]/g) ?? []).toHaveLength(1);
   });
 
+  it('makes the main landmark programmatically focusable for the skip link', async () => {
+    const html = await render();
+    expect(html).toMatch(/<main[^>]*\btabindex="-1"/);
+  });
+
   it('prevents horizontal overflow on the page body', async () => {
     expect(await render()).toContain('overflow-x-hidden');
   });
 
   it('caps the container width at the layout token', async () => {
-    expect(await render()).toContain('max-w-(--container-page)');
+    // `--container-page` lives in Tailwind's --container-* namespace, so the
+    // token generates a `max-w-page` utility directly.
+    expect(await render()).toContain('max-w-page');
   });
 });

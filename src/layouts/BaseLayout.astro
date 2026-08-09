@@ -34,8 +34,8 @@ const { title, description, noindex = false } = Astro.props;
       Pular para o conteúdo
     </a>
 
-    <div class="mx-auto w-full max-w-(--container-page) px-md">
-      <main id="main">
+    <div class="mx-auto w-full max-w-page px-md">
+      <main id="main" tabindex="-1">
         <slot />
       </main>
     </div>
