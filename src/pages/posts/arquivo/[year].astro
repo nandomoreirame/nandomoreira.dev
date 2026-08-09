@@ -1,0 +1,63 @@
+---
+import ListRow from '../../../components/ui/ListRow.astro';
+import SectionHeader from '../../../components/ui/SectionHeader.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getArchivedPostsByYear, getArchiveYears } from '../../../lib/content';
+import { toCompactStamp } from '../../../lib/format/date';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const years = await getArchiveYears();
+
+  return years.map(({ year }) => ({
+    params: { year },
+    props: { year },
+  }));
+}
+
+interface Props {
+  year: string;
+}
+
+const { year } = Astro.props as Props;
+const posts = await getArchivedPostsByYear(year);
+
+if (posts.length === 0) {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout
+  title={`Arquivo ${year} | nandomoreira.dev`}
+  description={`Textos publicados em ${year}.`}
+>
+  <nav class="mt-lg" aria-label="Trilha de navegação">
+    <a
+      href="/posts/arquivo"
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Arquivo
+    </a>
+  </nav>
+
+  <h1 class="mt-xl mb-xl text-h1 font-semibold text-foreground">{year}</h1>
+
+  <SectionHeader title="Textos" level={2} count={posts.length} />
+
+  <ul class="mb-3xl list-none p-0">
+    {
+      posts.map((post) => (
+        <li>
+          <ListRow
+            href={`/${post.slug}`}
+            title={post.title}
+            summary={post.summary}
+            markers={post.markers}
+            stamp={toCompactStamp(post.date)}
+          />
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

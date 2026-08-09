@@ -1,0 +1,70 @@
+---
+import { render } from 'astro:content';
+import Prose from '../components/ui/Prose.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAllPostEntries, getPostEntry } from '../lib/content';
+import type { PostEntry } from '../lib/content';
+import { toCompactStamp } from '../lib/format/date';
+import { jsonLdForPost, serialiseJsonLd } from '../lib/notes/note-ld';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getAllPostEntries();
+
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: PostEntry;
+}
+
+const { entry } = Astro.props as Props;
+// Re-check at render time so a draft never slips through a stale path list.
+const live = await getPostEntry(entry.data.slug);
+
+if (!live) {
+  return Astro.redirect('/404');
+}
+
+const post = live.data;
+const { Content } = await render(live);
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = serialiseJsonLd(jsonLdForPost(post, site));
+const stamp = toCompactStamp(post.date);
+---
+
+<BaseLayout title={`${post.title} | nandomoreira.dev`} description={post.summary}>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+  <nav class="mt-lg" aria-label="Trilha de navegação">
+    <a
+      href={post.archived ? '/posts/arquivo' : '/posts'}
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      {post.archived ? 'Voltar ao arquivo' : 'Voltar aos posts'}
+    </a>
+  </nav>
+
+  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
+    <header class="flex flex-col gap-md">
+      {
+        post.archived && (
+          <span class="inline-flex w-fit items-center rounded-sm border border-border-strong px-sm py-xs font-mono text-micro uppercase tracking-wide text-muted-foreground">
+            Arquivo
+          </span>
+        )
+      }
+      <h1 class="text-h1 font-semibold text-foreground">{post.title}</h1>
+      <time class="font-mono text-small text-muted-foreground" datetime={post.date}>
+        {stamp}
+      </time>
+    </header>
+    <Prose>
+      <Content />
+    </Prose>
+  </article>
+</BaseLayout>

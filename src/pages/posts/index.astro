@@ -1,0 +1,49 @@
+---
+import ListRow from '../../components/ui/ListRow.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCurrentPosts } from '../../lib/content';
+import { toCompactStamp } from '../../lib/format/date';
+
+const posts = await getCurrentPosts();
+---
+
+<BaseLayout
+  title="Posts | nandomoreira.dev"
+  description="Textos correntes sobre engenharia, tooling e agentes."
+>
+  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">Posts</h1>
+
+  <SectionHeader title="Correntes" level={2} count={posts.length} />
+
+  {
+    posts.length === 0 ? (
+      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+        Nenhum post corrente no momento.
+      </p>
+    ) : (
+      <ul class="list-none p-0">
+        {posts.map((post) => (
+          <li>
+            <ListRow
+              href={`/${post.slug}`}
+              title={post.title}
+              summary={post.summary}
+              markers={post.markers}
+              stamp={toCompactStamp(post.date)}
+            />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <p class="mt-2xl mb-3xl text-body text-muted-foreground">
+    <a
+      href="/posts/arquivo"
+      class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Arquivo por ano
+    </a>
+  </p>
+</BaseLayout>
