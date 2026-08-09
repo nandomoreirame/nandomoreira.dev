@@ -1,0 +1,15 @@
+---
+import CollectionListing from '../../components/catalog/CollectionListing.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllProjects } from '../../lib/content';
+
+const projects = await getAllProjects();
+---
+
+<BaseLayout
+  title="Portfólio | nandomoreira.dev"
+  description="Trabalho entregue: produtos com IA e cases profissionais."
+>
+  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">Portfólio</h1>
+  <CollectionListing collection="portfolio" projects={projects} />
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import ListRow from '../ui/ListRow.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import type { Project } from '../../content/schemas/project';
+import {
+  COLLECTION_LABELS,
+  blocksOf,
+  collectionOfBlock,
+  type CatalogCollection,
+} from '../../lib/catalog/groups';
+import { toCompactStamp } from '../../lib/format/date';
+
+interface Props {
+  collection: CatalogCollection;
+  projects: Project[];
+}
+
+const { collection, projects } = Astro.props;
+
+const allowed = new Set(blocksOf(collection));
+const items = projects
+  .filter((project) => allowed.has(project.block))
+  .sort((a, b) => b.date.localeCompare(a.date));
+
+const label = COLLECTION_LABELS[collection];
+---
+
+<section aria-labelledby={`collection-${collection}`}>
+  <SectionHeader
+    title={label}
+    level={2}
+    count={items.length}
+    id={`collection-${collection}`}
+  />
+
+  {
+    items.length === 0 ? (
+      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+        Nenhum case publicado nesta coleção ainda.
+      </p>
+    ) : (
+      <ul class="list-none p-0">
+        {items.map((project) => {
+          const dest = collectionOfBlock(project.block);
+          return (
+            <li>
+              <ListRow
+                href={`/${dest}/${project.slug}`}
+                title={project.title}
+                summary={project.summary}
+                markers={project.tech}
+                stamp={toCompactStamp(project.date)}
+              />
+            </li>
+          );
+        })}
+      </ul>
+    )
+  }
+</section>
