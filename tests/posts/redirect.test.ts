@@ -1,17 +1,17 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-describe('/notas redirects to /posts', () => {
-  it('keeps a permanent redirect from the never-indexed /notas path', () => {
-    const source = readFileSync('src/pages/notas/index.astro', 'utf8');
-    expect(source).toContain("Astro.redirect('/posts'");
-    expect(source).toMatch(/301/);
-  });
+const config = () => readFileSync('astro.config.mjs', 'utf8');
 
-  it('redirects legacy note detail slugs to the root post path', () => {
-    const source = readFileSync('src/pages/notas/[slug].astro', 'utf8');
-    expect(source).toContain('Astro.redirect');
-    expect(source).toMatch(/301/);
-    expect(source).toContain('getAllPosts');
+describe('/notas redirects to /posts', () => {
+  it('declares permanent redirects in astro.config, not pre-rendered pages', () => {
+    const source = config();
+
+    expect(source).toMatch(/redirects\s*:\s*\{/);
+    expect(source).toMatch(/['"]\/notas['"]\s*:\s*['"]\/posts['"]/);
+    expect(source).toMatch(/['"]\/notas\/\[slug\]['"]\s*:\s*['"]\/\[slug\]['"]/);
+
+    // Legacy page routes must be gone: prerender + Astro.redirect yields 200 + meta refresh.
+    expect(existsSync('src/pages/notas')).toBe(false);
   });
 });

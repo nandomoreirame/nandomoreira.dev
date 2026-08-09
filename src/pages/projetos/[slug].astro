@@ -1,25 +1,19 @@
 ---
 import { collectionOfBlock } from '../../lib/catalog/groups';
-import { getAllProjects } from '../../lib/content';
-import type { Project } from '../../content/schemas/project';
+import { getProject } from '../../lib/content';
 
-export const prerender = true;
+const slug = Astro.params.slug;
 
-export async function getStaticPaths() {
-  const projects = await getAllProjects();
-
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }));
+if (!slug) {
+  return new Response(null, { status: 404 });
 }
 
-interface Props {
-  project: Project;
+const project = await getProject(slug);
+
+if (!project) {
+  return new Response(null, { status: 404 });
 }
 
-const { project } = Astro.props as Props;
-const collection = collectionOfBlock(project.block);
-
-return Astro.redirect(`/${collection}/${project.slug}`, 301);
+const target = `/${collectionOfBlock(project.block)}/${project.slug}`;
+return Astro.redirect(target, 301);
 ---

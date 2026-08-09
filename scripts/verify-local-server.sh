@@ -55,4 +55,37 @@ if diff -q /tmp/health-1.json /tmp/health-2.json > /dev/null; then
   exit 1
 fi
 
+# A pre-rendered page cannot send a status, so `Astro.redirect` there degrades to
+# 200 plus a <meta refresh>. Only a real request proves the difference; a unit
+# test reading the source cannot, and that is exactly how it shipped broken.
+assert_redirect() {
+  from="$1"
+  to="$2"
+  status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}${from}")
+  location=$(curl -s -D - -o /dev/null "${BASE}${from}" | grep -i '^location:' | tr -d '\r' | awk '{print $2}')
+
+  if [ "$status" != "301" ]; then
+    echo "FAIL: ${from} answered ${status}, expected a real 301" >&2
+    exit 1
+  fi
+  if [ "$location" != "$to" ]; then
+    echo "FAIL: ${from} pointed at '${location}', expected '${to}'" >&2
+    exit 1
+  fi
+  echo "  ${from} -> 301 ${to}"
+}
+
+echo "== legacy paths answer with a real 301, never a meta refresh =="
+assert_redirect /notas /posts
+assert_redirect /notas/comece-com-gulp /comece-com-gulp
+assert_redirect /projetos /portfolio
+
+# Derived from the sitemap so the check does not pin a slug that may be retired.
+CASE_PATH=$(curl -s "${BASE}/sitemap.xml" | grep -oE '/(portfolio|lab)/[a-z0-9-]+' | head -1)
+if [ -z "$CASE_PATH" ]; then
+  echo "FAIL: no case route found in the sitemap to test /projetos/<slug> against" >&2
+  exit 1
+fi
+assert_redirect "/projetos/${CASE_PATH##*/}" "$CASE_PATH"
+
 echo "ALL LOCAL CHECKS PASSED"
