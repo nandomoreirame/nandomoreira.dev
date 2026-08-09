@@ -2,14 +2,14 @@
 import { render } from 'astro:content';
 import Prose from '../../components/ui/Prose.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getAllNoteEntries, getNoteEntry } from '../../lib/content';
-import type { NoteEntry } from '../../lib/content';
-import { jsonLdForNote, serialiseJsonLd } from '../../lib/notes/note-ld';
+import { getAllPostEntries, getPostEntry } from '../../lib/content';
+import type { PostEntry } from '../../lib/content';
+import { jsonLdForPost, serialiseJsonLd } from '../../lib/notes/note-ld';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const entries = await getAllNoteEntries();
+  const entries = await getAllPostEntries();
 
   return entries.map((entry) => ({
     params: { slug: entry.data.slug },
@@ -18,12 +18,12 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  entry: NoteEntry;
+  entry: PostEntry;
 }
 
 const { entry } = Astro.props as Props;
 // Re-check at render time so a draft never slips through a stale path list.
-const live = await getNoteEntry(entry.data.slug);
+const live = await getPostEntry(entry.data.slug);
 
 if (!live) {
   return Astro.redirect('/404');
@@ -32,7 +32,7 @@ if (!live) {
 const note = live.data;
 const { Content } = await render(live);
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const jsonLd = serialiseJsonLd(jsonLdForNote(note, site));
+const jsonLd = serialiseJsonLd(jsonLdForPost(note, site));
 ---
 
 <BaseLayout title={`${note.title} | nandomoreira.dev`} description={note.summary}>

@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
 import { requireSite } from '../lib/aeo/urls';
-import { getAllNotes } from '../lib/content';
+import { getAllPosts } from '../lib/content';
 import { buildRss } from '../lib/notes/rss';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const notes = await getAllNotes();
+  const notes = await getAllPosts();
 
   const body = buildRss({
     site: requireSite(site),

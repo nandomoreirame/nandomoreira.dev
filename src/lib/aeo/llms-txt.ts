@@ -1,4 +1,4 @@
-import type { Note } from '../../content/schemas/note';
+import type { Post } from '../../content/schemas/post';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock } from '../catalog/groups';
@@ -8,7 +8,7 @@ interface Input {
   site: URL;
   profile: Profile;
   projects: readonly Project[];
-  notes?: readonly Note[];
+  notes?: readonly Post[];
 }
 
 const MACHINE_ROUTES = [

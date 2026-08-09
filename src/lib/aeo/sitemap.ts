@@ -1,4 +1,4 @@
-import type { Note } from '../../content/schemas/note';
+import type { Post } from '../../content/schemas/post';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock } from '../catalog/groups';
 import { absoluteUrl } from './urls';
@@ -6,7 +6,7 @@ import { absoluteUrl } from './urls';
 interface Input {
   site: URL;
   projects: readonly Project[];
-  notes?: readonly Note[];
+  notes?: readonly Post[];
 }
 
 const escapeXml = (value: string): string =>

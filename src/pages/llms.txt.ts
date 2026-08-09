@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { buildLlmsTxt } from '../lib/aeo/llms-txt';
 import { requireSite } from '../lib/aeo/urls';
-import { getAllNotes, getAllProjects, getProfile } from '../lib/content';
+import { getAllPosts, getAllProjects, getProfile } from '../lib/content';
 
 export const prerender = false;
 
@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ site }) => {
   const [profile, projects, notes] = await Promise.all([
     getProfile(),
     getAllProjects(),
-    getAllNotes(),
+    getAllPosts(),
   ]);
 
   return new Response(buildLlmsTxt({ site: requireSite(site), profile, projects, notes }), {

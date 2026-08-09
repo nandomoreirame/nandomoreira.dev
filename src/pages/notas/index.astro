@@ -2,9 +2,9 @@
 import ListRow from '../../components/ui/ListRow.astro';
 import SectionHeader from '../../components/ui/SectionHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getAllNotes } from '../../lib/content';
+import { getAllPosts } from '../../lib/content';
 
-const notes = await getAllNotes();
+const notes = await getAllPosts();
 ---
 
 <BaseLayout

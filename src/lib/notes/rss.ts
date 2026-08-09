@@ -1,9 +1,9 @@
-import type { Note } from '../../content/schemas/note';
+import type { Post } from '../../content/schemas/post';
 import { absoluteUrl } from '../aeo/urls';
 
 interface Input {
   site: URL;
-  notes: readonly Note[];
+  notes: readonly Post[];
   title: string;
   description: string;
 }

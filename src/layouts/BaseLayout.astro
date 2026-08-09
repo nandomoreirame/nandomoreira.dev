@@ -4,7 +4,7 @@ import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { requireSite } from '../lib/aeo/urls';
 import { websiteLd } from '../lib/aeo/website-ld';
-import { getAllNotes, getProfile } from '../lib/content';
+import { getAllPosts, getProfile } from '../lib/content';
 import '../styles/global.css';
 
 interface Props {
@@ -19,7 +19,7 @@ const current = Astro.url?.pathname;
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
 const canonical = new URL(Astro.url?.pathname ?? '/', site).toString();
 const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
-const [profile, notes] = await Promise.all([getProfile(), getAllNotes()]);
+const [profile, notes] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
 const year = new Date().getUTCFullYear();
 const hasNotes = notes.length > 0;
