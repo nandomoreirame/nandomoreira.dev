@@ -1,0 +1,38 @@
+---
+import ListRow from '../../components/ui/ListRow.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllNotes } from '../../lib/content';
+
+const notes = await getAllNotes();
+---
+
+<BaseLayout
+  title="Minhas notas | nandomoreira.dev"
+  description="Notas curtas sobre engenharia, tooling e agentes."
+>
+  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">Minhas notas</h1>
+
+  <SectionHeader title="Notas" level={2} count={notes.length} />
+
+  {
+    notes.length === 0 ? (
+      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+        Nenhuma nota publicada ainda.
+      </p>
+    ) : (
+      <ul class="list-none p-0">
+        {notes.map((note) => (
+          <li>
+            <ListRow
+              href={`/notas/${note.slug}`}
+              title={note.title}
+              summary={note.summary}
+              markers={note.markers}
+            />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
