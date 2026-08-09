@@ -127,3 +127,31 @@ describe('projectSchema', () => {
     expect(projectSchema.safeParse({ ...valid, date: '01/04/2026' }).success).toBe(false);
   });
 });
+
+describe('link requirement', () => {
+  const base = {
+    slug: 'exemplo',
+    title: 'Exemplo',
+    block: 'professional' as const,
+    summary: 's',
+    problem: 'p',
+    decisions: 'd',
+    outcome: 'o',
+    tech: ['Python'],
+    featured: false,
+    date: '2026-01-01',
+  };
+
+  it('accepts a confidential case with no link at all', () => {
+    // A client repo is private and the client domain carries the client name,
+    // so the second refine forbids every link a real case could offer.
+    const parsed = projectSchema.parse({ ...base, confidential: true });
+    expect(parsed.repoUrl ?? null).toBeNull();
+  });
+
+  it('still rejects a public case with no link', () => {
+    expect(() => projectSchema.parse({ ...base, confidential: false })).toThrow(
+      /verifiable evidence/,
+    );
+  });
+});

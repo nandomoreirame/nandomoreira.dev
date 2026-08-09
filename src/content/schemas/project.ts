@@ -48,11 +48,15 @@ export const projectSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'updatedAt must be an ISO-8601 date (YYYY-MM-DD)')
       .optional(),
   })
-  .refine((project) => Boolean(project.repoUrl) || Boolean(project.liveUrl), {
-    message:
-      'A case needs at least one of repoUrl or liveUrl: without a link there is no verifiable evidence',
-    path: ['repoUrl'],
-  })
+  .refine(
+    (project) =>
+      project.confidential || Boolean(project.repoUrl) || Boolean(project.liveUrl),
+    {
+      message:
+        'A case needs at least one of repoUrl or liveUrl: without a link there is no verifiable evidence. Only a confidential case may omit both, and it must say so on the page (REQ-005).',
+      path: ['repoUrl'],
+    },
+  )
   .refine(
     (project) => {
       if (!project.confidential || !project.clientName) return true;
