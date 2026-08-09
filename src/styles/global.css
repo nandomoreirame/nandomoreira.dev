@@ -114,15 +114,12 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    @apply scheme-dark;
   }
 
   html,
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    @apply min-h-dvh min-w-dvw overflow-x-hidden bg-background text-foreground;
+    @apply min-h-dvh min-w-dvw font-sans overflow-x-hidden bg-background text-foreground;
   }
 
   .motion-safe-default {

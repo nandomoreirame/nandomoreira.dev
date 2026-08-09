@@ -34,9 +34,8 @@ describe('BaseLayout', () => {
     expect(html).toMatch(/<main[^>]*\btabindex="-1"/);
   });
 
-  it('prevents horizontal overflow on the page body', async () => {
-    expect(await render()).toContain('overflow-x-hidden');
-  });
+  // The horizontal-overflow guard moved to the base layer of global.css, where
+  // html and body are styled. It is asserted in global-tags.test.ts.
 
   it('caps the container width at the layout token', async () => {
     // `--container-page` lives in Tailwind's --container-* namespace, so the
