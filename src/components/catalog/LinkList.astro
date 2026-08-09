@@ -1,5 +1,6 @@
 ---
 import { visibleLinks } from '../../lib/catalog/links';
+import Button from '../ui/Button.astro';
 
 interface Props {
   repoUrl?: string | null;
@@ -11,17 +12,12 @@ const links = visibleLinks(Astro.props);
 
 {
   links.length > 0 && (
-    <ul class="flex flex-wrap gap-md">
+    <ul class="flex flex-wrap items-center gap-md">
       {links.map((link) => (
         <li>
-          <a
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
+          <Button href={link.href} variant={link.variant} target="_blank" rel="noopener noreferrer">
             {link.label}
-          </a>
+          </Button>
         </li>
       ))}
     </ul>

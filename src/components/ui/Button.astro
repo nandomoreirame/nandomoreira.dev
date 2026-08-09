@@ -4,9 +4,12 @@ interface Props {
   variant?: 'primary' | 'secondary' | 'ghost';
   disabled?: boolean;
   label?: string;
+  /** Only meaningful on a link; an external target needs its own rel. */
+  target?: '_blank';
+  rel?: string;
 }
 
-const { href, variant = 'primary', disabled = false, label } = Astro.props;
+const { href, variant = 'primary', disabled = false, label, target, rel } = Astro.props;
 
 const isLink = Boolean(href);
 const isDisabledLink = isLink && disabled;
@@ -52,6 +55,8 @@ const Tag = isLink ? 'a' : 'button';
 <Tag
   class={className}
   href={isDisabledLink ? undefined : href}
+  target={isLink ? target : undefined}
+  rel={isLink ? rel : undefined}
   role={isDisabledLink ? 'link' : undefined}
   aria-label={label}
   aria-disabled={disabled ? 'true' : undefined}

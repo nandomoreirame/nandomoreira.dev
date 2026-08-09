@@ -8,7 +8,7 @@ describe('visibleLinks', () => {
       liveUrl: 'https://y.app',
     });
 
-    expect(links.map((link) => link.kind)).toEqual(['repo', 'live']);
+    expect(links.map((link) => link.kind)).toEqual(['live', 'repo']);
   });
 
   it('omits the repo link entirely when the repository is private', () => {
@@ -43,6 +43,26 @@ describe('visibleLinks', () => {
       liveUrl: 'https://y.app',
     });
 
-    expect(links.map((link) => link.label)).toEqual(['Ver repositório', 'Ver no ar']);
+    expect(links.map((link) => link.label)).toEqual(['Ver projeto', 'Código fonte']);
+  });
+
+  it('leads with the running project and follows with the source', () => {
+    const links = visibleLinks({
+      repoUrl: 'https://github.com/x/y',
+      liveUrl: 'https://y.app',
+    });
+
+    // The live product is the claim; the repository is the proof behind it.
+    expect(links.map((link) => link.kind)).toEqual(['live', 'repo']);
+    expect(links.map((link) => link.variant)).toEqual(['primary', 'secondary']);
+  });
+
+  it('keeps the source link secondary even when it is the only one', () => {
+    // A case with no live URL must not promote its repository to the primary
+    // slot: the page already has one primary action at most.
+    const links = visibleLinks({ repoUrl: 'https://github.com/x/y', liveUrl: null });
+
+    expect(links).toHaveLength(1);
+    expect(links[0]!.variant).toBe('secondary');
   });
 });

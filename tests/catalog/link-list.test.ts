@@ -30,7 +30,7 @@ describe('LinkList', () => {
   it('uses meaningful link text', async () => {
     const html = await render({ repoUrl: 'https://github.com/x/y', liveUrl: null });
 
-    expect(html).toContain('Ver repositório');
+    expect(html).toContain('Código fonte');
     expect(html).not.toContain('clique aqui');
   });
 });
