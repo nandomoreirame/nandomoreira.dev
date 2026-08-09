@@ -80,11 +80,11 @@ exibida à esquerda em `MM/AAAA`. Entra como campo novo no schema.
 4. **[REQ-004]** QUANDO um título ou resumo excede a largura disponível ENTÃO ele DEVE ser truncado sem quebrar a grade nem gerar scroll horizontal.
 5. **[REQ-005]** QUANDO um cabeçalho de seção é renderizado ENTÃO ele DEVE apresentar um sobrescrito monoespaçado em caixa alta e, quando houver contagem, o total com zero à esquerda em duas casas.
 6. **[REQ-006]** QUANDO um projeto é cadastrado ENTÃO ele DEVE declarar uma data, e a listagem DEVE ordenar do mais recente para o mais antigo.
-7. **[REQ-007]** QUANDO a home é renderizada ENTÃO ela DEVE apresentar hero, trabalho selecionado, trajetória, serviços, sobre resumido e contato, nessa ordem, mantendo exatamente um CTA primário.
-8. **[REQ-008]** QUANDO a seção de trabalho selecionado da home é renderizada ENTÃO ela DEVE listar no máximo cinco itens, priorizando os destacados, e oferecer link para a listagem completa com o total.
+7. **[REQ-007]** QUANDO a home é renderizada ENTÃO ela DEVE apresentar hero, portfólio, laboratório, trajetória, serviços, sobre resumido e contato, nessa ordem, mantendo exatamente um CTA primário. *(Emendado em 2026-08-09: a seção única "trabalho selecionado" virou duas, uma por coleção — ver REQ-034.)*
+8. **[REQ-008]** QUANDO uma seção de coleção da home é renderizada ENTÃO ela DEVE listar no máximo cinco itens **da sua própria coleção**, priorizando os destacados, e oferecer link para a listagem correspondente com o total.
 9. **[REQ-009]** QUANDO um visitante acessa `/sobre` ENTÃO o sistema DEVE apresentar a bio completa, a stack e um canal de contato, derivados do perfil.
 10. **[REQ-010]** QUANDO a seção sobre da home é renderizada ENTÃO ela DEVE trazer um resumo curto e um link para `/sobre`, sem duplicar o texto no código.
-11. **[REQ-011]** QUANDO o catálogo é apresentado ENTÃO ele DEVE separar portfólio (`ai-product`, `professional`) de laboratório (`ai-tooling`, `systems-cli`), sem alterar o schema nem o cadastro existente.
+11. **[REQ-011]** QUANDO o catálogo é apresentado ENTÃO ele DEVE separar portfólio (`professional`) de laboratório (`ai-tooling`, `ai-product`, `systems-cli`), sem alterar o schema nem o cadastro existente. *(Emendado em 2026-08-09: o critério passou a ser trabalho de cliente contra produto próprio. A divisão anterior deixava dois SaaS próprios em portfólio e um terceiro em laboratório, sem nada que os separasse.)*
 12. **[REQ-012]** QUANDO um visitante acessa `/portfolio` ou `/lab` ENTÃO o sistema DEVE listar os projetos do agrupamento correspondente no padrão de linha.
 13. **[REQ-013]** QUANDO qualquer página é renderizada ENTÃO ela DEVE apresentar um rodapé com aviso de direito autoral, canais sociais derivados do perfil e link de retorno ao topo.
 14. **[REQ-014]** QUANDO o rodapé é renderizado ENTÃO ele NÃO PODE conter crédito ao autor do tema nem link para o X.
@@ -102,6 +102,8 @@ exibida à esquerda em `MM/AAAA`. Entra como campo novo no schema.
 26. **[REQ-031]** QUANDO uma tag global limita o transbordo horizontal ENTÃO ela DEVE usar `clip`, e NÃO PODE usar `hidden`, que criaria contêiner de rolagem e quebraria o cabeçalho fixo.
 27. **[REQ-032]** QUANDO um link aponta para uma âncora da mesma página ENTÃO a rolagem DEVE ser suave e parar abaixo do cabeçalho fixo, respeitando `prefers-reduced-motion`.
 28. **[REQ-033]** QUANDO um visitante acessa `/contato` ENTÃO o sistema DEVE apresentar um formulário rotulado e limitado em tamanho, com o envio desligado e declarado como tal, mantendo o canal direto na mesma página.
+29. **[REQ-034]** QUANDO a home apresenta cases ENTÃO ela DEVE separar portfólio de laboratório em duas seções, com portfólio primeiro, cada uma com sua âncora, seu contador e seu link para a listagem correspondente.
+30. **[REQ-035]** QUANDO uma seção de coleção recebe um case de outra coleção ENTÃO a renderização DEVE falhar, porque a linha montaria um link para rota inexistente.
 
 ### P2 (Should Have)
 
@@ -208,3 +210,5 @@ exibida à esquerda em `MM/AAAA`. Entra como campo novo no schema.
 | REQ-031 | `overflow-x: clip` em vez de `hidden` | P1 | Done |
 | REQ-032 | Rolagem suave até âncora, abaixo do cabeçalho | P2 | Done |
 | REQ-033 | `/contato` com formulário desligado e canal direto | P2 | Done |
+| REQ-034 | Home separa portfólio de laboratório | P1 | Done |
+| REQ-035 | Seção rejeita case de outra coleção | P1 | Done |

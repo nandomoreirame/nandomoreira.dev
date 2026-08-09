@@ -75,7 +75,7 @@ trajetória tenha `context` não vazio.
 
 ### P2 (Should Have)
 
- 1. **[REQ-013]** QUANDO uma seção é referenciada pela navegação ENTÃO ela DEVE ter uma âncora estável, para que `/#projetos` e similares funcionem.
+ 1. **[REQ-013]** QUANDO uma seção é referenciada pela navegação ENTÃO ela DEVE ter uma âncora estável, para que `/#portfolio` e similares *(Emendado em 2026-08-09: `#projetos` deu lugar a `#portfolio` e `#lab` quando a home separou as duas coleções — ver REQ-034 de `theme-restyle`.)* funcionem.
  2. **[REQ-014]** QUANDO um serviço é exibido ENTÃO o case que o comprova DEVE ser clicável a partir dali.
  3. **[REQ-015]** QUANDO a seção sobre é exibida ENTÃO ela DEVE apresentar a bio derivada do perfil, sem texto duplicado no código.
 
