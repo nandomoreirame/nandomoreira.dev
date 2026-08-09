@@ -12,6 +12,7 @@ const base = {
   tech: ['TypeScript'],
   featured: false,
   confidential: false,
+  date: '2026-01-15',
 };
 
 describe('link integrity', () => {

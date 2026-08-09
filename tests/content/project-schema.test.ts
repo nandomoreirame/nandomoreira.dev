@@ -14,6 +14,7 @@ const valid = {
   liveUrl: null,
   featured: true,
   confidential: false,
+  date: '2026-04-01',
 };
 
 describe('projectSchema', () => {
@@ -111,5 +112,18 @@ describe('projectSchema', () => {
       liveUrl: 'https://app.example.com',
     });
     expect(result.success).toBe(true);
+  });
+
+  it('requires a date, which the row pattern shows in its leading column', () => {
+    const { date: _dropped, ...withoutDate } = { ...valid, date: '2026-04-01' };
+    expect(projectSchema.safeParse(withoutDate).success).toBe(false);
+  });
+
+  it('accepts an ISO-8601 date', () => {
+    expect(projectSchema.safeParse({ ...valid, date: '2026-04-01' }).success).toBe(true);
+  });
+
+  it('rejects a date that is not ISO-8601', () => {
+    expect(projectSchema.safeParse({ ...valid, date: '01/04/2026' }).success).toBe(false);
   });
 });

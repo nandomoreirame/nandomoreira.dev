@@ -34,6 +34,10 @@ export const projectSchema = z
     images: z.array(imageSchema).optional(),
     featured: z.boolean(),
     confidential: z.boolean(),
+    /** Shown as MM/YYYY in the leading column of the row pattern. */
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
     /** Client name kept in source; redacted on public read when confidential. */
     clientName: z.string().min(1).optional(),
     /** Sensitive metrics kept in source; stripped on public read when confidential. */
