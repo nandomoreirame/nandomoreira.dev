@@ -6,6 +6,10 @@ const css = readFileSync('src/styles/global.css', 'utf8');
 describe('motion', () => {
   it('honours the reduced-motion preference', () => {
     expect(css).toContain('prefers-reduced-motion: reduce');
+    // Smooth anchor scrolling is motion too, and the reduce block already
+    // overrides scroll-behavior. Assert the pairing so enabling one without
+    // the other can never ship.
+    expect(css).toMatch(/scroll-behavior:\s*auto\s*!important/);
   });
 
   it('keeps state changes visible when motion is suppressed', () => {

@@ -34,7 +34,25 @@ describe('global tags are styled in CSS, never with utility classes in markup', 
   });
 
   it('keeps the horizontal-overflow guard in CSS, where the rule now lives', () => {
-    expect(GLOBAL_CSS).toContain('overflow-x-hidden');
+    expect(GLOBAL_CSS).toContain('overflow-x-clip');
+  });
+
+  it('clips rather than hides, because overflow-x-hidden kills the sticky header', () => {
+    // `overflow: hidden` on an ancestor makes that ancestor a scroll container,
+    // and `position: sticky` then sticks to it instead of to the viewport — so
+    // the header silently stops sticking. `clip` forbids the same overflow
+    // without creating a scroll container, so REQ-012 holds and sticky works.
+    const baseLayer = GLOBAL_CSS.slice(GLOBAL_CSS.indexOf('@layer base'));
+
+    expect(baseLayer).not.toMatch(/\boverflow-(x-)?hidden\b/);
+  });
+
+  it('scrolls smoothly to anchors and clears the sticky header', () => {
+    const baseLayer = GLOBAL_CSS.slice(GLOBAL_CSS.indexOf('@layer base'));
+
+    expect(baseLayer).toMatch(/\bscroll-smooth\b/);
+    // Without scroll padding the anchor target lands under the sticky header.
+    expect(baseLayer).toMatch(/\bscroll-pt-[a-z0-9]+\b/);
   });
 
   it('never forces a viewport-width minimum on a global tag', () => {

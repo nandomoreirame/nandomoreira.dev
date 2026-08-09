@@ -3,19 +3,21 @@ import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 
+// Exquisitus dark ramp, converted from OKLCH to sRGB hex. Surfaces stay
+// near-neutral; the warmth lives in the ink and the honey accent.
 const COLOR_TOKENS = {
-  '--color-background': '#0a0a0a',
-  '--color-surface': '#171717',
-  '--color-surface-elevated': '#262626',
-  '--color-border': '#262626',
-  '--color-border-strong': '#404040',
-  '--color-foreground': '#fafafa',
-  '--color-muted-foreground': '#a3a3a3',
-  '--color-primary': '#f59e0b',
-  '--color-primary-foreground': '#0a0a0a',
-  '--color-success': '#22c55e',
-  '--color-warning': '#eab308',
-  '--color-destructive': '#ef4444',
+  '--color-background': '#110f0d',
+  '--color-surface': '#191714',
+  '--color-surface-elevated': '#211f1c',
+  '--color-border': '#45423e',
+  '--color-border-strong': '#6c6863',
+  '--color-foreground': '#efebe2',
+  '--color-muted-foreground': '#a29e96',
+  '--color-primary': '#f0c36f',
+  '--color-primary-foreground': '#110f0d',
+  '--color-success': '#a9ddb2',
+  '--color-warning': '#facf9e',
+  '--color-destructive': '#ffb7b0',
 };
 
 const SPACING_TOKENS = {
@@ -71,6 +73,10 @@ describe('design tokens', () => {
 const NEW_TOKENS = {
   '--tracking-eyebrow': '0.2em',
   '--text-micro': '0.6875rem',
+  // The reference theme caps every surface at max-w-3xl (48rem). The original
+  // 1200px produced a measure 1.62x wider than the reference, which is what
+  // made the restyle read as a different layout rather than the same one.
+  '--container-page': '48rem',
 };
 
 describe('tokens introduced by the restyle', () => {
