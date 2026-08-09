@@ -1,9 +1,12 @@
+import type { SchemaContext } from 'astro:content';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { postSchema } from '../../src/content/schemas/post';
 
 /** Unit tests mock Astro's image() with a plain string path. */
-const schema = postSchema({ image: () => z.string() });
+const schema = postSchema({
+  image: (() => z.string()) as unknown as SchemaContext['image'],
+});
 
 const valid = {
   slug: 'por-que-parenteses-no-tailwind',
