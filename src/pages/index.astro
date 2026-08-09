@@ -1,19 +1,32 @@
 ---
-import Button from '../components/ui/Button.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
+import About from '../components/home/About.astro';
+import Contact from '../components/home/Contact.astro';
+import FeaturedProjects from '../components/home/FeaturedProjects.astro';
+import Hero from '../components/home/Hero.astro';
+import Services from '../components/home/Services.astro';
+import Trajectory from '../components/home/Trajectory.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAllProjects, getFeaturedProjects, getProfile } from '../lib/content';
+import { personLd } from '../lib/home/person-ld';
+
+const [profile, featuredProjects, allProjects] = await Promise.all([
+  getProfile(),
+  getFeaturedProjects(),
+  getAllProjects(),
+]);
+
+const knownSlugs = allProjects.map((project) => project.slug);
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = JSON.stringify(personLd(profile, site)).replaceAll('<', '\\u003c');
 ---
 
-<BaseLayout
-  title="nandomoreira.dev"
-  description="Engenheiro de produto com agentes de IA."
-  noindex
->
-  <SectionHeader
-    title="nandomoreira.dev"
-    level={2}
-    description="Fundação do design system no ar. O conteúdo entra na sprint 3."
-  />
+<BaseLayout title={`${profile.name} | ${profile.headline}`} description={profile.bio}>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
 
-  <Button href="/api/health" variant="secondary">Ver /api/health</Button>
+  <Hero headline={profile.headline} positioning={profile.positioning} />
+  <FeaturedProjects projects={featuredProjects} />
+  <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
+  <Services services={profile.services} knownSlugs={knownSlugs} />
+  <About bio={profile.bio} />
+  <Contact contacts={profile.contacts} />
 </BaseLayout>
