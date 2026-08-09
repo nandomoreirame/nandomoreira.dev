@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const noteSchema = z.object({
+export const postSchema = z.object({
   slug: z
     .string()
     .min(1)
@@ -8,7 +8,7 @@ export const noteSchema = z.object({
   title: z.string().min(1),
   summary: z.string().min(1),
   /**
-   * Never rendered on a human surface (REQ-002). It exists so notes have a
+   * Never rendered on a human surface (REQ-002). It exists so posts have a
    * stable order, and so RSS has a pubDate and the sitemap a lastmod.
    */
   date: z
@@ -18,4 +18,4 @@ export const noteSchema = z.object({
   draft: z.boolean().default(false),
 });
 
-export type Note = z.infer<typeof noteSchema>;
+export type Post = z.infer<typeof postSchema>;

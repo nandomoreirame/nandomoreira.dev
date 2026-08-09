@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { assertUniqueMarkdownSlugs } from './lib/content/validate';
-import { noteSchema } from './content/schemas/note';
+import { postSchema } from './content/schemas/post';
 import { profileSchema } from './content/schemas/profile';
 import { projectSchema } from './content/schemas/project';
 
@@ -55,9 +55,9 @@ const projects = defineCollection({
   schema: projectSchema,
 });
 
-const notes = defineCollection({
-  loader: uniqueSlugLoader('notes', 'note'),
-  schema: noteSchema,
+const posts = defineCollection({
+  loader: uniqueSlugLoader('posts', 'post'),
+  schema: postSchema,
 });
 
 const profile = defineCollection({
@@ -65,4 +65,4 @@ const profile = defineCollection({
   schema: profileSchema,
 });
 
-export const collections = { projects, notes, profile };
+export const collections = { projects, posts, profile };

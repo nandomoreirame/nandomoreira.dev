@@ -4,8 +4,8 @@ export {
   getProject,
   getProjectsByBlock,
 } from './projects';
-export { getAllNotes, getAllNoteEntries, getNote, getNoteEntry } from './notes';
-export type { NoteEntry } from './notes';
+export { getAllPosts, getAllPostEntries, getPost, getPostEntry } from './posts';
+export type { PostEntry } from './posts';
 export { getAvailability, getProfile } from './profile';
 export type { BlockGroup } from './projects';
 export type { Availability } from './profile';
