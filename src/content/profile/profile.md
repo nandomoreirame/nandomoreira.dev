@@ -16,7 +16,9 @@ stack:
 trajectory:
   - value: "964"
     label: estrelas no GitHub
-    context: cerca de 700 vêm de temas Jekyll de 2018
+    context: |
+      764 delas vêm de oito temas Jekyll publicados entre 2017 e 2021. O acervo
+      recente de agentes e ferramental soma 200.
   - value: "476"
     label: followers no GitHub
     context: conta desde 2012, 99 repositórios próprios
@@ -29,10 +31,10 @@ services:
     caseSlug: forja
   - title: Produtos SaaS com IA
     description: Produtos com modelos em produção, do pipeline ao produto.
-    caseSlug: forja
+    caseSlug: bragstack
   - title: Sistemas e CLI
     description: Ferramentas de linha de comando e sistemas em Rust e Go.
-    caseSlug: forja
+    caseSlug: hypr-switcher
 availability:
   status: open
   detail: Aberto a consultoria de escopo fechado e a posição sênior CLT ou PJ.
