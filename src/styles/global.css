@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Docs and tests contain class-name strings that must not enter the build CSS. */
+@source not "../../docs";
+@source not "../../tests";
+
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter-latin-400.woff2") format("woff2");
@@ -113,10 +117,12 @@
     color-scheme: dark;
   }
 
+  html,
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    @apply min-h-dvh min-w-dvw overflow-x-hidden bg-background text-foreground;
   }
 
   .motion-safe-default {
