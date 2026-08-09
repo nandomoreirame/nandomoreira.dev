@@ -3,7 +3,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
-import { assertUniqueProjectMarkdownSlugs } from './lib/content/validate';
+import { assertUniqueMarkdownSlugs } from './lib/content/validate';
+import { noteSchema } from './content/schemas/note';
 import { profileSchema } from './content/schemas/profile';
 import { projectSchema } from './content/schemas/project';
 
@@ -25,16 +26,17 @@ const listMarkdownFiles = async (dir: string): Promise<string[]> => {
 
 /**
  * Glob alone collapses two files that share data.slug into one store id and
- * only warns. REQ-010 needs a hard failure, so we scan the files first.
+ * only warns. A hard failure needs a pre-scan of the markdown sources.
  */
-const projectsLoader = () => {
-  const inner = glob({ base: './src/content/projects', pattern: '**/*.md' });
+const uniqueSlugLoader = (directory: string, label: string) => {
+  const base = `./src/content/${directory}`;
+  const inner = glob({ base, pattern: '**/*.md' });
 
   return {
-    name: 'projects-unique-slug',
+    name: `${directory}-unique-slug`,
     load: async (context: Parameters<typeof inner.load>[0]) => {
-      const projectsDir = fileURLToPath(new URL('./content/projects', import.meta.url));
-      const paths = await listMarkdownFiles(projectsDir);
+      const contentDir = fileURLToPath(new URL(`./content/${directory}`, import.meta.url));
+      const paths = await listMarkdownFiles(contentDir);
       const files = await Promise.all(
         paths.map(async (path) => ({
           path,
@@ -42,15 +44,20 @@ const projectsLoader = () => {
         })),
       );
 
-      assertUniqueProjectMarkdownSlugs(files);
+      assertUniqueMarkdownSlugs(files, label);
       await inner.load(context);
     },
   };
 };
 
 const projects = defineCollection({
-  loader: projectsLoader(),
+  loader: uniqueSlugLoader('projects', 'project'),
   schema: projectSchema,
+});
+
+const notes = defineCollection({
+  loader: uniqueSlugLoader('notes', 'note'),
+  schema: noteSchema,
 });
 
 const profile = defineCollection({
@@ -58,4 +65,4 @@ const profile = defineCollection({
   schema: profileSchema,
 });
 
-export const collections = { projects, profile };
+export const collections = { projects, notes, profile };

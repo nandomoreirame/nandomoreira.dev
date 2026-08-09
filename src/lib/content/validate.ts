@@ -2,22 +2,25 @@
  * The slug is the routing key, the JSON-LD identifier and the argument of the
  * MCP get_project tool. A duplicate makes all three ambiguous.
  */
-export const assertUniqueSlugs = (projects: ReadonlyArray<{ slug: string }>): void => {
+export const assertUniqueSlugs = (
+  items: ReadonlyArray<{ slug: string }>,
+  label = 'project',
+): void => {
   const seen = new Set<string>();
   const duplicates = new Set<string>();
 
-  for (const { slug } of projects) {
+  for (const { slug } of items) {
     if (seen.has(slug)) duplicates.add(slug);
     seen.add(slug);
   }
 
   if (duplicates.size > 0) {
-    throw new Error(`Duplicate project slugs: ${[...duplicates].sort().join(', ')}`);
+    throw new Error(`Duplicate ${label} slugs: ${[...duplicates].sort().join(', ')}`);
   }
 };
 
 /**
- * Pull the frontmatter `slug:` from a project markdown source.
+ * Pull the frontmatter `slug:` from a markdown source.
  * Must not depend on Astro: this runs in the content loader before entries land
  * in the store. Glob's generateId uses data.slug as the entry id, so two files
  * with the same slug collapse to one store row and a store-only check would miss
@@ -43,19 +46,29 @@ export const extractSlugFromMarkdown = (source: string): string | undefined => {
 export type MarkdownSource = Readonly<{ path: string; source: string }>;
 
 /**
- * REQ-010 at build time: scan every project file before the collection store
- * can silently overwrite same-slug entries.
+ * REQ-010 / REQ-007 at build time: scan every markdown file before the
+ * collection store can silently overwrite same-slug entries.
  */
-export const assertUniqueProjectMarkdownSlugs = (files: ReadonlyArray<MarkdownSource>): void => {
-  const projects: Array<{ slug: string }> = [];
+export const assertUniqueMarkdownSlugs = (
+  files: ReadonlyArray<MarkdownSource>,
+  label = 'project',
+): void => {
+  const items: Array<{ slug: string }> = [];
 
   for (const file of files) {
     const slug = extractSlugFromMarkdown(file.source);
     if (!slug) {
-      throw new Error(`Project markdown is missing a slug frontmatter field: ${file.path}`);
+      throw new Error(
+        `${label.charAt(0).toUpperCase()}${label.slice(1)} markdown is missing a slug frontmatter field: ${file.path}`,
+      );
     }
-    projects.push({ slug });
+    items.push({ slug });
   }
 
-  assertUniqueSlugs(projects);
+  assertUniqueSlugs(items, label);
 };
+
+/** @deprecated Prefer assertUniqueMarkdownSlugs — kept for existing call sites. */
+export const assertUniqueProjectMarkdownSlugs = (
+  files: ReadonlyArray<MarkdownSource>,
+): void => assertUniqueMarkdownSlugs(files, 'project');
