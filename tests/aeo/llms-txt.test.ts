@@ -11,8 +11,18 @@ const profile = {
 } as never;
 
 const projects = [
-  { slug: 'forja', title: 'Forja', summary: 'Multi-CLI GUI client for coding agents' },
-  { slug: 'bragstack', title: 'Bragstack', summary: 'Career brag doc generator' },
+  {
+    slug: 'forja',
+    title: 'Forja',
+    summary: 'Multi-CLI GUI client for coding agents',
+    block: 'ai-tooling',
+  },
+  {
+    slug: 'bragstack',
+    title: 'Bragstack',
+    summary: 'Career brag doc generator',
+    block: 'ai-product',
+  },
 ] as never[];
 
 const output = () => buildLlmsTxt({ site, profile, projects });
@@ -26,12 +36,14 @@ describe('buildLlmsTxt', () => {
     expect(output()).toMatch(/\n> /);
   });
 
-  it('lists every project, derived from the access layer', () => {
+  it('lists every project on its collection path, derived from the access layer', () => {
     const text = output();
 
     expect(text).toContain('Forja');
     expect(text).toContain('Bragstack');
-    expect(text).toContain('/projetos/forja');
+    expect(text).toContain('/lab/forja');
+    expect(text).toContain('/portfolio/bragstack');
+    expect(text).not.toContain('/projetos/');
   });
 
   it('lists the machine routes so an agent can find them', () => {
@@ -43,7 +55,7 @@ describe('buildLlmsTxt', () => {
   });
 
   it('uses absolute urls', () => {
-    expect(output()).toContain('https://nandomoreira.dev/projetos/forja');
+    expect(output()).toContain('https://nandomoreira.dev/lab/forja');
   });
 
   it('never leaks the email address', () => {

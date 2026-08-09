@@ -1,4 +1,5 @@
 import type { Project } from '../../content/schemas/project';
+import { collectionOfBlock } from '../catalog/groups';
 import { absoluteUrl } from './urls';
 
 interface Input {
@@ -23,9 +24,11 @@ interface Entry {
 export const buildSitemap = ({ site, projects }: Input): string => {
   const entries: Entry[] = [
     { path: '/' },
-    { path: '/projetos' },
+    { path: '/portfolio' },
+    { path: '/lab' },
+    { path: '/sobre' },
     ...projects.map((project) => ({
-      path: `/projetos/${project.slug}`,
+      path: `/${collectionOfBlock(project.block)}/${project.slug}`,
       lastmod: project.updatedAt,
     })),
   ];

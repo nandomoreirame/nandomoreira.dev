@@ -1,5 +1,6 @@
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
+import { collectionOfBlock } from '../catalog/groups';
 import { absoluteUrl } from './urls';
 
 interface Input {
@@ -28,8 +29,9 @@ export const buildLlmsTxt = ({ site, profile, projects }: Input): string => {
   ];
 
   for (const project of projects) {
+    const collection = collectionOfBlock(project.block);
     lines.push(
-      `- [${project.title}](${absoluteUrl(site, `/projetos/${project.slug}`)}): ${project.summary}`,
+      `- [${project.title}](${absoluteUrl(site, `/${collection}/${project.slug}`)}): ${project.summary}`,
     );
   }
 

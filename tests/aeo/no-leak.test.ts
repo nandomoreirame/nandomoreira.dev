@@ -19,7 +19,13 @@ const profile = {
 } as never;
 
 const projects = [
-  { slug: 'forja', title: 'Forja', summary: 'Multi-CLI GUI client', updatedAt: '2026-08-01' },
+  {
+    slug: 'forja',
+    title: 'Forja',
+    summary: 'Multi-CLI GUI client',
+    block: 'ai-tooling',
+    updatedAt: '2026-08-01',
+  },
 ] as never[];
 
 const outputs = () => [
