@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "rm -rf dist",
     "build": "astro build",
     "start": "node ./dist/server/entry.mjs",
     "check": "astro check",
