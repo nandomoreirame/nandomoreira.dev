@@ -36,4 +36,14 @@ describe('global tags are styled in CSS, never with utility classes in markup', 
   it('keeps the horizontal-overflow guard in CSS, where the rule now lives', () => {
     expect(GLOBAL_CSS).toContain('overflow-x-hidden');
   });
+
+  it('never forces a viewport-width minimum on a global tag', () => {
+    // A viewport width unit resolves against the initial containing block, which
+    // includes the classic scrollbar gutter. `min-w-dvw` therefore makes the page
+    // wider than the usable area and manufactures the very horizontal overflow
+    // REQ-012 forbids, which overflow-x-hidden would then merely hide.
+    const baseLayer = GLOBAL_CSS.slice(GLOBAL_CSS.indexOf('@layer base'));
+
+    expect(baseLayer).not.toMatch(/\bmin-w-(dvw|svw|lvw|screen|\[100[a-z]*vw\])/);
+  });
 });
