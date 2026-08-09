@@ -1,5 +1,8 @@
 ---
 import SiteNav from '../components/layout/SiteNav.astro';
+import { serialiseJsonLd } from '../lib/aeo/json-ld';
+import { requireSite } from '../lib/aeo/urls';
+import { websiteLd } from '../lib/aeo/website-ld';
 import '../styles/global.css';
 
 interface Props {
@@ -10,6 +13,10 @@ interface Props {
 
 const { title, description, noindex = false } = Astro.props;
 const current = Astro.url?.pathname;
+// Container tests may omit Astro.site; production always has config.site.
+const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
+const canonical = new URL(Astro.url?.pathname ?? '/', site).toString();
+const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
 ---
 
 <!doctype html>
@@ -20,6 +27,12 @@ const current = Astro.url?.pathname;
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <script type="application/ld+json" is:inline set:html={websiteJsonLd} />
     <link
       rel="preload"
       href="/fonts/inter-latin-400.woff2"
