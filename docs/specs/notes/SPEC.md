@@ -59,7 +59,7 @@ contrário. Isso é parte da feature, não efeito colateral.
 ### P1 (MVP)
 
 1. **[REQ-001]** QUANDO uma nota é cadastrada ENTÃO seu schema DEVE exigir título, resumo e corpo, e aceitar como opcionais marcadores de assunto.
-2. **[REQ-002]** QUANDO uma nota é renderizada em qualquer superfície humana ENTÃO o sistema NÃO PODE exibir data de publicação nem de atualização.
+2. **[REQ-002]** ~~QUANDO uma nota é renderizada em qualquer superfície humana ENTÃO o sistema NÃO PODE exibir data de publicação nem de atualização.~~ **REVOGADO em 2026-08-09** pela spec `blog-migration` (REQ-006): o requisito servia nota atemporal e se inverte diante de um acervo de 2015-2019, onde a ausência de data engana.
 3. **[REQ-003]** QUANDO uma nota é cadastrada ENTÃO ela DEVE declarar uma data no frontmatter, usada exclusivamente para ordenação, RSS e `lastmod`.
 4. **[REQ-004]** QUANDO um visitante acessa `/notas` ENTÃO o sistema DEVE listar as notas no padrão de linha, da mais recente para a mais antiga, com a coluna de data colapsada.
 5. **[REQ-005]** QUANDO um visitante acessa `/notas/<slug>` ENTÃO o sistema DEVE apresentar o título e o corpo da nota com a medida de linha do corpo de texto.
@@ -96,7 +96,7 @@ contrário. Isso é parte da feature, não efeito colateral.
 
 1. **Notas, não blog** — Decisão do autor sobre o nome, e ela carrega o formato: texto curto sem periodicidade. Reduz exatamente o risco que o `MVP-SCOPE.md` apontava, que era o blog não ter fim definido.
 2. **Data existe, mas nunca aparece** — Sem nenhuma data não há ordem estável, RSS válido nem `lastmod`. Mantê-la como metadado resolve os três sem contrariar o pedido, que é sobre o que o leitor vê.
-3. **Portão contra vazamento de data** — Um teste que renderiza a listagem e a página de nota e reprova qualquer coisa com cara de data. A regra é fácil de violar sem perceber justamente porque o campo está ali.
+3. **Portão contra vazamento de data** — ~~Um teste que renderiza a listagem e a página de nota e reprova qualquer coisa com cara de data.~~ **Revogado em 2026-08-09** com REQ-002: o portão foi apagado (`tests/notes/no-date-leak.test.ts`), não afrouxado, porque um portão que não protege mais nada vira ruído.
 4. **Coleção própria, camada de acesso compartilhada** — `notes` é uma collection nova, mas o acesso passa pelo mesmo barril de `src/lib/content/`, sob o portão de fonte única que já existe.
 5. **Fora da navegação enquanto vazia** — REQ-012. A feature entrega a estrutura, e o conteúdo é do autor; até existir a primeira nota, o menu não promete o que não há.
 6. **Rota em português, identificador em inglês** — `/notas` para o leitor, `notes` para o código, seguindo a convenção do projeto.
