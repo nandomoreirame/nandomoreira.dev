@@ -206,6 +206,40 @@ arrasta uma biblioteca inteira junto.
 | `StatItem` | Número da trajetória | — | Número mais contexto; nunca número solto |
 | `Prose` | Corpo do case | — | Medida de linha limitada |
 
+### Tags globais são estilizadas no CSS, não na marcação
+
+`html` e `body` recebem seu estilo por `@apply` dentro de `@layer base`, em
+`src/styles/global.css`. Nenhum componente pode colocar `class` nessas duas tags.
+
+```css
+@layer base {
+  html {
+    @apply scheme-dark;
+  }
+
+  html,
+  body {
+    @apply min-h-dvh font-sans overflow-x-hidden bg-background text-foreground;
+  }
+}
+```
+
+**Por quê:** `html` e `body` existem uma vez por página e não têm variante. Quando o
+estilo delas mora numa string de classe dentro do layout, ele vira invisível para
+quem lê o CSS, some junto se alguém editar a marcação por outro motivo (foi o que
+aconteceu ao remover `overflow-x-hidden` sem querer), e não há como um segundo
+layout herdar a mesma base sem duplicar a string. No CSS a regra é única, legível e
+impossível de perder de vista.
+
+**Escopo da regra:** vale **apenas** para tags puras e globais, ou seja, elementos
+sem variante que existem uma única vez no documento (`html`, `body`, e o reset de
+`*`). Não vale para componente. Um `Button` com três variantes e cinco estados
+continua compondo utilitários na marcação, que é onde a variação é legível. `@apply`
+em componente recria o problema que o Tailwind existe para resolver: uma segunda
+camada de nomes que precisa ser mantida em paralelo com o uso.
+
+O portão está em `tests/design-system/global-tags.test.ts`.
+
 ### Estados obrigatórios
 
 Todo elemento interativo: `default`, `hover`, `focus-visible`, `active`,
