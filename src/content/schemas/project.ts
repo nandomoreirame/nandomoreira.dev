@@ -38,6 +38,11 @@ export const projectSchema = z
     clientName: z.string().min(1).optional(),
     /** Sensitive metrics kept in source; stripped on public read when confidential. */
     confidentialMetrics: z.array(z.string().min(1)).optional(),
+    /** ISO-8601 date for sitemap lastmod; omit rather than inventing build time. */
+    updatedAt: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'updatedAt must be an ISO-8601 date (YYYY-MM-DD)')
+      .optional(),
   })
   .refine((project) => Boolean(project.repoUrl) || Boolean(project.liveUrl), {
     message:

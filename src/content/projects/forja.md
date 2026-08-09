@@ -19,4 +19,5 @@ repoUrl: https://github.com/nandomoreirame/forja
 liveUrl: null
 featured: true
 confidential: false
+updatedAt: "2026-08-01"
 ---
