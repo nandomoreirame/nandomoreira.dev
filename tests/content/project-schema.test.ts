@@ -1,0 +1,115 @@
+import { describe, expect, it } from 'vitest';
+import { projectSchema } from '../../src/content/schemas/project';
+
+const valid = {
+  slug: 'forja',
+  title: 'Forja',
+  block: 'ai-tooling',
+  summary: 'Cliente GUI multi-CLI para agentes de código',
+  problem: 'Alternar entre três CLIs de agente custa contexto.',
+  decisions: 'Tauri em vez de Electron, por peso do binário.',
+  outcome: '11 estrelas e uso diário próprio.',
+  tech: ['Rust', 'Tauri', 'TypeScript'],
+  repoUrl: 'https://github.com/nandomoreirame/forja',
+  liveUrl: null,
+  featured: true,
+  confidential: false,
+};
+
+describe('projectSchema', () => {
+  it('accepts a complete project', () => {
+    expect(projectSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it.each([
+    'slug',
+    'title',
+    'block',
+    'summary',
+    'problem',
+    'decisions',
+    'outcome',
+    'tech',
+    'featured',
+    'confidential',
+  ])('rejects a project missing %s', (field) => {
+    const { [field as keyof typeof valid]: _removed, ...incomplete } = valid;
+    expect(projectSchema.safeParse(incomplete).success).toBe(false);
+  });
+
+  it('rejects a block outside the four declared ones', () => {
+    const result = projectSchema.safeParse({ ...valid, block: 'side-project' });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an empty tech list, since a case with no stack proves nothing', () => {
+    expect(projectSchema.safeParse({ ...valid, tech: [] }).success).toBe(false);
+  });
+
+  it('rejects a relative repo URL', () => {
+    expect(
+      projectSchema.safeParse({ ...valid, repoUrl: '/nandomoreirame/forja' }).success,
+    ).toBe(false);
+  });
+
+  it('rejects an image without alternative text', () => {
+    const result = projectSchema.safeParse({
+      ...valid,
+      images: [{ src: '/img/forja.png', alt: '' }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts a project with no images at all', () => {
+    expect(projectSchema.safeParse({ ...valid, images: undefined }).success).toBe(true);
+  });
+
+  it('accepts optional clientName and confidentialMetrics when absent', () => {
+    expect(projectSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('accepts optional clientName and confidentialMetrics when present', () => {
+    expect(
+      projectSchema.safeParse({
+        ...valid,
+        clientName: 'Acme',
+        confidentialMetrics: ['R$ 2,3M'],
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects a confidential case whose slug identifies the client', () => {
+    const result = projectSchema.safeParse({
+      ...valid,
+      confidential: true,
+      clientName: 'Acme',
+      slug: 'acme-plataforma',
+      repoUrl: 'https://github.com/x/y',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a confidential case whose liveUrl identifies the client', () => {
+    const result = projectSchema.safeParse({
+      ...valid,
+      confidential: true,
+      clientName: 'Acme',
+      slug: 'plataforma-interna',
+      repoUrl: null,
+      liveUrl: 'https://Acme.example.com',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts a confidential case with a neutral slug and URL', () => {
+    const result = projectSchema.safeParse({
+      ...valid,
+      confidential: true,
+      clientName: 'Acme',
+      slug: 'plataforma-conciliacao',
+      repoUrl: null,
+      liveUrl: 'https://app.example.com',
+    });
+    expect(result.success).toBe(true);
+  });
+});
