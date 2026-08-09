@@ -67,3 +67,14 @@ describe('design tokens', () => {
     expect(css).not.toContain('data-theme');
   });
 });
+
+const NEW_TOKENS = {
+  '--tracking-eyebrow': '0.2em',
+  '--text-micro': '0.6875rem',
+};
+
+describe('tokens introduced by the restyle', () => {
+  it.each(Object.entries(NEW_TOKENS))('declares %s as %s', (token, value) => {
+    expect(css).toContain(`${token}: ${value}`);
+  });
+});
