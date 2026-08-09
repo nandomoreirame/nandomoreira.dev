@@ -1,0 +1,47 @@
+---
+import CaseArticle from '../../components/catalog/CaseArticle.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { jsonLdForProject, serialiseJsonLd } from '../../lib/catalog/json-ld';
+import { collectionOfBlock } from '../../lib/catalog/groups';
+import { getAllProjects } from '../../lib/content';
+import type { Project } from '../../content/schemas/project';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const projects = await getAllProjects();
+
+  return projects
+    .filter((project) => collectionOfBlock(project.block) === 'portfolio')
+    .map((project) => ({
+      params: { slug: project.slug },
+      props: { project },
+    }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props as Props;
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = serialiseJsonLd(jsonLdForProject(project, site));
+---
+
+<BaseLayout
+  title={`${project.title} | nandomoreira.dev`}
+  description={project.summary}
+>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+  <nav class="mt-lg" aria-label="Trilha de navegação">
+    <a
+      href="/portfolio"
+      class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Voltar para portfólio
+    </a>
+  </nav>
+
+  <CaseArticle project={project} />
+</BaseLayout>
