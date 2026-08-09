@@ -1,0 +1,22 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  headline: string;
+  positioning: string;
+}
+
+const { headline, positioning } = Astro.props;
+---
+
+<section id="inicio" class="flex flex-col gap-lg py-2xl lg:py-3xl">
+  <h1 class="text-display font-semibold text-foreground lg:text-[3.75rem]">
+    {headline}
+  </h1>
+
+  <p class="max-w-[68ch] text-body text-muted-foreground">{positioning}</p>
+
+  <div>
+    <Button href="/projetos" variant="primary">Ver o que eu construí</Button>
+  </div>
+</section>

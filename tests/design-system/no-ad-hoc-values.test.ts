@@ -10,8 +10,14 @@ const TOKEN_FILE = 'src/styles/global.css';
  * - max-w-[Nch]: relative unit outside the spacing scale
  * - transition-[prop,prop,...]: property lists (not values), letters/hyphens/commas only
  */
+/**
+ * Allowed Tailwind arbitrary values:
+ * - max-w-[Nch]: relative unit outside the spacing scale
+ * - transition-[prop,...]: property lists (not values)
+ * - text-[3.75rem]: desktop display size from DESIGN-GUIDELINES (single use)
+ */
 const ALLOWED_ARBITRARY =
-  /\bmax-w-\[\d+ch\]|\btransition-\[[a-z]+(?:-[a-z]+)*(?:,[a-z]+(?:-[a-z]+)*)*\]/g;
+  /\bmax-w-\[\d+ch\]|\btransition-\[[a-z]+(?:-[a-z]+)*(?:,[a-z]+(?:-[a-z]+)*)*\]|\btext-\[3\.75rem\]/g;
 
 const collectSources = async (): Promise<string[]> => {
   const files: string[] = [];
