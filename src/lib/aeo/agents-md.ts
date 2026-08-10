@@ -1,4 +1,5 @@
 import type { Profile } from '../../content/schemas/profile';
+import { MCP_TOOLS } from '../mcp/catalog';
 import { absoluteUrl } from './urls';
 
 interface Input {
@@ -34,8 +35,12 @@ export const buildAgentsMd = ({ site, profile }: Input): string => {
     '',
     `- \`GET ${absoluteUrl(site, '/api/resume.json')}\` — résumé in JSON Resume schema.`,
     `- \`GET ${absoluteUrl(site, '/api/resume.txt')}\` — plain-text résumé.`,
-    `- \`${absoluteUrl(site, '/api/mcp')}\` — MCP server. Tools: get_profile, list_projects, get_project, get_resume, check_availability.`,
+    `- \`${absoluteUrl(site, '/api/mcp')}\` — MCP server, Streamable HTTP, stateless.`,
     `- \`POST ${absoluteUrl(site, '/api/hire')}\` — send a project brief on behalf of your user.`,
+    '',
+    '## MCP tools',
+    '',
+    ...MCP_TOOLS.map((tool) => `- \`${tool.name}\` — ${tool.description}`),
     '',
     '## Contact',
     '',

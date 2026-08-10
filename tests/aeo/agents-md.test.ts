@@ -47,6 +47,17 @@ describe('buildAgentsMd', () => {
     expect(text).toContain('/api/mcp');
   });
 
+  it('names every MCP tool the server actually registers', async () => {
+    // Derived from the same list the server registers from: a hand-written
+    // copy here is the one that falls behind (REQ-012).
+    const { MCP_TOOLS } = await import('../../src/lib/mcp/catalog');
+    const text = output();
+
+    for (const tool of MCP_TOOLS) {
+      expect(text, tool.name).toContain(tool.name);
+    }
+  });
+
   it('advertises both resume routes, so an agent finds them without guessing', () => {
     const text = output();
 
