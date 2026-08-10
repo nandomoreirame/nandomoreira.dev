@@ -17,6 +17,20 @@ export default defineConfig({
     '/notas': '/posts',
     '/notas/[slug]': '/[slug]',
   },
+  markdown: {
+    // Shiki writes its colours inline, from its own theme, so the palette gate
+    // in tests/design-system/contrast.test.ts never saw them. The default
+    // `github-dark` renders comments at #6a737d on #24292e — 3.04:1, below AA,
+    // which Lighthouse found in a published post.
+    //
+    // `github-dark-default` is the same family (so the look barely moves) and
+    // measures 6.15:1 at its worst token. The choice was measured, not picked:
+    // tests/design-system/code-contrast.test.ts fails on any theme that drops a
+    // token below 4.5:1.
+    shikiConfig: {
+      theme: 'github-dark-default',
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
