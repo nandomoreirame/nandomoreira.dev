@@ -67,3 +67,65 @@ describe('profileSchema', () => {
     expect(profileSchema.safeParse({ ...valid, contacts: [] }).success).toBe(false);
   });
 });
+
+describe('profileSchema: career history', () => {
+  it('accepts a position with no end date, meaning it is current', () => {
+    const parsed = profileSchema.parse({
+      ...valid,
+      work: [{ name: 'Empresa', position: 'Cargo', startDate: '2024-01-01' }],
+    });
+
+    expect(parsed.work?.[0]?.endDate).toBeUndefined();
+  });
+
+  it('requires an ISO start date, because a resume without dates is unreadable', () => {
+    const result = profileSchema.safeParse({
+      ...valid,
+      work: [{ name: 'X', position: 'Y', startDate: '2024' }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('keeps both fields optional, so the profile stays valid until they are written', () => {
+    const parsed = profileSchema.parse(valid);
+
+    expect(parsed.work).toBeUndefined();
+    expect(parsed.education).toBeUndefined();
+  });
+
+  it('rejects a date that matches the shape but is not a real calendar date', () => {
+    const result = profileSchema.safeParse({
+      ...valid,
+      work: [{ name: 'X', position: 'Y', startDate: '2024-99-99' }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an employer with no name, which would render as a blank line', () => {
+    const result = profileSchema.safeParse({
+      ...valid,
+      work: [{ name: '', position: 'Cargo', startDate: '2024-01-01' }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts an education entry with the same date discipline', () => {
+    const parsed = profileSchema.parse({
+      ...valid,
+      education: [
+        {
+          institution: 'Instituição',
+          area: 'Área',
+          studyType: 'Bacharelado',
+          startDate: '2008-02-01',
+          endDate: '2012-12-01',
+        },
+      ],
+    });
+
+    expect(parsed.education?.[0]?.endDate).toBe('2012-12-01');
+  });
+});
