@@ -65,6 +65,21 @@ describe('buildAgentsMd', () => {
     expect(text).toContain('/api/resume.txt');
   });
 
+  it('documents the hire endpoint well enough to use without trial and error', () => {
+    const text = output();
+
+    // It is the only write surface, so guessing the contract is the failure.
+    expect(text).toContain('POST');
+    expect(text).toMatch(/`from`/);
+    expect(text).toMatch(/`contact`/);
+    expect(text).toMatch(/`brief`/);
+    expect(text).toMatch(/16 KB/);
+    expect(text).toMatch(/413/);
+    expect(text).toMatch(/429/);
+    expect(text).toMatch(/405/);
+    expect(text).toMatch(/202/);
+  });
+
   it('never publishes the email address on a machine route', () => {
     expect(output()).not.toContain('@nandomoreira.dev');
   });
