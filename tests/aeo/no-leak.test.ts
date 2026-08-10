@@ -73,3 +73,40 @@ describe('machine routes leak nothing', () => {
     expect('fernando@nandomoreira.dev').toMatch(FORBIDDEN[0][1]);
   });
 });
+
+/**
+ * The MCP route answers JSON-RPC, not running text, so scanning the route
+ * source proves nothing. The gate has to call each tool for real and scan the
+ * body that comes back (REQ-004, REQ-009 of the mcp-server spec).
+ */
+describe('the MCP tools leak nothing', () => {
+  const TOOLS = [
+    ['get_profile', {}],
+    ['check_availability', {}],
+    ['list_projects', {}],
+    ['get_resume', {}],
+    ['get_project', { slug: 'nao-existe' }],
+  ] as const;
+
+  const bodies = async (): Promise<string[]> => {
+    const { callToolRaw } = await import('../mcp/client');
+
+    return Promise.all(
+      TOOLS.map(async ([name, args]) =>
+        JSON.stringify(await callToolRaw(name, args as Record<string, unknown>)),
+      ),
+    );
+  };
+
+  it.each(FORBIDDEN)('never exposes an %s', async (_label, pattern) => {
+    for (const body of await bodies()) {
+      expect(body).not.toMatch(pattern);
+    }
+  });
+
+  it('never names a confidential client', async () => {
+    for (const body of await bodies()) {
+      expect(body).not.toMatch(/\bliquid\b/i);
+    }
+  });
+});
