@@ -26,24 +26,24 @@ const profile: Profile = {
   ],
 };
 
-const project = (overrides: Partial<Project> = {}): Project =>
-  ({
-    slug: 'forja',
-    title: 'Forja',
-    block: 'ai-tooling',
-    summary: 'Cliente multi-CLI para agentes de código.',
-    problem: 'p',
-    decisions: 'd',
-    outcome: 'o',
-    tech: ['Rust', 'Tauri'],
-    repoUrl: 'https://github.com/nandomoreirame/forja',
-    liveUrl: 'https://forja.web.app',
-    featured: true,
-    confidential: false,
-    discontinued: false,
-    date: '2026-05-01',
-    ...overrides,
-  }) as Project;
+const base = {
+  slug: 'forja',
+  title: 'Forja',
+  block: 'ai-tooling',
+  summary: 'Cliente multi-CLI para agentes de código.',
+  problem: 'p',
+  decisions: 'd',
+  outcome: 'o',
+  tech: ['Rust', 'Tauri'],
+  repoUrl: 'https://github.com/nandomoreirame/forja',
+  liveUrl: 'https://forja.web.app',
+  featured: true,
+  confidential: false,
+  discontinued: false,
+  date: '2026-05-01',
+} satisfies Project;
+
+const project = (overrides: Partial<Project> = {}): Project => ({ ...base, ...overrides });
 
 describe('buildResume: basics and skills', () => {
   it('derives basics from the profile, never from a literal', () => {
