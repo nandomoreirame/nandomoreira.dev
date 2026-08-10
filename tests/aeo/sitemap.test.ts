@@ -46,12 +46,28 @@ describe('buildSitemap', () => {
     expect(xml).not.toContain('/notas');
   });
 
-  it('excludes machine routes and error pages', () => {
+  it('excludes error pages and the discovery files themselves', () => {
     const xml = output();
 
-    for (const excluded of ['/llms.txt', '/AGENTS.md', '/robots.txt', '/api/', '/404']) {
+    for (const excluded of ['/llms.txt', '/AGENTS.md', '/robots.txt', '/404']) {
       expect(xml).not.toContain(excluded);
     }
+  });
+
+  it('lists both resume routes, which are indexable content and not protocol files', () => {
+    // REQ-012 of structured-resume. A crawler that never renders a page still
+    // has a route to the same facts, which is the point of the resume.
+    const xml = output();
+
+    expect(xml).toContain('/api/resume.json');
+    expect(xml).toContain('/api/resume.txt');
+  });
+
+  it('still keeps the non-indexable endpoints out', () => {
+    const xml = output();
+
+    expect(xml).not.toContain('/api/health');
+    expect(xml).not.toContain('/api/hire');
   });
 
   it('derives lastmod from content, never from the current time', () => {

@@ -47,6 +47,13 @@ describe('buildAgentsMd', () => {
     expect(text).toContain('/api/mcp');
   });
 
+  it('advertises both resume routes, so an agent finds them without guessing', () => {
+    const text = output();
+
+    expect(text).toContain('/api/resume.json');
+    expect(text).toContain('/api/resume.txt');
+  });
+
   it('never publishes the email address on a machine route', () => {
     expect(output()).not.toContain('@nandomoreira.dev');
   });

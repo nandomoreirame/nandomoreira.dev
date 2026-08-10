@@ -22,7 +22,15 @@ interface Entry {
   lastmod?: string;
 }
 
-/** Machine routes and error pages are deliberately absent (REQ-012). */
+/**
+ * Error pages and the discovery files themselves stay out: a crawler reaches
+ * `robots.txt` and `llms.txt` by convention, so listing them adds noise.
+ *
+ * The two résumé routes DO belong here (REQ-012 of structured-resume). They are
+ * indexable content, not protocol files: an agent that never renders a page
+ * still gets a route to the same facts. `/api/health` and `/api/hire` remain
+ * absent, being a probe and a write endpoint.
+ */
 export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
   const entries: Entry[] = [
     { path: '/' },
@@ -30,6 +38,8 @@ export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
     { path: '/lab' },
     { path: '/sobre' },
     { path: '/contato' },
+    { path: '/api/resume.json' },
+    { path: '/api/resume.txt' },
     ...projects.map((project) => ({
       path: `/${collectionOfBlock(project.block)}/${project.slug}`,
       lastmod: project.updatedAt,
