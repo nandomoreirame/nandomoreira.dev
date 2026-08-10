@@ -22,6 +22,8 @@
     "@astrojs/node": "11.1.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "astro": "7.2.0",
+    "firebase-admin": "^14.2.0",
+    "resend": "^6.18.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -11,6 +11,24 @@ env:
     availability:
       - RUNTIME
 
+  # /api/hire. Values live in Secret Manager, never in the repository, and the
+  # route reads them at boot so a missing one fails loudly instead of degrading
+  # to "never notifies" (REQ-010).
+  - variable: RESEND_API_KEY
+    secret: hire-resend-api-key
+    availability:
+      - RUNTIME
+
+  - variable: HIRE_NOTIFY_TO
+    secret: hire-notify-to
+    availability:
+      - RUNTIME
+
+  - variable: HIRE_NOTIFY_FROM
+    secret: hire-notify-from
+    availability:
+      - RUNTIME
+
 scripts:
   buildCommand: npm run build
   runCommand: node ./dist/server/entry.mjs
