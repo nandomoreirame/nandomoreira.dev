@@ -56,11 +56,19 @@ const stamp = toCompactStamp(post.date);
       {
         post.cover && (
           <figure class="m-0 overflow-hidden rounded-md border border-border">
+            {/*
+              The cover is above the fold and is the LCP element. Astro defaults
+              an Image to loading="lazy", which defers exactly what the page is
+              waiting on: one post measured 13.2s LCP because of it.
+            */}
             <Image
               src={post.cover.src}
               alt={post.cover.alt}
               widths={[720, 1080]}
               sizes="(min-width: 48rem) 45rem, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
               class="h-auto w-full"
             />
           </figure>
