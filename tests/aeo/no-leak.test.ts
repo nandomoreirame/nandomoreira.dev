@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import type { Project } from '../../src/content/schemas/project';
 import { buildAgentsMd } from '../../src/lib/aeo/agents-md';
 import { buildLlmsTxt } from '../../src/lib/aeo/llms-txt';
+import { buildResume } from '../../src/lib/aeo/resume';
+import { renderResumeText } from '../../src/lib/aeo/resume-txt';
 import { buildRobotsTxt } from '../../src/lib/aeo/robots';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
 
@@ -10,6 +13,9 @@ const profile = {
   name: 'Fernando Moreira Costa',
   headline: 'Product engineer working with AI agents',
   bio: 'I build agent tooling.',
+  positioning: 'AI, agents and AI coding tooling',
+  stack: ['TypeScript', 'Rust'],
+  trajectory: [{ value: '964', label: 'stars', context: 'mostly Jekyll themes' }],
   services: [{ title: 'Agent tooling', description: 'd', caseSlug: 'forja' }],
   availability: { status: 'open', detail: 'Open.', updatedAt: '2026-08-08' },
   contacts: [
@@ -23,16 +29,29 @@ const projects = [
     slug: 'forja',
     title: 'Forja',
     summary: 'Multi-CLI GUI client',
+    problem: 'p',
+    decisions: 'd',
+    outcome: 'o',
     block: 'ai-tooling',
+    tech: ['Rust'],
+    date: '2026-05-01',
+    repoUrl: 'https://github.com/nandomoreirame/forja',
+    featured: false,
+    confidential: false,
+    discontinued: false,
     updatedAt: '2026-08-01',
   },
-] as never[];
+] satisfies Project[];
+
+const resume = () => buildResume({ site, profile, projects });
 
 const outputs = () => [
   buildLlmsTxt({ site, profile, projects }),
   buildAgentsMd({ site, profile }),
   buildRobotsTxt({ site }),
   buildSitemap({ site, projects }),
+  JSON.stringify(resume()),
+  renderResumeText(resume()),
 ];
 
 const FORBIDDEN: Array<[string, RegExp]> = [
