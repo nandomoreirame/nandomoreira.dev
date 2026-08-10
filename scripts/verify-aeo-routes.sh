@@ -48,12 +48,55 @@ check() {
   echo "OK ${path} (${ctype})"
 }
 
-check "/llms.txt"    "text/plain"       "## Machine routes"
-check "/AGENTS.md"   "text/markdown"    "## Availability"
-check "/robots.txt"  "text/plain"       "Sitemap: https://"
-check "/sitemap.xml" "application/xml"  "<urlset"
+check "/llms.txt"         "text/plain"        "## Machine routes"
+check "/AGENTS.md"        "text/markdown"     "## Availability"
+check "/robots.txt"       "text/plain"        "Sitemap: https://"
+check "/sitemap.xml"      "application/xml"   "<urlset"
+check "/api/resume.json"  "application/json"  '"basics"'
+check "/api/resume.txt"   "text/plain"        "AVAILABILITY"
 
 echo "== sitemap is well-formed XML =="
 curl -s "${BASE}/sitemap.xml" | python3 -c "import sys,xml.dom.minidom as m; m.parseString(sys.stdin.read())"
+
+echo "== the resume validates against the published JSON Resume schema =="
+curl -s "${BASE}/api/resume.json" > /tmp/aeo-resume.json
+node -e '
+const { validate } = require("@jsonresume/schema");
+const resume = require("/tmp/aeo-resume.json");
+validate(resume, (error, valid) => {
+  if (!valid) {
+    console.error("FAIL: served resume does not validate:", JSON.stringify(error));
+    process.exit(1);
+  }
+  console.log("OK /api/resume.json validates");
+});
+'
+
+echo "== sitemap lists both resume routes (REQ-012) =="
+for route in "/api/resume.json" "/api/resume.txt"; do
+  curl -s "${BASE}/sitemap.xml" | grep -q "$route" || {
+    echo "FAIL: sitemap.xml does not list ${route}" >&2
+    exit 1
+  }
+  echo "OK sitemap lists ${route}"
+done
+
+# REQ-007/REQ-009 against what is actually served, not against the source.
+echo "== the resume routes leak neither an e-mail nor a confidential client =="
+for route in "/api/resume.json" "/api/resume.txt"; do
+  body=$(curl -s "${BASE}${route}")
+
+  if printf '%s' "$body" | grep -qE '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'; then
+    echo "FAIL: ${route} exposes an e-mail address" >&2
+    exit 1
+  fi
+
+  if printf '%s' "$body" | grep -qiE '\bliquid\b'; then
+    echo "FAIL: ${route} names a confidential client" >&2
+    exit 1
+  fi
+
+  echo "OK ${route} carries no e-mail and no confidential client"
+done
 
 echo "AEO ROUTES PASSED"
