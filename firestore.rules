@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Briefings are written only by the backend through the Admin SDK, which
+    // bypasses rules entirely. No client path may ever read one: a briefing
+    // carries a stranger's contact details and their business context.
+    match /hire_requests/{doc} {
+      allow read, write: if false;
+    }
+
+    // Anything not matched above is denied too, but saying it explicitly means
+    // a new collection cannot become world-readable by being forgotten here.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
