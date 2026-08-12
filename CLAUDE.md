@@ -189,22 +189,38 @@ Backend `nandomoreira-dev` em `us-east4`, servindo em
 no App Hosting**; as regiões disponíveis são `asia-east1`, `asia-southeast1`,
 `europe-west4`, `us-central1`, `us-east4` e `us-east5`.
 
-O deploy sai do **fonte local**, não de repositório GitHub conectado
-(`"alwaysDeployFromSource": true` no `firebase.json`):
+**O rollout é automático desde 2026-08-09.** O backend tem o repositório GitHub
+conectado e `rolloutPolicy: {"codebaseBranch": "main"}`, então **push em `main` dispara
+build e rollout sozinho**. Nada precisa ser rodado à mão para publicar.
+
+Confirme pela API, não pelo console. O build automático se distingue do manual pelo campo
+`branch` do `source.codebase`, que só vem preenchido no automático:
 
 ```bash
-firebase deploy --only apphosting --project nandomoreira-dev
+T=$(gcloud auth print-access-token)
+BASE="https://firebaseapphosting.googleapis.com/v1beta/projects/nandomoreira-dev/locations/us-east4/backends/nandomoreira-dev"
+curl -s -H "Authorization: Bearer $T" "$BASE/traffic"   # quem está servindo
+curl -s -H "Authorization: Bearer $T" "$BASE/builds"    # branch=main => automático
 ```
 
-Ele **bloqueia de 2 a 3 minutos** esperando o build. Rode em background, nunca em
-foreground com timeout curto: um timeout mata a CLI depois de o build já existir no
-servidor, e o retry cego devolve `HTTP 409`. Antes de qualquer retry, consulte o estado
-real: `traffic.current.splits[].build` da REST API do App Hosting é a autoridade sobre o
-que está servindo, e a lista de `rollouts` pode vir vazia mesmo com o deploy no ar.
+O ciclo push → `SUCCEEDED` leva cerca de 3 minutos. `traffic.current.splits[].build` é a
+autoridade sobre o que está no ar; o campo `commit` costuma vir vazio, então não tente
+descobrir por ele qual commit está servindo.
 
-`firebase apphosting:rollouts:create --git-commit <sha>` **não funciona** aqui, porque
-exige repositório conectado. Conectar o GitHub é o caminho recomendado antes do cutover
-(sprint 6), para que dê para responder qual commit está servindo.
+**Armadilha:** `firebase.json` mantém `"alwaysDeployFromSource": true`. Com o GitHub
+conectado, isso é uma saída de emergência, não o caminho normal, e um
+`firebase deploy --only apphosting` publica **o fonte local**, inclusive o que não está
+commitado, por cima do que o GitHub construiu. A partir daí ninguém mais sabe qual commit
+está servindo, que é justamente o que a conexão resolveu. Use só conscientemente, e
+prefira corrigir em `main`.
+
+Se precisar mesmo do deploy manual, ele **bloqueia de 2 a 3 minutos** esperando o build:
+rode em background, nunca em foreground com timeout curto, porque o timeout mata a CLI
+depois de o build já existir no servidor e o retry cego devolve `HTTP 409`.
+
+`firebase apphosting:rollouts:create --git-commit <sha>` passou a funcionar, porque exige
+repositório conectado e agora há um. Serve para promover um commit específico sem esperar
+o rollout automático, ou para voltar a um commit anterior.
 
 ## Importar config de outros agentes
 
@@ -212,3 +228,20 @@ Existem `~/.codex/config.toml` e `~/.gemini/settings.json` na máquina. Se quise
 MCP servers, slash commands, subagents ou skills de lá, responda `/import` para ver o que
 é importável, depois `/import --yes=<digest>` para aplicar. Se `/import` não estiver
 disponível nesta superfície, rode `claude import` no terminal.
+
+## Armadilhas já pagas (movidas do ~/.claude/CLAUDE.md)
+
+As duas lições abaixo saíram do `CLAUDE.md` global em 12/08/2026. Elas são específicas
+deste projeto (Astro), então carregavam em toda sessão de toda máquina sem servir a
+ninguém fora daqui. Aqui carregam exatamente quando importam.
+
+### Astro: `Astro.redirect` em página com `prerender = true` devolve 200 + meta refresh, nunca 301
+
+- Uma página pré-renderizada não tem como emitir status HTTP, então o `Astro.redirect('/x', 301)` dentro dela vira um documento com `<title>Redirecting to: /x` e `<meta http-equiv="refresh" content="0;url=/x">`, servido com **200**. O redirect "funciona" no navegador, então passa despercebido; para crawler e cache não é redirect nenhum. Aconteceu duas vezes no mesmo repo (`/notas/[slug]` e `/projetos/[slug]`), e os testes estavam VERDES porque liam o fonte procurando a string `301` — teste de fonte não distingue as duas coisas, por construção. FIX: ou declarar em `redirects: {}` no `astro.config.mjs` (o adapter emite 301 de verdade; aceita padrão com param, `'/velho/[slug]': '/[slug]'`), ou remover o `prerender` e deixar a rota SSR. O único portão que pega isso é HTTP real: `curl -s -o /dev/null -w '%{http_code}'` contra o build rodando. A página irmã sem `prerender` no mesmo diretório respondendo 301 corretamente é o que torna o sintoma confuso.
+
+
+### Astro dev server NÃO incorpora arquivo NOVO de content collection (store congelado)
+
+- O `astro dev` persiste as content collections em `.astro/data-store.json` e serve a coleção a partir do estado carregado no boot. **Um arquivo `.md` CRIADO depois que o servidor subiu não entra**, e reescrever o arquivo NÃO destrava (o watcher do glob não reprocessa o `add`). Sintoma: a página lista N itens enquanto o disco tem N+M, e o `npm run build` na MESMA árvore serve todos corretamente. Diagnóstico decisivo: comparar o mtime de `.astro/data-store.json` com o dos arquivos novos, e grepar os slugs no store — os que faltam na página são exatamente os que faltam no store. **Isso vale para arquivo novo; a EDIÇÃO de um arquivo que o store já conhece normalmente recarrega.** Caso irmão, mais traiçoeiro: acrescentar um CAMPO NOVO ao schema Zod e usá-lo num arquivo existente também pode servir o valor antigo em silêncio, porque o Zod faz strip de chave desconhecida no parse cacheado — sem erro, sem aviso, só o fallback. FIX: reiniciar o dev server (`astro dev stop` e subir de novo); apagar `.astro/data-store.json` antes ajuda. NUNCA conclua "faltou implementar" de uma página do dev server sem conferir o build (`npm run build` + rodar `dist/server/entry.mjs`) — o build lê do disco e é a autoridade.
+- **CUIDADO ao apagar `.astro/data-store.json`: ele só é (re)escrito no SHUTDOWN do dev server.** Nem `npm run build` nem `npx astro sync` nem `astro check` o recriam, e o `astro dev` recusa uma segunda instância (`Dev server already running ... pid N`), então não dá para regenerá-lo em paralelo ao servidor do usuário. Com o arquivo ausente, todo `getCollection` dentro do Vitest devolve **coleção vazia** (`The collection "X" does not exist or is empty`) e a suíte cai em massa — no nandomoreira.dev foram 47 testes em 12 arquivos, a maioria pré-existente, o que parece regressão do seu próprio trabalho e não é. Só recuperei rodando `npx astro dev stop` e subindo o dev de novo. Corolário: qualquer suíte que renderiza página lendo content collection depende desse artefato gitignored, então `npm test` num clone limpo que nunca rodou `astro dev` NÃO passa, por mais que o CLAUDE.md do projeto prometa. Antes de apagar o store para "invalidar cache", tenha o caminho de volta.
+
