@@ -22,7 +22,9 @@ describe('/posts listing', () => {
     const [html, current, archived] = await Promise.all([render(), getCurrentPosts(), getArchivedPosts()]);
 
     expect(current.length).toBeGreaterThan(0);
-    expect(html).toContain(`(${String(current.length).padStart(2, '0')})`);
+    // The header no longer prints a total (2026-10-08), so count the rows.
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    expect(main.match(/<li>/g)).toHaveLength(current.length);
 
     for (const post of current) {
       expect(html).toContain(`href="/${post.slug}"`);

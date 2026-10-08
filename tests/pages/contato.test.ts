@@ -61,15 +61,15 @@ describe('/contato', () => {
     expect(await render()).toContain('mailto:');
   });
 
-  it('ships no client JavaScript', async () => {
+  it('ships no client JavaScript besides the pointer effect', async () => {
     const html = await render();
     const scripts = html.match(/<script\b[^>]*>/g) ?? [];
 
-    // The layout emits <script type="application/ld+json">, which is data the
-    // browser never executes. Anything else is a real island.
+    // JSON-LD is data the browser never executes. The pointer effect is the
+    // one named exception (generative-case-art); anything else is an island.
     for (const tag of scripts) {
-      expect(tag, `executable script on the page: ${tag}`).toContain(
-        'application/ld+json',
+      expect(tag, `executable script on the page: ${tag}`).toMatch(
+        /application\/ld\+json|PointerField\.astro/,
       );
     }
 
