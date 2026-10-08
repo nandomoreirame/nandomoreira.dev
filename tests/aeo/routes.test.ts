@@ -7,6 +7,7 @@ const ROUTES = [
   { file: 'src/pages/ai-index.json.ts', contentType: 'application/json' },
   { file: 'src/pages/portfolio/[slug].md.ts', contentType: 'text/markdown' },
   { file: 'src/pages/lab/[slug].md.ts', contentType: 'text/markdown' },
+  { file: 'src/pages/[...path].md.ts', contentType: 'text/markdown' },
   { file: 'src/pages/AGENTS.md.ts', contentType: 'text/markdown' },
   { file: 'src/pages/robots.txt.ts', contentType: 'text/plain' },
   { file: 'src/pages/sitemap.xml.ts', contentType: 'application/xml' },
