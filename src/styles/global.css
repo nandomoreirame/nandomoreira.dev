@@ -177,3 +177,126 @@
     }
   }
 }
+
+/* Generative case art (docs/specs/generative-case-art). Colours only through
+   tokens; motion only under no-preference. Registered so the glow can ease
+   after the cursor instead of jumping to it. */
+@property --gx {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: -9999px;
+}
+
+@property --gy {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: -9999px;
+}
+
+@layer components {
+  .art {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .art-hero {
+    fill: var(--color-primary);
+    stroke: var(--color-primary);
+  }
+
+  .art-base {
+    fill: var(--color-muted-foreground);
+    stroke: var(--color-muted-foreground);
+  }
+
+  .art-faint {
+    fill: var(--color-border-strong);
+    stroke: var(--color-border-strong);
+  }
+
+  .art circle:not(.art-ring),
+  .art rect {
+    stroke: none;
+  }
+
+  .art-ring {
+    fill: none;
+    stroke-width: 0.3;
+  }
+
+  .art-line {
+    stroke-width: 0.25;
+  }
+
+  /* Without the script --mx and --my fall back to the centre: no offset. */
+  .art-layer {
+    transform-box: view-box;
+    transform-origin: center;
+    transform: translate(
+      calc((var(--mx, 0.5) - 0.5) * var(--depth) * 6px),
+      calc((var(--my, 0.5) - 0.5) * var(--depth) * 4px)
+    );
+  }
+
+  .art-banner {
+    aspect-ratio: 21 / 9;
+  }
+
+  /* Decorative dot grid. The amber copy shows only near the cursor, through
+     a mask the script positions; the neutral copy is always there. */
+  .pointer-field {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .pointer-field::before,
+  .pointer-field::after {
+    content: '';
+    position: absolute;
+    inset: calc(-1 * var(--spacing-lg));
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1.5px);
+    background-size: var(--spacing-md) var(--spacing-md);
+  }
+
+  .pointer-field::after {
+    background-image: radial-gradient(circle, var(--color-primary) 1px, transparent 1.5px);
+    mask-image: radial-gradient(circle 7rem at var(--gx) var(--gy), black, transparent);
+    opacity: 0;
+  }
+
+  .pointer-field[data-active]::after {
+    opacity: 1;
+  }
+}
+
+@keyframes art-drift {
+  from {
+    transform: translateX(-3px);
+  }
+
+  to {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pointer-field::after {
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      --gx var(--duration-base) var(--ease-out),
+      --gy var(--duration-base) var(--ease-out);
+  }
+
+  .art-layer {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  /* Only the case banner moves on its own; fifteen cards moving at once in
+     the grid would tire the eye (REQ-011). */
+  .art-banner .art-drift {
+    animation: art-drift 18s ease-in-out infinite alternate;
+  }
+}
