@@ -1,0 +1,61 @@
+---
+/**
+ * The only client script the site ships (docs/specs/generative-case-art,
+ * REQ-012). It writes four CSS variables and nothing else: the dot grid and
+ * the parallax are CSS. Removing this component removes the effect and
+ * nothing more (REQ-017). Without JavaScript, on touch, or with reduced motion,
+ * the art simply stays still (REQ-008).
+ */
+---
+
+<div class="pointer-field" data-pointer-field>
+  <slot />
+</div>
+
+<script>
+  const fine = window.matchMedia('(pointer: fine)').matches;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (fine && !calm) {
+    document.querySelectorAll<HTMLElement>('[data-pointer-field]').forEach((field) => {
+      let last: PointerEvent | null = null;
+      let frame = 0;
+      let current: HTMLElement | null = null;
+
+      const release = () => {
+        current?.style.removeProperty('--mx');
+        current?.style.removeProperty('--my');
+        current = null;
+      };
+
+      const paint = () => {
+        frame = 0;
+        if (!last) return;
+        const box = field.getBoundingClientRect();
+        field.style.setProperty('--gx', `${last.clientX - box.left}px`);
+        field.style.setProperty('--gy', `${last.clientY - box.top}px`);
+
+        const art = (last.target as Element | null)?.closest<HTMLElement>('[data-art]') ?? null;
+        if (art !== current) release();
+        if (art) {
+          const rect = art.getBoundingClientRect();
+          art.style.setProperty('--mx', ((last.clientX - rect.left) / rect.width).toFixed(3));
+          art.style.setProperty('--my', ((last.clientY - rect.top) / rect.height).toFixed(3));
+          current = art;
+        }
+      };
+
+      field.addEventListener('pointermove', (event) => {
+        last = event;
+        field.dataset.active = '';
+        if (!frame) frame = requestAnimationFrame(paint);
+      });
+
+      field.addEventListener('pointerleave', () => {
+        last = null;
+        delete field.dataset.active;
+        release();
+      });
+    });
+  }
+</script>
