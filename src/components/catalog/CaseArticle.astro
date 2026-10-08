@@ -4,7 +4,6 @@ import type { Project } from '../../content/schemas/project';
 import Prose from '../ui/Prose.astro';
 import TechBadge from '../ui/TechBadge.astro';
 import LinkList from './LinkList.astro';
-import PointerField from '../art/PointerField.astro';
 import { generateArt } from '../../lib/art';
 
 interface Props {
@@ -17,17 +16,15 @@ const evidenceIsPrivate =
 // The flag wins over the fields: a URL left behind in the frontmatter must not
 // put a dead link back on the page after the site is gone.
 const isDiscontinued = project.discontinued === true;
-const art = generateArt({ slug: project.slug, block: project.block, aspect: 'banner' });
+const art = generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'banner' });
 ---
 
 <article class="mt-2xl mb-3xl flex flex-col gap-xl">
-  <PointerField>
     <div
       data-art
       class="art-banner w-full overflow-hidden rounded-md border border-border bg-surface"
       set:html={art}
     />
-  </PointerField>
   <header>
     <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
       {BLOCK_LABELS[project.block]}

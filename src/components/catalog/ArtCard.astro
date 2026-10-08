@@ -1,13 +1,17 @@
 ---
+import TechBadge from '../ui/TechBadge.astro';
+
 interface Props {
   href: string;
   title: string;
   stamp: string;
   /** Markup from generateArt; decorative, hidden from assistive technology. */
   art: string;
+  /** The case stack; only the first four show, so a long list never stretches the card. */
+  tags?: string[];
 }
 
-const { href, title, stamp, art } = Astro.props;
+const { href, title, stamp, art, tags = [] } = Astro.props;
 ---
 
 <a
@@ -16,10 +20,21 @@ const { href, title, stamp, art } = Astro.props;
   class="group flex flex-col overflow-hidden rounded-md border border-border-strong bg-surface transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
   <div class="aspect-video w-full bg-background" set:html={art} />
-  <span class="flex items-baseline justify-between gap-md p-md">
-    <span class="font-serif text-h3 text-foreground transition-colors group-hover:text-primary">
-      {title}
+  <span class="flex flex-col gap-sm p-md">
+    <span class="flex items-baseline justify-between gap-md">
+      <span class="font-serif text-h3 text-foreground transition-colors group-hover:text-primary">
+        {title}
+      </span>
+      <span class="font-mono text-small text-muted-foreground">{stamp}</span>
     </span>
-    <span class="font-mono text-small text-muted-foreground">{stamp}</span>
+    {
+      tags.length > 0 && (
+        <span class="flex flex-wrap gap-xs">
+          {tags.slice(0, 4).map((tag) => (
+            <TechBadge name={tag} />
+          ))}
+        </span>
+      )
+    }
   </span>
 </a>

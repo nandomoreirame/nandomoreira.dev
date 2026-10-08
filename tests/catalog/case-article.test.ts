@@ -76,9 +76,9 @@ describe('CaseArticle', () => {
     expect(html).toContain('viewBox="0 0 210 90"');
   });
 
-  it('keeps the band decorative and inside the pointer field', async () => {
+  it('keeps the band decorative and leaves the pointer field to the layout', async () => {
     const html = await render();
     expect(html).toContain('aria-hidden="true"');
-    expect(html.indexOf('data-pointer-field')).toBeLessThan(html.indexOf('art-banner'));
+    expect(html).not.toContain('data-pointer-field');
   });
 });

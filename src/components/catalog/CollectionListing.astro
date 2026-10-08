@@ -1,7 +1,6 @@
 ---
 import ArtCard from './ArtCard.astro';
-import PointerField from '../art/PointerField.astro';
-import SectionHeader from '../ui/SectionHeader.astro';
+import ArtRow from './ArtRow.astro';
 import type { Project } from '../../content/schemas/project';
 import { generateArt } from '../../lib/art';
 import {
@@ -25,36 +24,52 @@ const items = projects
   .sort((a, b) => b.date.localeCompare(a.date));
 
 const label = COLLECTION_LABELS[collection];
+
+// Client work needs its context beside the art; the lab reads well as a grid.
+const statusOf = (project: Project): string[] => [
+  ...(project.discontinued ? ['Descontinuado'] : []),
+  ...(project.confidential ? ['Confidencial'] : []),
+];
 ---
 
-<section aria-labelledby={`collection-${collection}`}>
-  <SectionHeader
-    title={label}
-    level={2}
-    count={items.length}
-    id={`collection-${collection}`}
-  />
-
+{/* No heading of its own: the page header already names the collection and
+    counts it, and repeating it here is what the page used to do twice. */}
+<section aria-label={label}>
   {
     items.length === 0 ? (
       <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
         Nenhum case publicado nesta coleção ainda.
       </p>
+    ) : collection === 'portfolio' ? (
+      <ul class="list-none p-0">
+        {items.map((project) => (
+          <li>
+            <ArtRow
+              href={`/${collectionOfBlock(project.block)}/${project.slug}`}
+              title={project.title}
+              stamp={toCompactStamp(project.date)}
+              summary={project.summary}
+              tags={project.tech}
+              status={statusOf(project)}
+              art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
+            />
+          </li>
+        ))}
+      </ul>
     ) : (
-      <PointerField>
-        <ul class="grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
-          {items.map((project) => (
-            <li>
-              <ArtCard
-                href={`/${collectionOfBlock(project.block)}/${project.slug}`}
-                title={project.title}
-                stamp={toCompactStamp(project.date)}
-                art={generateArt({ slug: project.slug, block: project.block, aspect: 'card' })}
-              />
-            </li>
-          ))}
-        </ul>
-      </PointerField>
+      <ul class="grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
+        {items.map((project) => (
+          <li>
+            <ArtCard
+              href={`/${collectionOfBlock(project.block)}/${project.slug}`}
+              title={project.title}
+              stamp={toCompactStamp(project.date)}
+              tags={project.tech}
+              art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
+            />
+          </li>
+        ))}
+      </ul>
     )
   }
 </section>

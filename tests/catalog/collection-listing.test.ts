@@ -45,10 +45,41 @@ describe('CollectionListing', () => {
     expect(html).toContain('data-art');
   });
 
-  it('puts the grid inside the pointer field', async () => {
+  it('lists the portfolio as rows, with summary, stack and situation beside the art', async () => {
+    const html = await render({
+      collection: 'portfolio',
+      projects: [
+        project({
+          slug: 'seu-atelie-aqui',
+          title: 'Seu Ateliê Aqui',
+          block: 'professional',
+          art: 'map',
+          summary: 'Plataforma por proximidade geográfica',
+          discontinued: true,
+        }),
+      ],
+    });
+
+    expect(html).toContain('href="/portfolio/seu-atelie-aqui"');
+    expect(html).toContain('data-motif="map"');
+    expect(html).toContain('Plataforma por proximidade geográfica');
+    expect(html).toContain('Rust');
+    expect(html).toContain('Descontinuado');
+    expect(html).toMatch(/\bsm:grid-cols-5\b/);
+  });
+
+  it('keeps the lab as a grid of cards that carry the stack', async () => {
+    const html = await render({ collection: 'lab', projects: [project({ art: 'panels' })] });
+
+    expect(html).toContain('data-motif="panels"');
+    expect(html).toContain('Tauri');
+    expect(html).toMatch(/\bsm:grid-cols-2\b/);
+    expect(html).not.toMatch(/\bsm:grid-cols-5\b/);
+  });
+
+  it('leaves the pointer field to the layout, which covers the whole page', async () => {
     const html = await render({ collection: 'lab', projects: [project()] });
-    expect(html).toContain('data-pointer-field');
-    expect(html.indexOf('data-pointer-field')).toBeLessThan(html.indexOf('href="/lab/forja"'));
+    expect(html).not.toContain('data-pointer-field');
   });
 
   it('sorts from most recent to oldest', async () => {
@@ -63,7 +94,7 @@ describe('CollectionListing', () => {
     expect(html.indexOf('New')).toBeLessThan(html.indexOf('Old'));
   });
 
-  it('shows the total count in the section header', async () => {
+  it('names its region without repeating the page heading or the count', async () => {
     const html = await render({
       collection: 'portfolio',
       projects: [
@@ -72,15 +103,16 @@ describe('CollectionListing', () => {
       ],
     });
 
-    expect(html).toContain('(02)');
-    expect(html).toContain('Portfólio');
+    // The page header names and counts the collection (tests/pages/page-headers.test.ts).
+    expect(html).toContain('aria-label="Portfólio"');
+    expect(html).not.toMatch(/<h[1-3]/);
+    expect(html).not.toContain('(02)');
   });
 
   it('renders an explicit empty state when the grouping has no projects', async () => {
     const html = await render({ collection: 'portfolio', projects: [] });
 
     expect(html).toMatch(/nenhum case|em breve|ainda/i);
-    expect(html).toContain('(00)');
   });
 
   it('only includes projects whose block belongs to the collection', async () => {
