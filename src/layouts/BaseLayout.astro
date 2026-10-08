@@ -1,4 +1,5 @@
 ---
+import AiSwitcher from '../components/ai-view/AiSwitcher.astro';
 import PointerField from '../components/art/PointerField.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
@@ -14,18 +15,33 @@ interface Props {
   noindex?: boolean;
   /** Absolute or root-relative URL of the markdown alternate for this page. */
   markdownAlternate?: string;
+  /** Which side of the Humano | IA switcher is current. */
+  view?: 'human' | 'ai';
+  /** Root-relative path used for the canonical URL when it differs from the request. */
+  canonicalPath?: string;
 }
 
-const { title, description, noindex = false, markdownAlternate } = Astro.props;
+const {
+  title,
+  description,
+  noindex = false,
+  markdownAlternate,
+  view,
+  canonicalPath,
+} = Astro.props;
 const current = Astro.url?.pathname;
 // Container tests may omit Astro.site; production always has config.site.
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
-const canonical = new URL(Astro.url?.pathname ?? '/', site).toString();
+const canonical = new URL(canonicalPath ?? Astro.url?.pathname ?? '/', site).toString();
 const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
 const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
 const year = new Date().getUTCFullYear();
 const hasPosts = posts.length > 0;
+// 404 is noindex without a view; every other page shows the switcher.
+const showSwitcher = !(noindex && view === undefined);
+const switcherHumanPath = canonicalPath ?? current ?? '/';
+const switcherView = view ?? 'human';
 ---
 
 <!doctype html>
@@ -104,6 +120,11 @@ const hasPosts = posts.length > 0;
     </div>
 
     <SiteFooter name={profile.name} year={year} contacts={profile.contacts} />
+    {
+      showSwitcher && (
+        <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />
+      )
+    }
     <PointerField />
   </body>
 </html>

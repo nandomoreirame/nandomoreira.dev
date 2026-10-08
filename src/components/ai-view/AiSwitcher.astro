@@ -1,0 +1,34 @@
+---
+import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { aiPathFor } from '../../lib/ai-view/paths';
+
+interface Props {
+  humanPath: string;
+  view: 'human' | 'ai';
+}
+
+const { humanPath, view } = Astro.props;
+const aiHref = aiPathFor(humanPath);
+const linkClass =
+  'inline-flex min-h-11 items-center px-md font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary';
+---
+
+<nav
+  aria-label="Visão da página"
+  class="fixed right-lg bottom-lg z-10 flex overflow-hidden rounded-md border border-border-strong bg-surface/90 backdrop-blur-md"
+>
+  <a
+    href={humanPath}
+    aria-current={view === 'human' ? 'page' : undefined}
+    class={linkClass}
+  >
+    {AI_VIEW_LABELS.human}
+  </a>
+  <a
+    href={aiHref}
+    aria-current={view === 'ai' ? 'page' : undefined}
+    class={`${linkClass} border-l border-border-strong`}
+  >
+    {AI_VIEW_LABELS.ai}
+  </a>
+</nav>
