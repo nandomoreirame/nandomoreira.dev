@@ -16,7 +16,7 @@ const profile: Profile = {
   services: [{ title: 'Tooling', description: 'Ferramental.', caseSlug: 'forja' }],
   availability: { status: 'open', detail: 'Aberto a consultoria.', updatedAt: '2026-08-08' },
   contacts: [
-    { kind: 'email', value: 'fernando@nandomoreira.dev' },
+    { kind: 'email', value: 'oi@nandomoreira.dev' },
     { kind: 'github', value: 'https://github.com/nandomoreirame' },
   ],
 };

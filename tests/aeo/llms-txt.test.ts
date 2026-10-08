@@ -7,7 +7,7 @@ const profile = {
   name: 'Fernando Moreira Costa',
   headline: 'Product engineer working with AI agents',
   bio: 'I build agent tooling and AI products in production.',
-  contacts: [{ kind: 'email', value: 'fernando@nandomoreira.dev' }],
+  contacts: [{ kind: 'email', value: 'oi@nandomoreira.dev' }],
 } as never;
 
 const projects = [

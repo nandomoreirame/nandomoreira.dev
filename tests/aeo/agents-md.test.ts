@@ -19,7 +19,7 @@ const profile = {
     detail: 'Open to fixed-scope consulting and to a senior position.',
     updatedAt: '2026-08-08',
   },
-  contacts: [{ kind: 'email', value: 'fernando@nandomoreira.dev' }],
+  contacts: [{ kind: 'email', value: 'oi@nandomoreira.dev' }],
 } as never;
 
 const output = () => buildAgentsMd({ site, profile });

@@ -9,7 +9,7 @@ const render = async (component: unknown, props: Record<string, unknown>) => {
 };
 
 const contacts = [
-  { kind: 'email', value: 'fernando@nandomoreira.dev' },
+  { kind: 'email', value: 'oi@nandomoreira.dev' },
   { kind: 'github', value: 'https://github.com/nandomoreirame' },
 ];
 
@@ -25,7 +25,7 @@ describe('Contact', () => {
   it('offers a direct channel with no form', async () => {
     const html = await render(Contact, { contacts });
 
-    expect(html).toContain('mailto:fernando@nandomoreira.dev');
+    expect(html).toContain('mailto:oi@nandomoreira.dev');
     expect(html).not.toContain('<form');
     expect(html).not.toContain('<input');
   });

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import SiteFooter from '../../src/components/layout/SiteFooter.astro';
 
 const contacts = [
-  { kind: 'email', value: 'fernando@nandomoreira.dev' },
+  { kind: 'email', value: 'oi@nandomoreira.dev' },
   { kind: 'github', value: 'https://github.com/nandomoreirame' },
   { kind: 'linkedin', value: 'https://linkedin.com/in/nandomoreirame' },
 ];

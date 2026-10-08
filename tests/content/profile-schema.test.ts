@@ -26,7 +26,7 @@ const valid = {
     detail: 'Aberto a consultoria de escopo fechado e a posição sênior.',
     updatedAt: '2026-08-08',
   },
-  contacts: [{ kind: 'email', value: 'fernando@nandomoreira.dev' }],
+  contacts: [{ kind: 'email', value: 'oi@nandomoreira.dev' }],
 };
 
 describe('profileSchema', () => {
