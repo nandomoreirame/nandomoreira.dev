@@ -31,6 +31,7 @@ const jsonLd = serialiseJsonLd(jsonLdForProject(project, site));
 <BaseLayout
   title={`${project.title} | nandomoreira.dev`}
   description={project.summary}
+  markdownAlternate={`/lab/${project.slug}.md`}
 >
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 

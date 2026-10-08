@@ -12,9 +12,11 @@ interface Props {
   title: string;
   description: string;
   noindex?: boolean;
+  /** Absolute or root-relative URL of the markdown alternate for this page. */
+  markdownAlternate?: string;
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, markdownAlternate } = Astro.props;
 const current = Astro.url?.pathname;
 // Container tests may omit Astro.site; production always has config.site.
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
@@ -39,6 +41,27 @@ const hasPosts = posts.length > 0;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary" />
+    <link
+      rel="alternate"
+      type="text/plain"
+      href="/llms-full.txt"
+      title="LLM full content"
+    />
+    <link
+      rel="alternate"
+      type="application/json"
+      href="/ai-index.json"
+      title="AI index"
+    />
+    {
+      markdownAlternate && (
+        <link rel="alternate" type="text/markdown" href={markdownAlternate} />
+      )
+    }
     <script type="application/ld+json" is:inline set:html={websiteJsonLd} />
     {/* Two preloads, one per visible-above-the-fold job: the serif paints the
         headline (the LCP candidate), the sans paints the body around it. */}
