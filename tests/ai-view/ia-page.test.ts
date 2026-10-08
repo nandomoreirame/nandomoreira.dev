@@ -114,4 +114,30 @@ describe('AiBar', () => {
     expect(html).toContain(AI_VIEW_LABELS.download);
     expect(html).toContain(`>${AI_VIEW_LABELS.close}<`);
   });
+
+  it('hands the copied label to the script from the label map', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(AiBar, {
+      props: { title: 'Sobre', url: 'https://nandomoreira.dev/sobre', humanPath: '/sobre', mdPath: '/sobre.md', markdown: '# Sobre' },
+    });
+    expect(html).toContain(`data-label-copied="${AI_VIEW_LABELS.copied}"`);
+  });
+
+  it('lets a long URL wrap, so the bar never overflows a 320px screen', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(AiBar, {
+      props: { title: 'Forja', url: 'https://nandomoreira.dev/portfolio/financial-normalization', humanPath: '/portfolio/financial-normalization', mdPath: '/portfolio/financial-normalization.md', markdown: '# F' },
+    });
+    const link = html.match(/<a[^>]*href="https:\/\/nandomoreira\.dev\/portfolio\/financial-normalization"[^>]*>/)?.[0] ?? '';
+    expect(link).toMatch(/\bbreak-all\b/);
+    expect(html).toMatch(/<dd[^>]*\bmin-w-0\b/);
+  });
+
+  it('wraps long words and URLs inside the rendered markdown', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(AiBar, {
+      props: { title: 'F', url: 'https://nandomoreira.dev/lab/forja', humanPath: '/lab/forja', mdPath: '/lab/forja.md', markdown: '[repo](https://github.com/nandomoreirame/forja)' },
+    });
+    expect(html).toMatch(/class="ai-panel-rendered[^"]*\bwrap-anywhere\b/);
+  });
 });

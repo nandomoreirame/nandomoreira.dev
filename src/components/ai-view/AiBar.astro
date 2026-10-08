@@ -59,7 +59,14 @@ const actionClass =
         </label>
       </div>
 
-      <button type="button" data-ai-copy hidden class={actionClass}>
+      <button
+        type="button"
+        data-ai-copy
+        data-label-copied={AI_VIEW_LABELS.copied}
+        aria-live="polite"
+        hidden
+        class={actionClass}
+      >
         {AI_VIEW_LABELS.copy}
       </button>
       <a href={mdPath} download class={actionClass}>{AI_VIEW_LABELS.download}</a>
@@ -74,10 +81,10 @@ const actionClass =
     </div>
     <div class="flex flex-wrap gap-sm">
       <dt class="text-muted-foreground">{AI_VIEW_LABELS.url}</dt>
-      <dd>
+      <dd class="min-w-0">
         <a
           href={url}
-          class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="break-all text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {url}
         </a>
@@ -89,7 +96,7 @@ const actionClass =
     Panels are siblings of the radios (via the wrapping .ai-view) so the
     Task 8 CSS can toggle them with :has() on the checked input.
   */}
-  <div class="ai-panel-rendered">
+  <div class="ai-panel-rendered wrap-anywhere">
     <Prose>
       <div set:html={rendered} />
     </Prose>
