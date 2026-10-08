@@ -1,0 +1,102 @@
+---
+import Prose from '../ui/Prose.astro';
+import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { renderMarkdown } from '../../lib/ai-view/render';
+
+interface Props {
+  title: string;
+  url: string;
+  humanPath: string;
+  mdPath: string;
+  markdown: string;
+}
+
+const { title, url, humanPath, mdPath, markdown } = Astro.props;
+const rendered = renderMarkdown(markdown);
+const actionClass =
+  'inline-flex min-h-11 items-center px-md font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+---
+
+<div class="ai-view flex flex-col gap-lg py-xl">
+  <div
+    class="flex flex-col gap-md rounded-md border border-border-strong bg-surface p-md sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
+  >
+    <div class="flex flex-wrap items-center gap-md">
+      <p class="inline-flex min-h-11 items-center gap-sm font-mono text-small text-foreground">
+        <span class="inline-block size-2 shrink-0 rounded-full bg-success" aria-hidden="true"
+        ></span>
+        <span>{AI_VIEW_LABELS.ready}</span>
+      </p>
+      <p class="font-mono text-small text-muted-foreground">{mdPath}</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-sm">
+      <div class="ai-tabs flex overflow-hidden rounded-md border border-border-strong">
+        <input
+          type="radio"
+          name="ai-tab"
+          id="ai-tab-rendered"
+          class="ai-tab-input sr-only"
+          checked
+        />
+        <label
+          for="ai-tab-rendered"
+          class="ai-tab-label inline-flex min-h-11 cursor-pointer items-center px-md font-mono text-small text-muted-foreground"
+        >
+          {AI_VIEW_LABELS.rendered}
+        </label>
+        <input
+          type="radio"
+          name="ai-tab"
+          id="ai-tab-source"
+          class="ai-tab-input sr-only"
+        />
+        <label
+          for="ai-tab-source"
+          class="ai-tab-label inline-flex min-h-11 cursor-pointer items-center border-l border-border-strong px-md font-mono text-small text-muted-foreground"
+        >
+          {AI_VIEW_LABELS.source}
+        </label>
+      </div>
+
+      <button type="button" data-ai-copy hidden class={actionClass}>
+        {AI_VIEW_LABELS.copy}
+      </button>
+      <a href={mdPath} download class={actionClass}>{AI_VIEW_LABELS.download}</a>
+      <a href={humanPath} class={actionClass}>{AI_VIEW_LABELS.close}</a>
+    </div>
+  </div>
+
+  <dl class="grid gap-sm rounded-md border border-border bg-surface p-md font-mono text-small">
+    <div class="flex flex-wrap gap-sm">
+      <dt class="text-muted-foreground">{AI_VIEW_LABELS.title}</dt>
+      <dd class="text-foreground">{title}</dd>
+    </div>
+    <div class="flex flex-wrap gap-sm">
+      <dt class="text-muted-foreground">{AI_VIEW_LABELS.url}</dt>
+      <dd>
+        <a
+          href={url}
+          class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {url}
+        </a>
+      </dd>
+    </div>
+  </dl>
+
+  {/*
+    Panels are siblings of the radios (via the wrapping .ai-view) so the
+    Task 8 CSS can toggle them with :has() on the checked input.
+  */}
+  <div class="ai-panel-rendered">
+    <Prose>
+      <div set:html={rendered} />
+    </Prose>
+  </div>
+  <div class="ai-panel-source">
+    <pre
+      class="overflow-x-auto rounded-md border border-border bg-surface p-md font-mono text-mono text-foreground"
+    ><code data-ai-source>{markdown}</code></pre>
+  </div>
+</div>

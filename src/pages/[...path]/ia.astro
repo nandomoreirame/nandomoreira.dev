@@ -1,0 +1,40 @@
+---
+import AiBar from '../../components/ai-view/AiBar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { absoluteUrl, requireSite } from '../../lib/aeo/urls';
+import { markdownForPath } from '../../lib/ai-view/registry';
+
+export const prerender = false;
+
+const site = requireSite(Astro.site ?? new URL('https://nandomoreira.dev'));
+const page = await markdownForPath(site, Astro.params.path ?? '');
+
+// The catch-all would answer 200 for any path; the registry is the source of
+// truth for which pages have an AI view.
+if (!page) {
+  Astro.response.status = 404;
+}
+---
+
+{
+  !page ? (
+    <p>Not found</p>
+  ) : (
+    <BaseLayout
+      title={`${page.title} | IA | nandomoreira.dev`}
+      description={`Visão IA de ${page.humanPath}`}
+      noindex
+      view="ai"
+      canonicalPath={page.humanPath}
+      markdownAlternate={page.mdPath}
+    >
+      <AiBar
+        title={page.title}
+        url={absoluteUrl(site, page.humanPath)}
+        humanPath={page.humanPath}
+        mdPath={page.mdPath}
+        markdown={page.markdown}
+      />
+    </BaseLayout>
+  )
+}
