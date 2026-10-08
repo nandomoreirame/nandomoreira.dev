@@ -1,13 +1,17 @@
 ---
 import SiteNav from './SiteNav.astro';
+import { splitWordmark } from '../../lib/layout/wordmark';
 
 interface Props {
   name: string;
+  /** Part of the brand painted in the primary colour. */
+  accent?: string;
   current?: string;
   hasPosts?: boolean;
 }
 
-const { name, current, hasPosts = false } = Astro.props;
+const { name, accent, current, hasPosts = false } = Astro.props;
+const brand = splitWordmark(name, accent);
 ---
 
 {/* The rule sits on <header> so it spans the viewport; the container is the row
@@ -15,7 +19,7 @@ const { name, current, hasPosts = false } = Astro.props;
     depends on no ancestor being a scroll container — see the overflow-x-clip
     note in global.css. */}
 <header
-  class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur"
+  class="sticky top-0 z-40 border-b border-border bg-background/40 backdrop-blur-lg"
 >
   <div
     class="mx-auto flex w-full max-w-page flex-wrap items-center justify-between gap-sm px-lg py-sm"
@@ -24,7 +28,9 @@ const { name, current, hasPosts = false } = Astro.props;
       href="/"
       class="font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
-      {name}
+      {/* One line on purpose: any whitespace between the parts would split the
+          brand into words, on screen and for screen readers. */}
+      {brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}
     </a>
 
     <SiteNav current={current} hasPosts={hasPosts} />

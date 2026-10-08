@@ -30,6 +30,16 @@ describe('SiteHeader stickiness', () => {
     expect(html).toMatch(/<header[^>]*\bbackdrop-blur/);
   });
 
+  it('stays mostly transparent, so the page shows through the blur', async () => {
+    const html = await render();
+    const opacity = Number(html.match(/<header[^>]*\bbg-background\/(\d+)/)?.[1]);
+
+    // Requested 2026-10-08: transparent with blur. Half opacity or less keeps
+    // the content visible under the bar; the stronger blur keeps text legible.
+    expect(opacity).toBeLessThanOrEqual(50);
+    expect(html).toMatch(/<header[^>]*\bbackdrop-blur-(md|lg|xl)\b/);
+  });
+
   it('stays free of client JavaScript, since stickiness is pure CSS', async () => {
     const html = await render();
 

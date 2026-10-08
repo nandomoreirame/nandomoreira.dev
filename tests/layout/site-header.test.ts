@@ -24,6 +24,14 @@ describe('SiteHeader', () => {
     expect(html).toMatch(/<a[^>]*href="\/"[^>]*>[\s]*Fernando Moreira Costa/);
   });
 
+  it('paints the accent of the brand in the primary colour, keeping the text whole', async () => {
+    const html = await render({ name: 'nandomoreira.dev', accent: 'moreira' });
+    const link = html.match(/<a[^>]*href="\/"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(link).toMatch(/<span class="text-primary">moreira<\/span>/);
+    expect(link.replace(/<[^>]+>/g, '').replace(/\s+/g, '')).toBe('nandomoreira.dev');
+  });
+
   it('places the wordmark before the navigation, so it reads on the left', async () => {
     const html = await render();
 
