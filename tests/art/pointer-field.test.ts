@@ -34,6 +34,12 @@ describe('PointerField', () => {
     expect(source).toContain('removeProperty');
   });
 
+  it('snaps the glow on entry and clears the marker on the next frame', () => {
+    expect(source).toContain('dataset.snap');
+    expect(source).toMatch(/delete\s+field\.dataset\.snap/);
+    expect(source).toMatch(/pointerleave[\s\S]*dataset\.snap/);
+  });
+
   it('uses no framework island', () => {
     expect(source).not.toContain('client:');
   });

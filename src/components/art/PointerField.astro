@@ -20,6 +20,7 @@
     document.querySelectorAll<HTMLElement>('[data-pointer-field]').forEach((field) => {
       let last: PointerEvent | null = null;
       let frame = 0;
+      let snap = true;
       let current: HTMLElement | null = null;
 
       const release = () => {
@@ -31,6 +32,13 @@
       const paint = () => {
         frame = 0;
         if (!last) return;
+        if (snap) {
+          field.dataset.snap = '';
+          snap = false;
+          requestAnimationFrame(() => {
+            delete field.dataset.snap;
+          });
+        }
         const box = field.getBoundingClientRect();
         field.style.setProperty('--gx', `${last.clientX - box.left}px`);
         field.style.setProperty('--gy', `${last.clientY - box.top}px`);
@@ -53,7 +61,9 @@
 
       field.addEventListener('pointerleave', () => {
         last = null;
+        snap = true;
         delete field.dataset.active;
+        delete field.dataset.snap;
         release();
       });
     });

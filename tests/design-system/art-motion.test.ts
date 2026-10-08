@@ -49,4 +49,21 @@ describe('art motion', () => {
     expect(layer).toMatch(/transform:/);
     expect(layer).not.toMatch(/\b(top|left|margin|padding|width|height):/);
   });
+
+  it('compensates the ::after inset so the glow sits under the cursor', () => {
+    const mask = css.match(/\.pointer-field::after\s*\{[^}]*mask-image:[^;]+/)?.[0] ?? '';
+    expect(mask).toContain('calc(var(--gx) + var(--spacing-lg))');
+    expect(mask).toContain('calc(var(--gy) + var(--spacing-lg))');
+  });
+
+  it('drops --gx/--gy easing while data-snap is set, only under no-preference', () => {
+    const motion = css.match(
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{([\s\S]*)\}\s*$/,
+    )?.[1] ?? css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference)'));
+    expect(motion).toMatch(/\.pointer-field\[data-snap\]::after\s*\{[^}]*transition:/);
+    const snap = motion.match(/\.pointer-field\[data-snap\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(snap).toMatch(/transition:/);
+    expect(snap).not.toMatch(/--gx/);
+    expect(outsideMotion).not.toMatch(/\.pointer-field\[data-snap\]/);
+  });
 });

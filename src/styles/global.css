@@ -263,7 +263,12 @@
 
   .pointer-field::after {
     background-image: radial-gradient(circle, var(--color-primary) 1px, transparent 1.5px);
-    mask-image: radial-gradient(circle 7rem at var(--gx) var(--gy), black, transparent);
+    /* --gx/--gy are field-relative; the inset shifts this box by spacing-lg. */
+    mask-image: radial-gradient(
+      circle 7rem at calc(var(--gx) + var(--spacing-lg)) calc(var(--gy) + var(--spacing-lg)),
+      black,
+      transparent
+    );
     opacity: 0;
   }
 
@@ -288,6 +293,11 @@
       opacity var(--duration-base) var(--ease-out),
       --gx var(--duration-base) var(--ease-out),
       --gy var(--duration-base) var(--ease-out);
+  }
+
+  /* First paint after enter: place the glow, then ease later moves. */
+  .pointer-field[data-snap]::after {
+    transition: opacity var(--duration-base) var(--ease-out);
   }
 
   .art-layer {
