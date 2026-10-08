@@ -53,7 +53,6 @@ const hasMore = totalCount > shown.length;
   <SectionHeader
     title={title}
     level={2}
-    count={shown.length}
     index={index}
     description={DESCRIPTIONS[collection]}
   />
@@ -87,7 +86,7 @@ const hasMore = totalCount > shown.length;
           href={href}
           class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          Ver todos ({String(totalCount).padStart(2, '0')})
+          Ver todos
         </a>
       </p>
     )
