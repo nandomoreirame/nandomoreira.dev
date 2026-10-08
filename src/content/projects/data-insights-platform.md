@@ -11,7 +11,8 @@ decisions: |
   dashboards estáticos. Separação entre orquestração e execução para o
   modelo não virar o único caminho de confiar no resultado.
 outcome: |
-  Em produção paga. Nome do cliente e métricas comerciais não são públicos.
+  Em produção paga na Liquid AI. O código e as métricas comerciais não são
+  públicos.
   Este case amarra o bloco profissional ao posicionamento de IA em produto.
 tech:
   - Node.js
@@ -21,6 +22,5 @@ repoUrl: null
 liveUrl: null
 featured: false
 confidential: true
-clientName: Liquid
 date: "2025-06-01"
 ---

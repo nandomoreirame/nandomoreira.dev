@@ -11,8 +11,12 @@ decisions: |
   incorporadora entrar como adaptador e não como ramificação no núcleo. API
   Python de propósito único, com o frontend em repositório separado.
 outcome: |
-  Em produção sobre dezenas de bases ativas. Números e nome do cliente não são
-  públicos.
+  Em produção na Liquid AI, sobre as bases de mais de 20 incorporadoras. O
+  intervalo entre receber uma base e entregá-la pré-normalizada na pipeline
+  caiu de cerca de cinco dias para até 30 minutos, e uma suíte de mais de 4.800
+  casos de teste (unitários, integração, regressão e paridade) protege cada
+  mudança de transformação contra quebra silenciosa. O código e os nomes das
+  incorporadoras não são públicos.
 tech:
   - Python
   - DDD
@@ -21,6 +25,5 @@ repoUrl: null
 liveUrl: null
 featured: false
 confidential: true
-clientName: Liquid
 date: "2025-03-01"
 ---
