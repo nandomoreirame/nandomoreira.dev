@@ -66,4 +66,19 @@ describe('CaseArticle', () => {
     expect(html).toContain('width=');
     expect(html).toContain('height=');
   });
+
+  it('opens with the generated art band, before the block label and the title', async () => {
+    const html = await render();
+    const band = html.indexOf('art-banner');
+
+    expect(band).toBeGreaterThan(-1);
+    expect(band).toBeLessThan(html.indexOf('<h1'));
+    expect(html).toContain('viewBox="0 0 210 90"');
+  });
+
+  it('keeps the band decorative and inside the pointer field', async () => {
+    const html = await render();
+    expect(html).toContain('aria-hidden="true"');
+    expect(html.indexOf('data-pointer-field')).toBeLessThan(html.indexOf('art-banner'));
+  });
 });
