@@ -142,19 +142,29 @@ O backend serve com `servingLocality: GLOBAL_ACCESS`, então a região não dete
 latência do visitante. Ela importa para co-locar o Firestore de `hire_requests` (F7), que
 deve ser criado em `us-east4`.
 
-### Deploy a partir do fonte local, não de repositório GitHub conectado
+### Deploy: fonte local no spike, repositório conectado desde 2026-08-09
 
-O backend não tem repositório conectado. `firebase.json` declara
-`"alwaysDeployFromSource": true`, e o deploy é:
+**Emenda de 2026-08-09.** O backend passou a ter o repositório GitHub conectado
+(`codebase.repository` preenchido, `rolloutPolicy: {"codebaseBranch": "main"}`), então
+push em `main` dispara build e rollout automaticamente, sem comando. Isso resolve a
+rastreabilidade que o parágrafo abaixo apontava como pendente, e antecipa a recomendação
+que estava reservada para o cutover da sprint 6. O comando
+`firebase apphosting:rollouts:create <backend> --git-commit <sha>` passou a funcionar.
+
+Fica uma ressalva: `firebase.json` ainda declara `"alwaysDeployFromSource": true`. Com o
+repositório conectado, um `firebase deploy --only apphosting` publica o **fonte local**,
+inclusive o que não está commitado, por cima do que o GitHub construiu, e a origem do que
+está servindo volta a ser desconhecida. É saída de emergência, não caminho normal.
+
+**Estado original, durante o spike:** o backend não tinha repositório conectado e o deploy
+era, com o fonte local como origem do build:
 
 ```bash
 firebase deploy --only apphosting --project nandomoreira-dev
 ```
 
-Consequência direta: o comando `firebase apphosting:rollouts:create <backend> --git-commit <sha>`,
-originalmente documentado na Task 9 do plano, **não funciona** nesta configuração, e o
-plano foi corrigido. Conectar o GitHub depois é possível e passa a habilitar aquele
-comando; enquanto não for, o fonte local é a origem do build.
+Consequência daquela configuração: `firebase apphosting:rollouts:create <backend> --git-commit <sha>`,
+originalmente documentado na Task 9 do plano, **não funcionava**, e o plano foi corrigido.
 
 `firebase.json` e `.firebaserc` passam a ser versionados: sem eles, um clone limpo não
 reproduz o deploy e REQ-005 não se sustenta.

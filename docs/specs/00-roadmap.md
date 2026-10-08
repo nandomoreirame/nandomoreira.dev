@@ -110,11 +110,12 @@ Atualizado em 2026-08-08.
 | `design-system-foundation` | 2 | `design-system-foundation/SPEC.md` | `2026-08-08-design-system-foundation.md` | **Concluída** |
 | `content-data-layer` | 2 | `content-data-layer/SPEC.md` | `2026-08-08-content-data-layer.md` | **Concluída** |
 | `project-catalog` | 2 | `project-catalog/SPEC.md` | `2026-08-08-project-catalog.md` | **Concluída** |
-| `case-content` | 3 | `case-content/SPEC.md` | `2026-08-09-case-content.md` | **Concluída** (8 cases, 2 por bloco; mousai no lugar de portfoliosnap) |
-| `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | **Concluída** (1 case real; 7 cases pendentes) |
+| `case-content` | 3 | `case-content/SPEC.md` | `2026-08-09-case-content.md` | **Concluída** (15 cases; o piso de 2 por bloco virou mínimo, não teto) |
+| `home-page` | 3 | `home-page/SPEC.md` | `2026-08-08-home-page.md` | **Concluída** (portfólio e laboratório em seções separadas) |
 | `aeo-base` | 4 | `aeo-base/SPEC.md` | `2026-08-08-aeo-base.md` | **Concluída** |
 | `theme-restyle` | — | `theme-restyle/SPEC.md` | `2026-08-09-theme-restyle.md` | **Concluída** |
-| `notes` | F14 | `notes/SPEC.md` | `2026-08-09-notes.md` | **Concluída** (estrutura; 0 notas publicadas, só rascunho de exemplo) |
+| `notes` | F14 | `notes/SPEC.md` | `2026-08-09-notes.md` | **Concluída**, depois sucedida por `blog-migration` |
+| `blog-migration` | F14 | `blog-migration/SPEC.md` | `2026-08-09-blog-migration.md` | **Concluída** (40 posts importados, `/posts` + arquivo por ano; revoga REQ-002 de `notes`) |
 | `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `hire-endpoint` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
@@ -128,17 +129,23 @@ confirmou o plano A, então elas podem ser especificadas quando convier.
 
 ### O que está em produção
 
-O deploy **não é automático**: o backend não tem repositório GitHub conectado, então
-push não dispara rollout. Publicar exige
-`firebase deploy --only apphosting --project nandomoreira-dev`.
+O deploy **é automático desde 2026-08-09**: o backend tem o repositório GitHub conectado
+e `rolloutPolicy: {"codebaseBranch": "main"}`, então push em `main` dispara build e
+rollout sozinho, em cerca de 3 minutos. `traffic.current.splits[].build` da REST API é a
+autoridade sobre o que está servindo.
 
-Em 2026-08-08 a produção ainda servia o placeholder do spike: nada da sprint 2 tinha
-subido.
+Em 2026-08-09 a produção serve o acervo completo: 15 cases, blog migrado em `/posts` com
+arquivo por ano de 2015 a 2019, as quatro rotas de máquina e os redirects legados
+(`/notas`, `/projetos`) respondendo 301 real.
+
+Fora do ar, porque nem spec têm: `/api/resume.json`, `/api/resume.txt`, `/api/mcp` e
+`/api/hire`, todas 404.
 
 ### Próximo passo
 
-`content-data-layer`, por dependência: é pré-requisito de F1, F2, F4, F5 e F6, e
-`project-catalog` não começa sem ela.
+Uma das quatro features sem spec, todas desbloqueadas pelo ADR-001. Por dependência do
+corte de emergência do RISK-005, `structured-resume` (F5) vem primeiro: fecha a sprint 4
+e completa o conjunto mínimo de lançamento.
 
 ## Como usar este roadmap
 
@@ -153,6 +160,22 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-08-09: **Repositório GitHub conectado ao backend do App Hosting.** O rollout
+  deixou de ser manual: `rolloutPolicy` é `{"codebaseBranch": "main"}` e push em `main`
+  dispara build e rollout em cerca de 3 minutos. Isso antecipa a recomendação que estava
+  reservada para o cutover da sprint 6 e responde qual commit está servindo, que o deploy
+  a partir do fonte local não permitia. Ressalva registrada: `firebase.json` mantém
+  `"alwaysDeployFromSource": true`, então um `firebase deploy` manual ainda publica o
+  fonte local por cima, inclusive não commitado. Fica como saída de emergência, não como
+  caminho normal.
+- 2026-08-09: `blog-migration` sucede `notes`. Os 40 textos de 2015-2019 (Gatsby) e 2024
+  (Notion) entraram em `/posts`, com arquivo por ano em rota estática. REQ-002 de `notes`,
+  que proibia data em superfície humana, foi revogado por inteiro: a regra servia a nota
+  atemporal e se inverte diante de um acervo histórico, onde a ausência de data engana.
+- 2026-08-09: `case-content` reaberta para além dos 8 cases originais. O portão
+  `block-coverage` exigia **exatamente** 8 cases e 2 por bloco, o que transformava um piso
+  de cobertura em teto e quebraria o build ao publicar o nono. Corrigido para mínimo. O
+  acervo foi a 15 cases, com campo `discontinued` para trabalho de cliente fora do ar.
 - 2026-08-09: `case-content` concluída. Oito cases no ar, dois por bloco.
   `portfoliosnap.app` respondeu 525; o segundo case de `ai-product` é
   `mousai.gallery`, e o rótulo do bloco passou a "Produtos SaaS" para não
@@ -183,7 +206,8 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
   `us-east5`. O Firestore de F7 fica co-locado em `us-east4`.
 - 2026-08-08: Deploy a partir do fonte local (`alwaysDeployFromSource`), não de
   repositório GitHub conectado. Conectar o GitHub fica recomendado antes do cutover da
-  sprint 6, para rastrear qual commit está servindo.
+  sprint 6, para rastrear qual commit está servindo. **Superada em 2026-08-09**, quando o
+  repositório foi conectado e o rollout virou automático.
 - 2026-08-08: Specs e planos gerados até a fronteira do spike (sprints 1 a 4). As
   quatro features de sprint 4b em diante ficam sem spec até o ADR
   `docs/adr/001-hosting-platform.md` existir, porque plano A e plano B produzem
