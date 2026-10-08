@@ -165,6 +165,61 @@ Decisões levantadas e resolvidas na rodada de grilling (teste de pressão antes
 | 11 | Imagens reais futuras | Arte sempre no card e no topo; imagens no corpo | A série não quebra |
 | 12 | `ProjectCard` e `BlockSection` mortos | Substituídos e removidos | Código morto com link para rota legada |
 
+## Emenda 2026-10-08 (ajustes do autor após ver a feature no ar local)
+
+Visto no navegador, o portfólio repetia o mesmo desenho sete vezes: os sete cases são do
+bloco `professional`, e o motivo era escolhido pelo bloco. O grid também não funcionou para
+o portfólio, que é trabalho de cliente e pede contexto (resumo, stack, situação) ao lado da
+arte. O autor decidiu:
+
+| Decisão anterior | Nova decisão |
+|---|---|
+| Um motivo por bloco (REQ-003) | Um motivo por **tipo de produto**, declarado no frontmatter (`art`), com o bloco como fallback |
+| Card mínimo em `/portfolio` e `/lab` (REQ-006) | `/portfolio` em **linhas**, um case por linha, arte à esquerda e título, data, resumo, stack e situação à direita; `/lab` continua em grid, com as **tags de stack** no card |
+| Container de 48rem | **62,5rem (1000px)**, para as linhas do portfólio e o grid do lab respirarem |
+
+### Requisitos emendados
+
+- [REQ-003] QUANDO um case declara `art` ENTÃO o sistema DEVE desenhar aquele motivo; QUANDO não declara ENTÃO o sistema DEVE usar o motivo padrão do bloco (`ai-tooling` órbita, `ai-product` onda, `systems-cli` terminal, `professional` fluxo). Os parâmetros continuam derivados do slug.
+- [REQ-006] QUANDO `/portfolio` renderiza ENTÃO o sistema DEVE exibir uma linha por case, cada uma um único link para a rota real, com a arte em 16:9 à esquerda e, à direita, título, data, resumo, até quatro tecnologias e a situação (Descontinuado, Confidencial). QUANDO `/lab` renderiza ENTÃO o sistema DEVE exibir o grid de cards com arte, título, data e até quatro tecnologias.
+- [REQ-018] QUANDO o schema de projeto é validado ENTÃO o sistema DEVE aceitar `art` apenas entre os motivos conhecidos e falhar o build para qualquer outro valor.
+- [REQ-019] QUANDO o conteúdo é publicado ENTÃO todo case DEVE declarar `art`, para a escolha do desenho ser curadoria e não acaso.
+
+### Motivo por case
+
+| Case | `art` | Desenho |
+|---|---|---|
+| financial-normalization | `flow` | dados dispersos convergindo num pipeline |
+| data-insights-platform | `chart` | barras e linha de tendência |
+| atelie-eh-pique | `storefront` | vitrine em grade de produtos |
+| seu-atelie-aqui | `map` | pontos num mapa e raio de alcance |
+| abracce, sudadhara | `wireframe` | blocos de layout de página (variam pelo slug) |
+| encantos-brincantes | `play` | formas geométricas soltas |
+| forja | `panels` | painéis lado a lado, um por CLI |
+| amnesia-claude-code | `orbit` | memória orbitando um núcleo |
+| hypr-switcher | `windows` | janelas sobrepostas, uma em foco |
+| tumodori | `timer` | anel de progresso com marcações |
+| bragstack | `ascent` | degraus subindo |
+| mousai | `mosaic` | mosaico de blocos de tamanhos variados |
+| portfoliosnap | `timeline` | eventos ao longo de uma linha do tempo |
+| croonos | `gantt` | barras de cronograma escalonadas |
+
+## Emenda 2026-10-08, segunda rodada
+
+O autor pediu o efeito de ponteiro na página inteira, em todas as páginas, e não só no
+container das listagens e da faixa do case. Isso reverte duas decisões: o REQ-009 limitava o
+efeito ao grid e à faixa, e o REQ-012 limitava o script a `/portfolio`, `/lab` e cases.
+
+- [REQ-009] QUANDO o ponteiro (`pointer: fine`) se move em qualquer página ENTÃO o sistema DEVE acender os pontos de uma grade fixa na viewport próximos ao cursor. A grade é um pseudo-elemento `position: fixed` do `<body>` (`[data-pointer-field]`), atrás de todo o conteúdo, e o script escreve as coordenadas da viewport sem deslocamento.
+- [REQ-012] QUANDO o build termina ENTÃO o sistema DEVE reprovar qualquer script executável que não seja o efeito de ponteiro, ou o efeito acima de 1,5 KB gzip. A restrição de rotas deixa de existir.
+- O `<body>` não recebe `class` (portão `global-tags`): o campo é marcado por atributo, e o CSS usa `[data-pointer-field]`. O componente `PointerField` passou a só carregar o script, sem wrapper, para as bordas do cabeçalho e do rodapé continuarem indo até a borda da viewport (portão `base-layout`).
+
+Na mesma rodada, fora do escopo da arte e registrado aqui por ter vindo junto: as páginas
+`/portfolio`, `/lab`, `/posts`, `/posts/arquivo`, `/posts/arquivo/<ano>`, `/contato` e `/404`
+deixaram de repetir o nome da página como título. Todas abrem como `/sobre`, com o nome no
+sobrescrito (com a contagem, nas listagens), um h1 que afirma algo e uma descrição em destaque
+(`PageHeader`).
+
 ## Requirement Traceability
 
 | ID | Descrição | Prioridade | Status |
