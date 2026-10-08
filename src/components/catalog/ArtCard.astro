@@ -1,0 +1,25 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  stamp: string;
+  /** Markup from generateArt; decorative, hidden from assistive technology. */
+  art: string;
+}
+
+const { href, title, stamp, art } = Astro.props;
+---
+
+<a
+  href={href}
+  data-art
+  class="group flex flex-col overflow-hidden rounded-md border border-border-strong bg-surface transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <div class="aspect-video w-full bg-background" set:html={art} />
+  <span class="flex items-baseline justify-between gap-md p-md">
+    <span class="font-serif text-h3 text-foreground transition-colors group-hover:text-primary">
+      {title}
+    </span>
+    <span class="font-mono text-small text-muted-foreground">{stamp}</span>
+  </span>
+</a>
