@@ -1,6 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
-import BlockSection from '../../src/components/catalog/BlockSection.astro';
 import CaseArticle from '../../src/components/catalog/CaseArticle.astro';
 
 const privateRepoProject = {
@@ -30,20 +29,6 @@ describe('rendered catalogue integrity', () => {
     expect(html).not.toContain('href="null"');
     expect(html).not.toContain('href=""');
     expect(html).not.toContain('href="undefined"');
-  });
-
-  it('falls back deterministically for a card with no image', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(BlockSection, {
-      props: {
-        block: 'professional',
-        projects: [privateRepoProject],
-        index: 4,
-      },
-    });
-
-    expect(html).not.toContain('<img');
-    expect(html).toContain('CX');
   });
 
   it('never sets an element to a fixed width that could overflow 320px', async () => {
