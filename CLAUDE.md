@@ -136,7 +136,7 @@ código.**
 |---|---|---|
 | Contraste | `tests/design-system/contrast.test.ts` | Par de cor abaixo de 4,5:1 |
 | Literal fora da escala | `tests/design-system/no-ad-hoc-values.test.ts` | Hex solto e valor arbitrário do Tailwind em `src/` |
-| Zero JavaScript de cliente | `tests/design-system/no-client-js.test.ts` | Ilha acidental nas rotas P0 |
+| JavaScript de cliente sob lista de permissão | `tests/design-system/no-client-js.build-test.ts` | Script fora do efeito de ponteiro, acima de 1,5 KB gzip ou fora de /portfolio, /lab e cases |
 | Fonte única | `tests/content/single-source.test.ts` | `getCollection` fora da camada de acesso |
 | Schema quebra o build | `scripts/verify-schema-gate.sh` | Conteúdo inválido chegando em produção |
 | CTA primário único | `tests/home/single-primary-cta.test.ts` | Segundo botão de peso igual na home |
@@ -147,7 +147,7 @@ portão que nunca falhou não é portão.
 
 ## Restrições que não são preferência
 
-- **Zero JavaScript de cliente no P0.** Nenhuma diretiva `client:*`. A primeira ilha interativa é o filtro do catálogo (F11), que é v1.2.
+- **JavaScript de cliente só por exceção nomeada.** O único script é o efeito de ponteiro de generative-case-art (até 1,5 KB gzip, só em /portfolio, /lab e cases), autorizado pelo autor em 2026-10-07. Qualquer outro exige decisão registrada e passa pelo portão. Nenhuma diretiva `client:*`.
 - **O token `border` (`#262626`) reprova WCAG AA**, com 1,31:1 sobre o fundo. Serve como separador decorativo e **nunca** como único delimitador de alvo interativo ou meio de transmitir informação. Contorno que precisa ser percebido usa `border-strong` ou `primary`.
 - **Nenhum número sem narrativa.** `StatItem` lança se receber `value` sem `context`. Cerca de 700 das 964 estrelas do GitHub vêm de temas Jekyll de 2018, e exibir o agregado sem contexto seria enganoso (RISK-004).
 - **Todo case precisa de ao menos um link.** `repoUrl` e `liveUrl` não podem ser ambos nulos: um case sem link não tem evidência verificável, e o schema falha o build.

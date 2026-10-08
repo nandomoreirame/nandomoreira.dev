@@ -21,6 +21,10 @@ próprio documento.
 
 ## Goals
 
+> **Revogação parcial (2026-10-07):** "substituir o grid de cards por listagem em linha"
+> deixou de valer em `/portfolio` e `/lab`, que passaram a grid de cards com arte gerada
+> (`docs/specs/generative-case-art/SPEC.md`). A home continua em linhas.
+
 - Adotar a estrutura e a linguagem de composição do tema, mantendo paleta e tipografia atuais.
 - Substituir o grid de cards por listagem em linha nas três listagens do site.
 - Separar portfólio de laboratório sem tocar no schema nem recadastrar conteúdo.

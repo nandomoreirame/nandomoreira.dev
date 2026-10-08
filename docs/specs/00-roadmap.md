@@ -116,6 +116,7 @@ Atualizado em 2026-08-08.
 | `theme-restyle` | — | `theme-restyle/SPEC.md` | `2026-08-09-theme-restyle.md` | **Concluída** |
 | `notes` | F14 | `notes/SPEC.md` | `2026-08-09-notes.md` | **Concluída**, depois sucedida por `blog-migration` |
 | `blog-migration` | F14 | `blog-migration/SPEC.md` | `2026-08-09-blog-migration.md` | **Concluída** (40 posts importados, `/posts` + arquivo por ano; revoga REQ-002 de `notes`) |
+| `generative-case-art` | — | `generative-case-art/SPEC.md` | `2026-10-07-generative-case-art.md` | **Concluída** |
 | `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `hire-endpoint` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
@@ -160,6 +161,11 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-10-07: generative-case-art revoga duas decisões, por escolha do autor. Grid de
+  cards volta a /portfolio e /lab (contra o theme-restyle), justificado pela arte gerada
+  por case, que não é o card genérico que o restyle combatia. "Zero JS no P0" ganha uma
+  exceção nomeada, o efeito de ponteiro, sob portão de lista de permissão e orçamento de
+  1,5 KB gzip.
 - 2026-08-09: **Repositório GitHub conectado ao backend do App Hosting.** O rollout
   deixou de ser manual: `rolloutPolicy` é `{"codebaseBranch": "main"}` e push em `main`
   dispara build e rollout em cerca de 3 minutos. Isso antecipa a recomendação que estava
