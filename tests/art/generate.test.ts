@@ -1,8 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { BLOCKS } from '../../src/content/blocks';
-import { ELEMENT_BUDGET, generateArt, heroCount, type ArtAspect } from '../../src/lib/art';
+import { BLOCKS, type Block } from '../../src/content/blocks';
+import {
+  ELEMENT_BUDGET,
+  generateArt,
+  heroCount,
+  heroIndexes,
+  type ArtAspect,
+} from '../../src/lib/art';
+import { flow, orbit, terminal, wave, type Shape } from '../../src/lib/art/motifs';
+import { createRandom, hashString } from '../../src/lib/art/random';
 
 const ASPECTS: ArtAspect[] = ['card', 'banner'];
+const FRAMES: Record<ArtAspect, { width: number; height: number }> = {
+  card: { width: 160, height: 90 },
+  banner: { width: 210, height: 90 },
+};
+const MOTIFS: Record<Block, (random: () => number, frame: { width: number; height: number }) => Shape[]> = {
+  'ai-tooling': orbit,
+  'ai-product': wave,
+  'systems-cli': terminal,
+  professional: flow,
+};
 const shapesOf = (svg: string) => svg.match(/<(circle|line|rect)\b/g) ?? [];
 const heroesOf = (svg: string) => svg.match(/class="art-hero\b/g) ?? [];
 
@@ -68,4 +86,39 @@ describe('heroCount', () => {
     expect(heroCount(total)).toBeGreaterThanOrEqual(Math.ceil(total * 0.1));
     expect(heroCount(total)).toBeLessThanOrEqual(Math.floor(total * 0.2));
   });
+});
+
+describe('heroIndexes', () => {
+  it('never selects a shape whose weight is zero or less', () => {
+    const shapes: Shape[] = Array.from({ length: 20 }, (_, index) =>
+      index < 2
+        ? ({ kind: 'dot', x: index, y: 0, r: 1, layer: 2, weight: 1 - index * 0.2 } as Shape)
+        : ({ kind: 'dot', x: index, y: 0, r: 1, layer: 0, weight: 0 } as Shape),
+    );
+    // heroCount(20) is 3; only two shapes have weight > 0, so zeros must stay out.
+    expect(heroCount(shapes.length)).toBeGreaterThan(2);
+    const heroes = heroIndexes(shapes);
+    for (const index of heroes) {
+      expect(shapes[index].weight).toBeGreaterThan(0);
+    }
+    expect(heroes.size).toBe(2);
+  });
+});
+
+describe('motif hero signal', () => {
+  it.each(cases)(
+    'gives $block/$aspect enough positive-weight shapes for the amber quota',
+    ({ block, aspect }) => {
+      const frame = FRAMES[aspect];
+      const draw = MOTIFS[block];
+      for (let i = 0; i < 50; i += 1) {
+        const shapes = draw(createRandom(hashString(`${block}:slug-${i}`)), frame).slice(
+          0,
+          ELEMENT_BUDGET[aspect],
+        );
+        const positive = shapes.filter((shape) => shape.weight > 0).length;
+        expect(positive).toBeGreaterThanOrEqual(heroCount(shapes.length));
+      }
+    },
+  );
 });

@@ -82,8 +82,9 @@ export const wave: Motif = (random, { width, height }) => {
         y: baseline + s * amplitude,
         r: index === 0 ? 1.3 : 0.9,
         layer,
-        // y grows downwards, so a visual crest is a negative sine.
-        weight: index === 0 ? Math.max(0, -s) : 0,
+        // y grows downwards, so a visual crest is a negative sine. Floor keeps
+        // every primary-wave dot eligible so the amber quota is pure signal.
+        weight: index === 0 ? Math.max(0.05, -s) : 0,
       });
     }
   }
@@ -138,10 +139,14 @@ export const flow: Motif = (random, { width, height }) => {
   };
   const sources = intBetween(random, 18, 30);
 
+  const maxDistance = Math.hypot(width, height);
   for (let i = 0; i < sources; i += 1) {
     const x = between(random, width * 0.04, width * 0.38);
     const y = between(random, height * 0.08, height * 0.92);
-    shapes.push({ kind: 'dot', x, y, r: between(random, 0.6, 1.4), layer: 1, weight: 0 });
+    const distance = Math.hypot(x - hub.x, y - hub.y);
+    // Closer sources rank higher for amber; lines stay noise (weight 0).
+    const weight = 0.5 * (1 - distance / maxDistance);
+    shapes.push({ kind: 'dot', x, y, r: between(random, 0.6, 1.4), layer: 1, weight });
     shapes.push({ kind: 'line', x1: x, y1: y, x2: hub.x, y2: hub.y, layer: 0, weight: 0 });
   }
 

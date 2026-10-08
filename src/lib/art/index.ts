@@ -24,10 +24,11 @@ const MOTIFS: Record<Block, { name: string; draw: Motif }> = {
 export const heroCount = (total: number): number =>
   Math.min(Math.floor(total * 0.2), Math.max(Math.ceil(total * 0.1), Math.round(total * 0.15)));
 
-const heroIndexes = (shapes: Shape[]): Set<number> =>
+export const heroIndexes = (shapes: Shape[]): Set<number> =>
   new Set(
     shapes
       .map((shape, index) => ({ weight: shape.weight, index }))
+      .filter(({ weight }) => weight > 0)
       .sort((a, b) => b.weight - a.weight || a.index - b.index)
       .slice(0, heroCount(shapes.length))
       .map(({ index }) => index),
