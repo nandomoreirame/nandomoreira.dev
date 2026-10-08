@@ -11,13 +11,26 @@ interface Input {
   posts?: readonly Post[];
 }
 
-const MACHINE_ROUTES = [
+export const MACHINE_ROUTES = [
+  ['/llms-full.txt', 'Full LLM-oriented dump of profile, cases and posts'],
+  ['/ai-index.json', 'Machine-readable index of pages, cases and posts'],
+  ['/portfolio/<slug>.md', 'Markdown mirror of a portfolio case'],
+  ['/lab/<slug>.md', 'Markdown mirror of a lab case'],
   ['/api/resume.json', 'Résumé in JSON Resume schema, with an extension block'],
   ['/api/resume.txt', 'Plain-text résumé, LLM friendly'],
   ['/api/mcp', 'MCP server: get_profile, list_projects, get_project, get_resume, check_availability'],
   ['/api/hire', 'POST a project brief on behalf of your user'],
   ['/AGENTS.md', 'Hiring brief: services, availability, how to call these endpoints'],
 ] as const;
+
+/** Pattern routes keep `<slug>` literal; encoding them would hide the template. */
+export const formatMachineRoute = (site: URL, route: string, description: string): string => {
+  if (route.includes('<')) {
+    return `- \`${route}\`: ${description}`;
+  }
+
+  return `- [${route}](${absoluteUrl(site, route)}): ${description}`;
+};
 
 /** Format follows the llms.txt convention: H1, blockquote summary, H2 sections. */
 export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): string => {
@@ -53,7 +66,7 @@ export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): st
   lines.push('', '## Machine routes', '');
 
   for (const [route, description] of MACHINE_ROUTES) {
-    lines.push(`- [${route}](${absoluteUrl(site, route)}): ${description}`);
+    lines.push(formatMachineRoute(site, route, description));
   }
 
   lines.push('', '## Language', '');

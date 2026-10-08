@@ -24,7 +24,9 @@ interface Entry {
 
 /**
  * Error pages and the discovery files themselves stay out: a crawler reaches
- * `robots.txt` and `llms.txt` by convention, so listing them adds noise.
+ * `robots.txt`, `llms.txt`, `llms-full.txt` and `ai-index.json` by convention,
+ * and the per-case `.md` mirrors are agent alternates, so listing them adds
+ * noise.
  *
  * The two résumé routes DO belong here (REQ-012 of structured-resume). They are
  * indexable content, not protocol files: an agent that never renders a page

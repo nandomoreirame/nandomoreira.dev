@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { Project } from '../../src/content/schemas/project';
 import { buildAgentsMd } from '../../src/lib/aeo/agents-md';
+import { buildAiIndex } from '../../src/lib/aeo/ai-index';
+import { buildCaseMarkdown } from '../../src/lib/aeo/case-markdown';
+import { buildLlmsFullTxt } from '../../src/lib/aeo/llms-full-txt';
 import { buildLlmsTxt } from '../../src/lib/aeo/llms-txt';
 import { buildResume } from '../../src/lib/aeo/resume';
 import { renderResumeText } from '../../src/lib/aeo/resume-txt';
@@ -48,6 +51,9 @@ const resume = () => buildResume({ site, profile, projects });
 
 const outputs = () => [
   buildLlmsTxt({ site, profile, projects }),
+  buildLlmsFullTxt({ site, profile, projects }),
+  JSON.stringify(buildAiIndex({ site, profile, projects })),
+  buildCaseMarkdown({ site, project: projects[0] }),
   buildAgentsMd({ site, profile }),
   buildRobotsTxt({ site }),
   buildSitemap({ site, projects }),

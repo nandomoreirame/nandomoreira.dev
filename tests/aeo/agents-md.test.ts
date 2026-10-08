@@ -43,6 +43,10 @@ describe('buildAgentsMd', () => {
   it('explains how to reach the endpoints', () => {
     const text = output();
 
+    expect(text).toContain('/llms-full.txt');
+    expect(text).toContain('/ai-index.json');
+    expect(text).toContain('/portfolio/<slug>.md');
+    expect(text).toContain('/lab/<slug>.md');
     expect(text).toContain('/api/hire');
     expect(text).toContain('/api/mcp');
   });

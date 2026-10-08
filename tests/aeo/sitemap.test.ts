@@ -49,7 +49,15 @@ describe('buildSitemap', () => {
   it('excludes error pages and the discovery files themselves', () => {
     const xml = output();
 
-    for (const excluded of ['/llms.txt', '/AGENTS.md', '/robots.txt', '/404']) {
+    for (const excluded of [
+      '/llms.txt',
+      '/llms-full.txt',
+      '/ai-index.json',
+      '/AGENTS.md',
+      '/robots.txt',
+      '/404',
+      '.md',
+    ]) {
       expect(xml).not.toContain(excluded);
     }
   });

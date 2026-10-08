@@ -49,11 +49,23 @@ check() {
 }
 
 check "/llms.txt"         "text/plain"        "## Machine routes"
+check "/llms-full.txt"    "text/plain"        "## Projects"
+check "/ai-index.json"    "application/json"  '"machineRoutes"'
+check "/portfolio/financial-normalization.md" "text/markdown" "## Problema"
+check "/lab/forja.md"     "text/markdown"     "## Problema"
 check "/AGENTS.md"        "text/markdown"     "## Availability"
 check "/robots.txt"       "text/plain"        "Sitemap: https://"
 check "/sitemap.xml"      "application/xml"   "<urlset"
 check "/api/resume.json"  "application/json"  '"basics"'
 check "/api/resume.txt"   "text/plain"        "AVAILABILITY"
+
+echo "== cross-collection case markdown answers 404 =="
+status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}/lab/financial-normalization.md")
+if [ "$status" != "404" ]; then
+  echo "FAIL: /lab/financial-normalization.md answered ${status}, expected 404" >&2
+  exit 1
+fi
+echo "OK /lab/financial-normalization.md → 404"
 
 echo "== sitemap is well-formed XML =="
 curl -s "${BASE}/sitemap.xml" | python3 -c "import sys,xml.dom.minidom as m; m.parseString(sys.stdin.read())"
@@ -82,8 +94,29 @@ for route in "/api/resume.json" "/api/resume.txt"; do
 done
 
 # REQ-007/REQ-009 against what is actually served, not against the source.
-echo "== the resume routes leak neither an e-mail nor a confidential client =="
-for route in "/api/resume.json" "/api/resume.txt"; do
+# Employer names (e.g. Liquid AI) are public; only clientName on confidential
+# cases is forbidden. Same source the unit leak gate reads.
+echo "== the resume and AEO routes leak neither an e-mail nor a confidential client =="
+CONFIDENTIAL_CLIENTS=$(python3 - <<'PY'
+from pathlib import Path
+import re
+names = []
+for path in Path("src/content/projects").glob("*.md"):
+    source = path.read_text()
+    frontmatter = source.split("---", 2)
+    if len(frontmatter) < 2:
+        continue
+    fm = frontmatter[1]
+    if not re.search(r"^confidential:\s*true\s*$", fm, re.M):
+        continue
+    match = re.search(r"^clientName:\s*[\"']?(.+?)[\"']?\s*$", fm, re.M)
+    if match:
+        names.append(match.group(1).strip())
+print("\n".join(names))
+PY
+)
+
+for route in "/api/resume.json" "/api/resume.txt" "/llms-full.txt" "/ai-index.json" "/portfolio/financial-normalization.md" "/lab/forja.md"; do
   body=$(curl -s "${BASE}${route}")
 
   if printf '%s' "$body" | grep -qE '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'; then
@@ -91,9 +124,16 @@ for route in "/api/resume.json" "/api/resume.txt"; do
     exit 1
   fi
 
-  if printf '%s' "$body" | grep -qiE '\bliquid\b'; then
-    echo "FAIL: ${route} names a confidential client" >&2
-    exit 1
+  if [ -n "$CONFIDENTIAL_CLIENTS" ]; then
+    while IFS= read -r client; do
+      [ -z "$client" ] && continue
+      if printf '%s' "$body" | grep -qiF -- "$client"; then
+        echo "FAIL: ${route} names confidential client '${client}'" >&2
+        exit 1
+      fi
+    done <<EOF
+$CONFIDENTIAL_CLIENTS
+EOF
   fi
 
   echo "OK ${route} carries no e-mail and no confidential client"

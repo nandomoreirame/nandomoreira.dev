@@ -3,6 +3,10 @@ import { describe, expect, it } from 'vitest';
 
 const ROUTES = [
   { file: 'src/pages/llms.txt.ts', contentType: 'text/plain' },
+  { file: 'src/pages/llms-full.txt.ts', contentType: 'text/plain' },
+  { file: 'src/pages/ai-index.json.ts', contentType: 'application/json' },
+  { file: 'src/pages/portfolio/[slug].md.ts', contentType: 'text/markdown' },
+  { file: 'src/pages/lab/[slug].md.ts', contentType: 'text/markdown' },
   { file: 'src/pages/AGENTS.md.ts', contentType: 'text/markdown' },
   { file: 'src/pages/robots.txt.ts', contentType: 'text/plain' },
   { file: 'src/pages/sitemap.xml.ts', contentType: 'application/xml' },

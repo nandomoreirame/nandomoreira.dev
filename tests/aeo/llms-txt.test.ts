@@ -49,7 +49,16 @@ describe('buildLlmsTxt', () => {
   it('lists the machine routes so an agent can find them', () => {
     const text = output();
 
-    for (const route of ['/api/resume.json', '/api/resume.txt', '/api/mcp', '/api/hire']) {
+    for (const route of [
+      '/llms-full.txt',
+      '/ai-index.json',
+      '/portfolio/<slug>.md',
+      '/lab/<slug>.md',
+      '/api/resume.json',
+      '/api/resume.txt',
+      '/api/mcp',
+      '/api/hire',
+    ]) {
       expect(text).toContain(route);
     }
   });
