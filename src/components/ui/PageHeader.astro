@@ -1,0 +1,20 @@
+---
+interface Props {
+  /** The page name, small: the nav already says where you are. */
+  eyebrow: string;
+  /** What the page is about, in the only h1. Never the page name again. */
+  title: string;
+  /** The lead under the title. */
+  description: string;
+}
+
+const { eyebrow, title, description } = Astro.props;
+---
+
+{/* Same opening as /sobre: eyebrow, then the claim, then the lead. No rule
+    under the eyebrow: two horizontal lines that close read as a box. */}
+<header class="mt-2xl mb-xl">
+  <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">{eyebrow}</p>
+  <h1 class="mt-sm text-display font-semibold text-balance text-foreground">{title}</h1>
+  <p data-page-lead class="mt-md max-w-[68ch] text-h3 text-muted-foreground">{description}</p>
+</header>

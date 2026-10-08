@@ -1,6 +1,6 @@
 ---
 import ListRow from '../../../components/ui/ListRow.astro';
-import SectionHeader from '../../../components/ui/SectionHeader.astro';
+import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getArchivedPostsByYear, getArchiveYears } from '../../../lib/content';
 import { toCompactStamp } from '../../../lib/format/date';
@@ -39,9 +39,11 @@ const posts = await getArchivedPostsByYear(year);
     </a>
   </nav>
 
-  <h1 class="mt-xl mb-xl text-h1 font-semibold text-foreground">{year}</h1>
-
-  <SectionHeader title="Textos" level={2} count={posts.length} />
+  <PageHeader
+    eyebrow="Arquivo"
+    title={`Textos de ${year}`}
+    description={`${posts.length === 1 ? 'Um texto publicado' : `${posts.length} textos publicados`} em ${year}, mantidos como registro com a data à vista.`}
+  />
 
   <ul class="mb-3xl list-none p-0">
     {

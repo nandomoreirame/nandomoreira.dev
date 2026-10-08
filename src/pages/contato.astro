@@ -1,6 +1,6 @@
 ---
 import Button from '../components/ui/Button.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getProfile } from '../lib/content';
 
@@ -16,16 +16,12 @@ const labelClass = 'mb-sm block font-mono text-small text-muted-foreground';
   title={`Contato | ${profile.name}`}
   description="Fale comigo sobre um projeto, uma dúvida ou uma proposta."
 >
-  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
-    <SectionHeader
-      title="Contato"
-      level={2}
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader
+      eyebrow="Contato"
+      title="Vamos conversar"
       description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
     />
-
-    <h1 class="font-serif text-display font-semibold text-foreground">
-      Vamos conversar
-    </h1>
 
     {/* The form is not wired to anything yet. It is laid out in full so the
         shape can be reviewed, with the submit control disabled and the reason

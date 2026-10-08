@@ -1,19 +1,24 @@
 ---
 import ListRow from '../../../components/ui/ListRow.astro';
-import SectionHeader from '../../../components/ui/SectionHeader.astro';
+import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getArchiveYears } from '../../../lib/content';
 
 const years = await getArchiveYears();
+const span = years.map((year) => Number(year.year)).sort((a, b) => a - b);
+const title =
+  span.length > 1 ? `Textos de ${span[0]} a ${span[span.length - 1]}` : 'Textos arquivados';
 ---
 
 <BaseLayout
   title="Arquivo | nandomoreira.dev"
   description="Textos arquivados, agrupados por ano de publicação."
 >
-  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">Arquivo</h1>
-
-  <SectionHeader title="Anos" level={2} count={years.length} />
+  <PageHeader
+    eyebrow="Arquivo"
+    title={title}
+    description="Tutoriais da época em que eu escrevia sobre front-end, Sass, Gulp e WordPress. Ficam aqui como registro, com a data à vista, porque parte do que ensinam envelheceu."
+  />
 
   {
     years.length === 0 ? (

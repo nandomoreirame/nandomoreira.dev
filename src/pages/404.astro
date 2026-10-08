@@ -1,4 +1,5 @@
 ---
+import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 Astro.response.status = 404;
@@ -9,11 +10,10 @@ Astro.response.status = 404;
   description="A página solicitada não existe."
   noindex
 >
-  <h1 class="mt-2xl mb-md text-h1 font-semibold text-foreground">
-    Página não encontrada
-  </h1>
-  <p class="mb-lg text-body text-muted-foreground">
-    O endereço acessado não corresponde a nenhuma página deste site.
-  </p>
-  <a href="/projetos" class="text-body text-primary underline">Ver todos os projetos</a>
+  <PageHeader
+    eyebrow="Erro 404"
+    title="Página não encontrada"
+    description="O endereço acessado não corresponde a nenhuma página deste site."
+  />
+  <a href="/portfolio" class="text-body text-primary underline">Ver o portfólio</a>
 </BaseLayout>

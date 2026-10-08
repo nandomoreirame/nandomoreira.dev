@@ -1,6 +1,6 @@
 ---
 import ListRow from '../../components/ui/ListRow.astro';
-import SectionHeader from '../../components/ui/SectionHeader.astro';
+import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCurrentPosts } from '../../lib/content';
 import { toCompactStamp } from '../../lib/format/date';
@@ -12,9 +12,11 @@ const posts = await getCurrentPosts();
   title="Posts | nandomoreira.dev"
   description="Textos correntes sobre engenharia, tooling e agentes."
 >
-  <h1 class="mt-2xl mb-xl text-h1 font-semibold text-foreground">Posts</h1>
-
-  <SectionHeader title="Correntes" level={2} count={posts.length} />
+  <PageHeader
+    eyebrow="Posts"
+    title="O que aprendi construindo"
+    description="Textos práticos sobre desenvolvimento, ferramentas e fluxo de trabalho. Os textos de 2015 a 2019 ficam no arquivo, organizados por ano."
+  />
 
   {
     posts.length === 0 ? (
