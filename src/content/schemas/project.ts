@@ -84,6 +84,11 @@ export const projectSchema = z
         'A confidential case must not identify the client in slug, liveUrl or repoUrl: those fields cannot be redacted without breaking the case',
       path: ['slug'],
     },
-  );
+  )
+  .refine((project) => project.slug !== 'ia', {
+    message:
+      'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a case cannot claim that segment',
+    path: ['slug'],
+  });
 
 export type Project = z.infer<typeof projectSchema>;
