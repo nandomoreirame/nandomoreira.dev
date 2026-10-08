@@ -1,12 +1,28 @@
 ---
+import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
 import Prose from '../components/ui/Prose.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import StatItem from '../components/ui/StatItem.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getProfile } from '../lib/content';
+import { careerStartYear, formatPeriod } from '../lib/about/period';
+import { collectionOfBlock } from '../lib/catalog/groups';
+import { getAllProjects, getProfile } from '../lib/content';
 
-const profile = await getProfile();
+const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
 const email = profile.contacts.find((contact) => contact.kind === 'email');
+const profiles = profile.contacts.filter(
+  (contact) => contact.kind === 'github' || contact.kind === 'linkedin',
+);
+const PROFILE_LABELS = { github: 'GitHub', linkedin: 'LinkedIn' } as const;
+const since = careerStartYear(profile.work);
+
+// Real route of the proving case, not the legacy /projetos path that 301s.
+const caseHref = (slug: string): string | undefined => {
+  const project = projects.find((candidate) => candidate.slug === slug);
+  return project ? `/${collectionOfBlock(project.block)}/${slug}` : undefined;
+};
 ---
 
 <BaseLayout
@@ -25,6 +41,14 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
       {profile.headline}
     </h1>
 
+    {
+      since && (
+        <p class="mt-md font-mono text-small uppercase tracking-eyebrow text-primary">
+          Construindo software desde {since}
+        </p>
+      )
+    }
+
     <div class="mt-lg">
       <Prose>
         <p>{profile.bio}</p>
@@ -32,7 +56,94 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
       </Prose>
     </div>
 
-    <section class="mt-xl" aria-labelledby="stack-heading">
+    <div class="mt-lg flex flex-wrap items-center gap-md">
+      {
+        email && (
+          <Button href={`mailto:${email.value}`} variant="primary">
+            Entrar em contato
+          </Button>
+        )
+      }
+      {
+        profiles.map((contact) => (
+          <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">
+            {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
+          </Button>
+        ))
+      }
+    </div>
+
+    <section id="resultados" class="mt-2xl" aria-labelledby="resultados-heading">
+      <SectionHeader
+        id="resultados-heading"
+        title="Resultados"
+        level={2}
+        description="O que mudou, medido nas operações em que trabalhei. O que é aproximado vem dito no contexto."
+      />
+      <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        {
+          profile.trajectory.map((stat) => (
+            <li class="rounded-md border border-border bg-surface p-lg">
+              <StatItem value={stat.value} label={stat.label} context={stat.context} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section id="frentes" class="mt-2xl" aria-labelledby="frentes-heading">
+      <SectionHeader
+        id="frentes-heading"
+        title="Como posso ajudar"
+        level={2}
+        description="Três frentes, cada uma com um case que a comprova."
+      />
+      <ul class="grid grid-cols-1 gap-lg lg:grid-cols-3">
+        {
+          profile.services.map((service) => {
+            const href = caseHref(service.caseSlug);
+            return (
+              <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
+                <h3 class="text-h3 font-semibold text-foreground">{service.title}</h3>
+                <p class="text-body text-muted-foreground">{service.description}</p>
+                {href && (
+                  <a
+                    href={href}
+                    class="mt-auto inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    Ver o case que comprova
+                  </a>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+
+    {profile.work && profile.work.length > 0 && <Experience work={profile.work} />}
+
+    {
+      profile.education && profile.education.length > 0 && (
+        <section id="formacao" class="mt-2xl" aria-labelledby="formacao-heading">
+          <SectionHeader id="formacao-heading" title="Formação" level={2} />
+          <ul class="flex flex-col gap-md">
+            {profile.education.map((entry) => (
+              <li class="grid grid-cols-1 gap-sm md:grid-cols-4 md:gap-lg">
+                <p class="font-mono text-small text-muted-foreground">
+                  {formatPeriod(entry.startDate, entry.endDate)}
+                </p>
+                <p class="text-body text-foreground md:col-span-3">
+                  {entry.studyType} em {entry.area}, {entry.institution}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="mt-2xl" aria-labelledby="stack-heading">
       <h2 id="stack-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
         Stack
       </h2>
@@ -44,15 +155,5 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
         ))}
       </ul>
     </section>
-
-    {
-      email && (
-        <div class="mt-xl">
-          <Button href={`mailto:${email.value}`} variant="primary">
-            Entrar em contato
-          </Button>
-        </div>
-      )
-    }
   </article>
 </BaseLayout>
