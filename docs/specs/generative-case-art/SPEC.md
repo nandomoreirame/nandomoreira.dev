@@ -2,7 +2,7 @@
 
 > **Roadmap:** fora das sprints do MVP, feature visual pós-lançamento
 > **PRD:** sem ID (derivada da identidade visual, como `theme-restyle`)
-> **Status:** aprovada
+> **Status:** implementada (2026-10-08)
 > **Criado:** 2026-10-07
 
 ## Problem Statement
@@ -169,20 +169,20 @@ Decisões levantadas e resolvidas na rodada de grilling (teste de pressão antes
 
 | ID | Descrição | Prioridade | Status |
 |----|-----------|------------|--------|
-| REQ-001 | SVG por função pura de `{ slug, block }` | P1 | Pending |
-| REQ-002 | Determinismo byte a byte | P1 | Pending |
-| REQ-003 | Um motivo por bloco, parâmetros do slug | P1 | Pending |
-| REQ-004 | Só tokens; `primary` em 10% a 20% | P1 | Pending |
-| REQ-005 | Arte decorativa | P1 | Pending |
-| REQ-006 | Grid de cards em `/portfolio` e `/lab` | P1 | Pending |
-| REQ-007 | Faixa 21:9 no topo do case | P1 | Pending |
-| REQ-008 | Sem JS, toque ou movimento reduzido: parada e completa | P1 | Pending |
-| REQ-009 | Grade de pontos que acende perto do cursor | P1 | Pending |
-| REQ-010 | Paralaxe por `--mx`, `--my`, `--depth` | P1 | Pending |
-| REQ-011 | Movimento contínuo só no topo | P1 | Pending |
-| REQ-012 | Portão de JS estendido: lista de permissão, 1,5 KB, rotas | P1 | Pending |
-| REQ-013 | Portão provado vermelho | P1 | Pending |
-| REQ-014 | Unicidade entre cases publicados | P2 | Pending |
-| REQ-015 | Teto de elementos | P2 | Pending |
-| REQ-016 | Remover código morto e registrar revogação | P2 | Pending |
-| REQ-017 | Efeito removível por um import | P3 | Pending |
+| REQ-001 | SVG por função pura de `{ slug, block }` | P1 | Done |
+| REQ-002 | Determinismo byte a byte | P1 | Done |
+| REQ-003 | Um motivo por bloco, parâmetros do slug | P1 | Done |
+| REQ-004 | Só tokens; `primary` em 10% a 20% | P1 | Done |
+| REQ-005 | Arte decorativa | P1 | Done |
+| REQ-006 | Grid de cards em `/portfolio` e `/lab` | P1 | Done |
+| REQ-007 | Faixa 21:9 no topo do case | P1 | Done |
+| REQ-008 | Sem JS, toque ou movimento reduzido: parada e completa | P1 | Done |
+| REQ-009 | Grade de pontos que acende perto do cursor | P1 | Done |
+| REQ-010 | Paralaxe por `--mx`, `--my`, `--depth` | P1 | Done |
+| REQ-011 | Movimento contínuo só no topo | P1 | Done |
+| REQ-012 | Portão de JS estendido: lista de permissão, 1,5 KB, rotas | P1 | Done |
+| REQ-013 | Portão provado vermelho | P1 | Done |
+| REQ-014 | Unicidade entre cases publicados | P2 | Done |
+| REQ-015 | Teto de elementos | P2 | Done |
+| REQ-016 | Remover código morto e registrar revogação | P2 | Done |
+| REQ-017 | Efeito removível por um import | P3 | Pending (não provado por remoção; ver STATE.md, Task 13) |
