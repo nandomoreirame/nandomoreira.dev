@@ -1,7 +1,9 @@
 ---
-import ListRow from '../ui/ListRow.astro';
+import ArtCard from './ArtCard.astro';
+import PointerField from '../art/PointerField.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
 import type { Project } from '../../content/schemas/project';
+import { generateArt } from '../../lib/art';
 import {
   COLLECTION_LABELS,
   blocksOf,
@@ -39,22 +41,20 @@ const label = COLLECTION_LABELS[collection];
         Nenhum case publicado nesta coleção ainda.
       </p>
     ) : (
-      <ul class="list-none p-0">
-        {items.map((project) => {
-          const dest = collectionOfBlock(project.block);
-          return (
+      <PointerField>
+        <ul class="grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
+          {items.map((project) => (
             <li>
-              <ListRow
-                href={`/${dest}/${project.slug}`}
+              <ArtCard
+                href={`/${collectionOfBlock(project.block)}/${project.slug}`}
                 title={project.title}
-                summary={project.summary}
-                markers={project.tech}
                 stamp={toCompactStamp(project.date)}
+                art={generateArt({ slug: project.slug, block: project.block, aspect: 'card' })}
               />
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      </PointerField>
     )
   }
 </section>

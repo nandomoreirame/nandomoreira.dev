@@ -30,16 +30,25 @@ const render = async (props: Record<string, unknown>) => {
 };
 
 describe('CollectionListing', () => {
-  it('lists rows, never cards', async () => {
+  it('lists a card per case, with its art, title and date, linking to the real route', async () => {
     const html = await render({
       collection: 'lab',
       projects: [project()],
     });
 
+    // Cards replaced rows here on purpose: docs/specs/generative-case-art
+    // revokes the theme-restyle "rows, never cards" rule for /portfolio and /lab.
     expect(html).toContain('href="/lab/forja"');
     expect(html).toContain('Forja');
     expect(html).toContain('01/2026');
-    expect(html).not.toContain('ProjectCard');
+    expect(html).toContain('data-motif="orbit"');
+    expect(html).toContain('data-art');
+  });
+
+  it('puts the grid inside the pointer field', async () => {
+    const html = await render({ collection: 'lab', projects: [project()] });
+    expect(html).toContain('data-pointer-field');
+    expect(html.indexOf('data-pointer-field')).toBeLessThan(html.indexOf('href="/lab/forja"'));
   });
 
   it('sorts from most recent to oldest', async () => {
