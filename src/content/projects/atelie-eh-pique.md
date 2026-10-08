@@ -2,7 +2,8 @@
 slug: atelie-eh-pique
 title: Ateliê éh Pique
 block: professional
-summary: Loja de artes digitais para máquinas de corte, com painel próprio
+art: storefront
+summary: "Loja de artes digitais para máquinas de corte, que tirou do atendimento manual a venda de cada arquivo. Vitrine e painel ficam separados, para a autora publicar sem depender de quem desenvolveu, e o painel roda num tema WordPress próprio em vez de uma plataforma de loja com mensalidade."
 problem: |
   Um ateliê de artes digitais para máquinas de corte vendia arquivo por
   atendimento manual, refazendo o mesmo envio a cada pedido.

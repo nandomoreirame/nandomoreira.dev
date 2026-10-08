@@ -2,7 +2,8 @@
 slug: seu-atelie-aqui
 title: Seu Ateliê Aqui
 block: professional
-summary: Plataforma de anúncio de ateliês por proximidade geográfica
+art: map
+summary: "Plataforma de anúncio de ateliês por proximidade geográfica, para quem procura um ateliê perto de casa e para quem hoje depende de grupo de mensagem para ser encontrado. A busca por distância é o eixo da navegação, e não um filtro secundário, porque é ela que decide a escolha nesse mercado."
 problem: |
   Quem procura um ateliê perto de casa não tem onde buscar por localização, e
   quem anuncia depende de grupo de mensagem para ser encontrado.

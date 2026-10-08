@@ -2,7 +2,8 @@
 slug: abracce
 title: ABRACCE
 block: professional
-summary: Site institucional de organização sem fins lucrativos, em React Router
+art: wireframe
+summary: "Site institucional de uma organização sem fins lucrativos, feito para explicar a causa e receber apoio sem depender de rede social alheia. Construído em React Router no modo full-stack, para a mesma base servir as páginas de hoje e uma área autenticada no futuro, sem trocar de stack no caminho."
 problem: |
   Uma organização sem fins lucrativos precisava de presença própria para
   explicar a causa e receber apoio, sem depender de rede social alheia.

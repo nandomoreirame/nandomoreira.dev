@@ -2,7 +2,8 @@
 slug: encantos-brincantes
 title: Encantos Brincantes
 block: professional
-summary: Site de recursos lúdicos para educação infantil, em Svelte
+art: play
+summary: "Vitrine de recursos lúdicos para educação infantil, que levou para a web uma venda que dependia de mensagem direta. Feita em Svelte com renderização estática, porque o conteúdo muda por lote e não por visita, o que mantém a hospedagem perto de custo zero. No ar em encantosbrincantes.com.br."
 problem: |
   Uma especialista em educação infantil vendia recursos lúdicos por mensagem
   direta, sem vitrine própria, o que limitava o alcance ao contato pessoal.

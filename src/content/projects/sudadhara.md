@@ -2,7 +2,8 @@
 slug: sudadhara
 title: Sudadhara
 block: professional
-summary: Site institucional para consultório de terapia, com contato direto
+art: wireframe
+summary: "Site institucional de uma terapeuta autônoma, que explica o método antes do primeiro contato em vez de deixar toda a explicação para a conversa inicial. Página única, com o contato direto logo depois do método e sem formulário nem agenda integrada, porque o volume de atendimentos não justificava a manutenção."
 problem: |
   Uma terapeuta autônoma dependia de indicação boca a boca e não tinha onde
   explicar o método antes do primeiro contato, o que jogava toda a explicação

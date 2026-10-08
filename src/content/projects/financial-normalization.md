@@ -2,7 +2,8 @@
 slug: financial-normalization
 title: Normalização de dados financeiros
 block: professional
-summary: Serviço que normaliza dados financeiros heterogêneos de incorporadoras
+art: flow
+summary: "Serviço que normaliza os dados financeiros heterogêneos das incorporadoras atendidas pela Liquid AI, mais de 20 bases ativas. A regra de cada incorporadora entra como adaptador numa arquitetura hexagonal, e não como desvio no núcleo. Reduziu de cerca de cinco dias para até 30 minutos o preparo de uma base, protegido por mais de 4.800 casos de teste."
 problem: |
   Cada incorporadora entrega dado financeiro num formato próprio, e a
   normalização manual não acompanha o número de bases ativas.
