@@ -83,8 +83,8 @@ describe('client JavaScript', () => {
     expect(scriptViolations(pages)).toEqual([]);
   });
 
-  it('actually ships the effect on the listings, so the gate is not vacuous', async () => {
-    const { scripts } = await served('/lab');
+  it.each(['/', '/lab', '/sobre'])('actually ships the effect on %s, so the gate is not vacuous', async (route) => {
+    const { scripts } = await served(route);
     expect(scripts.some((script) => script.includes(POINTER_MARKER))).toBe(true);
   });
 

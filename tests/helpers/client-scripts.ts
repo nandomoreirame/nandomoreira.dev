@@ -8,8 +8,6 @@ export interface PageScripts {
 export const POINTER_MARKER = 'data-pointer-field';
 export const POINTER_BUDGET_BYTES = 1536;
 
-const ALLOWED_ROUTE = /^\/(portfolio|lab)(\/[a-z0-9-]+)?\/?$/;
-
 /**
  * Every executable script of a page: inline bodies, plus external ones read
  * through `readSrc`. JSON-LD is data, not code, and is skipped. Inline matters:
@@ -29,10 +27,8 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
   pages.flatMap(({ route, scripts }) =>
     scripts.flatMap((script) => {
       if (!script.includes(POINTER_MARKER)) return [`${route}: script outside the allowlist`];
+      // The effect covers the whole site since 2026-10-08: any page may carry it.
       const problems: string[] = [];
-      if (!ALLOWED_ROUTE.test(route)) {
-        problems.push(`${route}: pointer effect outside /portfolio, /lab and case pages`);
-      }
       const size = gzipSync(script).length;
       if (size > POINTER_BUDGET_BYTES) {
         problems.push(`${route}: pointer effect is ${size} B gzip, budget ${POINTER_BUDGET_BYTES}`);

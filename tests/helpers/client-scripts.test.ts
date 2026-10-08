@@ -36,10 +36,14 @@ describe('scriptViolations', () => {
     ]);
   });
 
-  it('rejects the pointer effect outside /portfolio, /lab and case pages', () => {
-    expect(scriptViolations([{ route: '/', scripts: [POINTER] }])).toEqual([
-      '/: pointer effect outside /portfolio, /lab and case pages',
-    ]);
+  it('accepts the pointer effect on every page, since it covers the whole site', () => {
+    expect(
+      scriptViolations([
+        { route: '/', scripts: [POINTER] },
+        { route: '/sobre', scripts: [POINTER] },
+        { route: '/criar-site-completo-com-o-notion', scripts: [POINTER] },
+      ]),
+    ).toEqual([]);
   });
 
   it('rejects the pointer effect above 1.5 KB gzip', () => {
