@@ -6,6 +6,7 @@ import { buildResume } from '../../src/lib/aeo/resume';
 import { renderResumeText } from '../../src/lib/aeo/resume-txt';
 import { buildRobotsTxt } from '../../src/lib/aeo/robots';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
+import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
 
 const site = new URL('https://nandomoreira.dev');
 
@@ -19,7 +20,7 @@ const profile = {
   services: [{ title: 'Agent tooling', description: 'd', caseSlug: 'forja' }],
   availability: { status: 'open', detail: 'Open.', updatedAt: '2026-08-08' },
   contacts: [
-    { kind: 'email', value: 'fernando@nandomoreira.dev' },
+    { kind: 'email', value: 'oi@nandomoreira.dev' },
     { kind: 'github', value: 'https://github.com/nandomoreirame' },
   ],
 } as never;
@@ -70,7 +71,7 @@ describe('machine routes leak nothing', () => {
   });
 
   it('proves the gate can fail', () => {
-    expect('fernando@nandomoreira.dev').toMatch(FORBIDDEN[0][1]);
+    expect('oi@nandomoreira.dev').toMatch(FORBIDDEN[0][1]);
   });
 });
 
@@ -104,9 +105,11 @@ describe('the MCP tools leak nothing', () => {
     }
   });
 
-  it('never names a confidential client', async () => {
+  // The employer is public; the clients behind a confidential case are not.
+  // Names come from the source, so the gate follows the content.
+  it.each(confidentialClientNames())('never names the confidential client %s', async (client) => {
     for (const body of await bodies()) {
-      expect(body).not.toMatch(/\bliquid\b/i);
+      expect(body).not.toMatch(clientPattern(client));
     }
   });
 });
