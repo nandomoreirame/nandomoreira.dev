@@ -76,7 +76,9 @@ const NEW_TOKENS = {
   // The reference theme caps every surface at max-w-3xl (48rem). The original
   // 1200px produced a measure 1.62x wider than the reference, which is what
   // made the restyle read as a different layout rather than the same one.
-  '--container-page': '48rem',
+  // Widened to 62.5rem (1000px) on 2026-10-08 so the portfolio rows fit art
+  // and text side by side (generative-case-art amendment).
+  '--container-page': '62.5rem',
 };
 
 describe('tokens introduced by the restyle', () => {

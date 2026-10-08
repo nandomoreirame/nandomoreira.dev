@@ -24,7 +24,7 @@ const outsideMotion = without(css, '(prefers-reduced-motion: no-preference)');
 describe('art motion', () => {
   it('defines the art and the pointer field', () => {
     expect(css).toContain('.art-hero');
-    expect(css).toContain('.pointer-field::after');
+    expect(css).toContain('[data-pointer-field]::after');
     expect(css).toMatch(/@keyframes art-drift/);
   });
 
@@ -50,20 +50,25 @@ describe('art motion', () => {
     expect(layer).not.toMatch(/\b(top|left|margin|padding|width|height):/);
   });
 
-  it('compensates the ::after inset so the glow sits under the cursor', () => {
-    const mask = css.match(/\.pointer-field::after\s*\{[^}]*mask-image:[^;]+/)?.[0] ?? '';
-    expect(mask).toContain('calc(var(--gx) + var(--spacing-lg))');
-    expect(mask).toContain('calc(var(--gy) + var(--spacing-lg))');
+  it('pins the dot grid to the viewport, so it covers the whole page at any scroll', () => {
+    const layer = css.match(/\[data-pointer-field\]::before,\s*\[data-pointer-field\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(layer).toMatch(/position:\s*fixed/);
+    expect(layer).toMatch(/inset:\s*0/);
+  });
+
+  it('centres the glow on viewport coordinates, with no offset to compensate', () => {
+    const mask = css.match(/\[data-pointer-field\]::after\s*\{[^}]*mask-image:[^;]+/)?.[0] ?? '';
+    expect(mask).toMatch(/at var\(--gx\) var\(--gy\)/);
   });
 
   it('drops --gx/--gy easing while data-snap is set, only under no-preference', () => {
     const motion = css.match(
       /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{([\s\S]*)\}\s*$/,
     )?.[1] ?? css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference)'));
-    expect(motion).toMatch(/\.pointer-field\[data-snap\]::after\s*\{[^}]*transition:/);
-    const snap = motion.match(/\.pointer-field\[data-snap\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(motion).toMatch(/\[data-pointer-field\]\[data-snap\]::after\s*\{[^}]*transition:/);
+    const snap = motion.match(/\[data-pointer-field\]\[data-snap\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
     expect(snap).toMatch(/transition:/);
     expect(snap).not.toMatch(/--gx/);
-    expect(outsideMotion).not.toMatch(/\.pointer-field\[data-snap\]/);
+    expect(outsideMotion).not.toMatch(/\[data-pointer-field\]\[data-snap\]/);
   });
 });

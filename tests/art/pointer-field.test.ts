@@ -6,13 +6,10 @@ import PointerField from '../../src/components/art/PointerField.astro';
 const source = readFileSync('src/components/art/PointerField.astro', 'utf8');
 
 describe('PointerField', () => {
-  it('wraps its content in the marked field the script and the gate look for', async () => {
+  it('renders no wrapper, so the header and footer rules still span the viewport', async () => {
     const container = await AstroContainer.create();
-    const html = await container.renderToString(PointerField, { slots: { default: '<p>inside</p>' } });
-
-    expect(html).toContain('data-pointer-field');
-    expect(html).toContain('pointer-field');
-    expect(html).toContain('<p>inside</p>');
+    const html = await container.renderToString(PointerField);
+    expect(html).not.toMatch(/<div\b/);
   });
 
   it('starts only for a fine pointer and only without a reduced-motion request', () => {
@@ -42,5 +39,18 @@ describe('PointerField', () => {
 
   it('uses no framework island', () => {
     expect(source).not.toContain('client:');
+  });
+});
+
+describe('PointerField on the whole page', () => {
+  it('loads on every page and marks the body as the field', () => {
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(layout).toContain('<PointerField />');
+    expect(layout).toMatch(/<body data-pointer-field>/);
+  });
+
+  it('writes the glow position in viewport coordinates, matching the fixed layer', () => {
+    expect(source).toContain('`${last.clientX}px`');
+    expect(source).toContain('`${last.clientY}px`');
   });
 });
