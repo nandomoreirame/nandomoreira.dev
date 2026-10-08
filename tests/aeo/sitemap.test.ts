@@ -62,6 +62,12 @@ describe('buildSitemap', () => {
     }
   });
 
+  it('keeps the AI views and the page markdown out, since both mirror a listed page', () => {
+    const xml = output();
+    expect(xml).not.toMatch(/<loc>[^<]*\/ia<\/loc>/);
+    expect(xml).not.toMatch(/<loc>[^<]*\.md<\/loc>/);
+  });
+
   it('lists the page that teaches agents to connect', () => {
     expect(output()).toContain('<loc>https://nandomoreira.dev/conectar</loc>');
   });

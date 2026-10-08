@@ -53,11 +53,26 @@ check "/llms-full.txt"    "text/plain"        "## Projects"
 check "/ai-index.json"    "application/json"  '"machineRoutes"'
 check "/portfolio/financial-normalization.md" "text/markdown" "## Problema"
 check "/lab/forja.md"     "text/markdown"     "## Problema"
+check "/index.md"          "text/markdown"     "title:"
+check "/sobre.md"          "text/markdown"     "title:"
+check "/criar-site-completo-com-o-notion.md" "text/markdown" "title:"
+check "/ia"                "text/html"         'name="robots" content="noindex"'
+check "/sobre/ia"          "text/html"         'name="robots" content="noindex"'
+check "/criar-site-completo-com-o-notion/ia" "text/html" 'name="robots" content="noindex"'
+check "/lab/forja/ia"      "text/html"         'data-ai-source'
 check "/AGENTS.md"        "text/markdown"     "## Availability"
 check "/robots.txt"       "text/plain"        "Sitemap: https://"
 check "/sitemap.xml"      "application/xml"   "<urlset"
 check "/api/resume.json"  "application/json"  '"basics"'
 check "/api/resume.txt"   "text/plain"        "AVAILABILITY"
+
+echo "== an AI view of an unknown page answers 404 =="
+status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}/nao-existe/ia")
+if [ "$status" != "404" ]; then
+  echo "FAIL: /nao-existe/ia answered ${status}, expected 404" >&2
+  exit 1
+fi
+echo "OK /nao-existe/ia → 404"
 
 echo "== cross-collection case markdown answers 404 =="
 status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}/lab/financial-normalization.md")
@@ -116,7 +131,7 @@ print("\n".join(names))
 PY
 )
 
-for route in "/api/resume.json" "/api/resume.txt" "/llms-full.txt" "/ai-index.json" "/portfolio/financial-normalization.md" "/lab/forja.md"; do
+for route in "/api/resume.json" "/api/resume.txt" "/llms-full.txt" "/ai-index.json" "/portfolio/financial-normalization.md" "/lab/forja.md" "/index.md" "/sobre.md" "/contato.md" "/conectar.md"; do
   body=$(curl -s "${BASE}${route}")
 
   if printf '%s' "$body" | grep -qE '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'; then

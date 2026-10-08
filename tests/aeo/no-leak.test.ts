@@ -9,6 +9,13 @@ import { buildResume } from '../../src/lib/aeo/resume';
 import { renderResumeText } from '../../src/lib/aeo/resume-txt';
 import { buildRobotsTxt } from '../../src/lib/aeo/robots';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
+import {
+  aboutMarkdown,
+  collectionMarkdown,
+  connectMarkdown,
+  contactMarkdown,
+  homeMarkdown,
+} from '../../src/lib/ai-view/pages';
 import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
 
 const site = new URL('https://nandomoreira.dev');
@@ -59,6 +66,12 @@ const outputs = () => [
   buildSitemap({ site, projects }),
   JSON.stringify(resume()),
   renderResumeText(resume()),
+  // AI view (docs/specs/ai-view, REQ-011): every page markdown is a machine surface.
+  homeMarkdown({ site, profile, portfolio: [], lab: projects }),
+  aboutMarkdown({ site, profile, projects }),
+  collectionMarkdown({ site, collection: 'lab', title: 'Lab', description: 'd', projects }),
+  contactMarkdown({ site, profile }),
+  connectMarkdown({ site }),
 ];
 
 const FORBIDDEN: Array<[string, RegExp]> = [

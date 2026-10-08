@@ -59,6 +59,8 @@ CDP_URL="http://127.0.0.1:${CDP_PORT}" node scripts/check-keyboard.mjs "$BASE" \
   /sobre \
   /contato \
   /conectar \
+  /sobre/ia \
+  /lab/forja/ia \
   /posts \
   /posts/arquivo \
   /lab/amnesia-claude-code \
