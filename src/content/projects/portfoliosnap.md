@@ -2,7 +2,8 @@
 slug: portfoliosnap
 title: PortfolioSnap
 block: ai-product
-summary: Registro de atividade em segundos, com o relatório pedagógico gerado pela IA
+art: timeline
+summary: "Registro de atividades para professores de educação infantil, feito em segundos no momento da atividade, com a IA gerando o relatório pedagógico do mês já alinhado à BNCC. O alinhamento acontece na geração, então o professor não precisa saber o código da habilidade na hora. No ar em portfoliosnap.com.br."
 problem: |
   Professor de educação infantil registra atividade no fim do dia, quando já não
   lembra o detalhe, e o relatório mensal alinhado à BNCC é escrito à mão, turma

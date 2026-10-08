@@ -2,7 +2,8 @@
 slug: amnesia-claude-code
 title: Amnesia
 block: ai-tooling
-summary: Camada de memória persistente e determinística para o Claude Code
+art: orbit
+summary: "Camada de memória persistente e determinística para o Claude Code. Merge, deduplicação e validação saem do modelo e vão para um CLI em Python, então o resultado é o mesmo em toda execução e o agente para de responder com um dado lembrado errado. Uso diário no meu próprio fluxo de trabalho."
 problem: |
   Memória de agente delegada ao próprio modelo erra em merge e deduplicação, e o
   erro só aparece quando o agente já respondeu com o dado errado.

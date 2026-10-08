@@ -2,7 +2,8 @@
 slug: hypr-switcher
 title: Hypr Switcher
 block: systems-cli
-summary: Alt+Tab visual para o Hyprland, em Rust sobre layer-shell
+art: windows
+summary: "Alt+Tab visual para o Hyprland, que não traz um alternador de janelas próprio. Em Rust sobre a camada layer-shell do Wayland, para o overlay aparecer acima de tudo sem roubar o foco, e com a latência de abertura como critério principal, porque é ela que decide se a ferramenta é usada ou abandonada."
 problem: |
   O Hyprland não traz um alternador visual de janelas, e trocar entre workspaces
   às cegas custa mais tempo que a troca em si.

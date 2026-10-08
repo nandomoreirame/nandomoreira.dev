@@ -2,7 +2,8 @@
 slug: tumodori
 title: Tumodori
 block: systems-cli
-summary: Pomodoro de terminal com dígitos grandes, em Rust e Ratatui
+art: timer
+summary: "Pomodoro de terminal com dígitos grandes, legíveis de longe sem aproximar do monitor. Feito em Rust com Ratatui, para o cronômetro viver no mesmo lugar que o trabalho, e com os dígitos desenhados em bloco, para o tamanho não depender da fonte configurada no terminal de quem usa."
 problem: |
   Um cronômetro em janela de terminal comum exige aproximar do monitor para ler,
   o que quebra o foco que a técnica existe para proteger.

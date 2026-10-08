@@ -2,7 +2,8 @@
 slug: mousai
 title: Mousai
 block: ai-product
-summary: Mood boards minimalistas para artistas, compartilháveis sem cadastro
+art: mosaic
+summary: "Mood boards minimalistas para artistas, compartilháveis por um código curto e sem exigir cadastro de quem visita. A interface sai do caminho para o acervo ser o centro, e não a ferramenta. Produto próprio em produção, no ar em mousai.gallery."
 problem: |
   Compartilhar um mood board costuma exigir conta no visitante ou um link
   preso a uma ferramenta genérica, e o ruído da plataforma compete com o

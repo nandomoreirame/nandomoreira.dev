@@ -2,7 +2,8 @@
 slug: croonos
 title: Croonos Multi-Track
 block: ai-product
-summary: Rastreamento de tempo e gestão de projetos, em monorepo Next.js
+art: gantt
+summary: "Rastreamento de tempo e gestão de projetos para quem atende vários clientes ao mesmo tempo e perde a conta de onde as horas foram. Monorepo em Next.js, com rastreador e painel compartilhando os tipos do domínio, e registro por projeto desde o início, porque o dado que falta na hora não volta."
 problem: |
   Quem atende vários projetos ao mesmo tempo perde a conta de onde as horas
   foram, e reconstruir isso no fim do mês depende de memória.

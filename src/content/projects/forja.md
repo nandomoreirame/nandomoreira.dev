@@ -2,7 +2,8 @@
 slug: forja
 title: Forja
 block: ai-tooling
-summary: Cliente GUI multi-CLI para Claude Code, Codex e Gemini
+art: panels
+summary: "Cliente desktop que reúne Claude Code, Codex e Gemini numa só interface, para não perder contexto alternando entre três terminais. Feito em Tauri e Rust, pelo peso do binário, com uma camada de adaptação por CLI em vez de impor um protocolo comum às três. É o meu cliente principal no dia a dia."
 problem: |
   Alternar entre três CLIs de agente em terminais separados custa contexto a cada
   troca, e nenhuma delas mostra o estado das outras.
