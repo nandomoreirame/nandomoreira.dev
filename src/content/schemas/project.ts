@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { BLOCKS } from '../blocks';
+import { ART_MOTIFS } from '../motifs';
 
 const imageSchema = z.object({
   src: z.string().min(1),
@@ -24,6 +25,8 @@ export const projectSchema = z
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug must be kebab-case'),
     title: z.string().min(1),
     block: z.enum(BLOCKS),
+    /** Drawing for the generated art; the block's motif when absent (REQ-003, REQ-018). */
+    art: z.enum(ART_MOTIFS).optional(),
     summary: z.string().min(1),
     problem: z.string().min(1),
     decisions: z.string().min(1),

@@ -38,6 +38,14 @@ describe('projectSchema', () => {
     expect(projectSchema.safeParse(incomplete).success).toBe(false);
   });
 
+  it('accepts an art motif from the known list', () => {
+    expect(projectSchema.safeParse({ ...valid, art: 'panels' }).success).toBe(true);
+  });
+
+  it('rejects an art motif that no drawer knows, so a typo fails the build', () => {
+    expect(projectSchema.safeParse({ ...valid, art: 'pannels' }).success).toBe(false);
+  });
+
   it('rejects a block outside the four declared ones', () => {
     const result = projectSchema.safeParse({ ...valid, block: 'side-project' });
     expect(result.success).toBe(false);

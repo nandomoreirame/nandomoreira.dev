@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { BLOCKS, type Block } from '../../src/content/blocks';
+import { BLOCKS } from '../../src/content/blocks';
+import { ART_MOTIFS } from '../../src/content/motifs';
 import {
+  BLOCK_MOTIF,
   ELEMENT_BUDGET,
+  MOTIF_DRAWERS,
   generateArt,
   heroCount,
   heroIndexes,
   type ArtAspect,
 } from '../../src/lib/art';
-import { flow, orbit, terminal, wave, type Shape } from '../../src/lib/art/motifs';
+import type { Shape } from '../../src/lib/art/motifs';
 import { createRandom, hashString } from '../../src/lib/art/random';
 
 const ASPECTS: ArtAspect[] = ['card', 'banner'];
@@ -15,51 +18,59 @@ const FRAMES: Record<ArtAspect, { width: number; height: number }> = {
   card: { width: 160, height: 90 },
   banner: { width: 210, height: 90 },
 };
-const MOTIFS: Record<Block, (random: () => number, frame: { width: number; height: number }) => Shape[]> = {
-  'ai-tooling': orbit,
-  'ai-product': wave,
-  'systems-cli': terminal,
-  professional: flow,
-};
 const shapesOf = (svg: string) => svg.match(/<(circle|line|rect)\b/g) ?? [];
 const heroesOf = (svg: string) => svg.match(/class="art-hero\b/g) ?? [];
 
-const cases = BLOCKS.flatMap((block) => ASPECTS.map((aspect) => ({ block, aspect })));
+// Every motif a case can declare, in both aspects: a new motif inherits every
+// guarantee below without anyone remembering to list it.
+const cases = ART_MOTIFS.flatMap((art) => ASPECTS.map((aspect) => ({ art, aspect })));
+const draw = (art: (typeof ART_MOTIFS)[number], aspect: ArtAspect, slug = 'sample') =>
+  generateArt({ slug, block: 'professional', art, aspect });
 
 describe('generateArt', () => {
   it('draws the same markup for the same input, byte for byte', () => {
-    const input = { slug: 'forja', block: 'ai-tooling', aspect: 'card' } as const;
+    const input = { slug: 'forja', block: 'ai-tooling', art: 'panels', aspect: 'card' } as const;
     expect(generateArt(input)).toBe(generateArt(input));
   });
 
-  it('gives each block its own motif', () => {
+  it('draws the motif the case declares', () => {
+    for (const art of ART_MOTIFS) {
+      expect(draw(art, 'card')).toContain(`data-motif="${art}"`);
+    }
+  });
+
+  it('falls back to the block motif when the case declares none', () => {
     const motifs = BLOCKS.map(
       (block) => generateArt({ slug: 'x', block, aspect: 'card' }).match(/data-motif="([a-z]+)"/)?.[1],
     );
     expect(motifs).toEqual(['orbit', 'wave', 'terminal', 'flow']);
+    expect(BLOCKS.map((block) => BLOCK_MOTIF[block])).toEqual(motifs);
   });
 
-  it('varies the drawing with the slug inside the same block', () => {
-    const a = generateArt({ slug: 'forja', block: 'ai-tooling', aspect: 'card' });
-    const b = generateArt({ slug: 'amnesia', block: 'ai-tooling', aspect: 'card' });
-    expect(a).not.toBe(b);
+  it('varies the drawing with the slug inside the same motif', () => {
+    expect(draw('wireframe', 'card', 'abracce')).not.toBe(draw('wireframe', 'card', 'sudadhara'));
   });
 
-  it.each(cases)('colours $block/$aspect only through classes, never hex or presentation attributes', ({ block, aspect }) => {
-    const svg = generateArt({ slug: 'sample', block, aspect });
+  it('draws every motif differently from the others', () => {
+    const drawings = ART_MOTIFS.map((art) => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
+    expect(new Set(drawings).size).toBe(ART_MOTIFS.length);
+  });
+
+  it.each(cases)('colours $art/$aspect only through classes, never hex or presentation attributes', ({ art, aspect }) => {
+    const svg = draw(art, aspect);
     expect(svg).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
     expect(svg).not.toMatch(/\s(fill|stroke)="/);
   });
 
-  it.each(cases)('keeps amber on 10% to 20% of the $block/$aspect elements', ({ block, aspect }) => {
-    const svg = generateArt({ slug: 'sample', block, aspect });
+  it.each(cases)('keeps amber on 10% to 20% of the $art/$aspect elements', ({ art, aspect }) => {
+    const svg = draw(art, aspect);
     const ratio = heroesOf(svg).length / shapesOf(svg).length;
     expect(ratio).toBeGreaterThanOrEqual(0.1);
     expect(ratio).toBeLessThanOrEqual(0.2);
   });
 
-  it.each(cases)('stays under the element budget for $block/$aspect', ({ block, aspect }) => {
-    const svg = generateArt({ slug: 'sample', block, aspect });
+  it.each(cases)('stays under the element budget for $art/$aspect', ({ art, aspect }) => {
+    const svg = draw(art, aspect);
     expect(shapesOf(svg).length).toBeLessThanOrEqual(ELEMENT_BUDGET[aspect]);
     expect(shapesOf(svg).length).toBeGreaterThan(20);
   });
@@ -106,19 +117,15 @@ describe('heroIndexes', () => {
 });
 
 describe('motif hero signal', () => {
-  it.each(cases)(
-    'gives $block/$aspect enough positive-weight shapes for the amber quota',
-    ({ block, aspect }) => {
-      const frame = FRAMES[aspect];
-      const draw = MOTIFS[block];
-      for (let i = 0; i < 50; i += 1) {
-        const shapes = draw(createRandom(hashString(`${block}:slug-${i}`)), frame).slice(
-          0,
-          ELEMENT_BUDGET[aspect],
-        );
-        const positive = shapes.filter((shape) => shape.weight > 0).length;
-        expect(positive).toBeGreaterThanOrEqual(heroCount(shapes.length));
-      }
-    },
-  );
+  it.each(cases)('gives $art/$aspect enough positive-weight shapes for the amber quota', ({ art, aspect }) => {
+    const frame = FRAMES[aspect];
+    for (let i = 0; i < 50; i += 1) {
+      const shapes = MOTIF_DRAWERS[art](createRandom(hashString(`${art}:slug-${i}`)), frame).slice(
+        0,
+        ELEMENT_BUDGET[aspect],
+      );
+      const positive = shapes.filter((shape) => shape.weight > 0).length;
+      expect(positive).toBeGreaterThanOrEqual(heroCount(shapes.length));
+    }
+  });
 });

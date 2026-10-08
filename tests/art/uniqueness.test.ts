@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Block } from '../../src/content/blocks';
+import type { ArtMotif } from '../../src/content/motifs';
 import { generateArt } from '../../src/lib/art';
 
 const DIR = 'src/content/projects';
@@ -13,6 +14,7 @@ const published = readdirSync(DIR)
     return {
       slug: frontmatter.match(/^slug:\s*(\S+)/m)?.[1] ?? '',
       block: frontmatter.match(/^block:\s*(\S+)/m)?.[1] as Block,
+      art: frontmatter.match(/^art:\s*(\S+)/m)?.[1] as ArtMotif | undefined,
     };
   });
 

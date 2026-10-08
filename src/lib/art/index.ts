@@ -1,5 +1,25 @@
 import type { Block } from '../../content/blocks';
-import { flow, orbit, terminal, wave, type Motif, type Shape } from './motifs';
+import type { ArtMotif } from '../../content/motifs';
+import {
+  ascent,
+  chart,
+  flow,
+  gantt,
+  map,
+  mosaic,
+  orbit,
+  panels,
+  play,
+  storefront,
+  terminal,
+  timeline,
+  timer,
+  wave,
+  windows,
+  wireframe,
+  type Motif,
+  type Shape,
+} from './motifs';
 import { createRandom, hashString } from './random';
 
 export type ArtAspect = 'card' | 'banner';
@@ -12,12 +32,32 @@ const FRAMES: Record<ArtAspect, { width: number; height: number }> = {
 /** Keeps the listing HTML small: fifteen cards render fifteen SVGs (REQ-015). */
 export const ELEMENT_BUDGET: Record<ArtAspect, number> = { card: 200, banner: 300 };
 
-/** Exhaustive by type: a new block without a motif fails the type-check. */
-const MOTIFS: Record<Block, { name: string; draw: Motif }> = {
-  'ai-tooling': { name: 'orbit', draw: orbit },
-  'ai-product': { name: 'wave', draw: wave },
-  'systems-cli': { name: 'terminal', draw: terminal },
-  professional: { name: 'flow', draw: flow },
+/** Exhaustive by type: a motif listed in ART_MOTIFS without a drawer fails the type-check. */
+export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
+  orbit,
+  wave,
+  terminal,
+  flow,
+  chart,
+  storefront,
+  map,
+  wireframe,
+  play,
+  panels,
+  windows,
+  timer,
+  ascent,
+  mosaic,
+  timeline,
+  gantt,
+};
+
+/** Fallback when a case declares no `art`: one motif per block. */
+export const BLOCK_MOTIF: Record<Block, ArtMotif> = {
+  'ai-tooling': 'orbit',
+  'ai-product': 'wave',
+  'systems-cli': 'terminal',
+  professional: 'flow',
 };
 
 /** Amber on 10% to 20% of the elements: the signal, never the noise (REQ-004). */
@@ -57,6 +97,8 @@ const element = (shape: Shape, tone: string): string => {
 export interface ArtInput {
   slug: string;
   block: Block;
+  /** The motif the case declares; the block's motif when absent (REQ-003). */
+  art?: ArtMotif;
   aspect: ArtAspect;
 }
 
@@ -64,11 +106,11 @@ export interface ArtInput {
  * Pure: same input, same markup (REQ-001, REQ-002). Colours are classes bound
  * to tokens in global.css, never attributes, so the hex gate holds (REQ-004).
  */
-export const generateArt = ({ slug, block, aspect }: ArtInput): string => {
+export const generateArt = ({ slug, block, art, aspect }: ArtInput): string => {
   const frame = FRAMES[aspect];
-  const motif = MOTIFS[block];
+  const motif = art ?? BLOCK_MOTIF[block];
   const random = createRandom(hashString(`${block}:${slug}`));
-  const shapes = motif.draw(random, frame).slice(0, ELEMENT_BUDGET[aspect]);
+  const shapes = MOTIF_DRAWERS[motif](random, frame).slice(0, ELEMENT_BUDGET[aspect]);
   const heroes = heroIndexes(shapes);
 
   const layers = ([0, 1, 2] as const)
@@ -82,5 +124,5 @@ export const generateArt = ({ slug, block, aspect }: ArtInput): string => {
     })
     .join('');
 
-  return `<svg class="art" viewBox="0 0 ${frame.width} ${frame.height}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" data-motif="${motif.name}">${layers}</svg>`;
+  return `<svg class="art" viewBox="0 0 ${frame.width} ${frame.height}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" data-motif="${motif}">${layers}</svg>`;
 };
