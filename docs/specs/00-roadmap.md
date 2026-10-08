@@ -116,6 +116,7 @@ Atualizado em 2026-08-08.
 | `theme-restyle` | — | `theme-restyle/SPEC.md` | `2026-08-09-theme-restyle.md` | **Concluída** |
 | `notes` | F14 | `notes/SPEC.md` | `2026-08-09-notes.md` | **Concluída**, depois sucedida por `blog-migration` |
 | `blog-migration` | F14 | `blog-migration/SPEC.md` | `2026-08-09-blog-migration.md` | **Concluída** (40 posts importados, `/posts` + arquivo por ano; revoga REQ-002 de `notes`) |
+| `ai-view` | — | `ai-view/SPEC.md` | `2026-10-08-ai-view.md` | **Concluída** |
 | `generative-case-art` | — | `generative-case-art/SPEC.md` | `2026-10-07-generative-case-art.md` | **Concluída** |
 | `structured-resume` | 4 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
 | `mcp-server` | 5 | a escrever | a escrever | Desbloqueada pelo ADR-001 |
@@ -161,6 +162,7 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-10-08: `ai-view` adiciona a visão IA de toda página (`<página>/ia`, `<página>.md`) e o switcher Humano | IA. Renderização no servidor com `marked` 18.1.0, abas só com CSS; o botão Copiar entra no script único do `PointerField`, que deixa de ser "só o efeito de ponteiro" e passa a ser o script do site, sob o mesmo orçamento de 1,5 KB.
 - 2026-10-07: generative-case-art revoga duas decisões, por escolha do autor. Grid de
   cards volta a /portfolio e /lab (contra o theme-restyle), justificado pela arte gerada
   por case, que não é o card genérico que o restyle combatia. "Zero JS no P0" ganha uma

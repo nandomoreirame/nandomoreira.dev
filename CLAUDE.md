@@ -116,6 +116,14 @@ A lógica mora em funções puras sob `lib/`, testáveis sem subir o Astro. Pág
 componentes são casca. Quando uma decisão aparecer dentro de um `.astro`, ela provavelmente
 está no lugar errado.
 
+### Visão IA (`docs/specs/ai-view`)
+
+Toda página coberta tem `<página>.md` (home: `/index.md`) e `<página>/ia` (home: `/ia`),
+servidas pelas rotas genéricas `src/pages/[...path].md.ts` e `src/pages/[...path]/ia.astro`.
+As duas consultam `markdownForPath` (`src/lib/ai-view/registry.ts`), a **única** tabela
+caminho → markdown; caminho fora dela responde 404. Página nova só ganha visão IA quando
+entra no registro. O slug `ia` é reservado nos schemas. Rótulos em `src/lib/ai-view/labels.ts`.
+
 ### JSON-LD, dividido de propósito
 
 - `Person` — `src/lib/home/person-ld.ts`, derivado do perfil.
@@ -136,7 +144,7 @@ código.**
 |---|---|---|
 | Contraste | `tests/design-system/contrast.test.ts` | Par de cor abaixo de 4,5:1 |
 | Literal fora da escala | `tests/design-system/no-ad-hoc-values.test.ts` | Hex solto e valor arbitrário do Tailwind em `src/` |
-| JavaScript de cliente sob lista de permissão | `tests/design-system/no-client-js.build-test.ts` | Script fora do efeito de ponteiro, acima de 1,5 KB gzip ou fora de /portfolio, /lab e cases |
+| JavaScript de cliente sob lista de permissão | `tests/design-system/no-client-js.build-test.ts` | Segundo script, ou o script único acima de 1,5 KB gzip |
 | Fonte única | `tests/content/single-source.test.ts` | `getCollection` fora da camada de acesso |
 | Schema quebra o build | `scripts/verify-schema-gate.sh` | Conteúdo inválido chegando em produção |
 | CTA primário único | `tests/home/single-primary-cta.test.ts` | Segundo botão de peso igual na home |
@@ -147,7 +155,7 @@ portão que nunca falhou não é portão.
 
 ## Restrições que não são preferência
 
-- **JavaScript de cliente só por exceção nomeada.** O único script é o efeito de ponteiro de generative-case-art (até 1,5 KB gzip, só em /portfolio, /lab e cases), autorizado pelo autor em 2026-10-07. Qualquer outro exige decisão registrada e passa pelo portão. Nenhuma diretiva `client:*`.
+- **JavaScript de cliente só por exceção nomeada.** Existe um único script, o do `PointerField`, em todas as páginas: o efeito de ponteiro (generative-case-art, 2026-10-07) e o botão Copiar da visão IA (ai-view, 2026-10-08), juntos em até 1,5 KB gzip. Funcionalidade nova entra nesse script ou exige decisão registrada; o portão reprova um segundo script. Nenhuma diretiva `client:*`.
 - **O token `border` (`#262626`) reprova WCAG AA**, com 1,31:1 sobre o fundo. Serve como separador decorativo e **nunca** como único delimitador de alvo interativo ou meio de transmitir informação. Contorno que precisa ser percebido usa `border-strong` ou `primary`.
 - **Nenhum número sem narrativa.** `StatItem` lança se receber `value` sem `context`. Cerca de 700 das 964 estrelas do GitHub vêm de temas Jekyll de 2018, e exibir o agregado sem contexto seria enganoso (RISK-004).
 - **Todo case precisa de ao menos um link.** `repoUrl` e `liveUrl` não podem ser ambos nulos: um case sem link não tem evidência verificável, e o schema falha o build.
