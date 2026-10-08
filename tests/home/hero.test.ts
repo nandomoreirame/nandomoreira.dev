@@ -14,6 +14,13 @@ const render = async (
 };
 
 describe('Hero', () => {
+  it('turns the availability label into the way in for agents, at /conectar', async () => {
+    const html = await render();
+    const link = html.match(/<a\b[^>]*href="\/conectar"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('Disponível para novos projetos');
+    expect(link).toContain('min-h-11');
+  });
+
   it('carries the only h1 of the page', async () => {
     expect((await render()).match(/<h1/g)).toHaveLength(1);
   });

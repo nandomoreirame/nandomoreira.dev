@@ -1,0 +1,135 @@
+---
+import PageHeader from '../components/ui/PageHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { MCP_TOOLS } from '../lib/mcp/catalog';
+
+type ToolName = (typeof MCP_TOOLS)[number]['name'];
+
+// Human layer in pt-BR; the tool names and the catalog stay in English.
+// Keyed by tool name, so a tool added to the catalog without a line here
+// fails the type-check instead of vanishing from the page.
+const TOOL_LABELS: Record<ToolName, string> = {
+  get_profile:
+    'Quem eu sou: título, bio, posicionamento, stack, frentes de trabalho e disponibilidade.',
+  check_availability:
+    'Se estou aberto a trabalho novo, com o detalhe e a data da última atualização.',
+  list_projects: 'Os cases publicados, com filtro opcional por coleção: portfolio ou lab.',
+  get_project: 'Um case completo: o problema, as decisões, o resultado e os links que o comprovam.',
+  get_resume: 'O currículo completo no padrão JSON Resume, o mesmo de /api/resume.json.',
+};
+
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const endpoint = `${site}/api/mcp`;
+
+const CLIENTS = [
+  {
+    name: 'Claude Code',
+    steps: ['No terminal, adicione o servidor:'],
+    code: `claude mcp add --transport http nandomoreira ${endpoint}`,
+    after: 'Depois pergunte: o que o Fernando já colocou em produção?',
+  },
+  {
+    name: 'Claude',
+    steps: ['Em Configurações, Conectores, adicione um conector personalizado e cole o endereço:'],
+    code: endpoint,
+    after: 'Conecte e peça para ele avaliar os cases.',
+  },
+  {
+    name: 'ChatGPT',
+    steps: ['Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:'],
+    code: endpoint,
+    after: 'Peça para ele chamar get_resume ou check_availability.',
+  },
+  {
+    name: 'Qualquer cliente MCP',
+    steps: ['Cadastre um servidor Streamable HTTP com o endereço:'],
+    code: endpoint,
+    after: `Rode tools/list para ver as ${MCP_TOOLS.length} tools.`,
+  },
+];
+
+const codeClass =
+  'block select-all break-all rounded-sm border border-border bg-background px-sm py-xs font-mono text-small text-primary';
+---
+
+<BaseLayout
+  title="Conectar via MCP | nandomoreira.dev"
+  description="Como conectar este portfólio a um agente de IA pelo Model Context Protocol."
+>
+  <PageHeader
+    eyebrow="Agentes · MCP"
+    title="Este site fala MCP"
+    description="Adicione este portfólio como conector e o seu agente lê o meu perfil, os cases e o currículo, e confere a minha disponibilidade. Sem conta, sem chave e sem cadastro."
+  />
+
+  {/* One click selects the whole address: a copy button would be a second
+      client script, and the pointer effect is the only one the site allows. */}
+  <section aria-labelledby="endpoint-heading" class="rounded-md border border-border-strong bg-surface p-lg">
+    <h2 id="endpoint-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      Endpoint MCP
+    </h2>
+    <code class={`mt-sm ${codeClass} text-body`}>{endpoint}</code>
+    <p class="mt-sm text-small text-muted-foreground">
+      Streamable HTTP, protocolo 2025-11-25, só leitura. Um clique seleciona o endereço inteiro.
+    </p>
+  </section>
+
+  <section aria-labelledby="clientes-heading" class="mt-2xl">
+    <h2 id="clientes-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      Como conectar
+    </h2>
+    <ol class="mt-md grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
+      {
+        CLIENTS.map((client, index) => (
+          <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
+            <span class="font-mono text-small text-muted-foreground">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="text-h3 font-semibold text-foreground">{client.name}</h3>
+            {client.steps.map((step) => (
+              <p class="text-body text-muted-foreground">{step}</p>
+            ))}
+            <code class={codeClass}>{client.code}</code>
+            <p class="text-body text-muted-foreground">{client.after}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="tools-heading" class="mt-2xl">
+    <h2 id="tools-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      O que o agente pode consultar
+    </h2>
+    <ul class="mt-md list-none p-0">
+      {
+        MCP_TOOLS.map((tool) => (
+          <li class="grid grid-cols-1 gap-xs border-b border-border py-md sm:grid-cols-3 sm:gap-lg">
+            <code class="font-mono text-small text-primary">{tool.name}</code>
+            <span class="text-body text-muted-foreground sm:col-span-2">{TOOL_LABELS[tool.name]}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="briefing-heading" class="mt-2xl mb-3xl">
+    <h2 id="briefing-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      Para propor um projeto
+    </h2>
+    <p class="mt-md max-w-[68ch] text-body text-muted-foreground">
+      As tools são só de leitura. Para mandar um briefing, o agente faz um
+      <code class="font-mono text-small text-foreground">POST /api/hire</code>, descrito no
+      <a
+        href="/AGENTS.md"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >guia para agentes</a
+      >. O resumo do site para modelos está em
+      <a
+        href="/llms.txt"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >llms.txt</a
+      >.
+    </p>
+  </section>
+</BaseLayout>

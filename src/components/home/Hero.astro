@@ -24,12 +24,22 @@ const STATUS_DOT: Record<Availability['status'], string> = {
 ---
 
 <section id="inicio" class="flex flex-col gap-lg py-2xl lg:py-3xl">
-  <p class="flex items-center gap-sm font-mono text-small text-muted-foreground">
-    <span
-      class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
-      aria-hidden="true"
-    ></span>
-    <span>{STATUS_LABEL[availability.status]}</span>
+  {/* The availability is also the way in for agents: it leads to /conectar,
+      the page that explains how to plug this site into an MCP client. */}
+  <p>
+    <a
+      href="/conectar"
+      class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-small text-muted-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      <span
+        class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
+        aria-hidden="true"
+      ></span>
+      <span>{STATUS_LABEL[availability.status]}</span>
+      <span aria-hidden="true">·</span>
+      <span>conectar via MCP</span>
+      <span aria-hidden="true">↗</span>
+    </a>
   </p>
 
   <h1 class="font-serif text-display font-semibold text-foreground lg:text-[3.75rem]">

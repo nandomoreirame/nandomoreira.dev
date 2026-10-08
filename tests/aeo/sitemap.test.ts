@@ -54,6 +54,10 @@ describe('buildSitemap', () => {
     }
   });
 
+  it('lists the page that teaches agents to connect', () => {
+    expect(output()).toContain('<loc>https://nandomoreira.dev/conectar</loc>');
+  });
+
   it('lists both resume routes, which are indexable content and not protocol files', () => {
     // REQ-012 of structured-resume. A crawler that never renders a page still
     // has a route to the same facts, which is the point of the resume.
