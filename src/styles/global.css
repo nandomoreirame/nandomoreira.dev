@@ -144,6 +144,33 @@
   --container-page: 62.5rem;
 }
 
+/* AI view tabs (docs/specs/ai-view, REQ-005): the radios do the switching, so
+   Rendered/Source works with no script. Without :has() support the rendered
+   panel stays, which is the safe default. */
+@layer components {
+  .ai-panel-source {
+    display: none;
+  }
+
+  .ai-view:has(#ai-tab-source:checked) .ai-panel-source {
+    display: block;
+  }
+
+  .ai-view:has(#ai-tab-source:checked) .ai-panel-rendered {
+    display: none;
+  }
+
+  .ai-tab-input:checked + .ai-tab-label {
+    color: var(--color-primary-foreground);
+    background-color: var(--color-primary);
+  }
+
+  .ai-tab-input:focus-visible + .ai-tab-label {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
 @layer base {
   html {
     /* scroll-pt clears the sticky header, which would otherwise cover the
