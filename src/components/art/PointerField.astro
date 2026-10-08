@@ -12,6 +12,21 @@
     footer rules still reach the viewport edges. */}
 
 <script>
+  // AI view Copy (docs/specs/ai-view, REQ-007). Lives in this, the site's only
+  // script, so the JS gate keeps accepting one script. The button ships hidden
+  // and appears only here, so without JS it never promises an action.
+  document.querySelectorAll<HTMLButtonElement>('[data-ai-copy]').forEach((button) => {
+    const source = document.querySelector('[data-ai-source]');
+    if (!source || !navigator.clipboard) return;
+    const label = button.textContent;
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(source.textContent ?? '');
+      button.textContent = button.dataset.labelCopied ?? label;
+      setTimeout(() => (button.textContent = label), 2000);
+    });
+  });
+
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

@@ -54,3 +54,23 @@ describe('PointerField on the whole page', () => {
     expect(source).toContain('`${last.clientY}px`');
   });
 });
+
+describe('Copy in the single site script (ai-view REQ-007)', () => {
+  it('reveals the copy button only when the script runs', () => {
+    expect(source).toContain('[data-ai-copy]');
+    expect(source).toMatch(/\.hidden\s*=\s*false|removeAttribute\('hidden'\)/);
+  });
+
+  it('copies the markdown source, not the rendered panel', () => {
+    expect(source).toContain('[data-ai-source]');
+    expect(source).toContain('navigator.clipboard.writeText');
+  });
+
+  it('takes the confirmation label from the button, which reads it from the label map', () => {
+    expect(source).toContain('labelCopied');
+  });
+
+  it('works regardless of the pointer and motion conditions that gate the effect', () => {
+    expect(source.indexOf('[data-ai-copy]')).toBeLessThan(source.indexOf('if (fine && !calm)'));
+  });
+});
