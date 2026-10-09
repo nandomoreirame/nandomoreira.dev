@@ -23,12 +23,16 @@ const brand = splitWordmark(name, accent);
   data-site-header
   class="sticky top-0 z-40 border-b border-transparent transition-[background-color,border-color] duration-(--duration-base) ease-out data-scrolled:border-border data-scrolled:bg-background/40 data-scrolled:backdrop-blur-lg"
 >
+  {/* The menu letters sit in the middle of a 44px hit target, so equal
+      padding leaves more air under them than above the logo. The extra top
+      padding and the shorter bottom one balance those two edges. From md up
+      the row is one line and py-sm is enough. */}
   <div
-    class="mx-auto flex w-full max-w-page flex-wrap items-center justify-between gap-sm px-lg py-sm"
+    class="mx-auto flex w-full max-w-page flex-col items-center gap-sm px-lg pt-md pb-xs md:flex-row md:justify-between md:py-sm"
   >
     <a
       href="/"
-      class="font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class="text-center font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       {/* One line on purpose: any whitespace between the parts would split the
           brand into words, on screen and for screen readers. */}
