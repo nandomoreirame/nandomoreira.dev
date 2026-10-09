@@ -1,4 +1,7 @@
 ---
+import { Icon } from 'astro-icon/components';
+import { contactIconFor } from '../../lib/ui/contact-icons';
+
 interface Props {
   name: string;
   year: number;
@@ -22,7 +25,15 @@ const social = contacts.filter((contact) => contact.kind in LABELS);
   <div
     class="mx-auto flex w-full max-w-page flex-col gap-md px-lg py-xl font-mono text-small text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
   >
-    <p>© {year} {name}.</p>
+    <p class="flex flex-wrap items-center gap-x-md">
+      <span>© {year} {name}.</span>
+      <a
+        href="/privacidade"
+        class="inline-flex min-h-11 items-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Privacidade
+      </a>
+    </p>
 
     <nav class="flex items-center gap-lg" aria-label="Canais">
       {social.map((contact) => (
@@ -30,8 +41,11 @@ const social = contacts.filter((contact) => contact.kind in LABELS);
           href={contact.value}
           target="_blank"
           rel="noopener noreferrer me"
-          class="inline-flex min-h-11 items-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="inline-flex min-h-11 items-center gap-xs transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
+          {contactIconFor(contact.kind) && (
+            <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
+          )}
           {LABELS[contact.kind]}
         </a>
       ))}

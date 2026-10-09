@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+import { contactIconFor } from '../../lib/ui/contact-icons';
 import SectionHeader from '../ui/SectionHeader.astro';
 
 interface Props {
@@ -41,8 +43,11 @@ const LABELS: Record<string, string> = {
           href={hrefFor(contact)}
           target={contact.kind === 'email' ? undefined : '_blank'}
           rel={contact.kind === 'email' ? undefined : 'noopener noreferrer'}
-          class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="inline-flex min-h-11 items-center gap-xs rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
+          {contactIconFor(contact.kind) && (
+            <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
+          )}
           {LABELS[contact.kind] ?? contact.kind}
         </a>
       </li>

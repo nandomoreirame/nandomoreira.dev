@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+import { contactIconFor } from '../lib/ui/contact-icons';
 import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
 import Prose from '../components/ui/Prose.astro';
@@ -60,6 +62,7 @@ const caseHref = (slug: string): string | undefined => {
       {
         email && (
           <Button href={`mailto:${email.value}`} variant="primary">
+            <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
             Entrar em contato
           </Button>
         )
@@ -67,6 +70,7 @@ const caseHref = (slug: string): string | undefined => {
       {
         profiles.map((contact) => (
           <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">
+            <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
             {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
           </Button>
         ))
