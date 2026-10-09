@@ -19,7 +19,7 @@ export const privacySections: PolicySection[] = [
     id: 'responsavel',
     title: 'Quem é o responsável',
     paragraphs: [
-      'Este site é pessoal. O responsável pelos dados (o controlador, nos termos da LGPD) sou eu, Fernando Moreira Costa. Os pedidos sobre seus dados vêm direto para mim, pelo canal no fim desta página.',
+      'Este site é pessoal. O responsável pelos dados (o controlador, nos termos da LGPD) sou eu, Fernando Moreira. Os pedidos sobre seus dados vêm direto para mim, pelo canal no fim desta página.',
     ],
   },
   {

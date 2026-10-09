@@ -69,6 +69,8 @@ export const profileSchema = z.object({
    * the machine routes and the copyright line, where a short brand is wrong.
    */
   wordmark: z.string().min(1).optional(),
+  /** Shorter name for human pages; machine routes, JSON-LD and the résumé keep `name`. */
+  displayName: z.string().min(1).optional(),
   headline: z.string().min(1),
   bio: z.string().min(1),
   positioning: z.string().min(1),

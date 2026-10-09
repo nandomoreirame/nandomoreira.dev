@@ -1,5 +1,6 @@
 ---
 name: Fernando Moreira Costa
+displayName: Fernando Moreira
 wordmark: nandomoreira.dev
 headline: Desenvolvedor de software e engenheiro de IA, do dado à produção
 bio: |

@@ -6,6 +6,7 @@ import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../lib/hire/form';
@@ -27,7 +28,7 @@ const hireBrief = buildHireBrief({
 ---
 
 <BaseLayout
-  title={`Contato | ${profile.name}`}
+  title={`Contato | ${displayNameOf(profile)}`}
   description="Fale comigo sobre um projeto, uma dúvida ou uma proposta."
 >
   <article class="mb-3xl flex flex-col gap-xl">

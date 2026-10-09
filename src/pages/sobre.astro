@@ -8,6 +8,7 @@ import SectionHeader from '../components/ui/SectionHeader.astro';
 import StatItem from '../components/ui/StatItem.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { displayNameOf } from '../lib/content/display-name';
 import { COLOPHON } from '../lib/about/colophon';
 import { careerStartYear, formatPeriod } from '../lib/about/period';
 import { collectionOfBlock } from '../lib/catalog/groups';
@@ -28,7 +29,7 @@ const caseHref = (slug: string): string | undefined => {
 ---
 
 <BaseLayout
-  title={`Sobre | ${profile.name}`}
+  title={`Sobre | ${displayNameOf(profile)}`}
   description={profile.headline}
 >
   <article class="mt-2xl mb-3xl">
