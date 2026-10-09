@@ -5,6 +5,10 @@ import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { requireSite } from '../lib/aeo/urls';
+import serifHeadingFont from '../assets/fonts/literata-latin-600.woff2?url';
+import sansBodyFont from '../assets/fonts/alegreya-sans-latin-400.woff2?url';
+import { webPageLd } from '../lib/aeo/webpage-ld';
+import { displayNameOf } from '../lib/content/display-name';
 import { websiteLd } from '../lib/aeo/website-ld';
 import { getAllPosts, getProfile } from '../lib/content';
 import '../styles/global.css';
@@ -34,6 +38,9 @@ const current = Astro.url?.pathname;
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
 const canonical = new URL(canonicalPath ?? Astro.url?.pathname ?? '/', site).toString();
 const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
+const webPageJsonLd = serialiseJsonLd(
+  webPageLd({ site, path: new URL(canonical).pathname, title, description }),
+);
 const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
 const year = new Date().getUTCFullYear();
@@ -80,18 +87,20 @@ const switcherView = view ?? 'human';
       )
     }
     <script type="application/ld+json" is:inline set:html={websiteJsonLd} />
-    {/* Two preloads, one per visible-above-the-fold job: the serif paints the
-        headline (the LCP candidate), the sans paints the body around it. */}
+    <script type="application/ld+json" is:inline set:html={webPageJsonLd} />
+    {/* Two preloads, one per visible-above-the-fold job: the serif at 600 paints
+        the headline (every h1 is semibold, the LCP candidate), the sans paints
+        the body around it. Imported, so the URL carries the content hash. */}
     <link
       rel="preload"
-      href="/fonts/literata-latin-400.woff2"
+      href={serifHeadingFont}
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/alegreya-sans-latin-400.woff2"
+      href={sansBodyFont}
       as="font"
       type="font/woff2"
       crossorigin
@@ -127,7 +136,7 @@ const switcherView = view ?? 'human';
       </main>
     </div>
 
-    <SiteFooter name={profile.name} year={year} contacts={profile.contacts} />
+    <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} />
     {
       showSwitcher && (
         <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />

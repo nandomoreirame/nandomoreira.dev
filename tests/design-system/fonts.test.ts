@@ -6,13 +6,13 @@ const css = readFileSync('src/styles/global.css', 'utf8');
 // Exquisitus pairing: a humanist serif carries the reading surfaces, a humanist
 // sans carries the register, and JetBrains Mono carries the machine voice.
 const FONT_FILES = [
-  'public/fonts/literata-latin-400.woff2',
-  'public/fonts/literata-latin-600.woff2',
-  'public/fonts/alegreya-sans-latin-400.woff2',
-  'public/fonts/alegreya-sans-latin-500.woff2',
-  'public/fonts/alegreya-sans-latin-700.woff2',
-  'public/fonts/jetbrains-mono-latin-400.woff2',
-  'public/fonts/jetbrains-mono-latin-500.woff2',
+  'src/assets/fonts/literata-latin-400.woff2',
+  'src/assets/fonts/literata-latin-600.woff2',
+  'src/assets/fonts/alegreya-sans-latin-400.woff2',
+  'src/assets/fonts/alegreya-sans-latin-500.woff2',
+  'src/assets/fonts/alegreya-sans-latin-700.woff2',
+  'src/assets/fonts/jetbrains-mono-latin-400.woff2',
+  'src/assets/fonts/jetbrains-mono-latin-500.woff2',
 ];
 
 describe('fonts', () => {
@@ -24,6 +24,21 @@ describe('fonts', () => {
     expect(css).not.toContain('fonts.googleapis.com');
     expect(css).not.toContain('fonts.gstatic.com');
     expect(css).not.toMatch(/@import\s+url\(\s*["']?https?:/);
+  });
+
+  it('lets the build fingerprint every font, so it can be cached for a year', () => {
+    // /fonts/ in public/ is served with a 30-minute cache; an imported asset
+    // lands in /_astro/ with a content hash and an immutable cache.
+    expect(css).not.toMatch(/url\(\s*["']?\/fonts\//);
+    expect(css.match(/url\("\.\.\/assets\/fonts\/[a-z0-9-]+\.woff2"\)/g) ?? []).toHaveLength(FONT_FILES.length);
+    expect(existsSync('public/fonts')).toBe(false);
+  });
+
+  it('preloads the above-the-fold faces through their fingerprinted URLs', () => {
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(layout).not.toContain('href="/fonts/');
+    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/literata-latin-600\.woff2\?url'/);
+    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/alegreya-sans-latin-400\.woff2\?url'/);
   });
 
   it('swaps rather than blocking, so text is never invisible while loading', () => {
@@ -43,7 +58,7 @@ describe('fonts', () => {
   it('drops Inter entirely rather than leaving a dead face behind', () => {
     expect(css).not.toContain('Inter');
     for (const weight of ['400', '500', '600']) {
-      expect(existsSync(`public/fonts/inter-latin-${weight}.woff2`)).toBe(false);
+      expect(existsSync(`src/assets/fonts/inter-latin-${weight}.woff2`)).toBe(false);
     }
   });
 });
