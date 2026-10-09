@@ -288,7 +288,7 @@ describe('contactMarkdown', () => {
     expect(text).toContain('https://github.com/nandomoreirame');
     expect(text).toContain('https://linkedin.com/in/nandomoreira');
     expect(text).toContain('POST /api/hire');
-    expect(text).toContain('/conectar');
+    expect(text).toContain('/mcp');
     expect(text).not.toMatch(/[\w.+-]+@[\w-]+\.[\w.]+/);
     expect(text).not.toContain('oi@nandomoreira.dev');
   });
@@ -298,7 +298,7 @@ describe('connectMarkdown', () => {
   it('documents the MCP endpoint, clients, tools and hire', () => {
     const text = connectMarkdown({ site });
 
-    opensWithFrontmatter(text, 'Conectar via MCP', 'https://nandomoreira.dev/conectar');
+    opensWithFrontmatter(text, 'Conectar via MCP', 'https://nandomoreira.dev/mcp');
     expect(text).toContain('https://nandomoreira.dev/api/mcp');
     expect(text).toContain('Claude Code');
     expect(text).toContain('get_profile');

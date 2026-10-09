@@ -294,7 +294,7 @@ export const contactMarkdown = ({
     '## Para agentes',
     '',
     `- \`POST /api/hire\`: envie um briefing de projeto.`,
-    `- [/conectar](${absoluteUrl(site, '/conectar')}): como plugar este site via MCP.`,
+    `- [/mcp](${absoluteUrl(site, '/mcp')}): como plugar este site via MCP.`,
     '',
   );
 
@@ -333,7 +333,7 @@ const MCP_CLIENTS = [
 export const connectMarkdown = ({ site }: { site: URL }): string => {
   const endpoint = absoluteUrl(site, '/api/mcp');
   const lines: string[] = [
-    ...frontmatter('Conectar via MCP', absoluteUrl(site, '/conectar')),
+    ...frontmatter('Conectar via MCP', absoluteUrl(site, '/mcp')),
     '# Este site fala MCP',
     '',
     'Adicione este portfólio como conector e o seu agente lê o perfil, os cases e o currículo, e confere a disponibilidade. Sem conta, sem chave e sem cadastro.',

@@ -17,7 +17,7 @@ const covered = [
   'posts/arquivo/2017',
   'como-exibir-calendario-do-terminal',
   'contato',
-  'conectar',
+  'mcp',
 ] as const;
 
 describe('markdownForPath', () => {

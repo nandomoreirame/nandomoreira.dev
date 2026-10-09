@@ -60,7 +60,7 @@ const PAGES: ReadonlyArray<{ path: string; title: string }> = [
   { path: '/portfolio', title: 'Portfolio' },
   { path: '/lab', title: 'Lab' },
   { path: '/posts', title: 'Posts' },
-  { path: '/conectar', title: 'Connect' },
+  { path: '/mcp', title: 'MCP' },
 ];
 
 const MACHINE_ROUTE_DESCRIPTIONS: ReadonlyArray<{ path: string; description: string }> = [

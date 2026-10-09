@@ -1,4 +1,5 @@
 import { buildCaseMarkdown } from '../aeo/case-markdown';
+import { privacyMarkdown } from '../privacy/policy';
 import { absoluteUrl } from '../aeo/urls';
 import {
   collectionOfBlock,
@@ -147,9 +148,13 @@ export const markdownForPath = async (
     return page('Contato', '/contato', '/contato.md', markdown);
   }
 
-  if (key === 'conectar') {
+  if (key === 'privacidade') {
+    return page('Política de privacidade', '/privacidade', '/privacidade.md', privacyMarkdown({ site }));
+  }
+
+  if (key === 'mcp') {
     const markdown = connectMarkdown({ site });
-    return page('Conectar via MCP', '/conectar', '/conectar.md', markdown);
+    return page('Conectar via MCP', '/mcp', '/mcp.md', markdown);
   }
 
   // Post at the site root: /<slug>
