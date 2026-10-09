@@ -1,7 +1,7 @@
 ---
 name: Fernando Moreira Costa
 wordmark: nandomoreira.dev
-headline: Engenheiro de IA e produto, do dado à produção
+headline: Desenvolvedor de software e engenheiro de IA, do dado à produção
 bio: |
   Construo software de ponta a ponta há 15 anos, da interface ao dado, e hoje
   coloco agentes de IA e produtos com IA em produção. Na Liquid AI, respondo
