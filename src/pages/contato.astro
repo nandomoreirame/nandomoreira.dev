@@ -1,5 +1,6 @@
 ---
 import Button from '../components/ui/Button.astro';
+import EmptyState from '../components/ui/EmptyState.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
@@ -7,11 +8,14 @@ import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getProfile } from '../lib/content';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
+import { FORM_HONEYPOT } from '../lib/hire/form';
 
 const profile = await getProfile();
 const email = profile.contacts.find((contact) => contact.kind === 'email');
 
 const outcome = outcomeMessage(Astro.url.searchParams.get('envio'));
+// Success replaces the form; a failure keeps it, with the alert above it.
+const sent = outcome?.role === 'status';
 
 const field =
   'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -37,9 +41,25 @@ const hireBrief = buildHireBrief({
         no JavaScript; the handler answers a form post with a redirect back here
         carrying `envio`, read above. */}
     <section
-      aria-labelledby="form-heading"
+      aria-labelledby={sent ? undefined : 'form-heading'}
+      aria-label={sent ? 'Mensagem enviada' : undefined}
       class="flex flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg"
     >
+      {
+        sent && outcome ? (
+          <EmptyState
+            id="envio"
+            role="status"
+            icon="lucide:mail-check"
+            title="Mensagem enviada"
+            description={outcome.text}
+          >
+            <Button href="/contato" variant="secondary">
+              Enviar outra mensagem
+            </Button>
+          </EmptyState>
+        ) : (
+      <>
       <div class="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
         <h2
           id="form-heading"
@@ -150,12 +170,14 @@ const hireBrief = buildHireBrief({
             class={field}></textarea>
         </div>
 
-        {/* Honeypot: invisible to people and to assistive technology. */}
-        <div aria-hidden="true" class="sr-only">
-          <label for="contato-website">Não preencha este campo</label>
+        {/* Honeypot: display:none, so people, screen readers and password
+            managers skip it, while bots reading the HTML still fill it. The
+            name is meaningless on purpose (see FORM_HONEYPOT). */}
+        <div hidden aria-hidden="true">
+          <label for="contato-hp">Não preencha este campo</label>
           <input
-            id="contato-website"
-            name="website"
+            id="contato-hp"
+            name={FORM_HONEYPOT}
             type="text"
             tabindex="-1"
             autocomplete="off"
@@ -174,6 +196,9 @@ const hireBrief = buildHireBrief({
           }
         </div>
       </form>
+      </>
+        )
+      }
     </section>
 
     <AgentBrief brief={hireBrief} />

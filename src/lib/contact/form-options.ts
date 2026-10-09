@@ -32,7 +32,7 @@ interface OutcomeMessage {
 const OUTCOMES: Record<string, OutcomeMessage> = {
   ok: {
     role: 'status',
-    text: 'Mensagem enviada. Ela já chegou para mim, e eu respondo no contato que você deixou.',
+    text: 'Ela já chegou para mim, e eu respondo no contato que você deixou.',
   },
   invalido: {
     role: 'alert',

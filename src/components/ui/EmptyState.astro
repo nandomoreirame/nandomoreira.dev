@@ -1,0 +1,25 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** astro-icon name, e.g. lucide:mail-check. */
+  icon: string;
+  title: string;
+  description: string;
+  id?: string;
+  role?: 'status' | 'alert';
+}
+
+const { icon, title, description, id, role } = Astro.props;
+---
+
+<div id={id} role={role} class="flex flex-col items-center gap-md px-lg py-2xl text-center">
+  <span
+    class="inline-flex size-14 items-center justify-center rounded-full border border-success/40 bg-surface-elevated text-success"
+  >
+    <Icon name={icon} class="size-6" aria-hidden="true" />
+  </span>
+  <h2 class="font-serif text-h2 font-semibold text-foreground">{title}</h2>
+  <p class="max-w-[52ch] text-body text-muted-foreground">{description}</p>
+  <div class="mt-sm flex flex-wrap justify-center gap-md empty:hidden"><slot /></div>
+</div>

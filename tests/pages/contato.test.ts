@@ -1,5 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
+import { FORM_HONEYPOT } from '../../src/lib/hire/form';
 import Contato from '../../src/pages/contato.astro';
 
 const render = async (query = '') => {
@@ -82,26 +83,41 @@ describe('/contato', () => {
     expect(await render()).toMatch(/<label[^>]*for="contato-orcamento"/);
   });
 
-  it('hides the honeypot from people and assistive technology', async () => {
+  it('hides the honeypot from people, screen readers and password managers', async () => {
     const html = await render();
-    const trap = html.match(/<input[^>]*name="website"[^>]*>/)?.[0] ?? '';
+    const trap = html.match(new RegExp(`<input[^>]*name="${FORM_HONEYPOT}"[^>]*>`))?.[0] ?? '';
 
     expect(trap).toContain('tabindex="-1"');
     expect(trap).toContain('autocomplete="off"');
-    expect(html).toMatch(/<div[^>]*aria-hidden="true"[^>]*>[\s\S]*?name="website"/);
+    // A name autofill recognises (website, url, email...) gets filled by a
+    // password manager, and the real message is then silently dropped.
+    expect(FORM_HONEYPOT).not.toMatch(/website|url|site|email|mail|name|nome|phone|tel|company|empresa/i);
+    // display:none: bots reading the HTML still fill it; autofill skips it.
+    expect(html).toMatch(new RegExp(`<div[^>]*\\bhidden\\b[^>]*>[\\s\\S]*?name="${FORM_HONEYPOT}"`));
   });
 
   it.each([
-    ['ok', 'Mensagem enviada'],
     ['invalido', 'Faltou'],
     ['limite', 'Muitas tentativas'],
     ['erro', 'Não consegui'],
-  ])('announces the outcome "%s" in a status region', async (outcome, text) => {
+  ])('keeps the form and announces "%s" as an alert', async (outcome, text) => {
     const html = await render(`?envio=${outcome}`);
     const region = html.match(/<p[^>]*id="envio"[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
 
-    expect(region).toMatch(/role="(status|alert)"/);
+    expect(region).toContain('role="alert"');
     expect(region).toContain(text);
+    expect(html).toContain('<form');
+  });
+
+  it('replaces the form with a centred success state', async () => {
+    const html = await render('?envio=ok');
+    const state = html.match(/<div[^>]*id="envio"[^>]*>[\s\S]*?<\/div>\s*<\/div>/)?.[0] ?? html;
+
+    expect(html).not.toContain('<form');
+    expect(html).toMatch(/<div[^>]*id="envio"[^>]*role="status"|<div[^>]*role="status"[^>]*id="envio"/);
+    expect(state).toContain('Mensagem enviada');
+    expect(state).toContain('data-icon="lucide:mail-check"');
+    expect(html).toMatch(/<a[^>]*href="\/contato"[^>]*>[\s\S]*?Enviar outra mensagem/);
   });
 
   it('shows no outcome on a plain visit, or for an unknown value', async () => {
