@@ -1,4 +1,5 @@
 import type { Profile } from '../../content/schemas/profile';
+import { BUDGETS, INTERESTS } from '../hire/schema';
 import { MCP_TOOLS } from '../mcp/catalog';
 import { absoluteUrl } from './urls';
 
@@ -51,8 +52,11 @@ export const buildAgentsMd = ({ site, profile }: Input): string => {
     `\`POST ${absoluteUrl(site, '/api/hire')}\` is the only write surface. It is how an agent`,
     'makes contact on behalf of its user; no e-mail address is published anywhere.',
     '',
-    '- Body: JSON with exactly `from`, `contact` and `brief`. Unknown keys are rejected.',
+    '- Body: JSON with `from`, `contact` and `brief` (required). Unknown keys are rejected.',
     '- `from` up to 200 chars, `contact` up to 320, `brief` up to 8000.',
+    '- Optional: `company` (up to 200 chars),',
+    `  \`budget\` in BRL, one of ${BUDGETS.map((value) => `\`${value}\``).join(', ')},`,
+    `  \`interests\`, a list of distinct values from ${INTERESTS.map((value) => `\`${value}\``).join(', ')}.`,
     '- Maximum body size 16 KB; larger bodies answer 413.',
     '- Rate limit: 5 requests per 10 minutes per IP; over that answers 429.',
     '- Any other method answers 405.',

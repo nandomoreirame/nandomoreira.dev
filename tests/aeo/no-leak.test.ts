@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Project } from '../../src/content/schemas/project';
 import { buildAgentsMd } from '../../src/lib/aeo/agents-md';
 import { buildAiIndex } from '../../src/lib/aeo/ai-index';
+import { buildHireBrief } from '../../src/lib/aeo/hire-brief';
 import { buildCaseMarkdown } from '../../src/lib/aeo/case-markdown';
 import { buildLlmsFullTxt } from '../../src/lib/aeo/llms-full-txt';
 import { buildLlmsTxt } from '../../src/lib/aeo/llms-txt';
@@ -62,6 +63,8 @@ const outputs = () => [
   JSON.stringify(buildAiIndex({ site, profile, projects })),
   buildCaseMarkdown({ site, project: projects[0] }),
   buildAgentsMd({ site, profile }),
+  // Shown on human pages, but written for an agent to read and act on.
+  buildHireBrief({ site, profile }),
   buildRobotsTxt({ site }),
   buildSitemap({ site, projects }),
   JSON.stringify(resume()),

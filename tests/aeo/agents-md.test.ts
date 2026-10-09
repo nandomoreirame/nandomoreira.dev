@@ -84,6 +84,13 @@ describe('buildAgentsMd', () => {
     expect(text).toMatch(/202/);
   });
 
+  it('documents the optional context fields with their closed values', () => {
+    const text = output();
+    for (const field of ['`company`', '`budget`', '`interests`']) expect(text).toContain(field);
+    for (const value of ['up-to-10k', '60k-plus', 'agents-mcp']) expect(text).toContain(value);
+    expect(text).toMatch(/BRL/);
+  });
+
   it('never publishes the email address on a machine route', () => {
     expect(output()).not.toContain('@nandomoreira.dev');
   });

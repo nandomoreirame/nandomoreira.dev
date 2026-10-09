@@ -2,6 +2,9 @@
 import About from '../components/home/About.astro';
 import CollectionSection from '../components/home/CollectionSection.astro';
 import Contact from '../components/home/Contact.astro';
+import AgentBrief from '../components/contact/AgentBrief.astro';
+import { buildHireBrief } from '../lib/aeo/hire-brief';
+import { requireSite } from '../lib/aeo/urls';
 import Hero from '../components/home/Hero.astro';
 import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
@@ -37,6 +40,10 @@ const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
 // One-line teaser: first sentence of the bio, without dumping the full page.
 const aboutSummary = profile.bio.split(/(?<=\.)\s+/)[0] ?? profile.positioning;
+const hireBrief = buildHireBrief({
+  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  profile,
+});
 ---
 
 <BaseLayout title={`${profile.name} | ${profile.headline}`} description={profile.bio}>
@@ -58,4 +65,5 @@ const aboutSummary = profile.bio.split(/(?<=\.)\s+/)[0] ?? profile.positioning;
   <Services services={profile.services} knownSlugs={knownSlugs} />
   <About summary={aboutSummary} />
   <Contact contacts={profile.contacts} />
+  <AgentBrief brief={hireBrief} />
 </BaseLayout>
