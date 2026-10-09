@@ -10,6 +10,17 @@ export default defineConfig({
   // Icons are inlined as SVG at render time; nothing ships to the browser.
   // Only the icons used are bundled into the server build.
   integrations: [icon()],
+  // App Hosting ends TLS at its proxy and forwards plain HTTP. Astro trusts
+  // X-Forwarded-Proto/Host only for these domains; without them it rebuilds the
+  // request origin as http://, the form's https Origin never matches, and the
+  // origin check answers 403 to every contact form post.
+  security: {
+    allowedDomains: [
+      { hostname: 'nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app', protocol: 'https' },
+      { hostname: 'nandomoreira.dev', protocol: 'https' },
+      { hostname: 'www.nandomoreira.dev', protocol: 'https' },
+    ],
+  },
   // Legacy /notas never made the production sitemap; these are courtesy 301s.
   // Declared here, not as pre-rendered pages: `Astro.redirect` in a pre-rendered
   // page cannot send a status, so it degrades to 200 plus a <meta refresh>.
