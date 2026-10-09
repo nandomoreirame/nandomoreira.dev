@@ -21,23 +21,24 @@ describe('SiteHeader stickiness', () => {
     expect(await render()).toMatch(/<header[^>]*\bz-\d+/);
   });
 
-  it('carries a translucent background with a blur, not a bare transparent bar', async () => {
-    const html = await render();
+  it('is bare at the top of the page: no background, no rule, no blur', async () => {
+    const header = (await render()).match(/<header[^>]*>/)?.[0] ?? '';
+    const classes = header.match(/class="([^"]*)"/)?.[1].split(/\s+/) ?? [];
 
-    // Fully transparent would let text collide with text underneath; opaque
-    // would lose the effect. The pairing is what makes it readable.
-    expect(html).toMatch(/<header[^>]*\bbg-background\/\d+/);
-    expect(html).toMatch(/<header[^>]*\bbackdrop-blur/);
+    expect(header).toContain('data-site-header');
+    for (const unconditional of classes.filter((name) => !name.includes(':'))) {
+      expect(unconditional).not.toMatch(/^(bg-background|border-border|backdrop-blur)/);
+    }
   });
 
-  it('stays mostly transparent, so the page shows through the blur', async () => {
-    const html = await render();
-    const opacity = Number(html.match(/<header[^>]*\bbg-background\/(\d+)/)?.[1]);
+  it('gains the translucent background, the rule and the blur once scrolled', async () => {
+    const header = (await render()).match(/<header[^>]*>/)?.[0] ?? '';
 
-    // Requested 2026-10-08: transparent with blur. Half opacity or less keeps
-    // the content visible under the bar; the stronger blur keeps text legible.
-    expect(opacity).toBeLessThanOrEqual(50);
-    expect(html).toMatch(/<header[^>]*\bbackdrop-blur-(md|lg|xl)\b/);
+    expect(header).toMatch(/\bdata-scrolled:bg-background\/(\d+)\b/);
+    expect(Number(header.match(/data-scrolled:bg-background\/(\d+)/)?.[1])).toBeLessThanOrEqual(50);
+    expect(header).toMatch(/\bdata-scrolled:border-border\b/);
+    expect(header).toMatch(/\bdata-scrolled:backdrop-blur-(md|lg|xl)\b/);
+    expect(header).toMatch(/\btransition-\[[^\]]*background-color/);
   });
 
   it('stays free of client JavaScript, since stickiness is pure CSS', async () => {
@@ -45,5 +46,27 @@ describe('SiteHeader stickiness', () => {
 
     expect(html).not.toContain('<script');
     expect(html).not.toContain('client:');
+  });
+});
+
+describe('header fill without JavaScript', () => {
+  it('keeps the filled header when scripting is off, so text never collides', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    const block = css.match(/@media \(scripting: none\)\s*\{([\s\S]*?)\n\s*\}\s*\n/)?.[1] ?? '';
+
+    expect(block).toContain('[data-site-header]');
+    expect(block).toMatch(/backdrop-filter/);
+  });
+});
+
+describe('scroll state in the single site script', () => {
+  it('toggles data-scrolled on the header from the scroll position, passively', async () => {
+    const { readFileSync } = await import('node:fs');
+    const script = readFileSync('src/components/art/PointerField.astro', 'utf8');
+
+    expect(script).toContain("querySelector('[data-site-header]')");
+    expect(script).toContain("toggleAttribute('data-scrolled'");
+    expect(script).toMatch(/passive:\s*true/);
   });
 });

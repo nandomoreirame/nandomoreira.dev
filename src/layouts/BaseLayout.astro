@@ -49,6 +49,7 @@ const switcherView = view ?? 'human';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -106,12 +107,19 @@ const switcherView = view ?? 'human';
       Pular para o conteúdo
     </a>
 
-    <SiteHeader
-      name={profile.wordmark ?? profile.name}
-      accent="moreira"
-      current={current}
-      hasPosts={hasPosts}
-    />
+    {/* The AI view swaps the human header for its own bar (docs/specs/ai-view). */}
+    {
+      view === 'ai' ? (
+        <slot name="top" />
+      ) : (
+        <SiteHeader
+          name={profile.wordmark ?? profile.name}
+          accent="moreira"
+          current={current}
+          hasPosts={hasPosts}
+        />
+      )
+    }
 
     <div class="mx-auto w-full max-w-page px-lg">
       <main id="main" tabindex="-1">

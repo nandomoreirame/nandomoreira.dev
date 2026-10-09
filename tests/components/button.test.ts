@@ -83,3 +83,24 @@ describe('Button', () => {
     expect(classes).toContain('disabled:');
   });
 });
+
+describe('Button hover fill', () => {
+  // The dot field behind the page shows through a transparent control; a solid
+  // fill on hover keeps the label readable over it.
+  it.each(['secondary', 'ghost'] as const)('fills the %s variant on hover', async (variant) => {
+    const html = await render({ href: '/x', variant });
+    expect(html).toMatch(/\bhover:bg-surface-elevated\b/);
+  });
+});
+
+describe('Outline links fill on hover', () => {
+  it.each([
+    'src/components/home/Hero.astro',
+    'src/components/home/Contact.astro',
+    'src/components/ai-view/AiBar.astro',
+  ])('%s', async (file) => {
+    const { readFileSync } = await import('node:fs');
+    const source = readFileSync(file, 'utf8');
+    expect(source).toMatch(/\bhover:bg-surface-elevated\b/);
+  });
+});

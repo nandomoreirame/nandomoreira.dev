@@ -144,30 +144,71 @@
   --container-page: 62.5rem;
 }
 
-/* AI view tabs (docs/specs/ai-view, REQ-005): the radios do the switching, so
-   Rendered/Source works with no script. Without :has() support the rendered
-   panel stays, which is the safe default. */
+/* AI view tabs (docs/specs/ai-view, REQ-005): the radios in the top bar do the
+   switching, so Rendered/Source works with no script. They sit outside <main>,
+   hence :root:has(). Without :has() support the rendered panel stays. */
 @layer components {
   .ai-panel-source {
     display: none;
   }
 
-  .ai-view:has(#ai-tab-source:checked) .ai-panel-source {
+  :root:has(#ai-tab-source:checked) .ai-panel-source {
     display: block;
   }
 
-  .ai-view:has(#ai-tab-source:checked) .ai-panel-rendered {
+  :root:has(#ai-tab-source:checked) .ai-panel-rendered {
     display: none;
   }
 
+  .ai-tab-label {
+    color: var(--color-muted-foreground);
+    background-color: var(--color-surface);
+  }
+
+  /* Foreground on a raised surface: the earlier amber fill lost to the muted
+     text colour and read as grey on yellow. */
   .ai-tab-input:checked + .ai-tab-label {
-    color: var(--color-primary-foreground);
-    background-color: var(--color-primary);
+    color: var(--color-foreground);
+    background-color: var(--color-surface-elevated);
   }
 
   .ai-tab-input:focus-visible + .ai-tab-label {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+
+  /* Without scripting nothing sets data-scrolled, so the header keeps the
+     scrolled fill for good rather than letting text collide under it. */
+  @media (scripting: none) {
+    [data-site-header] {
+      border-color: var(--color-border);
+      background-color: color-mix(in oklab, var(--color-background) 40%, transparent);
+      backdrop-filter: blur(var(--blur-lg));
+    }
+  }
+
+  /* Topic chips on /contato: checkbox plus label, state from CSS only. The
+     colours live here, not in utilities, for the same layer reason as the tabs. */
+  .chip {
+    border-color: var(--color-border-strong);
+    color: var(--color-muted-foreground);
+  }
+
+  .chip-input:checked + .chip {
+    border-color: var(--color-primary);
+    color: var(--color-foreground);
+    background-color: var(--color-surface-elevated);
+  }
+
+  .chip-input:focus-visible + .chip {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Trims a label's box to its capitals, so a flex row centres the letters on
+     the icon instead of the font's ascent/descent, which varies by engine. */
+  .text-trim-cap {
+    text-box: trim-both cap alphabetic;
   }
 }
 
