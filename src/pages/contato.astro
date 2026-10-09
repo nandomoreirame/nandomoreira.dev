@@ -1,15 +1,25 @@
 ---
 import Button from '../components/ui/Button.astro';
+import AgentBrief from '../components/contact/AgentBrief.astro';
+import { buildHireBrief } from '../lib/aeo/hire-brief';
+import { requireSite } from '../lib/aeo/urls';
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getProfile } from '../lib/content';
+import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 
 const profile = await getProfile();
 const email = profile.contacts.find((contact) => contact.kind === 'email');
 
+const outcome = outcomeMessage(Astro.url.searchParams.get('envio'));
+
 const field =
-  'w-full rounded-md border border-border-strong bg-surface px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
-const labelClass = 'mb-sm block font-mono text-small text-muted-foreground';
+  'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide text-muted-foreground';
+const hireBrief = buildHireBrief({
+  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  profile,
+});
 ---
 
 <BaseLayout
@@ -23,74 +33,149 @@ const labelClass = 'mb-sm block font-mono text-small text-muted-foreground';
       description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
     />
 
-    {/* The form is not wired to anything yet. It is laid out in full so the
-        shape can be reviewed, with the submit control disabled and the reason
-        stated, rather than a button that silently does nothing. */}
-    <form class="flex max-w-[52ch] flex-col gap-lg" novalidate>
-      <div>
-        <label for="contato-nome" class={labelClass}>Nome</label>
-        <input
-          id="contato-nome"
-          name="nome"
-          type="text"
-          autocomplete="name"
-          maxlength="120"
-          required
-          class={field}
-        />
-      </div>
-
-      <div>
-        <label for="contato-email" class={labelClass}>E-mail</label>
-        <input
-          id="contato-email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          maxlength="254"
-          required
-          class={field}
-        />
-      </div>
-
-      <div>
-        <label for="contato-mensagem" class={labelClass}>Mensagem</label>
-        <textarea
-          id="contato-mensagem"
-          name="mensagem"
-          rows="6"
-          maxlength="2000"
-          required
-          class={field}></textarea>
-      </div>
-
-      <div class="flex flex-col gap-sm">
-        <div>
-          <Button disabled>Enviar</Button>
-        </div>
-        <p class="text-small text-muted-foreground" id="contato-aviso">
-          O envio ainda não está ligado. Enquanto isso, o e-mail abaixo chega
-          direto em mim.
+    {/* Posts natively to the same endpoint agents use, so the form works with
+        no JavaScript; the handler answers a form post with a redirect back here
+        carrying `envio`, read above. */}
+    <section
+      aria-labelledby="form-heading"
+      class="flex flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg"
+    >
+      <div class="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
+        <h2
+          id="form-heading"
+          class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
+        >
+          Iniciar uma conversa
+        </h2>
+        <p class="font-mono text-micro text-muted-foreground">
+          Os campos com * são obrigatórios.
         </p>
       </div>
-    </form>
 
-    {
-      email && (
-        <section aria-labelledby="direto-heading" class="flex flex-col gap-md">
-          <h2
-            id="direto-heading"
-            class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
+      {
+        outcome && (
+          <p
+            id="envio"
+            role={outcome.role}
+            class={`rounded-md border px-md py-sm text-body ${outcome.role === 'status' ? 'border-success/40 text-success' : 'border-primary text-foreground'}`}
           >
-            Canal direto
-          </h2>
+            {outcome.text}
+          </p>
+        )
+      }
+
+      <form action="/api/hire" method="post" class="flex flex-col gap-lg">
+        <div class="grid grid-cols-1 gap-lg sm:grid-cols-2">
           <div>
-            <Button href={`mailto:${email.value}`} variant="secondary">
-              Escrever um e-mail
-            </Button>
+            <label for="contato-nome" class={labelClass}>Nome <span aria-hidden="true">*</span></label>
+            <input
+              id="contato-nome"
+              name="nome"
+              type="text"
+              autocomplete="name"
+              maxlength="200"
+              required
+              class={field}
+            />
           </div>
-        </section>
-      )
-    }
+
+          <div>
+            <label for="contato-email" class={labelClass}>E-mail <span aria-hidden="true">*</span></label>
+            <input
+              id="contato-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="320"
+              required
+              class={field}
+            />
+          </div>
+
+          <div>
+            <label for="contato-empresa" class={labelClass}>Empresa</label>
+            <input
+              id="contato-empresa"
+              name="empresa"
+              type="text"
+              autocomplete="organization"
+              maxlength="200"
+              class={field}
+            />
+          </div>
+
+          <div>
+            <label for="contato-orcamento" class={labelClass}>Orçamento</label>
+            <select id="contato-orcamento" name="orcamento" class={field}>
+              <option value="">Prefiro não dizer agora</option>
+              {BUDGET_OPTIONS.map((option) => (
+                <option value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend class={labelClass}>Tenho interesse em</legend>
+          <div class="flex flex-wrap gap-sm">
+            {INTEREST_OPTIONS.map((option) => (
+              <div>
+                <input
+                  type="checkbox"
+                  id={`contato-interesse-${option.value}`}
+                  name="interesse"
+                  value={option.value}
+                  class="chip-input sr-only"
+                />
+                <label
+                  for={`contato-interesse-${option.value}`}
+                  class="chip inline-flex min-h-11 cursor-pointer items-center rounded-full border px-md font-mono text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary"
+                >
+                  {option.label}
+                </label>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="contato-mensagem" class={labelClass}>Mensagem <span aria-hidden="true">*</span></label>
+          <textarea
+            id="contato-mensagem"
+            name="mensagem"
+            rows="6"
+            maxlength="8000"
+            required
+            placeholder="O que você está construindo, como é o sucesso para você e para quando precisa?"
+            class={field}></textarea>
+        </div>
+
+        {/* Honeypot: invisible to people and to assistive technology. */}
+        <div aria-hidden="true" class="sr-only">
+          <label for="contato-website">Não preencha este campo</label>
+          <input
+            id="contato-website"
+            name="website"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            maxlength="200"
+          />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-md">
+          <Button type="submit">Enviar mensagem</Button>
+          {
+            email && (
+              <Button href={`mailto:${email.value}`} variant="secondary">
+                Prefiro e-mail
+              </Button>
+            )
+          }
+        </div>
+      </form>
+    </section>
+
+    <AgentBrief brief={hireBrief} />
   </article>
 </BaseLayout>

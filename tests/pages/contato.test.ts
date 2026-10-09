@@ -2,9 +2,11 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Contato from '../../src/pages/contato.astro';
 
-const render = async () => {
+const render = async (query = '') => {
   const container = await AstroContainer.create();
-  return container.renderToString(Contato, {});
+  return container.renderToString(Contato, {
+    request: new Request(`https://nandomoreira.dev/contato${query}`),
+  });
 };
 
 describe('/contato', () => {
@@ -40,7 +42,9 @@ describe('/contato', () => {
 
   it('bounds every free-text field, so the future endpoint never meets an unbounded payload', async () => {
     const html = await render();
-    const controls = html.match(/<(?:input|textarea)\b[^>]*>/g) ?? [];
+    const controls = (html.match(/<(?:input|textarea)\b[^>]*>/g) ?? []).filter(
+      (control) => !/type="(checkbox|radio)"/.test(control),
+    );
 
     expect(controls.length).toBeGreaterThan(0);
     for (const control of controls) {
@@ -48,13 +52,61 @@ describe('/contato', () => {
     }
   });
 
-  it('does not submit anywhere yet, and says so instead of pretending', async () => {
+  it('posts to /api/hire without JavaScript', async () => {
     const html = await render();
 
-    // No action and no method: nothing is wired, so nothing must look wired.
-    expect(html).not.toMatch(/<form[^>]*\baction=/);
-    expect(html).not.toMatch(/<form[^>]*\bmethod=/);
-    expect(html).toMatch(/<button[^>]*\bdisabled/);
+    expect(html).toMatch(/<form[^>]*\baction="\/api\/hire"/);
+    expect(html).toMatch(/<form[^>]*\bmethod="post"/);
+    expect(html).not.toMatch(/<button[^>]*type="submit"[^>]*\bdisabled/);
+  });
+
+  it('asks for company, budget and interests, all optional', async () => {
+    const html = await render();
+
+    expect(html).toMatch(/<input[^>]*name="empresa"/);
+    expect(html).not.toMatch(/<input[^>]*name="empresa"[^>]*required/);
+    expect(html).toMatch(/<select[^>]*name="orcamento"/);
+    for (const value of ['undecided', 'up-to-10k', '10k-30k', '30k-60k', '60k-plus']) {
+      expect(html).toContain(`value="${value}"`);
+    }
+    for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'aeo']) {
+      expect(html).toMatch(new RegExp(`<input[^>]*type="checkbox"[^>]*name="interesse"[^>]*value="${value}"`));
+    }
+  });
+
+  it('groups the interest chips under a legend', async () => {
+    expect(await render()).toMatch(/<fieldset[\s\S]*?<legend[\s\S]*?Tenho interesse em/);
+  });
+
+  it('labels the budget select', async () => {
+    expect(await render()).toMatch(/<label[^>]*for="contato-orcamento"/);
+  });
+
+  it('hides the honeypot from people and assistive technology', async () => {
+    const html = await render();
+    const trap = html.match(/<input[^>]*name="website"[^>]*>/)?.[0] ?? '';
+
+    expect(trap).toContain('tabindex="-1"');
+    expect(trap).toContain('autocomplete="off"');
+    expect(html).toMatch(/<div[^>]*aria-hidden="true"[^>]*>[\s\S]*?name="website"/);
+  });
+
+  it.each([
+    ['ok', 'Mensagem enviada'],
+    ['invalido', 'Faltou'],
+    ['limite', 'Muitas tentativas'],
+    ['erro', 'Não consegui'],
+  ])('announces the outcome "%s" in a status region', async (outcome, text) => {
+    const html = await render(`?envio=${outcome}`);
+    const region = html.match(/<p[^>]*id="envio"[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
+
+    expect(region).toMatch(/role="(status|alert)"/);
+    expect(region).toContain(text);
+  });
+
+  it('shows no outcome on a plain visit, or for an unknown value', async () => {
+    expect(await render()).not.toContain('id="envio"');
+    expect(await render('?envio=<script>')).not.toContain('id="envio"');
   });
 
   it('keeps a direct channel on the page, per the PRD rule against a mandatory form', async () => {

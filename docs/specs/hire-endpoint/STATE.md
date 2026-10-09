@@ -44,6 +44,20 @@ driver e `PERMISSION_DENIED`.
    firebase deploy --only firestore:rules
    ```
 
+   **Ligar a TTL das duas coleções** (2026-10-08). A política de privacidade promete
+   apagar a mensagem em 12 meses e o IP/user agent em 30 dias; o código grava
+   `expiresAt` em `hire_requests` e em `hire_request_network`, mas quem apaga é a
+   política de TTL do Firestore. Sem ela, a política mente:
+
+   ```bash
+   gcloud firestore fields ttls update expiresAt --collection-group=hire_requests \
+     --enable-ttl --project=nandomoreira-dev
+   gcloud firestore fields ttls update expiresAt --collection-group=hire_request_network \
+     --enable-ttl --project=nandomoreira-dev
+   ```
+
+   A cópia no e-mail não é alcançada pela TTL: apagá-la em 12 meses é manual.
+
 2. **Criar os tres segredos.** `apphosting.yaml` ja os declara por nome; os valores nunca
    entram no repositorio:
 
