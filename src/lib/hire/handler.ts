@@ -1,3 +1,4 @@
+import { type FormOutcome, formRedirect, formToPayload } from './form';
 import type { Notifier } from './notify';
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from './read-body';
 import { type Limiter, clientIpOf } from './rate-limit';
@@ -34,11 +35,19 @@ const json = (status: number, payload: Record<string, unknown>): Response =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 
-const fail = (kind: keyof typeof RESPONSES): Response => {
-  const [status, message] = RESPONSES[kind];
-
-  return json(status, { error: message });
+/** The human form gets a redirect back to /contato instead of a JSON body. */
+const FORM_OUTCOMES: Record<keyof typeof RESPONSES, FormOutcome> = {
+  methodNotAllowed: 'erro',
+  tooLarge: 'invalido',
+  malformed: 'invalido',
+  timeout: 'erro',
+  invalid: 'invalido',
+  rateLimited: 'limite',
+  unavailable: 'erro',
 };
+
+const isForm = (request: Request): boolean =>
+  (request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded');
 
 /**
  * Shaped like a Firestore document id, because a fixed placeholder would make
@@ -53,14 +62,25 @@ const syntheticId = (): string =>
     () => ID_ALPHABET[Math.floor(Math.random() * ID_ALPHABET.length)],
   ).join('');
 
-/** 202: received and stored. Delivery of the notification is not the caller's problem. */
-const accepted = (id: string): Response =>
-  json(202, { status: 'accepted', id, message: 'Briefing received.' });
-
 export const handleHire = async (
   request: Request,
   { store, notifier, limiter, now, readTimeoutMs }: Dependencies,
 ): Promise<Response> => {
+  const fromForm = isForm(request);
+
+  const fail = (kind: keyof typeof RESPONSES): Response => {
+    if (fromForm) return formRedirect(FORM_OUTCOMES[kind]);
+    const [status, message] = RESPONSES[kind];
+
+    return json(status, { error: message });
+  };
+
+  // 202: received and stored. Delivery of the notification is not the caller's problem.
+  const accepted = (id: string): Response =>
+    fromForm
+      ? formRedirect('ok')
+      : json(202, { status: 'accepted', id, message: 'Briefing received.' });
+
   if (request.method !== 'POST') return fail('methodNotAllowed');
 
   const sourceIp = clientIpOf(request.headers);
@@ -79,7 +99,7 @@ export const handleHire = async (
 
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw);
+    parsed = fromForm ? formToPayload(new URLSearchParams(raw)) : JSON.parse(raw);
   } catch {
     return fail('malformed');
   }

@@ -36,3 +36,5 @@ export const resetFirestoreClient = (): void => {
 };
 
 export const HIRE_COLLECTION = 'hire_requests';
+/** IP and user agent per briefing, same id, shorter TTL. */
+export const HIRE_NETWORK_COLLECTION = 'hire_request_network';

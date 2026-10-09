@@ -52,3 +52,30 @@ describe('hireSchema', () => {
     expect(parsed.from).toBe('Agente');
   });
 });
+
+describe('hireSchema optional context fields', () => {
+  it('accepts company, budget and interests from the closed lists', () => {
+    const parsed = hireSchema.parse({
+      ...valid,
+      company: 'Acme',
+      budget: '10k-30k',
+      interests: ['freelance', 'ai-product'],
+    });
+
+    expect(parsed).toMatchObject({ company: 'Acme', budget: '10k-30k', interests: ['freelance', 'ai-product'] });
+  });
+
+  it('keeps every new field optional, so existing agents are not broken', () => {
+    expect(hireSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('rejects a budget or an interest outside the closed lists', () => {
+    expect(hireSchema.safeParse({ ...valid, budget: 'a lot' }).success).toBe(false);
+    expect(hireSchema.safeParse({ ...valid, interests: ['crypto'] }).success).toBe(false);
+  });
+
+  it('rejects repeated interests and oversized companies', () => {
+    expect(hireSchema.safeParse({ ...valid, interests: ['aeo', 'aeo'] }).success).toBe(false);
+    expect(hireSchema.safeParse({ ...valid, company: 'x'.repeat(201) }).success).toBe(false);
+  });
+});

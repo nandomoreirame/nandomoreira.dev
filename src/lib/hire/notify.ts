@@ -17,8 +17,12 @@ export const renderNotification = (briefing: StoredBriefing, id: string): string
     '',
     `From:      ${briefing.from}`,
     `Contact:   ${briefing.contact}`,
+    `Company:   ${briefing.company ?? 'not given'}`,
+    `Budget:    ${briefing.budget ?? 'not given'}`,
+    `Interests: ${briefing.interests.length > 0 ? briefing.interests.join(', ') : 'not given'}`,
     `Received:  ${briefing.receivedAt}`,
-    `Source IP: ${briefing.sourceIp}`,
+    // The IP stays out of the mail: an inbox copy outlives the 30-day TTL
+    // the privacy policy promises for network data.
     `Agent:     ${briefing.userAgent ?? 'not declared'}`,
     `Record:    ${id}`,
     '',
