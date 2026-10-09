@@ -1,9 +1,21 @@
+import { HONEYPOT_FIELD } from './schema';
+
 /**
  * The human form on /contato posts here without JavaScript, as
  * application/x-www-form-urlencoded with pt-BR field names. This maps it onto
  * the same payload an agent sends, so one schema validates both.
  */
+/**
+ * The honeypot's name on the human form. Deliberately meaningless: a name that
+ * autofill recognises (website, url, email...) gets filled by password
+ * managers, and the visitor's real message is then dropped as spam while the
+ * page says it was sent (seen in production on 2026-10-09). The API keeps
+ * `website`, since agents do not autofill.
+ */
+export const FORM_HONEYPOT = 'hp_ref';
+
 const FIELD_MAP: Record<string, string> = {
+  [FORM_HONEYPOT]: HONEYPOT_FIELD,
   nome: 'from',
   email: 'contact',
   mensagem: 'brief',

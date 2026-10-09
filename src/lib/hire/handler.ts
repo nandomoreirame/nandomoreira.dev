@@ -116,6 +116,9 @@ export const handleHire = async (
    * (REQ-004). Nothing is stored and nothing is sent.
    */
   if (isHoneypotFilled(result.data)) {
+    // Content stays out of the log; the line exists so a real visitor whose
+    // autofill tripped the trap shows up as more than an empty database.
+    console.warn(`hire: honeypot hit (${fromForm ? 'form' : 'json'})`);
     return accepted(syntheticId());
   }
 

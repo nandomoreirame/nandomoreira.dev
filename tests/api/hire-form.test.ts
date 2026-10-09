@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type Dependencies, handleHire } from '../../src/lib/hire/handler';
-import { formToPayload } from '../../src/lib/hire/form';
+import { FORM_HONEYPOT, formToPayload } from '../../src/lib/hire/form';
 import type { StoredBriefing } from '../../src/lib/hire/store';
 
 const saved: StoredBriefing[] = [];
@@ -101,8 +101,21 @@ describe('a form submission', () => {
     expect(response.headers.get('location')).toBe('/contato?envio=erro#envio');
   });
 
+  it('maps the form honeypot onto the API honeypot', () => {
+    expect(formToPayload(new URLSearchParams([[FORM_HONEYPOT, 'x']]))).toEqual({ website: 'x' });
+  });
+
+  it('logs a honeypot hit without its content, so a dropped message is visible', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    await submit(form([...complete, [FORM_HONEYPOT, 'http://spam']]));
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0])).toMatch(/honeypot/);
+    expect(String(warn.mock.calls[0])).not.toMatch(/spam|Ada|example\.com/);
+    warn.mockRestore();
+  });
+
   it('answers a filled honeypot exactly like a success, storing nothing', async () => {
-    const response = await submit(form([...complete, ['website', 'http://spam']]));
+    const response = await submit(form([...complete, [FORM_HONEYPOT, 'http://spam']]));
     expect(response.headers.get('location')).toBe('/contato?envio=ok#envio');
     expect(save).not.toHaveBeenCalled();
   });
