@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components';
+import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+
+interface Props {
+  /** id of the element whose text is copied. */
+  target: string;
+  /** Accessible name when the visible label alone is ambiguous on the page. */
+  label?: string;
+  /** A 44px square with the icon alone; the label stays for screen readers. */
+  iconOnly?: boolean;
+}
+
+const { target, label, iconOnly = false } = Astro.props;
+
+const shape = iconOnly ? 'size-11 justify-center' : 'min-h-11 gap-xs px-md';
+---
+
+{/* Ships hidden: the site script (PointerField) reveals it and wires the copy,
+    so without JavaScript it never promises an action. While confirming, the
+    script sets data-copied, which swaps the copy icon for a check. */}
+<button
+  type="button"
+  data-copy={target}
+  data-label-copied={AI_VIEW_LABELS.copied}
+  aria-label={label}
+  aria-live="polite"
+  hidden
+  class={`group/copy inline-flex shrink-0 items-center ${shape} rounded-md border border-border-strong bg-surface font-mono text-small text-foreground transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+>
+  <Icon name="lucide:copy" class="size-4 shrink-0 group-data-copied/copy:hidden" aria-hidden="true" />
+  <Icon
+    name="lucide:check"
+    class="hidden size-4 shrink-0 text-success group-data-copied/copy:block"
+    aria-hidden="true"
+  />
+  <span class={iconOnly ? 'sr-only' : undefined}>{AI_VIEW_LABELS.copy}</span>
+</button>

@@ -12,20 +12,35 @@
     footer rules still reach the viewport edges. */}
 
 <script>
-  // AI view Copy (docs/specs/ai-view, REQ-007). Lives in this, the site's only
-  // script, so the JS gate keeps accepting one script. The button ships hidden
-  // and appears only here, so without JS it never promises an action.
-  document.querySelectorAll<HTMLButtonElement>('[data-ai-copy]').forEach((button) => {
-    const source = document.querySelector('[data-ai-source]');
+  // Copy buttons (AI view, AGENTS.md brief). Lives in this, the site's only
+  // script, so the JS gate keeps accepting one script. A button names its
+  // source by id in data-copy, ships hidden and appears only here, so without
+  // JS it never promises an action.
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    const source = document.getElementById(button.dataset.copy ?? '');
     if (!source || !navigator.clipboard) return;
-    const label = button.textContent;
+    // Only the text changes, so the icon beside it survives the confirmation.
+    const text = button.querySelector('span') ?? button;
+    const label = text.textContent;
     button.hidden = false;
     button.addEventListener('click', async () => {
       await navigator.clipboard.writeText(source.textContent ?? '');
-      button.textContent = button.dataset.labelCopied ?? label;
-      setTimeout(() => (button.textContent = label), 2000);
+      text.textContent = button.dataset.labelCopied ?? label;
+      button.toggleAttribute('data-copied', true);
+      setTimeout(() => {
+        text.textContent = label;
+        button.removeAttribute('data-copied');
+      }, 2000);
     });
   });
+
+  // Header fill on scroll: bare at the top, filled once the page moves.
+  const header = document.querySelector('[data-site-header]');
+  if (header) {
+    const sync = () => header.toggleAttribute('data-scrolled', window.scrollY > 8);
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+  }
 
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

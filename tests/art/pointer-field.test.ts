@@ -57,12 +57,12 @@ describe('PointerField on the whole page', () => {
 
 describe('Copy in the single site script (ai-view REQ-007)', () => {
   it('reveals the copy button only when the script runs', () => {
-    expect(source).toContain('[data-ai-copy]');
+    expect(source).toContain('[data-copy]');
     expect(source).toMatch(/\.hidden\s*=\s*false|removeAttribute\('hidden'\)/);
   });
 
-  it('copies the markdown source, not the rendered panel', () => {
-    expect(source).toContain('[data-ai-source]');
+  it('copies the element the button names, by id', () => {
+    expect(source).toContain('getElementById(button.dataset.copy');
     expect(source).toContain('navigator.clipboard.writeText');
   });
 
@@ -71,6 +71,6 @@ describe('Copy in the single site script (ai-view REQ-007)', () => {
   });
 
   it('works regardless of the pointer and motion conditions that gate the effect', () => {
-    expect(source.indexOf('[data-ai-copy]')).toBeLessThan(source.indexOf('if (fine && !calm)'));
+    expect(source.indexOf('[data-copy]')).toBeLessThan(source.indexOf('if (fine && !calm)'));
   });
 });
