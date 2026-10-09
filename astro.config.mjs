@@ -36,6 +36,8 @@ export default defineConfig({
     '/favicon.ico': '/favicon.svg',
     // The MCP page moved on 2026-10-08; old links keep working.
     '/conectar': '/mcp',
+    // The previous site's only extra route. Nothing replaced it.
+    '/chat': '/',
   },
   markdown: {
     // Shiki writes its colours inline, from its own theme, so the palette gate
