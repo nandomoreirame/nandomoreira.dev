@@ -6,7 +6,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
 import { getProfile } from '../lib/content';
+import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { MCP_TOOLS } from '../lib/mcp/catalog';
+import { mcpClients, mcpHowToLd } from '../lib/mcp/clients';
 
 type ToolName = (typeof MCP_TOOLS)[number]['name'];
 
@@ -26,32 +28,10 @@ const TOOL_LABELS: Record<ToolName, string> = {
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const endpoint = `${site}/api/mcp`;
 
-const CLIENTS = [
-  {
-    name: 'Claude Code',
-    steps: ['No terminal, adicione o servidor:'],
-    code: `claude mcp add --transport http nandomoreira ${endpoint}`,
-    after: 'Depois pergunte: o que o Fernando já colocou em produção?',
-  },
-  {
-    name: 'Claude',
-    steps: ['Em Configurações, Conectores, adicione um conector personalizado e cole o endereço:'],
-    code: endpoint,
-    after: 'Conecte e peça para ele avaliar os cases.',
-  },
-  {
-    name: 'ChatGPT',
-    steps: ['Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:'],
-    code: endpoint,
-    after: 'Peça para ele chamar get_resume ou check_availability.',
-  },
-  {
-    name: 'Qualquer cliente MCP',
-    steps: ['Cadastre um servidor Streamable HTTP com o endereço:'],
-    code: endpoint,
-    after: `Rode tools/list para ver as ${MCP_TOOLS.length} tools.`,
-  },
-];
+const CLIENTS = mcpClients(endpoint);
+const howToJsonLd = serialiseJsonLd(
+  mcpHowToLd(requireSite(Astro.site ?? new URL('https://nandomoreira.dev'))),
+);
 
 const codeClass =
   'flex min-h-11 min-w-0 flex-1 items-center select-all break-all rounded-md border border-border bg-background px-sm py-xs font-mono text-small text-primary';
@@ -66,6 +46,7 @@ const hireBrief = buildHireBrief({
   title="Conectar via MCP | nandomoreira.dev"
   description="Como conectar este portfólio a um agente de IA pelo Model Context Protocol."
 >
+  <script type="application/ld+json" is:inline set:html={howToJsonLd} />
   <PageHeader
     eyebrow="Agentes · MCP"
     title="Este site fala MCP"

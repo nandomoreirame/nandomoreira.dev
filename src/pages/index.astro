@@ -12,6 +12,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { collectionOfBlock } from '../lib/catalog/groups';
 import { getAllProjects, getProfile } from '../lib/content';
+import { homeMeta } from '../lib/home/meta';
+import { organizationLd } from '../lib/home/organization-ld';
 import { personLd } from '../lib/home/person-ld';
 
 const [profile, allProjects] = await Promise.all([getProfile(), getAllProjects()]);
@@ -38,6 +40,10 @@ const lab = rank(
 
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
+const organizationJsonLd = serialiseJsonLd(
+  organizationLd(profile, requireSite(Astro.site ?? new URL('https://nandomoreira.dev'))),
+);
+const meta = homeMeta(profile);
 // One-line teaser: first sentence of the bio, without dumping the full page.
 const aboutSummary = profile.bio.split(/(?<=\.)\s+/)[0] ?? profile.positioning;
 const hireBrief = buildHireBrief({
@@ -46,8 +52,9 @@ const hireBrief = buildHireBrief({
 });
 ---
 
-<BaseLayout title={`${profile.name} | ${profile.headline}`} description={profile.bio}>
+<BaseLayout title={meta.title} description={meta.description}>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
+  <script type="application/ld+json" is:inline set:html={organizationJsonLd} />
 
   <Hero
     headline={profile.headline}
