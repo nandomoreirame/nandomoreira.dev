@@ -38,7 +38,8 @@
   const header = document.querySelector('[data-site-header]');
   if (header) {
     const sync = () => header.toggleAttribute('data-scrolled', window.scrollY > 8);
-    sync();
+    // No read at load: it forced a synchronous layout (Lighthouse). Opening
+    // mid-page (anchor, restored position) fires scroll, which syncs it.
     window.addEventListener('scroll', sync, { passive: true });
   }
 

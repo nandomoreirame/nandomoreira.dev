@@ -69,4 +69,14 @@ describe('scroll state in the single site script', () => {
     expect(script).toContain("toggleAttribute('data-scrolled'");
     expect(script).toMatch(/passive:\s*true/);
   });
+
+  it('never reads the scroll position at load, only in response to scroll', async () => {
+    // Reading scrollY at load forced a synchronous layout in Lighthouse
+    // (forced-reflow insight: 84 ms inline, 45 ms deferred one frame,
+    // 2026-10-09). Anchors and restored positions fire scroll anyway.
+    const { readFileSync } = await import('node:fs');
+    const script = readFileSync('src/components/art/PointerField.astro', 'utf8');
+    expect(script).not.toMatch(/requestAnimationFrame\(sync\)|^\s*sync\(\);/m);
+    expect(script).toContain("addEventListener('scroll', sync, { passive: true })");
+  });
 });
