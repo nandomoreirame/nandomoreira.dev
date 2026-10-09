@@ -58,7 +58,8 @@ CDP_URL="http://127.0.0.1:${CDP_PORT}" node scripts/check-keyboard.mjs "$BASE" \
   /lab \
   /sobre \
   /contato \
-  /conectar \
+  /privacidade \
+  /mcp \
   /sobre/ia \
   /lab/forja/ia \
   /posts \

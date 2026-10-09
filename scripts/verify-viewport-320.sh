@@ -58,7 +58,8 @@ CDP_URL="http://127.0.0.1:${CDP_PORT}" node scripts/check-viewport-320.mjs "$BAS
   /lab \
   /sobre \
   /contato \
-  /conectar \
+  /privacidade \
+  /mcp \
   /sobre/ia \
   /lab/forja/ia \
   /posts \

@@ -131,7 +131,7 @@ print("\n".join(names))
 PY
 )
 
-for route in "/api/resume.json" "/api/resume.txt" "/llms-full.txt" "/ai-index.json" "/portfolio/financial-normalization.md" "/lab/forja.md" "/index.md" "/sobre.md" "/contato.md" "/conectar.md"; do
+for route in "/api/resume.json" "/api/resume.txt" "/llms-full.txt" "/ai-index.json" "/portfolio/financial-normalization.md" "/lab/forja.md" "/index.md" "/sobre.md" "/contato.md" "/mcp.md" "/privacidade.md"; do
   body=$(curl -s "${BASE}${route}")
 
   if printf '%s' "$body" | grep -qE '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'; then
