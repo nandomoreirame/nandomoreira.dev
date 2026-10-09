@@ -10,6 +10,11 @@ export default defineConfig({
   // Icons are inlined as SVG at render time; nothing ships to the browser.
   // Only the icons used are bundled into the server build.
   integrations: [icon()],
+  // One stylesheet request before first paint cost ~540 ms on mobile PageSpeed
+  // (2026-10-09); inlined, the CSS arrives with the HTML.
+  build: {
+    inlineStylesheets: 'always',
+  },
   // App Hosting ends TLS at its proxy and forwards plain HTTP. Astro trusts
   // X-Forwarded-Proto/Host only for these domains; without them it rebuilds the
   // request origin as http://, the form's https Origin never matches, and the

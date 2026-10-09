@@ -18,6 +18,32 @@ const collectStylesheets = (dir: string): string[] => {
 };
 
 /**
+ * Stylesheets are inlined (build.inlineStylesheets: 'always'), so the CSS
+ * also lives in <style> blocks of the pre-rendered pages. Both count.
+ */
+const collectInlineStyles = (dir: string): string[] => {
+  if (!existsSync(dir)) return [];
+
+  const found: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...collectInlineStyles(path));
+    else if (entry.name.endsWith('.html')) {
+      const blocks = readFileSync(path, 'utf8').match(/<style[^>]*>[\s\S]*?<\/style>/g) ?? [];
+      if (blocks.length > 0) found.push(path);
+    }
+  }
+  return found;
+};
+
+const sources = (): string[] => [...collectStylesheets(CLIENT_ROOT), ...collectInlineStyles(CLIENT_ROOT)];
+
+const cssOf = (file: string): string =>
+  file.endsWith('.css')
+    ? readFileSync(file, 'utf8')
+    : (readFileSync(file, 'utf8').match(/<style[^>]*>([\s\S]*?)<\/style>/g) ?? []).join('\n');
+
+/**
  * Match declarations whose *value* is a bare custom-property name
  * (e.g. `transition-duration:--duration-fast`), which is invalid CSS.
  * Allows `var(--token)` and custom-property *definitions* (`--token: 1s`).
@@ -29,18 +55,17 @@ describe('valid CSS in the build output', () => {
     expect(existsSync('dist')).toBe(true);
   });
 
-  it('ships at least one stylesheet under dist/client', () => {
-    const sheets = collectStylesheets(CLIENT_ROOT);
-    expect(sheets.length, 'expected CSS under dist/client after a build').toBeGreaterThan(0);
+  it('ships CSS under dist/client, as a file or inline in the pages', () => {
+    expect(sources().length, 'expected CSS under dist/client after a build').toBeGreaterThan(0);
   });
 
   it('never emits a declaration whose value is a bare custom-property name', () => {
-    const sheets = collectStylesheets(CLIENT_ROOT);
+    const sheets = sources();
     expect(sheets.length).toBeGreaterThan(0);
 
     const offenders: string[] = [];
     for (const file of sheets) {
-      const css = readFileSync(file, 'utf8');
+      const css = cssOf(file);
       const matches = css.match(BARE_CUSTOM_PROPERTY_VALUE) ?? [];
       if (matches.length > 0) {
         offenders.push(`${file}: ${[...new Set(matches)].join(', ')}`);
