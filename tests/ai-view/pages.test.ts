@@ -194,6 +194,13 @@ describe('aboutMarkdown', () => {
     expect(text).toContain('- TypeScript');
     expect(text).toContain('- Rust');
   });
+
+  it('ends with the "Sobre esse site" section, as on the page', () => {
+    const text = aboutMarkdown({ site, profile, projects: [] });
+    expect(text.indexOf('## Sobre esse site')).toBeGreaterThan(text.indexOf('## Stack'));
+    expect(text).toContain('**Para agentes:**');
+    expect(text).toContain('https://nandomoreira.dev/mcp');
+  });
 });
 
 describe('collectionMarkdown', () => {

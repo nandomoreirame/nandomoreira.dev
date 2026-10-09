@@ -8,6 +8,7 @@ import SectionHeader from '../components/ui/SectionHeader.astro';
 import StatItem from '../components/ui/StatItem.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { COLOPHON } from '../lib/about/colophon';
 import { careerStartYear, formatPeriod } from '../lib/about/period';
 import { collectionOfBlock } from '../lib/catalog/groups';
 import { getAllProjects, getProfile } from '../lib/content';
@@ -153,6 +154,36 @@ const caseHref = (slug: string): string | undefined => {
           </li>
         ))}
       </ul>
+    </section>
+
+    <section class="mt-2xl" aria-labelledby="colophon-heading">
+      <h2 id="colophon-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        {COLOPHON.title}
+      </h2>
+      <p class="mt-md max-w-[68ch] text-body text-muted-foreground">{COLOPHON.intro}</p>
+      <dl class="mt-lg grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+        {
+          COLOPHON.items.map((item) => (
+            <>
+              <dt class="font-mono text-small text-foreground">{item.label}</dt>
+              <dd class="text-body text-muted-foreground">
+                {item.text}
+                {item.link && (
+                  <>
+                    {' '}
+                    <a
+                      href={item.link.href}
+                      class="text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {item.link.label}
+                    </a>
+                  </>
+                )}
+              </dd>
+            </>
+          ))
+        }
+      </dl>
     </section>
   </article>
 </BaseLayout>

@@ -8,6 +8,7 @@ import {
   type CatalogCollection,
 } from '../catalog/groups';
 import type { ArchiveYear } from '../content';
+import { COLOPHON } from '../about/colophon';
 import { absoluteUrl } from '../aeo/urls';
 import { MCP_TOOLS } from '../mcp/catalog';
 
@@ -153,6 +154,13 @@ export const aboutMarkdown = ({
   lines.push('## Stack', '');
   for (const item of profile.stack) {
     lines.push(`- ${item}`);
+  }
+  lines.push('');
+
+  lines.push(`## ${COLOPHON.title}`, '', COLOPHON.intro, '');
+  for (const item of COLOPHON.items) {
+    const link = item.link ? ` [${item.link.label}](${absoluteUrl(site, item.link.href)})` : '';
+    lines.push(`- **${item.label}:** ${item.text}${link}`);
   }
   lines.push('');
 
