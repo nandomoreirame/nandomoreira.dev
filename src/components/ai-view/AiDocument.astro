@@ -1,0 +1,49 @@
+---
+import Prose from '../ui/Prose.astro';
+import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { renderMarkdown } from '../../lib/ai-view/render';
+
+interface Props {
+  title: string;
+  url: string;
+  markdown: string;
+}
+
+const { title, url, markdown } = Astro.props;
+const rendered = renderMarkdown(markdown);
+---
+
+<div class="flex flex-col gap-lg py-xl">
+  <dl
+    class="flex flex-wrap items-center gap-x-md gap-y-xs rounded-md border border-border bg-surface px-md py-sm font-mono text-small"
+  >
+    <div class="flex min-w-0 flex-wrap gap-xs">
+      <dt class="text-muted-foreground">{AI_VIEW_LABELS.title}:</dt>
+      <dd class="min-w-0 text-foreground">{title}</dd>
+    </div>
+    <div class="flex min-w-0 flex-wrap gap-xs sm:border-l sm:border-border sm:pl-md">
+      <dt class="text-muted-foreground">{AI_VIEW_LABELS.url}:</dt>
+      <dd class="min-w-0">
+        <a
+          href={url}
+          class="break-all text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {url}
+        </a>
+      </dd>
+    </div>
+  </dl>
+
+  {/* Both panels sit in <main>; the radios live in the top bar, so the CSS
+      switches them with :root:has() (docs/specs/ai-view, REQ-005). */}
+  <div class="ai-panel-rendered wrap-anywhere">
+    <Prose wide>
+      <div set:html={rendered} />
+    </Prose>
+  </div>
+  <div class="ai-panel-source">
+    <pre
+      class="overflow-x-auto rounded-md border border-border bg-surface p-md font-mono text-mono text-foreground"
+    ><code id="ai-source" data-ai-source>{markdown}</code></pre>
+  </div>
+</div>

@@ -1,8 +1,15 @@
 ---
+interface Props {
+  /** Fill the container instead of the 68ch reading measure (the AI view). */
+  wide?: boolean;
+}
+
+const { wide = false } = Astro.props;
+const measure = wide ? 'max-w-none' : 'max-w-[68ch]';
 ---
 
 <div
-  class="max-w-[68ch] font-serif text-body leading-relaxed text-foreground [&_a]:text-primary [&_a]:underline [&_h2]:mt-xl [&_h2]:text-h2 [&_h3]:mt-lg [&_h3]:text-h3 [&_p]:mt-md [&_table]:block [&_table]:overflow-x-auto"
+  class={`${measure} font-serif text-body leading-relaxed text-foreground [&_a]:text-primary [&_a]:underline [&_h2]:mt-xl [&_h2]:text-h2 [&_h3]:mt-lg [&_h3]:text-h3 [&_p]:mt-md [&_table]:block [&_table]:overflow-x-auto`}
 >
   <slot />
 </div>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
 import { aiPathFor } from '../../lib/ai-view/paths';
 
@@ -8,27 +9,28 @@ interface Props {
 }
 
 const { humanPath, view } = Astro.props;
-const aiHref = aiPathFor(humanPath);
+// One button: the way to the other view. On a human page it leads to the AI
+// view, on the AI view it leads back, so it never points at the current page.
+const target =
+  view === 'human'
+    ? { href: aiPathFor(humanPath), icon: 'lucide:bot', label: AI_VIEW_LABELS.ai }
+    : { href: humanPath, icon: 'lucide:user', label: AI_VIEW_LABELS.human };
+// Icon only at rest. The label opens on hover or keyboard focus by growing
+// max-width and fading in. Width is a layout property, an accepted exception
+// here: the switcher is fixed, so nothing else reflows. The label stays in the
+// accessibility tree the whole time.
+const labelClass =
+  'text-trim-cap max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-(--duration-base) ease-out group-hover/view:ml-xs group-hover/view:max-w-20 group-hover/view:opacity-100 group-focus-visible/view:ml-xs group-focus-visible/view:max-w-20 group-focus-visible/view:opacity-100';
 const linkClass =
-  'inline-flex min-h-11 items-center px-md font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary';
+  'group/view inline-flex min-h-11 min-w-11 items-center justify-center px-md font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 <nav
   aria-label="Visão da página"
   class="fixed right-lg bottom-lg z-10 flex overflow-hidden rounded-md border border-border-strong bg-surface/90 backdrop-blur-md"
 >
-  <a
-    href={humanPath}
-    aria-current={view === 'human' ? 'page' : undefined}
-    class={linkClass}
-  >
-    {AI_VIEW_LABELS.human}
-  </a>
-  <a
-    href={aiHref}
-    aria-current={view === 'ai' ? 'page' : undefined}
-    class={`${linkClass} border-l border-border-strong`}
-  >
-    {AI_VIEW_LABELS.ai}
+  <a href={target.href} class={linkClass}>
+    <Icon name={target.icon} class="size-3.5 shrink-0" aria-hidden="true" />
+    <span class={labelClass}>{target.label}</span>
   </a>
 </nav>

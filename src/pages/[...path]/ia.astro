@@ -1,5 +1,6 @@
 ---
 import AiBar from '../../components/ai-view/AiBar.astro';
+import AiDocument from '../../components/ai-view/AiDocument.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { absoluteUrl, requireSite } from '../../lib/aeo/urls';
 import { markdownForPath } from '../../lib/ai-view/registry';
@@ -28,11 +29,10 @@ if (!page) {
       canonicalPath={page.humanPath}
       markdownAlternate={page.mdPath}
     >
-      <AiBar
+      <AiBar slot="top" humanPath={page.humanPath} mdPath={page.mdPath} />
+      <AiDocument
         title={page.title}
         url={absoluteUrl(site, page.humanPath)}
-        humanPath={page.humanPath}
-        mdPath={page.mdPath}
         markdown={page.markdown}
       />
     </BaseLayout>
