@@ -2,6 +2,20 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "hosting": {
+    "site": "nandomoreira-dev",
+    "public": "hosting-public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "nandomoreira-dev",
+          "region": "us-east4"
+        }
+      }
+    ]
+  },
   "apphosting": [
     {
       "backendId": "nandomoreira-dev",
