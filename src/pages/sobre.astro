@@ -13,7 +13,6 @@ import { collectionOfBlock } from '../lib/catalog/groups';
 import { getAllProjects, getProfile } from '../lib/content';
 
 const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
-const email = profile.contacts.find((contact) => contact.kind === 'email');
 const profiles = profile.contacts.filter(
   (contact) => contact.kind === 'github' || contact.kind === 'linkedin',
 );
@@ -59,14 +58,10 @@ const caseHref = (slug: string): string | undefined => {
     </div>
 
     <div class="mt-lg flex flex-wrap items-center gap-md">
-      {
-        email && (
-          <Button href={`mailto:${email.value}`} variant="primary">
-            <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
-            Entrar em contato
-          </Button>
-        )
-      }
+      <Button href="/contato" variant="primary">
+        <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
+        Entrar em contato
+      </Button>
       {
         profiles.map((contact) => (
           <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">

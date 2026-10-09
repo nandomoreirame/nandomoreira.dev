@@ -29,6 +29,15 @@ describe('/sobre', () => {
     expect(html).toMatch(/contato|mailto:|#contato|href="\/#contato"/i);
   });
 
+  it('sends "Entrar em contato" to the /contato page, not to a mail client', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SobrePage);
+    const cta = html.match(/<a[^>]*>(?:(?!<\/a>)[\s\S])*?Entrar em contato[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(cta).toMatch(/href="\/contato"/);
+    expect(html).not.toContain('mailto:');
+  });
+
   it('has exactly one h1', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);
