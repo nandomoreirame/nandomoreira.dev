@@ -213,6 +213,12 @@
 }
 
 @layer base {
+  /* Tailwind 4 no longer sets the pointer on <button>. One rule here covers
+     every enabled button (Copiar, Enviar, the AI bar), present and future. */
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
   html {
     /* scroll-pt clears the sticky header, which would otherwise cover the
        anchor target. The reduce-motion block below turns the smoothness off. */
