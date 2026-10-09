@@ -20,8 +20,11 @@
   },
   "dependencies": {
     "@astrojs/node": "11.1.0",
+    "@iconify-json/lucide": "1.2.141",
+    "@iconify-json/simple-icons": "1.2.99",
     "@modelcontextprotocol/sdk": "1.30.0",
     "astro": "7.2.0",
+    "astro-icon": "1.2.0",
     "firebase-admin": "^14.2.0",
     "marked": "18.1.0",
     "resend": "^6.18.1",

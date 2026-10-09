@@ -1,11 +1,15 @@
 import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
+import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://nandomoreira.dev',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
+  // Icons are inlined as SVG at render time; nothing ships to the browser.
+  // Only the icons used are bundled into the server build.
+  integrations: [icon()],
   // Legacy /notas never made the production sitemap; these are courtesy 301s.
   // Declared here, not as pre-rendered pages: `Astro.redirect` in a pre-rendered
   // page cannot send a status, so it degrades to 200 plus a <meta refresh>.
@@ -16,6 +20,11 @@ export default defineConfig({
   redirects: {
     '/notas': '/posts',
     '/notas/[slug]': '/[slug]',
+    // Browsers and crawlers ask for /favicon.ico by default; without this the
+    // post route [slug] answers it.
+    '/favicon.ico': '/favicon.svg',
+    // The MCP page moved on 2026-10-08; old links keep working.
+    '/conectar': '/mcp',
   },
   markdown: {
     // Shiki writes its colours inline, from its own theme, so the palette gate

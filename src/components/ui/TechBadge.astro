@@ -1,13 +1,18 @@
 ---
+import { Icon } from 'astro-icon/components';
+import { techIconFor } from '../../lib/ui/tech-icons';
+
 interface Props {
   name: string;
 }
 
 const { name } = Astro.props;
+const icon = techIconFor(name);
 ---
 
 <span
-  class="inline-block max-w-full rounded-sm border border-border bg-surface px-sm py-xs font-mono text-small break-words text-muted-foreground"
+  class="inline-flex max-w-full items-center gap-xs rounded-sm border border-border bg-surface px-sm py-xs font-mono text-small break-words text-muted-foreground"
 >
+  {icon && <Icon name={icon} class="size-3.5 shrink-0" aria-hidden="true" />}
   {name}
 </span>
