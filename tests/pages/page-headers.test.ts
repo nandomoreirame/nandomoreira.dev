@@ -1,7 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import NotFound from '../../src/pages/404.astro';
-import Conectar from '../../src/pages/conectar.astro';
+import Mcp from '../../src/pages/mcp.astro';
 import Contato from '../../src/pages/contato.astro';
 import Lab from '../../src/pages/lab/index.astro';
 import Portfolio from '../../src/pages/portfolio/index.astro';
@@ -14,7 +14,7 @@ const PAGES = [
   ['/posts', Posts, 'Posts'],
   ['/posts/arquivo', Arquivo, 'Arquivo'],
   ['/contato', Contato, 'Contato'],
-  ['/conectar', Conectar, 'Agentes · MCP'],
+  ['/mcp', Mcp, 'Agentes · MCP'],
   ['/404', NotFound, '404'],
 ] as const;
 

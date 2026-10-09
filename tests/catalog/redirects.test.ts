@@ -68,3 +68,9 @@ describe('new case routes', () => {
     },
   );
 });
+
+describe('/conectar moved to /mcp', () => {
+  it('keeps old links working with a real 301', () => {
+    expect(read('astro.config.mjs')).toMatch(/'\/conectar':\s*'\/mcp'/);
+  });
+});

@@ -65,3 +65,33 @@ describe('SiteNav', () => {
     expect(html).not.toContain('href="/#contato"');
   });
 });
+
+describe('SiteNav MCP entry', () => {
+  it('links the MCP page, right before Contato', async () => {
+    const html = await render({ hasPosts: true });
+    expect(html).toMatch(/<a[^>]*href="\/mcp"[^>]*>[\s\S]*?MCP[\s\S]*?<\/a>/);
+    expect(html.indexOf('href="/mcp"')).toBeLessThan(html.indexOf('href="/contato"'));
+    expect(html.indexOf('href="/sobre"')).toBeLessThan(html.indexOf('href="/mcp"'));
+  });
+
+  it('marks it current on /mcp', async () => {
+    expect(await render({ current: '/mcp' })).toMatch(/<a[^>]*href="\/mcp"[^>]*aria-current="page"|<a[^>]*aria-current="page"[^>]*href="\/mcp"/);
+  });
+});
+
+describe('SiteNav label alignment', () => {
+  it('trims each label to its capitals, so the letters sit on the row centre', async () => {
+    const html = await render({ hasPosts: true });
+    const labels = html.match(/<a[^>]*>[\s\S]*?<\/a>/g) ?? [];
+    expect(labels.length).toBeGreaterThan(0);
+    for (const link of labels) expect(link).toMatch(/<span class="text-trim-cap">[^<]+<\/span>/);
+  });
+});
+
+describe('SiteNav item boxes', () => {
+  it('makes each item a flex box, so the inline link adds no descender gap below it', async () => {
+    const items = (await render({ hasPosts: true })).match(/<li[^>]*>/g) ?? [];
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) expect(item).toMatch(/class="[^"]*\bflex\b/);
+  });
+});

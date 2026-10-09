@@ -1,6 +1,11 @@
 ---
+import AgentBrief from '../components/contact/AgentBrief.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildHireBrief } from '../lib/aeo/hire-brief';
+import { requireSite } from '../lib/aeo/urls';
+import { getProfile } from '../lib/content';
 import { MCP_TOOLS } from '../lib/mcp/catalog';
 
 type ToolName = (typeof MCP_TOOLS)[number]['name'];
@@ -49,7 +54,12 @@ const CLIENTS = [
 ];
 
 const codeClass =
-  'block select-all break-all rounded-sm border border-border bg-background px-sm py-xs font-mono text-small text-primary';
+  'flex min-h-11 min-w-0 flex-1 items-center select-all break-all rounded-md border border-border bg-background px-sm py-xs font-mono text-small text-primary';
+
+const hireBrief = buildHireBrief({
+  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  profile: await getProfile(),
+});
 ---
 
 <BaseLayout
@@ -62,15 +72,18 @@ const codeClass =
     description="Adicione este portfólio como conector e o seu agente lê o meu perfil, os cases e o currículo, e confere a minha disponibilidade. Sem conta, sem chave e sem cadastro."
   />
 
-  {/* One click selects the whole address: a copy button would be a second
-      client script, and the pointer effect is the only one the site allows. */}
+  {/* Copy rides the site's single script (PointerField); select-all stays as
+      the fallback when JavaScript is off and the button never appears. */}
   <section aria-labelledby="endpoint-heading" class="rounded-md border border-border-strong bg-surface p-lg">
     <h2 id="endpoint-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
       Endpoint MCP
     </h2>
-    <code class={`mt-sm ${codeClass} text-body`}>{endpoint}</code>
+    <div class="mt-sm flex items-start gap-sm">
+      <code id="mcp-endpoint" class={`${codeClass} text-body`}>{endpoint}</code>
+      <CopyButton target="mcp-endpoint" label="Copiar o endpoint MCP" iconOnly />
+    </div>
     <p class="mt-sm text-small text-muted-foreground">
-      Streamable HTTP, protocolo 2025-11-25, só leitura. Um clique seleciona o endereço inteiro.
+      Streamable HTTP, protocolo 2025-11-25, só leitura.
     </p>
   </section>
 
@@ -89,7 +102,12 @@ const codeClass =
             {client.steps.map((step) => (
               <p class="text-body text-muted-foreground">{step}</p>
             ))}
-            <code class={codeClass}>{client.code}</code>
+            <div class="flex items-start gap-sm">
+              <code id={`mcp-client-${index + 1}`} class={codeClass}>{client.code}</code>
+              <CopyButton target={`mcp-client-${index + 1}`} label={`Copiar ${client.code === endpoint ? 'o endereço' : 'o comando'} para ${client.name}`}
+                iconOnly
+              />
+            </div>
             <p class="text-body text-muted-foreground">{client.after}</p>
           </li>
         ))
@@ -113,18 +131,18 @@ const codeClass =
     </ul>
   </section>
 
-  <section aria-labelledby="briefing-heading" class="mt-2xl mb-3xl">
+  <section aria-labelledby="briefing-heading" class="mt-2xl">
     <h2 id="briefing-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
       Para propor um projeto
     </h2>
     <p class="mt-md max-w-[68ch] text-body text-muted-foreground">
-      As tools são só de leitura. Para mandar um briefing, o agente faz um
-      <code class="font-mono text-small text-foreground">POST /api/hire</code>, descrito no
+      As tools são só de leitura. Para mandar um briefing, o agente faz um{' '}
+      <code class="font-mono text-small text-foreground">POST /api/hire</code>, descrito no{' '}
       <a
         href="/AGENTS.md"
         class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >guia para agentes</a
-      >. O resumo do site para modelos está em
+      >. O resumo do site para modelos está em{' '}
       <a
         href="/llms.txt"
         class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -132,4 +150,5 @@ const codeClass =
       >.
     </p>
   </section>
+  <AgentBrief brief={hireBrief} />
 </BaseLayout>

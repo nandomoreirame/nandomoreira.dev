@@ -11,20 +11,21 @@ const items = [
   { href: '/lab', label: 'Lab' },
   ...(hasPosts ? [{ href: '/posts', label: 'Posts' }] : []),
   { href: '/sobre', label: 'Sobre' },
+  { href: '/mcp', label: 'MCP' },
   { href: '/contato', label: 'Contato' },
 ];
 ---
 
 <nav aria-label="Navegação principal">
-  <ul class="flex flex-wrap items-center gap-lg">
+  <ul class="flex flex-wrap items-center gap-x-md gap-y-0 sm:gap-lg">
     {items.map((item) => (
-      <li>
+      <li class="flex">
         <a
           href={item.href}
           aria-current={current === item.href ? 'page' : undefined}
           class="inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary"
         >
-          {item.label}
+          <span class="text-trim-cap">{item.label}</span>
         </a>
       </li>
     ))}

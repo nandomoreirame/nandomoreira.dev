@@ -2,16 +2,16 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import { MCP_TOOLS } from '../../src/lib/mcp/catalog';
-import Conectar from '../../src/pages/conectar.astro';
+import Conectar from '../../src/pages/mcp.astro';
 
-const source = readFileSync('src/pages/conectar.astro', 'utf8');
+const source = readFileSync('src/pages/mcp.astro', 'utf8');
 
 const render = async () => {
   const container = await AstroContainer.create();
   return container.renderToString(Conectar);
 };
 
-describe('/conectar', () => {
+describe('/mcp', () => {
   it('opens like every other page: eyebrow, the claim, the lead', async () => {
     const html = await render();
     expect(html).toContain('Este site fala MCP');
@@ -47,5 +47,36 @@ describe('/conectar', () => {
 
   it('uses no framework island', () => {
     expect(source).not.toContain('client:');
+  });
+});
+
+describe('/mcp copy buttons and agent brief', () => {
+  const page = async () => {
+    const { experimental_AstroContainer } = await import('astro/container');
+    const container = await experimental_AstroContainer.create();
+    return container.renderToString(Conectar, {});
+  };
+
+  it('gives the endpoint and every client snippet a copy button aimed at its own code', async () => {
+    const html = await page();
+    const targets = [...html.matchAll(/<button[^>]*data-copy="([^"]+)"/g)].map((m) => m[1]);
+    // Endpoint + four clients + the AGENTS.md brief.
+    expect(targets).toHaveLength(6);
+    expect(new Set(targets).size).toBe(6);
+    for (const id of targets) {
+      expect(html, id).toMatch(new RegExp(`<code[^>]*id="${id}"`));
+    }
+  });
+
+  it('shows the copy icon on each button, hidden until the script reveals it', async () => {
+    const buttons = (await page()).match(/<button[^>]*data-copy=[\s\S]*?<\/button>/g) ?? [];
+    for (const button of buttons) {
+      expect(button).toMatch(/<button[^>]*\bhidden\b/);
+      expect(button).toContain('data-icon="lucide:copy"');
+    }
+  });
+
+  it('includes the AGENTS.md brief block', async () => {
+    expect(await page()).toContain('id="agent-brief"');
   });
 });

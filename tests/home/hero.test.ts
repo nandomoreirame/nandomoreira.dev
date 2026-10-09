@@ -14,9 +14,9 @@ const render = async (
 };
 
 describe('Hero', () => {
-  it('turns the availability label into the way in for agents, at /conectar', async () => {
+  it('turns the availability label into the way in for agents, at /mcp', async () => {
     const html = await render();
-    const link = html.match(/<a\b[^>]*href="\/conectar"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const link = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
     expect(link).toContain('Disponível para novos projetos');
     expect(link).toContain('min-h-11');
   });
