@@ -1,0 +1,57 @@
+---
+import Button from '../components/ui/Button.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import Prose from '../components/ui/Prose.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getProfile } from '../lib/content';
+import {
+  POLICY_LEAD,
+  POLICY_UPDATED_AT,
+  formatPolicyDate,
+  privacySections,
+} from '../lib/privacy/policy';
+
+const profile = await getProfile();
+const email = profile.contacts.find((contact) => contact.kind === 'email');
+---
+
+<BaseLayout
+  title={`Política de privacidade | ${profile.name}`}
+  description="O que este site coleta, por quanto tempo guarda e como pedir a exclusão dos seus dados."
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader eyebrow="Privacidade" title="Política de privacidade" description={POLICY_LEAD} />
+
+    <p class="font-mono text-small text-muted-foreground">
+      Atualizada em <time datetime={POLICY_UPDATED_AT}>{formatPolicyDate(POLICY_UPDATED_AT)}</time>.
+    </p>
+
+    <Prose>
+      {
+        privacySections.map((section) => (
+          <section aria-labelledby={section.id}>
+            <h2 id={section.id}>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </section>
+        ))
+      }
+
+      <section aria-labelledby="contato-privacidade">
+        <h2 id="contato-privacidade">Contato</h2>
+        <p>Para qualquer pedido sobre seus dados, escreva para mim.</p>
+      </section>
+    </Prose>
+
+    {
+      email && (
+        <div>
+          <Button href={`mailto:${email.value}`} variant="secondary">
+            {email.value}
+          </Button>
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>

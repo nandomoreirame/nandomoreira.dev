@@ -69,7 +69,7 @@ describe('buildSitemap', () => {
   });
 
   it('lists the page that teaches agents to connect', () => {
-    expect(output()).toContain('<loc>https://nandomoreira.dev/conectar</loc>');
+    expect(output()).toContain('<loc>https://nandomoreira.dev/mcp</loc>');
   });
 
   it('lists both resume routes, which are indexable content and not protocol files', () => {
