@@ -205,6 +205,40 @@
     outline-offset: 2px;
   }
 
+  /* Code blocks (Shiki, class astro-code): long lines wrap instead of
+     scrolling, and every line carries a number. Each line is a full-width
+     inline-block, so the newline Shiki writes between lines ends it without
+     adding a blank one; padding plus a negative indent hangs the wrapped
+     continuation under the code rather than under the number. */
+  .astro-code {
+    --code-gutter: 4ch;
+    white-space: pre-wrap;
+  }
+
+  .astro-code code {
+    counter-reset: code-line;
+  }
+
+  .astro-code .line {
+    display: inline-block;
+    width: 100%;
+    padding-left: var(--code-gutter);
+    text-indent: calc(-1 * var(--code-gutter));
+    overflow-wrap: anywhere;
+  }
+
+  .astro-code .line::before {
+    counter-increment: code-line;
+    content: counter(code-line) / "";
+    display: inline-block;
+    width: calc(var(--code-gutter) - 1ch);
+    margin-right: 1ch;
+    text-indent: 0;
+    text-align: right;
+    color: var(--color-muted-foreground);
+    user-select: none;
+  }
+
   /* Trims a label's box to its capitals, so a flex row centres the letters on
      the icon instead of the font's ascent/descent, which varies by engine. */
   .text-trim-cap {
