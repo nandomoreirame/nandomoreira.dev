@@ -18,34 +18,34 @@ const columns = stamp
 
 <a
   href={href}
-  class={`group grid ${columns} items-center gap-md border-b border-border py-lg transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+  class={`group grid ${columns} items-baseline gap-md border-b border-border py-lg transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
 >
   {stamp && <span class="font-mono text-small text-muted-foreground">{stamp}</span>}
 
   <span class="min-w-0">
+    {/* The title wraps rather than truncating: cut at ~30 characters it read as nothing on a phone. */}
     <span
-      class="block truncate font-serif text-h3 text-foreground transition-colors group-hover:text-primary"
+      data-title
+      class="block font-serif text-h3 text-pretty text-foreground transition-colors group-hover:text-primary"
     >
       {title}
     </span>
     {summary && (
-      <span class="hidden sm:block truncate text-small text-muted-foreground">
+      <span data-summary class="mt-xs hidden sm:line-clamp-2 text-small text-muted-foreground">
         {summary}
+      </span>
+    )}
+    {markers.length > 0 && (
+      <span data-markers class="mt-xs block font-mono text-micro text-muted-foreground">
+        {markers.slice(0, 3).join(' · ')}
       </span>
     )}
   </span>
 
-  <span class="flex items-center gap-md">
-    {markers.length > 0 && (
-      <span class="hidden md:block font-mono text-micro text-muted-foreground">
-        {markers.slice(0, 2).join(' · ')}
-      </span>
-    )}
-    <span
-      aria-hidden="true"
-      class="text-muted-foreground transition-transform group-hover:translate-x-xs group-hover:text-primary"
-    >
-      →
-    </span>
+  <span
+    aria-hidden="true"
+    class="text-muted-foreground transition-transform group-hover:translate-x-xs group-hover:text-primary"
+  >
+    →
   </span>
 </a>
