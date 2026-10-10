@@ -52,7 +52,7 @@ describe('redactConfidential', () => {
     const redacted = redactConfidential({
       ...base,
       confidential: true,
-      images: [{ src: '/img/dash.png', alt: 'Dashboard da Acme em producao' }],
+      images: [{ src: '/img/dash.png', alt: 'Dashboard da Acme em producao', width: 1200, height: 675 }],
     });
     expect(redacted.images?.[0]?.alt.toLowerCase()).not.toContain('acme');
   });

@@ -30,14 +30,12 @@ const render = async (props: Record<string, unknown>) => {
 };
 
 describe('CollectionListing', () => {
-  it('lists a card per case, with its art, title and date, linking to the real route', async () => {
+  it('lists a row per case, with its art, title and date, linking to the real route', async () => {
     const html = await render({
       collection: 'lab',
       projects: [project()],
     });
 
-    // Cards replaced rows here on purpose: docs/specs/generative-case-art
-    // revokes the theme-restyle "rows, never cards" rule for /portfolio and /lab.
     expect(html).toContain('href="/lab/forja"');
     expect(html).toContain('Forja');
     expect(html).toContain('01/2026');
@@ -68,13 +66,27 @@ describe('CollectionListing', () => {
     expect(html).toMatch(/\bsm:grid-cols-5\b/);
   });
 
-  it('keeps the lab as a grid of cards that carry the stack', async () => {
+  it('lists the lab as rows too, with the summary beside the art', async () => {
     const html = await render({ collection: 'lab', projects: [project({ art: 'panels' })] });
 
     expect(html).toContain('data-motif="panels"');
+    expect(html).toContain('Cliente GUI multi-CLI');
     expect(html).toContain('Tauri');
-    expect(html).toMatch(/\bsm:grid-cols-2\b/);
-    expect(html).not.toMatch(/\bsm:grid-cols-5\b/);
+    expect(html).toMatch(/\bsm:grid-cols-5\b/);
+    expect(html).not.toMatch(/\bsm:grid-cols-2\b/);
+  });
+
+  it.each(['portfolio', 'lab'])('alternates the art side in %s: odd items left, even items right', async (collection) => {
+    const block = collection === 'lab' ? 'ai-tooling' : 'professional';
+    const projects = ['2026-03-01', '2026-02-01', '2026-01-01'].map((date, index) =>
+      project({ slug: `case-${index}`, title: `Case ${index}`, block, date }),
+    );
+    const rows = (await render({ collection, projects })).split(/<li[\s>]/).slice(1);
+
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).not.toContain('data-flipped');
+    expect(rows[1]).toContain('data-flipped');
+    expect(rows[2]).not.toContain('data-flipped');
   });
 
   it('leaves the pointer field to the layout, which covers the whole page', async () => {

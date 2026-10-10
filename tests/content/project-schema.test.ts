@@ -64,9 +64,17 @@ describe('projectSchema', () => {
   it('rejects an image without alternative text', () => {
     const result = projectSchema.safeParse({
       ...valid,
-      images: [{ src: '/img/forja.png', alt: '' }],
+      images: [{ src: '/img/forja.png', alt: '', width: 1200, height: 675 }],
     });
     expect(result.success).toBe(false);
+  });
+
+  it('requires the real width and height of every image, so the page reserves its space', () => {
+    const image = { src: '/lab/forja/workspaces.webp', alt: 'Tela do Forja' };
+
+    expect(projectSchema.safeParse({ ...valid, images: [image] }).success).toBe(false);
+    expect(projectSchema.safeParse({ ...valid, images: [{ ...image, width: 1600, height: 0 }] }).success).toBe(false);
+    expect(projectSchema.safeParse({ ...valid, images: [{ ...image, width: 1600, height: 673 }] }).success).toBe(true);
   });
 
   it('accepts a project with no images at all', () => {

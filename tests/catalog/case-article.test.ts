@@ -49,22 +49,66 @@ describe('CaseArticle', () => {
   it('renders several images in sequence, with no carousel', async () => {
     const html = await render({
       images: [
-        { src: '/a.png', alt: 'Tela A' },
-        { src: '/b.png', alt: 'Tela B' },
+        { src: '/a.png', alt: 'Tela A', width: 1200, height: 675 },
+        { src: '/b.png', alt: 'Tela B', width: 1200, height: 675 },
       ],
     });
 
-    expect(html.match(/<img/g)).toHaveLength(2);
+    // Each image also has a copy inside its lightbox; count the ones on the page.
+    const visible = (html.match(/<img\b[^>]*>/g) ?? []).filter((tag) => !tag.includes('lightbox-image'));
+    expect(visible).toHaveLength(2);
     expect(html).not.toContain('carousel');
     expect(html).not.toContain('client:');
   });
 
-  it('lazy-loads images and declares dimensions, to protect CLS', async () => {
-    const html = await render({ images: [{ src: '/a.png', alt: 'Tela A' }] });
+  it('lazy-loads images and declares their real dimensions, to protect CLS', async () => {
+    const html = await render({ images: [{ src: '/a.png', alt: 'Tela A', width: 700, height: 364 }] });
 
     expect(html).toContain('loading="lazy"');
-    expect(html).toContain('width=');
-    expect(html).toContain('height=');
+    expect(html).toContain('width="700"');
+    expect(html).toContain('height="364"');
+  });
+
+  it('fills the container like the art band, keeping the aspect ratio', async () => {
+    const img = (await render({ images: [{ src: '/a.png', alt: 'Tela A', width: 700, height: 364 }] })).match(
+      /<img\b[^>]*>/,
+    )?.[0];
+
+    expect(img).toMatch(/\bw-full\b/);
+    expect(img).toMatch(/\bh-auto\b/);
+    expect(img).not.toMatch(/\bmax-w-full\b/);
+  });
+
+  describe('lightbox', () => {
+    const images = [
+      { src: '/a.png', alt: 'Tela A', width: 1600, height: 900 },
+      { src: '/b.png', alt: 'Tela B', width: 700, height: 364 },
+    ];
+
+    it('opens each image in its own popover from a button, with no script', async () => {
+      const html = await render({ images });
+      const triggers = [...html.matchAll(/<button\b[^>]*popovertarget="([^"]+)"(?![^>]*popovertargetaction="hide")[^>]*>/g)];
+
+      expect(triggers.map((match) => match[1])).toEqual(['case-image-1', 'case-image-2']);
+      for (const [, id] of triggers) expect(html).toMatch(new RegExp(`<div\\b[^>]*id="${id}"[^>]*popover`));
+      expect(html).not.toContain('<script');
+      expect(html).not.toContain('client:');
+    });
+
+    it('names the trigger after the image, so a screen reader knows what opens', async () => {
+      const html = await render({ images });
+      expect(html).toMatch(/<button\b[^>]*aria-label="Ampliar imagem: Tela A"/);
+    });
+
+    it('shows the whole image inside, labelled as a dialog, with a close button', async () => {
+      const html = await render({ images });
+      const box = html.slice(html.indexOf('id="case-image-1"'), html.indexOf('id="case-image-2"'));
+
+      expect(box).toMatch(/role="dialog"/);
+      expect(box).toMatch(/aria-label="Tela A"/);
+      expect(box).toMatch(/<img\b[^>]*src="\/a.png"[^>]*class="[^"]*\blightbox-image\b/);
+      expect(box).toMatch(/<button\b[^>]*popovertarget="case-image-1"[^>]*popovertargetaction="hide"[^>]*aria-label="Fechar"/);
+    });
   });
 
   it('opens with the generated art band, before the block label and the title', async () => {

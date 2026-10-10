@@ -13,7 +13,7 @@ const base = {
   art: generateArt({ slug: 'seu-atelie-aqui', block: 'professional', art: 'map', aspect: 'card' }),
 };
 
-const render = async (props: Partial<typeof base> = {}) => {
+const render = async (props: Partial<typeof base> & { flip?: boolean } = {}) => {
   const container = await AstroContainer.create();
   return container.renderToString(ArtRow, { props: { ...base, ...props } });
 };
@@ -50,6 +50,52 @@ describe('ArtRow', () => {
     expect(html).toMatch(/\bsm:grid-cols-5\b/);
     expect(html).toMatch(/\bsm:col-span-2\b/);
     expect(html).toMatch(/\bsm:col-span-3\b/);
+  });
+
+  it('moves the art to the right from sm up when flipped, keeping it first in reading order', async () => {
+    const html = await render({ flip: true });
+    const artBox = html.match(/<div[^>]*data-motif|<div[^>]*class="[^"]*aspect-video[^"]*"/)?.[0] ?? '';
+
+    expect(html).toContain('data-flipped');
+    expect(artBox).toMatch(/\bsm:order-last\b/);
+    expect(html.indexOf('data-motif="map"')).toBeLessThan(html.indexOf('Seu Ateliê Aqui'));
+  });
+
+  it('aligns the text to the right from sm up when flipped, towards the art', async () => {
+    const html = await render({ flip: true });
+
+    expect(html).toMatch(/\bsm:text-right\b/);
+    expect(html.match(/\bsm:justify-end\b/g)).toHaveLength(2);
+  });
+
+  it('puts the date right beside the title, never pushed to the far edge', async () => {
+    for (const flip of [false, true]) {
+      const html = await render({ flip });
+      expect(html).not.toMatch(/\bjustify-between\b/);
+      expect(html.indexOf('Seu Ateliê Aqui')).toBeLessThan(html.indexOf('11/2025'));
+    }
+  });
+
+  it('keeps the date to the right of the title when flipped', async () => {
+    const html = await render({ flip: true });
+
+    expect(html).not.toMatch(/\bsm:flex-row-reverse\b/);
+    expect(html.indexOf('Seu Ateliê Aqui')).toBeLessThan(html.indexOf('11/2025'));
+  });
+
+  it('keeps the art on the left and the text left-aligned by default', async () => {
+    const html = await render();
+    expect(html).not.toContain('data-flipped');
+    expect(html).not.toMatch(/\bsm:order-last\b/);
+    expect(html).not.toMatch(/\bsm:text-right\b/);
+    expect(html).not.toMatch(/\bsm:flex-row-reverse\b/);
+    expect(html).not.toMatch(/\bsm:justify-end\b/);
+  });
+
+  it('leaves generous room between rows and the divider', async () => {
+    const row = (await render()).match(/<a\b[^>]*>/)?.[0] ?? '';
+    expect(row).toMatch(/\bpy-xl\b/);
+    expect(row).not.toMatch(/\bpy-lg\b/);
   });
 
   it('marks itself as the parallax target and keeps the art decorative', async () => {

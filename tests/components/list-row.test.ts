@@ -31,16 +31,30 @@ describe('ListRow', () => {
     expect(html).toContain('grid-cols-[1fr_auto]');
   });
 
-  it('truncates title and summary instead of widening the grid', async () => {
-    const html = await render();
-    expect((html.match(/truncate/g) ?? []).length).toBeGreaterThanOrEqual(2);
+  it('wraps a long title instead of cutting it, so it reads on a phone', async () => {
+    const html = await render({ title: 'Um título longo o bastante para não caber numa linha só no celular' });
+    const title = html.match(/<span[^>]*data-title[^>]*>/)?.[0] ?? '';
+
+    expect(title).not.toBe('');
+    expect(title).not.toContain('truncate');
+    expect(title).not.toContain('line-clamp');
   });
 
-  it('hides the summary below sm and the markers below md', async () => {
-    const html = await render();
+  it('clamps the summary to two lines and hides it below sm', async () => {
+    const summary = (await render()).match(/<span[^>]*data-summary[^>]*>/)?.[0] ?? '';
 
-    expect(html).toContain('hidden sm:block');
-    expect(html).toContain('hidden md:block');
+    // line-clamp sets its own display, so it is also what shows it from sm.
+    expect(summary).toContain('hidden sm:line-clamp-2');
+  });
+
+  it('shows the markers at every width, under the title', async () => {
+    const html = await render();
+    const markers = html.match(/<span[^>]*data-markers[^>]*>/)?.[0] ?? '';
+
+    expect(markers).not.toBe('');
+    expect(markers).not.toContain('hidden');
+    expect(html.indexOf('data-markers')).toBeGreaterThan(html.indexOf('data-title'));
+    expect(html).toContain('Rust · Tauri');
   });
 
   it('exposes a visible focus ring, since the row is a link', async () => {
@@ -53,6 +67,6 @@ describe('ListRow', () => {
 
   it('renders no marker column when the item has none', async () => {
     const html = await render({ markers: [] });
-    expect(html).not.toContain('hidden md:block');
+    expect(html).not.toContain('data-markers');
   });
 });
