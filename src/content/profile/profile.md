@@ -5,10 +5,10 @@ wordmark: nandomoreira.dev
 headline: Desenvolvedor de software e engenheiro de IA, do dado à produção
 bio: |
   Construo software de ponta a ponta há 15 anos, da interface ao dado, e hoje
-  coloco agentes de IA e produtos com IA em produção. Na Liquid AI, respondo
+  coloco agentes de IA e produtos com IA em produção. Na Liquid AI, respondi
   pela esteira de dados de financiamento imobiliário de mais de 20
   incorporadoras, onde reduzi de cerca de cinco dias para até 30 minutos o
-  tempo de preparar uma base e entregá-la na pipeline. Sustento essa operação
+  tempo de preparar uma base e entregá-la na pipeline. Sustentei essa operação
   com um framework próprio de desenvolvimento assistido por IA, com guard-rails
   de segurança e portões de qualidade obrigatórios. Antes disso, seis anos em
   produtos de alta escala, como Itaú Unibanco, Pipefy e Skyone, e open source
@@ -35,7 +35,7 @@ trajectory:
       execução manual caso a caso por extração e pré-normalização automatizadas
       por API e assistidas por IA.
   - value: "20+"
-    label: incorporadoras na esteira de dados que opero
+    label: incorporadoras na esteira de dados que operei
     context: |
       Liquid AI. Bases de financiamento imobiliário que viram indicador dentro
       do produto.
@@ -93,16 +93,17 @@ work:
   - name: Liquid AI
     position: AI Engineer • Full Cycle Developer
     startDate: "2025-11-01"
+    endDate: "2026-09-30"
     summary: |
-      Respondo pela esteira de dados que transforma as bases das incorporadoras
+      Respondi pela esteira de dados que transforma as bases das incorporadoras
       clientes em indicadores dentro dos produtos da Liquid, e pelo framework de
-      desenvolvimento assistido por IA que sustenta a entrega de software.
+      desenvolvimento assistido por IA que sustentava a entrega de software.
     highlights:
       - Reduzi de cerca de cinco dias para até 30 minutos o intervalo entre receber uma base e entregá-la pré-normalizada na pipeline, com extração e pré-normalização automatizadas por API e assistidas por IA.
       - Concebi e construí o Play Manager, produto interno que virou a fonte da verdade da operação, com fase, responsável, prazo e saúde de cada base visíveis em um só lugar para o time e para a liderança.
       - Cobri de testes dois pipelines que rodavam em produção sem nenhum teste automatizado, 920 casos levando a cobertura de 0% para 84% e 92%, com gate no CI e deploy bloqueado quando a suíte falha.
       - Construí o framework interno de desenvolvimento assistido por IA sobre Claude Code, com 106 automações, 34 comandos, 19 agentes especializados, TDD obrigatório por ferramenta e 21 regras invioláveis de segurança.
-      - Orquestro três CLIs de IA com papéis separados, sob a regra de que quem escreve não julga, e o orquestrador é o único que valida contra os portões e versiona.
+      - Orquestrei três CLIs de IA com papéis separados, sob a regra de que quem escreve não julga, e o orquestrador é o único que valida contra os portões e versiona.
   - name: Norte Marketing
     position: Gerente de Tecnologia
     startDate: "2025-08-01"
