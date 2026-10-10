@@ -68,6 +68,48 @@ describe('Prose rhythm and headings', () => {
     expect(await classes()).toContain('[&_:is(h2,h3)+:is(p,ul,ol,pre,blockquote,.code-block)]:mt-sm');
   });
 
+  it('formats tables: left-aligned bold header, ruled rows, padded cells', async () => {
+    const list = await classes();
+    for (const name of [
+      '[&_table]:mt-lg',
+      '[&_table]:text-small',
+      '[&_table]:border-collapse',
+      '[&_:is(th,td)]:px-md',
+      '[&_:is(th,td)]:py-xs',
+      '[&_:is(th,td)]:align-top',
+      '[&_th]:text-left',
+      '[&_th]:font-semibold',
+      '[&_th]:border-b',
+      '[&_th]:border-border-strong',
+      '[&_td]:border-b',
+      '[&_td]:border-border',
+    ]) {
+      expect(list).toContain(name);
+    }
+  });
+
+  it('frames tables like the code blocks, on a surface with a rounded border', async () => {
+    const list = await classes();
+    for (const name of [
+      '[&_table]:rounded-md',
+      '[&_table]:border',
+      '[&_table]:border-border-strong',
+      '[&_table]:bg-surface',
+      '[&_th]:bg-surface-elevated',
+      '[&_tr:last-child>td]:border-b-0',
+    ]) {
+      expect(list).toContain(name);
+    }
+    // Inside a frame the first column needs its padding back.
+    expect(list).not.toContain('[&_:is(th,td)]:first:pl-0');
+  });
+
+  it('keeps a wide table scrollable instead of widening the page', async () => {
+    const list = await classes();
+    expect(list).toContain('[&_table]:block');
+    expect(list).toContain('[&_table]:overflow-x-auto');
+  });
+
   it('gives h3 weight of its own', async () => {
     const list = await classes();
     for (const name of ['[&_h3]:mt-xl', '[&_h3]:font-semibold', '[&_h3]:text-h3']) expect(list).toContain(name);
