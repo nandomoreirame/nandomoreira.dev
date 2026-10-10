@@ -6,6 +6,7 @@ import {
   currentOf,
   groupArchiveYears,
   publishedPosts,
+  getCurrentPosts,
   sortPosts,
 } from '../../src/lib/content/posts';
 
@@ -56,6 +57,40 @@ describe('sortPosts', () => {
     ]);
 
     expect(result.map((item) => item.slug)).toEqual(['first', 'second']);
+  });
+
+  it('orders by the full timestamp: year, month, day, hour, minute and second', () => {
+    const result = sortPosts([
+      post({ slug: 'morning', date: '2026-10-10', publishedAt: '2026-10-10T11:12:35-03:00' }),
+      post({ slug: 'seconds-later', date: '2026-10-10', publishedAt: '2026-10-10T11:12:40-03:00' }),
+      post({ slug: 'noon', date: '2026-10-10', publishedAt: '2026-10-10T12:08:11-03:00' }),
+      post({ slug: 'yesterday-late', date: '2026-10-09', publishedAt: '2026-10-09T23:59:59-03:00' }),
+      post({ slug: 'last-month', date: '2026-09-30', publishedAt: '2026-09-30T23:59:59-03:00' }),
+    ]);
+
+    expect(result.map((item) => item.slug)).toEqual([
+      'noon',
+      'seconds-later',
+      'morning',
+      'yesterday-late',
+      'last-month',
+    ]);
+  });
+
+  it('places a post without a timestamp at the start of its day', () => {
+    const result = sortPosts([
+      post({ slug: 'day-only', date: '2026-10-10' }),
+      post({ slug: 'timed', date: '2026-10-10', publishedAt: '2026-10-10T00:00:01-03:00' }),
+      post({ slug: 'yesterday', date: '2026-10-09', publishedAt: '2026-10-09T23:00:00-03:00' }),
+    ]);
+
+    expect(result.map((item) => item.slug)).toEqual(['timed', 'day-only', 'yesterday']);
+  });
+
+  it('lists the newest post first on the real posts page order', async () => {
+    const [first, second] = await getCurrentPosts();
+    expect(first.slug).toBe('fluxo-rpi-claude-code-grok-codex');
+    expect(second.slug).toBe('como-construi-meu-site-que-conversa-com-ia-via-mcp');
   });
 });
 

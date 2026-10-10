@@ -78,6 +78,25 @@ describe('postSchema', () => {
     expect(result.cover?.alt).toBe('Screenshot of the Gulp CLI');
   });
 
+  it('accepts an optional full timestamp with seconds and offset', () => {
+    const result = schema.parse({ ...base, date: '2026-10-10', publishedAt: '2026-10-10T12:08:11-03:00' });
+    expect(result.publishedAt).toBe('2026-10-10T12:08:11-03:00');
+    expect(schema.parse(base).publishedAt).toBeUndefined();
+  });
+
+  it.each(['2026-10-10T12:08-03:00', '2026-10-10T12:08:11', '2026-10-10 12:08:11-03:00', '12:08:11'])(
+    'rejects the incomplete timestamp %s',
+    (publishedAt) => {
+      expect(schema.safeParse({ ...base, date: '2026-10-10', publishedAt }).success).toBe(false);
+    },
+  );
+
+  it('requires the timestamp to fall on the post date', () => {
+    expect(
+      schema.safeParse({ ...base, date: '2026-10-09', publishedAt: '2026-10-10T12:08:11-03:00' }).success,
+    ).toBe(false);
+  });
+
   it('accepts a known art motif for a post without a cover', () => {
     expect(schema.parse({ ...base, art: 'orbit' }).art).toBe('orbit');
   });
