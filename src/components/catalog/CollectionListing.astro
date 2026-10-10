@@ -1,5 +1,4 @@
 ---
-import ArtCard from './ArtCard.astro';
 import ArtRow from './ArtRow.astro';
 import type { Project } from '../../content/schemas/project';
 import { generateArt } from '../../lib/art';
@@ -25,7 +24,6 @@ const items = projects
 
 const label = COLLECTION_LABELS[collection];
 
-// Client work needs its context beside the art; the lab reads well as a grid.
 const statusOf = (project: Project): string[] => [
   ...(project.discontinued ? ['Descontinuado'] : []),
   ...(project.confidential ? ['Confidencial'] : []),
@@ -40,9 +38,9 @@ const statusOf = (project: Project): string[] => [
       <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
         Nenhum case publicado nesta coleção ainda.
       </p>
-    ) : collection === 'portfolio' ? (
+    ) : (
       <ul class="list-none p-0">
-        {items.map((project) => (
+        {items.map((project, index) => (
           <li>
             <ArtRow
               href={`/${collectionOfBlock(project.block)}/${project.slug}`}
@@ -52,20 +50,7 @@ const statusOf = (project: Project): string[] => [
               tags={project.tech}
               status={statusOf(project)}
               art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
-            />
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <ul class="grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
-        {items.map((project) => (
-          <li>
-            <ArtCard
-              href={`/${collectionOfBlock(project.block)}/${project.slug}`}
-              title={project.title}
-              stamp={toCompactStamp(project.date)}
-              tags={project.tech}
-              art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
+              flip={index % 2 === 1}
             />
           </li>
         ))}

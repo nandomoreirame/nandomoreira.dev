@@ -12,24 +12,35 @@ interface Props {
   tags?: string[];
   /** Situation labels such as "Descontinuado" or "Confidencial". */
   status?: string[];
+  /** Art on the right from sm up; listings alternate it row by row. */
+  flip?: boolean;
 }
 
-const { href, title, stamp, summary, art, tags = [], status = [] } = Astro.props;
+const { href, title, stamp, summary, art, tags = [], status = [], flip = false } = Astro.props;
+
+// A flipped row pushes its text towards the art: the title, with the date
+// still to its right, and the summary and tags align right. Below sm the row
+// stacks and stays left.
+const mirror = flip
+  ? { text: 'sm:text-right', heading: 'sm:justify-end', tags: 'sm:justify-end' }
+  : { text: '', heading: '', tags: '' };
 ---
 
 {/* Art first, text after it: the drawing announces the kind of product, the
-    text says which one. One link for the whole row, so there is one tab stop. */}
+    text says which one. One link for the whole row, so there is one tab stop.
+    A flipped row only moves the art visually; the reading order stays. */}
 <a
   href={href}
   data-art
-  class="group grid grid-cols-1 items-center gap-md border-b border-border py-lg transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:grid-cols-5 sm:gap-lg"
+  data-flipped={flip || undefined}
+  class="group grid grid-cols-1 items-center gap-md border-b border-border py-xl transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:grid-cols-5 sm:gap-lg"
 >
   <div
-    class="aspect-video w-full overflow-hidden rounded-md border border-border-strong bg-background transition-[border-color] duration-(--duration-fast) ease-out group-hover:border-primary sm:col-span-2"
+    class={`aspect-video w-full overflow-hidden rounded-md border border-border-strong bg-background transition-[border-color] duration-(--duration-fast) ease-out group-hover:border-primary sm:col-span-2 ${flip ? 'sm:order-last' : ''}`}
     set:html={art}
   />
-  <span class="flex flex-col gap-sm sm:col-span-3">
-    <span class="flex items-baseline justify-between gap-md">
+  <span class={`flex flex-col gap-sm sm:col-span-3 ${mirror.text}`}>
+    <span class={`flex flex-wrap items-baseline gap-x-md ${mirror.heading}`}>
       <span class="font-serif text-h3 text-foreground transition-colors group-hover:text-primary">
         {title}
       </span>
@@ -38,7 +49,7 @@ const { href, title, stamp, summary, art, tags = [], status = [] } = Astro.props
     <span class="text-body text-muted-foreground">{summary}</span>
     {
       (tags.length > 0 || status.length > 0) && (
-        <span class="flex flex-wrap items-center gap-xs">
+        <span class={`flex flex-wrap items-center gap-xs ${mirror.tags}`}>
           {tags.slice(0, 4).map((tag) => (
             <TechBadge name={tag} />
           ))}
