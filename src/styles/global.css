@@ -390,6 +390,12 @@
     @apply min-h-dvh font-sans overflow-x-clip bg-background text-foreground;
   }
 
+  /* Selected text takes the honey accent. The ink inverts to primary-foreground,
+     the same pair the CTA already clears, so the highlight stays readable. */
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
   .motion-safe-default {
     transition-property: transform, opacity;
     transition-duration: var(--duration-fast);
