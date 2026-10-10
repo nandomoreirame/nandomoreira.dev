@@ -182,7 +182,7 @@ describe('aboutMarkdown', () => {
     expect(text).toContain('minutos');
     expect(text).toContain('Liquid AI, bases de cliente.');
     expect(text).toContain('## Como posso ajudar');
-    expect(text).toContain('[BragStack](https://nandomoreira.dev/lab/bragstack)');
+    expect(text).toContain('[BragStack](https://nandomoreira.dev/portfolio/bragstack)');
     expect(text).toContain('## Experiência');
     expect(text).toContain('AI Engineer');
     expect(text).toContain('Liquid AI');

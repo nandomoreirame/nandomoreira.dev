@@ -12,6 +12,17 @@ describe('collection copy', () => {
     expect(description).toMatch(/automaç/);
   });
 
+  it('puts the SaaS products in the portfolio copy and out of the lab copy', () => {
+    for (const text of [COLLECTION_COPY.portfolio.description, COLLECTION_COPY.portfolio.metaDescription]) {
+      expect(text).toMatch(/SaaS/);
+    }
+    for (const text of [COLLECTION_COPY.lab.description, COLLECTION_COPY.lab.metaDescription]) {
+      expect(text).not.toMatch(/SaaS/);
+    }
+    // The portfolio no longer holds only client work.
+    expect(COLLECTION_COPY.portfolio.title).not.toMatch(/^Trabalho de cliente/);
+  });
+
   it.each([
     ['src/pages/lab/index.astro', 'lab'],
     ['src/pages/portfolio/index.astro', 'portfolio'],

@@ -7,19 +7,18 @@ describe('catalogue collections', () => {
     expect(Object.keys(COLLECTION_BLOCKS)).toEqual(['portfolio', 'lab']);
   });
 
-  it('puts client work in portfolio', () => {
-    // The split is client versus own product. It used to be ai-product +
-    // professional, which put two self-made SaaS in portfolio and a third in
-    // lab with nothing separating them.
-    expect(blocksOf('portfolio')).toEqual(['professional']);
+  it('puts products in production and client work in portfolio', () => {
+    // Since 2026-10-10 the split is product in production versus open-source
+    // tooling. The SaaS products moved as a whole block, so none is left behind.
+    expect(blocksOf('portfolio')).toEqual(['ai-product', 'professional']);
   });
 
-  it('puts own products, tooling and systems in lab', () => {
-    expect(blocksOf('lab')).toEqual(['ai-tooling', 'ai-product', 'systems-cli']);
+  it('keeps open-source tooling and systems in lab', () => {
+    expect(blocksOf('lab')).toEqual(['ai-tooling', 'systems-cli']);
   });
 
-  it('keeps every own-product block out of portfolio', () => {
-    expect(collectionOfBlock('ai-product')).toBe('lab');
+  it('keeps every SaaS product out of the lab', () => {
+    expect(collectionOfBlock('ai-product')).toBe('portfolio');
   });
 
   it('assigns every block to exactly one collection', () => {

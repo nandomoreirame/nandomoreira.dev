@@ -42,7 +42,7 @@ describe('buildLlmsTxt', () => {
     expect(text).toContain('Forja');
     expect(text).toContain('Bragstack');
     expect(text).toContain('/lab/forja');
-    expect(text).toContain('/lab/bragstack');
+    expect(text).toContain('/portfolio/bragstack');
     expect(text).not.toContain('/projetos/');
   });
 
