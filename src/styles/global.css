@@ -241,6 +241,37 @@
 
   /* Trims a label's box to its capitals, so a flex row centres the letters on
      the icon instead of the font's ascent/descent, which varies by engine. */
+  /* Case image lightbox (Popover API). The UA already centres a popover in
+     the top layer; this sizes it to the image and dims the page behind. */
+  .lightbox {
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    overflow: hidden;
+  }
+
+  .lightbox::backdrop {
+    background: color-mix(in oklab, var(--color-background) 88%, transparent);
+  }
+
+  .lightbox-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 94vw;
+    max-height: 90dvh;
+  }
+
+  /* On the overlay, in the corner of the screen: fixed resolves against the
+     viewport because the popover has no transform. */
+  .lightbox-close {
+    position: fixed;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+  }
+
   .text-trim-cap {
     text-box: trim-both cap alphabetic;
   }

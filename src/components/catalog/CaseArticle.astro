@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { BLOCK_LABELS } from '../../content/blocks';
 import type { Project } from '../../content/schemas/project';
 import Prose from '../ui/Prose.astro';
@@ -70,16 +71,51 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
       <section>
         <h2 class="mb-md text-h2 font-semibold text-foreground">Imagens</h2>
         <div class="flex flex-col gap-lg">
-          {project.images.map((image) => (
-            <img
-              src={image.src}
-              alt={image.alt}
-              width="1200"
-              height="675"
-              loading="lazy"
-              class="w-full rounded-md border border-border"
-            />
-          ))}
+          {/* Lightbox through the Popover API: no script, Esc and a click
+              outside close it, and the hidden copy only loads when opened. */}
+          {project.images.map((image, index) => {
+            const id = `case-image-${index + 1}`;
+            return (
+              <figure class="m-0">
+                <button
+                  type="button"
+                  popovertarget={id}
+                  aria-label={`Ampliar imagem: ${image.alt}`}
+                  class="block w-full cursor-zoom-in rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-auto w-full rounded-md border border-border transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong"
+                  />
+                </button>
+                <div id={id} popover role="dialog" aria-label={image.alt} class="lightbox">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="lightbox-image"
+                  />
+                  <button
+                    type="button"
+                    popovertarget={id}
+                    popovertargetaction="hide"
+                    aria-label="Fechar"
+                    class="lightbox-close inline-flex size-11 items-center justify-center rounded-md border border-border-strong bg-background text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <Icon name="lucide:x" aria-hidden="true" class="size-5" />
+                  </button>
+                </div>
+              </figure>
+            );
+          })}
         </div>
       </section>
     )

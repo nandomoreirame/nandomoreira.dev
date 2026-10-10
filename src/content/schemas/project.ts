@@ -5,6 +5,9 @@ import { ART_MOTIFS } from '../motifs';
 const imageSchema = z.object({
   src: z.string().min(1),
   alt: z.string().min(1, 'A case image is content, never decoration: alt is required'),
+  /** The file's real size: the page reserves the space, and screenshots are not 16:9. */
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
 });
 
 /** Collapse punctuation so "Acme Corp" matches slug acme-corp and host acme.example.com. */
