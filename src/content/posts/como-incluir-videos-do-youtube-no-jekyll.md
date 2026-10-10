@@ -13,7 +13,7 @@ cover:
   alt: "Banner vermelho com a frase Get started with Jekyll ao lado de um tubo de ensaio cheio de líquido vermelho."
 ---
 
-Criar plugins para **[Jekyll](http://jekyllrb.com/)** é bem simples e fácil, basta criar seu arquivo `.rb` dentro do diretório `_plugins`.
+Criar plugins para **[Jekyll](https://jekyllrb.com/)** é bem simples e fácil, basta criar seu arquivo `.rb` dentro do diretório `_plugins`.
 
 Hoje vamos [usar um plugin](https://gist.github.com/joelverhagen/1805814) bem bacana para incluir vídeos do [Youtube](https://www.youtube.com/) no seu blog Jekyll sem precisar copiar e colar o iframe do youtube, apenas usando o `ID` do vídeo.
 
@@ -51,7 +51,7 @@ class YouTube < Liquid::Tag
 end
 ```
 
-### Exemplo de uso:
+### Exemplo de uso
 
 Como eu falei logo acima, é bem simples, apenas com uma linha curta você inclui o iframe do youtube no HTML final do Jekyll.
 

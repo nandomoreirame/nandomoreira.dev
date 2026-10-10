@@ -15,9 +15,9 @@ cover:
 
 Automatizadores de tarefas ou como são conhecidos pelo termo em inglês [Task Runners](https://goo.gl/Zugcvt), tem a capacidade de fazer muita coisa, facilitam muito não só no desenvolvimento dos projetos mas também nos builds e deploys, cara é simplesmente lindo.
 
-Já usei o [Gruntjs](http://gruntjs.com/) e [Rake tasks](https://github.com/ruby/rake) do Ruby, ambos são muito bons e tem suas finalidades, mas hoje vou falar sobre o magnífico [GulpJS](http://gulpjs.com/).
+Já usei o [Gruntjs](https://gruntjs.com/) e [Rake tasks](https://github.com/ruby/rake) do Ruby, ambos são muito bons e tem suas finalidades, mas hoje vou falar sobre o magnífico [GulpJS](https://gulpjs.com/).
 
-## Poque eu deveria usar um Task Runner?
+## Por que eu deveria usar um Task Runner?
 
 Usar um automatizador de tarefas te traz muitas vantagens, das quais se você desfrutar nunca mais vai querer começar o desenvolvimento de um novo projeto sem elas.
 

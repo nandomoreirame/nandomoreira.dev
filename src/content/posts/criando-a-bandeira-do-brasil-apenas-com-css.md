@@ -15,7 +15,7 @@ cover:
 
 Olá terráqueo, como vai?
 
-Recentemente eu contribui com um projeto chamado [Flags-in-CSS](https://github.com/pattle/Flags-in-CSS) enviando a bandeira do Brasil [pra coleção](http://pattle.github.io/Flags-in-CSS/).
+Recentemente eu contribui com um projeto chamado [Flags-in-CSS](https://github.com/pattle/Flags-in-CSS) enviando a bandeira do Brasil [pra coleção](https://pattle.github.io/Flags-in-CSS/).
 
 Eu vou demonstrar nesse artigo como eu criei ela usando apenas com <abbr title="Cascading Style Sheets">CSS</abbr>
 

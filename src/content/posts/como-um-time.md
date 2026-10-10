@@ -19,7 +19,7 @@ cover:
 
 Não é ficar horas e horas tentando resolver um problema sozinho...
 
-... é consultar o colega do lado e perguntar se ele pode te ajudar a resolve o problema junto com você.
+... é consultar o colega do lado e perguntar se ele pode te ajudar a resolver o problema junto com você.
 
 Não é resolver as suas tarefas rápido e ir tomar aquele café demorado...
 

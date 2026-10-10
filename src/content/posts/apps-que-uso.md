@@ -32,10 +32,10 @@ cover:
 - **[Spark mail app](https://sparkmailapp.com/)**: Sempre estive em busca de um gerenciador de emails que chutasse bundas, e sim ele é o cara! Eu uso no computador e no Celular.
 - **iCalendar/Google Calendar**: Para todas as minhas me lembrar de tarefas e reuniões no celular e computador.
 - **[Trello](https://trello.com/)**: Onde organizo meus projetos, planos e onde coloco muitas ideias malucas que geralmente me esquecerei mais tarde.
-- **[Evernote](http://evernote.com/)**: Com certeza o melhor app para notas que existe, antes eu usava o [Bear](http://www.bear-writer.com/) mas acabei migrando para o **Evernote** mesmo.
+- **[Evernote](https://evernote.com/)**: Com certeza o melhor app para notas que existe, antes eu usava o [Bear](https://bear.app/) mas acabei migrando para o **Evernote** mesmo.
 - **[Habitica](https://habitica.com/)**: Onde listo meus hábitos (ruins e bons) e atividades diárias que quero que se tornem hábitos.
-- **[Organizze](http://organizze.com.br/)**: Um webapp para cotrole financeiro pessoal.
-- **[Controlle](http://controlle.com/)**: Um webapp para cotrole financeiro para empresas.
+- **[Organizze](https://organizze.com.br/)**: Um webapp para cotrole financeiro pessoal.
+- **[Controlle](https://controlle.com/)**: Um webapp para cotrole financeiro para empresas.
 
 ### Design e UX Design
 
@@ -53,7 +53,7 @@ cover:
 
 - **[Pocket](https://getpocket.com/)**: Eu uso muito para salvar artigos de sites para ler mais tarde. Uso bastante integrado com o [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/).
 - **[feedly](https://feedly.com/)**: Onde faço a leitura dos sites que assino os feeds.
-- **[Kindle for Mac](https://itunes.apple.com/us/app/kindle/id405399194?mt=12)**: Os livros que estou lendo no meu [Kindle Paperwhite](https://www.amazon.com/dp/B00OQVZDJM) eu também leio no Macbook, e ele sincroniza as páginas do livro.
+- **[Kindle for Mac](https://web.archive.org/web/20190607181744/https://itunes.apple.com/us/app/kindle/id405399194?mt=12)**: Os livros que estou lendo no meu [Kindle Paperwhite](https://www.amazon.com/dp/B00OQVZDJM) eu também leio no Macbook, e ele sincroniza as páginas do livro.
 
 ### Música
 
@@ -63,7 +63,7 @@ cover:
 
 - **[Alfred 3](https://www.alfredapp.com/)**: Abrir apps, fazer cálculos básicos, fazer uma busca no Google quando não estou com o navegador aberto.
 - **[1Password](https://1password.com/)**: O App que uso para gerenciar todas as minhas senhas. Uso também a extensão no Chrome para fazer login rápido nas aplicações.
-- **[Caffeine](http://lightheadsw.com/caffeine/)**: Esse app serve para não hibernar o mac quando estou assistindo algum video/filme.
+- **[Caffeine](https://web.archive.org/web/20190101144415/http://lightheadsw.com/caffeine/)**: Esse app serve para não hibernar o mac quando estou assistindo algum video/filme.
 - **[CheatSheet](https://www.cheatsheetapp.com/CheatSheet/)**: Um app muito útil para saber os atalhos de teclado de seus apps.
 - **[Memory Clean](https://fiplab.com/apps/memory-clean-for-mac)**: Uso esse app para monitorar o consumo de memória do meu Macbook, to usando a versão 1.
 - **[Spectacle](https://www.spectacleapp.com/)**: Eu realmente não consigo viver sem esse app, ele é bem útil, com apenas um atalho no teclado ele deixa as janelas fullscreen sem coloca-las em um novo Desktop no MacOS.

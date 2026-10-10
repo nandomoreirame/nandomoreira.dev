@@ -24,7 +24,7 @@ Esse texto é para tentar responder algumas perguntas que me faço todos os dias
 
 Estamos procurando um dev [front-end](https://github.com/lojaskd/frontend-challenge) aqui na empresa onde trabalho, decidimos procurar os desenvolvedores que tinham um perfil no [GitHub](https://github.com/) e de alguma forma contribuem com a comunidade. Começamos a divulgar e receber emails.
 
-Nós achávamos que seria rápido (ou até mesmo fácil) encontrar o profissional dessa forma ([sabem de nada inocentes](http://portalrtn.com.br/wp-content/uploads/2014/05/1reproducao30.jpg)).
+Nós achávamos que seria rápido (ou até mesmo fácil) encontrar o profissional dessa forma (sabem de nada inocentes).
 
 Começamos a receber algumas respostas. Algumas nos deixaram tristes, recebemos frases e desculpas do tipo:
 

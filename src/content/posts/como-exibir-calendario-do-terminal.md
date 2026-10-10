@@ -23,10 +23,6 @@ O comando acima sem nenhum paramentro exibe o mês atual completo pra você.
 
 ![Comando `cal`direto do terminal](../../assets/posts/2018/Untitled.png)
 
-
-
-
-
 Se você quiser escolher o Mês para ser exibido você precisa passar o número do mês (de 1 a 12) e o ano, assim:
 
 ```bash
@@ -37,17 +33,11 @@ Isso vai imprimir o mês excolhido.
 
 ![Comando `cal 3 2017` irá exibir o mês de março do ano de 2017](../../assets/posts/2018/Untitled 1.png)
 
-
-
-
-
 Caso você queira apenas o ano
 
 ```bash
 cal 2018
 ```
-
-
 
 ![O comando `cal 2018` irá imprimir o ano inteiro de 2018](../../assets/posts/2018/Untitled 2.png)
 
@@ -55,7 +45,7 @@ O comando `cal 2018` irá imprimir o ano inteiro de 2018
 
 ---
 
-That’s it! [Aqui está um link para uma simples doc](http://ss64.com/bash/cal.html)
+That’s it! [Aqui está um link para uma simples doc](https://ss64.com/bash/cal.html)
 
 Espero que use e abuse!
 

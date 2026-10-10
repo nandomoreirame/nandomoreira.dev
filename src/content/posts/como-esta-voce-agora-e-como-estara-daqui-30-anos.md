@@ -48,7 +48,7 @@ Sou minimalista (?). Sim, eu sou, e eu não sinto mais vontade de comprar coisas
 
 ## Você não é, você está
 
-Eu gosto muito desse texto do **João Cristofolini** que ele escreve em **administradores.com.br**, que diz: [“Você não é seu cargo, você está no seu cargo”](http://administradores.com.br/artigos/carreira/voce-nao-e-seu-cargo-voce-esta-no-seu-cargo/103085/), é um texto curto mas me fez refletir.
+Eu gosto muito desse texto do **João Cristofolini** que ele escreve em **administradores.com.br**, que diz: [“Você não é seu cargo, você está no seu cargo”](https://administradores.com.br/artigos/carreira/voce-nao-e-seu-cargo-voce-esta-no-seu-cargo/103085/), é um texto curto mas me fez refletir.
 
 > Seu emprego, cargo ou trabalho é apenas um personagem de você atuando nesse mundo transitório. <small>João Cristofolini</small>
 
