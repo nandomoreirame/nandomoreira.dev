@@ -12,20 +12,42 @@ const token = (name: string) => css.match(new RegExp(`--color-${name}:\\s*(#[0-9
 // Shiki's github-dark-default paints every block on this background.
 const CODE_BACKGROUND = '#0d1117';
 
-describe('code blocks wrap long lines', () => {
-  it('wraps instead of scrolling sideways', () => {
-    expect(rule('.astro-code')).toMatch(/white-space:\s*pre-wrap/);
-    expect(rule('.astro-code .line')).toMatch(/overflow-wrap:\s*anywhere/);
+describe('code blocks keep their lines intact', () => {
+  // Wrapping was tried on 2026-10-10 and reverted: code reads as written, and
+  // a long line scrolls sideways instead of breaking.
+  it('never wraps a line, and scrolls sideways when it is too long', () => {
+    const block = rule('.astro-code');
+    expect(block).toMatch(/white-space:\s*pre;/);
+    expect(block).toMatch(/overflow-x:\s*auto/);
+    expect(css).not.toMatch(/overflow-wrap:\s*anywhere/);
   });
 
-  it('hangs wrapped continuations under the code, not under the line number', () => {
-    const line = rule('.astro-code .line');
-    expect(line).toMatch(/padding-left:\s*var\(--code-gutter\)/);
-    expect(line).toMatch(/text-indent:\s*calc\(-1 \* var\(--code-gutter\)\)/);
+  it('drops the hanging indent that only made sense while wrapping', () => {
+    expect(css).not.toMatch(/text-indent:\s*calc\(-1 \* var\(--code-gutter\)\)/);
+  });
+
+  it('gives the sideways scrollbar a thin bar in the palette', () => {
+    const block = rule('.astro-code');
+    expect(block).toMatch(/scrollbar-width:\s*thin/);
+    expect(block).toMatch(/scrollbar-color:\s*var\(--color-[a-z-]+\)\s+transparent/);
+  });
+});
+
+describe('project scrollbars', () => {
+  it('paints every scrollbar from the colour tokens, never the browser default', () => {
+    const html = rule('html');
+    expect(html).toMatch(/scrollbar-color:\s*var\(--color-border-strong\)\s+var\(--color-background\)/);
   });
 });
 
 describe('code blocks number their lines', () => {
+  // Less empty space left of the numbers, more between number and code.
+  it('keeps the number column tight and separates it from the code', () => {
+    const before = rule('.astro-code .line::before');
+    expect(before).toMatch(/width:\s*2ch/);
+    expect(before).toMatch(/margin-right:\s*2ch/);
+  });
+
   it('counts lines per block', () => {
     expect(rule('.astro-code code')).toMatch(/counter-reset:\s*code-line/);
     expect(rule('.astro-code .line::before')).toMatch(/counter-increment:\s*code-line/);

@@ -25,7 +25,7 @@ describe('Prose code blocks', () => {
   // happens to be monospaced (2026-10-10).
   it('pads, frames and spaces every block apart from the text around it', async () => {
     const list = await classes();
-    for (const name of ['[&_pre]:my-lg', '[&_pre]:p-md', '[&_pre]:rounded-md', '[&_pre]:border', '[&_pre]:border-border-strong']) {
+    for (const name of ['[&_.code-block]:my-lg', '[&_pre]:my-0', '[&_pre]:p-md', '[&_pre]:pl-sm', '[&_pre]:rounded-md', '[&_pre]:border', '[&_pre]:border-border-strong']) {
       expect(list).toContain(name);
     }
   });
@@ -65,7 +65,7 @@ describe('Prose rhythm and headings', () => {
   });
 
   it('keeps a heading close to its first paragraph', async () => {
-    expect(await classes()).toContain('[&_:is(h2,h3)+:is(p,ul,ol,pre,blockquote)]:mt-sm');
+    expect(await classes()).toContain('[&_:is(h2,h3)+:is(p,ul,ol,pre,blockquote,.code-block)]:mt-sm');
   });
 
   it('gives h3 weight of its own', async () => {
