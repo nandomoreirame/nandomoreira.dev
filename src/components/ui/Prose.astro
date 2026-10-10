@@ -21,7 +21,11 @@ const flow = [
   '[&_ul]:list-disc [&_ol]:list-decimal [&_:is(ul,ol)]:mt-lg [&_:is(ul,ol)]:pl-lg [&_li]:mt-xs [&_li]:marker:text-muted-foreground',
   '[&_blockquote]:mt-lg [&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-md [&_blockquote]:text-muted-foreground',
   '[&_hr]:my-2xl [&_hr]:border-border',
-  '[&_table]:block [&_table]:overflow-x-auto',
+  '[&_table]:mt-lg [&_table]:block [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-small',
+  '[&_table]:rounded-md [&_table]:border [&_table]:border-border-strong [&_table]:bg-surface',
+  '[&_:is(th,td)]:px-md [&_:is(th,td)]:py-xs [&_:is(th,td)]:align-top',
+  '[&_th]:text-left [&_th]:font-semibold [&_th]:bg-surface-elevated [&_th]:border-b [&_th]:border-border-strong',
+  '[&_td]:border-b [&_td]:border-border [&_tr:last-child>td]:border-b-0',
 ];
 
 // Code blocks come from Shiki with their own colours (measured in
