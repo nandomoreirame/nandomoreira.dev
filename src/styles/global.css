@@ -205,42 +205,128 @@
     outline-offset: 2px;
   }
 
-  /* Code blocks (Shiki, class astro-code): long lines wrap instead of
-     scrolling, and every line carries a number. Each line is a full-width
-     inline-block, so the newline Shiki writes between lines ends it without
-     adding a blank one; padding plus a negative indent hangs the wrapped
-     continuation under the code rather than under the number. */
+  /* Code blocks (Shiki, class astro-code): lines stay as written and a long
+     one scrolls sideways, on a thin scrollbar in the palette. Every line
+     carries a number from a per-block counter. */
   .astro-code {
-    --code-gutter: 4ch;
-    white-space: pre-wrap;
+    white-space: pre;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
   }
 
   .astro-code code {
     counter-reset: code-line;
   }
 
-  .astro-code .line {
-    display: inline-block;
-    width: 100%;
-    padding-left: var(--code-gutter);
-    text-indent: calc(-1 * var(--code-gutter));
-    overflow-wrap: anywhere;
+  /* Code toolbar (src/lib/code/toolbar.ts): Raw and Copy as icons, labelled
+     by a tooltip. The toolbar sits on the block, not inside the <pre>, so it
+     stays put while a long line scrolls sideways. */
+  .code-block {
+    position: relative;
   }
+
+  /* Hidden until the block is hovered or reached by keyboard: it sits over
+     the first lines of code. focus-within keeps it reachable without a mouse. */
+  .code-toolbar {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    display: flex;
+    gap: var(--spacing-xs);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) ease-out;
+  }
+
+  .code-block:hover .code-toolbar,
+  .code-block:focus-within .code-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .code-action {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) ease-out,
+      border-color var(--duration-fast) ease-out;
+  }
+
+  .code-action:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .code-action:has(:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .code-action:has(.code-raw-toggle:checked) {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .code-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .code-tooltip {
+    position: absolute;
+    top: calc(100% + var(--spacing-xs));
+    right: 0;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-elevated);
+    color: var(--color-foreground);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--duration-fast) ease-out;
+  }
+
+  .code-action:hover .code-tooltip,
+  .code-action:has(:focus-visible) .code-tooltip {
+    opacity: 1;
+  }
+
 
   .astro-code .line::before {
     counter-increment: code-line;
     content: counter(code-line) / "";
     display: inline-block;
-    width: calc(var(--code-gutter) - 1ch);
-    margin-right: 1ch;
-    text-indent: 0;
+    /* Two digits wide, right-aligned, with a clear gap before the code. */
+    width: 2ch;
+    margin-right: 2ch;
     text-align: right;
     color: var(--color-muted-foreground);
     user-select: none;
   }
 
-  /* Trims a label's box to its capitals, so a flex row centres the letters on
-     the icon instead of the font's ascent/descent, which varies by engine. */
+  /* Raw view: plain text, no token colours, no line numbers. */
+  .code-block:has(.code-raw-toggle:checked) .astro-code span {
+    color: inherit !important;
+  }
+
+  .code-block:has(.code-raw-toggle:checked) .astro-code .line::before {
+    content: none;
+  }
+
   /* Case image lightbox (Popover API). The UA already centres a popover in
      the top layer; this sizes it to the image and dims the page behind. */
   .lightbox {
@@ -272,6 +358,8 @@
     right: var(--spacing-md);
   }
 
+  /* Trims a label's box to its capitals, so a flex row centres the letters on
+     the icon instead of the font's ascent/descent, which varies by engine. */
   .text-trim-cap {
     text-box: trim-both cap alphabetic;
   }
@@ -288,6 +376,9 @@
     /* scroll-pt clears the sticky header, which would otherwise cover the
        anchor target. The reduce-motion block below turns the smoothness off. */
     @apply scheme-dark scroll-smooth scroll-pt-3xl;
+    /* Every scrollbar in the palette: thumb in border-strong on the page
+       background. Inherited, so it reaches the code blocks and the lightbox. */
+    scrollbar-color: var(--color-border-strong) var(--color-background);
   }
 
   html,
