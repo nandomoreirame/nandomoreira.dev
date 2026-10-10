@@ -109,6 +109,26 @@ describe('/[slug] post page', () => {
     expect(links).not.toContain('o-futuro-do-desenvolvimento-web');
   });
 
+  it('draws the declared art where a post has no cover', async () => {
+    const entries = await getAllPostEntries();
+    const coverless = entries.find((e) => !e.data.cover && e.data.art);
+    expect(coverless).toBeTruthy();
+
+    const html = await renderEntry(coverless!);
+
+    expect(html).toMatch(/<div[^>]*data-art/);
+    expect(html).toContain(`data-motif="${coverless!.data.art}"`);
+    expect(html.search(/data-art/)).toBeGreaterThan(html.search(/<time\b/i));
+  });
+
+  it('keeps the cover and draws no art when a post has one', async () => {
+    const entries = await getAllPostEntries();
+    const html = await renderEntry(entries.find((e) => e.data.slug === 'criar-site-completo-com-o-notion')!);
+
+    expect(html).toMatch(/<figure\b/i);
+    expect(html).not.toMatch(/data-motif=/);
+  });
+
   it('puts the title and date above the cover', async () => {
     const entries = await getAllPostEntries();
     const withCover = entries.find((e) => e.data.slug === 'criar-site-completo-com-o-notion');

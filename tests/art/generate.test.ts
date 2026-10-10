@@ -28,6 +28,15 @@ const draw = (art: (typeof ART_MOTIFS)[number], aspect: ArtAspect, slug = 'sampl
   generateArt({ slug, block: 'professional', art, aspect });
 
 describe('generateArt', () => {
+  it('draws a post, which has no block, from the motif it declares', () => {
+    const post = { slug: 'um-post', art: 'orbit', aspect: 'banner' } as const;
+    const svg = generateArt(post);
+
+    expect(svg).toContain('data-motif="orbit"');
+    expect(svg).toBe(generateArt(post));
+    expect(svg).not.toBe(generateArt({ ...post, slug: 'outro-post' }));
+  });
+
   it('draws the same markup for the same input, byte for byte', () => {
     const input = { slug: 'forja', block: 'ai-tooling', art: 'panels', aspect: 'card' } as const;
     expect(generateArt(input)).toBe(generateArt(input));

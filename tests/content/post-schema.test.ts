@@ -77,4 +77,12 @@ describe('postSchema', () => {
     });
     expect(result.cover?.alt).toBe('Screenshot of the Gulp CLI');
   });
+
+  it('accepts a known art motif for a post without a cover', () => {
+    expect(schema.parse({ ...base, art: 'orbit' }).art).toBe('orbit');
+  });
+
+  it('rejects an unknown art motif', () => {
+    expect(schema.safeParse({ ...base, art: 'spiral' }).success).toBe(false);
+  });
 });
