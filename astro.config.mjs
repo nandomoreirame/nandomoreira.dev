@@ -43,6 +43,15 @@ export default defineConfig({
     '/conectar': '/mcp',
     // The previous site's only extra route. Nothing replaced it.
     '/chat': '/',
+    // The SaaS products moved from the lab to the portfolio on 2026-10-10.
+    '/lab/bragstack': '/portfolio/bragstack',
+    '/lab/bragstack.md': '/portfolio/bragstack.md',
+    '/lab/croonos': '/portfolio/croonos',
+    '/lab/croonos.md': '/portfolio/croonos.md',
+    '/lab/mousai': '/portfolio/mousai',
+    '/lab/mousai.md': '/portfolio/mousai.md',
+    '/lab/portfoliosnap': '/portfolio/portfoliosnap',
+    '/lab/portfoliosnap.md': '/portfolio/portfoliosnap.md',
   },
   markdown: {
     // Shiki writes its colours inline, from its own theme, so the palette gate

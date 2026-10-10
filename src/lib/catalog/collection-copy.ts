@@ -10,15 +10,15 @@ export const COLLECTION_COPY: Record<
   { title: string; description: string; metaDescription: string }
 > = {
   portfolio: {
-    title: 'Trabalho de cliente, do problema à produção',
+    title: 'Produtos e trabalho de cliente, do problema à produção',
     description:
-      'Plataformas de dados com IA, loja virtual e sites institucionais, entregues para empresas e organizações. Cada case mostra o problema, as decisões técnicas e o resultado.',
-    metaDescription: 'Trabalho entregue: produtos com IA e cases profissionais.',
+      'Produtos SaaS próprios com IA e trabalho entregue para empresas e organizações: plataformas de dados com IA, loja virtual e sites institucionais. Cada case mostra o problema, as decisões técnicas e o resultado.',
+    metaDescription: 'Produtos SaaS com IA e trabalho de cliente, do problema à produção.',
   },
   lab: {
     title: 'O que construo por conta própria',
     description:
-      'Ferramental para agentes de IA, produtos SaaS, CLIs, automações e apps de desktop Linux. Cada case mostra o problema que me levou a construir, as decisões e onde o projeto está hoje.',
-    metaDescription: 'Ferramental de IA, produtos SaaS, CLIs, automações e apps de desktop Linux.',
+      'Ferramental para agentes de IA, CLIs, automações e apps de desktop Linux. Cada case mostra o problema que me levou a construir, as decisões e onde o projeto está hoje.',
+    metaDescription: 'Ferramental de IA, CLIs, automações e apps de desktop Linux.',
   },
 };

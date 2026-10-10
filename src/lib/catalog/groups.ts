@@ -3,14 +3,14 @@ import type { Block } from '../../content/blocks';
 export type CatalogCollection = 'portfolio' | 'lab';
 
 /**
- * Regrouping only: the four blocks stay exactly as cadastred. The split is
- * client work versus own product. `ai-product` moved to lab in 2026-08 because
- * the earlier split left two self-made SaaS in portfolio and a third in lab,
- * with nothing distinguishing them.
+ * Regrouping only: the four blocks stay exactly as cadastred. Since
+ * 2026-10-10 the split is product in production (own SaaS and client work)
+ * versus open-source tooling. `ai-product` moved as a whole block, so no SaaS
+ * is left in the lab with nothing distinguishing it from the others.
  */
 export const COLLECTION_BLOCKS = {
-  portfolio: ['professional'],
-  lab: ['ai-tooling', 'ai-product', 'systems-cli'],
+  portfolio: ['ai-product', 'professional'],
+  lab: ['ai-tooling', 'systems-cli'],
 } as const satisfies Record<CatalogCollection, readonly Block[]>;
 
 export const COLLECTION_LABELS: Record<CatalogCollection, string> = {
