@@ -13,11 +13,11 @@ cover:
   alt: "Banner vermelho com a frase Get started with Jekyll ao lado de um tubo de ensaio cheio de líquido vermelho."
 ---
 
-> Esse artigo foi traduzido de: [How to use tags and categories on github pages without plugins](http://www.minddust.com/post/tags-and-categories-on-github-pages/)
+> Esse artigo foi traduzido de: [How to use tags and categories on github pages without plugins](https://web.archive.org/web/20220418101826/http://www.minddust.com/post/tags-and-categories-on-github-pages/)
 
 ---
 
-[GitHub Pages](http://pages.github.com/) serviço é simplesmente incrível, e com a integração Jekyll ele fica ainda mais impressionante! Mas existem algumas limitações neste grande sistema automatizado:
+[GitHub Pages](https://pages.github.com/) serviço é simplesmente incrível, e com a integração Jekyll ele fica ainda mais impressionante! Mas existem algumas limitações neste grande sistema automatizado:
 
 - não há próprios plugins
 - [plugins disponíveis limitados](https://pages.github.com/versions/)

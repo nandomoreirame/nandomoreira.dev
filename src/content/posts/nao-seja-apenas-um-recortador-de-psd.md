@@ -19,11 +19,11 @@ Eu tenho um pouco mais de 6 anos de experiência em desenvolvimento web e posso 
 
 ![Mamilos polêmico](../../assets/posts/2015/polemico.jpg)
 
-> **Nota:** Porque eu me referi ao **profissional** e não ao **front-end** no texto acima? Por que, apesar do texto ser focado no mundo front-end, onde estou mais ligado, ele também vale para designers, programadores, marketeiros, UX e afins.
+> **Nota:** Por que eu me referi ao **profissional** e não ao **front-end** no texto acima? Porque, apesar do texto ser focado no mundo front-end, onde estou mais ligado, ele também vale para designers, programadores, marketeiros, UX e afins.
 
 Durante minha trajetória até aqui eu já trabalhei com alguns programadores e designers que discordariam completamente da minha opinião, que é:
 
-**_Sim, o profissional que trabalha com web deve saber, ou pelo menos entender das áreas a sua volta_**. Principamente as áreas nas quais sua equipe trabalha e as equipes que ele tem contato dentro da empresa onde trabalha.
+**_Sim, o profissional que trabalha com web deve saber, ou pelo menos entender das áreas a sua volta_**. Principalmente as áreas nas quais sua equipe trabalha e as equipes que ele tem contato dentro da empresa onde trabalha.
 
 Calma jovem, antes de você vir com pedras nas mãos eu vou começar a defender a minha opinião com os 6 itens logo abaixo.
 

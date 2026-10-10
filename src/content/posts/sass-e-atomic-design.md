@@ -13,13 +13,13 @@ cover:
   alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
-**SASS** é um pré-processador incrível não acha? Mas muitos não sabem como organizar seus projetos com ele, nesse artigo vou lhe mostrar como organizar uma estrutura _"foda"_ usando **[SASS](http://sass-lang.com/)** e _**[Atomic Design](http://patternlab.io/about.html)**_, vem comigo.
+**SASS** é um pré-processador incrível não acha? Mas muitos não sabem como organizar seus projetos com ele, nesse artigo vou lhe mostrar como organizar uma estrutura _"foda"_ usando **[SASS](https://sass-lang.com/)** e _**[Atomic Design](https://web.archive.org/web/20160630165942/http://patternlab.io/about.html)**_, vem comigo.
 
 > Não vou explicar o que é _Atomic Design_, não é o intuito desse artigo, mas vou deixar aqui alguns links para que você dê uma lida antes de continuar.
 
-- **[O que é Design Atômico?](http://tableless.com.br/o-que-e-design-atomic/)** - _tableless_
-- **[Atomic Design - Por que usar?](http://nomadev.com.br/atomic-design-por-que-usar/)** - _nomadev_
-- **[Passo-a-passo como desenvolver com Atomic Design, Mobile-first e Stylus - Parte 1](http://nomadev.com.br/passo-a-passo-como-desenvolver-com-atomic-design-mobile-first-e-stylus/)** - _nomadev_
+- **[O que é Design Atômico?](https://tableless.com.br/o-que-e-design-atomic/)** - _tableless_
+- **[Atomic Design - Por que usar?](https://web.archive.org/web/20170718140716/http://nomadev.com.br/atomic-design-por-que-usar/)** - _nomadev_
+- **[Passo-a-passo como desenvolver com Atomic Design, Mobile-first e Stylus - Parte 1](https://web.archive.org/web/20170814032538/http://nomadev.com.br/passo-a-passo-como-desenvolver-com-atomic-design-mobile-first-e-stylus/)** - _nomadev_
 - **[Atomic Design como funciona](http://www.frontendbrasil.com.br/tutoriais/atomic-design-como-funciona/)** - _frontendbrasil_
 
 ## /diretórios
@@ -62,9 +62,9 @@ sass-e-atomic-design/
 
 Vamos começar com o diretório `core/`, nele vamos criar 4 outros diretórios: `bosons/`, `functions/`, `mixins/` e `variables/`, e 4 arquivos `_bosons.scss`, `_functions.scss`, `_mixins.scss` e `_variables.scss`.
 
-- **_bosons/_**: São os _[placeholders](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#placeholder_selectors_)\_ do SASS, são as partículas que vão dar massa a nossos átomos.
-- **_functions/_**: São as [funções SASS](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#functions) do projeto.
-- **_mixins/_**: São as [mixins](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins) do projeto.
+- **_bosons/_**: São os _[placeholders](https://sass-lang.com/documentation/file.SASS_REFERENCE.html#placeholder_selectors_)\_ do SASS, são as partículas que vão dar massa a nossos átomos.
+- **_functions/_**: São as [funções SASS](https://sass-lang.com/documentation/file.SASS_REFERENCE.html#functions) do projeto.
+- **_mixins/_**: São as [mixins](https://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins) do projeto.
 - **_variables/_**: São todas as variáveis do projeto.
 
 Vamos deixar `functions/`, `mixins/` e `variables/` de lado e vamos nos concentrar em `bosons/`, é ai que começa a fazer sentido a metodologia _Atomic Design_. Nesse diretório vamos criar um _bóson_ que muita gente conheçe, o famoso `button`.
@@ -116,7 +116,7 @@ A estrutura acima tem dois _bósons_ que darão massa aos átomos de botões por
 
 Esse é só um pequeno exemplo de como podemos criar os nossos _placeholders_ de SASS em nosso projeto, pense em _bóson_ como algo que você vai usar muito e por todo o seu projeto, algo que será igualmente repetido em muitos lugares, assim você abstrai o CSS e o arquivo final ficá sem repetição de código.
 
-> Leia mais sobre _bósons_ e _quarks_ em [nomadev](http://nomadev.com.br/atomic-design-bósons-e-quarks-extended/)
+> Leia mais sobre _bósons_ e _quarks_ em [nomadev](https://web.archive.org/web/20171216145713/http://nomadev.com.br/atomic-design-b%C3%B3sons-e-quarks-extended/)
 
 ## /continua..
 

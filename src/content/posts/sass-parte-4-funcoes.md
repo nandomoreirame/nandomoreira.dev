@@ -83,7 +83,7 @@ $font-size-base: 16px;
 }
 ```
 
-É isso ai moçada, se tiverem alguma dúvida comentem ai que reponderei em ["dois palitos"](http://goo.gl/oM5AOY).
+É isso ai moçada, se tiverem alguma dúvida comentem ai que reponderei em ["dois palitos"](https://goo.gl/oM5AOY).
 
 Abraço!
 

@@ -15,7 +15,7 @@ Meu amigo Wilson gostou muito da ideia de poder publicar o blog dele no github u
 
 Bom, ele usou por algum tempo o tema default gerado pelo jekyll, é até “bonitinho” mas convenhamos, sempre pode melhorar né.
 
-O link do projeto é: [wprosdocimo.com.br](http://wprosdocimo.com.br)
+O link do projeto é: [wprosdocimo.com.br](https://wprosdocimo.com.br)
 
 O resultado foi bem bacana, veja logo abaixo.
 

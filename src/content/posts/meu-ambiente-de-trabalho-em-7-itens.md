@@ -25,7 +25,7 @@ Uso **Ubuntu 15.04** com **Gnome-shell 3.14** pois acho ele muito bonito, elegan
 
 ### 2. Editor de código
 
-Uso o [Sublime text 3](http://www.sublimetext.com/3) como editor de código padrão, gratuito e indispensável para um desenvolvedor front-end
+Uso o [Sublime text 3](https://www.sublimetext.com/3) como editor de código padrão, gratuito e indispensável para um desenvolvedor front-end
 
 ![Sublime text 3](../../assets/posts/2015/meu-ambiente-sublime-text-3.png)
 
@@ -58,11 +58,11 @@ Eu costumo sempre que instalar meu **Sublime Text**, já sair instalando meus pa
 
 ### 3. Linha de comando
 
-Usei por algums meses o **[Guake Terminal](http://guake.org/)** pelo simples fato de ser _dropdown_, logo migrei para o **[Terminator](http://gnometerminator.blogspot.com.br/p/introduction.html)** porque gostei da ideia de dividir a tela do terminal em múltiplas telinhas menores, mas ele não era _dropdown_, fiquei triste por algum tempo até encontrar o **[Yakuake](http://kde-apps.org/content/show.php?content=29153)**, um terminal que use o _dropdown_ com o divisão de múltiplas telas.
+Usei por algums meses o **[Guake Terminal](http://guake.org/)** pelo simples fato de ser _dropdown_, logo migrei para o **[Terminator](https://gnometerminator.blogspot.com.br/p/introduction.html)** porque gostei da ideia de dividir a tela do terminal em múltiplas telinhas menores, mas ele não era _dropdown_, fiquei triste por algum tempo até encontrar o **[Yakuake](https://web.archive.org/web/20160617014254/http://kde-apps.org/content/show.php/?content=29153)**, um terminal que use o _dropdown_ com o divisão de múltiplas telas.
 
 Hoje uso o **Yakuake** com muito prazer, e sou mais feliz por isso.
 
-Ah! Não poderia esquecer do **[Fish shell](http://fishshell.com/)**, com ele tudo fica mais fácil no terminal, sério, tudo.
+Ah! Não poderia esquecer do **[Fish shell](https://fishshell.com/)**, com ele tudo fica mais fácil no terminal, sério, tudo.
 
 ![Yakuake e fish shell](../../assets/posts/2015/meu-ambiente-linha-de-comando-yakuake-fish-shell.png)
 
@@ -72,7 +72,7 @@ Ah! Não poderia esquecer do **[Fish shell](http://fishshell.com/)**, com ele tu
 
 Mas é claro que é o **Git**, não precisaria nem discutir isso aqui pelo simples fato de que é o melhor controle de versão já desenvolvido.
 
-Uso **[Github](http://github.com/nandomoreirame)** para repositórios públicos e **[Bitbucket](https://bitbucket.org/)** para repositórios privados.
+Uso **[Github](https://github.com/nandomoreirame)** para repositórios públicos e **[Bitbucket](https://bitbucket.org/)** para repositórios privados.
 
 ![Github](../../assets/posts/2015/meu-ambiente-github.jpg)
 
@@ -82,7 +82,7 @@ Uso **[Github](http://github.com/nandomoreirame)** para repositórios públicos 
 
 Todo front-end precisa usar um **[pré-processador](https://goo.gl/G79yVN)**, seja ele **LESS**, **SASS(SCSS)**, **Stylus** ou qualquer outro, isso não é uma opção, é um item necessário para um bom front-end.
 
-Eu uso **[SASS/SCSS](http://sass-lang.com/)**, apesar de ouvir falar muito bem do **Stylus** prefiro ficar com o **SASS**, ele tem tudo que preciso em um pré-processador e muito mais..
+Eu uso **[SASS/SCSS](https://sass-lang.com/)**, apesar de ouvir falar muito bem do **Stylus** prefiro ficar com o **SASS**, ele tem tudo que preciso em um pré-processador e muito mais..
 
 ![SASS e Compass](../../assets/posts/2015/meu-ambiente-sass-compass.jpg)
 
@@ -120,7 +120,7 @@ Junto com ele uso uma série de _packages_, que são indispensáveis em meu arse
 
 ---
 
-Nós usamos o **[Jira](https://www.atlassian.com/software/jira)** lá na **[MalaPronta.com](http://www.malapronta.com.br)** um software incrível da **Atlassian** a mesma empresa que criou o **Bitbucket**.
+Nós usamos o **[Jira](https://www.atlassian.com/software/jira)** lá na **[MalaPronta.com](https://web.archive.org/web/20170301034852/http://malapronta.com.br/)** um software incrível da **Atlassian** a mesma empresa que criou o **Bitbucket**.
 
 ![Jira Atlassian](../../assets/posts/2015/meu-ambiente-jira.png)
 

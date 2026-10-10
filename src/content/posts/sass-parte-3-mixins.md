@@ -18,11 +18,11 @@ cover:
 O principal objetivo do Mixin é você poder reutilizar um determinado bloco de código por todo seu projeto.
 
 > Um mixin permite fazer grupos de declarações CSS que você deseja reutilizar em todo o site. Você pode até mesmo passar valores para fazer a sua mixin mais flexível.
-> <small> Traduzido de: [sass-lang.com](http://sass-lang.com)</small>
+> <small> Traduzido de: [sass-lang.com](https://sass-lang.com)</small>
 
 ## Legal e por onde eu começo?
 
-Vamos fazer um exemplo simples, o mesmo usado na documentação do SASS ([sass-lang.com/guide](http://sass-lang.com/guide)).
+Vamos fazer um exemplo simples, o mesmo usado na documentação do SASS ([sass-lang.com/guide](https://sass-lang.com/guide)).
 
 ```scss
 @mixin border-radius($radius) {

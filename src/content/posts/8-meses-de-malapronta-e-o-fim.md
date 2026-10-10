@@ -15,19 +15,19 @@ Esse post não poderia começar melhor, com um "_I love U_" para MalaPronta.com,
 
 Eu queria poder dizer que to feliz com tudo isso, mas não to. Eu amava trabalhar lá, apesar de muitas intrigas e desavenças, eu amava meu emprego.
 
-Eu vou compartilhar com vocês meus **8 meses** de experiência em uma _startup_ com 10 anos de vida, posso dizer que não vi o começo de tudo, mas vi o fim do começo, vi o fim de sonhos e planos, amizades e desavenças, tudo se acabar dentro de uma sala de reuniões de um hotel, tudo se acabou com algumas palavas ditas em dois idiomas, porque um só já não bastava.
+Eu vou compartilhar com vocês meus **8 meses** de experiência em uma _startup_ com 10 anos de vida, posso dizer que não vi o começo de tudo, mas vi o fim do começo, vi o fim de sonhos e planos, amizades e desavenças, tudo se acabar dentro de uma sala de reuniões de um hotel, tudo se acabou com algumas palavras ditas em dois idiomas, porque um só já não bastava.
 
 ## Meu começo na MalaPronta
 
-Tudo começou em meados Janeiro, quando nos meus primeiros dias de empresa eu teria que entender um sistema desconhecido, entender como melhorar (ou deixar menos ruim) o HTML, o CSS e o JS daquele sistema, esse sistema era chamado de **Reserva Imediata**.
+Tudo começou em meados de janeiro, quando nos meus primeiros dias de empresa eu teria que entender um sistema desconhecido, entender como melhorar (ou deixar menos ruim) o HTML, o CSS e o JS daquele sistema, esse sistema era chamado de **Reserva Imediata**.
 
 No começo tudo parecia muito confuso, muitos arquivos de configs, era configs pra tudo, pra por CSS, pra tirar CSS, pra por JS, pra tirar JS.. isso tudo era novo pra mim, mas bora lá melhorar esse projeto.
 
 ## Primeiro desafio
 
-O primeiro desafio, que me foi solicitado, foi _**Ajudar a melhorar a performance do projeto**_. Todos estavam envolvido nesse novo desafio, DBA, Integrações, Back-end e Front-end, confesso que tava com receio de não conseguir ajudar em quase nada mas eu aceitei o desafio.
+O primeiro desafio, que me foi solicitado, foi _**Ajudar a melhorar a performance do projeto**_. Todos estavam envolvidos nesse novo desafio, DBA, Integrações, Back-end e Front-end, confesso que tava com receio de não conseguir ajudar em quase nada mas eu aceitei o desafio.
 
-Primeira coisa que configurei no projeto foi o **Gulp**, com ele eu consegui _minificar_ quase 4 mil arquivos CSS e JS, e comprimir as mais de 3 mil imagens em questões de minutos, depois fizemos uma "_marotagem_" com _regex_ para _minificar_ o HTML processado pelo **PHP**, com isso reduziriamos relativamente o tamanho dos arquivos de download do site, foi um bom ganho.
+Primeira coisa que configurei no projeto foi o **Gulp**, com ele eu consegui _minificar_ quase 4 mil arquivos CSS e JS, e comprimir as mais de 3 mil imagens em questão de minutos, depois fizemos uma "_marotagem_" com _regex_ para _minificar_ o HTML processado pelo **PHP**, com isso reduziríamos relativamente o tamanho dos arquivos de download do site, foi um bom ganho.
 
 Resultado, conseguimos baixar a média do site de 14s pra 8s, quase a metade não? Claro que isso não se deve só a mim, a galera trabalhou duro para isso acontecer, equipe massa (faltou o churrasco pra comemorar hein!).
 
@@ -61,13 +61,13 @@ Então na metade da terceira semana de setembro meu gerente me chamou para fazer
 
 Ta bom, vai vendo..
 
-O documento contia coisas do tipo: "_A indentação no navegador está errada(bagunçada), isso prejudica manutenções futuras_"... E também: "_As classes que você usou nos títulos estão confusas, isso prejudica manutenções futuras_"... E mais: "_Muitas linhas no seu CSS, pode impactar na performance_".. E ainda: "_Muitas linhas no seu JS, pode impactar na performance_".. [Pode isso Arnaldo?](http://geradormemes.com/media/created/18qk4w.jpg)
+O documento continha coisas do tipo: "_A indentação no navegador está errada(bagunçada), isso prejudica manutenções futuras_"... E também: "_As classes que você usou nos títulos estão confusas, isso prejudica manutenções futuras_"... E mais: "_Muitas linhas no seu CSS, pode impactar na performance_".. E ainda: "_Muitas linhas no seu JS, pode impactar na performance_".. Pode isso Arnaldo?
 
 Tem como não levar para o lado pessoal? Tem como não ter isso como um insulto ao meu trabalho? Pois bem.. Deixarei que você, que está lendo isso agora, responda essas perguntas e tire suas própias conclusões.
 
 ## A infra
 
-Eu não posso deixar de mencionar o famoso [Quarteto Fantástico](http://wprosdocimo.com.br/fantastic_four/) que era a equipe de infraestrutura, preciso deixar os meus agradecimentos aqui por todas as pausas para o café que tivemos no sétimo andar e todos os papos nerds(e outros papos sem futuro e de buling uns com os outros), com esses com certeza materei eterno contato. Continuem salvando o mundo e fazendo ótimos cafés como vocês sempre fizeram que tudo ficará bem.
+Eu não posso deixar de mencionar o famoso [Quarteto Fantástico](https://web.archive.org/web/20190101055709/http://wprosdocimo.com.br/fantastic_four) que era a equipe de infraestrutura, preciso deixar os meus agradecimentos aqui por todas as pausas para o café que tivemos no sétimo andar e todos os papos nerds(e outros papos sem futuro e de buling uns com os outros), com esses com certeza materei eterno contato. Continuem salvando o mundo e fazendo ótimos cafés como vocês sempre fizeram que tudo ficará bem.
 
 ## O fim
 

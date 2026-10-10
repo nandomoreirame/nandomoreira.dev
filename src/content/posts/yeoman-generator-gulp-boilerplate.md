@@ -17,11 +17,11 @@ Eu criei um [repositório](https://github.com/nandomoreirame/gulp-boilerplate) n
 
 Todo mundo já usou ou já ouviu falar dos pacotes do [NodeJS](https://nodejs.org/) os famosos [npm](https://www.npmjs.com/), eu queria saber como fazer um e talvez, quem sabe, criar um pra saber que gostinho tem :)
 
-Eu gosto muito da ideia do [Yeoman](http://yeoman.io/) de poder iniciar um projeto rápido com os seus _[generators](http://yeoman.io/generators/)_, dai eu pensei: **"Porque não fazer o um generator também?"**
+Eu gosto muito da ideia do [Yeoman](https://yeoman.io/) de poder iniciar um projeto rápido com os seus _[generators](https://yeoman.io/generators/)_, dai eu pensei: **"Porque não fazer o um generator também?"**
 
 Dessa ideia que saiu o [Generator Gulp Boilerplate](https://github.com/nandomoreirame/generator-gulp-boilerplate).
 
-A documentação do Yeoman é bem simples e fazer um generator é bem fácil, eu realmente não tive dificuldades e com a ajuda do [blog do Da2k](http://blog.da2k.com.br/2015/03/20/criando-uma-ferramenta-de-cli-com-nodejs/) eu consegui publicar ele no repositório do npmjs.com.
+A documentação do Yeoman é bem simples e fazer um generator é bem fácil, eu realmente não tive dificuldades e com a ajuda do [blog do Da2k](https://blog.da2k.com.br/2015/03/20/criando-uma-ferramenta-de-cli-com-nodejs/) eu consegui publicar ele no repositório do npmjs.com.
 
 ## Como usar o Yeoman
 
@@ -31,7 +31,7 @@ Como o **Yeoman** é um componente do **NodeJS** então você deve instalar ele 
 sudo npm install -g yo
 ```
 
-Com o Yeoman devidamente instalado em sua máquina basta só ir no [repositório](http://yeoman.io/generators/) e escolher o generator que quer instalar, a escolha não vai ser fácil pois atualmente tem mais de _**3 mil**_ generators no repositório do Yeoman.
+Com o Yeoman devidamente instalado em sua máquina basta só ir no [repositório](https://yeoman.io/generators/) e escolher o generator que quer instalar, a escolha não vai ser fácil pois atualmente tem mais de _**3 mil**_ generators no repositório do Yeoman.
 
 > Procure por "gulp-boilerplate" no campo de busca que vc vai encontrar o meu generator por lá..
 
@@ -74,7 +74,7 @@ Calma jovem, vou listar abaixo todos os pacotes e as tasks do Gulp Boilerplate p
 
 #### Pacotes gulp
 
-- [browser-sync](http://browsersync.io/)
+- [browser-sync](https://browsersync.io/)
 - [gulp](https://npmjs.com/package/gulp)
 - [gulp-autoprefixer](https://npmjs.com/package/gulp-autoprefixer)
 - [gulp-combine-media-queries](https://npmjs.com/package/gulp-combine-media-queries)
@@ -98,8 +98,8 @@ Calma jovem, vou listar abaixo todos os pacotes e as tasks do Gulp Boilerplate p
 
 - `gulp default` ou apenas `gulp`: executa a task `gulp serve`
 - `gulp serve`: executa o **watch** do projeto para os arquivos de `.jade`, `.sass` e `.js` e executa também um servidor usando o `browser-sync` e toda a vez que um arquivo HTML, CSS ou JS é alterado ele dá o _reload_ nos navegadores.
-- `gulp html`: usando os pacotes [jade](https://www.npmjs.com/package/jade) e [gulp-jade](https://www.npmjs.com/package/gulp-jade) essa tarefa processa arquivos [.jade](http://jade-lang.com/)
-- `gulp sass`: tarefa para executar o pré-processador [SASS](http://sass-lang.com/), aqui usamos o pacote [gulp-compass](https://www.npmjs.com/package/gulp-compass).
+- `gulp html`: usando os pacotes [jade](https://www.npmjs.com/package/jade) e [gulp-jade](https://www.npmjs.com/package/gulp-jade) essa tarefa processa arquivos [.jade](https://jade-lang.com/)
+- `gulp sass`: tarefa para executar o pré-processador [SASS](https://sass-lang.com/), aqui usamos o pacote [gulp-compass](https://www.npmjs.com/package/gulp-compass).
 - `gulp lint`: aqui executamos o `lint` para aquivos que estão em `js/components/` que são os arquinos js de produção.
 - `gulp js`: essa tarefa usa o pacote [gulp-include](https://www.npmjs.com/package/gulp-include) para incluir arquivos JS como é feito em **SASS** e emseguida minificar e salvar em dois aquivos `FILE.js` e `FILE.min.js`.
 - `gulp images`: usando [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) e [imagemin-pngquant](https://www.npmjs.com/package/imagemin-pngquant) reduzimos o tamanho de todas as imagens para produção.
