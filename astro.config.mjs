@@ -2,6 +2,7 @@ import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
+import { codeToolbar } from './src/lib/code/toolbar.ts';
 
 export default defineConfig({
   site: 'https://nandomoreira.dev',
@@ -65,6 +66,8 @@ export default defineConfig({
     // token below 4.5:1.
     shikiConfig: {
       theme: 'github-dark-default',
+      // Raw and Copy icon actions on every block (src/lib/code/toolbar.ts).
+      transformers: [codeToolbar()],
     },
   },
   vite: {
