@@ -29,6 +29,14 @@ describe('techIconFor', () => {
     expect(techIconFor('Google Cloud')).toBe('simple-icons:googlecloud');
   });
 
+  it('maps the desktop-plugin stack', () => {
+    expect(techIconFor('QML')).toBe('simple-icons:qt');
+    expect(techIconFor('JavaScript')).toBe('simple-icons:javascript');
+    expect(techIconFor('Google Calendar')).toBe('simple-icons:googlecalendar');
+    expect(techIconFor('Vitest')).toBe('simple-icons:vitest');
+    expect(techIconFor('Markdown')).toBe('simple-icons:markdown');
+  });
+
   it('ignores case and surrounding whitespace', () => {
     expect(techIconFor('  rust ')).toBe('simple-icons:rust');
   });
