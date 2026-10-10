@@ -94,6 +94,36 @@ describe('/[slug] post page', () => {
     expect(html).toContain(alt);
   });
 
+  it('closes with three related posts linking to other posts', async () => {
+    const entries = await getAllPostEntries();
+    const entry = entries.find((e) => e.data.slug === 'o-futuro-do-desenvolvimento-web')!;
+
+    const html = await renderEntry(entry);
+    const start = html.search(/<section[^>]*aria-labelledby="related-heading"/);
+    expect(start).toBeGreaterThan(-1);
+    const section = html.slice(start, html.indexOf('</section>', start));
+
+    expect(section).toContain('Posts relacionados');
+    const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map((m) => m[1]);
+    expect(links).toHaveLength(3);
+    expect(links).not.toContain('o-futuro-do-desenvolvimento-web');
+  });
+
+  it('puts the title and date above the cover', async () => {
+    const entries = await getAllPostEntries();
+    const withCover = entries.find((e) => e.data.slug === 'criar-site-completo-com-o-notion');
+    expect(withCover?.data.cover).toBeTruthy();
+
+    const html = await renderEntry(withCover!);
+    const heading = html.search(/<h1\b/i);
+    const time = html.search(/<time\b/i);
+    const figure = html.search(/<figure\b/i);
+
+    expect(heading).toBeGreaterThan(-1);
+    expect(figure).toBeGreaterThan(time);
+    expect(time).toBeGreaterThan(heading);
+  });
+
   it('omits the cover image when the post has no cover', async () => {
     // The only post without a cover today is the draft (exemplo.md). Drafts
     // are excluded from getStaticPaths, so this asserts the markup contract:
@@ -103,10 +133,20 @@ describe('/[slug] post page', () => {
     const entries = await getAllPostEntries();
     const withoutCover = entries.filter((e) => !e.data.cover);
     // Published posts may all have covers; when one does not, render it.
+    // The cover is the eager, high-priority <img> in a <figure>; images in
+    // the body (imported posts carry some) are not covers and may render.
     for (const entry of withoutCover) {
       const html = await renderEntry(entry);
-      expect(html).not.toMatch(/<img\b/i);
+      expect(html).not.toMatch(/<img\b[^>]*fetchpriority="high"/i);
+      expect(html).not.toMatch(/<figure\b/i);
       expect(html).toContain(entry.data.title);
     }
+  });
+
+  it('renders the images inside a post body', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'meu-stack-ferramentas-ia-2026');
+    expect(entry).toBeDefined();
+    const html = await renderEntry(entry!);
+    expect(html).toMatch(/<img\b[^>]*alt="Claude Code em ação no terminal"/);
   });
 });
