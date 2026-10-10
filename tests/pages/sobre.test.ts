@@ -94,7 +94,7 @@ describe('/sobre', () => {
     }
   });
 
-  it('lists the whole work history, current position first and marked as current', async () => {
+  it('lists the whole work history, most recent first, each with its real period', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);
     const profile = await getProfile();
@@ -105,7 +105,9 @@ describe('/sobre', () => {
 
     const experience = html.slice(html.indexOf('id="experiencia"'));
     expect(experience.indexOf(work[0].name)).toBeLessThan(experience.indexOf(work[1].name));
-    expect(experience).toContain('– atual');
+    // Liquid AI ended on 2026-09-30: no position is current now.
+    expect(experience).toContain('nov/2025 – set/2026');
+    expect(experience).not.toContain('– atual');
     for (const highlight of work[0].highlights ?? []) {
       expect(experience).toContain(highlight.slice(0, 40));
     }
