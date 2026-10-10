@@ -1,4 +1,5 @@
 import { buildCaseMarkdown } from '../aeo/case-markdown';
+import { OPEN_SOURCE_REPOS } from '../catalog/open-source';
 import { COLLECTION_COPY } from '../catalog/collection-copy';
 import { privacyMarkdown } from '../privacy/policy';
 import { absoluteUrl } from '../aeo/urls';
@@ -86,6 +87,7 @@ export const markdownForPath = async (
       title: copy.title,
       description: copy.description,
       projects,
+      openSource: collection === 'lab' ? OPEN_SOURCE_REPOS : [],
     });
     return page(copy.title, `/${collection}`, `/${collection}.md`, markdown);
   }

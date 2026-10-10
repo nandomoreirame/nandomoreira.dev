@@ -1,0 +1,44 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import { GITHUB_REPOSITORIES_URL, OPEN_SOURCE_REPOS } from '../../lib/catalog/open-source';
+---
+
+{/* What is open on GitHub without a case of its own, then the way to see all of it. */}
+<section aria-labelledby="open-source-heading" class="mt-3xl mb-3xl">
+  <SectionHeader id="open-source-heading" title="Outros projetos abertos" />
+  <ul class="list-none p-0">
+    {/* One link per row, so the whole row takes the hover and the click. */}
+    {
+      OPEN_SOURCE_REPOS.map((repo) => (
+        <li>
+          <a
+            href={repo.url}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            class="group flex flex-col gap-xs border-b border-border py-md transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-row sm:items-baseline sm:justify-between sm:gap-lg"
+          >
+            <span class="min-w-0">
+              <span class="font-mono text-body text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-(--duration-fast) ease-out group-hover:text-primary group-hover:decoration-primary">
+                {repo.name}
+              </span>
+              <span class="block text-small text-muted-foreground">{repo.description}</span>
+            </span>
+            <span class="shrink-0 font-mono text-micro text-muted-foreground">
+              {repo.language} · {repo.year}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="mt-lg">
+    <a
+      href={GITHUB_REPOSITORIES_URL}
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      Ver todos no GitHub <span aria-hidden="true">→</span>
+    </a>
+  </p>
+</section>

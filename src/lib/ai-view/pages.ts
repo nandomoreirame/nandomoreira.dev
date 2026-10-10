@@ -1,4 +1,5 @@
 import type { Post } from '../../content/schemas/post';
+import { GITHUB_REPOSITORIES_URL, type OpenSourceRepo } from '../catalog/open-source';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { formatPeriod } from '../about/period';
@@ -173,12 +174,15 @@ export const collectionMarkdown = ({
   title,
   description,
   projects,
+  openSource = [],
 }: {
   site: URL;
   collection: CatalogCollection;
   title: string;
   description: string;
   projects: readonly Project[];
+  /** The lab closes with the open repositories that have no case. */
+  openSource?: readonly OpenSourceRepo[];
 }): string => {
   const lines: string[] = [
     ...frontmatter(title, absoluteUrl(site, `/${collection}`)),
@@ -200,6 +204,14 @@ export const collectionMarkdown = ({
       `- Markdown: [${project.slug}.md](${absoluteUrl(site, `/${path}/${project.slug}.md`)})`,
       '',
     );
+  }
+
+  if (openSource.length > 0) {
+    lines.push('## Outros projetos abertos', '');
+    for (const repo of openSource) {
+      lines.push(`- [${repo.name}](${repo.url}): ${repo.description} (${repo.language}, ${repo.year})`);
+    }
+    lines.push('', `Todos os repositórios: ${GITHUB_REPOSITORIES_URL}`, '');
   }
 
   return lines.join('\n');
