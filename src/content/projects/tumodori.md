@@ -19,6 +19,11 @@ tech:
   - Ratatui
 repoUrl: https://github.com/nandomoreirame/tumodori
 liveUrl: null
+images:
+  - src: /lab/tumodori/timer.webp
+    alt: "tumodori no terminal: sessão de trabalho com 08:21 em dígitos grandes, atalhos de teclado e a barra de progresso"
+    width: 1076
+    height: 524
 featured: false
 confidential: false
 date: "2026-04-08"

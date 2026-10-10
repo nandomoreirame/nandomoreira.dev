@@ -26,6 +26,11 @@ tech:
   - systemd
 repoUrl: https://github.com/nandomoreirame/job-radar
 liveUrl: null
+images:
+  - src: /lab/job-radar/discord.webp
+    alt: "Canal #job-radar no Discord com duas vagas de engenharia de IA publicadas pelo bot, cada uma com modalidade, local, as qualificações que casaram, o link de candidatura e a nota de compatibilidade (90/100 na primeira)"
+    width: 756
+    height: 996
 featured: false
 confidential: false
 date: "2026-09-28"

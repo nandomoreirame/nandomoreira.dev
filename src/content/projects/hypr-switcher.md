@@ -20,6 +20,11 @@ tech:
   - Hyprland
 repoUrl: https://github.com/nandomoreirame/hypr-switcher
 liveUrl: null
+images:
+  - src: /lab/hypr-switcher/switcher.webp
+    alt: "hypr-switcher sobre o editor: faixa de janelas abertas com ícone, título e workspace, e a janela selecionada em destaque"
+    width: 1600
+    height: 905
 featured: false
 confidential: false
 date: "2026-03-03"

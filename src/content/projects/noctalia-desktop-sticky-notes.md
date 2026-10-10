@@ -27,6 +27,11 @@ tech:
   - Vitest
 repoUrl: https://github.com/nandomoreirame/noctalia-desktop-sticky-notes
 liveUrl: null
+images:
+  - src: /lab/noctalia-desktop-sticky-notes/settings.webp
+    alt: "Nota adesiva amarela na área de trabalho com o painel de configurações aberto: arquivo Markdown vinculado, cor de fundo, cor do texto e tamanho da fonte"
+    width: 1600
+    height: 793
 featured: false
 confidential: false
 date: "2026-06-09"
