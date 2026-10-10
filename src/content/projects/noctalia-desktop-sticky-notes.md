@@ -25,6 +25,11 @@ tech:
   - Noctalia Shell
   - Markdown
   - Vitest
+shortcuts:
+  - keys: "Ctrl+S"
+    action: "salva a nota e fecha o editor"
+  - keys: "Esc"
+    action: "também salva e fecha"
 repoUrl: https://github.com/nandomoreirame/noctalia-desktop-sticky-notes
 liveUrl: null
 images:

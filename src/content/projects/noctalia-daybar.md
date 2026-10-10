@@ -22,6 +22,23 @@ tech:
   - JavaScript
   - Noctalia Shell
   - Google Calendar
+shortcuts:
+  - keys: "Mod+Space"
+    action: "abre a captura rápida"
+  - keys: "Mod+Shift+Space"
+    action: "abre o painel com as abas"
+  - keys: "Tab"
+    action: "alterna o tipo da captura"
+  - keys: "Enter"
+    action: "salva e fecha"
+  - keys: "Shift+Enter"
+    action: "salva e mantém o campo aberto"
+  - keys: "Esc"
+    action: "fecha"
+  - keys: "Ctrl+E"
+    action: "troca a prévia da nota pelo editor"
+  - keys: "Ctrl+S"
+    action: "salva a nota na hora"
 repoUrl: https://github.com/nandomoreirame/noctalia-daybar
 liveUrl: null
 images:
