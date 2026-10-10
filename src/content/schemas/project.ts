@@ -38,6 +38,10 @@ export const projectSchema = z
     repoUrl: z.url().nullable().optional(),
     liveUrl: z.url().nullable().optional(),
     images: z.array(imageSchema).optional(),
+    /** Keyboard shortcuts of a desktop tool, as typed in its README: "Mod+Shift+Space". */
+    shortcuts: z
+      .array(z.object({ keys: z.string().min(1), action: z.string().min(1) }))
+      .optional(),
     featured: z.boolean(),
     confidential: z.boolean(),
     /**

@@ -40,6 +40,12 @@ export const buildCaseMarkdown = ({ site, project }: Input): string => {
     '',
   ];
 
+  if (project.shortcuts && project.shortcuts.length > 0) {
+    lines.push('## Atalhos', '');
+    for (const { keys, action } of project.shortcuts) lines.push(`- \`${keys}\`: ${action}`);
+    lines.push('');
+  }
+
   if (project.repoUrl || project.liveUrl) {
     lines.push('## Links', '');
     if (project.repoUrl) lines.push(`- Repo: ${project.repoUrl}`);

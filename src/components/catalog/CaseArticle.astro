@@ -67,6 +67,29 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
   </section>
 
   {
+    project.shortcuts && project.shortcuts.length > 0 && (
+      <section>
+        <h2 class="mb-md text-h2 font-semibold text-foreground">Atalhos</h2>
+        <dl class="flex flex-col gap-sm text-body text-muted-foreground">
+          {project.shortcuts.map(({ keys, action }) => (
+            <div class="flex flex-wrap items-baseline gap-x-md gap-y-xs">
+              <dt class="shrink-0 font-mono text-small text-foreground">
+                {keys.split('+').map((key, index) => (
+                  <Fragment>
+                    {index > 0 && ' + '}
+                    <kbd class="rounded-md border border-border-strong bg-surface px-xs">{key}</kbd>
+                  </Fragment>
+                ))}
+              </dt>
+              <dd>{action}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )
+  }
+
+  {
     project.images && project.images.length > 0 && (
       <section>
         <h2 class="mb-md text-h2 font-semibold text-foreground">Imagens</h2>
