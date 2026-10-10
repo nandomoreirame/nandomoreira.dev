@@ -3,6 +3,11 @@ slug: meu-stack-ferramentas-ia-2026
 title: "Meu Stack de Ferramentas em 2026: Como Claude Code, Cursor e IA transformaram meu workflow de desenvolvimento"
 summary: "Minha experiência real usando Claude Code, Gemini CLI, Cursor, Warp e outras ferramentas de IA no desenvolvimento. Workflow completo, insights práticos e resultados em números."
 date: "2026-01-28"
+markers:
+  - ferramentas
+  - ia
+  - claude code
+art: windows
 ---
 Depois de 6 meses testando praticamente todas as ferramentas de IA para desenvolvimento que existem no mercado, finalmente encontrei meu stack ideal. E não, não é uma única ferramenta milagrosa. É uma combinação estratégica de 9 ferramentas que se complementam perfeitamente.
 

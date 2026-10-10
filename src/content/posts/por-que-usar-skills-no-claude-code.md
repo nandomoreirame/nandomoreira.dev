@@ -3,6 +3,10 @@ slug: por-que-usar-skills-no-claude-code
 title: "Por que usar Skills no Claude Code mudou completamente meu workflow"
 summary: "Depois de 3 meses usando Claude Code com e sem skills, aprendi que a diferença não é só produtividade - é sobre trabalhar de forma completamente diferente."
 date: "2026-01-22"
+markers:
+  - claude code
+  - skills
+art: terminal
 ---
 Se você já usou Claude Code por algumas semanas, provavelmente já passou por isso: você passa 10 minutos explicando pro Claude exatamente como você quer que ele revise seu código, quais padrões seguir, que tipo de feedback dar. Na próxima sessão? Você explica tudo de novo. E de novo. E de novo.
 

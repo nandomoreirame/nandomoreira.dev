@@ -3,6 +3,10 @@ slug: criar-site-completo-com-o-notion
 title: "Hey dev! Vamos criar um site completo usando o Notion como CMS?"
 summary: A ideia desse artigo é dar uma introdução de como criar um site completo usando o Notion como gerenciador de conteúdo (CMS).
 date: "2024-06-09"
+markers:
+  - notion
+  - next.js
+  - cms
 archived: false
 cover:
   src: ../../assets/posts/2024/CleanShot_2024-06-09_at_19.55.53.gif

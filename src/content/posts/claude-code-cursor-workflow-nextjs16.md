@@ -3,6 +3,11 @@ slug: claude-code-cursor-workflow-nextjs16
 title: "Como uso Claude Code e Cursor juntos: Workflow real em projetos Next.js 16"
 summary: "Descubra como combinar Claude Code e Cursor para desenvolver projetos Next.js 16 40% mais rápido. Workflow real, exemplos de código e números de produtividade."
 date: "2026-01-26"
+markers:
+  - claude code
+  - cursor
+  - next.js
+art: panels
 ---
 Quando comecei a usar ferramentas de IA para desenvolvimento, achei que precisava escolher uma única solução. Testei Claude Code, depois Cursor, e ficava naquela dúvida: qual usar? Até que percebi que essa era a pergunta errada. A questão certa é: **quando usar cada uma?**
 

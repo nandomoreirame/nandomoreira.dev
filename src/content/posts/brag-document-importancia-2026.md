@@ -3,6 +3,10 @@ slug: brag-document-importancia-2026
 title: "Por que seu Brag Document é mais importante em 2026 do que nunca"
 summary: "Em 2026, com 84% dos devs usando IA, como você prova seu valor real? Descubra por que documentar suas conquistas deixou de ser opcional e virou estratégia de sobrevivência profissional."
 date: "2026-01-30"
+markers:
+  - carreira
+  - ia
+art: ascent
 ---
 Se você está lendo isso, provavelmente usa alguma ferramenta de IA para programar. Claude Code, Cursor, Copilot... pelo menos uma delas está no seu workflow diário. E se você é como os 84% dos desenvolvedores em 2026, essas ferramentas já escrevem cerca de 41% do seu código.
 

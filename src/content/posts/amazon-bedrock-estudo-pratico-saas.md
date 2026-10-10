@@ -3,6 +3,11 @@ slug: amazon-bedrock-estudo-pratico-saas
 title: "Amazon Bedrock: O que aprendi estudando a plataforma de IA da AWS (e por que isso importa para SaaS)"
 summary: "Minha jornada explorando Amazon Bedrock em 2026. Insights práticos sobre Knowledge Bases, Agents, comparação com Azure OpenAI e aplicação real em projetos SaaS."
 date: "2026-02-07"
+markers:
+  - aws
+  - ia
+  - saas
+art: wave
 ---
 Se você desenvolve SaaS ou Micro-SaaS, provavelmente já se perguntou: "Como adiciono IA generativa no meu produto sem depender de uma única API externa ou explodir meu orçamento?"
 

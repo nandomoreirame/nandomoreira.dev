@@ -3,6 +3,10 @@ slug: como-criar-claude-project-produtivo
 title: "Como criar um Claude Project produtivo usando o próprio Claude: Guia passo a passo"
 summary: "Tutorial completo de como usar o Claude para gerar suas próprias custom instructions e knowledge base. Do zero ao projeto funcionando em 30 minutos, com prompts prontos."
 date: "2026-02-04"
+markers:
+  - claude
+  - produtividade
+art: mosaic
 ---
 Se você já tentou usar Claude Projects, provavelmente passou pela mesma frustração que eu: abrir o projeto, olhar para a tela em branco de "Custom Instructions" e pensar "o que diabos eu escrevo aqui?".
 
