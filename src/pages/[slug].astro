@@ -6,6 +6,7 @@ import Prose from '../components/ui/Prose.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry } from '../lib/content';
 import type { PostEntry } from '../lib/content';
+import { generateArt } from '../lib/art';
 import { toCompactStamp } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
@@ -39,6 +40,8 @@ const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForPost(post, site));
 const stamp = toCompactStamp(post.date);
 const related = relatedPosts(post, await getAllPosts());
+// Same generated drawing as the case pages, in the cover's place.
+const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.art, aspect: 'banner' }) : undefined;
 ---
 
 <BaseLayout title={`${post.title} | nandomoreira.dev`} description={post.summary}>
@@ -87,6 +90,15 @@ const related = relatedPosts(post, await getAllPosts());
               class="h-auto w-full"
             />
           </figure>
+        )
+      }
+      {
+        art && (
+          <div
+            data-art
+            class="art-banner mt-md w-full overflow-hidden rounded-md border border-border bg-surface"
+            set:html={art}
+          />
         )
       }
     </header>

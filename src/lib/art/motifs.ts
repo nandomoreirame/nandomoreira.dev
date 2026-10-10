@@ -468,3 +468,69 @@ export const gantt: Motif = (random, { width, height }) => {
   shapes.push({ kind: 'line', x1: today, y1: height * 0.04, x2: today, y2: height * 0.96, layer: 2, weight: 1 });
   return shapes;
 };
+
+/** Day planner: a month of five weeks, events on some days, today lit. */
+export const calendar: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const left = width * 0.06;
+  const gridWidth = width * 0.88;
+  const top = height * 0.26;
+  const gridHeight = height * 0.68;
+  const colW = gridWidth / 7;
+  const rowH = gridHeight / 5;
+
+  // Month title and the previous/next arrows.
+  shapes.push({ kind: 'bar', x: left, y: height * 0.07, w: gridWidth * between(random, 0.22, 0.32), h: 3, layer: 2, weight: 0.35 });
+  shapes.push({ kind: 'dot', x: left + gridWidth - 7, y: height * 0.1, r: 1, layer: 1, weight: 0.02 });
+  shapes.push({ kind: 'dot', x: left + gridWidth - 2, y: height * 0.1, r: 1, layer: 1, weight: 0.02 });
+
+  // Weekday initials.
+  for (let col = 0; col < 7; col += 1) {
+    shapes.push({ kind: 'bar', x: left + col * colW + 1.2, y: height * 0.19, w: colW * 0.3, h: 1.4, layer: 0, weight: 0 });
+  }
+
+  const lead = intBetween(random, 0, 5);
+  const days = intBetween(random, 28, 31);
+  const today = intBetween(random, 6, Math.min(days, 35 - lead) - 4);
+
+  // A ruled grid, like the gantt: filled cells read as one heavy block.
+  for (let col = 0; col <= 7; col += 1) {
+    const x = left + col * colW;
+    shapes.push({ kind: 'line', x1: x, y1: top, x2: x, y2: top + gridHeight, layer: 0, weight: 0 });
+  }
+  for (let row = 0; row <= 5; row += 1) {
+    const y = top + row * rowH;
+    shapes.push({ kind: 'line', x1: left, y1: y, x2: left + gridWidth, y2: y, layer: 0, weight: 0 });
+  }
+
+  for (let cell = 0; cell < 35; cell += 1) {
+    const x = left + (cell % 7) * colW;
+    const y = top + Math.floor(cell / 7) * rowH;
+
+    const day = cell - lead + 1;
+    if (day < 1 || day > days) continue;
+
+    const isToday = day === today;
+    if (isToday) {
+      shapes.push({ kind: 'dot', x: x + 3.5, y: y + 3.4, r: 2.2, layer: 2, weight: 1 });
+    } else {
+      shapes.push({ kind: 'bar', x: x + 2, y: y + 2.4, w: 2.4, h: 1.6, layer: 1, weight: 0 });
+    }
+
+    // Busier around today, the way a real week fills up.
+    const chance = Math.abs(day - today) < 4 ? 0.85 : 0.5;
+    const events = isToday ? 2 : random() < chance ? intBetween(random, 1, 2) : 0;
+    for (let e = 0; e < events; e += 1) {
+      shapes.push({
+        kind: 'bar',
+        x: x + 1.6,
+        y: y + rowH * 0.48 + e * 2.8,
+        w: (colW - 3.2) * between(random, 0.5, 0.9),
+        h: 1.8,
+        layer: 1,
+        weight: isToday ? 0.9 : 0.1 + random() * 0.5,
+      });
+    }
+  }
+  return shapes;
+};

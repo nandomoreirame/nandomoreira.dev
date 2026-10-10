@@ -2,6 +2,7 @@ import type { Block } from '../../content/blocks';
 import type { ArtMotif } from '../../content/motifs';
 import {
   ascent,
+  calendar,
   chart,
   flow,
   gantt,
@@ -50,6 +51,7 @@ export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
   mosaic,
   timeline,
   gantt,
+  calendar,
 };
 
 /** Fallback when a case declares no `art`: one motif per block. */
@@ -94,13 +96,14 @@ const element = (shape: Shape, tone: string): string => {
   }
 };
 
-export interface ArtInput {
-  slug: string;
-  block: Block;
-  /** The motif the case declares; the block's motif when absent (REQ-003). */
-  art?: ArtMotif;
-  aspect: ArtAspect;
-}
+/**
+ * A case brings its block, which also supplies the motif when it declares
+ * none (REQ-003). A post has no block, so it must name its motif.
+ */
+export type ArtInput = { slug: string; aspect: ArtAspect } & (
+  | { block: Block; art?: ArtMotif }
+  | { block?: undefined; art: ArtMotif }
+);
 
 /**
  * Pure: same input, same markup (REQ-001, REQ-002). Colours are classes bound
@@ -108,8 +111,9 @@ export interface ArtInput {
  */
 export const generateArt = ({ slug, block, art, aspect }: ArtInput): string => {
   const frame = FRAMES[aspect];
-  const motif = art ?? BLOCK_MOTIF[block];
-  const random = createRandom(hashString(`${block}:${slug}`));
+  const motif = art ?? BLOCK_MOTIF[block!];
+  // Cases keep their block in the seed so their drawings never change.
+  const random = createRandom(hashString(`${block ?? 'post'}:${slug}`));
   const shapes = MOTIF_DRAWERS[motif](random, frame).slice(0, ELEMENT_BUDGET[aspect]);
   const heroes = heroIndexes(shapes);
 
