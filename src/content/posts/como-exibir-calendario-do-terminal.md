@@ -3,7 +3,7 @@ slug: como-exibir-calendario-do-terminal
 title: Como exibir o calendário rápido direto do terminal
 summary: Uma dica rápida e super útil para visualizar o calendário completo de qualquer ano diretamente no terminal
 date: "2018-01-17"
-archived: false
+archived: true
 cover:
   src: ../../assets/posts/2018/Untitled.png
   alt: "Terminal exibindo a saída do comando cal com o calendário de junho de 2024 e o dia 9 destacado."
