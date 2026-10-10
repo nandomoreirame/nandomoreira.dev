@@ -33,7 +33,8 @@ const upcoming = await getUpcomingPosts();
               href={`/${post.slug}`}
               title={post.title}
               summary={post.summary}
-              markers={post.draft ? ['rascunho', ...(post.markers ?? [])] : post.markers}
+              markers={post.markers}
+              badge={post.draft ? 'Rascunho' : undefined}
               stamp={toCompactStamp(post.date)}
             />
           </li>

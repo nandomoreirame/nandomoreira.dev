@@ -54,6 +54,7 @@ const posts = await getArchivedPostsByYear(year);
             title={post.title}
             summary={post.summary}
             markers={post.markers}
+            badge={post.draft ? 'Rascunho' : undefined}
             stamp={toCompactStamp(post.date)}
           />
         </li>

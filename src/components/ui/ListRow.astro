@@ -4,10 +4,12 @@ interface Props {
   title: string;
   summary?: string;
   markers?: string[];
+  /** Status chip rendered before the markers, e.g. a draft. */
+  badge?: string;
   stamp?: string;
 }
 
-const { href, title, summary, markers = [], stamp } = Astro.props;
+const { href, title, summary, markers = [], badge, stamp } = Astro.props;
 
 // The leading column only exists when there is something to put in it: an
 // empty fixed column would leave a hole in the notes listing (REQ-022).
@@ -35,9 +37,16 @@ const columns = stamp
         {summary}
       </span>
     )}
-    {markers.length > 0 && (
-      <span data-markers class="mt-xs block font-mono text-micro text-muted-foreground">
-        {markers.slice(0, 3).join(' · ')}
+    {(badge || markers.length > 0) && (
+      <span data-markers class="mt-xs flex flex-wrap items-center gap-xs font-mono text-micro text-muted-foreground">
+        {
+          badge && (
+            <span class="mr-sm inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs font-mono uppercase leading-none text-trim-cap text-primary-foreground">
+              {badge}
+            </span>
+          )
+        }
+        {markers.length > 0 && <span>{markers.slice(0, 3).join(' · ')}</span>}
       </span>
     )}
   </span>

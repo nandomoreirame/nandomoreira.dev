@@ -61,7 +61,7 @@ const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.a
     <header class="flex flex-col gap-md">
       {
         post.draft && (
-          <span class="inline-flex w-fit items-center rounded-sm border border-primary px-sm py-xs font-mono text-micro uppercase tracking-wide text-primary">
+          <span class="inline-flex w-fit items-center rounded-sm bg-muted-foreground px-sm py-xs font-mono text-micro uppercase leading-none text-trim-cap text-primary-foreground">
             Rascunho
           </span>
         )
