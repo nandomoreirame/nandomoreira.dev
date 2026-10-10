@@ -3,6 +3,7 @@ slug: como-construi-meu-site-que-conversa-com-ia-via-mcp
 title: "Como eu construí meu novo site em 2026 que conversa com IA via MCP"
 summary: "Um portfólio escrito para duas audiências: o avaliador humano e o agente que faz a triagem por ele. Servidor MCP, visão IA de cada página, sete portões automatizados e o que deu errado no caminho."
 date: "2026-10-10"
+publishedAt: "2026-10-10T11:12:35-03:00"
 art: orbit
 markers:
   - astro

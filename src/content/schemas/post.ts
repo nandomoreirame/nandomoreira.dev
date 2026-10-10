@@ -19,6 +19,18 @@ export const postSchema = ({ image }: SchemaContext) =>
       date: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
+      /**
+       * Optional full timestamp (ISO 8601 with seconds and offset), so posts of
+       * the same day order by when they were written. A field, not the file's
+       * mtime: on the build server every file carries the checkout time.
+       */
+      publishedAt: z
+        .string()
+        .regex(
+          /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(Z|[+-]\d{2}:\d{2})$/,
+          'publishedAt must be YYYY-MM-DDTHH:MM:SS with an offset, e.g. 2026-10-10T12:08:11-03:00',
+        )
+        .optional(),
       markers: z.array(z.string().min(1)).optional(),
       draft: z.boolean().default(false),
       /** Archived posts live under /posts/arquivo/<ano>; current ones under /posts. */
@@ -35,6 +47,10 @@ export const postSchema = ({ image }: SchemaContext) =>
           alt: z.string().min(1, 'A cover image is content, never decoration'),
         })
         .optional(),
+    })
+    .refine((post) => !post.publishedAt || post.publishedAt.slice(0, 10) === post.date, {
+      message: 'publishedAt must fall on the post date',
+      path: ['publishedAt'],
     })
     .refine((post) => post.slug !== 'ia', {
       message:

@@ -11,14 +11,19 @@ export type ArchiveYear = {
 
 export const publishedPosts = (posts: readonly Post[]): Post[] => posts.filter((post) => post.draft !== true);
 
-/** Newest first. Equal dates keep insertion order (stable sort). */
+/**
+ * The instant a post was published. Without `publishedAt` it is the start of
+ * its day in the author's offset (São Paulo), so a timed post of the same day
+ * still lists above it.
+ */
+const publishedInstant = (post: Post): number =>
+  Date.parse(post.publishedAt ?? `${post.date}T00:00:00-03:00`);
+
+/** Newest first, by the full timestamp. Equal instants keep insertion order. */
 export const sortPosts = (posts: readonly Post[]): Post[] =>
   posts
     .map((post, index) => ({ post, index }))
-    .sort((a, b) => {
-      const byDate = b.post.date.localeCompare(a.post.date);
-      return byDate !== 0 ? byDate : a.index - b.index;
-    })
+    .sort((a, b) => publishedInstant(b.post) - publishedInstant(a.post) || a.index - b.index)
     .map(({ post }) => post);
 
 /** Published and not archived. Drafts never appear. */
