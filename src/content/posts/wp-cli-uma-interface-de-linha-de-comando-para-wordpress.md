@@ -13,7 +13,7 @@ cover:
   alt: "Saída do terminal com a ajuda do WP-CLI, listando os subcomandos do comando wp e a descrição de cada um."
 ---
 
-Nesse artigo vou mostrar como instalar a [WP-CLI](http://wp-cli.org/), uma interface de linha de comando para WordPress.
+Nesse artigo vou mostrar como instalar a [WP-CLI](https://wp-cli.org/), uma interface de linha de comando para WordPress.
 
 **WP-CLI** significa _WordPress Command Line Interface_ traduzindo para o português _interface de linha de comando_.
 
@@ -44,7 +44,7 @@ sudo mv wp-cli.phar /usr/local/bin/wp
 
 Agora é só executar `wp --info`.
 
-> O texto acima foi uma tradução de [WP-CLI](http://wp-cli.org/).
+> O texto acima foi uma tradução de [WP-CLI](https://wp-cli.org/).
 
 ---
 
@@ -74,7 +74,7 @@ Tem um vídeo muito bom de uma palestra do **[Rodrigo Primo](https://github.com/
 
 https://www.youtube.com/watch?v=Gy6uQ_2Gceg
 
-Os slides da palestra está nesse link: [rodrigoprimo.github.io/wp-cli-wordcamp-bh-2014](http://rodrigoprimo.github.io/wp-cli-wordcamp-bh-2014/)
+Os slides da palestra está nesse link: [rodrigoprimo.github.io/wp-cli-wordcamp-bh-2014](https://rodrigoprimo.github.io/wp-cli-wordcamp-bh-2014/)
 
 E você já usa <abbr title="WordPress Command Line Interface">WP-CLI</abbr>? Conte para nós como está sendo sua experiência com a ferramenta.
 

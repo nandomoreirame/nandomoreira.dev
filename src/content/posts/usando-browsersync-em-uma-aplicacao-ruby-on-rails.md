@@ -18,13 +18,13 @@ Aplicações Rails são magníficas não é mesmo? Todas aquelas Gems "mágicas"
 
 Mas e se eu quiser algo ainda mais "supimpa" pra fazer o meu _front-end_? E se eu não quiser sair do Rails? Será que existe algo que sincronize todos os navegadores possíveis ou que me de históricos e ferramentas para debug do _front-end_, será que existe uma Gem assim para Rails?
 
-Eu procurei pelo Google a fora uma Gem que fizesse essa magia toda, mas não encontrei nada tão bom quanto o **[Browsersync](https://www.browsersync.io/)**, e se você não conhece o **Browsersync** recomendo dar uma lida [nesse artigo que a Caelum escreveu](http://blog.caelum.com.br/browser-sync-indispensavel-para-desenvolver-sites-em-varios-dispositivos/).
+Eu procurei pelo Google a fora uma Gem que fizesse essa magia toda, mas não encontrei nada tão bom quanto o **[Browsersync](https://www.browsersync.io/)**, e se você não conhece o **Browsersync** recomendo dar uma lida [nesse artigo que a Caelum escreveu](https://blog.caelum.com.br/browser-sync-indispensavel-para-desenvolver-sites-em-varios-dispositivos/).
 
 > ℹ️ Se você é _front-end_ e não conhece o **Browsersync** eu recomendo fortemente que leia sobre ele e comece imediatamente a usar, é uma ferramenta indispensável no cinto de utilidades do Batman!
 
 ### Ruby on Rails
 
-O intuito desse post não é explicar sobre o Rails e suas ["Magic"](http://i.imgur.com/NpWtG3j.gif) Gems, e sim como integrar e usar o Browsersync dentro de uma app Rails.
+O intuito desse post não é explicar sobre o Rails e suas ["Magic"](https://i.imgur.com/NpWtG3j.gif) Gems, e sim como integrar e usar o Browsersync dentro de uma app Rails.
 
 Primeiro de tudo você precisa de uma aplicação Rails já instalada em sua máquina (a vá! jura? 😱), logo após essa façanha instale o Browsersync global (sim tem que ser global).
 

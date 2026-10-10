@@ -1,6 +1,6 @@
 ---
 slug: retro-2016-planing-2017
-title: Retro 2016 Planing 2017
+title: Retro 2016, Planning 2017
 summary: "2016 não foi um ano ruim, tanto na minha vida profissional quando na minha vida pessoal, confesso que tive alguns obstáculos, mas todos foram ultrapassados com sucesso."
 date: "2017-01-01"
 markers:
@@ -51,17 +51,17 @@ Aprendi que o impossível é apenas uma questão de opinião, você consegue faz
 
 Ano de 2016 foi um ano de trabalho duro e tenho certeza que 2017 será ainda melhor.
 
-Eu consegui ser notado por algumas empresas legais como a **[Pipefy](http://www.pipefy.com/)**, **[Hero99](http://hero99.com.br/)**, **[EBANX](https://www.ebanx.com/br)**, **[pagar.me](https://pagar.me/)** e **[wipro.com](http://wipro.com)**.
+Eu consegui ser notado por algumas empresas legais como a **[Pipefy](https://www.pipefy.com/)**, **[Hero99](https://hero99.com.br/)**, **[EBANX](https://www.ebanx.com/br)**, **[pagar.me](https://pagar.me/)** e **[wipro.com](https://wipro.com)**.
 
-Tudo através do que fiz pela comunidade (foi pouco mas fiz), criando temas para [Jekyll](http://jekyllrb.com), ajudando em discussões de front-end, enviando contribuições em alguns repositórios no [github](https://github.com/nandomoreirame) e compartilhando meu conhecimento como tutor no [Centro de Treinamento](https://github.com/training-center) e escrevendo nesse pequeno [blog](/blog).
+Tudo através do que fiz pela comunidade (foi pouco mas fiz), criando temas para [Jekyll](https://jekyllrb.com), ajudando em discussões de front-end, enviando contribuições em alguns repositórios no [github](https://github.com/nandomoreirame) e compartilhando meu conhecimento como tutor no [Centro de Treinamento](https://github.com/training-center) e escrevendo nesse pequeno [blog](/blog).
 
-Eu tive a oportunidade de trabalhar em uma startup chamada **[Pipefy](http://www.pipefy.com/)**, onde trabalhei com grandes mentes que me ensinaram grandes coisas, infelizmente não durou o tempo que eu gostaria, mas valeu a pena cada dia de trabalho.
+Eu tive a oportunidade de trabalhar em uma startup chamada **[Pipefy](https://www.pipefy.com/)**, onde trabalhei com grandes mentes que me ensinaram grandes coisas, infelizmente não durou o tempo que eu gostaria, mas valeu a pena cada dia de trabalho.
 
 Em 2016 eu comecei a trabalhar na **[LojasKD](https://www.lojaskd.com.br/)**, onde tenho o prazer de trabalhar com pessoas incríveis, estou muito feliz em poder ajudar a melhorar e construir um projeto que vende algumas dezenas de milhares por dia.
 
 ---
 
-## Planing 2017
+## Planning 2017
 
 Quero fazer em 2017 o dobro das coisas que fiz em 2016.
 

@@ -13,12 +13,12 @@ cover:
   alt: "Terminal executando sudo yo wordpress, com uma caveira em arte ASCII verde e a legenda A Yeoman Generator For WordPress."
 ---
 
-Esse é o meu primeiro artigo do ano de **2016**, então eu vou falar sobre **[Yeoman](http://yeoman.io/)** e o <abbr title="Content Management System">CMS</abbr> mais usado do mundo, o **[WordPress](https://wordpress.org/)**.
+Esse é o meu primeiro artigo do ano de **2016**, então eu vou falar sobre **[Yeoman](https://yeoman.io/)** e o <abbr title="Content Management System">CMS</abbr> mais usado do mundo, o **[WordPress](https://wordpress.org/)**.
 
 ## O que é Yeoman?
 
 > Yeoman helps you to kickstart new projects, prescribing best practices and tools to help you stay productive.
-> <small>[yeoman.io](http://yeoman.io/)</small>
+> <small>[yeoman.io](https://yeoman.io/)</small>
 
 > _Traduzindo:_ Yeoman ajuda a iniciar novos projetos, a prescrição de melhores práticas e ferramentas para ajudá-lo a manter-se produtivo.
 > <small>[Google translate](https://goo.gl/d9zH8D) :D</small>
@@ -31,7 +31,7 @@ E sim, existe um _Generator_ para **WordPress**, o _YeoPress_ faz o download do 
 
 ### Instalando o yo-wordpress
 
-A instalação de um generator yo é bem simples, basta que você encontra o generator que deseja no [site do yeoman](http://yeoman.io/generators/) e siga as instruções de instalação do generator.
+A instalação de um generator yo é bem simples, basta que você encontra o generator que deseja no [site do yeoman](https://yeoman.io/generators/) e siga as instruções de instalação do generator.
 
 Nós vamos procurar por **yo-wordpress** no campo de busca e clicar no link.
 
