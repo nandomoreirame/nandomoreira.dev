@@ -16,3 +16,12 @@ describe('archive blocks', () => {
     }
   });
 });
+
+describe('systems-cli label', () => {
+  // The block holds Rust, Python and QML (CLIs, TUIs and Noctalia plugins);
+  // naming languages made the label wrong for half of it (2026-10-09).
+  it('describes the group without naming languages', () => {
+    expect(BLOCK_LABELS['systems-cli']).toBe('CLI, automação e desktop Linux');
+    expect(BLOCK_LABELS['systems-cli']).not.toMatch(/Rust|Go\b|Python|QML/);
+  });
+});
