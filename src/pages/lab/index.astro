@@ -2,6 +2,7 @@
 import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
 import { getAllProjects } from '../../lib/content';
 
 const projects = await getAllProjects();
@@ -9,12 +10,12 @@ const projects = await getAllProjects();
 
 <BaseLayout
   title="Laboratório | nandomoreira.dev"
-  description="Ferramental, experimentos e sistemas de linha de comando."
+  description={COLLECTION_COPY.lab.metaDescription}
 >
   <PageHeader
     eyebrow="Laboratório"
-    title="O que construo por conta própria"
-    description="Ferramental para agentes de IA, produtos SaaS e utilitários de terminal em Rust. Cada case mostra o problema que me levou a construir, as decisões e onde o projeto está hoje."
+    title={COLLECTION_COPY.lab.title}
+    description={COLLECTION_COPY.lab.description}
   />
   <CollectionListing collection="lab" projects={projects} />
 </BaseLayout>

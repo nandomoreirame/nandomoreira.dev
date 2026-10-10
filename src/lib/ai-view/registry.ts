@@ -1,4 +1,5 @@
 import { buildCaseMarkdown } from '../aeo/case-markdown';
+import { COLLECTION_COPY } from '../catalog/collection-copy';
 import { privacyMarkdown } from '../privacy/policy';
 import { absoluteUrl } from '../aeo/urls';
 import {
@@ -31,21 +32,6 @@ export type AiPage = {
   markdown: string;
 };
 
-const COLLECTION_COPY: Record<
-  CatalogCollection,
-  { title: string; description: string }
-> = {
-  portfolio: {
-    title: 'Trabalho de cliente, do problema à produção',
-    description:
-      'Plataformas de dados com IA, loja virtual e sites institucionais, entregues para empresas e organizações. Cada case mostra o problema, as decisões técnicas e o resultado.',
-  },
-  lab: {
-    title: 'O que construo por conta própria',
-    description:
-      'Ferramental para agentes de IA, produtos SaaS e utilitários de terminal em Rust. Cada case mostra o problema que me levou a construir, as decisões e onde o projeto está hoje.',
-  },
-};
 
 /** Strip a trailing slash; treat '' and 'index' as the home key. */
 const normalise = (path: string): string => {
