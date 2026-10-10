@@ -22,6 +22,8 @@ export const ART_MOTIFS = [
   'timeline',
   'gantt',
   'calendar',
+  'usage',
+  'gists',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];

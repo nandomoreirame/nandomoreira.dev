@@ -534,3 +534,82 @@ export const calendar: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** Plan usage meter: rows of tracks filled by how much is used, the fullest lit. */
+export const usage: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const left = width * 0.08;
+  const trackWidth = width * 0.84;
+  const rows = intBetween(random, 3, 5);
+  const top = height * 0.22;
+  const rowH = (height * 0.72) / rows;
+  const critical = intBetween(random, 0, rows - 1);
+
+  // Panel title and the refresh button.
+  shapes.push({ kind: 'bar', x: left, y: height * 0.07, w: trackWidth * between(random, 0.25, 0.35), h: 2.6, layer: 2, weight: 0.3 });
+  shapes.push({ kind: 'ring', x: left + trackWidth - 2, y: height * 0.1, r: 2, layer: 1, weight: 0.02 });
+
+  for (let row = 0; row < rows; row += 1) {
+    const y = top + row * rowH;
+    const used = row === critical ? between(random, 0.88, 0.97) : between(random, 0.12, 0.75);
+    const trackY = y + rowH * 0.32;
+
+    // Label on the left, percent on the right.
+    shapes.push({ kind: 'bar', x: left, y, w: trackWidth * between(random, 0.15, 0.3), h: 1.8, layer: 1, weight: 0.05 + random() * 0.1 });
+    shapes.push({ kind: 'bar', x: left + trackWidth * 0.9, y, w: trackWidth * 0.1, h: 1.8, layer: 1, weight: 0.05 + used * 0.2 });
+    // The track and, drawn over it from the same start, the used part.
+    shapes.push({ kind: 'bar', x: left, y: trackY, w: trackWidth, h: 2.2, layer: 0, weight: 0 });
+    shapes.push({ kind: 'bar', x: left, y: trackY, w: trackWidth * used, h: 2.2, layer: 2, weight: row === critical ? 1 : used * 0.8 });
+    // Reset countdown under the track.
+    shapes.push({ kind: 'bar', x: left, y: trackY + 4, w: trackWidth * between(random, 0.2, 0.4), h: 1.2, layer: 0, weight: 0.02 });
+  }
+
+  const dust = intBetween(random, 12, 20);
+  for (let i = 0; i < dust; i += 1) {
+    shapes.push({ kind: 'dot', x: random() * width, y: random() * height, r: 0.4, layer: 0, weight: 0 });
+  }
+  return shapes;
+};
+
+/** Gist search panel: a search field, visibility chips, a list of snippets with language pills, one selected. */
+export const gists: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const left = width * 0.08;
+  const right = width * 0.92;
+
+  // Search field and the "new gist" button beside it.
+  shapes.push(...outline(left, height * 0.06, (right - left) * 0.7, height * 0.12, 1, 0.08));
+  shapes.push({ kind: 'bar', x: left + 3, y: height * 0.11, w: (right - left) * 0.18, h: 1.4, layer: 0, weight: 0.3 });
+  shapes.push(...outline(left + (right - left) * 0.75, height * 0.06, (right - left) * 0.25, height * 0.12, 1, 0.12));
+
+  // Visibility chips: all, public, secret.
+  let chipX = left;
+  for (let chip = 0; chip < 3; chip += 1) {
+    const w = (right - left) * between(random, 0.1, 0.14);
+    shapes.push({ kind: 'bar', x: chipX, y: height * 0.25, w, h: 2, layer: chip === 0 ? 2 : 1, weight: chip === 0 ? 0.35 : 0.06 });
+    chipX += w + 4;
+  }
+
+  const rows = intBetween(random, 4, 6);
+  const top = height * 0.36;
+  const rowH = (height * 0.6) / rows;
+  const selected = intBetween(random, 0, rows - 1);
+
+  for (let row = 0; row < rows; row += 1) {
+    const y = top + row * rowH;
+    const lit = row === selected;
+    const pillW = (right - left) * between(random, 0.08, 0.13);
+
+    // The </> glyph, the title, the file names under it, and the language pill.
+    shapes.push({ kind: 'dot', x: left + 1.2, y: y + 1.5, r: 1, layer: 1, weight: lit ? 0.5 : 0.03 });
+    shapes.push({ kind: 'bar', x: left + 5, y, w: (right - left) * between(random, 0.3, 0.55), h: 2, layer: lit ? 2 : 1, weight: lit ? 1 : 0.04 + random() * 0.05 });
+    shapes.push({ kind: 'bar', x: left + 5, y: y + 3.6, w: (right - left) * between(random, 0.12, 0.3), h: 1.2, layer: lit ? 1 : 0, weight: lit ? 0.4 : 0.02 });
+    shapes.push({ kind: 'bar', x: right - pillW, y: y - 0.5, w: pillW, h: 3, layer: lit ? 2 : 0, weight: lit ? 0.6 : 0.03 });
+  }
+
+  const dust = intBetween(random, 8, 14);
+  for (let i = 0; i < dust; i += 1) {
+    shapes.push({ kind: 'dot', x: random() * width, y: random() * height, r: 0.4, layer: 0, weight: 0 });
+  }
+  return shapes;
+};

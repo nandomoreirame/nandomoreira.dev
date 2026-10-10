@@ -15,6 +15,8 @@ import {
   terminal,
   timeline,
   timer,
+  usage,
+  gists,
   wave,
   windows,
   wireframe,
@@ -52,6 +54,8 @@ export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
   timeline,
   gantt,
   calendar,
+  usage,
+  gists,
 };
 
 /** Fallback when a case declares no `art`: one motif per block. */
