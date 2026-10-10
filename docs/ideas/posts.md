@@ -41,6 +41,17 @@ linkar o repositório.
 | Radares que publicam no Discord | job-radar e home-radar: Python puro, sem dependência, rodando sozinho | Ideia |
 | Homelab com Tailscale | Import de música com scan de vírus e rsync, backup com `btrfs send`. Combina com o tema 5 | Ideia |
 
+## Sementes no arquivo (2015 a 2019)
+
+Textos antigos que viram post novo. O original fica intacto e linkado; o post novo é escrito do zero, com o olhar de hoje. Esses são os textos em que a voz dele aparece sem filtro, então são também a melhor fonte de tom.
+
+| Original | Ideia de post novo | Material |
+|---|---|---|
+| `8-meses-de-malapronta-e-o-fim` (2015) | O que o fim de uma startup me ensinou, onze anos depois | Startup vista por dentro, o primeiro desafio de performance (quase 4 mil arquivos CSS e JS minificados, mais de 3 mil imagens comprimidas com Gulp), o fim numa sala de reunião de hotel |
+| `nao-seja-apenas-um-recortador-de-psd` (2015) | Não seja só quem cola o que a IA devolve | O mesmo argumento de 2015 trocando o PSD pelo prompt: o profissional precisa entender as áreas em volta, agora incluindo o que o agente faz |
+| `retro-2016-planing-2017` | Retro 2026, planning 2027 | O formato de retrospectiva de volta, com o ano de 2026: Liquid AI (encerrada em 30/09), o site novo, o framework |
+| `como-um-time` (2016) | Trabalhar como um time quando metade do time é agente | O "não é X... é Y" original virou estrutura do post; agora com agentes que implementam, revisam e não podem commitar |
+
 ## Ordem sugerida
 
 1. O falso verde (1): conversa com o post do RPI e reforça o argumento de qualidade do site.
