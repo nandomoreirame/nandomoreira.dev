@@ -2,10 +2,12 @@
 import ListRow from '../../components/ui/ListRow.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCurrentPosts } from '../../lib/content';
+import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
+import { getCurrentPosts, getUpcomingPosts } from '../../lib/content';
 import { toCompactStamp } from '../../lib/format/date';
 
 const posts = await getCurrentPosts();
+const upcoming = await getUpcomingPosts();
 ---
 
 <BaseLayout
@@ -31,7 +33,7 @@ const posts = await getCurrentPosts();
               href={`/${post.slug}`}
               title={post.title}
               summary={post.summary}
-              markers={post.markers}
+              markers={post.draft ? ['rascunho', ...(post.markers ?? [])] : post.markers}
               stamp={toCompactStamp(post.date)}
             />
           </li>
@@ -39,6 +41,8 @@ const posts = await getCurrentPosts();
       </ul>
     )
   }
+
+  <UpcomingPosts titles={upcoming.map((post) => post.title)} />
 
   <p class="mt-2xl mb-3xl text-body text-muted-foreground">
     <a

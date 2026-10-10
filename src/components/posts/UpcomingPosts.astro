@@ -1,0 +1,29 @@
+---
+import { UPCOMING_LIMIT } from './upcoming-limit';
+
+interface Props {
+  /** Titles of the drafts in progress, newest first. */
+  titles: string[];
+}
+
+const titles = Astro.props.titles.slice(0, UPCOMING_LIMIT);
+---
+
+{/* Names what is coming without linking it: draft pages exist only in dev. */}
+{
+  titles.length > 0 && (
+    <section
+      aria-labelledby="upcoming-heading"
+      class="mt-2xl rounded-md border border-border-strong bg-surface p-lg"
+    >
+      <h2 id="upcoming-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        Rascunhos em andamento
+      </h2>
+      <ul class="mt-sm list-disc pl-lg text-body text-foreground marker:text-muted-foreground">
+        {titles.map((title) => (
+          <li class="mt-xs">{title}</li>
+        ))}
+      </ul>
+    </section>
+  )
+}

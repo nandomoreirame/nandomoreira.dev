@@ -13,6 +13,7 @@ export {
   getCurrentPosts,
   getPost,
   getPostEntry,
+  getUpcomingPosts,
 } from './posts';
 export type { ArchiveYear, PostEntry } from './posts';
 export { getAvailability, getProfile } from './profile';
