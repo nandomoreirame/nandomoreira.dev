@@ -1,12 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
+import ListRow from '../components/ui/ListRow.astro';
 import Prose from '../components/ui/Prose.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getAllPostEntries, getPostEntry } from '../lib/content';
+import { getAllPostEntries, getAllPosts, getPostEntry } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { toCompactStamp } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
+import { relatedPosts } from '../lib/posts/related';
 
 export const prerender = true;
 
@@ -36,6 +38,7 @@ const { Content } = await render(live);
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForPost(post, site));
 const stamp = toCompactStamp(post.date);
+const related = relatedPosts(post, await getAllPosts());
 ---
 
 <BaseLayout title={`${post.title} | nandomoreira.dev`} description={post.summary}>
@@ -51,15 +54,27 @@ const stamp = toCompactStamp(post.date);
     </a>
   </nav>
 
-  <article class="mt-2xl mb-3xl flex flex-col gap-xl">
+  <article class="mt-2xl flex flex-col gap-xl">
     <header class="flex flex-col gap-md">
       {
+        post.archived && (
+          <span class="inline-flex w-fit items-center rounded-sm border border-border-strong px-sm py-xs font-mono text-micro uppercase tracking-wide text-muted-foreground">
+            Arquivo
+          </span>
+        )
+      }
+      <h1 class="text-h1 font-semibold text-foreground">{post.title}</h1>
+      <time class="font-mono text-small text-muted-foreground" datetime={post.date}>
+        {stamp}
+      </time>
+      {
         post.cover && (
-          <figure class="m-0 overflow-hidden rounded-md border border-border">
+          <figure class="m-0 mt-md overflow-hidden rounded-md border border-border">
             {/*
-              The cover is above the fold and is the LCP element. Astro defaults
-              an Image to loading="lazy", which defers exactly what the page is
-              waiting on: one post measured 13.2s LCP because of it.
+              The cover sits under the title, still above the fold, and is the
+              LCP element. Astro defaults an Image to loading="lazy", which
+              defers exactly what the page is waiting on: one post measured
+              13.2s LCP because of it.
             */}
             <Image
               src={post.cover.src}
@@ -74,20 +89,31 @@ const stamp = toCompactStamp(post.date);
           </figure>
         )
       }
-      {
-        post.archived && (
-          <span class="inline-flex w-fit items-center rounded-sm border border-border-strong px-sm py-xs font-mono text-micro uppercase tracking-wide text-muted-foreground">
-            Arquivo
-          </span>
-        )
-      }
-      <h1 class="text-h1 font-semibold text-foreground">{post.title}</h1>
-      <time class="font-mono text-small text-muted-foreground" datetime={post.date}>
-        {stamp}
-      </time>
     </header>
     <Prose>
       <Content />
     </Prose>
   </article>
+
+  {
+    related.length > 0 && (
+      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl">
+        <h2 id="related-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+          Posts relacionados
+        </h2>
+        <ul class="mt-md list-none p-0">
+          {related.map((item) => (
+            <li>
+              <ListRow
+                href={`/${item.slug}`}
+                title={item.title}
+                summary={item.summary}
+                stamp={toCompactStamp(item.date)}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </BaseLayout>
