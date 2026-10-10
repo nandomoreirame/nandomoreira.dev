@@ -13,6 +13,8 @@ cover:
   alt: "Terminal executando o comando `pnpm create t3-app@latest` e respondendo as perguntas do start t3-app."
 ---
 
+> **Nota de 2026:** a série que este post anuncia parou aqui, no primeiro capítulo. O código do que foi feito continua no [repositório do projeto](https://github.com/nandomoreirame/notion-site).
+
 Olá dev! 👋🏼 
 
 Estou muito feliz em recebê-lo aqui! É uma honra e um prazer compartilhar minhas experiências com você.

@@ -12,6 +12,8 @@ cover:
   alt: "Logotipo do Vue.js, um V verde e azul-escuro, sobre fundo branco texturizado."
 ---
 
+> **Nota de 2026:** o `vue-cli` e o `vue init` usados aqui foram aposentados, e o Nuxt mudou bastante desde a versão 1. Hoje um projeto começa com `npm create nuxt@latest`.
+
 ## Introdução
 
 Todo mundo (devs) tá acostumado a criar blogs utilizando o [Jekyll](https://jekyllrb.com) e hospedá-los no [GitHub pages](https://pages.github.com/). E se eu disser que existem muitas outras plataformas para criar projetos estáticos?
@@ -20,7 +22,7 @@ Não que eu esteja dizendo que o Jekyll é uma ferramenta ruim, muito pelo contr
 
 No site [staticgen](https://www.staticgen.com/) você encontrará uma série de projetos, aplicações e ferramentas, em várias linguagens diferentes e todas elas tem o mesmo proprósito: **Fazer o build de um projeto estático**, ou seja gerar HTML, CSS e JS final para o seu projeto.
 
-Nesse artigo nós iremos utilizar a tecnologia [Server Side Rendering (SSR)](http://link) ou Renderização do lado do servidor em pt-BR, e para isso usaremos o **[Vue.js](https://vuejs.org/)** com o **[Nuxt.js](https://nuxtjs.org/)**.
+Nesse artigo nós iremos utilizar a tecnologia [Server Side Rendering (SSR)](https://vuejs.org/guide/scaling-up/ssr.html) ou Renderização do lado do servidor em pt-BR, e para isso usaremos o **[Vue.js](https://vuejs.org/)** com o **[Nuxt.js](https://nuxtjs.org/)**.
 
 ## O que é Vue.JS?
 

@@ -13,6 +13,8 @@ cover:
   alt: "Logotipo do AngularJS: escudo vermelho com a letra A ao lado da palavra AngularJS, em fundo preto."
 ---
 
+> **Nota de 2026:** o AngularJS (a versão 1.x) deixou de receber suporte no fim de 2021. A ideia da busca no Jekyll continua de pé; o framework, não.
+
 Por alguns meses eu usei o plugin [Simple Jekyll Search](https://github.com/christian-fei/Simple-Jekyll-Search) que funcionou muito bem no meu blog, mas agora ele foi totalmente feito em angular e ficou uma maravilha.
 
 Hoje vou mostrar aqui como foi eu criei essa façanha, é bem simples e sem segredo nenhum, vem comigo.

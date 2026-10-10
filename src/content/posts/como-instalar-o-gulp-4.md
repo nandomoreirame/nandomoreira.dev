@@ -13,6 +13,8 @@ cover:
   alt: "Ilustração de copos de refrigerante com canudo em fundo vermelho, cada um estampado com a palavra Gulp em letra cursiva."
 ---
 
+> **Nota de 2026:** quando escrevi, o Gulp 4 ainda era instalado direto do branch `4.0`. Ele saiu como versão estável em janeiro de 2018, e hoje o Gulp está na versão 5: basta `npm install --save-dev gulp`.
+
 Gulp 4 não foi liberado ainda e se você não pode esperar para colocar suas mãos sobre ele, aqui vai como instalar o Gulp 4.
 
 ### Instale o Gulp globalmente

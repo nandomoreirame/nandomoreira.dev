@@ -11,6 +11,8 @@ cover:
   alt: "Logotipo do Sass em letra cursiva branca sobre gradiente azul e rosa, com a palavra Architecture abaixo."
 ---
 
+> **Nota de 2026:** a instalação com `gem install sass` usa o Ruby Sass, que chegou ao fim em 2019. Hoje o Sass se instala pelo pacote `sass` do npm (Dart Sass). O resto da série continua valendo para a sintaxe.
+
 Na minha opinião todo desenvolvedor web deveria conhecer algum pré-processador CSS, seja ele `Less`, `SASS`, `Stylus` ou qualquer outro.
 
 Hoje vou começar uma série de artigos com algumas dicas sobre o pré-processador **SASS**... sei que existem muitos tutoriais e artigos bacanas por ai, mas eu vou explicar o meu ponto de vista sobre essa forma de escrever CSS.
