@@ -6,7 +6,7 @@ import { readNowConfig, type NowConfig } from './config';
 import { dayLabel } from './day';
 import { fetchActiveRepos, type ActiveRepo } from './github';
 import { logSourceError } from './http';
-import { NOW_DECLINING, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_TTL } from './now';
+import { NOW_DECLINING, NOW_FAILURE_TTL_MS, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_TTL } from './now';
 import { fetchRecentTracks, type RecentTrack } from './spotify';
 import { fetchXbox, type PlayingNow, type RecentGame } from './xbox';
 
@@ -73,6 +73,7 @@ export const createNowLoader = ({
   const xboxConfig = config.xbox;
   const github = createCachedSource({
     ttlMs: NOW_TTL.github,
+    failureTtlMs: NOW_FAILURE_TTL_MS,
     now,
     load: () =>
       fetchActiveRepos({
@@ -85,6 +86,7 @@ export const createNowLoader = ({
   const spotify = spotifyConfig
     ? createCachedSource({
         ttlMs: NOW_TTL.spotify,
+        failureTtlMs: NOW_FAILURE_TTL_MS,
         now,
         load: () => fetchRecentTracks({ fetch: fetchImpl, ...spotifyConfig }),
       })
@@ -92,6 +94,7 @@ export const createNowLoader = ({
   const xbox = xboxConfig
     ? createCachedSource({
         ttlMs: NOW_TTL.xbox,
+        failureTtlMs: NOW_FAILURE_TTL_MS,
         now,
         load: () => fetchXbox({ fetch: fetchImpl, apiKey: xboxConfig.apiKey }),
       })

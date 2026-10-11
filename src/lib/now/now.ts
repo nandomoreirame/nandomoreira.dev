@@ -37,3 +37,6 @@ export const NOW_TTL = {
   spotify: 5 * 60_000,
   xbox: 5 * 60_000,
 } as const;
+
+/** How long a failed source stays failed before the next attempt. */
+export const NOW_FAILURE_TTL_MS = 60_000;
