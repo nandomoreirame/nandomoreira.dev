@@ -336,18 +336,86 @@
     border-radius: var(--radius-md);
     background: var(--color-background);
     overflow: hidden;
+    /* Closed state. overlay and display are discrete: allow-discrete keeps the
+       popover in the top layer until the fade out ends. The popover only
+       fades: any transform on it, even mid-animation, makes it the containing
+       block of the fixed close button, which then flashes inside the image. */
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .lightbox:popover-open {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .lightbox:popover-open {
+      opacity: 0;
+    }
+  }
+
+  .lightbox:popover-open > img {
+    transform: none;
+  }
+
+  @starting-style {
+    .lightbox:popover-open > img {
+      transform: scale(0.96);
+    }
   }
 
   .lightbox::backdrop {
-    background: color-mix(in oklab, var(--color-background) 88%, transparent);
+    background: color-mix(in oklab, var(--color-background) 72%, transparent);
+    backdrop-filter: blur(var(--blur-sm));
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
   }
 
-  .lightbox-image {
+  .lightbox:popover-open::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .lightbox:popover-open::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* Styled through the parent, not a class: post body images go through
+     Astro's optimiser, which re-emits a class as a stray attribute
+     (src/lib/markdown/post-plugins.ts). The zoom of the opening animation
+     lives here, on the image, which contains nothing fixed. */
+  .lightbox > img {
+    transform: scale(0.96);
+    transition: transform var(--duration-base) var(--ease-out);
     display: block;
     width: auto;
     height: auto;
     max-width: 94vw;
     max-height: 90dvh;
+  }
+
+  .post-figure {
+    display: block;
+  }
+
+  .post-figure > button > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--duration-fast) ease-out;
+  }
+
+  .post-figure > button:hover > img {
+    border-color: var(--color-border-strong);
   }
 
   /* On the overlay, in the corner of the screen: fixed resolves against the

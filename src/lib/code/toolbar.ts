@@ -49,7 +49,7 @@ export const svgBody = (markup: string): ElementContent[] => {
   return root;
 };
 
-const icon = (name: string, className: string): Element => {
+export const icon = (name: string, className: string): Element => {
   const data = icons.icons[name];
   if (!data) throw new Error(`Unknown Lucide icon "${name}"`);
   return element(
