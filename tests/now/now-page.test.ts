@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getUpcomingPosts } from '../../src/lib/content';
-import { NOW_UPDATED_AT } from '../../src/lib/now/now';
+import { NOW_DECLINING, NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
 
@@ -36,6 +36,18 @@ describe('/now page', () => {
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
     const playing = html.split('>Jogando<')[1]?.split('</section>')[0] ?? '';
     expect(playing).toContain('Sem dados no momento.');
+  });
+
+  it('labels what is being declined inside Foco', async () => {
+    const html = await render(NowPage);
+    const foco = html.split('id="foco"')[1]?.split('id="projetos"')[0] ?? '';
+    const heading = foco.indexOf('>Recusando agora<');
+    const declining = foco.indexOf(NOW_DECLINING[0]!);
+
+    expect(foco).toContain('<h3');
+    expect(heading).toBeGreaterThan(-1);
+    expect(declining).toBeGreaterThan(heading);
+    expect(foco).toContain('Disponibilidade:');
   });
 
   it('lists draft titles without a link', async () => {

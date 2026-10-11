@@ -32,10 +32,11 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
         <ul>
           {data.focus.items.map((item) => <li>{item}</li>)}
         </ul>
+        <h3>Recusando agora</h3>
         <ul>
           {data.focus.declining.map((item) => <li>{item}</li>)}
         </ul>
-        <p>{data.focus.availability}</p>
+        <p>Disponibilidade: {data.focus.availability}</p>
       </NowSection>
 
       <NowSection id="projetos" title="Projetos em andamento">

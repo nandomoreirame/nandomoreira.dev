@@ -53,6 +53,10 @@ describe('nowMarkdown', () => {
       '## Ouvindo',
       '## Jogando',
     ]);
+    const foco = markdown.split('## Foco')[1]?.split('## Projetos em andamento')[0] ?? '';
+    expect(foco.indexOf('### Recusando agora')).toBeGreaterThan(-1);
+    expect(foco.indexOf('### Recusando agora')).toBeLessThan(foco.indexOf('Declínio um'));
+    expect(foco).toContain('Disponibilidade:');
     expect(markdown).toContain('title: Agora');
     expect(markdown).toContain('url: https://nandomoreira.dev/now');
     expect(markdown).toContain('https://github.com/nandomoreirame/alpha');

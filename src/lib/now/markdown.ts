@@ -32,6 +32,8 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const focus = [
     ...data.focus.items.map((item) => `- ${item}`),
     '',
+    '### Recusando agora',
+    '',
     ...data.focus.declining.map((item) => `- ${item}`),
     ...(availability ? ['', `Disponibilidade: ${availability}`] : []),
   ];
