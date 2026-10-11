@@ -1,3 +1,4 @@
+import { getSecret } from 'astro:env/server';
 import { UPCOMING_LIMIT } from '../../components/posts/upcoming-limit';
 import { getAvailability, getCurrentPosts, getUpcomingPosts } from '../content';
 import type { Post } from '../../content/schemas/post';
@@ -145,10 +146,23 @@ export const createNowLoader = ({
 
 let cached: ReturnType<typeof createNowLoader> | undefined;
 
+/**
+ * `astro dev` does not copy .env into process.env. getSecret reads .env in dev
+ * and process.env at runtime in the Node adapter, and is never inlined in the
+ * bundle the way import.meta.env would be.
+ */
+const runtimeEnv = (): Record<string, string | undefined> => ({
+  OPENXBL_API_KEY: getSecret('OPENXBL_API_KEY'),
+  SPOTIFY_CLIENT_ID: getSecret('SPOTIFY_CLIENT_ID'),
+  SPOTIFY_CLIENT_SECRET: getSecret('SPOTIFY_CLIENT_SECRET'),
+  SPOTIFY_REFRESH_TOKEN: getSecret('SPOTIFY_REFRESH_TOKEN'),
+  GITHUB_TOKEN: getSecret('GITHUB_TOKEN'),
+});
+
 /** Bound on first call so a test can stub `fetch` before the sources run. */
 export const loadNow = (): Promise<NowSnapshot> => {
   cached ??= createNowLoader({
-    config: readNowConfig(process.env),
+    config: readNowConfig(runtimeEnv()),
     fetch: globalThis.fetch.bind(globalThis),
     now: () => Date.now(),
     logger: console,
