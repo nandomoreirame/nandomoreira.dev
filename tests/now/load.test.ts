@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { readNowConfig } from '../../src/lib/now/config';
 import { createNowLoader } from '../../src/lib/now/load';
-import { NOW_FOCUS, NOW_GAMES } from '../../src/lib/now/now';
+import { NOW_FOCUS } from '../../src/lib/now/now';
 
 const readJson = (name: string) =>
   JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -67,8 +67,7 @@ describe('loadNow', () => {
     const data = await loadNow();
 
     expect(data.music.state).toBe('empty');
-    expect(data.games.state).toBe('fallback');
-    if (data.games.state === 'fallback') expect(data.games.items).toEqual(NOW_GAMES);
+    expect(data.games.state).toBe('empty');
     expect(data.projects.state).toBe('empty');
     expect(logger.warn).toHaveBeenCalledTimes(1);
     const urls = fetchImpl.mock.calls.map((call) => String(call[0]));
@@ -76,6 +75,19 @@ describe('loadNow', () => {
     expect(urls.some((url) => url.includes('xbl.io'))).toBe(false);
     expect(data.focus.items).toEqual(NOW_FOCUS);
     expect(data.focus.availability.length).toBeGreaterThan(0);
+  });
+
+  it('uses an injected games list when Xbox is off', async () => {
+    const fallbackGames = [{ name: 'Hades', note: 'na reserva' }];
+    const loadNow = createNowLoader({
+      config: readNowConfig({}),
+      fetch: vi.fn().mockRejectedValue(new Error('offline')),
+      now: NOW,
+      logger: { warn: vi.fn() },
+      fallbackGames,
+    });
+
+    await expect(loadNow()).resolves.toMatchObject({ games: { state: 'fallback', items: fallbackGames } });
   });
 
   it('marks every configured source ok when each one answers', async () => {

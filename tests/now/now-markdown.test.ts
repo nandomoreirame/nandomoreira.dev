@@ -59,7 +59,7 @@ describe('nowMarkdown', () => {
     expect(markdown).toContain('](https://nandomoreira.dev/posts/post-publicado)');
     expect(markdown).toMatch(/^- Rascunho sem link$/m);
     expect(markdown).not.toContain('[Rascunho sem link]');
-    expect(markdown).toContain('TODO(author)');
+    expect(markdown).not.toContain('TODO');
     expect(markdown.toLowerCase()).not.toContain('api');
   });
 

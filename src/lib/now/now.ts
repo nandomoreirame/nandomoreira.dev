@@ -24,10 +24,8 @@ export const NOW_DECLINING = [
   'Projeto sem escopo fechado. O que eu aceito é escopo fechado, ou uma posição sênior, CLT ou PJ.',
 ];
 
-/** Fallback list when OpenXBL is down or unset. The author replaces the placeholder. */
-export const NOW_GAMES: Array<{ name: string; note?: string }> = [
-  { name: 'TODO(author)', note: 'Reserva para eu preencher na revisão.' },
-];
+/** The author fills this when a fallback list is wanted. Empty leaves Jogando empty. */
+export const NOW_GAMES: Array<{ name: string; note?: string }> = [];
 
 export const NOW_REPO_EXCLUDE = ['.dotfiles', 'dotfiles', 'nandomoreirame'];
 

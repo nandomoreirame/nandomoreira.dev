@@ -32,16 +32,36 @@ export interface NowSnapshot {
 const arraySection = <T>(items: readonly T[]): Section<T[]> =>
   items.length === 0 ? { state: 'empty' } : { state: 'ok', items: [...items] };
 
+const gamesSection = (
+  result: PromiseSettledResult<XboxNow | 'unconfigured'>,
+  fallbackGames: readonly { name: string; note?: string }[],
+  logger: Pick<Console, 'warn'>,
+): GamesSection => {
+  const fallback = (): GamesSection =>
+    fallbackGames.length === 0 ? { state: 'empty' } : { state: 'fallback', items: fallbackGames };
+
+  if (result.status === 'rejected') {
+    logSourceError('xbox', result.reason, logger);
+    return fallback();
+  }
+  if (result.value === 'unconfigured' || (!result.value.playingNow && result.value.recent.length === 0)) {
+    return fallback();
+  }
+  return { state: 'ok', items: result.value };
+};
+
 export const createNowLoader = ({
   config,
   fetch: fetchImpl,
   now = Date.now,
   logger = console,
+  fallbackGames = NOW_GAMES,
 }: {
   config: NowConfig;
   fetch: typeof fetch;
   now?: () => number;
   logger?: Pick<Console, 'warn'>;
+  fallbackGames?: readonly { name: string; note?: string }[];
 }) => {
   const clock = () => new Date(now());
   const spotifyConfig = config.spotify;
@@ -96,13 +116,7 @@ export const createNowLoader = ({
           ? { state: 'empty' as const }
           : arraySection(musicResult.value);
 
-    const games: GamesSection =
-      gamesResult.status === 'rejected'
-        ? (logSourceError('xbox', gamesResult.reason, logger), { state: 'fallback', items: NOW_GAMES })
-        : gamesResult.value === 'unconfigured' ||
-            (!gamesResult.value.playingNow && gamesResult.value.recent.length === 0)
-          ? { state: 'fallback', items: NOW_GAMES }
-          : { state: 'ok', items: gamesResult.value };
+    const games = gamesSection(gamesResult, fallbackGames, logger);
 
     return {
       projects,

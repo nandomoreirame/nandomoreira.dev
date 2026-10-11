@@ -25,9 +25,9 @@ describe('now curated data', () => {
     expect(Number.isNaN(Date.parse(NOW_UPDATED_AT))).toBe(false);
   });
 
-  it('has at least one focus item and a hand-filled games placeholder', () => {
+  it('has at least one focus item and no TODO in curated copy', () => {
     expect(NOW_FOCUS.length).toBeGreaterThan(0);
-    expect(NOW_GAMES.some((game) => game.name.includes('TODO(author)'))).toBe(true);
+    for (const text of curated) expect(text).not.toContain('TODO');
   });
 
   it('keeps curated copy free of dashes and of a present-tense Liquid job', () => {

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getUpcomingPosts } from '../../src/lib/content';
-import { NOW_GAMES, NOW_UPDATED_AT } from '../../src/lib/now/now';
+import { NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
 
@@ -34,8 +34,8 @@ describe('/now page', () => {
     ]);
     expect(html).toContain('Atualizada em');
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
-    const playing = html.split('>Jogando<')[1] ?? '';
-    expect(playing).toContain(NOW_GAMES[0]!.name);
+    const playing = html.split('>Jogando<')[1]?.split('</section>')[0] ?? '';
+    expect(playing).toContain('Sem dados no momento.');
   });
 
   it('lists draft titles without a link', async () => {
