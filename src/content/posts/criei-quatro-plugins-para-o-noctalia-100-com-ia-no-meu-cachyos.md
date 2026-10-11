@@ -1,31 +1,33 @@
 ---
-slug: plugins-noctalia-para-produtividade-no-cachyos
-title: "Criei plugins para o Noctalia para melhorar minha produtividade no CachyOS"
+slug: criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos
+title: "Criei quatro plugins para o Noctalia 100% com IA no meu CachyOS"
 summary: "Quatro plugins para a barra e a área de trabalho do Noctalia: captura rápida e agenda, uso do plano do Claude Code e do Grok, gists do GitHub e notas adesivas. Todos feitos com IA, no fluxo RPI, e o que mais deu trabalho foi a interface."
-date: "2026-10-10"
+date: "2026-10-11"
+publishedAt: "2026-10-11T00:25:05-03:00"
 art: timeline
 markers:
   - linux
   - noctalia
   - produtividade
-draft: true
 ---
 
-Eu uso muito o teclado. O meu `config.kdl` do Niri tem mais de 140 linhas de atalho: abro os apps que mais uso direto pela tecla, e o que não tem atalho próprio vai pelo launcher do Noctalia (`Mod+D`). TickTick, Obsidian, WhatsApp e YouTube Music ficam em scratchpads, janelas que aparecem e somem com um atalho sem ocupar uma coluna. A barra é a outra metade: fica sempre à vista, então o que eu consultava várias vezes por dia fazia sentido estar ali, a um atalho ou a um clique.
+Eu uso muito o teclado. O meu `config.kdl` do Niri tem mais de 140 linhas de atalho: abro os apps que mais uso direto pela tecla, e o que não tem atalho próprio vai pelo launcher do Noctalia (`Ctrl+Space`). Obsidian, WhatsApp e YouTube Music ficam em scratchpads, janelas que aparecem e somem com um atalho sem ocupar uma coluna. A barra é a outra metade: fica sempre à vista, então o que eu consultava várias vezes por dia fazia sentido estar ali, a um atalho ou a um clique.
 
 O que ainda me tirava do que eu estava fazendo era o resto. Anotar uma tarefa ou marcar uma reunião era abrir um app diferente para cada coisa, saber quanto do plano do Claude Code já tinha ido era abrir uma página, e achar um trecho de código antigo era ir ao GitHub caçar o gist certo.
 
-O CachyOS foi instalado neste notebook em 1º de junho de 2026, às 19h44 (o `pacman.log` não deixa mentir). Oito dias depois eu já estava criando o primeiro plugin para o Noctalia, a barra que veio junto com o Niri. Hoje são quatro, e uso todos os dias.
+O CachyOS foi instalado neste notebook em 1º de junho de 2026. Oito dias depois eu já estava criando o primeiro plugin para o Noctalia, a barra que veio junto com o Niri. Hoje são quatro, e uso todos os dias.
 
 Este texto não é um tutorial de QML. É o relato de como cheguei até aqui, como eu uso essas ferramentas e como elas foram feitas, com IA do começo ao fim.
 
 ## Antes do CachyOS, muita distro
 
-Já testei muito sistema operacional na vida. Windows XP, Vista e Seven entre 2010 e 2014, Ubuntu lá por 2015, e macOS de 2016 até 2024. Depois do Mac voltei para o Linux e passei pelas distros base Ubuntu: Linux Mint, Pop!_OS, ZorinOS e o próprio Ubuntu, que usei por anos até ir para o ZorinOS em 2025. Ainda testei o [Omarchy](https://omarchy.org) por uns meses, até encontrar o [CachyOS](https://cachyos.org).
+Já usei muito sistema operacional na vida. Windows XP, Vista e Seven entre 2010 e 2014, Ubuntu lá por 2015, e macOS de 2016 até 2024. Depois do Mac voltei para o Linux e passei pelas distros base Ubuntu: Linux Mint, Pop!_OS, ZorinOS e o próprio Ubuntu, que usei por anos até ir para o ZorinOS em 2025. Ainda testei o [Omarchy](https://omarchy.org) por uns meses, até encontrar o [CachyOS](https://cachyos.org).
 
 O que me prendeu foi a combinação do CachyOS com o [Niri](https://github.com/YaLTeR/niri), um compositor Wayland que organiza as janelas em colunas roláveis, e o [Noctalia](https://github.com/noctalia-dev/noctalia), que faz o papel de shell inteiro: barra, launcher, notificações, tela de bloqueio. E o Noctalia tem um sistema de plugins.
 
 **Daí veio a ideia: trazer para a barra o que me fazia sair do que eu estava fazendo.** Procurei na comunidade e não achei plugin para quase nada disso. A exceção foi o [Model Usage](https://github.com/noctalia-dev/noctalia-plugins), que usei por uns meses até criar o meu próprio.
+
+![Meu desktop no CachyOS com o Niri: a barra do Noctalia no topo, com os botões do Gistbar e dos favoritos do Daybar à esquerda e o uso do Claude Code do AI Bar no centro, e abaixo uma fileira de colunas com terminais rodando o Claude Code e o papel de parede de uma montanha](../../assets/posts/2026/desktop-niri-noctalia.webp)
 
 ## Os quatro plugins
 
@@ -49,7 +51,7 @@ O Google Calendar é lido e escrito pelo `khal` e sincronizado pelo `vdirsyncer`
 
 ### AI Bar
 
-Feito hoje, para substituir o Model Usage. Mostra na barra quanto do plano do Claude Code e do Grok já foi usado: a porcentagem da janela mais crítica, o tempo até ela reiniciar e uma barra de progresso. No painel, cada janela aparece com o ritmo de uso, que compara a porcentagem gasta com a porcentagem do tempo que já passou. Se estou adiantado, sei antes de bater no limite no meio do trabalho.
+Feito em 10 de outubro, para substituir o Model Usage. Mostra na barra quanto do plano do Claude Code e do Grok já foi usado: a porcentagem da janela mais crítica, o tempo até ela reiniciar e uma barra de progresso. No painel, cada janela aparece com o ritmo de uso, que compara a porcentagem gasta com a porcentagem do tempo que já passou. Se estou adiantado, sei antes de bater no limite no meio do trabalho.
 
 As credenciais das CLIs são só lidas, nunca gravadas nem renovadas. Os endpoints e as armadilhas vieram do [ai-usagebar](https://github.com/akitaonrails/ai-usagebar), do Fabio Akita (que conta como fez o dele [neste post](https://akitaonrails.com/2026/05/24/criei-widget-waybar-omarchy-monitorar-uso-llms-ai-usagebar/)), sem reaproveitar o código.
 
@@ -59,7 +61,7 @@ As credenciais das CLIs são só lidas, nunca gravadas nem renovadas. Os endpoin
 
 ### Gistbar
 
-Também de hoje. Tenho 95 gists no GitHub, e achar um trecho era abrir o navegador, lembrar em qual gist estava e copiar à mão. Agora `Mod+G` abre a busca, que olha descrição, nome de arquivo, linguagem e o conteúdo, e o Enter copia o primeiro arquivo. `Mod+Ctrl+G` cria um gist com o que está na área de transferência, e ele nasce secreto, porque publicar por engano é a pior coisa que esse plugin poderia fazer.
+Feito no mesmo dia. Tenho 95 gists no GitHub, e achar um trecho era abrir o navegador, lembrar em qual gist estava e copiar à mão. Agora `Mod+G` abre a busca, que olha descrição, nome de arquivo, linguagem e o conteúdo, e o Enter copia o primeiro arquivo. `Mod+Ctrl+G` cria um gist com o que está na área de transferência, e ele nasce secreto, porque publicar por engano é a pior coisa que esse plugin poderia fazer.
 
 Todo acesso ao GitHub passa pelo `gh`, então o plugin nunca toca num token.
 
@@ -116,10 +118,12 @@ Os títulos contam a história: "show a pointer cursor on note and bookmark rows
 
 A saída foi juntar esses acertos num kit de componentes (`components/ui/`: card, chip, campo, linha de lista, botão com confirmação, estado vazio) dentro do Daybar. Como o Noctalia não tem um jeito de um plugin importar componentes de outro, o kit foi copiado para o AI Bar e para o Gistbar, e foi por isso que os dois já nasceram com a aparência certa e saíram em uma tarde.
 
-Uma armadilha de brinde: o Noctalia não recarrega plugins sozinho. Mudou um QML ou o `settings.json`, reinicia o shell.
+Uma armadilha de brinde: o Noctalia não recarrega plugins sozinho. Mudou um QML ou o `settings.json`, reinicia o shell (criei um atalho só para isso, `Super+Alt+B`).
 
 ## Próximo passo
 
 Os quatro rodam no Noctalia 4.7.7. O Noctalia v5 trocou o sistema de plugins (os novos são escritos em Luau, com outro manifesto), então nenhum deles roda lá ainda. O port está planejado, um por vez, assim que eu tiver a v5 instalada e testada aqui.
+
+E não devem ficar só nesses quatro: estou pensando em criar mais coisas para o Noctalia e, quem sabe, publicar no repositório de plugins da v5.
 
 Os quatro são MIT e estão no GitHub: [noctalia-daybar](https://github.com/nandomoreirame/noctalia-daybar), [noctalia-aibar](https://github.com/nandomoreirame/noctalia-aibar), [noctalia-gistbar](https://github.com/nandomoreirame/noctalia-gistbar) e [noctalia-desktop-sticky-notes](https://github.com/nandomoreirame/noctalia-desktop-sticky-notes). Achou bug ou sentiu falta de alguma coisa, abre uma issue ou manda um pull request.

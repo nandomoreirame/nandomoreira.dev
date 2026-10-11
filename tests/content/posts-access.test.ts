@@ -88,9 +88,11 @@ describe('sortPosts', () => {
   });
 
   it('lists the newest post first on the real posts page order', async () => {
-    const [first, second] = await getCurrentPosts();
-    expect(first.slug).toBe('fluxo-rpi-claude-code-grok-codex');
-    expect(second.slug).toBe('como-construi-meu-site-que-conversa-com-ia-via-mcp');
+    const [first, second, third] = await getCurrentPosts();
+    expect(first.slug).toBe('criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos');
+    // Same day (2026-10-10): publishedAt breaks the tie.
+    expect(second.slug).toBe('fluxo-rpi-claude-code-grok-codex');
+    expect(third.slug).toBe('como-construi-meu-site-que-conversa-com-ia-via-mcp');
   });
 });
 

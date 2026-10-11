@@ -37,7 +37,7 @@ linkar o repositório.
 
 | Tema | Ângulo | Status |
 |---|---|---|
-| Desktop Linux sob medida: CachyOS, Niri e Noctalia | Daybar, Sticky Notes, hypr-switcher e flipclock como ecossistema | Rascunho: `plugins-noctalia-para-produtividade-no-cachyos` (os quatro plugins do Noctalia) |
+| Desktop Linux sob medida: CachyOS, Niri e Noctalia | Daybar, Sticky Notes, hypr-switcher e flipclock como ecossistema | Rascunho: `criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos` (os quatro plugins do Noctalia) |
 | Radares que publicam no Discord | job-radar e home-radar: Python puro, sem dependência, rodando sozinho | Ideia |
 | Homelab com Tailscale | Import de música com scan de vírus e rsync, backup com `btrfs send`. Combina com o tema 5 | Ideia |
 
