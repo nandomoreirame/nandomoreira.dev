@@ -1,0 +1,102 @@
+---
+import type { NowSnapshot } from '../../lib/now/load';
+
+interface Props {
+  music: NowSnapshot['music'];
+}
+
+const { music } = Astro.props;
+const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
+const focus =
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+
+const localCover = (cover: string | undefined): string | undefined =>
+  cover?.startsWith('/api/now/cover/') ? cover : undefined;
+
+const albumLine = (artists: string, album: string, year: string | undefined): string =>
+  year ? `${artists} · ${album} (${year})` : `${artists} · ${album}`;
+---
+
+{
+  music.topArtists.state === 'ok' && (
+    <div class="flex flex-col gap-md">
+      <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Artistas do mês</p>
+      <ul class="grid grid-cols-3 gap-md sm:grid-cols-5">
+        {music.topArtists.items.map((artist) => {
+          const photo = localCover(artist.cover);
+          return (
+            <li>
+              <a
+                href={artist.url}
+                {...externalAttrs}
+                class:list={['group flex flex-col items-center gap-sm', focus]}
+              >
+                {photo ? (
+                  <img
+                    src={photo}
+                    width="96"
+                    height="96"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    class="size-20 rounded-full border border-border-strong bg-surface-elevated object-cover transition-[border-color] duration-(--duration-fast) ease-out group-hover:border-primary sm:size-24"
+                  />
+                ) : (
+                  <span
+                    class="flex size-20 items-center justify-center rounded-full border border-border-strong bg-surface-elevated font-mono text-small text-muted-foreground sm:size-24"
+                    aria-hidden="true"
+                  >
+                    {artist.name.slice(0, 1)}
+                  </span>
+                )}
+                <span class="line-clamp-2 text-center text-small">{artist.name}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  )
+}
+
+{
+  music.recent.state === 'empty' ? (
+    <p class="text-muted-foreground">Sem dados no momento.</p>
+  ) : (
+    <ul class="divide-y divide-border overflow-hidden rounded-lg border border-border-strong bg-surface">
+      {music.recent.items.map((track) => {
+        const photo = localCover(track.cover);
+        return (
+          <li class="flex items-center gap-md p-md">
+            {photo ? (
+              <img
+                src={photo}
+                width="56"
+                height="56"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="size-14 shrink-0 rounded-sm bg-surface-elevated object-cover"
+              />
+            ) : (
+              <span class="size-14 shrink-0 rounded-sm bg-surface-elevated" aria-hidden="true" />
+            )}
+            <div class="min-w-0 flex-1">
+              <a
+                href={track.url}
+                {...externalAttrs}
+                class:list={['block truncate text-foreground hover:text-primary', focus]}
+              >
+                {track.title}
+              </a>
+              <p class="truncate text-small text-muted-foreground">
+                {albumLine(track.artists, track.album, track.year)}
+              </p>
+            </div>
+            <span class="shrink-0 font-mono text-caption text-muted-foreground">{track.day}</span>
+          </li>
+        );
+      })}
+    </ul>
+  )
+}

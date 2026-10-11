@@ -1,0 +1,32 @@
+---
+import type { GameProgress as GameProgressValue } from '../../lib/now/xbox';
+
+interface Props {
+  progress?: GameProgressValue;
+  name: string;
+  size: 'lg' | 'sm';
+}
+
+const { progress, name, size } = Astro.props;
+const height = size === 'lg' ? 'h-1.5' : 'h-1';
+---
+
+{
+  progress && (
+    <div class="flex flex-col gap-xs">
+      <div
+        class:list={['overflow-hidden rounded-full bg-surface-elevated', height]}
+        role="progressbar"
+        aria-valuenow={progress.percent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Progresso em ${name}`}
+      >
+        <div class="h-full rounded-full bg-primary" style={`width: ${progress.percent}%`} />
+      </div>
+      <p class="font-mono text-caption text-muted-foreground">
+        {progress.current} / {progress.total} G · {progress.percent}%
+      </p>
+    </div>
+  )
+}

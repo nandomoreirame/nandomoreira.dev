@@ -1,0 +1,130 @@
+---
+import GameProgress from './GameProgress.astro';
+import type { GamesSection } from '../../lib/now/load';
+import type { GameProgress as GameProgressValue } from '../../lib/now/xbox';
+import { formatPolicyDate } from '../../lib/privacy/policy';
+
+interface Props {
+  games: GamesSection;
+}
+
+interface Featured {
+  name: string;
+  platforms: string[];
+  cover?: string;
+  progress?: GameProgressValue;
+  eyebrow: 'Jogando agora' | 'Último jogado';
+}
+
+const { games } = Astro.props;
+
+const localCover = (cover: string | undefined): string | undefined =>
+  cover?.startsWith('/api/now/cover/') ? cover : undefined;
+
+const view = (() => {
+  if (games.state !== 'ok') return undefined;
+  const { playingNow, recent } = games.items;
+  const featured: Featured | undefined = playingNow
+    ? {
+        name: playingNow.title,
+        platforms: playingNow.platforms,
+        cover: playingNow.cover,
+        progress: playingNow.progress,
+        eyebrow: 'Jogando agora',
+      }
+    : recent[0]
+      ? {
+          name: recent[0].name,
+          platforms: recent[0].platforms,
+          cover: recent[0].cover,
+          progress: recent[0].progress,
+          eyebrow: 'Último jogado',
+        }
+      : undefined;
+  if (!featured) return undefined;
+  return {
+    featured,
+    rest: recent.filter((game) => game.name !== featured.name).slice(0, 4),
+  };
+})();
+---
+
+{
+  games.state === 'empty' ? (
+    <p class="text-muted-foreground">Sem dados no momento.</p>
+  ) : games.state === 'fallback' ? (
+    <ul>
+      {games.items.map((game) => (
+        <li>
+          {game.name}
+          {game.note ? `: ${game.note}` : ''}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    view && (
+      <div class="flex flex-col gap-lg">
+        <article class="flex gap-lg rounded-lg border border-border-strong bg-surface p-md transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary sm:p-lg">
+          {localCover(view.featured.cover) ? (
+            <img
+              src={localCover(view.featured.cover)}
+              width="144"
+              height="144"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              class="size-28 shrink-0 rounded-md bg-surface-elevated object-cover sm:size-36"
+            />
+          ) : (
+            <span class="size-28 shrink-0 rounded-md bg-surface-elevated sm:size-36" aria-hidden="true" />
+          )}
+          <div class="flex min-w-0 flex-col gap-sm">
+            <p
+              class:list={[
+                'font-mono text-micro uppercase tracking-eyebrow',
+                view.featured.eyebrow === 'Jogando agora' ? 'text-primary' : 'text-muted-foreground',
+              ]}
+            >
+              {view.featured.eyebrow}
+            </p>
+            <h3 class="font-serif text-h3 font-semibold">{view.featured.name}</h3>
+            {view.featured.platforms.length > 0 && (
+              <ul class="flex flex-wrap gap-xs">
+                {view.featured.platforms.map((platform) => (
+                  <li class="rounded-sm border border-border-strong px-xs font-mono text-micro uppercase">{platform}</li>
+                ))}
+              </ul>
+            )}
+            <GameProgress progress={view.featured.progress} name={view.featured.name} size="lg" />
+          </div>
+        </article>
+        {view.rest.length > 0 && (
+          <ul class="grid grid-cols-2 gap-md sm:grid-cols-4">
+            {view.rest.map((game) => (
+              <li class="flex flex-col gap-xs">
+                {localCover(game.cover) ? (
+                  <img
+                    src={localCover(game.cover)}
+                    width="320"
+                    height="320"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-square w-full rounded-md bg-surface-elevated object-cover"
+                  />
+                ) : (
+                  <span class="aspect-square w-full rounded-md bg-surface-elevated" aria-hidden="true" />
+                )}
+                <p class="line-clamp-2 text-small">{game.name}</p>
+                <p class="font-mono text-caption text-muted-foreground">
+                  <time datetime={game.lastPlayed}>{formatPolicyDate(game.lastPlayed)}</time>
+                </p>
+                <GameProgress progress={game.progress} name={game.name} size="sm" />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )
+  )
+}
