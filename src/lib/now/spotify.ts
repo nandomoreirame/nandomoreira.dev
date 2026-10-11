@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SourceError, fetchJson } from './http';
+import { isAllowedUrl } from './safe';
 
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const RECENT_URL = 'https://api.spotify.com/v1/me/player/recently-played?limit=50';
@@ -8,16 +9,20 @@ const trackSchema = z.object({
   id: z.string(),
   name: z.string(),
   artists: z.array(z.object({ name: z.string() })),
-  external_urls: z.object({ spotify: z.string() }),
+  external_urls: z.object({
+    spotify: z
+      .string()
+      .refine((url) => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
+  }),
+});
+
+const playedItemSchema = z.object({
+  played_at: z.string(),
+  track: trackSchema.nullable(),
 });
 
 const recentSchema = z.object({
-  items: z.array(
-    z.object({
-      played_at: z.string(),
-      track: trackSchema.nullable(),
-    }),
-  ),
+  items: z.array(z.unknown()),
 });
 
 const tokenSchema = z.object({ access_token: z.string().min(1) });
@@ -66,7 +71,11 @@ export const parseRecentTracks = (
 
   const seen = new Set<string>();
   return parsed.data.items
-    .flatMap((item) => (item.track ? [{ playedAt: item.played_at, track: item.track }] : []))
+    .flatMap((item) => {
+      const parsedItem = playedItemSchema.safeParse(item);
+      if (!parsedItem.success || !parsedItem.data.track) return [];
+      return [{ playedAt: parsedItem.data.played_at, track: parsedItem.data.track }];
+    })
     .sort((a, b) => Date.parse(b.playedAt) - Date.parse(a.playedAt))
     .filter((item) => {
       if (seen.has(item.track.id)) return false;

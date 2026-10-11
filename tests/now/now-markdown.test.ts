@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Post } from '../../src/content/schemas/post';
+import { renderMarkdown } from '../../src/lib/ai-view/render';
 import { nowMarkdown } from '../../src/lib/now/markdown';
 import { NOW_GAMES } from '../../src/lib/now/now';
 import type { NowSnapshot } from '../../src/lib/now/load';
@@ -72,5 +73,21 @@ describe('nowMarkdown', () => {
     for (const [label, pattern] of MACHINE_LEAKS) {
       expect(markdown, label).not.toMatch(pattern);
     }
+  });
+
+  it('escapes hostile API text and omits a description that leaks', () => {
+    const data = snapshot('Aberto a projetos.');
+    data.projects.items[0]!.description = 'contato: x@y.com';
+    data.music.items[0]!.title = '<script>alert(1)</script>';
+    const markdown = nowMarkdown({ site, data });
+    const html = renderMarkdown(markdown);
+
+    expect(markdown).not.toContain('<script');
+    expect(markdown).not.toContain('x@y.com');
+    for (const [label, pattern] of MACHINE_LEAKS) {
+      expect(markdown, label).not.toMatch(pattern);
+    }
+    expect(html).not.toContain('<script');
+    expect(html).not.toContain('onerror=');
   });
 });

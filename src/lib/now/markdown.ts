@@ -2,10 +2,7 @@ import { absoluteUrl } from '../aeo/urls';
 import { formatPolicyDate } from '../privacy/policy';
 import type { NowSnapshot } from './load';
 import { NOW_LEAD, NOW_PATH, NOW_UPDATED_AT } from './now';
-
-const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
-
-const withoutEmail = (text: string): string => text.replace(EMAIL, '').replace(/\s{2,}/g, ' ').trim();
+import { leaksToMachine, machineText } from './safe';
 
 const pushSection = (lines: string[], title: string, body: string[]): void => {
   lines.push(`## ${title}`, '');
@@ -31,7 +28,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
     '',
   ];
 
-  const availability = withoutEmail(data.focus.availability);
+  const availability = leaksToMachine(data.focus.availability) ? '' : machineText(data.focus.availability);
   const focus = [
     ...data.focus.items.map((item) => `- ${item}`),
     '',
@@ -43,11 +40,13 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const projects =
     data.projects.state === 'empty'
       ? []
-      : data.projects.items.map((repo) => {
-          const description = repo.description ? `${repo.description}. ` : '';
-          const language = repo.language ? `${repo.language}. ` : '';
+      : data.projects.items.flatMap((repo) => {
+          if (leaksToMachine(repo.name)) return [];
+          const description =
+            repo.description && !leaksToMachine(repo.description) ? `${machineText(repo.description)}. ` : '';
+          const language = repo.language && !leaksToMachine(repo.language) ? `${machineText(repo.language)}. ` : '';
           const pushed = formatPolicyDate(repo.pushedAt.slice(0, 10));
-          return `- [${repo.name}](${repo.url}): ${description}${language}Último push em ${pushed}.`;
+          return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}Último push em ${pushed}.`];
         });
   pushSection(lines, 'Projetos em andamento', projects);
 
@@ -62,13 +61,22 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const music =
     data.music.state === 'empty'
       ? []
-      : data.music.items.map((track) => `- [${track.title}](${track.url}), ${track.artists}. ${track.day}`);
+      : data.music.items.flatMap((track) => {
+          if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
+          return [`- [${machineText(track.title)}](${track.url}), ${machineText(track.artists)}. ${track.day}`];
+        });
   pushSection(lines, 'Ouvindo', music);
 
   const games: string[] = [];
   if (data.games.state === 'ok') {
-    if (data.games.items.playingNow) games.push(`Jogando agora: ${data.games.items.playingNow.title}`);
-    for (const game of data.games.items.recent) games.push(`- ${game.name}, ${game.lastPlayed}`);
+    const playingNow = data.games.items.playingNow;
+    if (playingNow && !leaksToMachine(playingNow.title)) {
+      games.push(`Jogando agora: ${machineText(playingNow.title)}`);
+    }
+    for (const game of data.games.items.recent) {
+      if (leaksToMachine(game.name)) continue;
+      games.push(`- ${machineText(game.name)}, ${game.lastPlayed}`);
+    }
   } else if (data.games.state === 'fallback') {
     for (const game of data.games.items) {
       games.push(game.note ? `- ${game.name}: ${game.note}` : `- ${game.name}`);

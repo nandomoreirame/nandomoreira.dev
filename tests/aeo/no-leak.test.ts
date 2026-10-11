@@ -17,6 +17,7 @@ import {
   contactMarkdown,
   homeMarkdown,
 } from '../../src/lib/ai-view/pages';
+import { nowMarkdown } from '../../src/lib/now/markdown';
 import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
 import { MACHINE_LEAKS } from '../helpers/machine-leaks';
 
@@ -76,6 +77,37 @@ const outputs = () => [
   collectionMarkdown({ site, collection: 'lab', title: 'Lab', description: 'd', projects }),
   contactMarkdown({ site, profile }),
   connectMarkdown({ site }),
+  nowMarkdown({
+    site,
+    data: {
+      projects: {
+        state: 'ok',
+        items: [
+          {
+            name: 'alpha',
+            url: 'https://github.com/nandomoreirame/alpha',
+            description: 'contato: x@y.com',
+            language: 'TypeScript',
+            pushedAt: '2026-10-10T12:00:00Z',
+          },
+        ],
+      },
+      music: {
+        state: 'ok',
+        items: [
+          {
+            title: '<script>alert(1)</script>',
+            artists: 'Artist A',
+            url: 'https://open.spotify.com/track/t1',
+            day: 'hoje',
+          },
+        ],
+      },
+      games: { state: 'empty' },
+      writing: { latest: undefined, drafts: [] },
+      focus: { items: ['Foco'], declining: ['Fora'], availability: 'Aberto.' },
+    },
+  }),
 ];
 
 const FORBIDDEN = MACHINE_LEAKS;

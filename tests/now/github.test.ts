@@ -60,6 +60,14 @@ describe('parseActiveRepos', () => {
   it('returns an empty list when nothing was pushed inside the window', () => {
     expect(parseActiveRepos([repo('ancient', 40)], { now: NOW, exclude: [] })).toEqual([]);
   });
+
+  it('drops a repo whose url is outside https://github.com and keeps the others', () => {
+    const evil = repo('evil', 0);
+    evil.html_url = 'javascript:alert(1)';
+    const kept = repo('kept', 1);
+
+    expect(parseActiveRepos([evil, kept], { now: NOW, exclude: [] }).map((item) => item.name)).toEqual(['kept']);
+  });
 });
 
 describe('linkForRepo', () => {

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { Block } from '../../content/blocks';
 import { collectionOfBlock } from '../catalog/groups';
 import { SourceError, fetchJson } from './http';
+import { isAllowedUrl } from './safe';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -10,7 +11,9 @@ const REPOS_URL =
 
 const repoSchema = z.object({
   name: z.string(),
-  html_url: z.string(),
+  html_url: z
+    .string()
+    .refine((url) => isAllowedUrl(url, 'github.com') && url.startsWith('https://github.com/')),
   description: z.string().nullable(),
   language: z.string().nullable(),
   pushed_at: z.string(),
@@ -19,7 +22,7 @@ const repoSchema = z.object({
   private: z.boolean(),
 });
 
-const reposSchema = z.array(repoSchema);
+const reposSchema = z.array(z.unknown());
 
 export interface ActiveRepo {
   name: string;
@@ -53,6 +56,10 @@ export const parseActiveRepos = (
   const excluded = new Set(exclude.map((name) => name.toLowerCase()));
 
   return parsed.data
+    .flatMap((item) => {
+      const repo = repoSchema.safeParse(item);
+      return repo.success ? [repo.data] : [];
+    })
     .filter((repo) => !repo.fork && !repo.archived && !repo.private)
     .filter((repo) => !excluded.has(repo.name.toLowerCase()))
     .filter((repo) => Date.parse(repo.pushed_at) >= cutoff)

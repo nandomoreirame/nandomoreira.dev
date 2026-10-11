@@ -32,6 +32,16 @@ describe('parseRecentTracks', () => {
     );
     expect(tracks.map((track) => track.title)).toEqual(['Two']);
   });
+
+  it('drops a track whose url is outside https://open.spotify.com and keeps the others', () => {
+    const evil = structuredClone(fixture.items[0]);
+    evil.track.id = 'evil';
+    evil.track.name = 'Evil';
+    evil.track.external_urls.spotify = 'javascript:alert(1)';
+
+    const tracks = parseRecentTracks({ items: [evil, fixture.items[3]] }, { now: NOW });
+    expect(tracks.map((track) => track.title)).toEqual(['Two']);
+  });
 });
 
 describe('dayLabel', () => {
