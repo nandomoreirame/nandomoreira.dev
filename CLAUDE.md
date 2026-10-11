@@ -62,6 +62,12 @@ bash scripts/verify-schema-gate.sh                   # conteúdo inválido quebr
 bash scripts/verify-aeo-routes.sh                    # rotas de máquina, status e content-type (sprint 4)
 ```
 
+Refresh token do Spotify para a página `/now`. Cadastre `http://127.0.0.1:8888/callback` no app do Spotify antes de rodar. O script imprime só o `refresh_token`.
+
+```bash
+SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-token.mjs
+```
+
 `verify-local-server.sh` usa `PORT=8080` por padrão. Se a porta estiver ocupada ele
 falha com `FAIL: the server died on startup` em vez de validar o processo alheio;
 passe `PORT=<livre>` para contornar.
