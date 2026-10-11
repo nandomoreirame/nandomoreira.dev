@@ -64,6 +64,10 @@ const caseHref = (slug: string): string | undefined => {
         <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
         Entrar em contato
       </Button>
+      <Button href="/curriculo" variant="secondary">
+        <Icon name="lucide:file-down" class="size-4 shrink-0" aria-hidden="true" />
+        Baixar currículo (PDF)
+      </Button>
       {
         profiles.map((contact) => (
           <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">

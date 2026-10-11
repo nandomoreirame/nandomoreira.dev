@@ -1,0 +1,127 @@
+---
+import EmptyState from '../components/ui/EmptyState.astro';
+import Button from '../components/ui/Button.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { displayNameOf } from '../lib/content/display-name';
+import { getProfile } from '../lib/content';
+import { CV_PDF_PATH, cvFileName } from '../lib/cv/download';
+import { FORM_HONEYPOT } from '../lib/hire/form';
+
+export const prerender = false;
+
+const profile = await getProfile();
+// Rendered per request, so the stamp is the moment this page was opened.
+const fileName = cvFileName(new Date());
+
+const envio = Astro.url.searchParams.get('envio');
+const sent = envio === 'ok';
+const alert =
+  envio === 'invalido'
+    ? 'Algo no que você digitou não passou: confira o e-mail (e o nome, se estiver muito longo), ou pule e baixe direto.'
+    : envio === 'limite'
+      ? 'Muitas tentativas seguidas. Espere alguns minutos, ou pule e baixe direto.'
+      : undefined;
+
+const field =
+  'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide text-muted-foreground';
+---
+
+<BaseLayout
+  title={`Currículo | ${displayNameOf(profile)}`}
+  description="Baixe o currículo em PDF."
+  noindex
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader
+      eyebrow="Currículo"
+      title="Antes de baixar"
+      description="Se quiser, deixe seu nome e e-mail. É só para eu saber quem está baixando meu currículo e poder retornar o contato, caso faça sentido. Os dois são opcionais: dá para pular e baixar direto."
+    />
+
+    <section class="flex max-w-[68ch] flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg">
+      {
+        sent ? (
+          <EmptyState
+            id="baixar"
+            role="status"
+            icon="lucide:file-check"
+            title="Pronto, é só baixar"
+            description="Obrigado. Se você deixou nome ou e-mail, eles chegaram até mim."
+          >
+            <Button href={CV_PDF_PATH} download={fileName}>
+              Baixar currículo (PDF)
+            </Button>
+          </EmptyState>
+        ) : (
+          <>
+            {alert && (
+              <p id="email-alerta" role="alert" class="rounded-md border border-primary px-md py-sm text-body text-foreground">
+                {alert}
+              </p>
+            )}
+
+            {/* Posts natively, no JavaScript: the endpoint answers with a
+                redirect back here carrying `envio`, read above. */}
+            <form action="/api/cv" method="post" class="flex flex-col gap-lg">
+              <div>
+                <label for="cv-nome" class={labelClass}>
+                  Nome (opcional)
+                </label>
+                <input
+                  id="cv-nome"
+                  name="nome"
+                  type="text"
+                  autocomplete="name"
+                  maxlength="200"
+                  aria-describedby={alert ? 'email-alerta' : undefined}
+                  class={field}
+                />
+              </div>
+
+              <div>
+                <label for="cv-email" class={labelClass}>
+                  E-mail (opcional)
+                </label>
+                <input
+                  id="cv-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  maxlength="254"
+                  placeholder="voce@empresa.com"
+                  aria-describedby={alert ? 'email-alerta' : undefined}
+                  class={field}
+                />
+              </div>
+
+              {/* Honeypot, the same as /contato: display:none, so people,
+                  screen readers and password managers skip it, while bots
+                  reading the HTML still fill it. */}
+              <div hidden aria-hidden="true">
+                <label for="cv-hp">Não preencha este campo</label>
+                <input id="cv-hp" name={FORM_HONEYPOT} type="text" tabindex="-1" autocomplete="off" maxlength="200" />
+              </div>
+
+              <div class="flex flex-wrap items-center gap-md">
+                <Button type="submit">Enviar e baixar</Button>
+                <Button href={CV_PDF_PATH} variant="ghost" download={fileName}>
+                  Pular e baixar
+                </Button>
+              </div>
+            </form>
+
+            <p class="text-small text-muted-foreground">
+              O que você deixar fica guardado por 12 meses e não vai para nenhuma lista. Os detalhes estão na <a
+                href="/privacidade#curriculo"
+                class="text-foreground underline underline-offset-4 hover:text-primary">política de privacidade</a
+              >.
+            </p>
+          </>
+        )
+      }
+    </section>
+  </article>
+</BaseLayout>

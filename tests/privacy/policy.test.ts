@@ -17,11 +17,22 @@ describe('privacy policy content', () => {
       'nao-coletado',
       'registros',
       'formulario',
+      'curriculo',
       'agentes',
       'compartilhamento',
       'direitos',
       'mudancas',
     ]);
+  });
+
+  it('explains the optional e-mail before the CV download, and that skipping records nothing', () => {
+    const section = privacySections.find((candidate) => candidate.id === 'curriculo');
+    const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
+    expect(text).toMatch(/opcion(al|ais)/);
+    expect(text).toContain('12 meses');
+    expect(text).toMatch(/nada é gravado/);
+    expect(text).toMatch(/[Nn]ão guardo o IP/);
+    expect(text).toMatch(/nome e (o )?e-mail/);
   });
 
   it('states the retention the code enforces', () => {
@@ -45,7 +56,7 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-08');
+    expect(POLICY_UPDATED_AT).toBe('2026-10-11');
   });
 });
 
@@ -67,7 +78,7 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('8 de outubro de 2026');
+    expect(await render()).toContain('11 de outubro de 2026');
   });
 });
 

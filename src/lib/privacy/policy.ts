@@ -6,7 +6,7 @@ import { absoluteUrl } from '../aeo/urls';
  * or by the platform default, so changing a number here without changing that
  * is how the policy starts to lie.
  */
-export const POLICY_UPDATED_AT = '2026-10-08';
+export const POLICY_UPDATED_AT = '2026-10-11';
 
 export interface PolicySection {
   id: string;
@@ -48,6 +48,15 @@ export const privacySections: PolicySection[] = [
       'A mensagem fica no Firestore, banco do Google Cloud na região us-east4, nos Estados Unidos, e uma cópia chega ao meu e-mail pelo Resend, serviço de envio de e-mail também nos Estados Unidos.',
       'A mensagem é apagada automaticamente 12 meses depois do envio, e a cópia no meu e-mail segue o mesmo prazo. O IP e o user agent ficam em um registro separado, apagado depois de 30 dias, e não vão no e-mail.',
       'Não envie dados sensíveis, como saúde, documentos ou senhas. Nada disso é necessário para começar uma conversa.',
+    ],
+  },
+  {
+    id: 'curriculo',
+    title: 'Nome e e-mail antes de baixar o currículo',
+    paragraphs: [
+      'Antes de baixar o currículo, a página /curriculo pede nome e e-mail, os dois opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
+      'Se você pular, nada é gravado: nem nome e e-mail, nem um registro anônimo do download.',
+      'Se você deixar nome ou e-mail, eles ficam no Firestore, junto com a data, e uma cópia chega ao meu e-mail pelo Resend. Não guardo o IP nem o user agent desse envio. O registro é apagado automaticamente 12 meses depois, e a cópia no meu e-mail segue o mesmo prazo.',
     ],
   },
   {
