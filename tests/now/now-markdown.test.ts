@@ -61,7 +61,8 @@ describe('nowMarkdown', () => {
     expect(markdown).toContain('url: https://nandomoreira.dev/now');
     expect(markdown).toContain('https://github.com/nandomoreirame/alpha');
     expect(markdown).toContain('https://open.spotify.com/track/t1');
-    expect(markdown).toContain('](https://nandomoreira.dev/posts/post-publicado)');
+    expect(markdown).toContain('](https://nandomoreira.dev/post-publicado)');
+    expect(markdown).not.toContain('/posts/');
     expect(markdown).toMatch(/^- Rascunho sem link$/m);
     expect(markdown).not.toContain('[Rascunho sem link]');
     expect(markdown).not.toContain('TODO');

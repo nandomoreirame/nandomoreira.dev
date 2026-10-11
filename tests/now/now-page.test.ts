@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getUpcomingPosts } from '../../src/lib/content';
+import { getCurrentPosts, getUpcomingPosts } from '../../src/lib/content';
 import { NOW_DECLINING, NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
@@ -48,6 +48,16 @@ describe('/now page', () => {
     expect(heading).toBeGreaterThan(-1);
     expect(declining).toBeGreaterThan(heading);
     expect(foco).toContain('Disponibilidade:');
+  });
+
+  it('links the latest post at /slug and never under /posts', async () => {
+    const latest = (await getCurrentPosts()).find((post) => post.draft !== true);
+    const html = await render(NowPage);
+    const writing = html.split('id="escrevendo"')[1]?.split('id="ouvindo"')[0] ?? '';
+
+    expect(latest).toBeDefined();
+    expect(writing).toContain(`href="/${latest!.slug}"`);
+    expect(writing).not.toContain('/posts/');
   });
 
   it('lists draft titles without a link', async () => {

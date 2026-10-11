@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
+import type { Post } from '../../src/content/schemas/post';
 import { readNowConfig } from '../../src/lib/now/config';
 import { createNowLoader } from '../../src/lib/now/load';
 import { NOW_FOCUS } from '../../src/lib/now/now';
@@ -132,6 +133,21 @@ describe('loadNow', () => {
     clock = Date.parse('2026-10-13T15:00:00Z');
     const second = await loadNow();
     expect(second.music).toMatchObject({ state: 'ok', items: [{ day: '11 de out.' }] });
+  });
+
+  it('skips a leading draft and links the published post', async () => {
+    const draft = { title: 'Rascunho', slug: 'rascunho', draft: true } as Post;
+    const published = { title: 'Publicado', slug: 'publicado', draft: false } as Post;
+    const loadNow = createNowLoader({
+      config: readNowConfig({}),
+      fetch: vi.fn().mockRejectedValue(new Error('offline')),
+      now: NOW,
+      logger: { warn: vi.fn() },
+      currentPosts: async () => [draft, published],
+    });
+
+    const data = await loadNow();
+    expect(data.writing.latest?.slug).toBe('publicado');
   });
 
   it('marks every configured source ok when each one answers', async () => {

@@ -55,7 +55,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const writing: string[] = [];
   if (data.writing.latest) {
     const post = data.writing.latest;
-    writing.push(`- [${post.title}](${absoluteUrl(site, `/posts/${post.slug}`)})`);
+    writing.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)})`);
   }
   for (const title of data.writing.drafts) writing.push(`- ${title}`);
   pushSection(lines, 'Escrevendo', writing);

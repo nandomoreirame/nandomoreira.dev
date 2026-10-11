@@ -59,12 +59,14 @@ export const createNowLoader = ({
   now = Date.now,
   logger = console,
   fallbackGames = NOW_GAMES,
+  currentPosts = getCurrentPosts,
 }: {
   config: NowConfig;
   fetch: typeof fetch;
   now?: () => number;
   logger?: Pick<Console, 'warn'>;
   fallbackGames?: readonly { name: string; note?: string }[];
+  currentPosts?: () => Promise<Post[]>;
 }) => {
   const clock = () => new Date(now());
   const spotifyConfig = config.spotify;
@@ -102,7 +104,7 @@ export const createNowLoader = ({
         spotify ? spotify() : Promise.resolve('unconfigured' as const),
         xbox ? xbox() : Promise.resolve('unconfigured' as const),
       ]),
-      getCurrentPosts(),
+      currentPosts(),
       getUpcomingPosts(),
       getAvailability(),
     ]);
@@ -126,7 +128,7 @@ export const createNowLoader = ({
       music,
       games,
       writing: {
-        latest: posts[0],
+        latest: posts.find((post) => post.draft !== true),
         drafts: drafts.slice(0, UPCOMING_LIMIT).map((post) => post.title),
       },
       focus: {
