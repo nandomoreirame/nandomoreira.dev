@@ -30,9 +30,17 @@ describe('showDrafts', () => {
     expect(showDrafts({ DEV: true, MODE: 'test' })).toBe(false);
   });
 
+  // The homelab staging build (`astro build --mode staging`) is where the
+  // author reviews drafts; a default build is production and never shows them.
+  it('shows drafts on the staging build and on no other build', () => {
+    expect(showDrafts({ DEV: false, MODE: 'staging' })).toBe(true);
+    expect(showDrafts({ DEV: false, MODE: 'production' })).toBe(false);
+    expect(showDrafts({ DEV: false, MODE: 'development' })).toBe(false);
+  });
+
   it('is off in this test run, so the suite sees what production sees', async () => {
     const slugs = (await getCurrentPosts()).map((item) => item.slug);
-    expect(slugs).not.toContain('por-que-parenteses-no-tailwind');
+    expect(slugs).not.toContain('de-cinco-dias-para-trinta-minutos');
   });
 });
 

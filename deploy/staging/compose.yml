@@ -1,0 +1,15 @@
+# Homelab staging: Caddy (host network) proxies http://nandomoreira.home to the
+# loopback port below. No secrets are passed, so /api/hire answers an error here
+# and never sends a real notification.
+name: nandomoreira-dev-staging
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/staging/Dockerfile
+    image: nandomoreira-dev-staging:latest
+    container_name: nandomoreira-dev-staging
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${STAGING_PORT:-4321}:8080"

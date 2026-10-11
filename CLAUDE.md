@@ -230,6 +230,20 @@ depois de o build já existir no servidor e o retry cego devolve `HTTP 409`.
 repositório conectado e agora há um. Serve para promover um commit específico sem esperar
 o rollout automático, ou para voltar a um commit anterior.
 
+## Homologação no homelab
+
+`bash scripts/deploy-staging.sh` publica a árvore local (rascunhos não commitados
+incluídos) em **http://nandomoreira.home**, um container Docker no homelab atrás do
+Caddy, com o nome resolvido pelo Pi-hole. É um build `--mode staging`, o único além do
+`astro dev` em que os rascunhos aparecem (`showDrafts` em `src/lib/content/posts.ts`).
+Produção não muda: continua sendo push em `main`.
+
+- Arquivos: `deploy/staging/Dockerfile`, `deploy/staging/compose.yml`, `scripts/deploy-staging.sh`.
+- O container escuta só em `127.0.0.1:4321`; o Caddy responde com `X-Robots-Tag: noindex`.
+- Nenhum segredo vai para lá, então `/api/hire` responde erro na homologação e nunca notifica.
+- O SSH do homelab passa pelo Tailscale SSH, que às vezes pede uma verificação no navegador antes de conectar.
+- A evidência é a linha `STAGING DEPLOY PASSED`.
+
 ## Importar config de outros agentes
 
 Existem `~/.codex/config.toml` e `~/.gemini/settings.json` na máquina. Se quiser trazer

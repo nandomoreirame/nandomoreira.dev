@@ -10,12 +10,13 @@ export type ArchiveYear = {
 };
 
 /**
- * Drafts show only on the local dev server (`astro dev`, mode development).
- * The production build and Vitest (mode test) never see them, so the suite
- * checks exactly what production serves.
+ * Drafts show on the local dev server (`astro dev`, mode development) and on
+ * the homelab staging build (`astro build --mode staging`), where the author
+ * reviews them. The production build and Vitest (mode test) never see them, so
+ * the suite checks exactly what production serves.
  */
 export const showDrafts = (env: { DEV: boolean; MODE: string }): boolean =>
-  env.DEV && env.MODE === 'development';
+  (env.DEV && env.MODE === 'development') || env.MODE === 'staging';
 
 const SHOW_DRAFTS = showDrafts(import.meta.env);
 
