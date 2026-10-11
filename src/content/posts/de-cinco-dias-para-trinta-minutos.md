@@ -93,3 +93,5 @@ Se eu tivesse que resumir em três decisões:
 3. **Transformar intenção em regra.** Prazo com orçamento por etapa, cobertura com portão no CI. O que depende de alguém lembrar acaba esquecido.
 
 Os cinco dias não sumiram porque um modelo ficou mais esperto. Sumiram porque o trabalho parou de esperar.
+
+`sys.exit(0)`

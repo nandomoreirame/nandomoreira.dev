@@ -200,3 +200,5 @@ Não uso RPI para tudo. Trocar uma cor, corrigir um texto ou ajustar um espaçam
 Gosto do jeito que está. Por ora não mudaria muita coisa. Continuo mexendo na forma de trabalhar, e uma hora mudo um pedaço ou outro. O desenho de hoje eu assino.
 
 Já discordaram de mim. Disseram que o fluxo é engessado demais, porque o teste vem antes da implementação e a IA demora mais para terminar o trabalho. Eu sigo firme. Teste é essencial em qualquer feature.
+
+`/exit`

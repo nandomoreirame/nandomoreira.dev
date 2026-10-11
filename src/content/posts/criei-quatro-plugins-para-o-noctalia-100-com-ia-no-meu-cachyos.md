@@ -127,3 +127,5 @@ Os quatro rodam no Noctalia 4.7.7. O Noctalia v5 trocou o sistema de plugins (os
 E não devem ficar só nesses quatro: estou pensando em criar mais coisas para o Noctalia e, quem sabe, publicar no repositório de plugins da v5.
 
 Os quatro são MIT e estão no GitHub: [noctalia-daybar](https://github.com/nandomoreirame/noctalia-daybar), [noctalia-aibar](https://github.com/nandomoreirame/noctalia-aibar), [noctalia-gistbar](https://github.com/nandomoreirame/noctalia-gistbar) e [noctalia-desktop-sticky-notes](https://github.com/nandomoreirame/noctalia-desktop-sticky-notes). Achou bug ou sentiu falta de alguma coisa, abre uma issue ou manda um pull request.
+
+`qs -c noctalia-shell kill`
