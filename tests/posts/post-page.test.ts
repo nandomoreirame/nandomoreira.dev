@@ -96,7 +96,7 @@ describe('/[slug] post page', () => {
 
   it('closes with three related posts linking to other posts', async () => {
     const entries = await getAllPostEntries();
-    const entry = entries.find((e) => e.data.slug === 'o-futuro-do-desenvolvimento-web')!;
+    const entry = entries.find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
 
     const html = await renderEntry(entry);
     const start = html.search(/<section[^>]*aria-labelledby="related-heading"/);
@@ -106,7 +106,7 @@ describe('/[slug] post page', () => {
     expect(section).toContain('Posts relacionados');
     const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map((m) => m[1]);
     expect(links).toHaveLength(3);
-    expect(links).not.toContain('o-futuro-do-desenvolvimento-web');
+    expect(links).not.toContain('fluxo-rpi-claude-code-grok-codex');
   });
 
   it('draws the declared art where a post has no cover', async () => {
@@ -164,9 +164,9 @@ describe('/[slug] post page', () => {
   });
 
   it('renders the images inside a post body', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'meu-stack-ferramentas-ia-2026');
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos');
     expect(entry).toBeDefined();
     const html = await renderEntry(entry!);
-    expect(html).toMatch(/<img\b[^>]*alt="Claude Code em ação no terminal"/);
+    expect(html).toMatch(/<img\b[^>]*alt="Meu desktop no CachyOS com o Niri/);
   });
 });
