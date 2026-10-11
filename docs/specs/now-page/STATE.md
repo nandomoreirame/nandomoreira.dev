@@ -13,4 +13,23 @@ Research em andamento. Página `/now` ("Agora") no menu principal: projetos em a
 jogos no Xbox, Spotify em tempo real e seções extras a definir.
 
 Spec aprovada e plano gerado em 2026-10-11: 14 tarefas em 4 lotes.
-Pendências do autor antes do push: criar os cinco segredos (Task 12), chave OpenXBL para a Task 5, revisar a copy curada.
+Pendências do autor antes do push: criar os cinco segredos (Task 12), revisar a copy curada e `NOW_GAMES`.
+
+## Segredos antes do push
+
+O commit que declara os cinco segredos em `apphosting.yaml` não pode chegar em `origin/main` enquanto eles não existirem no Secret Manager. Um segredo declarado e inexistente quebra o rollout do App Hosting.
+
+Criar cada um e conceder acesso ao backend `nandomoreira-dev`:
+
+- `now-spotify-client-id` (`SPOTIFY_CLIENT_ID`)
+- `now-spotify-client-secret` (`SPOTIFY_CLIENT_SECRET`)
+- `now-spotify-refresh-token` (`SPOTIFY_REFRESH_TOKEN`)
+- `now-openxbl-api-key` (`OPENXBL_API_KEY`)
+- `now-github-token` (`GITHUB_TOKEN`)
+
+```bash
+firebase apphosting:secrets:set <nome>
+firebase apphosting:secrets:grantaccess <nome> --backend nandomoreira-dev
+```
+
+A ausência em runtime degrada a seção, não o boot. Homologação continua sem esses segredos.
