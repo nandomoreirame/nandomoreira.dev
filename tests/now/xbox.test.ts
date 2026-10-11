@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { NOW_GAME_EXCLUDE } from '../../src/lib/now/now';
-import { fetchXbox, parsePresence, parseRecentGames } from '../../src/lib/now/xbox';
+import { fetchXbox, parsePresence, parseRecentGames, xboxStoreUrl } from '../../src/lib/now/xbox';
 
 const readJson = (name: string) =>
   JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -194,6 +194,19 @@ describe('parseRecentGames', () => {
   });
 });
 
+describe('xboxStoreUrl', () => {
+  it('links a Microsoft Store product id, whatever its first character', () => {
+    expect(xboxStoreUrl('BPSWGQBW7R3G')).toBe('https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G');
+    expect(xboxStoreUrl('9P079R5LGV4T')).toBe('https://www.xbox.com/pt-BR/games/store/-/9P079R5LGV4T');
+  });
+
+  it('gives no link without a valid product id', () => {
+    for (const id of [undefined, '', '591405932', 'bpswgqbw7r3g', 'BPSWGQBW7R3G/../x', 'BPSWGQBW7R3']) {
+      expect(xboxStoreUrl(id), String(id)).toBeUndefined();
+    }
+  });
+});
+
 describe('fetchXbox', () => {
   it('reads presence and title history in parallel and applies the same filters', async () => {
     const fetchImpl = vi.fn(async (url: string, init?: RequestInit) => {
@@ -207,7 +220,11 @@ describe('fetchXbox', () => {
       throw new Error(`unexpected ${url}`);
     });
 
-    const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'key-1' });
+    const result = await fetchXbox({
+      fetch: fetchImpl as unknown as typeof fetch,
+      apiKey: 'key-1',
+      productIds: new Map(),
+    });
 
     expect(fetchImpl).toHaveBeenCalledTimes(2);
     expect(result.playingNow).toEqual({
@@ -234,8 +251,87 @@ describe('fetchXbox', () => {
       };
     });
 
-    await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'key-1' });
+    await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'key-1', productIds: new Map() });
 
     expect(languages).toEqual(['pt-BR', 'pt-BR']);
+  });
+});
+
+describe('fetchXbox store links', () => {
+  const titled = (name: string, titleId: string, at: string) => ({
+    name,
+    type: 'Game',
+    titleId,
+    titleHistory: { lastTimePlayed: at },
+  });
+  const historyWithIds = {
+    content: {
+      titles: [
+        titled('Red Dead Redemption 2', '591405932', '2026-10-11T15:00:00Z'),
+        titled('Jogo Sem Loja', '111', '2026-10-10T15:00:00Z'),
+      ],
+    },
+  };
+  const CATALOG = 'https://displaycatalog.mp.microsoft.com/v7.0/products/lookup';
+
+  const fakeFetch = (catalog: (titleId: string) => unknown) =>
+    vi.fn(async (url: string, _init?: RequestInit) => {
+      const target = String(url);
+      if (target.endsWith('/presence')) return { ok: true, status: 200, json: async () => playing('Scarlett', 'Red Dead Redemption 2') };
+      if (target.endsWith('/titleHistory')) return { ok: true, status: 200, json: async () => historyWithIds };
+      if (target.startsWith(CATALOG)) {
+        const titleId = new URL(target).searchParams.get('value') ?? '';
+        const body = catalog(titleId);
+        if (body instanceof Error) throw body;
+        return { ok: true, status: 200, json: async () => body };
+      }
+      throw new Error(`unexpected ${target}`);
+    });
+
+  it('links a game to its store page through the catalog and leaves the rest unlinked', async () => {
+    const fetchImpl = fakeFetch((titleId) =>
+      titleId === '591405932' ? { Products: [{ ProductId: 'BPSWGQBW7R3G' }] } : { Products: [] },
+    );
+
+    const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds: new Map() });
+
+    const store = 'https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G';
+    expect(result.playingNow?.url).toBe(store);
+    expect(result.recent[0]?.url).toBe(store);
+    expect(result.recent[1]?.name).toBe('Jogo Sem Loja');
+    expect(result.recent[1]?.url).toBeUndefined();
+    const lookup = fetchImpl.mock.calls.find(([url]) => String(url).startsWith(CATALOG))?.[0];
+    expect(String(lookup)).toContain('alternateId=XboxTitleId');
+    expect(String(lookup)).toContain('market=BR');
+  });
+
+  it('asks the catalog once per title, then answers from the cache', async () => {
+    const productIds = new Map<string, string | null>();
+    const fetchImpl = fakeFetch((titleId) => (titleId === '591405932' ? { Products: [{ ProductId: 'BPSWGQBW7R3G' }] } : { Products: [] }));
+
+    await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
+    await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
+
+    const lookups = fetchImpl.mock.calls.filter(([url]) => String(url).startsWith(CATALOG));
+    expect(lookups).toHaveLength(2);
+  });
+
+  it('keeps the games, without links, when the catalog fails, and retries next time', async () => {
+    const productIds = new Map<string, string | null>();
+    const fetchImpl = fakeFetch(() => new Error('catalog down'));
+
+    const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
+
+    expect(result.recent).toHaveLength(2);
+    expect(result.recent.every((game) => game.url === undefined)).toBe(true);
+    expect(productIds.size).toBe(0);
+  });
+
+  it('ignores a catalog answer that is not a store product id', async () => {
+    const fetchImpl = fakeFetch(() => ({ Products: [{ ProductId: 'javascript:alert(1)' }] }));
+
+    const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds: new Map() });
+
+    expect(result.recent.every((game) => game.url === undefined)).toBe(true);
   });
 });

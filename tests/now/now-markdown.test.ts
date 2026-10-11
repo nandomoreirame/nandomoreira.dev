@@ -116,6 +116,7 @@ describe('nowMarkdown', () => {
       items: {
         playingNow: {
           title: 'Hades',
+          url: 'https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G',
           platforms: ['PC'],
           progress: { current: 690, total: 1000, percent: 69 },
         },
@@ -135,6 +136,9 @@ describe('nowMarkdown', () => {
     expect(markdown).toContain('- [Raul Seixas](https://open.spotify.com/artist/raul)');
     expect(markdown).toContain('Krig-ha (1990).');
     expect(markdown).toContain('690 / 1000 G (69%)');
+    expect(markdown).toContain('Jogando agora: [Hades](https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G)');
+    expect(markdown).toContain('- Hades, 2026-10-05');
+    expect(markdown).not.toContain('xbox.com/pt-BR/search');
     expect(markdown).toContain('PC');
     expect(markdown).not.toContain('![');
   });

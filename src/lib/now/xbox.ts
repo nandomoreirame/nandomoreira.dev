@@ -35,6 +35,7 @@ const titleSchema = z.object({
   titleHistory: z.object({ lastTimePlayed: z.string() }),
   displayImage: z.string().optional(),
   devices: z.array(z.string()).optional(),
+  titleId: z.string().optional(),
   achievement: z
     .object({
       currentGamerscore: z.number().optional(),
@@ -56,8 +57,58 @@ export interface GameProgress {
   percent: number;
 }
 
+/** Microsoft Store product ids: twelve upper-case letters and digits (9P079R5LGV4T, BPSWGQBW7R3G). */
+const STORE_PRODUCT = /^[0-9A-Z]{12}$/;
+
+/** Store page of a game, or nothing: xbox.com search answered 500 when probed, so it is no fallback. */
+export const xboxStoreUrl = (productId: string | undefined): string | undefined =>
+  productId && STORE_PRODUCT.test(productId) ? `https://www.xbox.com/pt-BR/games/store/-/${productId}` : undefined;
+
+const CATALOG_URL = 'https://displaycatalog.mp.microsoft.com/v7.0/products/lookup';
+
+const catalogSchema = z.object({
+  Products: z.array(z.object({ ProductId: z.string() })).default([]),
+});
+
+/** titleId -> store product id; null means the catalog answered and had none. */
+export type ProductIdCache = Map<string, string | null>;
+
+// A title's product id never changes, so the cache lives for the instance.
+const productIdCache: ProductIdCache = new Map();
+
+/**
+ * Title history carries no store id; the public Microsoft catalog maps the
+ * Xbox title id to one. A failed lookup is not cached, so it retries later.
+ */
+const lookupProductId = async (
+  fetchImpl: typeof fetch,
+  titleId: string,
+  cache: ProductIdCache,
+): Promise<string | undefined> => {
+  if (cache.has(titleId)) return cache.get(titleId) ?? undefined;
+  if (!/^\d+$/.test(titleId)) return undefined;
+  try {
+    const query = new URLSearchParams({
+      alternateId: 'XboxTitleId',
+      value: titleId,
+      market: 'BR',
+      languages: 'pt-BR',
+      fieldsTemplate: 'browse',
+    });
+    const parsed = catalogSchema.safeParse(await fetchJson(fetchImpl, `${CATALOG_URL}?${query}`));
+    if (!parsed.success) return undefined;
+    const productId = parsed.data.Products.map((product) => product.ProductId).find((id) => STORE_PRODUCT.test(id));
+    cache.set(titleId, productId ?? null);
+    return productId;
+  } catch {
+    return undefined;
+  }
+};
+
 export interface RecentGame {
   name: string;
+  /** Store page, only when the catalog knows the game. */
+  url?: string;
   lastPlayed: string;
   platforms: string[];
   cover?: string;
@@ -66,6 +117,7 @@ export interface RecentGame {
 
 export interface PlayingNow {
   title: string;
+  url?: string;
   platforms: string[];
   cover?: string;
   progress?: GameProgress;
@@ -139,6 +191,7 @@ export const parsePresence = (
       if (!match) continue;
       return {
         title: title.name,
+        ...(match.url ? { url: match.url } : {}),
         platforms: match.platforms,
         ...(match.cover ? { cover: match.cover } : {}),
         ...(match.progress ? { progress: match.progress } : {}),
@@ -148,11 +201,16 @@ export const parsePresence = (
   return undefined;
 };
 
+/** A history game plus the Xbox title id the catalog lookup needs. */
+type HistoryGame = RecentGame & { titleId?: string };
+
+const publicGame = ({ titleId: _titleId, ...game }: HistoryGame): RecentGame => game;
+
 /** Games that survived the schema, the date check and the exclusion list, newest first. */
 const acceptedGames = (
   json: unknown,
   { exclude = NOW_GAME_EXCLUDE }: { exclude?: readonly string[] } = {},
-): RecentGame[] => {
+): HistoryGame[] => {
   const parsed = historySchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
@@ -164,13 +222,22 @@ const acceptedGames = (
       if (title.data.type !== 'Game' || excluded.has(title.data.name.toLowerCase())) return [];
       const lastPlayed = playedOn(title.data.titleHistory.lastTimePlayed);
       if (!lastPlayed) return [];
-      return [{ name: title.data.name, lastPlayed, at: Date.parse(title.data.titleHistory.lastTimePlayed), ...mediaOf(title.data) }];
+      return [
+        {
+          name: title.data.name,
+          lastPlayed,
+          at: Date.parse(title.data.titleHistory.lastTimePlayed),
+          titleId: title.data.titleId,
+          ...mediaOf(title.data),
+        },
+      ];
     })
     .sort((a, b) => b.at - a.at)
-    .map(({ name, lastPlayed, platforms, cover, progress }) => ({
+    .map(({ name, lastPlayed, titleId, platforms, cover, progress }) => ({
       name,
       lastPlayed,
       platforms,
+      ...(titleId ? { titleId } : {}),
       ...(cover ? { cover } : {}),
       ...(progress ? { progress } : {}),
     }));
@@ -180,14 +247,16 @@ const acceptedGames = (
 export const parseRecentGames = (
   json: unknown,
   { limit = 5, exclude = NOW_GAME_EXCLUDE }: { limit?: number; exclude?: readonly string[] } = {},
-): RecentGame[] => acceptedGames(json, { exclude }).slice(0, limit);
+): RecentGame[] => acceptedGames(json, { exclude }).slice(0, limit).map(publicGame);
 
 export const fetchXbox = async ({
   fetch: fetchImpl,
   apiKey,
+  productIds = productIdCache,
 }: {
   fetch: typeof fetch;
   apiKey: string;
+  productIds?: ProductIdCache;
 }): Promise<{ playingNow?: PlayingNow; recent: RecentGame[] }> => {
   // Without an explicit locale Node's fetch sends `Accept-Language: *`, which
   // titleHistory rejects with a 200 whose `content` is an error string.
@@ -197,9 +266,29 @@ export const fetchXbox = async ({
     fetchJson(fetchImpl, HISTORY_URL, { headers }),
   ]);
   const eligible = acceptedGames(history);
-  const playingNow = parsePresence(presence, eligible);
+  const shown = eligible.slice(0, 5);
+  const playing = parsePresence(presence, eligible);
+  const playingGame = playing && eligible.find((game) => game.name.toLowerCase() === playing.title.toLowerCase());
+
+  // Only the games on the page are looked up, in parallel; the cache makes
+  // later refreshes free.
+  const titleIds = [...new Set([...shown, ...(playingGame ? [playingGame] : [])].flatMap((game) => game.titleId ?? []))];
+  const urls = new Map<string, string>();
+  await Promise.all(
+    titleIds.map(async (titleId) => {
+      const url = xboxStoreUrl(await lookupProductId(fetchImpl, titleId, productIds));
+      if (url) urls.set(titleId, url);
+    }),
+  );
+  const urlOf = (game: HistoryGame | undefined): string | undefined => (game?.titleId ? urls.get(game.titleId) : undefined);
+
+  const recent = shown.map((game) => {
+    const url = urlOf(game);
+    return { ...publicGame(game), ...(url ? { url } : {}) };
+  });
+  const playingUrl = urlOf(playingGame);
   return {
-    ...(playingNow ? { playingNow } : {}),
-    recent: eligible.slice(0, 5),
+    ...(playing ? { playingNow: { ...playing, ...(playingUrl ? { url: playingUrl } : {}) } } : {}),
+    recent,
   };
 };

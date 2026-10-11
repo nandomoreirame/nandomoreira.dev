@@ -3,7 +3,7 @@ import { formatPolicyDate } from '../privacy/policy';
 import type { NowSnapshot } from './load';
 import { endSentence } from './sentence';
 import { NOW_LEAD, NOW_PATH, NOW_UPDATED_AT } from './now';
-import { leaksToMachine, machineText } from './safe';
+import { isAllowedUrl, leaksToMachine, machineText } from './safe';
 
 const pushSection = (lines: string[], title: string, body: string[]): void => {
   lines.push(`## ${title}`, '');
@@ -19,6 +19,11 @@ const albumClause = (album: string, year: string | undefined): string => {
   const safeYear = year !== undefined && /^\d{4}$/.test(year) ? year : undefined;
   const label = safeYear ? `${machineText(album)} (${safeYear})` : machineText(album);
   return `${endSentence(label)} `;
+};
+
+const linkedName = (name: string, url: string | undefined): string => {
+  if (!url || !isAllowedUrl(url, 'www.xbox.com')) return machineText(name);
+  return `[${machineText(name)}](${url})`;
 };
 
 const mediaClause = (
@@ -103,11 +108,13 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   if (data.games.state === 'ok') {
     const playingNow = data.games.items.playingNow;
     if (playingNow && !leaksToMachine(playingNow.title)) {
-      games.push(`Jogando agora: ${machineText(playingNow.title)}${mediaClause(playingNow.platforms, playingNow.progress)}`);
+      games.push(
+        `Jogando agora: ${linkedName(playingNow.title, playingNow.url)}${mediaClause(playingNow.platforms, playingNow.progress)}`,
+      );
     }
     for (const game of data.games.items.recent) {
       if (leaksToMachine(game.name)) continue;
-      games.push(`- ${machineText(game.name)}, ${game.lastPlayed}${mediaClause(game.platforms, game.progress)}`);
+      games.push(`- ${linkedName(game.name, game.url)}, ${game.lastPlayed}${mediaClause(game.platforms, game.progress)}`);
     }
   } else if (data.games.state === 'fallback') {
     for (const game of data.games.items) {
