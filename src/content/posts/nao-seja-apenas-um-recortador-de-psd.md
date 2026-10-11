@@ -5,6 +5,8 @@ summary: Durante minha trajetória até aqui eu já trabalhei com alguns program
 date: "2015-12-10"
 markers:
   - front-end
+  - carreira
+  - design
 archived: true
 cover:
   src: ../../assets/posts/2015/skate.gif

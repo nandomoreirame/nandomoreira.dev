@@ -6,6 +6,7 @@ date: "2017-03-12"
 markers:
   - geral
   - comunidade
+  - carreira
 archived: true
 cover:
   src: ../../assets/posts/2017/programador-a-comunidade-precisa-de-voce.jpeg

@@ -7,6 +7,7 @@ art: chart
 markers:
   - qualidade
   - agentes
+  - testes
 draft: true
 ---
 

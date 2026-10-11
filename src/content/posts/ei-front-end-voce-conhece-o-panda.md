@@ -6,6 +6,7 @@ date: "2015-12-11"
 markers:
   - dicas
   - extensões
+  - front-end
 archived: true
 cover:
   src: ../../assets/posts/2015/panda-app-chrome-extension.png

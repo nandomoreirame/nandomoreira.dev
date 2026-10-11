@@ -6,6 +6,7 @@ date: "2026-10-11"
 markers:
   - code review
   - agentes
+  - qualidade
 draft: true
 ---
 

@@ -6,6 +6,7 @@ date: "2016-06-20"
 markers:
   - rails
   - npm
+  - browsersync
 archived: true
 cover:
   src: ../../assets/posts/2016/painel-browsersync-io.png

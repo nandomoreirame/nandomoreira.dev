@@ -4,7 +4,9 @@ title: Retro 2016, Planning 2017
 summary: "2016 não foi um ano ruim, tanto na minha vida profissional quando na minha vida pessoal, confesso que tive alguns obstáculos, mas todos foram ultrapassados com sucesso."
 date: "2017-01-01"
 markers:
-  - refrexão
+  - reflexão
+  - retrospectiva
+  - carreira
 archived: true
 cover:
   src: ../../assets/posts/2017/retro-2016-planing-2017.jpg

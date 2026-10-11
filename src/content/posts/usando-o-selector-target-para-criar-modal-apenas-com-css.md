@@ -6,6 +6,7 @@ date: "2016-09-23"
 markers:
   - dicas
   - css
+  - front-end
 archived: true
 cover:
   src: ../../assets/posts/2016/css3.jpg
