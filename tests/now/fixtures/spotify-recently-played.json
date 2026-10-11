@@ -1,0 +1,85 @@
+{
+  "items": [
+    {
+      "played_at": "2026-10-11T18:00:00Z",
+      "track": {
+        "id": "t1",
+        "name": "Same Song",
+        "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+      }
+    },
+    {
+      "played_at": "2026-10-11T17:30:00Z",
+      "track": {
+        "id": "t1",
+        "name": "Same Song",
+        "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+      }
+    },
+    {
+      "played_at": "2026-10-11T17:00:00Z",
+      "track": {
+        "id": "t1",
+        "name": "Same Song",
+        "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+      }
+    },
+    {
+      "played_at": "2026-10-11T16:00:00Z",
+      "track": {
+        "id": "t2",
+        "name": "Two",
+        "artists": [{ "name": "C" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t2" }
+      }
+    },
+    {
+      "played_at": "2026-10-11T15:00:00Z",
+      "track": {
+        "id": "t3",
+        "name": "Three",
+        "artists": [{ "name": "D" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t3" }
+      }
+    },
+    {
+      "played_at": "2026-10-10T15:00:00Z",
+      "track": {
+        "id": "t4",
+        "name": "Four",
+        "artists": [{ "name": "E" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t4" }
+      }
+    },
+    {
+      "played_at": "2026-10-09T15:00:00Z",
+      "track": {
+        "id": "t5",
+        "name": "Five",
+        "artists": [{ "name": "F" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t5" }
+      }
+    },
+    {
+      "played_at": "2026-10-08T15:00:00Z",
+      "track": {
+        "id": "t6",
+        "name": "Six",
+        "artists": [{ "name": "G" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t6" }
+      }
+    },
+    {
+      "played_at": "2026-10-07T15:00:00Z",
+      "track": {
+        "id": "t7",
+        "name": "Seven",
+        "artists": [{ "name": "H" }],
+        "external_urls": { "spotify": "https://open.spotify.com/track/t7" }
+      }
+    }
+  ]
+}

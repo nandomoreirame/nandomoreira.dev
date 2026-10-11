@@ -1,0 +1,130 @@
+import { z } from 'zod';
+import { SourceError, fetchJson } from './http';
+
+const TOKEN_URL = 'https://accounts.spotify.com/api/token';
+const RECENT_URL = 'https://api.spotify.com/v1/me/player/recently-played?limit=50';
+
+const trackSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  artists: z.array(z.object({ name: z.string() })),
+  external_urls: z.object({ spotify: z.string() }),
+});
+
+const recentSchema = z.object({
+  items: z.array(
+    z.object({
+      played_at: z.string(),
+      track: trackSchema.nullable(),
+    }),
+  ),
+});
+
+const tokenSchema = z.object({ access_token: z.string().min(1) });
+
+export interface RecentTrack {
+  title: string;
+  artists: string;
+  url: string;
+  day: string;
+}
+
+const saoPauloDay = (instant: Date): string =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(instant);
+
+const shiftDay = (isoDay: string, days: number): string => {
+  const [year, month, day] = isoDay.split('-').map(Number);
+  const utc = new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1));
+  utc.setUTCDate(utc.getUTCDate() + days);
+  return utc.toISOString().slice(0, 10);
+};
+
+/** Calendar day in America/Sao_Paulo. Never a clock time (REQ-008). */
+export const dayLabel = (playedAt: string, now: Date): string => {
+  const playedDay = saoPauloDay(new Date(playedAt));
+  const today = saoPauloDay(now);
+  if (playedDay === today) return 'hoje';
+  if (playedDay === shiftDay(today, -1)) return 'ontem';
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'America/Sao_Paulo',
+  }).format(new Date(playedAt));
+};
+
+export const parseRecentTracks = (
+  json: unknown,
+  { now, limit = 5 }: { now: Date; limit?: number },
+): RecentTrack[] => {
+  const parsed = recentSchema.safeParse(json);
+  if (!parsed.success) throw new SourceError('shape');
+
+  const seen = new Set<string>();
+  return parsed.data.items
+    .flatMap((item) => (item.track ? [{ playedAt: item.played_at, track: item.track }] : []))
+    .sort((a, b) => Date.parse(b.playedAt) - Date.parse(a.playedAt))
+    .filter((item) => {
+      if (seen.has(item.track.id)) return false;
+      seen.add(item.track.id);
+      return true;
+    })
+    .slice(0, limit)
+    .map((item) => ({
+      title: item.track.name,
+      artists: item.track.artists.map((artist) => artist.name).join(', '),
+      url: item.track.external_urls.spotify,
+      day: dayLabel(item.playedAt, now),
+    }));
+};
+
+export const refreshAccessToken = async ({
+  fetch: fetchImpl,
+  clientId,
+  clientSecret,
+  refreshToken,
+}: {
+  fetch: typeof fetch;
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+}): Promise<string> => {
+  const json = await fetchJson(fetchImpl, TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    }).toString(),
+  });
+  const parsed = tokenSchema.safeParse(json);
+  if (!parsed.success) throw new SourceError('shape');
+  return parsed.data.access_token;
+};
+
+export const fetchRecentTracks = async ({
+  fetch: fetchImpl,
+  clientId,
+  clientSecret,
+  refreshToken,
+  now,
+}: {
+  fetch: typeof fetch;
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+  now: Date;
+}): Promise<RecentTrack[]> => {
+  const accessToken = await refreshAccessToken({ fetch: fetchImpl, clientId, clientSecret, refreshToken });
+  const json = await fetchJson(fetchImpl, RECENT_URL, {
+    headers: { authorization: `Bearer ${accessToken}` },
+  });
+  return parseRecentTracks(json, { now });
+};
