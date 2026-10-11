@@ -55,6 +55,15 @@ export default defineConfig({
     '/lab/mousai.md': '/portfolio/mousai.md',
     '/lab/portfoliosnap': '/portfolio/portfoliosnap',
     '/lab/portfoliosnap.md': '/portfolio/portfoliosnap.md',
+    // Posts copied from the A's Code blog, removed on 2026-10-11: each old
+    // address sends readers to its original on ascode.com.br.
+    '/amazon-bedrock-estudo-pratico-saas': 'https://ascode.com.br/blog/amazon-bedrock-estudo-pratico-saas',
+    '/brag-document-importancia-2026': 'https://ascode.com.br/blog/brag-document-importancia-2026',
+    '/claude-code-cursor-workflow-nextjs16': 'https://ascode.com.br/blog/claude-code-cursor-workflow-nextjs16',
+    '/como-criar-claude-project-produtivo': 'https://ascode.com.br/blog/como-criar-claude-project-produtivo',
+    '/meu-stack-ferramentas-ia-2026': 'https://ascode.com.br/blog/meu-stack-ferramentas-ia-2026',
+    '/o-futuro-do-desenvolvimento-web': 'https://ascode.com.br/blog/o-futuro-do-desenvolvimento-web',
+    '/por-que-usar-skills-no-claude-code': 'https://ascode.com.br/blog/por-que-usar-skills-no-claude-code',
   },
   markdown: {
     // Post body, at build: images open in a popover lightbox like the case

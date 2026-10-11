@@ -7,9 +7,11 @@
 O ativo mais valioso para escrever são as **falhas documentadas**: o framework guarda
 dezenas de lições com causa, sintoma e correção. Isso é raro em blog técnico.
 
-Já publicados (não repetir): skills no Claude Code, Claude Project, Claude Code + Cursor,
-stack de ferramentas 2026, fluxo RPI com três agentes, o site que conversa via MCP, brag
-document e Amazon Bedrock.
+Já publicados (não repetir): fluxo RPI com três agentes, o site que conversa via MCP e os
+plugins do Noctalia. Os sete textos copiados do blog da A's Code (skills no Claude Code,
+Claude Project, Claude Code + Cursor, stack de ferramentas 2026, brag document, Amazon
+Bedrock e o futuro do desenvolvimento web) saíram em 2026-10-11 e redirecionam para
+ascode.com.br; não repetir os temas sem um ângulo novo.
 
 **Atenção:** o repositório `.claude` é privado. Os posts podem mostrar trechos, mas não
 linkar o repositório.
