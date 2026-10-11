@@ -9,7 +9,10 @@
       {
         "name": "Halo Infinite",
         "type": "Game",
-        "titleHistory": { "lastTimePlayed": "2026-10-11T20:00:00.000Z" }
+        "titleHistory": { "lastTimePlayed": "2026-10-11T20:00:00.000Z" },
+        "displayImage": "http://store-images.s-microsoft.com/image/apps.46694.68182501197884443.ac728a87-7bc1-4a0d-8bc6-0123456789ab.0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+        "devices": ["XboxSeries", "XboxOne"],
+        "achievement": { "currentGamerscore": 690, "totalGamerscore": 1000, "progressPercentage": 69 }
       },
       {
         "name": "Microsoft Jewel",

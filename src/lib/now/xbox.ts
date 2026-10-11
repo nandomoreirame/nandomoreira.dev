@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { coverPathFromUpstream } from './cover';
 import { saoPauloDay } from './day';
 import { SourceError, fetchJson } from './http';
 import { NOW_GAME_EXCLUDE } from './now';
@@ -32,6 +33,15 @@ const titleSchema = z.object({
   name: z.string(),
   type: z.string(),
   titleHistory: z.object({ lastTimePlayed: z.string() }),
+  displayImage: z.string().optional(),
+  devices: z.array(z.string()).optional(),
+  achievement: z
+    .object({
+      currentGamerscore: z.number().optional(),
+      totalGamerscore: z.number().optional(),
+      progressPercentage: z.number().optional(),
+    })
+    .optional(),
 });
 
 const historySchema = z.object({
@@ -40,14 +50,68 @@ const historySchema = z.object({
   }),
 });
 
+export interface GameProgress {
+  current: number;
+  total: number;
+  percent: number;
+}
+
 export interface RecentGame {
   name: string;
   lastPlayed: string;
+  platforms: string[];
+  cover?: string;
+  progress?: GameProgress;
 }
 
 export interface PlayingNow {
   title: string;
+  platforms: string[];
+  cover?: string;
+  progress?: GameProgress;
 }
+
+const PLATFORM_LABEL: Record<string, string> = {
+  XboxOne: 'Xbox One',
+  XboxSeries: 'Xbox Series',
+  PC: 'PC',
+  Xbox360: 'Xbox 360',
+};
+
+const platformsOf = (devices: readonly string[] | undefined): string[] => {
+  const seen = new Set<string>();
+  const labels: string[] = [];
+  for (const device of devices ?? []) {
+    const label = PLATFORM_LABEL[device];
+    if (!label || seen.has(label)) continue;
+    seen.add(label);
+    labels.push(label);
+  }
+  return labels;
+};
+
+const progressOf = (
+  achievement: { currentGamerscore?: number; totalGamerscore?: number; progressPercentage?: number } | undefined,
+): GameProgress | undefined => {
+  const total = achievement?.totalGamerscore;
+  if (total === undefined || total <= 0) return undefined;
+  const raw = achievement?.progressPercentage ?? 0;
+  return {
+    current: achievement?.currentGamerscore ?? 0,
+    total,
+    percent: Math.round(Math.min(100, Math.max(0, raw))),
+  };
+};
+
+const mediaOf = (title: z.infer<typeof titleSchema>): Pick<RecentGame, 'platforms' | 'cover' | 'progress'> => {
+  const cover = title.displayImage ? coverPathFromUpstream(title.displayImage) : undefined;
+  const progress = progressOf(title.achievement);
+  return {
+    platforms: platformsOf(title.devices),
+    ...(cover ? { cover } : {}),
+    ...(progress ? { progress } : {}),
+  };
+};
 
 /** Sao Paulo calendar day. An invalid instant is omitted so the list stays dated. */
 const playedOn = (iso: string): string | undefined => {
@@ -62,18 +126,23 @@ const playedOn = (iso: string): string | undefined => {
  */
 export const parsePresence = (
   json: unknown,
-  recentGames: readonly { name: string }[],
+  recentGames: readonly RecentGame[],
 ): PlayingNow | undefined => {
   const parsed = presenceSchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
-  const allowed = new Set(recentGames.map((game) => game.name.toLowerCase()));
   for (const device of parsed.data.content.devices) {
     if (device.type === 'Web') continue;
     for (const title of device.titles) {
       if (title.placement !== 'Full' || title.name.trim().length === 0) continue;
-      if (!allowed.has(title.name.toLowerCase())) continue;
-      return { title: title.name };
+      const match = recentGames.find((game) => game.name.toLowerCase() === title.name.toLowerCase());
+      if (!match) continue;
+      return {
+        title: title.name,
+        platforms: match.platforms,
+        ...(match.cover ? { cover: match.cover } : {}),
+        ...(match.progress ? { progress: match.progress } : {}),
+      };
     }
   }
   return undefined;
@@ -95,10 +164,16 @@ const acceptedGames = (
       if (title.data.type !== 'Game' || excluded.has(title.data.name.toLowerCase())) return [];
       const lastPlayed = playedOn(title.data.titleHistory.lastTimePlayed);
       if (!lastPlayed) return [];
-      return [{ name: title.data.name, lastPlayed, at: Date.parse(title.data.titleHistory.lastTimePlayed) }];
+      return [{ name: title.data.name, lastPlayed, at: Date.parse(title.data.titleHistory.lastTimePlayed), ...mediaOf(title.data) }];
     })
     .sort((a, b) => b.at - a.at)
-    .map(({ name, lastPlayed }) => ({ name, lastPlayed }));
+    .map(({ name, lastPlayed, platforms, cover, progress }) => ({
+      name,
+      lastPlayed,
+      platforms,
+      ...(cover ? { cover } : {}),
+      ...(progress ? { progress } : {}),
+    }));
 };
 
 /** Games only, exclusions applied before the cap so the next title fills the slot. */
