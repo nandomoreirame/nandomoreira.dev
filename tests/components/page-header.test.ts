@@ -9,7 +9,7 @@ const render = async (props: Record<string, unknown>) => {
 
 const base = {
   eyebrow: 'Laboratório',
-  title: 'O que construo por conta própria',
+  title: 'Coçando as minhas próprias coceiras',
   description: 'Ferramental para agentes de IA e utilitários de terminal.',
 };
 

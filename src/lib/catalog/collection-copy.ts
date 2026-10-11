@@ -16,9 +16,9 @@ export const COLLECTION_COPY: Record<
     metaDescription: 'Produtos SaaS com IA e trabalho de cliente, do problema à produção.',
   },
   lab: {
-    title: 'O que construo por conta própria',
+    title: 'Coçando as minhas próprias coceiras',
     description:
-      'Ferramental para agentes de IA, CLIs, automações e apps de desktop Linux. Cada case mostra o problema que me levou a construir, as decisões e onde o projeto está hoje.',
+      'Ferramentas open source que eu fiz para resolver problemas meus: apps e plugins para o meu desktop Linux, CLIs, automações e ferramental para agentes de IA, boa parte escrita junto com os próprios agentes.',
     metaDescription: 'Ferramental de IA, CLIs, automações e apps de desktop Linux.',
   },
 };
