@@ -10,7 +10,7 @@ process.env.SPOTIFY_CLIENT_ID ??= 'cid';
 process.env.SPOTIFY_CLIENT_SECRET ??= 'sec';
 process.env.SPOTIFY_REFRESH_TOKEN ??= 'ref';
 
-const fetchImpl = vi.fn(async (_url: string, _init?: RequestInit) => {
+const fetchImpl = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(async () => {
   throw new Error('offline');
 });
 

@@ -83,6 +83,7 @@ describe('nowMarkdown', () => {
 
   it('escapes hostile API text and omits a description that leaks', () => {
     const data = snapshot('Aberto a projetos.');
+    if (data.projects.state === 'empty' || data.music.state === 'empty') throw new Error('fixture must be populated');
     data.projects.items[0]!.description = 'contato: x@y.com';
     data.music.items[0]!.title = '<script>alert(1)</script>';
     const markdown = nowMarkdown({ site, data });
