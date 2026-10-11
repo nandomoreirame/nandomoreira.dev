@@ -4,7 +4,9 @@ title: Meu ambiente de trabalho em 7 itens
 summary: "Aderi ao GNU linux como OS padrão no final de 2014, apesar de usá-lo desde 2009."
 date: "2015-08-01"
 markers:
-  - "['workspace', 'ambiente', 'desenvolvimento']"
+  - workspace
+  - ambiente
+  - desenvolvimento
 archived: true
 cover:
   src: ../../assets/posts/2015/meu-ambiente-de-trabalho-em-7-itens.png

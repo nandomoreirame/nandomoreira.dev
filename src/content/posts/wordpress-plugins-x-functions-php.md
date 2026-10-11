@@ -4,7 +4,9 @@ title: Wordpress - plugins x functions.php
 summary: Muitos amigos e colegas de trabalho sempre me perguntam porque eu sou contra o uso de plugins no Wordpress.
 date: "2015-07-24"
 markers:
-  - "['wordpress', 'dicas', 'php']"
+  - wordpress
+  - dicas
+  - php
 archived: true
 cover:
   src: ../../assets/posts/2015/wordpress-plugins-x-functions-php.jpg
