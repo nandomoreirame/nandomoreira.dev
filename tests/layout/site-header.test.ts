@@ -42,6 +42,18 @@ describe('SiteHeader', () => {
     expect(await render()).toContain('justify-between');
   });
 
+  it('keeps wordmark and hamburger on one row on mobile, left and right', async () => {
+    const html = await render();
+    const row =
+      html.match(/<header[\s\S]*?<div([^>]*)>[\s\S]*?href="\/"/)?.[1] ?? '';
+
+    expect(row).toMatch(/\bflex\b/);
+    expect(row).toMatch(/\bitems-center\b/);
+    expect(row).toMatch(/\bjustify-between\b/);
+    expect(row).not.toMatch(/\bflex-col\b/);
+    expect(html).toMatch(/aria-label="Abrir menu"/);
+  });
+
   it('caps its inner row at the layout token, keeping the border full-bleed', async () => {
     const html = await render();
 

@@ -96,3 +96,58 @@ describe('SiteNav item boxes', () => {
     for (const item of items) expect(item).toMatch(/class="[^"]*\bflex\b/);
   });
 });
+
+describe('SiteNav mobile hamburger menu', () => {
+  it('opens a full-viewport popover from a hamburger that is hidden from md up', async () => {
+    const html = await render({ hasPosts: true });
+
+    expect(html).toMatch(
+      /<button\b[^>]*type="button"[^>]*popovertarget="site-menu"[^>]*aria-label="Abrir menu"|<button\b[^>]*type="button"[^>]*aria-label="Abrir menu"[^>]*popovertarget="site-menu"/,
+    );
+    const open = html.match(/<button\b[^>]*aria-label="Abrir menu"[^>]*>/)?.[0] ?? '';
+    expect(open).toMatch(/\bmd:hidden\b/);
+    expect(open).toMatch(/\bsize-11\b/);
+
+    expect(html).toMatch(
+      /<div\b[^>]*id="site-menu"[^>]*popover[^>]*role="dialog"|<div\b[^>]*id="site-menu"[^>]*role="dialog"[^>]*popover/,
+    );
+    expect(html).toMatch(/id="site-menu"[^>]*class="[^"]*\bsite-menu\b|class="[^"]*\bsite-menu\b[^"]*"[^>]*id="site-menu"/);
+    expect(html).toMatch(/aria-label="Menu"/);
+  });
+
+  it('closes the popover from a button labelled Fechar menu', async () => {
+    const html = await render();
+    const close = html.match(/<button\b[^>]*aria-label="Fechar menu"[^>]*>/)?.[0] ?? '';
+
+    expect(close).toContain('popovertarget="site-menu"');
+    expect(close).toContain('popovertargetaction="hide"');
+    expect(close).toMatch(/\bsize-11\b/);
+  });
+
+  it('keeps the desktop list hidden on small screens and flex from md up', async () => {
+    const html = await render();
+    const desktopList =
+      html.match(/<nav[^>]*aria-label="Navegação principal"[^>]*>[\s\S]*?<ul([^>]*)>/)?.[1] ?? '';
+
+    expect(desktopList).toMatch(/\bhidden\b/);
+    expect(desktopList).toMatch(/\bmd:flex\b/);
+  });
+
+  it('lists every item in the mobile menu in the same order as the desktop list', async () => {
+    const html = await render({ hasPosts: true });
+    const mobileNav =
+      html.match(
+        /<nav[^>]*aria-label="Menu principal \(mobile\)"[^>]*>([\s\S]*?)<\/nav>/,
+      )?.[1] ?? '';
+    const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+
+    expect(hrefs).toEqual(['/portfolio', '/lab', '/posts', '/sobre', '/mcp', '/contato']);
+  });
+
+  it('still ships with no client script', async () => {
+    const html = await render();
+
+    expect(html).not.toContain('<script');
+    expect(html).not.toContain('client:');
+  });
+});

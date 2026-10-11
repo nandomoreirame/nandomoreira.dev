@@ -327,6 +327,38 @@
     content: none;
   }
 
+  /* Full-viewport mobile nav (Popover API). Same fade technique as .lightbox:
+     opacity only, no transform on the popover. */
+  .site-menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-background);
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .site-menu:popover-open {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+  }
+
+  @starting-style {
+    .site-menu:popover-open {
+      opacity: 0;
+    }
+  }
+
   /* Case image lightbox (Popover API). The UA already centres a popover in
      the top layer; this sizes it to the image and dims the page behind. */
   .lightbox {
