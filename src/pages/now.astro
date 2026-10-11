@@ -77,11 +77,11 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 
       <NowSection id="ouvindo" title="Ouvindo">
         {
-          data.music.state === 'empty' ? (
+          data.music.recent.state === 'empty' ? (
             <p class="text-muted-foreground">Sem dados no momento.</p>
           ) : (
             <ul>
-              {data.music.items.map((track) => (
+              {data.music.recent.items.map((track) => (
                 <li>
                   <a href={track.url} {...externalAttrs}>{track.title}</a>{`, ${endSentence(track.artists)} ${track.day}`}
                 </li>

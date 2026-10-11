@@ -128,6 +128,80 @@ export const refreshAccessToken = async ({
   return parsed.data.access_token;
 };
 
+export interface TopArtist {
+  name: string;
+  url: string;
+  cover?: string;
+}
+
+const artistSchema = z.object({
+  name: z.string().min(1),
+  external_urls: z.object({
+    spotify: z
+      .string()
+      .refine((url) => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
+  }),
+  images: z.array(imageSchema).default([]),
+});
+
+const artistsSchema = z.object({
+  items: z.array(z.unknown()),
+});
+
+/** Valid cover whose width is nearest the target. A tie keeps the smaller image. */
+const coverClosestTo = (
+  images: readonly { url: string; width: number | null }[],
+  target: number,
+): string | undefined => {
+  const usable = images.flatMap((image) => {
+    if (image.width === null) return [];
+    const path = coverPathFromUpstream(image.url);
+    return path ? [{ width: image.width, path }] : [];
+  });
+  usable.sort((a, b) => Math.abs(a.width - target) - Math.abs(b.width - target) || a.width - b.width);
+  return usable[0]?.path;
+};
+
+export const parseTopArtists = (json: unknown, { limit = 5 }: { limit?: number } = {}): TopArtist[] => {
+  const parsed = artistsSchema.safeParse(json);
+  if (!parsed.success) throw new SourceError('shape');
+
+  return parsed.data.items
+    .flatMap((item) => {
+      const artist = artistSchema.safeParse(item);
+      if (!artist.success) return [];
+      const cover = coverClosestTo(artist.data.images, 320);
+      return [
+        {
+          name: artist.data.name,
+          url: artist.data.external_urls.spotify,
+          ...(cover ? { cover } : {}),
+        },
+      ];
+    })
+    .slice(0, limit);
+};
+
+const TOP_URL = 'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5';
+
+export const fetchTopArtists = async ({
+  fetch: fetchImpl,
+  clientId,
+  clientSecret,
+  refreshToken,
+}: {
+  fetch: typeof fetch;
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+}): Promise<TopArtist[]> => {
+  const accessToken = await refreshAccessToken({ fetch: fetchImpl, clientId, clientSecret, refreshToken });
+  const json = await fetchJson(fetchImpl, TOP_URL, {
+    headers: { authorization: `Bearer ${accessToken}` },
+  });
+  return parseTopArtists(json);
+};
+
 export const fetchRecentTracks = async ({
   fetch: fetchImpl,
   clientId,

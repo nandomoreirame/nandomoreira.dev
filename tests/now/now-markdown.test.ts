@@ -22,17 +22,20 @@ const snapshot = (availability: string): NowSnapshot => ({
     ],
   },
   music: {
-    state: 'ok',
-    items: [
-      {
-        title: 'Same Song',
-        artists: 'Artist A',
-        album: 'Album',
-        url: 'https://open.spotify.com/track/t1',
-        playedAt: '2026-10-11T12:00:00Z',
-        day: 'hoje',
-      },
-    ],
+    recent: {
+      state: 'ok',
+      items: [
+        {
+          title: 'Same Song',
+          artists: 'Artist A',
+          album: 'Album',
+          url: 'https://open.spotify.com/track/t1',
+          playedAt: '2026-10-11T12:00:00Z',
+          day: 'hoje',
+        },
+      ],
+    },
+    topArtists: { state: 'empty' },
   },
   games: { state: 'fallback', items: NOW_GAMES },
   writing: {
@@ -73,7 +76,7 @@ describe('nowMarkdown', () => {
   it('replaces an empty section with a single line and strips an e-mail from availability', () => {
     const data = snapshot('Escreva para oi@nandomoreira.dev');
     data.projects = { state: 'empty' };
-    data.music = { state: 'empty' };
+    data.music = { recent: { state: 'empty' }, topArtists: { state: 'empty' } };
     const markdown = nowMarkdown({ site, data });
 
     expect(markdown).toContain('Sem dados no momento.');
@@ -84,9 +87,9 @@ describe('nowMarkdown', () => {
 
   it('escapes hostile API text and omits a description that leaks', () => {
     const data = snapshot('Aberto a projetos.');
-    if (data.projects.state === 'empty' || data.music.state === 'empty') throw new Error('fixture must be populated');
+    if (data.projects.state === 'empty' || data.music.recent.state === 'empty') throw new Error('fixture must be populated');
     data.projects.items[0]!.description = 'contato: x@y.com';
-    data.music.items[0]!.title = '<script>alert(1)</script>';
+    data.music.recent.items[0]!.title = '<script>alert(1)</script>';
     const markdown = nowMarkdown({ site, data });
     const html = renderMarkdown(markdown);
 
@@ -101,9 +104,9 @@ describe('nowMarkdown', () => {
 
   it('does not double the period after text that already ends a sentence', () => {
     const data = snapshot('Aberto a projetos.');
-    if (data.projects.state === 'empty' || data.music.state === 'empty') throw new Error('fixture must be populated');
+    if (data.projects.state === 'empty' || data.music.recent.state === 'empty') throw new Error('fixture must be populated');
     data.projects.items[0]!.description = 'CLI de dados.';
-    data.music.items[0]!.artists = 'Charlie Brown Jr.';
+    data.music.recent.items[0]!.artists = 'Charlie Brown Jr.';
     const markdown = nowMarkdown({ site, data });
 
     expect(markdown).not.toContain('..');

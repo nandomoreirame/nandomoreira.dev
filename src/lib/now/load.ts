@@ -8,7 +8,7 @@ import { dayLabel } from './day';
 import { fetchActiveRepos, type ActiveRepo } from './github';
 import { logSourceError } from './http';
 import { NOW_DECLINING, NOW_FAILURE_TTL_MS, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_TTL } from './now';
-import { fetchRecentTracks, type RecentTrack } from './spotify';
+import { fetchRecentTracks, fetchTopArtists, type RecentTrack, type TopArtist } from './spotify';
 import { fetchXbox, type PlayingNow, type RecentGame } from './xbox';
 
 export type Section<T> = { state: 'ok'; items: T } | { state: 'fallback'; items: T } | { state: 'empty' };
@@ -25,9 +25,14 @@ export type GamesSection =
 
 export type RecentTrackView = RecentTrack & { day: string };
 
+export interface NowMusic {
+  recent: Section<RecentTrackView[]>;
+  topArtists: Section<TopArtist[]>;
+}
+
 export interface NowSnapshot {
   projects: Section<ActiveRepo[]>;
-  music: Section<RecentTrackView[]>;
+  music: NowMusic;
   games: GamesSection;
   writing: { latest: Post | undefined; drafts: string[] };
   focus: { items: readonly string[]; declining: readonly string[]; availability: string };
@@ -92,6 +97,14 @@ export const createNowLoader = ({
         load: () => fetchRecentTracks({ fetch: fetchImpl, ...spotifyConfig }),
       })
     : undefined;
+  const spotifyTop = spotifyConfig
+    ? createCachedSource({
+        ttlMs: NOW_TTL.spotifyTop,
+        failureTtlMs: NOW_FAILURE_TTL_MS,
+        now,
+        load: () => fetchTopArtists({ fetch: fetchImpl, ...spotifyConfig }),
+      })
+    : undefined;
   const xbox = xboxConfig
     ? createCachedSource({
         ttlMs: NOW_TTL.xbox,
@@ -102,11 +115,12 @@ export const createNowLoader = ({
     : undefined;
 
   return async (): Promise<NowSnapshot> => {
-    const [[projectsResult, musicResult, gamesResult], posts, drafts, availability] = await Promise.all([
+    const [[projectsResult, musicResult, gamesResult, topResult], posts, drafts, availability] = await Promise.all([
       Promise.allSettled([
         github(),
         spotify ? spotify() : Promise.resolve('unconfigured' as const),
         xbox ? xbox() : Promise.resolve('unconfigured' as const),
+        spotifyTop ? spotifyTop() : Promise.resolve('unconfigured' as const),
       ]),
       currentPosts(),
       getUpcomingPosts(),
@@ -118,18 +132,25 @@ export const createNowLoader = ({
         ? (logSourceError('github', projectsResult.reason, logger), { state: 'empty' as const })
         : arraySection(projectsResult.value);
 
-    const music =
+    const recent =
       musicResult.status === 'rejected'
         ? (logSourceError('spotify', musicResult.reason, logger), { state: 'empty' as const })
         : musicResult.value === 'unconfigured'
           ? { state: 'empty' as const }
           : arraySection(musicResult.value.map((track) => ({ ...track, day: dayLabel(track.playedAt, clock()) })));
 
+    const topArtists =
+      topResult.status === 'rejected'
+        ? (logSourceError('spotify-top', topResult.reason, logger), { state: 'empty' as const })
+        : topResult.value === 'unconfigured'
+          ? { state: 'empty' as const }
+          : arraySection(topResult.value);
+
     const games = gamesSection(gamesResult, fallbackGames, logger);
 
     return {
       projects,
-      music,
+      music: { recent, topArtists },
       games,
       writing: {
         latest: posts.find((post) => post.draft !== true),

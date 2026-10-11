@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { SourceError } from '../../src/lib/now/http';
-import { fetchRecentTracks, parseRecentTracks, refreshAccessToken } from '../../src/lib/now/spotify';
+import { fetchRecentTracks, fetchTopArtists, parseRecentTracks, parseTopArtists, refreshAccessToken } from '../../src/lib/now/spotify';
 
 const fixture = JSON.parse(
   readFileSync(new URL('./fixtures/spotify-recently-played.json', import.meta.url), 'utf8'),
@@ -122,6 +122,57 @@ describe('refreshAccessToken', () => {
         refreshToken: 'ref',
       }),
     ).rejects.toBeInstanceOf(SourceError);
+  });
+});
+
+const artistImage = (width: number, hex: string) => ({
+  url: `https://i.scdn.co/image/${hex}`,
+  width,
+  height: width,
+});
+
+const topArtists = {
+  items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Evil'].map((name, index) => ({
+    name,
+    external_urls: {
+      spotify: name === 'Evil' ? 'javascript:alert(1)' : `https://open.spotify.com/artist/${name.toLowerCase()}`,
+    },
+    images: [
+      artistImage(640, `${index}`.repeat(40)),
+      artistImage(320, `${index + 1}`.repeat(40)),
+    ],
+  })),
+};
+
+describe('parseTopArtists', () => {
+  it('keeps five artists and the image closest to 320 px, as a local cover', () => {
+    const artists = parseTopArtists(topArtists);
+    expect(artists.map((artist) => artist.name)).toEqual(['Raul', 'Nando', 'Tim', 'Gal', 'Elis']);
+    expect(artists[0]?.cover).toBe(`/api/now/cover/spotify/${'1'.repeat(40)}`);
+    expect(JSON.stringify(artists)).not.toContain('i.scdn.co');
+  });
+});
+
+describe('fetchTopArtists', () => {
+  it('refreshes once and asks for the short-term top five', async () => {
+    const fetchImpl = vi.fn(async (url: string) => {
+      if (String(url).includes('/api/token')) {
+        return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
+      }
+      return { ok: true, status: 200, json: async () => topArtists };
+    });
+
+    const artists = await fetchTopArtists({
+      fetch: fetchImpl as unknown as typeof fetch,
+      clientId: 'cid',
+      clientSecret: 'sec',
+      refreshToken: 'ref',
+    });
+
+    expect(artists).toHaveLength(5);
+    const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('/top/artists'));
+    expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5');
+    expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
   });
 });
 

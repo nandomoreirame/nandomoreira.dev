@@ -35,6 +35,7 @@ export const NOW_GAME_EXCLUDE = ['Microsoft Jewel'];
 export const NOW_TTL = {
   github: 30 * 60_000,
   spotify: 5 * 60_000,
+  spotifyTop: 60 * 60_000,
   xbox: 5 * 60_000,
 } as const;
 

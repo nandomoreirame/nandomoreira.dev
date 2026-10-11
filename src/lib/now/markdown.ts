@@ -62,9 +62,9 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   pushSection(lines, 'Escrevendo', writing);
 
   const music =
-    data.music.state === 'empty'
+    data.music.recent.state === 'empty'
       ? []
-      : data.music.items.flatMap((track) => {
+      : data.music.recent.items.flatMap((track) => {
           if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
           return [`- [${machineText(track.title)}](${track.url}), ${machineText(endSentence(track.artists))} ${track.day}`];
         });

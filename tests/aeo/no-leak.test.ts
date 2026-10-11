@@ -93,17 +93,20 @@ const outputs = () => [
         ],
       },
       music: {
-        state: 'ok',
-        items: [
-          {
-            title: '<script>alert(1)</script>',
-            artists: 'Artist A',
-            album: 'Album',
-            url: 'https://open.spotify.com/track/t1',
-            playedAt: '2026-10-11T12:00:00Z',
-            day: 'hoje',
-          },
-        ],
+        recent: {
+          state: 'ok',
+          items: [
+            {
+              title: '<script>alert(1)</script>',
+              artists: 'Artist A',
+              album: 'Album',
+              url: 'https://open.spotify.com/track/t1',
+              playedAt: '2026-10-11T12:00:00Z',
+              day: 'hoje',
+            },
+          ],
+        },
+        topArtists: { state: 'empty' },
       },
       games: { state: 'empty' },
       writing: { latest: undefined, drafts: [] },

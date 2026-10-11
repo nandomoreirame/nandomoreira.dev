@@ -67,7 +67,8 @@ describe('loadNow', () => {
 
     const data = await loadNow();
 
-    expect(data.music.state).toBe('empty');
+    expect(data.music.recent.state).toBe('empty');
+    expect(data.music.topArtists.state).toBe('empty');
     expect(data.games.state).toBe('empty');
     expect(data.projects.state).toBe('empty');
     expect(logger.warn).toHaveBeenCalledTimes(1);
@@ -128,12 +129,12 @@ describe('loadNow', () => {
     });
 
     const first = await loadNow();
-    expect(first.music).toMatchObject({ state: 'ok', items: [{ day: 'hoje' }] });
+    expect(first.music).toMatchObject({ recent: { state: 'ok', items: [{ day: 'hoje' }] } });
 
     fail = true;
     clock = Date.parse('2026-10-13T15:00:00Z');
     const second = await loadNow();
-    expect(second.music).toMatchObject({ state: 'ok', items: [{ day: '11 de out.' }] });
+    expect(second.music).toMatchObject({ recent: { state: 'ok', items: [{ day: '11 de out.' }] } });
   });
 
   it('skips a leading draft and links the published post', async () => {
@@ -151,6 +152,70 @@ describe('loadNow', () => {
     expect(data.writing.latest?.slug).toBe('publicado');
   });
 
+  it('keeps recent tracks when the top artists endpoint refuses the scope', async () => {
+    const fetchImpl = vi.fn(async (url: string) => {
+      const target = String(url);
+      if (target.includes('accounts.spotify.com')) return jsonResponse({ access_token: 'access-1' });
+      if (target.includes('/top/artists')) return { ok: false, status: 403, json: async () => ({ error: 'Forbidden' }) };
+      if (target.includes('api.spotify.com')) return jsonResponse(readJson('spotify-recently-played.json'));
+      throw new Error(`unexpected ${target}`);
+    });
+    const logger = { warn: vi.fn() };
+    const loadNow = createNowLoader({
+      config: readNowConfig({
+        SPOTIFY_CLIENT_ID: 'cid',
+        SPOTIFY_CLIENT_SECRET: 'sec',
+        SPOTIFY_REFRESH_TOKEN: 'ref',
+      }),
+      fetch: fetchImpl as unknown as typeof fetch,
+      now: NOW,
+      logger,
+    });
+
+    const data = await loadNow();
+    expect(data.music.recent.state).toBe('ok');
+    expect(data.music.topArtists.state).toBe('empty');
+    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('spotify-top'));
+  });
+
+  it('refreshes the Spotify token once per source inside the cache window', async () => {
+    const fetchImpl = vi.fn(async (url: string) => {
+      const target = String(url);
+      if (target.includes('accounts.spotify.com')) return jsonResponse({ access_token: 'access-1' });
+      if (target.includes('/top/artists')) {
+        return jsonResponse({
+          items: Array.from({ length: 5 }, (_, index) => ({
+            name: `Artist ${index}`,
+            external_urls: { spotify: `https://open.spotify.com/artist/a${index}` },
+            images: [{ url: `https://i.scdn.co/image/${String(index + 1).repeat(40)}`, width: 320, height: 320 }],
+          })),
+        });
+      }
+      if (target.includes('api.spotify.com')) return jsonResponse(readJson('spotify-recently-played.json'));
+      throw new Error(`unexpected ${target}`);
+    });
+    const loadNow = createNowLoader({
+      config: readNowConfig({
+        SPOTIFY_CLIENT_ID: 'cid',
+        SPOTIFY_CLIENT_SECRET: 'sec',
+        SPOTIFY_REFRESH_TOKEN: 'ref',
+      }),
+      fetch: fetchImpl as unknown as typeof fetch,
+      now: () => Date.parse('2026-10-11T12:00:00Z'),
+      logger: { warn: vi.fn() },
+    });
+
+    const first = await loadNow();
+    await loadNow();
+    const tokenCalls = fetchImpl.mock.calls.filter((call) => String(call[0]).includes('accounts.spotify.com'));
+    expect(tokenCalls).toHaveLength(2);
+    expect(first.music.topArtists.state).toBe('ok');
+    if (first.music.topArtists.state === 'ok') {
+      expect(first.music.topArtists.items).toHaveLength(5);
+      expect(first.music.topArtists.items[0]?.cover).toBe(`/api/now/cover/spotify/${'1'.repeat(40)}`);
+    }
+  });
+
   it('marks every configured source ok when each one answers', async () => {
     const loadNow = createNowLoader({
       config: readNowConfig(fullConfig),
@@ -162,7 +227,7 @@ describe('loadNow', () => {
     const data = await loadNow();
 
     expect(data.projects.state).toBe('ok');
-    expect(data.music.state).toBe('ok');
+    expect(data.music.recent.state).toBe('ok');
     expect(data.games.state).toBe('ok');
   });
 

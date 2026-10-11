@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const REDIRECT_URI = 'http://127.0.0.1:8888/callback';
-const SCOPE = 'user-read-recently-played';
+const SCOPE = 'user-read-recently-played user-top-read';
 
 export const authorizeUrl = ({ clientId, redirectUri, state }) => {
   const url = new URL(AUTHORIZE_URL);

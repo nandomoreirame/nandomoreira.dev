@@ -12,7 +12,7 @@ describe('spotify refresh token script', () => {
   it('builds an authorize URL with the scope, the encoded callback and the state', () => {
     const url = authorizeUrl({ clientId: 'client', redirectUri, state: 'state-1' });
 
-    expect(url).toContain('scope=user-read-recently-played');
+    expect(new URL(url).searchParams.get('scope')).toBe('user-read-recently-played user-top-read');
     expect(url).toContain(`redirect_uri=${encodeURIComponent(redirectUri)}`);
     expect(url).toContain('state=state-1');
   });
