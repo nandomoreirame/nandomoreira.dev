@@ -1,0 +1,11 @@
+{
+  "content": {
+    "state": "Online",
+    "devices": [
+      {
+        "type": "Web",
+        "titles": [{ "name": "", "placement": "Full", "state": "Active" }]
+      }
+    ]
+  }
+}
