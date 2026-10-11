@@ -29,4 +29,9 @@ describe('outcomeMessage', () => {
     expect(outcomeMessage('<script>')).toBeUndefined();
     expect(outcomeMessage('toString')).toBeUndefined();
   });
+
+  it('offers consultoria and no longer AEO as an interest', () => {
+    expect(INTEREST_OPTIONS).toContainEqual({ value: 'consulting', label: 'Consultoria' });
+    expect(INTEREST_OPTIONS.map((option) => option.value)).not.toContain('aeo');
+  });
 });

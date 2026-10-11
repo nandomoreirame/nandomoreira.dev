@@ -13,7 +13,7 @@ const LIMITS = { from: 200, contact: 320, brief: 8_000, company: 200 } as const;
 /** Budget ranges in BRL. The labels live on the form; the API speaks the slugs. */
 export const BUDGETS = ['undecided', 'up-to-10k', '10k-30k', '30k-60k', '60k-plus'] as const;
 
-export const INTERESTS = ['job', 'freelance', 'ai-product', 'agents-mcp', 'aeo'] as const;
+export const INTERESTS = ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting'] as const;
 
 const required = (max: number) => z.string().trim().min(1).max(max);
 

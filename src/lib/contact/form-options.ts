@@ -17,7 +17,7 @@ const INTEREST_LABELS: Record<Interest, string> = {
   freelance: 'Projeto freela',
   'ai-product': 'Produto de IA',
   'agents-mcp': 'Agents e MCP',
-  aeo: 'AEO',
+  consulting: 'Consultoria',
 };
 
 export const BUDGET_OPTIONS = BUDGETS.map((value) => ({ value, label: BUDGET_LABELS[value] }));

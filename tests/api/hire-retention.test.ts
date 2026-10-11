@@ -41,7 +41,7 @@ describe('retention (privacy policy: 12 months, network data 30 days)', () => {
   it('carries the new context fields into the notification', () => {
     const mail = renderNotification(
       toStoredBriefing({
-        payload: { from: 'Ada', contact: 'a@b.co', brief: 'Oi', company: 'Acme', interests: ['job', 'aeo'] },
+        payload: { from: 'Ada', contact: 'a@b.co', brief: 'Oi', company: 'Acme', interests: ['job', 'consulting'] },
         sourceIp: '1.1.1.1',
         userAgent: null,
         now,
@@ -49,6 +49,6 @@ describe('retention (privacy policy: 12 months, network data 30 days)', () => {
       'doc-2',
     );
     expect(mail).toContain('Acme');
-    expect(mail).toContain('job, aeo');
+    expect(mail).toContain('job, consulting');
   });
 });

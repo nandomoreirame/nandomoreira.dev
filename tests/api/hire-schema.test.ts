@@ -75,7 +75,7 @@ describe('hireSchema optional context fields', () => {
   });
 
   it('rejects repeated interests and oversized companies', () => {
-    expect(hireSchema.safeParse({ ...valid, interests: ['aeo', 'aeo'] }).success).toBe(false);
+    expect(hireSchema.safeParse({ ...valid, interests: ['consulting', 'consulting'] }).success).toBe(false);
     expect(hireSchema.safeParse({ ...valid, company: 'x'.repeat(201) }).success).toBe(false);
   });
 });
