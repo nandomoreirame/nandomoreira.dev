@@ -1,0 +1,22 @@
+---
+/**
+ * The favicon glyph (public/favicon.svg) drawn inline next to the wordmark.
+ * Same paths, but painted with the theme tokens instead of hex: the tile uses
+ * `surface` with a `primary` outline so it reads against the header, which
+ * already is `background`.
+ * Decorative: the wordmark text beside it is the accessible name of the link.
+ */
+---
+
+<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false" class="size-7 shrink-0">
+  {/* Inset by half the stroke so the primary outline is not clipped by the viewBox. */}
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="5.25" stroke-width="1.5" class="fill-surface stroke-primary/50"></rect>
+  <path
+    d="M8 10l6 6-6 6"
+    fill="none"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="stroke-primary"></path>
+  <path d="M17 22h7" stroke-width="3" stroke-linecap="round" class="stroke-primary"></path>
+</svg>

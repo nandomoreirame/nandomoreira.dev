@@ -21,7 +21,7 @@ describe('SiteHeader', () => {
     const html = await render();
 
     expect(html).toContain('Fernando Moreira Costa');
-    expect(html).toMatch(/<a[^>]*href="\/"[^>]*>[\s]*Fernando Moreira Costa/);
+    expect(html).toMatch(/<a[^>]*href="\/"[^>]*>[\s\S]*?Fernando Moreira Costa[\s\S]*?<\/a>/);
   });
 
   it('paints the accent of the brand in the primary colour, keeping the text whole', async () => {
@@ -30,6 +30,25 @@ describe('SiteHeader', () => {
 
     expect(link).toMatch(/<span class="text-primary">moreira<\/span>/);
     expect(link.replace(/<[^>]+>/g, '').replace(/\s+/g, '')).toBe('nandomoreira.dev');
+  });
+
+  it('opens the wordmark with the favicon glyph as an inline SVG, hidden from screen readers', async () => {
+    const html = await render({ name: 'nandomoreira.dev', accent: 'moreira' });
+    const links = html.match(/<a[^>]*href="\/"[^>]*>[\s\S]*?<\/a>/g) ?? [];
+
+    // Desktop wordmark and the copy inside the mobile menu.
+    expect(links.length).toBe(2);
+    for (const link of links) {
+      const svg = link.match(/<svg[^>]*>[\s\S]*?<\/svg>/)?.[0] ?? '';
+      expect(svg).toMatch(/aria-hidden="true"/);
+      expect(svg).toContain('viewBox="0 0 32 32"');
+      // The two strokes of the favicon: the chevron and the underscore.
+      expect(svg).toContain('d="M8 10l6 6-6 6"');
+      expect(svg).toContain('d="M17 22h7"');
+      // A primary outline lifts the tile off the header background.
+      expect(svg).toMatch(/<rect[^>]*class="[^"]*stroke-primary\/50\b/);
+      expect(link.indexOf('<svg')).toBeLessThan(link.indexOf('nando'));
+    }
   });
 
   it('places the wordmark before the navigation, so it reads on the left', async () => {

@@ -1,4 +1,5 @@
 ---
+import BrandMark from './BrandMark.astro';
 import SiteNav from './SiteNav.astro';
 import { splitWordmark } from '../../lib/layout/wordmark';
 
@@ -14,7 +15,7 @@ const { name, accent, current, hasPosts = false } = Astro.props;
 const brand = splitWordmark(name, accent);
 
 const wordmarkClass =
-  'font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+  'inline-flex items-center gap-sm font-serif text-h3 font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 {/* The rule sits on <header> so it spans the viewport; the container is the row
@@ -28,14 +29,17 @@ const wordmarkClass =
 >
   <div class="mx-auto flex w-full max-w-page items-center justify-between px-lg py-sm">
     <a href="/" class={wordmarkClass}>
+      <BrandMark />
       {/* One line on purpose: any whitespace between the parts would split the
-          brand into words, on screen and for screen readers. */}
-      {brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}
+          brand into words, on screen and for screen readers. The outer span
+          keeps the parts as one flex item beside the mark. */}
+      <span>{brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}</span>
     </a>
 
     <SiteNav current={current} hasPosts={hasPosts}>
       <a href="/" slot="wordmark" class={wordmarkClass}>
-        {brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}
+        <BrandMark />
+        <span>{brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}</span>
       </a>
     </SiteNav>
   </div>
