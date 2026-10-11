@@ -8,6 +8,7 @@ import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllProjects, getProfile } from '../lib/content';
 import { displayNameOf } from '../lib/content/display-name';
+import { saoPauloDay } from '../lib/now/day';
 import { linkForRepo } from '../lib/now/github';
 import { loadNow } from '../lib/now/load';
 import { NOW_LEAD, NOW_UPDATED_AT } from '../lib/now/now';
@@ -47,16 +48,11 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             <ul>
               {data.projects.items.map((repo) => {
                 const href = linkForRepo(repo, cases);
+                const day = saoPauloDay(new Date(repo.pushedAt));
+                const lead = repo.description ? `: ${repo.description}. ` : '. ';
                 return (
                   <li>
-                    <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>
-                      {repo.name}
-                    </a>
-                    {repo.description ? `: ${repo.description}` : ''}
-                    {repo.language && <TechBadge name={repo.language} />}
-                    {' '}
-                    Último push em{' '}
-                    <time datetime={repo.pushedAt.slice(0, 10)}>{formatPolicyDate(repo.pushedAt.slice(0, 10))}</time>.
+                    <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>{repo.name}</a>{lead}{repo.language && <TechBadge name={repo.language} />}{repo.language ? '. ' : ''}Último push em <time datetime={day}>{formatPolicyDate(day)}</time>.
                   </li>
                 );
               })}
@@ -86,10 +82,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             <ul>
               {data.music.items.map((track) => (
                 <li>
-                  <a href={track.url} {...externalAttrs}>
-                    {track.title}
-                  </a>
-                  , {track.artists}. {track.day}
+                  <a href={track.url} {...externalAttrs}>{track.title}</a>{`, ${track.artists}. ${track.day}`}
                 </li>
               ))}
             </ul>

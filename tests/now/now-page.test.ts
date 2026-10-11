@@ -6,21 +6,87 @@ import { NOW_DECLINING, NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
 
+process.env.SPOTIFY_CLIENT_ID ??= 'cid';
+process.env.SPOTIFY_CLIENT_SECRET ??= 'sec';
+process.env.SPOTIFY_REFRESH_TOKEN ??= 'ref';
+
+const fetchImpl = vi.fn(async (_url: string, _init?: RequestInit) => {
+  throw new Error('offline');
+});
+
 const render = async (page: typeof NowPage) => {
   const container = await AstroContainer.create();
   return container.renderToString(page);
 };
+
+const visibleText = (html: string): string => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
 
 const headings = (html: string): string[] =>
   [...html.matchAll(/<h2\b[^>]*>(.*?)<\/h2>/g)].map((match) => match[1] ?? '');
 
 describe('/now page', () => {
   beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+    fetchImpl.mockReset();
+    fetchImpl.mockRejectedValue(new Error('offline'));
+    vi.stubGlobal('fetch', fetchImpl);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it('keeps separators against the previous word and dates pushes in Sao Paulo', async () => {
+    fetchImpl.mockImplementation(async (url: string) => {
+      const target = String(url);
+      if (target.includes('api.github.com')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => [
+            {
+              name: 'alpha',
+              html_url: 'https://github.com/nandomoreirame/alpha',
+              description: 'newest',
+              language: 'TypeScript',
+              pushed_at: '2026-10-12T01:30:00Z',
+              fork: false,
+              archived: false,
+              private: false,
+            },
+          ],
+        };
+      }
+      if (target.includes('accounts.spotify.com')) {
+        return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
+      }
+      if (target.includes('api.spotify.com')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            items: [
+              {
+                played_at: '2026-10-11T12:00:00Z',
+                track: {
+                  id: 't1',
+                  name: 'Same Song',
+                  artists: [{ name: 'Artist A' }],
+                  external_urls: { spotify: 'https://open.spotify.com/track/t1' },
+                },
+              },
+            ],
+          }),
+        };
+      }
+      throw new Error(`unexpected ${target}`);
+    });
+
+    const html = await render(NowPage);
+    const text = visibleText(html.split('<article')[1]?.split('</article>')[0] ?? '');
+    expect(text).not.toContain(' ,');
+    expect(text).not.toContain(' :');
+    expect(text).not.toContain(' .');
+    expect(text).toContain('11 de outubro');
   });
 
   it('renders the five sections in order, the update date, and the games fallback', async () => {
