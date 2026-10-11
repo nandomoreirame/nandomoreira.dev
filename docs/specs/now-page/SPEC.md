@@ -23,6 +23,7 @@ automáticos que não envelhecem sozinhos.
 
 ## Non-Goals
 
+- Capas carregadas direto dos servidores do Spotify ou da Microsoft.
 - "Tocando agora" do Spotify e atualização ao vivo sem recarregar (descartado: exigiria JS de cliente ou exporia presença).
 - Seções Lendo/Estudando e Vida/Lugar.
 - Tool `get_now` no MCP.
@@ -75,6 +76,16 @@ automáticos que não envelhecem sozinhos.
 ### P2 (Should Have)
 
 19. [REQ-018] QUANDO o autor precisa gerar o refresh token do Spotify ENTÃO um script (`scripts/spotify-refresh-token.mjs`) DEVE conduzir o fluxo authorization code em `localhost` com o escopo `user-read-recently-played` e imprimir o token.
+
+### P1, segunda entrega: mídia (2026-10-11)
+
+20. [REQ-020] QUANDO a seção Ouvindo renderiza uma faixa ENTÃO ela DEVE mostrar a capa do álbum, o título, os artistas, o álbum com o ano de lançamento e o dia em que tocou.
+21. [REQ-021] QUANDO a seção Ouvindo renderiza ENTÃO ela DEVE mostrar, antes das faixas, os 5 artistas mais ouvidos nas últimas 4 semanas (`/v1/me/top/artists?time_range=short_term`), com foto e link para o Spotify; QUANDO essa fonte falha ou o token não tem o escopo `user-top-read` ENTÃO só o bloco de artistas DEVE sumir, mantendo as faixas.
+22. [REQ-022] QUANDO a seção Jogando renderiza ENTÃO o jogo em execução (ou, sem ele, o mais recente) DEVE aparecer em destaque com capa, plataformas e progresso de gamerscore (atual, total e percentual), e os demais em grade com capa, data e progresso.
+23. [REQ-023] QUANDO a página exibe uma capa ou foto ENTÃO a imagem DEVE ser servida pela rota própria `/api/now/cover/<fonte>/<id>`, nunca carregada direto de `i.scdn.co` ou `store-images.s-microsoft.com`, para o IP do visitante não chegar a terceiros.
+24. [REQ-024] QUANDO `/api/now/cover/<fonte>/<id>` é requisitada ENTÃO o sistema DEVE aceitar só `spotify` com `id` de 40 hexadecimais e `xbox` com `id` no formato `apps.<n>.<n>.<uuid>.<uuid>`, montar a URL de origem a partir desse padrão (nunca de uma URL recebida), responder 404 para qualquer outro valor, para resposta de origem que não seja imagem ou acima de 512 KB, e responder 200 com `cache-control: public, max-age=86400, s-maxage=604800, immutable` e `x-content-type-options: nosniff` quando der certo.
+25. [REQ-025] QUANDO o progresso de um jogo é exibido ENTÃO ele DEVE ser um elemento acessível (`role="progressbar"` com `aria-valuenow`, `aria-valuemin`, `aria-valuemax` e rótulo textual visível), e QUANDO o total de gamerscore é 0 ENTÃO o progresso NÃO DEVE aparecer.
+26. [REQ-026] QUANDO `/now.md` é gerado ENTÃO ele DEVE trazer álbum e ano das faixas, os artistas do mês e o progresso dos jogos como texto, sem nenhuma imagem.
 
 ## Edge Cases
 
@@ -134,3 +145,6 @@ Decisões levantadas e resolvidas antes do build.
 | 11 | Rota | `/now` canônica, `/agora` com 301 | Convenção do nownownow, exigida para entrar no diretório |
 | 12 | Jogo casual no histórico | `NOW_GAME_EXCLUDE` com `Microsoft Jewel`; o próximo do histórico ocupa a vaga | Pedido do autor depois de ver o histórico real |
 | 13 | Segredos da `/now` no yaml | O `apphosting.yaml` só declara segredo que já existe; os cinco saem até serem criados | Um segredo declarado e inexistente quebra o rollout do App Hosting |
+| 14 | Mais dados de mídia | Álbum e ano, top 5 artistas do mês, progresso de gamerscore e plataformas | Já vêm nas respostas ou custam só um escopo novo; popularidade não vem para app em modo desenvolvimento |
+| 15 | Capas | Exibir, servidas por rota própria com id validado e cache longo | O autor quer as capas; carregar direto exporia o IP do visitante, e uma rota que aceita URL viraria proxy aberto |
+| 16 | "Tocando agora" do Spotify | Continua fora | Mostra em tempo real quando o autor está online |
