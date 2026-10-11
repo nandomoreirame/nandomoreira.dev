@@ -41,7 +41,7 @@ describe('scriptViolations', () => {
       scriptViolations([
         { route: '/', scripts: [POINTER] },
         { route: '/sobre', scripts: [POINTER] },
-        { route: '/criar-site-completo-com-o-notion', scripts: [POINTER] },
+        { route: '/fluxo-rpi-claude-code-grok-codex', scripts: [POINTER] },
       ]),
     ).toEqual([]);
   });

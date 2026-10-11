@@ -24,7 +24,7 @@ describe('/[slug] post page', () => {
     const paths = await getStaticPaths();
     const slugs = paths.map((p) => p.params.slug);
 
-    expect(slugs).toContain('criar-site-completo-com-o-notion');
+    expect(slugs).toContain('fluxo-rpi-claude-code-grok-codex');
     expect(slugs).toContain('comece-com-gulp');
     // A draft's slug must never be a public path.
     expect(slugs).not.toContain('de-cinco-dias-para-trinta-minutos');
@@ -65,7 +65,7 @@ describe('/[slug] post page', () => {
 
   it('renders a current post without the archive badge', async () => {
     const entries = await getAllPostEntries();
-    const current = entries.find((e) => e.data.archived !== true && e.data.cover);
+    const current = entries.find((e) => e.data.archived !== true && e.data.draft !== true);
     expect(current).toBeTruthy();
 
     const html = await renderEntry(current!);
@@ -123,7 +123,7 @@ describe('/[slug] post page', () => {
 
   it('keeps the cover and draws no art when a post has one', async () => {
     const entries = await getAllPostEntries();
-    const html = await renderEntry(entries.find((e) => e.data.slug === 'criar-site-completo-com-o-notion')!);
+    const html = await renderEntry(entries.find((e) => e.data.slug === '8-meses-de-malapronta-e-o-fim')!);
 
     expect(html).toMatch(/<figure\b/i);
     expect(html).not.toMatch(/data-motif=/);
@@ -131,7 +131,7 @@ describe('/[slug] post page', () => {
 
   it('puts the title and date above the cover', async () => {
     const entries = await getAllPostEntries();
-    const withCover = entries.find((e) => e.data.slug === 'criar-site-completo-com-o-notion');
+    const withCover = entries.find((e) => e.data.slug === '8-meses-de-malapronta-e-o-fim');
     expect(withCover?.data.cover).toBeTruthy();
 
     const html = await renderEntry(withCover!);
