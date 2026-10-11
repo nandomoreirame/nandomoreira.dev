@@ -28,15 +28,15 @@ const presenceSchema = z.object({
   }),
 });
 
+const titleSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  titleHistory: z.object({ lastTimePlayed: z.string() }),
+});
+
 const historySchema = z.object({
   content: z.object({
-    titles: z.array(
-      z.object({
-        name: z.string(),
-        type: z.string(),
-        titleHistory: z.object({ lastTimePlayed: z.string() }),
-      }),
-    ),
+    titles: z.array(z.unknown()),
   }),
 });
 
@@ -79,27 +79,33 @@ export const parsePresence = (
   return undefined;
 };
 
-/** Games only, exclusions applied before the cap so the next title fills the slot. */
-export const parseRecentGames = (
+/** Games that survived the schema, the date check and the exclusion list, newest first. */
+const acceptedGames = (
   json: unknown,
-  { limit = 5, exclude = NOW_GAME_EXCLUDE }: { limit?: number; exclude?: readonly string[] } = {},
+  { exclude = NOW_GAME_EXCLUDE }: { exclude?: readonly string[] } = {},
 ): RecentGame[] => {
   const parsed = historySchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
   const excluded = new Set(exclude.map((name) => name.toLowerCase()));
   return parsed.data.content.titles
-    .filter((title) => title.type === 'Game' && !excluded.has(title.name.toLowerCase()))
-    .sort(
-      (a, b) =>
-        Date.parse(b.titleHistory.lastTimePlayed) - Date.parse(a.titleHistory.lastTimePlayed),
-    )
-    .slice(0, limit)
-    .flatMap((title) => {
-      const lastPlayed = playedOn(title.titleHistory.lastTimePlayed);
-      return lastPlayed ? [{ name: title.name, lastPlayed }] : [];
-    });
+    .flatMap((item) => {
+      const title = titleSchema.safeParse(item);
+      if (!title.success) return [];
+      if (title.data.type !== 'Game' || excluded.has(title.data.name.toLowerCase())) return [];
+      const lastPlayed = playedOn(title.data.titleHistory.lastTimePlayed);
+      if (!lastPlayed) return [];
+      return [{ name: title.data.name, lastPlayed, at: Date.parse(title.data.titleHistory.lastTimePlayed) }];
+    })
+    .sort((a, b) => b.at - a.at)
+    .map(({ name, lastPlayed }) => ({ name, lastPlayed }));
 };
+
+/** Games only, exclusions applied before the cap so the next title fills the slot. */
+export const parseRecentGames = (
+  json: unknown,
+  { limit = 5, exclude = NOW_GAME_EXCLUDE }: { limit?: number; exclude?: readonly string[] } = {},
+): RecentGame[] => acceptedGames(json, { exclude }).slice(0, limit);
 
 export const fetchXbox = async ({
   fetch: fetchImpl,
@@ -113,10 +119,10 @@ export const fetchXbox = async ({
     fetchJson(fetchImpl, PRESENCE_URL, { headers }),
     fetchJson(fetchImpl, HISTORY_URL, { headers }),
   ]);
-  const recentGames = parseRecentGames(history, { limit: Number.POSITIVE_INFINITY });
-  const playingNow = parsePresence(presence, recentGames);
+  const eligible = acceptedGames(history);
+  const playingNow = parsePresence(presence, eligible);
   return {
     ...(playingNow ? { playingNow } : {}),
-    recent: recentGames.slice(0, 5),
+    recent: eligible.slice(0, 5),
   };
 };

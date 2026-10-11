@@ -72,6 +72,30 @@ describe('parseRecentGames', () => {
     expect(recent).toEqual([{ name: 'Hades', lastPlayed: '2026-10-11' }]);
   });
 
+  it('drops a broken title in the middle and still returns five games', () => {
+    const game = (name: string, iso: string) => ({
+      name,
+      type: 'Game',
+      titleHistory: { lastTimePlayed: iso },
+    });
+    const recent = parseRecentGames({
+      content: {
+        titles: [
+          game('One', '2026-10-11T20:00:00Z'),
+          game('Two', '2026-10-10T20:00:00Z'),
+          { name: 'Broken', type: 'Game', titleHistory: null },
+          game('Three', '2026-10-09T20:00:00Z'),
+          { name: 'Dated', type: 'Game', titleHistory: { lastTimePlayed: 'ontem' } },
+          game('Four', '2026-10-08T20:00:00Z'),
+          game('Five', '2026-10-07T20:00:00Z'),
+          game('Six', '2026-10-06T20:00:00Z'),
+        ],
+      },
+    });
+
+    expect(recent.map((item) => item.name)).toEqual(['One', 'Two', 'Three', 'Four', 'Five']);
+  });
+
   it('matches excluded names without case', () => {
     const recent = parseRecentGames(
       {
