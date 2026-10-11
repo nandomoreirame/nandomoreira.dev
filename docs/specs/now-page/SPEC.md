@@ -87,6 +87,16 @@ automáticos que não envelhecem sozinhos.
 25. [REQ-025] QUANDO o progresso de um jogo é exibido ENTÃO ele DEVE ser um elemento acessível (`role="progressbar"` com `aria-valuenow`, `aria-valuemin`, `aria-valuemax` e rótulo textual visível), e QUANDO o total de gamerscore é 0 ENTÃO o progresso NÃO DEVE aparecer.
 26. [REQ-026] QUANDO `/now.md` é gerado ENTÃO ele DEVE trazer álbum e ano das faixas, os artistas do mês e o progresso dos jogos como texto, sem nenhuma imagem.
 
+### P1, terceira entrega: prévia de áudio (2026-10-11)
+
+27. [REQ-027] QUANDO uma faixa de Ouvindo tem prévia ENTÃO a capa DEVE ganhar um botão (`aria-pressed`, rótulo "Ouvir prévia de <faixa>") que mostra play no hover, no foco e em tela de toque, e pause aceso em `primary` enquanto toca; tocar outra faixa DEVE parar a anterior. É o único script além do efeito de ponteiro, só em `/now`, em até 1 KB gzip, e o portão de JS o reprova em qualquer outra rota.
+28. [REQ-028] QUANDO o JavaScript não roda ENTÃO o botão NÃO DEVE aparecer (sai com `hidden` e só o script o revela).
+29. [REQ-029] QUANDO as faixas são carregadas ENTÃO o sistema DEVE procurar a prévia no Deezer pelo ISRC da faixa (`api.deezer.com/track/isrc:<ISRC>`), guardando em memória só se ela existe, e anexar a rota local apenas às faixas que o Deezer tem; falha do Deezer DEVE deixar a faixa sem botão, sem afetar a seção.
+30. [REQ-030] QUANDO `/api/now/preview/<isrc>` é requisitada ENTÃO o sistema DEVE aceitar só ISRC válido, buscar a URL assinada a cada requisição, aceitar só `https` em `*.dzcdn.net`, `audio/mpeg` e até 1 MiB, nunca repassar header da origem, e responder com `cache-control: private, max-age=3600` (os termos do Deezer proíbem armazenar áudio, então nenhum cache compartilhado o guarda).
+31. [REQ-031] QUANDO alguma faixa tem prévia ENTÃO a seção DEVE creditar uma vez "Prévias de 30 segundos via Deezer.".
+
+32. [REQ-032] QUANDO um artista do mês tem prévia ENTÃO a foto DEVE virar o botão de play da mesma forma que as capas (rótulo "Ouvir <faixa>, de <artista>") e o nome DEVE continuar como link para o Spotify; a faixa é a mais ouvida pelo autor desse artista (top de 4 semanas, depois de 6 meses, até 5 tentativas) que o Deezer tenha, e, sem nenhuma, a mais tocada do artista no Deezer desde que o nome seja idêntico.
+
 ## Edge Cases
 
 - Spotify devolve a mesma faixa várias vezes seguidas: deduplicar por id antes de cortar em 5.
@@ -148,3 +158,7 @@ Decisões levantadas e resolvidas antes do build.
 | 14 | Mais dados de mídia | Álbum e ano, top 5 artistas do mês, progresso de gamerscore e plataformas | Já vêm nas respostas ou custam só um escopo novo; popularidade não vem para app em modo desenvolvimento |
 | 15 | Capas | Exibir, servidas por rota própria com id validado e cache longo | O autor quer as capas; carregar direto exporia o IP do visitante, e uma rota que aceita URL viraria proxy aberto |
 | 16 | "Tocando agora" do Spotify | Continua fora | Mostra em tempo real quando o autor está online |
+| 17 | Prévia de áudio | Deezer pelo ISRC, servida por rota própria | O Spotify não manda mais `preview_url` para app novo (conferido); o Deezer acertou as 5 faixas testadas |
+| 18 | JavaScript da prévia | Segundo script permitido só em `/now`, até 1 KB gzip | Decisão do autor: o JS extra fica restrito a esta página, fora do script global |
+| 19 | Cache do áudio | Só no navegador (`private`), nunca no CDN | Termos do Deezer proíbem armazenar áudio |
+| 20 | Prévia dos artistas do mês | Faixa mais ouvida pelo autor; sem ela, o top do artista no Deezer com nome idêntico | `/artists/{id}/top-tracks` do Spotify responde 403 em modo desenvolvimento; a busca por nome no Deezer achou um homônimo para "Queen", por isso só entra como reserva |

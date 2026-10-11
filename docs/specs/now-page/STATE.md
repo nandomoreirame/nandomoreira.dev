@@ -37,3 +37,5 @@ A ausência em runtime degrada a seção, não o boot. Homologação continua se
 2026-10-11: `/code-review` sobre `6d3c881..977bbf8` achou 10 problemas, mais 1 na leitura (link do post). Plano de correção em `docs/plans/2026-10-11-now-page-fixes.md`, 10 tarefas. Não fazer push antes de fechá-lo.
 
 2026-10-11: segunda entrega planejada (REQ-020 a REQ-026): capas por rota própria, artistas do mês, progresso de gamerscore. Plano em `docs/plans/2026-10-11-now-media.md`, 9 tarefas.
+
+2026-10-11: prévia de áudio implementada pelo Claude (REQ-027 a REQ-031), fora de plano, com o Grok sem cota: Deezer por ISRC, rota `/api/now/preview/<isrc>`, script só em `/now`. Links da loja do Xbox via catálogo público da Microsoft (titleId para productId).
