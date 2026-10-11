@@ -59,6 +59,21 @@ describe('/now page', () => {
       if (target.includes('accounts.spotify.com')) {
         return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
       }
+      if (target.includes('/top/artists')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            items: [
+              {
+                name: 'Raul',
+                external_urls: { spotify: 'https://open.spotify.com/artist/raul' },
+                images: [{ url: `https://i.scdn.co/image/${'c'.repeat(40)}`, width: 320, height: 320 }],
+              },
+            ],
+          }),
+        };
+      }
       if (target.includes('api.spotify.com')) {
         return {
           ok: true,
@@ -71,7 +86,11 @@ describe('/now page', () => {
                   id: 't1',
                   name: 'Same Song',
                   artists: [{ name: 'Artist A Jr.' }],
-                  album: { name: 'Album', release_date: '1999' },
+                  album: {
+                    name: 'Album',
+                    release_date: '1999',
+                    images: [{ url: `https://i.scdn.co/image/${'b'.repeat(40)}`, width: 300, height: 300 }],
+                  },
                   external_urls: { spotify: 'https://open.spotify.com/track/t1' },
                 },
               },
@@ -89,8 +108,12 @@ describe('/now page', () => {
     expect(text).not.toContain(' .');
     // A description or an artist that already ends in a period gets no second one.
     expect(text).not.toContain('..');
-    expect(text).toContain('Artist A Jr. hoje');
+    expect(text).toContain('Artist A Jr. · Album (1999)');
+    expect(text).toContain('hoje');
     expect(text).toContain('11 de outubro');
+    expect(html).toContain('/api/now/cover/spotify/');
+    expect(html).not.toContain('scdn.co');
+    expect(html).not.toContain('s-microsoft.com');
   });
 
   it('renders the five sections in order, the update date, and the games fallback', async () => {

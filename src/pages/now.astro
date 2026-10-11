@@ -1,6 +1,8 @@
 ---
 Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 
+import NowGames from '../components/now/NowGames.astro';
+import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
@@ -74,52 +76,14 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
           {data.writing.drafts.map((title) => <li>{title}</li>)}
         </ul>
       </NowSection>
-
-      <NowSection id="ouvindo" title="Ouvindo">
-        {
-          data.music.recent.state === 'empty' ? (
-            <p class="text-muted-foreground">Sem dados no momento.</p>
-          ) : (
-            <ul>
-              {data.music.recent.items.map((track) => (
-                <li>
-                  <a href={track.url} {...externalAttrs}>{track.title}</a>{`, ${endSentence(track.artists)} ${track.day}`}
-                </li>
-              ))}
-            </ul>
-          )
-        }
-      </NowSection>
-
-      <NowSection id="jogando" title="Jogando">
-        {
-          data.games.state === 'empty' ? (
-            <p class="text-muted-foreground">Sem dados no momento.</p>
-          ) : data.games.state === 'ok' ? (
-            <Fragment>
-              {data.games.items.playingNow && (
-                <p class="font-semibold text-foreground">Jogando agora: {data.games.items.playingNow.title}</p>
-              )}
-              <ul>
-                {data.games.items.recent.map((game) => (
-                  <li>
-                    {game.name}, <time datetime={game.lastPlayed}>{formatPolicyDate(game.lastPlayed)}</time>
-                  </li>
-                ))}
-              </ul>
-            </Fragment>
-          ) : (
-            <ul>
-              {data.games.items.map((game) => (
-                <li>
-                  {game.name}
-                  {game.note ? `: ${game.note}` : ''}
-                </li>
-              ))}
-            </ul>
-          )
-        }
-      </NowSection>
     </Prose>
+
+    <NowSection id="ouvindo" title="Ouvindo">
+      <NowMusic music={data.music} />
+    </NowSection>
+
+    <NowSection id="jogando" title="Jogando">
+      <NowGames games={data.games} />
+    </NowSection>
   </article>
 </BaseLayout>

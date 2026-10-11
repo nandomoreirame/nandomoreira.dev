@@ -102,6 +102,54 @@ describe('nowMarkdown', () => {
     expect(html).not.toContain('onerror=');
   });
 
+  it('prints artists, the album and gamerscore as text, never as an image', () => {
+    const data = snapshot('Aberto a projetos.');
+    data.music.topArtists = {
+      state: 'ok',
+      items: [{ name: 'Raul Seixas', url: 'https://open.spotify.com/artist/raul' }],
+    };
+    if (data.music.recent.state === 'empty') throw new Error('fixture must be populated');
+    data.music.recent.items[0]!.album = 'Krig-ha';
+    data.music.recent.items[0]!.year = '1990';
+    data.games = {
+      state: 'ok',
+      items: {
+        playingNow: {
+          title: 'Hades',
+          platforms: ['PC'],
+          progress: { current: 690, total: 1000, percent: 69 },
+        },
+        recent: [
+          {
+            name: 'Hades',
+            lastPlayed: '2026-10-05',
+            platforms: ['PC'],
+            progress: { current: 690, total: 1000, percent: 69 },
+          },
+        ],
+      },
+    };
+    const markdown = nowMarkdown({ site, data });
+
+    expect(markdown).toContain('### Artistas do mês');
+    expect(markdown).toContain('- [Raul Seixas](https://open.spotify.com/artist/raul)');
+    expect(markdown).toContain('Krig-ha (1990).');
+    expect(markdown).toContain('690 / 1000 G (69%)');
+    expect(markdown).toContain('PC');
+    expect(markdown).not.toContain('![');
+  });
+
+  it('escapes a hostile album before the markdown is rendered', () => {
+    const data = snapshot('Aberto a projetos.');
+    if (data.music.recent.state === 'empty') throw new Error('fixture must be populated');
+    data.music.recent.items[0]!.album = '<img src=x onerror=alert(1)>';
+    const html = renderMarkdown(nowMarkdown({ site, data }));
+
+    expect(html).not.toContain('<img');
+    expect(html).not.toMatch(/<[^>]*onerror=/);
+    expect(html).toContain('&lt;img');
+  });
+
   it('does not double the period after text that already ends a sentence', () => {
     const data = snapshot('Aberto a projetos.');
     if (data.projects.state === 'empty' || data.music.recent.state === 'empty') throw new Error('fixture must be populated');
@@ -110,7 +158,7 @@ describe('nowMarkdown', () => {
     const markdown = nowMarkdown({ site, data });
 
     expect(markdown).not.toContain('..');
-    expect(markdown).toContain('Charlie Brown Jr. hoje');
+    expect(markdown).toContain('Charlie Brown Jr. Album. hoje');
     expect(markdown).toContain('CLI de dados. TypeScript.');
   });
 });

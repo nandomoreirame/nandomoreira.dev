@@ -14,6 +14,24 @@ const pushSection = (lines: string[], title: string, body: string[]): void => {
   lines.push(...body, '');
 };
 
+const albumClause = (album: string, year: string | undefined): string => {
+  if (leaksToMachine(album) || (year !== undefined && leaksToMachine(year))) return '';
+  const safeYear = year !== undefined && /^\d{4}$/.test(year) ? year : undefined;
+  const label = safeYear ? `${machineText(album)} (${safeYear})` : machineText(album);
+  return `${endSentence(label)} `;
+};
+
+const mediaClause = (
+  platforms: readonly string[],
+  progress: { current: number; total: number; percent: number } | undefined,
+): string => {
+  const parts: string[] = [];
+  const names = platforms.filter((platform) => !leaksToMachine(platform)).map((platform) => machineText(platform));
+  if (names.length > 0) parts.push(names.join(', '));
+  if (progress) parts.push(`${progress.current} / ${progress.total} G (${progress.percent}%)`);
+  return parts.length > 0 ? `, ${parts.join(', ')}` : '';
+};
+
 /** Machine view of /now. Same sections as the page, no address, no secret (REQ-015). */
 export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): string => {
   const lines = [
@@ -61,24 +79,35 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   for (const title of data.writing.drafts) writing.push(`- ${title}`);
   pushSection(lines, 'Escrevendo', writing);
 
-  const music =
-    data.music.recent.state === 'empty'
-      ? []
-      : data.music.recent.items.flatMap((track) => {
-          if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
-          return [`- [${machineText(track.title)}](${track.url}), ${machineText(endSentence(track.artists))} ${track.day}`];
-        });
+  const music: string[] = [];
+  if (data.music.topArtists.state === 'ok') {
+    const artists = data.music.topArtists.items.flatMap((artist) => {
+      if (leaksToMachine(artist.name)) return [];
+      return [`- [${machineText(artist.name)}](${artist.url})`];
+    });
+    if (artists.length > 0) music.push('### Artistas do mês', '', ...artists);
+  }
+  if (data.music.recent.state !== 'empty') {
+    const tracks = data.music.recent.items.flatMap((track) => {
+      if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
+      const album = albumClause(track.album, track.year);
+      const line = `- [${machineText(track.title)}](${track.url}), ${machineText(endSentence(track.artists))} ${album}${track.day}`;
+      return [line];
+    });
+    if (music.length > 0 && tracks.length > 0) music.push('');
+    music.push(...tracks);
+  }
   pushSection(lines, 'Ouvindo', music);
 
   const games: string[] = [];
   if (data.games.state === 'ok') {
     const playingNow = data.games.items.playingNow;
     if (playingNow && !leaksToMachine(playingNow.title)) {
-      games.push(`Jogando agora: ${machineText(playingNow.title)}`);
+      games.push(`Jogando agora: ${machineText(playingNow.title)}${mediaClause(playingNow.platforms, playingNow.progress)}`);
     }
     for (const game of data.games.items.recent) {
       if (leaksToMachine(game.name)) continue;
-      games.push(`- ${machineText(game.name)}, ${game.lastPlayed}`);
+      games.push(`- ${machineText(game.name)}, ${game.lastPlayed}${mediaClause(game.platforms, game.progress)}`);
     }
   } else if (data.games.state === 'fallback') {
     for (const game of data.games.items) {
