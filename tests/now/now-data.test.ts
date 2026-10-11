@@ -43,6 +43,7 @@ describe('now curated data', () => {
     expect(NOW_TTL).toEqual({
       github: 30 * 60_000,
       spotify: 5 * 60_000,
+      spotifyTop: 60 * 60_000,
       xbox: 5 * 60_000,
     });
     expect(NOW_REPO_EXCLUDE).toEqual(['.dotfiles', 'dotfiles', 'nandomoreirame']);
