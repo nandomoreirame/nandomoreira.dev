@@ -7,11 +7,13 @@ interface Props {
   /** Only meaningful on a link; an external target needs its own rel. */
   target?: '_blank';
   rel?: string;
+  /** Only meaningful on a link: the file name to save the target as. */
+  download?: string;
   /** Only meaningful on a <button>; defaults to "button" so nothing submits by accident. */
   type?: 'button' | 'submit';
 }
 
-const { href, variant = 'primary', disabled = false, label, target, rel, type = 'button' } = Astro.props;
+const { href, variant = 'primary', disabled = false, label, target, rel, download, type = 'button' } = Astro.props;
 
 const isLink = Boolean(href);
 const isDisabledLink = isLink && disabled;
@@ -59,6 +61,7 @@ const Tag = isLink ? 'a' : 'button';
   href={isDisabledLink ? undefined : href}
   target={isLink ? target : undefined}
   rel={isLink ? rel : undefined}
+  download={isLink ? download : undefined}
   role={isDisabledLink ? 'link' : undefined}
   aria-label={label}
   aria-disabled={disabled ? 'true' : undefined}

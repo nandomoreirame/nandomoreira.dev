@@ -103,4 +103,11 @@ describe('Outline links fill on hover', () => {
     const source = readFileSync(file, 'utf8');
     expect(source).toMatch(/\bhover:bg-surface-elevated\b/);
   });
+
+  it('passes download through on a link, so a file is saved instead of opened', async () => {
+    expect(await render({ href: '/cv.pdf', download: 'cv.pdf' })).toMatch(/<a[^>]*\bdownload="cv\.pdf"/);
+    expect(await render({ href: '/cv.pdf' })).not.toContain('download');
+    // A <button> has no download attribute.
+    expect(await render({ download: 'cv.pdf' })).not.toContain('download');
+  });
 });
