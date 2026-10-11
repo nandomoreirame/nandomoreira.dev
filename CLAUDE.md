@@ -236,6 +236,24 @@ depois de o build já existir no servidor e o retry cego devolve `HTTP 409`.
 repositório conectado e agora há um. Serve para promover um commit específico sem esperar
 o rollout automático, ou para voltar a um commit anterior.
 
+### Ligar as fontes da `/now`
+
+O `apphosting.yaml` só declara segredo que já existe no Secret Manager. Um nome
+declarado e inexistente quebra o rollout. Para cada fonte, nesta ordem:
+
+1. `firebase apphosting:secrets:set <nome>`
+2. `firebase apphosting:secrets:grantaccess <nome> --backend nandomoreira-dev`
+3. Só então acrescentar a entrada no `apphosting.yaml` e fazer push.
+
+| Segredo | Variável |
+|---|---|
+| `now-openxbl-api-key` | `OPENXBL_API_KEY` |
+| `now-spotify-client-id` | `SPOTIFY_CLIENT_ID` |
+| `now-spotify-client-secret` | `SPOTIFY_CLIENT_SECRET` |
+| `now-spotify-refresh-token` | `SPOTIFY_REFRESH_TOKEN` |
+
+`GITHUB_TOKEN` fica de fora: a API pública responde sem token.
+
 ## Homologação no homelab
 
 `bash scripts/deploy-staging.sh` publica a árvore local (rascunhos não commitados

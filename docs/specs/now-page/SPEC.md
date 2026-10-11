@@ -70,7 +70,7 @@ automáticos que não envelhecem sozinhos.
 15. [REQ-015] QUANDO `/now.md` ou `/now/ia` é requisitada ENTÃO o sistema DEVE servir a visão IA da página pelo registro `markdownForPath`, com as mesmas seções, passando pelo portão de vazamento.
 16. [REQ-019] QUANDO `/now` responde 200 ENTÃO a resposta DEVE declarar `cache-control: public, max-age=60, s-maxage=300`.
 17. [REQ-016] QUANDO o sitemap e o `ai-index.json` são gerados ENTÃO eles DEVEM incluir `/now`.
-18. [REQ-017] QUANDO as credenciais de produção são configuradas ENTÃO elas DEVEM vir do Secret Manager por `apphosting.yaml` (`SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN`, `OPENXBL_API_KEY`, `GITHUB_TOKEN` opcional), e a ausência de qualquer uma NÃO DEVE impedir o boot.
+18. [REQ-017] QUANDO uma fonte da `/now` é ligada em produção ENTÃO sua credencial DEVE vir do Secret Manager por `apphosting.yaml`, declarada só depois de o segredo existir.
 
 ### P2 (Should Have)
 
@@ -133,3 +133,4 @@ Decisões levantadas e resolvidas antes do build.
 | 10 | Conta Spotify | Premium (confirmado pelo autor) | Requisito do modo desenvolvimento |
 | 11 | Rota | `/now` canônica, `/agora` com 301 | Convenção do nownownow, exigida para entrar no diretório |
 | 12 | Jogo casual no histórico | `NOW_GAME_EXCLUDE` com `Microsoft Jewel`; o próximo do histórico ocupa a vaga | Pedido do autor depois de ver o histórico real |
+| 13 | Segredos da `/now` no yaml | O `apphosting.yaml` só declara segredo que já existe; os cinco saem até serem criados | Um segredo declarado e inexistente quebra o rollout do App Hosting |

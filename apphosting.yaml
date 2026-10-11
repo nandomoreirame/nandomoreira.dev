@@ -29,32 +29,6 @@ env:
     availability:
       - RUNTIME
 
-  # /now. A missing secret degrades that section; it does not stop boot (REQ-017).
-  - variable: SPOTIFY_CLIENT_ID
-    secret: now-spotify-client-id
-    availability:
-      - RUNTIME
-
-  - variable: SPOTIFY_CLIENT_SECRET
-    secret: now-spotify-client-secret
-    availability:
-      - RUNTIME
-
-  - variable: SPOTIFY_REFRESH_TOKEN
-    secret: now-spotify-refresh-token
-    availability:
-      - RUNTIME
-
-  - variable: OPENXBL_API_KEY
-    secret: now-openxbl-api-key
-    availability:
-      - RUNTIME
-
-  - variable: GITHUB_TOKEN
-    secret: now-github-token
-    availability:
-      - RUNTIME
-
 scripts:
   buildCommand: npm run build
   runCommand: node ./dist/server/entry.mjs

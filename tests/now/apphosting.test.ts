@@ -3,33 +3,45 @@ import { describe, expect, it } from 'vitest';
 
 const manifest = readFileSync('apphosting.yaml', 'utf8');
 
-const SECRETS = [
-  ['SPOTIFY_CLIENT_ID', 'now-spotify-client-id'],
-  ['SPOTIFY_CLIENT_SECRET', 'now-spotify-client-secret'],
-  ['SPOTIFY_REFRESH_TOKEN', 'now-spotify-refresh-token'],
-  ['OPENXBL_API_KEY', 'now-openxbl-api-key'],
-  ['GITHUB_TOKEN', 'now-github-token'],
+const NOW_VARIABLES = [
+  'SPOTIFY_CLIENT_ID',
+  'SPOTIFY_CLIENT_SECRET',
+  'SPOTIFY_REFRESH_TOKEN',
+  'OPENXBL_API_KEY',
+  'GITHUB_TOKEN',
 ] as const;
 
-const blocks = (): Map<string, string> => {
+const blocksOf = (source: string): Map<string, string> => {
   const entries = new Map<string, string>();
-  for (const chunk of manifest.split(/\n  - variable: /).slice(1)) {
+  for (const chunk of source.split(/\n  - variable: /).slice(1)) {
     const name = chunk.slice(0, chunk.indexOf('\n'));
     entries.set(name, chunk);
   }
   return entries;
 };
 
-describe('apphosting.yaml now secrets', () => {
-  it('declares the five runtime secrets and never a literal value', () => {
-    const entries = blocks();
+/** Variables that are absent are off. A declared one must be a runtime secret, never a literal. */
+const literalNowValues = (source: string): string[] => {
+  const entries = blocksOf(source);
+  return NOW_VARIABLES.filter((variable) => {
+    const block = entries.get(variable);
+    if (!block) return false;
+    return !block.includes('secret:') || !block.includes('RUNTIME') || /^\s*value:/m.test(block);
+  });
+};
 
-    for (const [variable, secret] of SECRETS) {
-      const block = entries.get(variable);
-      expect(block, variable).toBeDefined();
-      expect(block).toContain(`secret: ${secret}`);
-      expect(block).toContain('RUNTIME');
-      expect(block).not.toMatch(/^\s*value:/m);
-    }
+describe('apphosting.yaml now secrets', () => {
+  it('allows a now variable only as a runtime secret and does not require any of them', () => {
+    expect(literalNowValues(manifest)).toEqual([]);
+  });
+
+  it('rejects a literal value on a declared now variable', () => {
+    const hostile = `
+  - variable: OPENXBL_API_KEY
+    value: abc
+    availability:
+      - RUNTIME
+`;
+    expect(literalNowValues(hostile)).toEqual(['OPENXBL_API_KEY']);
   });
 });
