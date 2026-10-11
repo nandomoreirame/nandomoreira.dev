@@ -57,7 +57,7 @@ const iconButton =
         popovertarget="site-menu"
         popovertargetaction="hide"
         aria-label="Fechar menu"
-        class={iconButton}
+        class={`site-menu-close ${iconButton}`}
       >
         <Icon name="lucide:x" aria-hidden="true" class="size-6" />
       </button>
@@ -65,11 +65,11 @@ const iconButton =
 
     <nav
       aria-label="Menu principal (mobile)"
-      class="flex flex-1 flex-col items-center justify-center px-lg"
+      class="flex flex-1 flex-col items-center px-lg pb-lg"
     >
-      <ul class="flex w-full max-w-page flex-col">
+      <ul class="flex w-full max-w-page flex-1 flex-col">
         {items.map((item) => (
-          <li class="flex border-b border-border first:border-t">
+          <li class="flex flex-1 border-b border-border first:border-t">
             <a
               href={item.href}
               aria-current={current === item.href ? 'page' : undefined}

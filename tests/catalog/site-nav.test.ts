@@ -124,6 +124,24 @@ describe('SiteNav mobile hamburger menu', () => {
     expect(close).toMatch(/\bsize-11\b/);
   });
 
+  it('marks the close button as the animated one', async () => {
+    const html = await render({ hasPosts: true });
+    const close = html.match(/<button\b[^>]*aria-label="Fechar menu"[^>]*>/)?.[0] ?? '';
+    expect(close).toMatch(/class="[^"]*\bsite-menu-close\b/);
+  });
+
+  // The rows share the height of the screen, like the reference site, instead
+  // of a short list floating in the middle.
+  it('stretches the items over the full height of the menu', async () => {
+    const html = await render({ hasPosts: true });
+    const menu = html.slice(html.indexOf('id="site-menu"'));
+    const list = menu.match(/<ul\b[^>]*>/)?.[0] ?? '';
+    expect(list).toMatch(/class="[^"]*\bflex-1\b/);
+    const items = menu.match(/<li\b[^>]*>/g) ?? [];
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) expect(item).toMatch(/class="[^"]*\bflex-1\b/);
+  });
+
   it('keeps the desktop list hidden on small screens and flex from md up', async () => {
     const html = await render();
     const desktopList =

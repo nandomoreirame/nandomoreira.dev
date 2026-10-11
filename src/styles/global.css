@@ -340,6 +340,10 @@
     padding: 0;
     border: 0;
     background: var(--color-background);
+    /* Layout on the base rule, not on :popover-open: display stays flex through
+       the closing fade, and a direction that dropped on close turned the menu
+       into a squashed row for that instant. */
+    flex-direction: column;
     opacity: 0;
     transition:
       opacity var(--duration-base) var(--ease-out),
@@ -349,13 +353,63 @@
 
   .site-menu:popover-open {
     display: flex;
-    flex-direction: column;
     opacity: 1;
   }
 
   @starting-style {
     .site-menu:popover-open {
       opacity: 0;
+    }
+  }
+
+  /* The X turns in on open. The icon moves, not the button, so the hit target
+     stays put under the pointer. */
+  .site-menu-close svg {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .site-menu:popover-open .site-menu-close svg {
+    opacity: 1;
+    transform: none;
+    transition-delay: 80ms;
+  }
+
+  /* Items rise and fade in one after another. Only the open state carries the
+     stagger: closing takes them all out at once, inside the popover's own fade. */
+  .site-menu li {
+    opacity: 0;
+    transform: translateY(var(--spacing-md));
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .site-menu:popover-open li {
+    opacity: 1;
+    transform: none;
+  }
+
+  .site-menu:popover-open li:nth-child(1) { transition-delay: 60ms; }
+  .site-menu:popover-open li:nth-child(2) { transition-delay: 100ms; }
+  .site-menu:popover-open li:nth-child(3) { transition-delay: 140ms; }
+  .site-menu:popover-open li:nth-child(4) { transition-delay: 180ms; }
+  .site-menu:popover-open li:nth-child(5) { transition-delay: 220ms; }
+  .site-menu:popover-open li:nth-child(6) { transition-delay: 260ms; }
+  .site-menu:popover-open li:nth-child(7) { transition-delay: 300ms; }
+
+  @starting-style {
+    .site-menu:popover-open .site-menu-close svg {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
+    }
+
+    .site-menu:popover-open li {
+      opacity: 0;
+      transform: translateY(var(--spacing-md));
     }
   }
 
