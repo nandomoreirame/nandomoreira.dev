@@ -9,6 +9,15 @@ describe('favicon', () => {
     expect(readFileSync('public/favicon.svg', 'utf8')).toMatch(/^<svg[^>]*viewBox="0 0 32 32"/);
   });
 
+  it('outlines the tile with the primary colour at half opacity, like the header mark', () => {
+    const svg = readFileSync('public/favicon.svg', 'utf8');
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    const primary = css.match(/--color-primary:\s*(#[0-9a-fA-F]{6})/)?.[1];
+    const rect = svg.match(/<rect[^>]*stroke=[^>]*>/)?.[0] ?? '';
+    expect(rect).toContain(`stroke="${primary}"`);
+    expect(rect).toContain('stroke-opacity="0.5"');
+  });
+
   it('declares it in the head of every page', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(BaseLayout, {
