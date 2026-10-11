@@ -105,7 +105,7 @@ describe('refreshAccessToken', () => {
 
 describe('fetchRecentTracks', () => {
   it('refreshes the access token and reads recently played with it', async () => {
-    const fetchImpl = vi.fn(async (url: string) => {
+    const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
       if (String(url).includes('/api/token')) {
         return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
       }
@@ -113,7 +113,7 @@ describe('fetchRecentTracks', () => {
     });
 
     const tracks = await fetchRecentTracks({
-      fetch: fetchImpl as typeof fetch,
+      fetch: fetchImpl as unknown as typeof fetch,
       clientId: 'cid',
       clientSecret: 'sec',
       refreshToken: 'ref',
@@ -123,6 +123,6 @@ describe('fetchRecentTracks', () => {
     expect(tracks[0]?.title).toBe('Same Song');
     const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('recently-played'));
     expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/player/recently-played?limit=50');
-    expect(new Headers((played?.[1] as RequestInit).headers).get('authorization')).toBe('Bearer access-1');
+    expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
   });
 });

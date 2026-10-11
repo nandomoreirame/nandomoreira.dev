@@ -94,7 +94,7 @@ describe('fetchXbox', () => {
       throw new Error(`unexpected ${url}`);
     });
 
-    const result = await fetchXbox({ fetch: fetchImpl as typeof fetch, apiKey: 'key-1' });
+    const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'key-1' });
 
     expect(fetchImpl).toHaveBeenCalledTimes(2);
     expect(result.playingNow).toEqual({ title: 'Halo Infinite' });

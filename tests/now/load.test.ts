@@ -81,7 +81,7 @@ describe('loadNow', () => {
   it('marks every configured source ok when each one answers', async () => {
     const loadNow = createNowLoader({
       config: readNowConfig(fullConfig),
-      fetch: okFetch() as typeof fetch,
+      fetch: okFetch() as unknown as typeof fetch,
       now: NOW,
       logger: { warn: vi.fn() },
     });
@@ -100,7 +100,7 @@ describe('loadNow', () => {
     });
     const loadNow = createNowLoader({
       config: readNowConfig({}),
-      fetch: fetchImpl as typeof fetch,
+      fetch: fetchImpl as unknown as typeof fetch,
       now: NOW,
       logger: { warn: vi.fn() },
     });
