@@ -1,6 +1,7 @@
 ---
 import type { Post } from '../../content/schemas/post';
 import { toCompactStamp } from '../../lib/format/date';
+import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import ListRow from '../ui/ListRow.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
 
@@ -17,7 +18,7 @@ const { posts } = Astro.props;
       <SectionHeader
         title="Blog"
         level={2}
-        description="Os textos mais recentes do blog."
+        description={BLOG_COPY.description}
       />
 
       <ul class="mt-md list-none p-0">

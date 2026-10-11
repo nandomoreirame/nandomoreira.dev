@@ -2,6 +2,8 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import LatestPosts from '../../src/components/home/LatestPosts.astro';
 import type { Post } from '../../src/content/schemas/post';
+import PostsPage from '../../src/pages/posts/index.astro';
+import { BLOG_COPY } from '../../src/lib/posts/blog-copy';
 
 const post = (overrides: Partial<Post> & Pick<Post, 'slug' | 'title' | 'date'>): Post => ({
   summary: 'Resumo do post.',
@@ -49,5 +51,13 @@ describe('LatestPosts', () => {
     expect(html).toContain('Ver todos os posts');
     expect(html).not.toContain('variant="primary"');
     expect(html).not.toContain('bg-primary');
+  });
+
+  it('describes the blog with the same text as /posts, from one source', async () => {
+    const html = await render([post({ slug: 'a', title: 'A', date: '2026-10-01' })]);
+    expect(html).toContain(BLOG_COPY.description.replace(':)', ''));
+
+    const container = await AstroContainer.create();
+    expect(await container.renderToString(PostsPage)).toContain(BLOG_COPY.description.replace(':)', ''));
   });
 });

@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
 import { getCurrentPosts, getUpcomingPosts } from '../../lib/content';
 import { toCompactStamp } from '../../lib/format/date';
+import { BLOG_COPY } from '../../lib/posts/blog-copy';
 
 const posts = await getCurrentPosts();
 const upcoming = await getUpcomingPosts();
@@ -12,12 +13,12 @@ const upcoming = await getUpcomingPosts();
 
 <BaseLayout
   title="Blog | nandomoreira.dev"
-  description="Meus estudos e experimentos com agentes de IA, Linux e as ferramentas que eu mesmo construo."
+  description={BLOG_COPY.metaDescription}
 >
   <PageHeader
     eyebrow="Blog"
-    title="Meu caderno aberto"
-    description="Escrevo aqui desde 2015. Hoje sai muito sobre agentes de IA, Linux e as ferramentas que eu mesmo construo, com o que deu certo e o que quebrou no caminho. No fundo, eu escrevo sobre meus estudos e experimentos pra mim mesmo; se você está lendo, é um bônus :)"
+    title={BLOG_COPY.title}
+    description={BLOG_COPY.description}
   />
 
   {

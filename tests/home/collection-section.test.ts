@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import CollectionSection from '../../src/components/home/CollectionSection.astro';
 import type { Project } from '../../src/content/schemas/project';
+import { COLLECTION_COPY } from '../../src/lib/catalog/collection-copy';
 
 const project = (overrides: Partial<Project> = {}): Project =>
   ({
@@ -41,6 +42,13 @@ describe('CollectionSection', () => {
     );
     expect(await render('lab', [project()])).toContain('Laboratório');
   });
+
+  it.each(['portfolio', 'lab'] as const)(
+    'describes %s with the same text as its own page, from one source',
+    async (collection) => {
+      expect(await render(collection, [])).toContain(COLLECTION_COPY[collection].description);
+    },
+  );
 
   it('anchors itself on the collection it shows', async () => {
     expect(await render('portfolio', [project({ block: 'professional' })])).toContain(

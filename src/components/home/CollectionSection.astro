@@ -5,6 +5,7 @@ import {
   collectionOfBlock,
   type CatalogCollection,
 } from '../../lib/catalog/groups';
+import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
 import { toCompactStamp } from '../../lib/format/date';
 import ListRow from '../ui/ListRow.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
@@ -35,11 +36,6 @@ if (foreign) {
   );
 }
 
-const DESCRIPTIONS: Record<CatalogCollection, string> = {
-  portfolio: 'Trabalho entregue, com o problema, a decisão técnica e o resultado.',
-  lab: 'Ferramental e experimentos, com o mesmo recorte.',
-};
-
 const EMPTY: Record<CatalogCollection, string> = {
   portfolio: 'Nenhum case de portfólio publicado ainda.',
   lab: 'Nenhum experimento publicado ainda.',
@@ -54,7 +50,7 @@ const hasMore = totalCount > shown.length;
     title={title}
     level={2}
     index={index}
-    description={DESCRIPTIONS[collection]}
+    description={COLLECTION_COPY[collection].description}
   />
 
   {
