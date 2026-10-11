@@ -109,6 +109,9 @@
   --text-body--line-height: 1.625;
   --text-small: 0.875rem;
   --text-small--line-height: 1.5;
+  /* 13px: one step under small, for a compact label on phones (the hero pill). */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.5;
   --text-mono: 0.875rem;
   --text-mono--line-height: 1.6;
 

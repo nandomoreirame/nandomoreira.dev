@@ -29,20 +29,22 @@ const STATUS_DOT: Record<Availability['status'], string> = {
   <p>
     <a
       href="/mcp"
-      class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-small text-muted-foreground transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-caption text-muted-foreground sm:text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       <span
         class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
         aria-hidden="true"
       ></span>
       <span>{STATUS_LABEL[availability.status]}</span>
-      <span aria-hidden="true">·</span>
-      <span>conectar via MCP</span>
+      {/* Phones drop the MCP hint, which wrapped the pill onto two lines; the
+          arrow stays, so the pill still reads as a link (to /mcp). */}
+      <span class="hidden sm:inline" aria-hidden="true">·</span>
+      <span class="hidden sm:inline">conectar via MCP</span>
       <span aria-hidden="true">↗</span>
     </a>
   </p>
 
-  <h1 class="font-serif text-display font-semibold text-foreground lg:text-[3.75rem]">
+  <h1 class="font-serif text-h1 font-semibold text-foreground sm:text-display lg:text-[3.75rem]">
     {headline}
   </h1>
 
