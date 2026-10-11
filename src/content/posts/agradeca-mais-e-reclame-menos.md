@@ -5,6 +5,8 @@ summary: "Você já parou pra pensar quantas vezes você reclama por dia, ou qua
 date: "2016-08-23"
 markers:
   - reflexão
+  - vida
+  - gratidão
 archived: true
 cover:
   src: ../../assets/posts/2016/thanks.gif

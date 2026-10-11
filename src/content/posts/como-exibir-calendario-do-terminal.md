@@ -7,6 +7,10 @@ archived: true
 cover:
   src: ../../assets/posts/2018/Untitled.png
   alt: "Terminal exibindo a saída do comando cal com o calendário de junho de 2024 e o dia 9 destacado."
+markers:
+  - terminal
+  - dicas
+  - shell
 ---
 
 Você tá focado no código, apenas com algumas ferramentas abertas e não quer procurar o calendário na listagem de programas instalados no seu computador, ou ir até a barra de ferramentas e clicar na data pra poder ver o calendário completo do mês ou do ano?

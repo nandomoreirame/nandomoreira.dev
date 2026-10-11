@@ -4,8 +4,9 @@ title: "Como está você agora e como estará daqui 30 anos?"
 summary: "Todo mundo já fez essa pergunta para si próprio: “Afinal, quem sou eu?”, se você ainda não fez, vai por mim, um dia você irá parar e refletir sobre sua essência e sua personalidade."
 date: "2019-01-07"
 markers:
-  - reflexoes
+  - reflexão
   - vida
+  - carreira
 archived: true
 cover:
   src: ../../assets/posts/2019/hidethepainharold.jpg

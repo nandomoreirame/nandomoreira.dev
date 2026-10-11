@@ -6,6 +6,7 @@ date: "2016-07-05"
 markers:
   - scss
   - sass
+  - css
 archived: true
 cover:
   src: ../../assets/posts/2015/xx-conhecendo-o-pre-processador-sass.jpg

@@ -5,6 +5,8 @@ summary: "Eu queria poder dizer que to feliz com tudo isso, mas não to. Eu amav
 date: "2015-09-30"
 markers:
   - geral
+  - carreira
+  - startup
 archived: true
 cover:
   src: ../../assets/posts/2015/galera-do-porao-malapronta.jpg

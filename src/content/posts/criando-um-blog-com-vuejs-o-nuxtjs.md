@@ -6,6 +6,7 @@ date: "2017-11-05"
 markers:
   - vue
   - javascript
+  - nuxt
 archived: true
 cover:
   src: ../../assets/posts/2017/criando-um-blog-com-javascript-vuejs.jpg

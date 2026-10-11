@@ -5,6 +5,8 @@ summary: "Trabalhar como um time é elevar o projeto a um nível superior, que n
 date: "2016-12-27"
 markers:
   - reflexão
+  - equipe
+  - carreira
 archived: true
 cover:
   src: ../../assets/posts/2016/lojaskd-team-it.jpeg
