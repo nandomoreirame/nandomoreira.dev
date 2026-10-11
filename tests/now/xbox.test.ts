@@ -140,4 +140,22 @@ describe('fetchXbox', () => {
     expect(result.recent).toHaveLength(5);
     expect(result.recent.map((game) => game.name)).not.toContain('Microsoft Jewel');
   });
+
+  // Node's fetch sends `Accept-Language: *` when none is set, and titleHistory
+  // answers 200 with an error string in `content` instead of the titles.
+  it('sends a concrete Accept-Language on both calls', async () => {
+    const languages: Array<string | null> = [];
+    const fetchImpl = vi.fn(async (url: string, init?: RequestInit) => {
+      languages.push(new Headers(init?.headers).get('accept-language'));
+      return {
+        ok: true,
+        status: 200,
+        json: async () => (String(url).endsWith('/presence') ? playing('Scarlett', 'Halo Infinite') : history),
+      };
+    });
+
+    await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'key-1' });
+
+    expect(languages).toEqual(['pt-BR', 'pt-BR']);
+  });
 });

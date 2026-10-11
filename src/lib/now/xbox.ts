@@ -114,7 +114,9 @@ export const fetchXbox = async ({
   fetch: typeof fetch;
   apiKey: string;
 }): Promise<{ playingNow?: PlayingNow; recent: RecentGame[] }> => {
-  const headers = { accept: 'application/json', 'X-Authorization': apiKey };
+  // Without an explicit locale Node's fetch sends `Accept-Language: *`, which
+  // titleHistory rejects with a 200 whose `content` is an error string.
+  const headers = { accept: 'application/json', 'accept-language': 'pt-BR', 'X-Authorization': apiKey };
   const [presence, history] = await Promise.all([
     fetchJson(fetchImpl, PRESENCE_URL, { headers }),
     fetchJson(fetchImpl, HISTORY_URL, { headers }),
