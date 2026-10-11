@@ -1,0 +1,82 @@
+[
+  {
+    "name": "forked",
+    "html_url": "https://github.com/nandomoreirame/forked",
+    "description": "a fork",
+    "language": "TypeScript",
+    "pushed_at": "2026-10-10T00:00:00Z",
+    "fork": true,
+    "archived": false,
+    "private": false
+  },
+  {
+    "name": "old-archive",
+    "html_url": "https://github.com/nandomoreirame/old-archive",
+    "description": "archived",
+    "language": "JavaScript",
+    "pushed_at": "2026-10-09T00:00:00Z",
+    "fork": false,
+    "archived": true,
+    "private": false
+  },
+  {
+    "name": "secret-repo",
+    "html_url": "https://github.com/nandomoreirame/secret-repo",
+    "description": "private",
+    "language": "Go",
+    "pushed_at": "2026-10-08T00:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": true
+  },
+  {
+    "name": "dotfiles",
+    "html_url": "https://github.com/nandomoreirame/dotfiles",
+    "description": "dots",
+    "language": "Shell",
+    "pushed_at": "2026-10-11T00:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": false
+  },
+  {
+    "name": "stale",
+    "html_url": "https://github.com/nandomoreirame/stale",
+    "description": "too old",
+    "language": "Rust",
+    "pushed_at": "2026-09-01T12:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": false
+  },
+  {
+    "name": "alpha",
+    "html_url": "https://github.com/nandomoreirame/alpha",
+    "description": "newest",
+    "language": "TypeScript",
+    "pushed_at": "2026-10-10T12:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": false
+  },
+  {
+    "name": "beta",
+    "html_url": "https://github.com/nandomoreirame/beta",
+    "description": null,
+    "language": null,
+    "pushed_at": "2026-10-05T12:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": false
+  },
+  {
+    "name": "gamma",
+    "html_url": "https://github.com/nandomoreirame/gamma",
+    "description": "oldest valid",
+    "language": "Python",
+    "pushed_at": "2026-09-20T12:00:00Z",
+    "fork": false,
+    "archived": false,
+    "private": false
+  }
+]
