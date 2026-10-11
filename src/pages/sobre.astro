@@ -5,13 +5,13 @@ import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
+import ServiceCards from '../components/ui/ServiceCards.astro';
 import StatItem from '../components/ui/StatItem.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { COLOPHON } from '../lib/about/colophon';
 import { careerStartYear, formatPeriod } from '../lib/about/period';
-import { collectionOfBlock } from '../lib/catalog/groups';
 import { getAllProjects, getProfile } from '../lib/content';
 
 const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
@@ -20,12 +20,10 @@ const profiles = profile.contacts.filter(
 );
 const PROFILE_LABELS = { github: 'GitHub', linkedin: 'LinkedIn' } as const;
 const since = careerStartYear(profile.work);
-
-// Real route of the proving case, not the legacy /projetos path that 301s.
-const caseHref = (slug: string): string | undefined => {
-  const project = projects.find((candidate) => candidate.slug === slug);
-  return project ? `/${collectionOfBlock(project.block)}/${slug}` : undefined;
-};
+const serviceProjects = projects.map((project) => ({
+  slug: project.slug,
+  block: project.block,
+}));
 ---
 
 <BaseLayout
@@ -103,27 +101,7 @@ const caseHref = (slug: string): string | undefined => {
         level={2}
         description="Três frentes, cada uma com um case que a comprova."
       />
-      <ul class="grid grid-cols-1 gap-lg lg:grid-cols-3">
-        {
-          profile.services.map((service) => {
-            const href = caseHref(service.caseSlug);
-            return (
-              <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
-                <h3 class="text-h3 font-semibold text-foreground">{service.title}</h3>
-                <p class="text-body text-muted-foreground">{service.description}</p>
-                {href && (
-                  <a
-                    href={href}
-                    class="mt-auto inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    Ver o case que comprova
-                  </a>
-                )}
-              </li>
-            );
-          })
-        }
-      </ul>
+      <ServiceCards services={profile.services} projects={serviceProjects} />
     </section>
 
     {profile.work && profile.work.length > 0 && <Experience work={profile.work} />}

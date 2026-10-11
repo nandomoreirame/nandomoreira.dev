@@ -1,15 +1,14 @@
 ---
-import { assertServicesHaveCases } from '../../lib/home/services';
+import type { Block } from '../../content/blocks';
 import SectionHeader from '../ui/SectionHeader.astro';
+import ServiceCards from '../ui/ServiceCards.astro';
 
 interface Props {
   services: Array<{ title: string; description: string; caseSlug: string }>;
-  knownSlugs: string[];
+  projects: Array<{ slug: string; block: Block }>;
 }
 
-const { services, knownSlugs } = Astro.props;
-
-assertServicesHaveCases(services, knownSlugs);
+const { services, projects } = Astro.props;
 ---
 
 <section id="servicos" class="py-2xl lg:py-3xl">
@@ -20,18 +19,5 @@ assertServicesHaveCases(services, knownSlugs);
     description="Cada frente com um case que a comprova."
   />
 
-  <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2">
-    {services.map((service) => (
-      <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
-        <h3 class="text-h3 font-semibold text-foreground">{service.title}</h3>
-        <p class="text-body text-muted-foreground">{service.description}</p>
-        <a
-          href={`/projetos/${service.caseSlug}`}
-          class="mt-auto inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Ver o case
-        </a>
-      </li>
-    ))}
-  </ul>
+  <ServiceCards services={services} projects={projects} />
 </section>

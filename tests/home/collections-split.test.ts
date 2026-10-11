@@ -30,7 +30,13 @@ describe('home splits portfolio from lab', () => {
   it('never shows a lab case inside portfolio, or the reverse', async () => {
     const html = await render();
     const portfolio = html.slice(html.indexOf('id="portfolio"'), html.indexOf('id="lab"'));
-    const lab = html.slice(html.indexOf('id="lab"'));
+    // Stop at the next home section: Services now links to real /portfolio
+    // cases, and would false-fail a slice that runs to the end of the page.
+    const labEnd = html.indexOf('id="trajetoria"');
+    const lab = html.slice(
+      html.indexOf('id="lab"'),
+      labEnd === -1 ? html.length : labEnd,
+    );
 
     // Asserting on the hrefs alone is not enough: the row href is built from
     // the section, so a mixed-in case still renders a section-shaped link
