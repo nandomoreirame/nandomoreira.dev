@@ -11,7 +11,7 @@ import Posts from '../../src/pages/posts/index.astro';
 const PAGES = [
   ['/portfolio', Portfolio, 'Portfólio'],
   ['/lab', Lab, 'Laboratório'],
-  ['/posts', Posts, 'Posts'],
+  ['/posts', Posts, 'Blog'],
   ['/posts/arquivo', Arquivo, 'Arquivo'],
   ['/contato', Contato, 'Contato'],
   ['/mcp', Mcp, 'Agentes · MCP'],
@@ -31,6 +31,7 @@ describe.each(PAGES)('%s header', (_route, Page, eyebrow) => {
     const main = html.slice(html.indexOf('<main'));
 
     expect(main.match(/<h1/g)).toHaveLength(1);
+    expect(main).toContain(eyebrow);
     expect(main.indexOf(eyebrow)).toBeLessThan(main.indexOf('<h1'));
     expect(main).toContain('data-page-lead');
   });

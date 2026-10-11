@@ -42,4 +42,8 @@ describe('/posts listing', () => {
     const html = await render();
     expect(html).toContain('href="/posts/arquivo"');
   });
+
+  it('names the page Blog in the browser tab', async () => {
+    expect(await render()).toContain('<title>Blog | nandomoreira.dev</title>');
+  });
 });

@@ -9,7 +9,7 @@ const { current, hasPosts = false } = Astro.props;
 const items = [
   { href: '/portfolio', label: 'Portfólio' },
   { href: '/lab', label: 'Lab' },
-  ...(hasPosts ? [{ href: '/posts', label: 'Posts' }] : []),
+  ...(hasPosts ? [{ href: '/posts', label: 'Blog' }] : []),
   { href: '/sobre', label: 'Sobre' },
   { href: '/mcp', label: 'MCP' },
   { href: '/contato', label: 'Contato' },
