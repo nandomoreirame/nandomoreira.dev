@@ -55,10 +55,10 @@ check "/portfolio/financial-normalization.md" "text/markdown" "## Problema"
 check "/lab/forja.md"     "text/markdown"     "## Problema"
 check "/index.md"          "text/markdown"     "title:"
 check "/sobre.md"          "text/markdown"     "title:"
-check "/criar-site-completo-com-o-notion.md" "text/markdown" "title:"
+check "/como-exibir-calendario-do-terminal.md" "text/markdown" "title:"
 check "/ia"                "text/html"         'name="robots" content="noindex"'
 check "/sobre/ia"          "text/html"         'name="robots" content="noindex"'
-check "/criar-site-completo-com-o-notion/ia" "text/html" 'name="robots" content="noindex"'
+check "/como-exibir-calendario-do-terminal/ia" "text/html" 'name="robots" content="noindex"'
 check "/lab/forja/ia"      "text/html"         'data-ai-source'
 check "/AGENTS.md"        "text/markdown"     "## Availability"
 check "/robots.txt"       "text/plain"        "Sitemap: https://"
