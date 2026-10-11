@@ -56,6 +56,14 @@ describe('art motion', () => {
     expect(layer).toMatch(/inset:\s*0/);
   });
 
+  it('keeps the resting dots at half strength, nearly lost in the background', () => {
+    const layer = css.match(/\[data-pointer-field\]::before,\s*\[data-pointer-field\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(layer).toMatch(/radial-gradient\(circle,\s*color-mix\(in oklch,\s*var\(--color-border\) 50%,\s*transparent\)/);
+    // The amber copy under the cursor keeps full strength: the glow is the contrast.
+    const glow = [...css.matchAll(/\[data-pointer-field\]::after\s*\{([^}]*)\}/g)].map((m) => m[1]).find((body) => /mask-image/.test(body ?? '')) ?? '';
+    expect(glow).toMatch(/radial-gradient\(circle,\s*var\(--color-primary\) 1px/);
+  });
+
   it('centres the glow on viewport coordinates, with no offset to compensate', () => {
     const mask = css.match(/\[data-pointer-field\]::after\s*\{[^}]*mask-image:[^;]+/)?.[0] ?? '';
     expect(mask).toMatch(/at var\(--gx\) var\(--gy\)/);

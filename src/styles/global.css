@@ -649,7 +649,8 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1.5px);
+    /* Half strength at rest: the grid is texture, the amber glow is the contrast. */
+    background-image: radial-gradient(circle, color-mix(in oklch, var(--color-border) 50%, transparent) 1px, transparent 1.5px);
     background-size: var(--spacing-md) var(--spacing-md);
   }
 
