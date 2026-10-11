@@ -20,9 +20,9 @@ e nenhum fato sai sem decisão dele.
 | `fluxo-rpi-claude-code-grok-codex` | Publicado | 1 |
 | `como-construi-meu-site-que-conversa-com-ia-via-mcp` | Publicado | 2 |
 | `de-cinco-dias-para-trinta-minutos` | Rascunho, texto completo | 3 |
-| `o-falso-verde` | Roteiro em `docs/ideas/posts.md` | 4 (escrever do zero) |
-| `memoria-para-agentes-em-4-camadas` | Roteiro em `docs/ideas/posts.md` | 5 (escrever do zero) |
-| `revisao-cruzada-entre-modelos` | Roteiro em `docs/ideas/posts.md` | 6 (escrever do zero) |
+| `o-falso-verde` | Rascunho escrito (2026-10-11) | 4 (escrever do zero) |
+| `memoria-para-agentes-em-4-camadas` | Rascunho escrito (2026-10-11) | 5 (escrever do zero) |
+| `revisao-cruzada-entre-modelos` | Rascunho escrito (2026-10-11) | 6 (escrever do zero) |
 
 Fora do escopo: os sete posts republicados do blog da A's Code (são cópia do original
 creditado) e o arquivo de 2015 a 2019 (escrito por ele).
