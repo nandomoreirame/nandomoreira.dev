@@ -15,3 +15,26 @@ export const toCompactStamp = (iso: string): string => {
 
   return `${month}/${year}`;
 };
+
+const FULL_ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * "11 de outubro de 2026". Built from the parts in UTC and formatted in UTC,
+ * so no local offset can move the day.
+ */
+export const toLongDate = (iso: string): string => {
+  const match = FULL_ISO_DATE.exec(iso);
+
+  if (!match) {
+    throw new Error(`Expected an ISO-8601 date (YYYY-MM-DD), received "${iso}"`);
+  }
+
+  const [, year, month, day] = match.map(Number);
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year!, month! - 1, day!)));
+};

@@ -7,9 +7,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { generateArt } from '../lib/art';
-import { toCompactStamp } from '../lib/format/date';
+import { toCompactStamp, toLongDate } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
+import { toHashtag } from '../lib/posts/tags';
 
 export const prerender = true;
 
@@ -38,7 +39,7 @@ const post = live.data;
 const { Content } = await render(live);
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForPost(post, site));
-const stamp = toCompactStamp(post.date);
+const published = `publicado: ${toLongDate(post.date)}`;
 const related = relatedPosts(post, await getAllPosts());
 // Same generated drawing as the case pages, in the cover's place.
 const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.art, aspect: 'banner' }) : undefined;
@@ -74,9 +75,19 @@ const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.a
         )
       }
       <h1 class="text-h1 font-semibold text-foreground">{post.title}</h1>
-      <time class="font-mono text-small text-muted-foreground" datetime={post.date}>
-        {stamp}
-      </time>
+      <p class="flex flex-wrap items-center gap-x-sm gap-y-xs font-mono text-small text-muted-foreground">
+        <time datetime={post.date}>{published}</time>
+        {
+          post.markers && post.markers.length > 0 && (
+            <Fragment>
+              <span aria-hidden="true">|</span>
+              {post.markers.map((marker) => (
+                <span>{toHashtag(marker)}</span>
+              ))}
+            </Fragment>
+          )
+        }
+      </p>
       {
         post.cover && (
           <figure class="m-0 mt-md overflow-hidden rounded-md border border-border">

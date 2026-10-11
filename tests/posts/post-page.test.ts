@@ -129,6 +129,22 @@ describe('/[slug] post page', () => {
     expect(html).not.toMatch(/data-motif=/);
   });
 
+  it('shows the full publication date on the post, labelled', async () => {
+    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway');
+    expect(post).toBeDefined();
+    const html = await renderEntry(post!);
+    expect(html).toMatch(/<time[^>]*datetime="2026-10-11"[^>]*>\s*publicado: 11 de outubro de 2026\s*<\/time>/);
+  });
+
+  it('follows the date with the post tags as hashtags, after a | that screen readers skip', async () => {
+    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway');
+    const html = await renderEntry(post!);
+    const meta = html.slice(html.indexOf('publicado:'), html.indexOf('publicado:') + 600);
+    expect(meta).toMatch(/<span[^>]*aria-hidden="true"[^>]*>\|<\/span>/);
+    const tags = [...meta.matchAll(/>(#[^<]+)</g)].map((m) => m[1]);
+    expect(tags).toEqual(['#linux', '#redes', '#open-source']);
+  });
+
   it('puts the title and date above the cover', async () => {
     const entries = await getAllPostEntries();
     const withCover = entries.find((e) => e.data.slug === '8-meses-de-malapronta-e-o-fim');
