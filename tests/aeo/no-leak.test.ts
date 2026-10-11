@@ -18,6 +18,7 @@ import {
   homeMarkdown,
 } from '../../src/lib/ai-view/pages';
 import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
+import { MACHINE_LEAKS } from '../helpers/machine-leaks';
 
 const site = new URL('https://nandomoreira.dev');
 
@@ -77,13 +78,7 @@ const outputs = () => [
   connectMarkdown({ site }),
 ];
 
-const FORBIDDEN: Array<[string, RegExp]> = [
-  ['email address', /[\w.+-]+@[\w-]+\.[\w.]+/],
-  ['absolute filesystem path', /\/(home|Users|var|etc)\//],
-  ['api key or token', /(api[_-]?key|secret|token|bearer)\s*[:=]/i],
-  ['firebase project id', /nandomoreira-dev/],
-  ['private ip', /\b(10|127|192\.168)\.\d+\.\d+\.\d+\b/],
-];
+const FORBIDDEN = MACHINE_LEAKS;
 
 describe('machine routes leak nothing', () => {
   it.each(FORBIDDEN)('never exposes an %s', (_label, pattern) => {
