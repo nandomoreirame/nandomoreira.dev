@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  NOW_PREVIEW_MARKER,
   POINTER_MARKER,
   executableScripts,
   scriptViolations,
@@ -88,9 +89,19 @@ describe('client JavaScript', () => {
     expect(scripts.some((script) => script.includes(POINTER_MARKER))).toBe(true);
   });
 
+  it('ships the audio preview on /now and nowhere else', async () => {
+    const { scripts } = await served('/now');
+    expect(scripts.some((script) => script.includes(NOW_PREVIEW_MARKER))).toBe(true);
+    const home = await served('/');
+    expect(home.scripts.some((script) => script.includes(NOW_PREVIEW_MARKER))).toBe(false);
+  });
+
   it('leaves no stray script file in the client asset dir', () => {
     const dir = join(CLIENT, '_astro');
     const files = existsSync(dir) ? readdirSync(dir).filter((file) => file.endsWith('.js')) : [];
-    for (const file of files) expect(readFileSync(join(dir, file), 'utf8')).toContain(POINTER_MARKER);
+    for (const file of files) {
+      const body = readFileSync(join(dir, file), 'utf8');
+      expect(body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER), file).toBe(true);
+    }
   });
 });

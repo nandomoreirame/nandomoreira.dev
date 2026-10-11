@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { executableScripts, scriptViolations } from './client-scripts';
 
 const POINTER = "document.querySelectorAll('[data-pointer-field]')";
+const PREVIEW = "document.querySelectorAll('[data-now-preview]')";
 
 describe('executableScripts', () => {
   it('ignores JSON-LD data blocks', () => {
@@ -50,5 +51,27 @@ describe('scriptViolations', () => {
     const bloated = `${POINTER};${randomBytes(3000).toString('hex')}`;
     const [violation] = scriptViolations([{ route: '/lab', scripts: [bloated] }]);
     expect(violation).toMatch(/^\/lab: pointer effect is \d+ B gzip, budget 1536$/);
+  });
+
+  it('accepts the audio preview script on /now, beside the pointer effect', () => {
+    expect(scriptViolations([{ route: '/now', scripts: [POINTER, PREVIEW] }])).toEqual([]);
+  });
+
+  it('rejects the audio preview script on any other page', () => {
+    expect(scriptViolations([{ route: '/sobre', scripts: [POINTER, PREVIEW] }])).toEqual([
+      '/sobre: audio preview outside /now',
+    ]);
+  });
+
+  it('rejects the audio preview above 1 KB gzip', () => {
+    const bloated = `${PREVIEW};${randomBytes(3000).toString('hex')}`;
+    const [violation] = scriptViolations([{ route: '/now', scripts: [bloated] }]);
+    expect(violation).toMatch(/^\/now: audio preview is \d+ B gzip, budget 1024$/);
+  });
+
+  it('still rejects a third, unnamed script on /now', () => {
+    expect(scriptViolations([{ route: '/now', scripts: [POINTER, PREVIEW, 'console.log(1)'] }])).toEqual([
+      '/now: script outside the allowlist',
+    ]);
   });
 });
