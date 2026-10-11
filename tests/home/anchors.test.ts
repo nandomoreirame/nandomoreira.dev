@@ -5,14 +5,14 @@ import Index from '../../src/pages/index.astro';
 
 // `projetos` gave way to one anchor per collection when the home stopped
 // merging portfolio and lab into a single "Trabalho selecionado" section.
+// About and contact moved to /sobre and /contato; blog sits above portfolio.
 const EXPECTED_ANCHORS = [
   'inicio',
+  'blog',
   'portfolio',
   'lab',
   'trajetoria',
   'servicos',
-  'sobre',
-  'contato',
 ];
 
 const nav = readFileSync('src/components/layout/SiteNav.astro', 'utf8');

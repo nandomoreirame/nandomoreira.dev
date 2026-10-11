@@ -1,24 +1,31 @@
 ---
-import About from '../components/home/About.astro';
 import CollectionSection from '../components/home/CollectionSection.astro';
-import Contact from '../components/home/Contact.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
 import Hero from '../components/home/Hero.astro';
+import LatestPosts from '../components/home/LatestPosts.astro';
 import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { collectionOfBlock } from '../lib/catalog/groups';
-import { getAllProjects, getProfile } from '../lib/content';
+import { getAllPosts, getAllProjects, getProfile } from '../lib/content';
 import { homeMeta } from '../lib/home/meta';
 import { organizationLd } from '../lib/home/organization-ld';
 import { personLd } from '../lib/home/person-ld';
+import { latestPosts } from '../lib/posts/latest';
 
-const [profile, allProjects] = await Promise.all([getProfile(), getAllProjects()]);
+const [profile, allProjects, allPosts] = await Promise.all([
+  getProfile(),
+  getAllProjects(),
+  getAllPosts(),
+]);
 
-const knownSlugs = allProjects.map((project) => project.slug);
+const serviceProjects = allProjects.map((project) => ({
+  slug: project.slug,
+  block: project.block,
+}));
 
 /**
  * Featured first, then by date. Applied per collection: a single merged list
@@ -38,14 +45,14 @@ const lab = rank(
   allProjects.filter((project) => collectionOfBlock(project.block) === 'lab'),
 );
 
+const blogPosts = latestPosts(allPosts, 4);
+
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
 const organizationJsonLd = serialiseJsonLd(
   organizationLd(profile, requireSite(Astro.site ?? new URL('https://nandomoreira.dev'))),
 );
 const meta = homeMeta(profile);
-// One-line teaser: first sentence of the bio, without dumping the full page.
-const aboutSummary = profile.bio.split(/(?<=\.)\s+/)[0] ?? profile.positioning;
 const hireBrief = buildHireBrief({
   site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
   profile,
@@ -61,6 +68,7 @@ const hireBrief = buildHireBrief({
     positioning={profile.positioning}
     availability={profile.availability}
   />
+  <LatestPosts posts={blogPosts} />
   <CollectionSection
     collection="portfolio"
     projects={portfolio}
@@ -69,8 +77,6 @@ const hireBrief = buildHireBrief({
   />
   <CollectionSection collection="lab" projects={lab} totalCount={lab.length} index={2} />
   <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
-  <Services services={profile.services} knownSlugs={knownSlugs} />
-  <About summary={aboutSummary} />
-  <Contact contacts={profile.contacts} />
+  <Services services={profile.services} projects={serviceProjects} />
   <AgentBrief brief={hireBrief} />
 </BaseLayout>

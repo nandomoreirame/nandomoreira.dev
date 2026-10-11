@@ -2,17 +2,23 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const page = readFileSync('src/pages/index.astro', 'utf8');
-const about = readFileSync('src/components/home/About.astro', 'utf8');
 
 describe('home page assembly', () => {
   it('reads through the access layer, never through getCollection', () => {
     expect(page).toContain('getAllProjects');
     expect(page).toContain('getProfile');
+    expect(page).toContain('getAllPosts');
     expect(page).not.toContain('getCollection(');
   });
 
-  it('places the six sections in the order the PRD declares', () => {
-    const order = ['Hero', 'CollectionSection', 'Trajectory', 'Services', 'About', 'Contact'];
+  it('places the sections in the order the home now declares', () => {
+    const order = [
+      'Hero',
+      'LatestPosts',
+      'CollectionSection',
+      'Trajectory',
+      'Services',
+    ];
     const positions = order.map((name) => page.lastIndexOf(`<${name}`));
 
     expect(positions.every((position) => position > -1)).toBe(true);
@@ -20,8 +26,12 @@ describe('home page assembly', () => {
   });
 
   it('puts proof before offer: projects come before services', () => {
-    expect(page.lastIndexOf('<FeaturedProjects')).toBeLessThan(
-      page.lastIndexOf('<Services'),
+    expect(page.lastIndexOf('<CollectionSection')).toBeLessThan(page.lastIndexOf('<Services'));
+  });
+
+  it('puts the latest posts above the portfolio section', () => {
+    expect(page.lastIndexOf('<LatestPosts')).toBeLessThan(
+      page.lastIndexOf('<CollectionSection'),
     );
   });
 
@@ -34,8 +44,8 @@ describe('home page assembly', () => {
     expect(page).not.toContain('noindex');
   });
 
-  it('links the about section to /sobre without duplicating the full bio', () => {
-    expect(about).toContain('href="/sobre"');
-    expect(about).not.toContain('{bio}');
+  it('no longer mounts the home About or Contact sections', () => {
+    expect(page).not.toContain('<About');
+    expect(page).not.toContain('<Contact');
   });
 });

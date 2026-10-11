@@ -1,0 +1,46 @@
+---
+import type { Post } from '../../content/schemas/post';
+import { toCompactStamp } from '../../lib/format/date';
+import ListRow from '../ui/ListRow.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <section id="blog" class="py-2xl lg:py-3xl">
+      <SectionHeader
+        title="Blog"
+        level={2}
+        description="Os textos mais recentes do blog."
+      />
+
+      <ul class="mt-md list-none p-0">
+        {posts.map((post) => (
+          <li>
+            <ListRow
+              href={`/${post.slug}`}
+              title={post.title}
+              summary={post.summary}
+              stamp={toCompactStamp(post.date)}
+            />
+          </li>
+        ))}
+      </ul>
+
+      <p class="mt-lg">
+        <a
+          href="/posts"
+          class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Ver todos os posts
+        </a>
+      </p>
+    </section>
+  )
+}
