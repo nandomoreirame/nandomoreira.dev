@@ -61,6 +61,7 @@ const PAGES: ReadonlyArray<{ path: string; title: string }> = [
   { path: '/lab', title: 'Lab' },
   { path: '/posts', title: 'Posts' },
   { path: '/mcp', title: 'MCP' },
+  { path: '/setup', title: 'Setup' },
 ];
 
 const MACHINE_ROUTE_DESCRIPTIONS: ReadonlyArray<{ path: string; description: string }> = [

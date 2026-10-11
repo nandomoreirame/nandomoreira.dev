@@ -2,6 +2,7 @@ import { buildCaseMarkdown } from '../aeo/case-markdown';
 import { OPEN_SOURCE_REPOS } from '../catalog/open-source';
 import { COLLECTION_COPY } from '../catalog/collection-copy';
 import { privacyMarkdown } from '../privacy/policy';
+import { SETUP_PATH, setupMarkdown } from '../setup/setup';
 import { absoluteUrl } from '../aeo/urls';
 import {
   collectionOfBlock,
@@ -138,6 +139,10 @@ export const markdownForPath = async (
 
   if (key === 'privacidade') {
     return page('Política de privacidade', '/privacidade', '/privacidade.md', privacyMarkdown({ site }));
+  }
+
+  if (key === 'setup') {
+    return page('Setup', SETUP_PATH, `${SETUP_PATH}.md`, setupMarkdown({ site }));
   }
 
   if (key === 'mcp') {

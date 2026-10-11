@@ -41,6 +41,7 @@ export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
     { path: '/sobre' },
     { path: '/contato' },
     { path: '/mcp' },
+    { path: '/setup' },
     { path: '/privacidade' },
     { path: '/api/resume.json' },
     { path: '/api/resume.txt' },

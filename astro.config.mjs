@@ -39,6 +39,8 @@ export default defineConfig({
   redirects: {
     '/notas': '/posts',
     '/notas/[slug]': '/[slug]',
+    // The Setup page started at the URL of the 2018 post it replaced.
+    '/apps-que-uso': '/setup',
     // Browsers and crawlers ask for /favicon.ico by default; without this the
     // post route [slug] answers it.
     '/favicon.ico': '/favicon.svg',

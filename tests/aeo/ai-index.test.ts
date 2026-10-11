@@ -65,6 +65,7 @@ describe('buildAiIndex', () => {
       'https://nandomoreira.dev/lab',
       'https://nandomoreira.dev/posts',
       'https://nandomoreira.dev/mcp',
+      'https://nandomoreira.dev/setup',
     ]);
   });
 

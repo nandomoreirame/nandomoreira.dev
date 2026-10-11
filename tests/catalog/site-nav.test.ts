@@ -159,7 +159,7 @@ describe('SiteNav mobile hamburger menu', () => {
       )?.[1] ?? '';
     const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
 
-    expect(hrefs).toEqual(['/portfolio', '/lab', '/posts', '/sobre', '/mcp', '/contato']);
+    expect(hrefs).toEqual(['/portfolio', '/lab', '/posts', '/setup', '/sobre', '/mcp', '/contato']);
   });
 
   it('still ships with no client script', async () => {
