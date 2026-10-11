@@ -113,7 +113,7 @@ const switcherView = view ?? 'human';
         page, behind everything (generative-case-art, amendment 2). */}
     <a
       href="#main"
-      class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-md focus-visible:left-md focus-visible:z-10 focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-md focus-visible:py-sm focus-visible:text-primary-foreground"
+      class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-md focus-visible:left-md focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-md focus-visible:py-sm focus-visible:text-primary-foreground"
     >
       Pular para o conteúdo
     </a>
@@ -133,7 +133,7 @@ const switcherView = view ?? 'human';
     }
 
     <div class="mx-auto w-full max-w-page px-lg">
-      <main id="main" tabindex="-1">
+      <main id="main" tabindex="-1" class="focus:outline-none">
         <slot />
       </main>
     </div>

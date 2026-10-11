@@ -34,6 +34,20 @@ describe('BaseLayout', () => {
     expect(html).toMatch(/<main[^>]*\btabindex="-1"/);
   });
 
+  it('draws no focus ring around main: it is a skip-link target, not a control', async () => {
+    const html = await render();
+    expect(html).toMatch(/<main[^>]*class="[^"]*\bfocus:outline-none\b/);
+  });
+
+  it('stacks the skip link above the sticky header, which would cover it', async () => {
+    const html = await render();
+    const zOf = (classes: string) => Number(classes.match(/\bz-(\d+)\b/)?.[1] ?? 0);
+    const skip = html.match(/<a[^>]*href="#main"[^>]*class="([^"]*)"/)?.[1] ?? '';
+    const header = html.match(/<header[^>]*class="([^"]*)"/)?.[1] ?? '';
+    expect(zOf(header)).toBeGreaterThan(0);
+    expect(zOf(skip)).toBeGreaterThan(zOf(header));
+  });
+
   // The horizontal-overflow guard moved to the base layer of global.css, where
   // html and body are styled. It is asserted in global-tags.test.ts.
 
