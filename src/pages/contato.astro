@@ -137,8 +137,23 @@ const hireBrief = buildHireBrief({
         </div>
 
         <fieldset>
-          <legend class={labelClass}>Tenho interesse em</legend>
-          <div class="flex flex-wrap gap-sm">
+          <legend id="contato-interesse-legenda" class={labelClass}>Tenho interesse em</legend>
+          {/* Phones get a native multiple select, which iOS and Android open as a
+              checklist, like the budget select above; wider screens keep the chips.
+              Both send `interesse`, and the server drops repeated values. */}
+          <select
+            id="contato-interesse"
+            name="interesse"
+            multiple
+            size={INTEREST_OPTIONS.length}
+            aria-labelledby="contato-interesse-legenda"
+            class={`${field} sm:hidden`}
+          >
+            {INTEREST_OPTIONS.map((option) => (
+              <option value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          <div class="hidden flex-wrap gap-sm sm:flex">
             {INTEREST_OPTIONS.map((option) => (
               <div>
                 <input

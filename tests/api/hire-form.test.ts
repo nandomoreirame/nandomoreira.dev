@@ -32,7 +32,7 @@ const complete: Array<[string, string]> = [
   ['empresa', 'Analytical Engines'],
   ['orcamento', '30k-60k'],
   ['interesse', 'job'],
-  ['interesse', 'aeo'],
+  ['interesse', 'consulting'],
   ['mensagem', 'Quero um site preparado para agents.'],
 ];
 
@@ -51,9 +51,18 @@ describe('formToPayload', () => {
       contact: 'ada@example.com',
       company: 'Analytical Engines',
       budget: '30k-60k',
-      interests: ['job', 'aeo'],
+      interests: ['job', 'consulting'],
       brief: 'Quero um site preparado para agents.',
     });
+  });
+
+  it('keeps each interest once when the chips and the phone select both send it', () => {
+    const params = new URLSearchParams([
+      ['interesse', 'job'],
+      ['interesse', 'consulting'],
+      ['interesse', 'job'],
+    ]);
+    expect(formToPayload(params).interests).toEqual(['job', 'consulting']);
   });
 
   it('drops optional fields left blank instead of storing empty strings', () => {
@@ -81,7 +90,7 @@ describe('a form submission', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe('/contato?envio=ok#envio');
-    expect(saved[0]).toMatchObject({ from: 'Ada Lovelace', budget: '30k-60k', interests: ['job', 'aeo'] });
+    expect(saved[0]).toMatchObject({ from: 'Ada Lovelace', budget: '30k-60k', interests: ['job', 'consulting'] });
   });
 
   it('redirects with "invalido" when a required field is missing', async () => {

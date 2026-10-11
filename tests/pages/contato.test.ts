@@ -70,9 +70,25 @@ describe('/contato', () => {
     for (const value of ['undecided', 'up-to-10k', '10k-30k', '30k-60k', '60k-plus']) {
       expect(html).toContain(`value="${value}"`);
     }
-    for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'aeo']) {
+    for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting']) {
       expect(html).toMatch(new RegExp(`<input[^>]*type="checkbox"[^>]*name="interesse"[^>]*value="${value}"`));
     }
+  });
+
+  it('swaps the interest chips for a multiple select on phones', async () => {
+    const html = await render();
+    const select = html.match(/<select[^>]*name="interesse"[^>]*>[\s\S]*?<\/select>/)?.[0] ?? '';
+    const open = select.match(/<select[^>]*>/)?.[0] ?? '';
+
+    expect(open).toMatch(/\bmultiple\b/);
+    expect(open).toMatch(/\bsm:hidden\b/);
+    expect(open).toMatch(/aria-labelledby="contato-interesse-legenda"/);
+    for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting']) {
+      expect(select).toContain(`value="${value}"`);
+    }
+    // The chips are the same choice for wider screens, hidden on phones.
+    expect(html).toMatch(/<div class="hidden flex-wrap gap-sm sm:flex">/);
+    expect(html).toMatch(/<legend[^>]*id="contato-interesse-legenda"/);
   });
 
   it('groups the interest chips under a legend', async () => {
