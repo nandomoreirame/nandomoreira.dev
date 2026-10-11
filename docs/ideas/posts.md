@@ -18,9 +18,9 @@ linkar o repositório.
 
 | # | Tema | Ângulo | Material | Status |
 |---|---|---|---|---|
-| 1 | O falso verde: quando o portão diz PASS e nada rodou | Validação com agentes falha sempre do mesmo jeito: verde sem evidência | Portão que ignorava a suíte (7 testes vermelhos com `PASS`), `rpi-gates.sh` rodando da pasta errada com zero verificações, `cmd \| tail` mascarando o exit code, `prettier --write` que diz sucesso sem gravar | Rascunho: `o-falso-verde` |
-| 2 | Memória para agentes: um backbone em 4 camadas | Como o Claude lembra entre sessões sem inflar o contexto | Camadas Self, Workspace, Entity e Project, `memory-recall` lazy, migração do amnesia com `--finalize`, detecção de drift | Rascunho: `memoria-para-agentes-em-4-camadas` |
-| 3 | Revisão cruzada entre modelos | Por que um segundo modelo acha o que o primeiro não vê, e como agregar os achados | `review_aggregate.py`, o Codex achando o vazamento no fechamento do MCP, achados corroborados como sinal | Rascunho: `revisao-cruzada-entre-modelos` |
+| 1 | O falso verde: quando o portão diz PASS e nada rodou | Validação com agentes falha sempre do mesmo jeito: verde sem evidência | Portão que ignorava a suíte (7 testes vermelhos com `PASS`), `rpi-gates.sh` rodando da pasta errada com zero verificações, `cmd \| tail` mascarando o exit code, `prettier --write` que diz sucesso sem gravar | Roteiro: [`o-falso-verde`](#o-falso-verde) |
+| 2 | Memória para agentes: um backbone em 4 camadas | Como o Claude lembra entre sessões sem inflar o contexto | Camadas Self, Workspace, Entity e Project, `memory-recall` lazy, migração do amnesia com `--finalize`, detecção de drift | Roteiro: [`memoria-para-agentes-em-4-camadas`](#memoria-para-agentes-em-4-camadas) |
+| 3 | Revisão cruzada entre modelos | Por que um segundo modelo acha o que o primeiro não vê, e como agregar os achados | `review_aggregate.py`, o Codex achando o vazamento no fechamento do MCP, achados corroborados como sinal | Roteiro: [`revisao-cruzada-entre-modelos`](#revisao-cruzada-entre-modelos) |
 | 4 | Auto-learning: o agente que transforma erro em regra | Ciclo erro e correção vira lição persistente, com filtro de qualidade | Regra 12 com os quatro critérios, roteamento por escopo, lições sem dono no `CLAUDE.md` global | Ideia |
 
 ## Prioridade média (mais nicho)
@@ -37,7 +37,7 @@ linkar o repositório.
 
 | Tema | Ângulo | Status |
 |---|---|---|
-| Desktop Linux sob medida: CachyOS, Niri e Noctalia | Daybar, Sticky Notes, hypr-switcher e flipclock como ecossistema | Ideia |
+| Desktop Linux sob medida: CachyOS, Niri e Noctalia | Daybar, Sticky Notes, hypr-switcher e flipclock como ecossistema | Rascunho: `plugins-noctalia-para-produtividade-no-cachyos` (os quatro plugins do Noctalia) |
 | Radares que publicam no Discord | job-radar e home-radar: Python puro, sem dependência, rodando sozinho | Ideia |
 | Homelab com Tailscale | Import de música com scan de vírus e rsync, backup com `btrfs send`. Combina com o tema 5 | Ideia |
 
@@ -51,6 +51,55 @@ Textos antigos que viram post novo. O original fica intacto e linkado; o post no
 | `nao-seja-apenas-um-recortador-de-psd` (2015) | Não seja só quem cola o que a IA devolve | O mesmo argumento de 2015 trocando o PSD pelo prompt: o profissional precisa entender as áreas em volta, agora incluindo o que o agente faz |
 | `retro-2016-planing-2017` | Retro 2026, planning 2027 | O formato de retrospectiva de volta, com o ano de 2026: Liquid AI (encerrada em 30/09), o site novo, o framework |
 | `como-um-time` (2016) | Trabalhar como um time quando metade do time é agente | O "não é X... é Y" original virou estrutura do post; agora com agentes que implementam, revisam e não podem commitar |
+
+## Roteiros
+
+Ideias que já têm título, resumo e roteiro, mas nenhum texto escrito. Ficam aqui, e não
+em `src/content/posts/`, para não poluir os rascunhos em revisão na homologação. Quando
+for escrever, o post nasce em `src/content/posts/<slug>.md` com `draft: true`, a partir
+do roteiro e de uma entrevista (`docs/ideas/reescrita-posts-ia.md`).
+
+### o-falso-verde
+
+- **Título:** O falso verde: quando o portão diz PASS e nada rodou
+- **Resumo:** Em fluxo com agentes, o erro perigoso não é o teste vermelho, que alguém investiga. É o verde que ninguém questiona.
+- **Marcadores:** qualidade, agentes
+
+Roteiro:
+
+- O portão que rodava lint, type-check e build, mas não a suíte: `PASS` com sete testes vermelhos.
+- Rodando da pasta errada: todas as ferramentas puladas com aviso, zero verificações, `result: PASS`.
+- `cmd | tail -12` e o exit code do último estágio do pipeline.
+- `prettier --write` que imprime sucesso e não grava.
+- A regra: um passo pulado não é um passo verde; evidência é a linha de marca, nunca o exit code.
+
+### memoria-para-agentes-em-4-camadas
+
+- **Título:** Memória para agentes: um backbone em quatro camadas
+- **Resumo:** Como o Claude Code lembra decisões entre sessões sem carregar tudo no contexto: o que é sempre lido, o que só entra quando alguém pergunta.
+- **Marcadores:** claude code, memória, agentes
+
+Roteiro:
+
+- O problema: cada sessão começa do zero, e jogar tudo no contexto custa caro.
+- As quatro camadas: Self, Workspace, Entity e Project, e o que mora em cada uma.
+- Eager contra lazy: o `recall` só quando uma entidade é mencionada.
+- A migração do sistema anterior e o `--finalize`.
+- Drift: memória que mente quando o código muda, e como detectar.
+
+### revisao-cruzada-entre-modelos
+
+- **Título:** Revisão cruzada entre modelos: por que um segundo agente acha o que o primeiro não vê
+- **Resumo:** Modelos diferentes erram em lugares diferentes. Como pôr o Codex para revisar o código que outro modelo escreveu, e como agregar os achados dos dois.
+- **Marcadores:** code review, agentes
+
+Roteiro:
+
+- O ponto cego de um modelo revisando o próprio código.
+- Codex em sandbox somente leitura, com as regras de revisão embutidas no prompt.
+- Achados em linhas com severidade, e o agregador que cruza Claude e Codex.
+- Corroboração: o achado que os dois modelos apontam pesa mais.
+- O caso do fechamento do servidor MCP, que o implementador não viu.
 
 ## Ordem sugerida
 

@@ -26,8 +26,8 @@ describe('/[slug] post page', () => {
 
     expect(slugs).toContain('criar-site-completo-com-o-notion');
     expect(slugs).toContain('comece-com-gulp');
-    // Draft lives in exemplo.md; its slug must never be a public path.
-    expect(slugs).not.toContain('por-que-parenteses-no-tailwind');
+    // A draft's slug must never be a public path.
+    expect(slugs).not.toContain('de-cinco-dias-para-trinta-minutos');
     expect(slugs).not.toContain('exemplo');
   });
 
@@ -145,7 +145,7 @@ describe('/[slug] post page', () => {
   });
 
   it('omits the cover image when the post has no cover', async () => {
-    // The only post without a cover today is the draft (exemplo.md). Drafts
+    // Coverless posts are drafts or use generated art. Drafts
     // are excluded from getStaticPaths, so this asserts the markup contract:
     // the page only emits <img> for posts that declare cover.
     expect(source).toMatch(/post\.cover\s*&&/);
