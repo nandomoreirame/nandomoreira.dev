@@ -8,6 +8,7 @@ const TECH_ICONS: Record<string, string> = {
   aws: 'amazonwebservices',
   'claude code': 'claude',
   discord: 'discord',
+  electron: 'electron',
   firebase: 'firebase',
   go: 'go',
   'google calendar': 'googlecalendar',

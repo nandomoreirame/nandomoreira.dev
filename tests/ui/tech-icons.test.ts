@@ -37,6 +37,11 @@ describe('techIconFor', () => {
     expect(techIconFor('Markdown')).toBe('simple-icons:markdown');
   });
 
+  it('maps the Forja desktop stack', () => {
+    expect(techIconFor('Electron')).toBe('simple-icons:electron');
+    expect(techIconFor('React')).toBe('simple-icons:react');
+  });
+
   it('ignores case and surrounding whitespace', () => {
     expect(techIconFor('  rust ')).toBe('simple-icons:rust');
   });

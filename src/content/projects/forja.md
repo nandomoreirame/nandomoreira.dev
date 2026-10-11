@@ -3,18 +3,20 @@ slug: forja
 title: Forja
 block: ai-tooling
 art: panels
-summary: "Cliente desktop que reúne Claude Code, Codex e Gemini numa só interface, para não perder contexto alternando entre três terminais. Feito em Tauri e Rust, pelo peso do binário, com uma camada de adaptação por CLI em vez de impor um protocolo comum às três. É o meu cliente principal no dia a dia."
+summary: "Cliente desktop que reúne Claude Code, Codex e Gemini numa só interface, para não perder contexto alternando entre três terminais. Feito em Electron, React e TypeScript, com xterm.js para o terminal e uma camada de adaptação por CLI em vez de impor um protocolo comum às três. É o meu cliente principal no dia a dia."
 problem: |
   Alternar entre três CLIs de agente em terminais separados custa contexto a cada
   troca, e nenhuma delas mostra o estado das outras.
 decisions: |
-  Tauri em vez de Electron, pelo peso do binário e por já haver Rust no acervo.
+  Começou em Tauri e Rust, pelo peso do binário. Em março de 2026 migrou para
+  Electron: o terminal de cada sessão é um PTY, e gerenciar PTY pelo Node.js
+  ficou mais simples e com um ecossistema maior do que pelo backend em Rust.
   Uma camada de adaptação por CLI, em vez de um protocolo comum imposto às três.
 outcome: |
   11 estrelas no GitHub e uso diário próprio como cliente principal.
 tech:
-  - Rust
-  - Tauri
+  - Electron
+  - React
   - TypeScript
 repoUrl: https://github.com/nandomoreirame/forja
 liveUrl: https://forja.web.app
