@@ -71,6 +71,7 @@ describe('/now page', () => {
                   id: 't1',
                   name: 'Same Song',
                   artists: [{ name: 'Artist A Jr.' }],
+                  album: { name: 'Album', release_date: '1999' },
                   external_urls: { spotify: 'https://open.spotify.com/track/t1' },
                 },
               },

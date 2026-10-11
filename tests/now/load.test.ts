@@ -107,6 +107,7 @@ describe('loadNow', () => {
                 id: 't1',
                 name: 'Same Song',
                 artists: [{ name: 'Artist A' }],
+                album: { name: 'Album', release_date: '1999' },
                 external_urls: { spotify: 'https://open.spotify.com/track/t1' },
               },
             },

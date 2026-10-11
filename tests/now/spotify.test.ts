@@ -16,7 +16,38 @@ describe('parseRecentTracks', () => {
       artists: 'Artist A, Artist B',
       url: 'https://open.spotify.com/track/t1',
       playedAt: '2026-10-11T18:00:00Z',
+      album: 'Album One',
+      year: '1999',
+      cover: '/api/now/cover/spotify/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     });
+    expect(JSON.stringify(tracks)).not.toContain('i.scdn.co');
+  });
+
+  it('uses a year-only release date and omits the cover when there is no image', () => {
+    const item = structuredClone(fixture.items[3]);
+    item.track.album = { name: 'Bare', release_date: '1999', images: [] };
+    const tracks = parseRecentTracks({ items: [item] });
+    expect(tracks[0]).toMatchObject({ album: 'Bare', year: '1999' });
+    expect(tracks[0]?.cover).toBeUndefined();
+  });
+
+  it('falls back to the smallest image at least 64 px wide', () => {
+    const item = structuredClone(fixture.items[0]);
+    item.track.id = 'wide';
+    item.track.album.images = [
+      { url: `https://i.scdn.co/image/${'d'.repeat(40)}`, width: 640, height: 640 },
+      { url: `https://i.scdn.co/image/${'e'.repeat(40)}`, width: 64, height: 64 },
+    ];
+    const tracks = parseRecentTracks({ items: [item] });
+    expect(tracks[0]?.cover).toBe(`/api/now/cover/spotify/${'e'.repeat(40)}`);
+  });
+
+  it('drops a track that has no album name and keeps the others', () => {
+    const broken = structuredClone(fixture.items[0]);
+    broken.track.id = 'no-album';
+    delete broken.track.album;
+    const tracks = parseRecentTracks({ items: [broken, fixture.items[3]] });
+    expect(tracks.map((track) => track.title)).toEqual(['Two']);
   });
 
   it('drops a null track without failing the parse', () => {

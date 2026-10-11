@@ -27,6 +27,7 @@ const snapshot = (availability: string): NowSnapshot => ({
       {
         title: 'Same Song',
         artists: 'Artist A',
+        album: 'Album',
         url: 'https://open.spotify.com/track/t1',
         playedAt: '2026-10-11T12:00:00Z',
         day: 'hoje',

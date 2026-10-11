@@ -6,7 +6,16 @@
         "id": "t1",
         "name": "Same Song",
         "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" },
+        "album": {
+          "name": "Album One",
+          "release_date": "1999-03-01",
+          "images": [
+            { "url": "https://i.scdn.co/image/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "width": 640, "height": 640 },
+            { "url": "https://i.scdn.co/image/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "width": 300, "height": 300 },
+            { "url": "https://i.scdn.co/image/cccccccccccccccccccccccccccccccccccccccc", "width": 64, "height": 64 }
+          ]
+        }
       }
     },
     {
@@ -15,7 +24,8 @@
         "id": "t1",
         "name": "Same Song",
         "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" },
+        "album": { "name": "Album One", "release_date": "1999-03-01", "images": [] }
       }
     },
     {
@@ -24,7 +34,8 @@
         "id": "t1",
         "name": "Same Song",
         "artists": [{ "name": "Artist A" }, { "name": "Artist B" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t1" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t1" },
+        "album": { "name": "Album One", "release_date": "1999-03-01", "images": [] }
       }
     },
     {
@@ -33,7 +44,8 @@
         "id": "t2",
         "name": "Two",
         "artists": [{ "name": "C" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t2" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t2" },
+        "album": { "name": "Album Two" }
       }
     },
     {
@@ -42,7 +54,8 @@
         "id": "t3",
         "name": "Three",
         "artists": [{ "name": "D" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t3" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t3" },
+        "album": { "name": "Album Three" }
       }
     },
     {
@@ -51,7 +64,8 @@
         "id": "t4",
         "name": "Four",
         "artists": [{ "name": "E" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t4" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t4" },
+        "album": { "name": "Album Four" }
       }
     },
     {
@@ -60,7 +74,8 @@
         "id": "t5",
         "name": "Five",
         "artists": [{ "name": "F" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t5" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t5" },
+        "album": { "name": "Album Five" }
       }
     },
     {
@@ -69,7 +84,8 @@
         "id": "t6",
         "name": "Six",
         "artists": [{ "name": "G" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t6" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t6" },
+        "album": { "name": "Album Six" }
       }
     },
     {
@@ -78,7 +94,8 @@
         "id": "t7",
         "name": "Seven",
         "artists": [{ "name": "H" }],
-        "external_urls": { "spotify": "https://open.spotify.com/track/t7" }
+        "external_urls": { "spotify": "https://open.spotify.com/track/t7" },
+        "album": { "name": "Album Seven" }
       }
     }
   ]
