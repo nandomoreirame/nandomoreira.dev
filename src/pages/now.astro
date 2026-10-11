@@ -1,0 +1,130 @@
+---
+Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
+
+import NowSection from '../components/now/NowSection.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import Prose from '../components/ui/Prose.astro';
+import TechBadge from '../components/ui/TechBadge.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAllProjects, getProfile } from '../lib/content';
+import { displayNameOf } from '../lib/content/display-name';
+import { linkForRepo } from '../lib/now/github';
+import { loadNow } from '../lib/now/load';
+import { NOW_LEAD, NOW_UPDATED_AT } from '../lib/now/now';
+import { formatPolicyDate } from '../lib/privacy/policy';
+
+const profile = await getProfile();
+const cases = await getAllProjects();
+const data = await loadNow();
+const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
+---
+
+<BaseLayout title={`Agora | ${displayNameOf(profile)}`} description={NOW_LEAD}>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader eyebrow="Agora" title="O que estou fazendo agora" description={NOW_LEAD} />
+
+    <p class="font-mono text-small text-muted-foreground">
+      Atualizada em <time datetime={NOW_UPDATED_AT}>{formatPolicyDate(NOW_UPDATED_AT)}</time>.
+    </p>
+
+    <Prose>
+      <NowSection id="foco" title="Foco">
+        <ul>
+          {data.focus.items.map((item) => <li>{item}</li>)}
+        </ul>
+        <ul>
+          {data.focus.declining.map((item) => <li>{item}</li>)}
+        </ul>
+        <p>{data.focus.availability}</p>
+      </NowSection>
+
+      <NowSection id="projetos" title="Projetos em andamento">
+        {
+          data.projects.state === 'empty' ? (
+            <p class="text-muted-foreground">Sem dados no momento.</p>
+          ) : (
+            <ul>
+              {data.projects.items.map((repo) => {
+                const href = linkForRepo(repo, cases);
+                return (
+                  <li>
+                    <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>
+                      {repo.name}
+                    </a>
+                    {repo.description ? `: ${repo.description}` : ''}
+                    {repo.language && <TechBadge name={repo.language} />}
+                    {' '}
+                    Último push em{' '}
+                    <time datetime={repo.pushedAt.slice(0, 10)}>{formatPolicyDate(repo.pushedAt.slice(0, 10))}</time>.
+                  </li>
+                );
+              })}
+            </ul>
+          )
+        }
+      </NowSection>
+
+      <NowSection id="escrevendo" title="Escrevendo">
+        <ul>
+          {
+            data.writing.latest && (
+              <li>
+                <a href={`/posts/${data.writing.latest.slug}`}>{data.writing.latest.title}</a>
+              </li>
+            )
+          }
+          {data.writing.drafts.map((title) => <li>{title}</li>)}
+        </ul>
+      </NowSection>
+
+      <NowSection id="ouvindo" title="Ouvindo">
+        {
+          data.music.state === 'empty' ? (
+            <p class="text-muted-foreground">Sem dados no momento.</p>
+          ) : (
+            <ul>
+              {data.music.items.map((track) => (
+                <li>
+                  <a href={track.url} {...externalAttrs}>
+                    {track.title}
+                  </a>
+                  , {track.artists}. {track.day}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </NowSection>
+
+      <NowSection id="jogando" title="Jogando">
+        {
+          data.games.state === 'empty' ? (
+            <p class="text-muted-foreground">Sem dados no momento.</p>
+          ) : data.games.state === 'ok' ? (
+            <Fragment>
+              {data.games.items.playingNow && (
+                <p class="font-semibold text-foreground">Jogando agora: {data.games.items.playingNow.title}</p>
+              )}
+              <ul>
+                {data.games.items.recent.map((game) => (
+                  <li>
+                    {game.name}, <time datetime={game.lastPlayed}>{formatPolicyDate(game.lastPlayed)}</time>
+                  </li>
+                ))}
+              </ul>
+            </Fragment>
+          ) : (
+            <ul>
+              {data.games.items.map((game) => (
+                <li>
+                  {game.name}
+                  {game.note ? `: ${game.note}` : ''}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </NowSection>
+    </Prose>
+  </article>
+</BaseLayout>
