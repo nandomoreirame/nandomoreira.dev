@@ -65,6 +65,8 @@ check "/robots.txt"       "text/plain"        "Sitemap: https://"
 check "/sitemap.xml"      "application/xml"   "<urlset"
 check "/api/resume.json"  "application/json"  '"basics"'
 check "/api/resume.txt"   "text/plain"        "AVAILABILITY"
+check "/now.md"           "text/markdown"     "title: Agora"
+check "/now/ia"           "text/html"         'name="robots" content="noindex"'
 
 echo "== an AI view of an unknown page answers 404 =="
 status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}/nao-existe/ia")

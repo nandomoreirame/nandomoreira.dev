@@ -2,6 +2,9 @@ import { buildCaseMarkdown } from '../aeo/case-markdown';
 import { OPEN_SOURCE_REPOS } from '../catalog/open-source';
 import { COLLECTION_COPY } from '../catalog/collection-copy';
 import { privacyMarkdown } from '../privacy/policy';
+import { loadNow } from '../now/load';
+import { nowMarkdown } from '../now/markdown';
+import { NOW_PATH } from '../now/now';
 import { SETUP_PATH, setupMarkdown } from '../setup/setup';
 import { absoluteUrl } from '../aeo/urls';
 import {
@@ -143,6 +146,12 @@ export const markdownForPath = async (
 
   if (key === 'setup') {
     return page('Setup', SETUP_PATH, `${SETUP_PATH}.md`, setupMarkdown({ site }));
+  }
+
+  if (key === 'now') {
+    const data = await loadNow();
+    const markdown = nowMarkdown({ site, data });
+    return page('Agora', NOW_PATH, '/now.md', markdown);
   }
 
   if (key === 'mcp') {

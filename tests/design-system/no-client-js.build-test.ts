@@ -13,7 +13,7 @@ const PORT = Number(process.env.GATE_PORT ?? 4931);
 const BASE = `http://127.0.0.1:${PORT}`;
 const CLIENT = 'dist/client';
 // /404 is SSR too (no prerender) and renders the full BaseLayout; /projetos* only redirect.
-const SSR_ROUTES = ['/', '/sobre', '/contato', '/posts', '/posts/arquivo', '/portfolio', '/lab', '/404'];
+const SSR_ROUTES = ['/', '/sobre', '/contato', '/posts', '/posts/arquivo', '/portfolio', '/lab', '/now', '/404'];
 
 const readSrc = (src: string): string => readFileSync(join(CLIENT, src.replace(/^\//, '')), 'utf8');
 
