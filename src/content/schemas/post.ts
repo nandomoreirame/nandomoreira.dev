@@ -31,7 +31,8 @@ export const postSchema = ({ image }: SchemaContext) =>
           'publishedAt must be YYYY-MM-DDTHH:MM:SS with an offset, e.g. 2026-10-10T12:08:11-03:00',
         )
         .optional(),
-      markers: z.array(z.string().min(1)).optional(),
+      /** Tags, shown as hashtags. At least three: they key tag search and grouping. */
+      markers: z.array(z.string().min(1)).min(3, 'a post needs at least three markers (tags)'),
       draft: z.boolean().default(false),
       /** Archived posts live under /posts/arquivo/<ano>; current ones under /posts. */
       archived: z.boolean().default(false),

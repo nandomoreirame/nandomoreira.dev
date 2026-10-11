@@ -13,6 +13,7 @@ const valid = {
   title: 'Por que parênteses e não colchetes no Tailwind 4',
   summary: 'A sintaxe de colchete gera CSS inválido que o browser descarta em silêncio.',
   date: '2026-08-09',
+  markers: ['tailwind', 'css', 'front-end'],
   draft: false,
 };
 
@@ -21,6 +22,7 @@ const base = {
   title: 'Exemplo',
   summary: 's',
   date: '2015-09-30',
+  markers: ['um', 'dois', 'tres'],
 };
 
 describe('postSchema', () => {
@@ -49,12 +51,17 @@ describe('postSchema', () => {
     if (result.success) expect(result.data.draft).toBe(false);
   });
 
-  it('accepts optional subject markers', () => {
-    expect(schema.safeParse({ ...valid, markers: ['Tailwind'] }).success).toBe(true);
+  // Every post carries at least three tags: they are the keys of the tag
+  // search and grouping, and one or two tags group nothing.
+  it('requires at least three markers', () => {
+    const { markers: _dropped, ...withoutMarkers } = valid;
+    expect(schema.safeParse(withoutMarkers).success).toBe(false);
+    expect(schema.safeParse({ ...valid, markers: ['css', 'front-end'] }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, markers: ['css', 'front-end', 'tailwind'] }).success).toBe(true);
   });
 
   it('rejects an empty marker', () => {
-    expect(schema.safeParse({ ...valid, markers: [''] }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, markers: ['', 'css', 'front-end'] }).success).toBe(false);
   });
 
   it('defaults to current, so a new post needs no ceremony', () => {

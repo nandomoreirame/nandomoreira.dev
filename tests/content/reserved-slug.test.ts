@@ -28,6 +28,7 @@ const postBase = {
   title: 'Exemplo',
   summary: 's',
   date: '2015-09-30',
+  markers: ['um', 'dois', 'tres'],
 };
 
 describe('reserved slug ia', () => {
