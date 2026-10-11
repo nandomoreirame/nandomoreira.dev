@@ -155,7 +155,7 @@ describe('parseTopArtists', () => {
 
 describe('fetchTopArtists', () => {
   it('refreshes once and asks for the short-term top five', async () => {
-    const fetchImpl = vi.fn(async (url: string) => {
+    const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
       if (String(url).includes('/api/token')) {
         return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
       }
@@ -196,5 +196,107 @@ describe('fetchRecentTracks', () => {
     const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('recently-played'));
     expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/player/recently-played?limit=50');
     expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
+  });
+});
+
+describe('fetchRecentTracks previews', () => {
+  it('keeps a valid ISRC and adds the local preview when Deezer has the recording', async () => {
+    const withIsrc = structuredClone(fixture);
+    withIsrc.items[0].track.external_ids = { isrc: 'GBUM70812423' };
+    withIsrc.items[1].track.external_ids = { isrc: 'not-an-isrc' };
+    const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
+      const target = String(url);
+      if (target.includes('/api/token')) return { ok: true, status: 200, json: async () => ({ access_token: 'a' }) };
+      if (target.startsWith('https://api.deezer.com/')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ preview: 'https://cdnt-preview.dzcdn.net/api/1/1/a.mp3?hdnea=x' }),
+        };
+      }
+      return { ok: true, status: 200, json: async () => withIsrc };
+    });
+
+    const tracks = await fetchRecentTracks({
+      fetch: fetchImpl as unknown as typeof fetch,
+      clientId: 'cid',
+      clientSecret: 'sec',
+      refreshToken: 'ref',
+      previews: new Map(),
+    });
+
+    const first = tracks.find((track) => track.isrc === 'GBUM70812423');
+    expect(first?.preview).toBe('/api/now/preview/GBUM70812423');
+    expect(tracks.filter((track) => track.preview !== undefined)).toHaveLength(1);
+    expect(tracks.some((track) => track.isrc === 'not-an-isrc')).toBe(false);
+  });
+});
+
+describe('fetchTopArtists previews', () => {
+  it("gives each artist a preview of the author's own top track by them", async () => {
+    const PREVIEW = 'https://cdnt-preview.dzcdn.net/api/1/1/x.mp3?hdnea=y';
+    const artists = {
+      items: [
+        {
+          id: 'racionais',
+          name: "Racionais MC's",
+          external_urls: { spotify: 'https://open.spotify.com/artist/racionais' },
+          images: [],
+        },
+      ],
+    };
+    const myTop = (range: string) => ({
+      items:
+        range === 'short_term'
+          ? [{ name: 'Vida Loka, Pt. 1', artists: [{ id: 'racionais' }], external_ids: { isrc: 'US7VG1324975' } }]
+          : [],
+    });
+    const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
+      const target = String(url);
+      const body = target.includes('/api/token')
+        ? { access_token: 'a' }
+        : target.includes('/me/top/artists')
+          ? artists
+          : target.includes('/me/top/tracks')
+            ? myTop(new URL(target).searchParams.get('time_range') ?? '')
+            : target.includes('track/isrc:US7VG1324975')
+              ? { preview: PREVIEW }
+              : { error: { code: 800 } };
+      return { ok: true, status: 200, json: async () => body };
+    });
+
+    const [racionais] = await fetchTopArtists({
+      fetch: fetchImpl as unknown as typeof fetch,
+      clientId: 'cid',
+      clientSecret: 'sec',
+      refreshToken: 'ref',
+      previews: new Map(),
+    });
+
+    expect(racionais?.preview).toBe('/api/now/preview/US7VG1324975');
+    expect(racionais?.previewTitle).toBe('Vida Loka, Pt. 1');
+    const ranges = fetchImpl.mock.calls
+      .map(([url]) => String(url))
+      .filter((url) => url.includes('/me/top/tracks'))
+      .map((url) => new URL(url).searchParams.get('time_range'));
+    expect(ranges.sort()).toEqual(['medium_term', 'short_term']);
+  });
+
+  it('keeps the artists when the top tracks call fails', async () => {
+    const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
+      const target = String(url);
+      if (target.includes('/api/token')) return { ok: true, status: 200, json: async () => ({ access_token: 'a' }) };
+      if (target.includes('/me/top/artists')) return { ok: true, status: 200, json: async () => topArtists };
+      return { ok: false, status: 500, json: async () => ({}) };
+    });
+    const result = await fetchTopArtists({
+      fetch: fetchImpl as unknown as typeof fetch,
+      clientId: 'cid',
+      clientSecret: 'sec',
+      refreshToken: 'ref',
+      previews: new Map(),
+    });
+    expect(result).toHaveLength(5);
+    expect(result.every((artist) => artist.preview === undefined)).toBe(true);
   });
 });

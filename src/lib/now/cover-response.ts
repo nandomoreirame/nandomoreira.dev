@@ -3,16 +3,16 @@ import { upstreamFromCover } from './cover';
 const MAX_COVER_BYTES = 524_288;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-const notFound = (): Response =>
+export const notFound = (): Response =>
   new Response(null, {
     status: 404,
     headers: { 'cache-control': 'public, max-age=300' },
   });
 
-const mediaType = (value: string | null): string => (value ?? '').split(';', 1)[0]!.trim().toLowerCase();
+export const mediaType = (value: string | null): string => (value ?? '').split(';', 1)[0]!.trim().toLowerCase();
 
 /** Reads the body and rejects it once it passes the cap. The header alone is not enough. */
-const readAtMost = async (response: Response, max: number): Promise<Uint8Array | undefined> => {
+export const readAtMost = async (response: Response, max: number): Promise<Uint8Array<ArrayBuffer> | undefined> => {
   if (!response.body) {
     const bytes = new Uint8Array(await response.arrayBuffer());
     return bytes.byteLength > max ? undefined : bytes;

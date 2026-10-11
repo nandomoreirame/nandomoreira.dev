@@ -55,6 +55,7 @@ describe('NowMusic', () => {
     expect(html).toContain('alt=""');
     expect(html).not.toMatch(/src="[^"]*(?:scdn\.co|s-microsoft\.com)/);
     expect(html).toContain('Artist A · Album One (1999)');
+    expect(html).toContain('href="https://open.spotify.com/track/t1"');
     expect(html).toContain('Artistas do mês');
   });
 
@@ -84,7 +85,12 @@ describe('NowGames', () => {
       games: {
         state: 'ok',
         items: {
-          playingNow: { title: 'Red Dead Redemption 2', platforms: ['Xbox One', 'Xbox Series'], progress: score },
+          playingNow: {
+            title: 'Red Dead Redemption 2',
+            platforms: ['Xbox One', 'Xbox Series'],
+            progress: score,
+            url: 'https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G',
+          },
           recent: [game('Red Dead Redemption 2', score), game('Forza Horizon 5'), game('Starfield'), game('Hades'), game('Celeste')],
         },
       },
@@ -92,6 +98,15 @@ describe('NowGames', () => {
     const grid = html.split('grid-cols-2')[1] ?? '';
 
     expect(html).toContain('Jogando agora');
+    const featured = html.match(
+      /<a\b[^>]*href="https:\/\/www\.xbox\.com\/pt-BR\/games\/store\/-\/BPSWGQBW7R3G"[^>]*>[\s\S]*?<\/a>/,
+    )?.[0];
+    expect(featured).toContain('Red Dead Redemption 2');
+    expect(featured).toContain('690 / 1000 G');
+    // A game the catalog does not know stays a card, never a link to a search page.
+    expect(grid).toContain('Forza Horizon 5');
+    expect(grid).not.toMatch(/<a\b[^>]*>[^]*?Forza Horizon 5/);
+    expect(html).not.toContain('xbox.com/pt-BR/search');
     expect(html).not.toContain('Último jogado');
     expect(grid).not.toContain('Red Dead Redemption 2');
     expect(grid).toContain('Forza Horizon 5');
@@ -134,5 +149,100 @@ describe('NowGames', () => {
     expect(fallback).not.toContain('role="progressbar"');
     expect(fallback).not.toContain('/api/now/cover/');
     expect(empty).toContain('Sem dados no momento.');
+  });
+});
+
+describe('NowGames fallback', () => {
+  it('lists the curated games as plain text', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(NowGames, {
+      props: { games: { state: 'fallback', items: [{ name: 'Hades', note: 'zerado' }] } },
+    });
+    expect(html).toContain('Hades');
+    expect(html).not.toContain('<a');
+  });
+});
+
+describe('NowMusic preview button', () => {
+  const withPreview = (): NowSnapshot['music'] => {
+    const base = music();
+    if (base.recent.state !== 'ok') throw new Error('fixture must be populated');
+    base.recent.items = [
+      { ...base.recent.items[0]!, preview: '/api/now/preview/GBUM70812423' },
+      { ...base.recent.items[0]!, title: 'Sem prévia', url: 'https://open.spotify.com/track/t2' },
+    ];
+    return base;
+  };
+
+  it('puts a hidden, labelled toggle over the cover of a track Deezer can play', async () => {
+    const html = await render(NowMusic, { music: withPreview() });
+    const buttons = [...html.matchAll(/<button\b[^>]*>/g)].map((match) => match[0]);
+
+    expect(buttons).toHaveLength(1);
+    const button = buttons[0]!;
+    expect(button).toContain('type="button"');
+    expect(button).toContain('data-now-preview="/api/now/preview/GBUM70812423"');
+    expect(button).toContain('aria-pressed="false"');
+    expect(button).toContain('aria-label="Ouvir prévia de Same Song"');
+    // Without JavaScript it never promises an action; the script reveals it.
+    expect(button).toMatch(/\shidden(\s|>|=)/);
+  });
+
+  it('draws both icons so CSS can swap play for pause while it plays', async () => {
+    const html = await render(NowMusic, { music: withPreview() });
+    const button = html.match(/<button\b[\s\S]*?<\/button>/)?.[0] ?? '';
+    expect(button.match(/<svg\b/g)).toHaveLength(2);
+    expect(button).toContain('group-aria-pressed/preview:');
+  });
+
+  it('credits Deezer once, below the tracks, only when some track has a preview', async () => {
+    const credited = await render(NowMusic, { music: withPreview() });
+    expect(credited.match(/Prévias de 30 segundos via Deezer/g)).toHaveLength(1);
+    const plain = await render(NowMusic, { music: music() });
+    expect(plain).not.toContain('Deezer');
+  });
+
+  it('never points the audio at Deezer', async () => {
+    const html = await render(NowMusic, { music: withPreview() });
+    expect(html).not.toContain('dzcdn.net');
+    expect(html).not.toContain('api.deezer.com');
+  });
+});
+
+describe('NowMusic artist previews', () => {
+  const withArtistPreview = (): NowSnapshot['music'] => {
+    const base = music();
+    if (base.topArtists.state !== 'ok') throw new Error('fixture must be populated');
+    base.topArtists.items[0] = {
+      ...base.topArtists.items[0]!,
+      preview: '/api/now/preview/BRWMB0101850',
+      previewTitle: 'Metamorfose Ambulante',
+    };
+    return base;
+  };
+
+  it('turns the photo of an artist with a preview into the play toggle and keeps the name as the link', async () => {
+    const html = await render(NowMusic, { music: withArtistPreview() });
+    const artists = html.split('Artistas do mês')[1]?.split('</ul>')[0] ?? '';
+    const button = artists.match(/<button\b[^>]*>/)?.[0] ?? '';
+
+    expect(button).toContain('data-now-preview="/api/now/preview/BRWMB0101850"');
+    expect(button).toContain('aria-label="Ouvir Metamorfose Ambulante, de Raul"');
+    expect(button).toContain('aria-pressed="false"');
+    expect(button).toContain('rounded-full');
+    // No button inside a link: the name links to Spotify on its own.
+    expect(artists).not.toMatch(/<a\b[^>]*>(?:(?!<\/a>)[\s\S])*<button/);
+    expect(artists).toMatch(/<a\b[^>]*href="https:\/\/open\.spotify\.com\/artist\/raul"[^>]*>[\s\S]*?Raul[\s\S]*?<\/a>/);
+  });
+
+  it('keeps one button per previewable artist and none for the others', async () => {
+    const html = await render(NowMusic, { music: withArtistPreview() });
+    const artists = html.split('Artistas do mês')[1]?.split('</ul>')[0] ?? '';
+    expect(artists.match(/<button\b/g)).toHaveLength(1);
+  });
+
+  it('credits Deezer when only an artist has a preview', async () => {
+    const html = await render(NowMusic, { music: withArtistPreview() });
+    expect(html).toContain('Prévias de 30 segundos via Deezer.');
   });
 });

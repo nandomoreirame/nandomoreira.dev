@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { coverPathFromUpstream } from './cover';
 import { SourceError, fetchJson } from './http';
+import { attachPreviews, pickArtistPreview, previewPath, type PreviewCache } from './preview';
 import { isAllowedUrl } from './safe';
 
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
@@ -23,6 +24,7 @@ const trackSchema = z.object({
   name: z.string(),
   artists: z.array(z.object({ name: z.string() })),
   album: albumSchema,
+  external_ids: z.object({ isrc: z.string().optional() }).optional(),
   external_urls: z.object({
     spotify: z
       .string()
@@ -49,6 +51,10 @@ export interface RecentTrack {
   cover?: string;
   url: string;
   playedAt: string;
+  /** Recording code, kept only when valid: the key for the Deezer preview. */
+  isrc?: string;
+  /** Local preview route, only when Deezer has the recording. */
+  preview?: string;
 }
 
 /** 300 px when present, otherwise the smallest image that is still sharp enough. */
@@ -89,6 +95,7 @@ export const parseRecentTracks = (json: unknown, { limit = 5 }: { limit?: number
     .map((item) => {
       const year = yearOf(item.track.album.release_date);
       const cover = coverFromImages(item.track.album.images);
+      const isrc = item.track.external_ids?.isrc?.toUpperCase();
       return {
         title: item.track.name,
         artists: item.track.artists.map((artist) => artist.name).join(', '),
@@ -97,6 +104,7 @@ export const parseRecentTracks = (json: unknown, { limit = 5 }: { limit?: number
         ...(cover ? { cover } : {}),
         url: item.track.external_urls.spotify,
         playedAt: item.playedAt,
+        ...(previewPath(isrc) ? { isrc } : {}),
       };
     });
 };
@@ -129,12 +137,18 @@ export const refreshAccessToken = async ({
 };
 
 export interface TopArtist {
+  /** Spotify artist id: matches the author's own tracks to the artist. Not rendered. */
+  id?: string;
   name: string;
   url: string;
   cover?: string;
+  /** Local preview route of one track by the artist, with its title for the label. */
+  preview?: string;
+  previewTitle?: string;
 }
 
 const artistSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1),
   external_urls: z.object({
     spotify: z
@@ -173,6 +187,7 @@ export const parseTopArtists = (json: unknown, { limit = 5 }: { limit?: number }
       const cover = coverClosestTo(artist.data.images, 320);
       return [
         {
+          ...(artist.data.id ? { id: artist.data.id } : {}),
           name: artist.data.name,
           url: artist.data.external_urls.spotify,
           ...(cover ? { cover } : {}),
@@ -183,23 +198,72 @@ export const parseTopArtists = (json: unknown, { limit = 5 }: { limit?: number }
 };
 
 const TOP_URL = 'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=5';
+const TOP_TRACKS_URL = 'https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=';
+
+const ownTrackSchema = z.object({
+  name: z.string(),
+  artists: z.array(z.object({ id: z.string() })),
+  external_ids: z.object({ isrc: z.string().optional() }).optional(),
+});
+
+interface OwnTrack {
+  title: string;
+  isrc?: string;
+  artistIds: string[];
+}
+
+/**
+ * The author's most played tracks, last four weeks first, then the last six
+ * months: the pool a preview for each artist of the month is drawn from.
+ * Best effort: a failure only means falling back to Deezer's own top.
+ */
+const myTopTracks = async (fetchImpl: typeof fetch, headers: Record<string, string>): Promise<OwnTrack[]> => {
+  const ranges = await Promise.all(
+    ['short_term', 'medium_term'].map(async (range) => {
+      try {
+        const json = await fetchJson(fetchImpl, `${TOP_TRACKS_URL}${range}`, { headers });
+        const items = z.object({ items: z.array(z.unknown()) }).safeParse(json);
+        return items.success ? items.data.items : [];
+      } catch {
+        return [];
+      }
+    }),
+  );
+  return ranges.flat().flatMap((item) => {
+    const track = ownTrackSchema.safeParse(item);
+    if (!track.success) return [];
+    const isrc = track.data.external_ids?.isrc?.toUpperCase();
+    return [{ title: track.data.name, ...(isrc ? { isrc } : {}), artistIds: track.data.artists.map((artist) => artist.id) }];
+  });
+};
 
 export const fetchTopArtists = async ({
   fetch: fetchImpl,
   clientId,
   clientSecret,
   refreshToken,
+  previews,
 }: {
   fetch: typeof fetch;
   clientId: string;
   clientSecret: string;
   refreshToken: string;
+  previews?: PreviewCache;
 }): Promise<TopArtist[]> => {
   const accessToken = await refreshAccessToken({ fetch: fetchImpl, clientId, clientSecret, refreshToken });
-  const json = await fetchJson(fetchImpl, TOP_URL, {
-    headers: { authorization: `Bearer ${accessToken}` },
-  });
-  return parseTopArtists(json);
+  const headers = { authorization: `Bearer ${accessToken}` };
+  const [json, ownTracks] = await Promise.all([
+    fetchJson(fetchImpl, TOP_URL, { headers }),
+    myTopTracks(fetchImpl, headers),
+  ]);
+  const artists = parseTopArtists(json);
+  return Promise.all(
+    artists.map(async (artist) => {
+      const tracks = artist.id ? ownTracks.filter((track) => track.artistIds.includes(artist.id!)) : [];
+      const pick = await pickArtistPreview(fetchImpl, { name: artist.name, tracks }, previews);
+      return pick ? { ...artist, ...pick } : artist;
+    }),
+  );
 };
 
 export const fetchRecentTracks = async ({
@@ -207,15 +271,17 @@ export const fetchRecentTracks = async ({
   clientId,
   clientSecret,
   refreshToken,
+  previews,
 }: {
   fetch: typeof fetch;
   clientId: string;
   clientSecret: string;
   refreshToken: string;
+  previews?: PreviewCache;
 }): Promise<RecentTrack[]> => {
   const accessToken = await refreshAccessToken({ fetch: fetchImpl, clientId, clientSecret, refreshToken });
   const json = await fetchJson(fetchImpl, RECENT_URL, {
     headers: { authorization: `Bearer ${accessToken}` },
   });
-  return parseRecentTracks(json);
+  return attachPreviews(fetchImpl, parseRecentTracks(json), previews);
 };

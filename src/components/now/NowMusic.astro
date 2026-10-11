@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import type { NowSnapshot } from '../../lib/now/load';
 
 interface Props {
@@ -13,6 +14,24 @@ const focus =
 const localCover = (cover: string | undefined): string | undefined =>
   cover?.startsWith('/api/now/cover/') ? cover : undefined;
 
+const localPreview = (preview: string | undefined): string | undefined =>
+  preview?.startsWith('/api/now/preview/') ? preview : undefined;
+
+const artistFrame = 'size-20 rounded-full border border-border-strong bg-surface-elevated sm:size-24';
+
+// Play on hover, focus and touch; pause lit in primary while it plays.
+const previewToggle = [
+  'group/preview absolute inset-0 flex items-center justify-center bg-background/40 text-foreground',
+  'opacity-0 transition-opacity duration-(--duration-fast) ease-out',
+  'hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100',
+  'aria-pressed:bg-background/60 aria-pressed:text-primary aria-pressed:opacity-100',
+  focus,
+].join(' ');
+
+const hasPreview =
+  (music.recent.state === 'ok' && music.recent.items.some((track) => localPreview(track.preview))) ||
+  (music.topArtists.state === 'ok' && music.topArtists.items.some((artist) => localPreview(artist.preview)));
+
 const albumLine = (artists: string, album: string, year: string | undefined): string =>
   year ? `${artists} · ${album} (${year})` : `${artists} · ${album}`;
 ---
@@ -24,31 +43,52 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
       <ul class="grid grid-cols-3 gap-md sm:grid-cols-5">
         {music.topArtists.items.map((artist) => {
           const photo = localCover(artist.cover);
-          return (
-            <li>
+          const preview = localPreview(artist.preview);
+          const portrait = photo ? (
+            <img
+              src={photo}
+              width="96"
+              height="96"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              class={`${artistFrame} object-cover transition-[border-color] duration-(--duration-fast) ease-out group-hover:border-primary`}
+            />
+          ) : (
+            <span class={`${artistFrame} flex items-center justify-center font-mono text-small text-muted-foreground`} aria-hidden="true">
+              {artist.name.slice(0, 1)}
+            </span>
+          );
+          // With a preview the photo is the play toggle and the name is the link:
+          // a button cannot live inside a link.
+          return preview ? (
+            <li class="flex flex-col items-center gap-sm">
+              <div class="group relative">
+                {portrait}
+                <button
+                  type="button"
+                  data-now-preview={preview}
+                  aria-pressed="false"
+                  aria-label={`Ouvir ${artist.previewTitle ?? 'uma prévia'}, de ${artist.name}`}
+                  hidden
+                  class:list={[previewToggle, 'rounded-full']}
+                >
+                  <Icon name="lucide:play" class="size-7 group-aria-pressed/preview:hidden" aria-hidden="true" />
+                  <Icon name="lucide:pause" class="hidden size-7 group-aria-pressed/preview:block" aria-hidden="true" />
+                </button>
+              </div>
               <a
                 href={artist.url}
                 {...externalAttrs}
-                class:list={['group flex flex-col items-center gap-sm', focus]}
+                class:list={['line-clamp-2 text-center text-small underline-offset-4 hover:text-primary hover:underline', focus]}
               >
-                {photo ? (
-                  <img
-                    src={photo}
-                    width="96"
-                    height="96"
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    class="size-20 rounded-full border border-border-strong bg-surface-elevated object-cover transition-[border-color] duration-(--duration-fast) ease-out group-hover:border-primary sm:size-24"
-                  />
-                ) : (
-                  <span
-                    class="flex size-20 items-center justify-center rounded-full border border-border-strong bg-surface-elevated font-mono text-small text-muted-foreground sm:size-24"
-                    aria-hidden="true"
-                  >
-                    {artist.name.slice(0, 1)}
-                  </span>
-                )}
+                {artist.name}
+              </a>
+            </li>
+          ) : (
+            <li>
+              <a href={artist.url} {...externalAttrs} class:list={['group flex flex-col items-center gap-sm', focus]}>
+                {portrait}
                 <span class="line-clamp-2 text-center text-small">{artist.name}</span>
               </a>
             </li>
@@ -66,26 +106,42 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
     <ul class="divide-y divide-border overflow-hidden rounded-lg border border-border-strong bg-surface">
       {music.recent.items.map((track) => {
         const photo = localCover(track.cover);
+        const preview = localPreview(track.preview);
         return (
           <li class="flex items-center gap-md p-md">
-            {photo ? (
-              <img
-                src={photo}
-                width="56"
-                height="56"
-                alt=""
-                loading="lazy"
-                decoding="async"
-                class="size-14 shrink-0 rounded-sm bg-surface-elevated object-cover"
-              />
-            ) : (
-              <span class="size-14 shrink-0 rounded-sm bg-surface-elevated" aria-hidden="true" />
-            )}
+            <div class="relative size-14 shrink-0">
+              {photo ? (
+                <img
+                  src={photo}
+                  width="56"
+                  height="56"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  class="size-14 rounded-sm bg-surface-elevated object-cover"
+                />
+              ) : (
+                <span class="block size-14 rounded-sm bg-surface-elevated" aria-hidden="true" />
+              )}
+              {preview && (
+                <button
+                  type="button"
+                  data-now-preview={preview}
+                  aria-pressed="false"
+                  aria-label={`Ouvir prévia de ${track.title}`}
+                  hidden
+                  class:list={[previewToggle, 'rounded-sm']}
+                >
+                  <Icon name="lucide:play" class="size-6 group-aria-pressed/preview:hidden" aria-hidden="true" />
+                  <Icon name="lucide:pause" class="hidden size-6 group-aria-pressed/preview:block" aria-hidden="true" />
+                </button>
+              )}
+            </div>
             <div class="min-w-0 flex-1">
               <a
                 href={track.url}
                 {...externalAttrs}
-                class:list={['block truncate text-foreground hover:text-primary', focus]}
+                class:list={['block truncate text-foreground underline-offset-4 hover:text-primary hover:underline', focus]}
               >
                 {track.title}
               </a>
@@ -100,3 +156,32 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
     </ul>
   )
 }
+{
+  hasPreview && (
+    <p class="font-mono text-caption text-muted-foreground">Prévias de 30 segundos via Deezer.</p>
+  )
+}
+
+<script>
+  // Audio preview, /now only (docs/specs/now-page, REQ-027): the one script
+  // besides the site-wide pointer effect, allowed on this route by the JS gate.
+  // One <audio> for the page; a button ships hidden, so without JS nothing is promised.
+  const audio = new Audio();
+  audio.preload = 'none';
+  let current: HTMLButtonElement | undefined;
+  const mark = (on: boolean) => current?.setAttribute('aria-pressed', String(on));
+  audio.addEventListener('play', () => mark(true));
+  audio.addEventListener('pause', () => mark(false));
+  document.querySelectorAll<HTMLButtonElement>('[data-now-preview]').forEach((button) => {
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      if (current === button && !audio.paused) return audio.pause();
+      if (current !== button) {
+        mark(false);
+        current = button;
+        audio.src = button.dataset.nowPreview ?? '';
+      }
+      audio.play().catch(() => mark(false));
+    });
+  });
+</script>

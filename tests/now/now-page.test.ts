@@ -166,11 +166,16 @@ describe('/now page', () => {
     }
   });
 
-  it('adds no script beyond the one layout script /setup already has', async () => {
+  // The audio preview is the one script /now adds (REQ-027); anything else is a regression.
+  // The container renders component scripts by source; the build gate checks their bodies.
+  it('adds exactly one script beyond the layout ones, and it is the audio preview', async () => {
     const nowHtml = await render(NowPage);
     const setupHtml = await render(SetupPage);
-    const scripts = (html: string) => [...html.matchAll(/<script\b/gi)].length;
-    expect(scripts(nowHtml)).toBe(scripts(setupHtml));
+    const sources = (html: string) =>
+      [...html.matchAll(/<script\b(?![^>]*application\/ld\+json)[^>]*>/gi)].map((match) => match[0]);
+    const extra = sources(nowHtml).filter((tag) => !sources(setupHtml).includes(tag));
+    expect(extra).toHaveLength(1);
+    expect(extra[0]).toContain('components/now/NowMusic.astro?astro&type=script');
   });
 
   it('is server rendered and cacheable for five minutes at the edge', () => {
@@ -178,5 +183,18 @@ describe('/now page', () => {
     expect(source).not.toContain('prerender');
     expect(source).toContain('s-maxage=300');
     expect(source).not.toContain('client:');
+  });
+});
+
+describe('/now section headings', () => {
+  // Ouvindo and Jogando sit outside Prose, which is what sized the h2 before.
+  it('styles every section h2 itself, inside or outside Prose', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(NowPage);
+    vi.unstubAllGlobals();
+    const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map((match) => match[0]);
+    expect(h2s).toHaveLength(5);
+    for (const tag of h2s) expect(tag).toContain('text-h2');
   });
 });
