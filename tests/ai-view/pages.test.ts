@@ -107,6 +107,7 @@ const post = {
   title: 'Por que parênteses no Tailwind 4',
   summary: 'Colchetes geram CSS inválido.',
   date: '2026-08-09',
+  markers: ['css', 'front-end', 'tailwind'],
   draft: false,
   archived: false,
 } satisfies Post;
@@ -116,6 +117,7 @@ const archived = {
   title: 'Comece com Gulp',
   summary: 'Task runner.',
   date: '2017-03-01',
+  markers: ['css', 'front-end', 'tailwind'],
   draft: false,
   archived: true,
 } satisfies Post;

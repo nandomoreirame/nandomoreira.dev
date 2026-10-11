@@ -7,6 +7,7 @@ const post: Post = {
   title: 'Por que parênteses no Tailwind 4',
   summary: 'Colchetes geram CSS inválido.',
   date: '2026-08-09',
+  markers: ['css', 'front-end', 'tailwind'],
   draft: false,
   archived: false,
 };

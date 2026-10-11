@@ -7,6 +7,7 @@ const post = (slug: string, overrides: Partial<Post> = {}): Post => ({
   title: slug,
   summary: slug,
   date: '2026-01-01',
+  markers: [],
   draft: false,
   archived: false,
   ...overrides,
