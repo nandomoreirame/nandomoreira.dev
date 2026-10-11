@@ -89,10 +89,10 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos');
-    // Same day (2026-10-10): publishedAt breaks the tie.
-    expect(second.slug).toBe('fluxo-rpi-claude-code-grok-codex');
-    expect(third.slug).toBe('como-construi-meu-site-que-conversa-com-ia-via-mcp');
+    // Same day (2026-10-11): publishedAt breaks the tie.
+    expect(first.slug).toBe('rdo-solo-red-dead-online-sozinho-pelo-gateway');
+    expect(second.slug).toBe('criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos');
+    expect(third.slug).toBe('fluxo-rpi-claude-code-grok-codex');
   });
 });
 
