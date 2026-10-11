@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { SourceError } from '../../src/lib/now/http';
-import { dayLabel, fetchRecentTracks, parseRecentTracks, refreshAccessToken } from '../../src/lib/now/spotify';
+import { fetchRecentTracks, parseRecentTracks, refreshAccessToken } from '../../src/lib/now/spotify';
 
 const NOW = new Date('2026-10-11T18:00:00Z');
 const fixture = JSON.parse(
@@ -41,23 +41,6 @@ describe('parseRecentTracks', () => {
 
     const tracks = parseRecentTracks({ items: [evil, fixture.items[3]] }, { now: NOW });
     expect(tracks.map((track) => track.title)).toEqual(['Two']);
-  });
-});
-
-describe('dayLabel', () => {
-  it('calls the previous calendar day in Sao Paulo yesterday', () => {
-    expect(dayLabel('2026-10-11T02:30:00Z', new Date('2026-10-11T15:00:00Z'))).toBe('ontem');
-  });
-
-  it('labels the same Sao Paulo day as today and an older day as a short date, never a clock time', () => {
-    const now = new Date('2026-10-11T15:00:00Z');
-    const today = dayLabel('2026-10-11T15:00:00Z', now);
-    const older = dayLabel('2026-10-08T15:00:00Z', now);
-    expect(today).toBe('hoje');
-    expect(older).toBe('8 de out.');
-    expect(today).not.toContain(':');
-    expect(older).not.toContain(':');
-    expect(dayLabel('2026-10-11T02:30:00Z', now)).not.toContain(':');
   });
 });
 

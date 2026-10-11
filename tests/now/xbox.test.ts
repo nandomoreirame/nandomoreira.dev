@@ -57,6 +57,21 @@ describe('parseRecentGames', () => {
     ]);
   });
 
+  it('records the last played day in Sao Paulo, not UTC', () => {
+    const recent = parseRecentGames({
+      content: {
+        titles: [
+          {
+            name: 'Hades',
+            type: 'Game',
+            titleHistory: { lastTimePlayed: '2026-10-12T01:00:00Z' },
+          },
+        ],
+      },
+    });
+    expect(recent).toEqual([{ name: 'Hades', lastPlayed: '2026-10-11' }]);
+  });
+
   it('matches excluded names without case', () => {
     const recent = parseRecentGames(
       {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { saoPauloDay } from './day';
 import { SourceError, fetchJson } from './http';
 import { NOW_GAME_EXCLUDE } from './now';
 
@@ -48,10 +49,11 @@ export interface PlayingNow {
   title: string;
 }
 
-const playedOn = (iso: string): string => {
-  const day = iso.slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new SourceError('shape');
-  return day;
+/** Sao Paulo calendar day. An invalid instant is omitted so the list stays dated. */
+const playedOn = (iso: string): string | undefined => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return saoPauloDay(date);
 };
 
 /**
@@ -93,10 +95,10 @@ export const parseRecentGames = (
         Date.parse(b.titleHistory.lastTimePlayed) - Date.parse(a.titleHistory.lastTimePlayed),
     )
     .slice(0, limit)
-    .map((title) => ({
-      name: title.name,
-      lastPlayed: playedOn(title.titleHistory.lastTimePlayed),
-    }));
+    .flatMap((title) => {
+      const lastPlayed = playedOn(title.titleHistory.lastTimePlayed);
+      return lastPlayed ? [{ name: title.name, lastPlayed }] : [];
+    });
 };
 
 export const fetchXbox = async ({
