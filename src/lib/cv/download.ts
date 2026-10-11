@@ -69,7 +69,7 @@ export interface CvDependencies {
 
 const RETENTION_MONTHS = 12;
 
-const emailSchema = z.string().email().max(254);
+const emailSchema = z.email().max(254);
 const MAX_NAME = 200;
 
 /** Where the form lands; the page reads `envio`. */
