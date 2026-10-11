@@ -3,6 +3,7 @@ import { getAvailability, getCurrentPosts, getUpcomingPosts } from '../content';
 import type { Post } from '../../content/schemas/post';
 import { createCachedSource } from './cache';
 import { readNowConfig, type NowConfig } from './config';
+import { dayLabel } from './day';
 import { fetchActiveRepos, type ActiveRepo } from './github';
 import { logSourceError } from './http';
 import { NOW_DECLINING, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_TTL } from './now';
@@ -21,9 +22,11 @@ export type GamesSection =
   | { state: 'fallback'; items: readonly { name: string; note?: string }[] }
   | { state: 'empty' };
 
+export type RecentTrackView = RecentTrack & { day: string };
+
 export interface NowSnapshot {
   projects: Section<ActiveRepo[]>;
-  music: Section<RecentTrack[]>;
+  music: Section<RecentTrackView[]>;
   games: GamesSection;
   writing: { latest: Post | undefined; drafts: string[] };
   focus: { items: readonly string[]; declining: readonly string[]; availability: string };
@@ -81,7 +84,7 @@ export const createNowLoader = ({
     ? createCachedSource({
         ttlMs: NOW_TTL.spotify,
         now,
-        load: () => fetchRecentTracks({ fetch: fetchImpl, ...spotifyConfig, now: clock() }),
+        load: () => fetchRecentTracks({ fetch: fetchImpl, ...spotifyConfig }),
       })
     : undefined;
   const xbox = xboxConfig
@@ -114,7 +117,7 @@ export const createNowLoader = ({
         ? (logSourceError('spotify', musicResult.reason, logger), { state: 'empty' as const })
         : musicResult.value === 'unconfigured'
           ? { state: 'empty' as const }
-          : arraySection(musicResult.value);
+          : arraySection(musicResult.value.map((track) => ({ ...track, day: dayLabel(track.playedAt, clock()) })));
 
     const games = gamesSection(gamesResult, fallbackGames, logger);
 

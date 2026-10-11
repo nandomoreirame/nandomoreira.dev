@@ -3,20 +3,19 @@ import { describe, expect, it, vi } from 'vitest';
 import { SourceError } from '../../src/lib/now/http';
 import { fetchRecentTracks, parseRecentTracks, refreshAccessToken } from '../../src/lib/now/spotify';
 
-const NOW = new Date('2026-10-11T18:00:00Z');
 const fixture = JSON.parse(
   readFileSync(new URL('./fixtures/spotify-recently-played.json', import.meta.url), 'utf8'),
 );
 
 describe('parseRecentTracks', () => {
   it('dedupes by track id, keeps the latest play, and caps at five', () => {
-    const tracks = parseRecentTracks(fixture, { now: NOW });
+    const tracks = parseRecentTracks(fixture);
     expect(tracks.map((track) => track.title)).toEqual(['Same Song', 'Two', 'Three', 'Four', 'Five']);
     expect(tracks[0]).toEqual({
       title: 'Same Song',
       artists: 'Artist A, Artist B',
       url: 'https://open.spotify.com/track/t1',
-      day: 'hoje',
+      playedAt: '2026-10-11T18:00:00Z',
     });
   });
 
@@ -28,7 +27,6 @@ describe('parseRecentTracks', () => {
           fixture.items[3],
         ],
       },
-      { now: NOW },
     );
     expect(tracks.map((track) => track.title)).toEqual(['Two']);
   });
@@ -39,7 +37,7 @@ describe('parseRecentTracks', () => {
     evil.track.name = 'Evil';
     evil.track.external_urls.spotify = 'javascript:alert(1)';
 
-    const tracks = parseRecentTracks({ items: [evil, fixture.items[3]] }, { now: NOW });
+    const tracks = parseRecentTracks({ items: [evil, fixture.items[3]] });
     expect(tracks.map((track) => track.title)).toEqual(['Two']);
   });
 });
@@ -110,7 +108,6 @@ describe('fetchRecentTracks', () => {
       clientId: 'cid',
       clientSecret: 'sec',
       refreshToken: 'ref',
-      now: NOW,
     });
 
     expect(tracks[0]?.title).toBe('Same Song');

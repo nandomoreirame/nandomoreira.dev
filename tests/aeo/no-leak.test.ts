@@ -99,6 +99,7 @@ const outputs = () => [
             title: '<script>alert(1)</script>',
             artists: 'Artist A',
             url: 'https://open.spotify.com/track/t1',
+            playedAt: '2026-10-11T12:00:00Z',
             day: 'hoje',
           },
         ],

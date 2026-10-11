@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { dayLabel } from './day';
 import { SourceError, fetchJson } from './http';
 import { isAllowedUrl } from './safe';
 
@@ -32,13 +31,10 @@ export interface RecentTrack {
   title: string;
   artists: string;
   url: string;
-  day: string;
+  playedAt: string;
 }
 
-export const parseRecentTracks = (
-  json: unknown,
-  { now, limit = 5 }: { now: Date; limit?: number },
-): RecentTrack[] => {
+export const parseRecentTracks = (json: unknown, { limit = 5 }: { limit?: number } = {}): RecentTrack[] => {
   const parsed = recentSchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
@@ -60,7 +56,7 @@ export const parseRecentTracks = (
       title: item.track.name,
       artists: item.track.artists.map((artist) => artist.name).join(', '),
       url: item.track.external_urls.spotify,
-      day: dayLabel(item.playedAt, now),
+      playedAt: item.playedAt,
     }));
 };
 
@@ -96,17 +92,15 @@ export const fetchRecentTracks = async ({
   clientId,
   clientSecret,
   refreshToken,
-  now,
 }: {
   fetch: typeof fetch;
   clientId: string;
   clientSecret: string;
   refreshToken: string;
-  now: Date;
 }): Promise<RecentTrack[]> => {
   const accessToken = await refreshAccessToken({ fetch: fetchImpl, clientId, clientSecret, refreshToken });
   const json = await fetchJson(fetchImpl, RECENT_URL, {
     headers: { authorization: `Bearer ${accessToken}` },
   });
-  return parseRecentTracks(json, { now });
+  return parseRecentTracks(json);
 };

@@ -90,6 +90,50 @@ describe('loadNow', () => {
     await expect(loadNow()).resolves.toMatchObject({ games: { state: 'fallback', items: fallbackGames } });
   });
 
+  it('relabels a cached track after the clock moves and Spotify fails', async () => {
+    let clock = Date.parse('2026-10-11T15:00:00Z');
+    let fail = false;
+    const fetchImpl = vi.fn(async (url: string) => {
+      if (fail) throw new Error('offline');
+      const target = String(url);
+      if (target.includes('accounts.spotify.com')) return jsonResponse({ access_token: 'access-1' });
+      if (target.includes('api.spotify.com')) {
+        return jsonResponse({
+          items: [
+            {
+              played_at: '2026-10-11T12:00:00Z',
+              track: {
+                id: 't1',
+                name: 'Same Song',
+                artists: [{ name: 'Artist A' }],
+                external_urls: { spotify: 'https://open.spotify.com/track/t1' },
+              },
+            },
+          ],
+        });
+      }
+      throw new Error(`unexpected ${target}`);
+    });
+    const loadNow = createNowLoader({
+      config: readNowConfig({
+        SPOTIFY_CLIENT_ID: 'cid',
+        SPOTIFY_CLIENT_SECRET: 'sec',
+        SPOTIFY_REFRESH_TOKEN: 'ref',
+      }),
+      fetch: fetchImpl as unknown as typeof fetch,
+      now: () => clock,
+      logger: { warn: vi.fn() },
+    });
+
+    const first = await loadNow();
+    expect(first.music).toMatchObject({ state: 'ok', items: [{ day: 'hoje' }] });
+
+    fail = true;
+    clock = Date.parse('2026-10-13T15:00:00Z');
+    const second = await loadNow();
+    expect(second.music).toMatchObject({ state: 'ok', items: [{ day: '11 de out.' }] });
+  });
+
   it('marks every configured source ok when each one answers', async () => {
     const loadNow = createNowLoader({
       config: readNowConfig(fullConfig),
