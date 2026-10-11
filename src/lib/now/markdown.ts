@@ -1,6 +1,7 @@
 import { absoluteUrl } from '../aeo/urls';
 import { formatPolicyDate } from '../privacy/policy';
 import type { NowSnapshot } from './load';
+import { endSentence } from './sentence';
 import { NOW_LEAD, NOW_PATH, NOW_UPDATED_AT } from './now';
 import { leaksToMachine, machineText } from './safe';
 
@@ -45,7 +46,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
       : data.projects.items.flatMap((repo) => {
           if (leaksToMachine(repo.name)) return [];
           const description =
-            repo.description && !leaksToMachine(repo.description) ? `${machineText(repo.description)}. ` : '';
+            repo.description && !leaksToMachine(repo.description) ? `${machineText(endSentence(repo.description))} ` : '';
           const language = repo.language && !leaksToMachine(repo.language) ? `${machineText(repo.language)}. ` : '';
           const pushed = formatPolicyDate(repo.pushedAt.slice(0, 10));
           return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}Último push em ${pushed}.`];
@@ -65,7 +66,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
       ? []
       : data.music.items.flatMap((track) => {
           if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
-          return [`- [${machineText(track.title)}](${track.url}), ${machineText(track.artists)}. ${track.day}`];
+          return [`- [${machineText(track.title)}](${track.url}), ${machineText(endSentence(track.artists))} ${track.day}`];
         });
   pushSection(lines, 'Ouvindo', music);
 

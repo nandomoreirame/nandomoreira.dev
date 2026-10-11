@@ -97,4 +97,16 @@ describe('nowMarkdown', () => {
     expect(html).not.toContain('<script');
     expect(html).not.toContain('onerror=');
   });
+
+  it('does not double the period after text that already ends a sentence', () => {
+    const data = snapshot('Aberto a projetos.');
+    if (data.projects.state === 'empty' || data.music.state === 'empty') throw new Error('fixture must be populated');
+    data.projects.items[0]!.description = 'CLI de dados.';
+    data.music.items[0]!.artists = 'Charlie Brown Jr.';
+    const markdown = nowMarkdown({ site, data });
+
+    expect(markdown).not.toContain('..');
+    expect(markdown).toContain('Charlie Brown Jr. hoje');
+    expect(markdown).toContain('CLI de dados. TypeScript.');
+  });
 });

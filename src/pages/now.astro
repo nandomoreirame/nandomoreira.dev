@@ -10,6 +10,7 @@ import { getAllProjects, getProfile } from '../lib/content';
 import { displayNameOf } from '../lib/content/display-name';
 import { saoPauloDay } from '../lib/now/day';
 import { linkForRepo } from '../lib/now/github';
+import { endSentence } from '../lib/now/sentence';
 import { loadNow } from '../lib/now/load';
 import { NOW_LEAD, NOW_UPDATED_AT } from '../lib/now/now';
 import { formatPolicyDate } from '../lib/privacy/policy';
@@ -49,7 +50,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
               {data.projects.items.map((repo) => {
                 const href = linkForRepo(repo, cases);
                 const day = saoPauloDay(new Date(repo.pushedAt));
-                const lead = repo.description ? `: ${repo.description}. ` : '. ';
+                const lead = repo.description ? `: ${endSentence(repo.description)} ` : '. ';
                 return (
                   <li>
                     <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>{repo.name}</a>{lead}{repo.language && <TechBadge name={repo.language} />}{repo.language ? '. ' : ''}Último push em <time datetime={day}>{formatPolicyDate(day)}</time>.
@@ -82,7 +83,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             <ul>
               {data.music.items.map((track) => (
                 <li>
-                  <a href={track.url} {...externalAttrs}>{track.title}</a>{`, ${track.artists}. ${track.day}`}
+                  <a href={track.url} {...externalAttrs}>{track.title}</a>{`, ${endSentence(track.artists)} ${track.day}`}
                 </li>
               ))}
             </ul>

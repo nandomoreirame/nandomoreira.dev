@@ -46,7 +46,7 @@ describe('/now page', () => {
             {
               name: 'alpha',
               html_url: 'https://github.com/nandomoreirame/alpha',
-              description: 'newest',
+              description: 'newest.',
               language: 'TypeScript',
               pushed_at: '2026-10-12T01:30:00Z',
               fork: false,
@@ -70,7 +70,7 @@ describe('/now page', () => {
                 track: {
                   id: 't1',
                   name: 'Same Song',
-                  artists: [{ name: 'Artist A' }],
+                  artists: [{ name: 'Artist A Jr.' }],
                   external_urls: { spotify: 'https://open.spotify.com/track/t1' },
                 },
               },
@@ -86,6 +86,9 @@ describe('/now page', () => {
     expect(text).not.toContain(' ,');
     expect(text).not.toContain(' :');
     expect(text).not.toContain(' .');
+    // A description or an artist that already ends in a period gets no second one.
+    expect(text).not.toContain('..');
+    expect(text).toContain('Artist A Jr. hoje');
     expect(text).toContain('11 de outubro');
   });
 
