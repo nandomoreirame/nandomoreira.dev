@@ -29,6 +29,13 @@ env:
     availability:
       - RUNTIME
 
+  # /now. Declare a source only after its secret exists in Secret Manager and
+  # the backend has access (CLAUDE.md, Deploy); a missing one breaks the rollout.
+  - variable: OPENXBL_API_KEY
+    secret: now-openxbl-api-key
+    availability:
+      - RUNTIME
+
 scripts:
   buildCommand: npm run build
   runCommand: node ./dist/server/entry.mjs
