@@ -41,6 +41,8 @@ export default defineConfig({
     '/notas/[slug]': '/[slug]',
     // The Setup page started at the URL of the 2018 post it replaced.
     '/apps-que-uso': '/setup',
+    // Portuguese alias of /now, the canonical address of the directory.
+    '/agora': '/now',
     // Browsers and crawlers ask for /favicon.ico by default; without this the
     // post route [slug] answers it.
     '/favicon.ico': '/favicon.svg',
