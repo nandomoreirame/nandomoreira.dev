@@ -24,6 +24,24 @@ describe('ListRow', () => {
     expect(await render()).toContain('01/2026');
   });
 
+  it('stacks the stamp above the title below sm, so the title gets the full width on a phone', async () => {
+    const html = await render();
+    const row = html.match(/<a[^>]*>/)?.[0] ?? '';
+    const stamp = html.match(/<span[^>]*data-stamp[^>]*>/)?.[0] ?? '';
+
+    expect(row).toContain('grid-cols-[1fr_auto] sm:grid-cols-[4.5rem_1fr_auto]');
+    expect(stamp).toContain('col-start-1 row-start-1');
+    expect(html.indexOf('data-stamp')).toBeLessThan(html.indexOf('data-title'));
+  });
+
+  it('keeps the stamp in its own leading column from sm', async () => {
+    const html = await render();
+    const content = html.match(/<span[^>]*data-content[^>]*>/)?.[0] ?? '';
+
+    expect(content).toContain('row-start-2');
+    expect(content).toContain('sm:col-start-2 sm:row-start-1');
+  });
+
   it('collapses the leading column when there is no stamp', async () => {
     const html = await render({ stamp: undefined });
 
