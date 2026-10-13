@@ -14,7 +14,7 @@ const render = async () => {
 describe('/mcp', () => {
   it('opens like every other page: eyebrow, the claim, the lead', async () => {
     const html = await render();
-    expect(html).toContain('Este site fala MCP');
+    expect(html).toContain('Este site fala com Agentes de IA');
     expect(html).toContain('data-page-lead');
     expect(html.match(/<h1/g)).toHaveLength(1);
   });
