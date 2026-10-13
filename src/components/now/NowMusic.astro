@@ -28,10 +28,6 @@ const previewToggle = [
   focus,
 ].join(' ');
 
-const hasPreview =
-  (music.recent.state === 'ok' && music.recent.items.some((track) => localPreview(track.preview))) ||
-  (music.topArtists.state === 'ok' && music.topArtists.items.some((artist) => localPreview(artist.preview)));
-
 const albumLine = (artists: string, album: string, year: string | undefined): string =>
   year ? `${artists} · ${album} (${year})` : `${artists} · ${album}`;
 ---
@@ -154,11 +150,6 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
         );
       })}
     </ul>
-  )
-}
-{
-  hasPreview && (
-    <p class="font-mono text-caption text-muted-foreground">Prévias de 30 segundos via Deezer.</p>
   )
 }
 
