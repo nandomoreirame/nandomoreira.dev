@@ -44,6 +44,6 @@ describe('/posts listing', () => {
   });
 
   it('names the page Blog in the browser tab', async () => {
-    expect(await render()).toContain('<title>Blog | nandomoreira.dev</title>');
+    expect(await render()).toContain('<title>Blog | Fernando Moreira</title>');
   });
 });
