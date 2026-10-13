@@ -126,3 +126,19 @@ describe('Setup across the site', () => {
     expect(JSON.stringify(index)).toContain('https://nandomoreira.dev/setup');
   });
 });
+
+describe('setup agents', () => {
+  const section = (id: string) => SETUP_SECTIONS.find((item) => item.id === id)!;
+
+  it('lists only the agents of the current RPI flow, with the Grok CLI linked to its repository', () => {
+    const agents = section('ia').items;
+    expect(agents.map((item) => item.name)).not.toContain('Codex');
+    expect(agents.find((item) => item.name === 'Grok CLI')?.url).toBe('https://github.com/xai-org/grok-build');
+  });
+
+  it('keeps the Codex once, under what was tried and dropped', () => {
+    const dropped = section('deixei-de-lado').items.filter((item) => item.name.startsWith('Codex'));
+    expect(dropped).toHaveLength(1);
+    expect(dropped[0]?.url).toBe('https://github.com/openai/codex');
+  });
+});
