@@ -93,7 +93,7 @@ automáticos que não envelhecem sozinhos.
 28. [REQ-028] QUANDO o JavaScript não roda ENTÃO o botão NÃO DEVE aparecer (sai com `hidden` e só o script o revela).
 29. [REQ-029] QUANDO as faixas são carregadas ENTÃO o sistema DEVE procurar a prévia no Deezer pelo ISRC da faixa (`api.deezer.com/track/isrc:<ISRC>`), guardando em memória só se ela existe, e anexar a rota local apenas às faixas que o Deezer tem; falha do Deezer DEVE deixar a faixa sem botão, sem afetar a seção.
 30. [REQ-030] QUANDO `/api/now/preview/<isrc>` é requisitada ENTÃO o sistema DEVE aceitar só ISRC válido, buscar a URL assinada a cada requisição, aceitar só `https` em `*.dzcdn.net`, `audio/mpeg` e até 1 MiB, nunca repassar header da origem, e responder com `cache-control: private, max-age=3600` (os termos do Deezer proíbem armazenar áudio, então nenhum cache compartilhado o guarda).
-31. [REQ-031] QUANDO alguma faixa tem prévia ENTÃO a seção DEVE creditar uma vez "Prévias de 30 segundos via Deezer.".
+31. [REQ-031] ~~QUANDO alguma faixa tem prévia ENTÃO a seção DEVE creditar uma vez "Prévias de 30 segundos via Deezer.".~~ Revogado em 2026-10-13 a pedido do autor: a seção não mostra crédito ao Deezer.
 
 32. [REQ-032] QUANDO um artista do mês tem prévia ENTÃO a foto DEVE virar o botão de play da mesma forma que as capas (rótulo "Ouvir <faixa>, de <artista>") e o nome DEVE continuar como link para o Spotify; a faixa é a mais ouvida pelo autor desse artista (top de 4 semanas, depois de 6 meses, até 5 tentativas) que o Deezer tenha, e, sem nenhuma, a mais tocada do artista no Deezer desde que o nome seja idêntico.
 
