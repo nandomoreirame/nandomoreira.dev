@@ -216,11 +216,9 @@ describe('NowMusic preview button', () => {
     expect(button).toContain('group-aria-pressed/preview:');
   });
 
-  it('credits Deezer once, below the tracks, only when some track has a preview', async () => {
-    const credited = await render(NowMusic, { music: withPreview() });
-    expect(credited.match(/Prévias de 30 segundos via Deezer/g)).toHaveLength(1);
-    const plain = await render(NowMusic, { music: music() });
-    expect(plain).not.toContain('Deezer');
+  it('shows no Deezer credit under the tracks, even with previews (REQ-031 revoked)', async () => {
+    const html = await render(NowMusic, { music: withPreview() });
+    expect(html).not.toContain('Deezer');
   });
 
   it('never points the audio at Deezer', async () => {
@@ -262,8 +260,8 @@ describe('NowMusic artist previews', () => {
     expect(artists.match(/<button\b/g)).toHaveLength(1);
   });
 
-  it('credits Deezer when only an artist has a preview', async () => {
+  it('shows no Deezer credit when only an artist has a preview', async () => {
     const html = await render(NowMusic, { music: withArtistPreview() });
-    expect(html).toContain('Prévias de 30 segundos via Deezer.');
+    expect(html).not.toContain('Deezer');
   });
 });
