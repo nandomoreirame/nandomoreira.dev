@@ -8,7 +8,7 @@ import { absoluteUrl } from '../aeo/urls';
 export const SETUP_PATH = '/setup';
 
 /** Bump when the list changes: it is a living document. */
-export const SETUP_UPDATED_AT = '2026-10-11';
+export const SETUP_UPDATED_AT = '2026-10-13';
 
 export const SETUP_LEAD =
   'O hardware e as ferramentas que eu uso todo dia, as que eu mesmo fiz para preencher o que faltava e as que testei e deixei de lado. Não é uma página estática: muda quando o meu setup muda.';
@@ -181,12 +181,8 @@ export const SETUP_SECTIONS: SetupSection[] = [
       },
       {
         name: 'Grok CLI',
+        url: 'https://github.com/xai-org/grok-build',
         why: 'Implementa as tarefas do plano, uma por vez, sem permissão para rodar git.',
-      },
-      {
-        name: 'Codex',
-        url: 'https://github.com/openai/codex',
-        why: 'Revisa o diff em sandbox somente leitura. Um segundo modelo acha o que o primeiro não vê.',
       },
       {
         name: 'Ollama e OpenCode',
@@ -354,9 +350,9 @@ export const SETUP_SECTIONS: SetupSection[] = [
         why: 'Fazia a validação final das tarefas. Saiu porque o plano gratuito era frágil demais: limite de requisições estourando no meio da execução.',
       },
       {
-        name: 'Codex fazendo commit',
+        name: 'Codex',
         url: 'https://github.com/openai/codex',
-        why: 'Dei a ele uma lista com um arquivo para commitar e ele fez cinco commits. Hoje ele só revisa, em modo somente leitura, e quem commita é o Claude.',
+        why: 'Começou commitando, até receber uma lista com um arquivo e fazer cinco commits. Passou a só revisar o diff em sandbox somente leitura, e depois saiu do fluxo RPI, que hoje é só o Claude Code e o Grok.',
       },
       {
         name: 'TickTick',
