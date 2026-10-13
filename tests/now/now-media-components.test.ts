@@ -15,7 +15,7 @@ const cover = (id: string) => `/api/now/cover/spotify/${id}`;
 const music = (): NowSnapshot['music'] => ({
   topArtists: {
     state: 'ok',
-    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis'].map((name, index) => ({
+    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita'].map((name, index) => ({
       name,
       url: `https://open.spotify.com/artist/${name.toLowerCase()}`,
       cover: cover(String(index + 1).repeat(40)),
@@ -47,16 +47,24 @@ const game = (name: string, progress?: RecentGame['progress']): RecentGame => ({
 });
 
 describe('NowMusic', () => {
-  it('renders five local artist photos and the album line, with no third-party image', async () => {
+  it('renders six local artist photos and the album line, with no third-party image', async () => {
     const html = await render(NowMusic, { music: music() });
     const sources = [...html.matchAll(/<img\b[^>]*\bsrc="([^"]*)"/g)].map((match) => match[1]);
 
-    expect(sources.filter((src) => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(6);
+    expect(sources.filter((src) => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(7);
     expect(html).toContain('alt=""');
     expect(html).not.toMatch(/src="[^"]*(?:scdn\.co|s-microsoft\.com)/);
     expect(html).toContain('Artist A · Album One (1999)');
     expect(html).toContain('href="https://open.spotify.com/track/t1"');
     expect(html).toContain('Artistas do mês');
+  });
+
+  it('lays six artists in two full rows of three on a phone and in one row from sm', async () => {
+    const html = await render(NowMusic, { music: music() });
+    const grid = html.split('Artistas do mês')[1]?.match(/<ul\b[^>]*>/)?.[0] ?? '';
+
+    expect(grid).toContain('grid-cols-3');
+    expect(grid).toContain('sm:grid-cols-6');
   });
 
   it('hides the artist block when that source is empty and still lists tracks', async () => {
@@ -129,6 +137,19 @@ describe('NowGames', () => {
     expect(html).not.toContain('Jogando agora');
     expect(grid).not.toContain('>Hades<');
     expect(grid).toContain('Celeste');
+  });
+
+  it('stretches the featured details across the card, with a thick bar at the bottom', async () => {
+    const html = await render(NowGames, {
+      games: { state: 'ok', items: { recent: [game('Hades', { current: 690, total: 1000, percent: 69 })] } },
+    });
+    const details = html.match(/<div[^>]*data-featured-details[^>]*>/)?.[0] ?? '';
+    const bar = html.match(/<div[^>]*role="progressbar"[^>]*>/)?.[0] ?? '';
+    const block = html.match(/<div[^>]*data-progress[^>]*>/)?.[0] ?? '';
+
+    expect(details).toContain('flex-1');
+    expect(bar).toContain('h-2.5');
+    expect(block).toContain('mt-auto');
   });
 
   it('omits the bar when a game has no gamerscore', async () => {
