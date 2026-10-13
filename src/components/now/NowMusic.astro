@@ -40,7 +40,7 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
   music.topArtists.state === 'ok' && (
     <div class="flex flex-col gap-md">
       <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Artistas do mês</p>
-      <ul class="grid grid-cols-3 gap-md sm:grid-cols-5">
+      <ul class="grid grid-cols-3 gap-md sm:grid-cols-6">
         {music.topArtists.items.map((artist) => {
           const photo = localCover(artist.cover);
           const preview = localPreview(artist.preview);
