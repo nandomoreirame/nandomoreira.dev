@@ -354,7 +354,7 @@ export const connectMarkdown = ({ site }: { site: URL }): string => {
   const endpoint = absoluteUrl(site, '/api/mcp');
   const lines: string[] = [
     ...frontmatter('Conectar via MCP', absoluteUrl(site, '/mcp')),
-    '# Este site fala MCP',
+    '# Este site fala com Agentes de IA',
     '',
     'Adicione este portfólio como conector e o seu agente lê o perfil, os cases e o currículo, e confere a disponibilidade. Sem conta, sem chave e sem cadastro.',
     '',
