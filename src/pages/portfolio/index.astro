@@ -3,13 +3,16 @@ import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
-import { getAllProjects } from '../../lib/content';
+import { getAllProjects, getProfile } from '../../lib/content';
+import { displayNameOf } from '../../lib/content/display-name';
 
 const projects = await getAllProjects();
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title="Portfólio | nandomoreira.dev"
+  title={`Portfólio | ${authorName}`}
   description={COLLECTION_COPY.portfolio.metaDescription}
 >
   <PageHeader

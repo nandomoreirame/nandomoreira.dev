@@ -4,13 +4,14 @@ import { render } from 'astro:content';
 import ListRow from '../components/ui/ListRow.astro';
 import Prose from '../components/ui/Prose.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getAllPostEntries, getAllPosts, getPostEntry } from '../lib/content';
+import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { generateArt } from '../lib/art';
 import { toCompactStamp, toLongDate } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
 import { toHashtag } from '../lib/posts/tags';
+import { displayNameOf } from '../lib/content/display-name';
 
 export const prerender = true;
 
@@ -43,9 +44,11 @@ const published = `publicado: ${toLongDate(post.date)}`;
 const related = relatedPosts(post, await getAllPosts());
 // Same generated drawing as the case pages, in the cover's place.
 const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.art, aspect: 'banner' }) : undefined;
+
+const authorName = displayNameOf(await getProfile());
 ---
 
-<BaseLayout title={`${post.title} | nandomoreira.dev`} description={post.summary}>
+<BaseLayout title={`${post.title} | ${authorName}`} description={post.summary}>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
   <nav class="mt-lg" aria-label="Trilha de navegação">

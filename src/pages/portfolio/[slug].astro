@@ -3,8 +3,9 @@ import CaseArticle from '../../components/catalog/CaseArticle.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { jsonLdForProject, serialiseJsonLd } from '../../lib/catalog/json-ld';
 import { collectionOfBlock } from '../../lib/catalog/groups';
-import { getAllProjects } from '../../lib/content';
+import { getAllProjects, getProfile } from '../../lib/content';
 import type { Project } from '../../content/schemas/project';
+import { displayNameOf } from '../../lib/content/display-name';
 
 export const prerender = true;
 
@@ -26,10 +27,12 @@ interface Props {
 const { project } = Astro.props as Props;
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForProject(project, site));
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title={`${project.title} | nandomoreira.dev`}
+  title={`${project.title} | ${authorName}`}
   description={project.summary}
   markdownAlternate={`/portfolio/${project.slug}.md`}
 >

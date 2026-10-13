@@ -1,12 +1,16 @@
 ---
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { displayNameOf } from '../lib/content/display-name';
+import { getProfile } from '../lib/content';
 
 Astro.response.status = 404;
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title="Página não encontrada | nandomoreira.dev"
+  title={`Página não encontrada | ${authorName}`}
   description="A página solicitada não existe."
   noindex
 >

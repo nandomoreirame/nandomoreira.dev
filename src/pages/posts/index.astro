@@ -3,16 +3,19 @@ import ListRow from '../../components/ui/ListRow.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
-import { getCurrentPosts, getUpcomingPosts } from '../../lib/content';
+import { getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
 import { toCompactStamp } from '../../lib/format/date';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
+import { displayNameOf } from '../../lib/content/display-name';
 
 const posts = await getCurrentPosts();
 const upcoming = await getUpcomingPosts();
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title="Blog | nandomoreira.dev"
+  title={`Blog | ${authorName}`}
   description={BLOG_COPY.metaDescription}
 >
   <PageHeader

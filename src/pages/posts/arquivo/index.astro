@@ -2,16 +2,19 @@
 import ListRow from '../../../components/ui/ListRow.astro';
 import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getArchiveYears } from '../../../lib/content';
+import { getArchiveYears, getProfile } from '../../../lib/content';
+import { displayNameOf } from '../../../lib/content/display-name';
 
 const years = await getArchiveYears();
 const span = years.map((year) => Number(year.year)).sort((a, b) => a - b);
 const title =
   span.length > 1 ? `Textos de ${span[0]} a ${span[span.length - 1]}` : 'Textos arquivados';
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title="Arquivo | nandomoreira.dev"
+  title={`Arquivo | ${authorName}`}
   description="Textos arquivados, agrupados por ano de publicação."
 >
   <PageHeader

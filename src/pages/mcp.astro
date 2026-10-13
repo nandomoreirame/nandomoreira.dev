@@ -9,6 +9,7 @@ import { getProfile } from '../lib/content';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { MCP_TOOLS } from '../lib/mcp/catalog';
 import { mcpClients, mcpHowToLd } from '../lib/mcp/clients';
+import { displayNameOf } from '../lib/content/display-name';
 
 type ToolName = (typeof MCP_TOOLS)[number]['name'];
 
@@ -40,10 +41,12 @@ const hireBrief = buildHireBrief({
   site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
   profile: await getProfile(),
 });
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title="Conectar via MCP | nandomoreira.dev"
+  title={`Conectar via MCP | ${authorName}`}
   description="Como conectar este portfólio a um agente de IA pelo Model Context Protocol."
 >
   <script type="application/ld+json" is:inline set:html={howToJsonLd} />

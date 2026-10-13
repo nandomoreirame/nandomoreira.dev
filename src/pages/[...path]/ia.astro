@@ -4,6 +4,8 @@ import AiDocument from '../../components/ai-view/AiDocument.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { absoluteUrl, requireSite } from '../../lib/aeo/urls';
 import { markdownForPath } from '../../lib/ai-view/registry';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
 
 export const prerender = false;
 
@@ -15,6 +17,8 @@ const page = await markdownForPath(site, Astro.params.path ?? '');
 if (!page) {
   Astro.response.status = 404;
 }
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 {
@@ -22,7 +26,7 @@ if (!page) {
     <p>Not found</p>
   ) : (
     <BaseLayout
-      title={`${page.title} | IA | nandomoreira.dev`}
+      title={`${page.title} | IA | ${authorName}`}
       description={`Visão IA de ${page.humanPath}`}
       noindex
       view="ai"

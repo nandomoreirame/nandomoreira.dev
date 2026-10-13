@@ -2,8 +2,9 @@
 import ListRow from '../../../components/ui/ListRow.astro';
 import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getArchivedPostsByYear, getArchiveYears } from '../../../lib/content';
+import { getArchivedPostsByYear, getArchiveYears, getProfile } from '../../../lib/content';
 import { toCompactStamp } from '../../../lib/format/date';
+import { displayNameOf } from '../../../lib/content/display-name';
 
 export const prerender = true;
 
@@ -23,10 +24,12 @@ interface Props {
 const { year } = Astro.props as Props;
 // getStaticPaths only emits years with count > 0, so the list is never empty here.
 const posts = await getArchivedPostsByYear(year);
+
+const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title={`Arquivo ${year} | nandomoreira.dev`}
+  title={`Arquivo ${year} | ${authorName}`}
   description={`Textos publicados em ${year}.`}
 >
   <nav class="mt-lg" aria-label="Trilha de navegação">
