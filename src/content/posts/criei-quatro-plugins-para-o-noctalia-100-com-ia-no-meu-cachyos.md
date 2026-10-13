@@ -41,11 +41,19 @@ O primeiro, começado em 9 de junho. Notas adesivas presas na área de trabalho 
 
 ### Daybar
 
-`Mod+Space` abre um campo de captura no centro da tela que entende texto livre: "comprar pão amanhã 9h" vira tarefa, "/e reunião sexta 15h-16h" vira evento no Google Calendar, uma URL vira favorito com prévia da página, "=200\*15%" vira conta com o resultado copiado. `Mod+Shift+Space` abre o painel com o calendário, o checklist do dia, um timer de foco, os favoritos e as notas.
+`Mod+Space` abre um campo de captura no centro da tela que entende texto livre: "comprar pão amanhã 9h" vira tarefa, "/e reunião sexta 15h-16h" vira evento no Google Calendar, uma URL vira favorito com prévia da página, "=200\*15%" vira conta com o resultado copiado. `Mod+Shift+Space` abre o painel com o calendário, o checklist do dia, o pomodoro, os favoritos e as notas.
 
 O Google Calendar é lido e escrito pelo `khal` e sincronizado pelo `vdirsyncer`, com as credenciais no keyring do sistema, e não num arquivo.
 
 ![Captura rápida do Daybar transformando "/e reunião com o time sexta 15h-16h" em um evento com data e horário](/lab/noctalia-daybar/capture-event.webp)
+
+Na v0.3.0, de 12 de outubro, o Daybar ganhou um timer. Eu queria uma coisa simples: digitar quanto tempo quero, ver a contagem regressiva e receber o alarme no fim. Ele virou uma quarta aba do Foco, ao lado de Foco, Pausa curta e Pausa longa, e também começa pela captura: `/t 10m chá` já sai contando, e `/p` inicia ou pausa o pomodoro. Só um relógio conta por vez (começar o timer pausa o pomodoro, e o contrário também, sem perder o tempo que faltava), e os quatro últimos timers ficam ali como atalho de um clique.
+
+![Aba Foco do Daybar no modo Timer: contagem regressiva de 01:41 dentro de um círculo de progresso, com o rótulo "Pausa para o café", e a barra mostrando o mesmo tempo com o ícone de alarme](/lab/noctalia-daybar/timer.webp)
+
+O relógio também sai do painel. Um clique abre a contagem numa janela do Niri, que eu movo e redimensiono, e outro fixa um relógio pequeno num canto da tela, por cima das janelas e em todos os workspaces. Os dois voltam abertos quando o shell reinicia.
+
+![Relógio do Daybar aberto numa janela própria: contagem de 01:17 em um círculo grande, com os botões de reiniciar e pausar e as abas do Foco embaixo](/lab/noctalia-daybar/clock-window.webp)
 
 [Ver o Daybar no lab](/lab/noctalia-daybar)
 
@@ -74,6 +82,8 @@ Todo acesso ao GitHub passa pelo `gh`, então o plugin nunca toca num token.
 Eu não escrevi o código desses plugins à mão. Todos saíram do mesmo fluxo que uso em qualquer projeto: pesquisa e spec no Claude Code (`/rpi:research`), plano com tarefas pequenas e teste antes do código (`/rpi:plan`), e implementação no Grok (`/rpi:implement`), com o Claude Code conferindo e commitando. Contei como funciona em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex).
 
 O `git log` mostra o ritmo. O Daybar teve 107 commits num dia só, das 11h31 às 21h52, passando por três specs (o MVP, depois favoritos e notas, depois apagar evento do calendário). O AI Bar foi do primeiro ao último commit em cerca de uma hora e meia, e o Gistbar em menos de uma hora, os dois reaproveitando a base que o Daybar deixou.
+
+A v0.3.0 do Daybar, a do timer e do relógio destacado, foi mais 42 commits, das 19h28 do dia 11 até a tag no começo da tarde do dia 12. Essa rodada saiu sem dois dos três agentes: o Grok respondeu `402 Payment Required: Grok Build usage balance exhausted` já na primeira tarefa, e o Codex bateu o limite de uso. O fluxo prevê isso (cada etapa cai para o Claude Code quando a ferramenta não responde), então ele implementou e revisou tudo sozinho.
 
 ## O que um plugin precisa
 
@@ -106,7 +116,7 @@ ln -s ~/dev/projects/noctalia-gistbar ~/.config/noctalia/plugins/gistbar
 
 Depois é ativar em Configurações > Plugins e pôr o widget na barra.
 
-Nos quatro, a lógica mora em funções JavaScript puras, testadas com Vitest, e o QML fica só como tela. O Gistbar tem 151 testes e o AI Bar, 36. É o que deixa a IA mexer no código sem eu precisar conferir cada linha.
+Nos quatro, a lógica mora em funções JavaScript puras, testadas com Vitest, e o QML fica só como tela. O Daybar tem 440 testes, o Gistbar 151 e o AI Bar 36. É o que deixa a IA mexer no código sem eu precisar conferir cada linha.
 
 Se isso é simples, eu não sei dizer: escrevi tudo com IA e não tenho com o que comparar. O que eu sei é onde o tempo foi.
 
@@ -117,6 +127,10 @@ O código funcionava. O que voltava toda hora era a UI dos painéis da barra: se
 Os títulos contam a história: "show a pointer cursor on note and bookmark rows", "dim and italicize the empty-day message", "center the timer, controls and task picker", "keep lists stable while a delete bubble is open and reachable by Tab". Nenhum deles é bug de lógica. É o tipo de detalhe que a IA não vê, porque ela não olha a tela (quem olha sou eu).
 
 A saída foi juntar esses acertos num kit de componentes (`components/ui/`: card, chip, campo, linha de lista, botão com confirmação, estado vazio) dentro do Daybar. Como o Noctalia não tem um jeito de um plugin importar componentes de outro, o kit foi copiado para o AI Bar e para o Gistbar, e foi por isso que os dois já nasceram com a aparência certa e saíram em uma tarde.
+
+Com o timer foi igual. O contador do Foco ficou achatado dentro do círculo, e na janela grande os botões de pausar e reiniciar cresciam junto com ela até ficarem gigantes. Eu mandava o print, a IA corrigia, e o print seguinte mostrava o próximo detalhe: o traço do círculo grosso demais, os botões empurrando os números para fora do centro, o rótulo do timer que aparecia no painel e não na janela.
+
+Um bug dessa rodada não era de tela. A primeira versão da janela logava `Binding loop detected for property "progress"` ao subir o shell. A janela nascia junto com o serviço principal do plugin, e o cálculo do círculo lia a configuração do pomodoro pela primeira vez no meio do próprio binding, o que reescrevia o tempo restante que ele mesmo usava. A correção foi criar o mostrador só quando a janela está visível, com um `Loader`.
 
 Uma armadilha de brinde: o Noctalia não recarrega plugins sozinho. Mudou um QML ou o `settings.json`, reinicia o shell (criei um atalho só para isso, `Super+Alt+B`).
 
