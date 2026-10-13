@@ -8,12 +8,14 @@ interface Props {
 }
 
 const { progress, name, size } = Astro.props;
-const height = size === 'lg' ? 'h-1.5' : 'h-1';
+const height = size === 'lg' ? 'h-2.5' : 'h-1';
+// The large bar sits at the bottom of the featured card, level with the cover.
+const placement = size === 'lg' ? 'mt-auto' : '';
 ---
 
 {
   progress && (
-    <div class="flex flex-col gap-xs">
+    <div data-progress class:list={['flex flex-col gap-xs', placement]}>
       <div
         class:list={['overflow-hidden rounded-full bg-surface-elevated', height]}
         role="progressbar"
