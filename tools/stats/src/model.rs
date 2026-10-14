@@ -32,6 +32,44 @@ pub struct Event {
     pub conversion: Option<Conversion>,
 }
 
+/// Brazilian states as Cloudflare names them (cf-region), to their codes.
+const BR_STATES: [(&str, &str); 27] = [
+    ("Acre", "AC"),
+    ("Alagoas", "AL"),
+    ("Amapá", "AP"),
+    ("Amazonas", "AM"),
+    ("Bahia", "BA"),
+    ("Ceará", "CE"),
+    ("Distrito Federal", "DF"),
+    ("Espírito Santo", "ES"),
+    ("Goiás", "GO"),
+    ("Maranhão", "MA"),
+    ("Mato Grosso", "MT"),
+    ("Mato Grosso do Sul", "MS"),
+    ("Minas Gerais", "MG"),
+    ("Pará", "PA"),
+    ("Paraíba", "PB"),
+    ("Paraná", "PR"),
+    ("Pernambuco", "PE"),
+    ("Piauí", "PI"),
+    ("Rio de Janeiro", "RJ"),
+    ("Rio Grande do Norte", "RN"),
+    ("Rio Grande do Sul", "RS"),
+    ("Rondônia", "RO"),
+    ("Roraima", "RR"),
+    ("Santa Catarina", "SC"),
+    ("São Paulo", "SP"),
+    ("Sergipe", "SE"),
+    ("Tocantins", "TO"),
+];
+
+fn state_code(name: &str) -> Option<&'static str> {
+    BR_STATES
+        .iter()
+        .find(|(state, _)| *state == name)
+        .map(|(_, code)| *code)
+}
+
 fn text(data: &Value, key: &str) -> Option<String> {
     data.get(key)?.as_str().map(str::to_owned)
 }
@@ -72,11 +110,20 @@ impl Event {
         })
     }
 
-    /// "City, State", or whichever of the two is known.
+    /// "City, State", or whichever of the two is known. A Brazilian state
+    /// shows as its two-letter code ("Curitiba, PR") to fit the columns.
     pub fn place(&self) -> Option<String> {
-        match (&self.city, &self.region) {
+        let region = self.region.as_deref().map(|name| {
+            if self.country.as_deref() == Some("BR") {
+                state_code(name).unwrap_or(name)
+            } else {
+                name
+            }
+        });
+        match (&self.city, region) {
             (Some(city), Some(region)) => Some(format!("{city}, {region}")),
-            (Some(only), None) | (None, Some(only)) => Some(only.clone()),
+            (Some(city), None) => Some(city.clone()),
+            (None, Some(region)) => Some(region.to_owned()),
             (None, None) => None,
         }
     }
@@ -205,7 +252,17 @@ mod tests {
         with_place["city"] = json!("Curitiba");
         with_place["region"] = json!("Paraná");
         let event = Event::from_data(&with_place).unwrap();
-        assert_eq!(event.place().as_deref(), Some("Curitiba, Paraná"));
+        // data() is from Brazil, so the state shows as its two-letter code.
+        assert_eq!(event.place().as_deref(), Some("Curitiba, PR"));
+
+        let mut abroad = with_place.clone();
+        abroad["country"] = json!("PT");
+        abroad["city"] = json!("Porto");
+        abroad["region"] = json!("Porto");
+        assert_eq!(
+            Event::from_data(&abroad).unwrap().place().as_deref(),
+            Some("Porto, Porto")
+        );
 
         let without = Event::from_data(&data()).unwrap();
         assert_eq!(without.city, None);

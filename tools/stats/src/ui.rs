@@ -265,7 +265,7 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
         Constraint::Length(6),
         Constraint::Min(28),
         Constraint::Length(14),
-        Constraint::Length(22),
+        Constraint::Length(26),
         Constraint::Length(24),
     ];
     let head = header_row(
@@ -805,10 +805,10 @@ mod tests {
     #[test]
     fn shows_the_city_in_the_feed_and_ranks_cities_on_the_traffic_tab() {
         let mut app = app();
-        assert!(screen(&app).contains("Curitiba, Paraná"));
+        assert!(screen(&app).contains("Curitiba, PR"));
         app.tab = Tab::Traffic;
         let text = screen(&app);
         assert!(text.contains("Cidades"));
-        assert!(text.contains("Curitiba, Paraná"));
+        assert!(text.contains("Curitiba, PR"));
     }
 }
