@@ -33,9 +33,14 @@ describe('/now page', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   it('keeps separators against the previous word and dates pushes in Sao Paulo', async () => {
+    // The fixtures are dated 2026-10-11 and "hoje" is relative: freeze the clock
+    // on that day, or the test turns red the day after it was written.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-11T15:00:00Z'));
     fetchImpl.mockImplementation(async (url: string) => {
       const target = String(url);
       if (target.includes('api.github.com')) {
