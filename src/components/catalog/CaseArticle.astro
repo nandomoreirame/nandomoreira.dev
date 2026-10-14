@@ -6,6 +6,7 @@ import Prose from '../ui/Prose.astro';
 import TechBadge from '../ui/TechBadge.astro';
 import LinkList from './LinkList.astro';
 import { generateArt } from '../../lib/art';
+import { collectionOfBlock } from '../../lib/catalog/groups';
 
 interface Props {
   project: Project;
@@ -161,7 +162,11 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
               Trabalho sob confidencialidade: o código e a URL não são públicos.
             </p>
           ) : (
-            <LinkList repoUrl={project.repoUrl} liveUrl={project.liveUrl} />
+            <LinkList
+              repoUrl={project.repoUrl}
+              liveUrl={project.liveUrl}
+              goBase={`/go/${collectionOfBlock(project.block)}/${project.slug}`}
+            />
           )}
         </div>
       )

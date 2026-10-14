@@ -9,6 +9,8 @@ export interface ProjectLink {
 interface LinkSource {
   repoUrl?: string | null;
   liveUrl?: string | null;
+  /** When set, human links go through /go instead of the destination itself. */
+  goBase?: string;
 }
 
 /**
@@ -20,14 +22,15 @@ interface LinkSource {
  * an outline. A repo-only case keeps the outline rather than being promoted,
  * so no page ever grows a second primary.
  */
-export const visibleLinks = ({ repoUrl, liveUrl }: LinkSource): ProjectLink[] => {
+export const visibleLinks = ({ repoUrl, liveUrl, goBase }: LinkSource): ProjectLink[] => {
+  const hrefFor = (kind: 'live' | 'repo', url: string): string => (goBase ? `${goBase}/${kind}` : url);
   const links: ProjectLink[] = [];
 
   if (liveUrl) {
-    links.push({ kind: 'live', href: liveUrl, label: 'Ver projeto', variant: 'primary' });
+    links.push({ kind: 'live', href: hrefFor('live', liveUrl), label: 'Ver projeto', variant: 'primary' });
   }
   if (repoUrl) {
-    links.push({ kind: 'repo', href: repoUrl, label: 'Código fonte', variant: 'secondary' });
+    links.push({ kind: 'repo', href: hrefFor('repo', repoUrl), label: 'Código fonte', variant: 'secondary' });
   }
 
   return links;

@@ -42,7 +42,7 @@ describe('discontinued case', () => {
     const html = await render({ liveUrl: 'https://example.com' });
 
     expect(html).not.toMatch(/descontinuado/i);
-    expect(html).toMatch(/<a[^>]*href="https:\/\/example\.com"/);
+    expect(html).toMatch(/<a[^>]*href="\/go\/portfolio\/atelie\/live"/);
   });
 
   it('drops the link even when a stale URL is left in the frontmatter', async () => {

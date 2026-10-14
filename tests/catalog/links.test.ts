@@ -65,4 +65,12 @@ describe('visibleLinks', () => {
     expect(links).toHaveLength(1);
     expect(links[0]!.variant).toBe('secondary');
   });
+
+  it('routes case links through /go when a base is given', () => {
+    expect(
+      visibleLinks({ repoUrl: 'https://github.com/x/forja', liveUrl: 'https://forja.dev', goBase: '/go/lab/forja' }).map(
+        (link) => link.href,
+      ),
+    ).toEqual(['/go/lab/forja/live', '/go/lab/forja/repo']);
+  });
 });

@@ -6,6 +6,7 @@ import Button from '../ui/Button.astro';
 interface Props {
   repoUrl?: string | null;
   liveUrl?: string | null;
+  goBase?: string;
 }
 
 const links = visibleLinks(Astro.props);
