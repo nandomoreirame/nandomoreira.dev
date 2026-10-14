@@ -1,0 +1,83 @@
+import { describe, expect, it } from 'vitest';
+import { readAnalyticsConfig } from '../../src/lib/analytics/config';
+import { createRecorder } from '../../src/lib/analytics/recorder';
+import type { AnalyticsStore } from '../../src/lib/analytics/store';
+import { memoryAnalyticsStore } from '../helpers/analytics-store';
+
+const SECRET = 's'.repeat(32);
+const CHROME = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/129.0 Safari/537.36';
+const now = () => new Date('2026-10-14T17:02:00.000Z');
+
+const request = (headers: Record<string, string> = {}) =>
+  new Request('https://nandomoreira.dev/sobre', {
+    headers: { 'user-agent': CHROME, 'x-forwarded-for': '203.0.113.7, 10.0.0.1', 'cf-ipcountry': 'BR', ...headers },
+  });
+
+const hit = { kind: 'pageview' as const, path: '/sobre', source: 'ssr' as const, referrer: 'https://www.google.com/' };
+
+describe('readAnalyticsConfig', () => {
+  it('accepts secrets of at least 32 characters and nothing shorter', () => {
+    expect(readAnalyticsConfig({ ANALYTICS_HASH_SECRET: SECRET, ANALYTICS_SELF_TOKEN: ` ${SECRET} ` })).toEqual({
+      hashSecret: SECRET,
+      selfToken: SECRET,
+    });
+    expect(readAnalyticsConfig({ ANALYTICS_HASH_SECRET: 'short' })).toEqual({ hashSecret: null, selfToken: null });
+  });
+});
+
+describe('createRecorder', () => {
+  it('records a pageview with a hash and no ip', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+
+    await recorder.record(request(), hit);
+
+    expect(memory.events).toHaveLength(1);
+    expect(memory.events[0]).toMatchObject({ path: '/sobre', channel: 'google', country: 'BR', class: 'human' });
+    expect(JSON.stringify(memory.events[0])).not.toContain('203.0.113.7');
+  });
+
+  it('records nothing without the secret', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: null, selfToken: null }, now });
+    await recorder.record(request(), hit);
+    expect(memory.daily.size).toBe(0);
+  });
+
+  it('records nothing for the author', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+    await recorder.record(request({ cookie: 'a=b; nm_self=1' }), hit);
+    expect(memory.daily.size).toBe(0);
+  });
+
+  it('gives up after the timeout and never throws', async () => {
+    const slow: AnalyticsStore = { record: () => new Promise(() => {}), eventsOf: () => new Promise(() => {}) };
+    const failing: AnalyticsStore = {
+      record: () => Promise.reject(new Error('down')),
+      eventsOf: () => Promise.reject(new Error('down')),
+    };
+    const config = { hashSecret: SECRET, selfToken: null };
+
+    const started = Date.now();
+    await createRecorder({ store: slow, config, now, timeoutMs: 50 }).record(request(), hit);
+    expect(Date.now() - started).toBeLessThan(500);
+
+    await expect(createRecorder({ store: failing, config, now }).record(request(), hit)).resolves.toBeUndefined();
+    await expect(createRecorder({ store: failing, config, now }).journey(request())).resolves.toContain(
+      'No journey recorded today.',
+    );
+  });
+
+  it('finds the journey of the same visitor on the same day', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+
+    await recorder.record(request(), hit);
+    await recorder.record(request({ 'user-agent': `${CHROME} Other` }), { ...hit, path: '/lab' });
+
+    const journey = await recorder.journey(request());
+    expect(journey).toContain('/sobre');
+    expect(journey).not.toContain('/lab');
+  });
+});
