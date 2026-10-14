@@ -1,8 +1,18 @@
 import { defineMiddleware } from 'astro:middleware';
+import { measureRequest } from './lib/analytics/measure';
+import { recorder } from './lib/analytics/runtime';
 import { robotsTagFor } from './lib/seo/backend-host';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
+
+  await measureRequest(recorder, {
+    request: context.request,
+    url: context.url,
+    isPrerendered: context.isPrerendered,
+    response,
+  });
+
   const tag = robotsTagFor(context.url.hostname);
   if (!tag) return response;
 
