@@ -1,0 +1,67 @@
+import type { Project } from '../../content/schemas/project';
+import { collectionOfBlock } from '../catalog/groups';
+import type { Recorder } from './recorder';
+
+export interface ContactLink {
+  kind: string;
+  value: string;
+}
+
+export const contactUrl = (contact: ContactLink): string =>
+  contact.kind === 'email' ? `mailto:${contact.value}` : contact.value;
+
+export const contactGoPath = (kind: string): string => `/go/contato/${kind}`;
+
+export const caseGoPath = (collection: string, slug: string, link: 'repo' | 'live'): string =>
+  `/go/${collection}/${slug}/${link}`;
+
+/**
+ * Every destination /go can reach, built from the profile and the projects
+ * only. Nothing from the request ever becomes a Location, which is what keeps
+ * this from being an open redirect (REQ-010).
+ */
+export const outboundTable = ({
+  contacts,
+  projects,
+}: {
+  contacts: readonly ContactLink[];
+  projects: ReadonlyArray<Pick<Project, 'slug' | 'block' | 'repoUrl' | 'liveUrl'>>;
+}): Map<string, string> => {
+  const table = new Map<string, string>();
+
+  for (const contact of contacts) table.set(contactGoPath(contact.kind), contactUrl(contact));
+
+  for (const project of projects) {
+    const collection = collectionOfBlock(project.block);
+    if (project.repoUrl) table.set(caseGoPath(collection, project.slug, 'repo'), project.repoUrl);
+    if (project.liveUrl) table.set(caseGoPath(collection, project.slug, 'live'), project.liveUrl);
+  }
+
+  return table;
+};
+
+const notFound = (): Response =>
+  new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain', 'cache-control': 'no-store' } });
+
+export const handleOutbound = async (
+  request: Request,
+  { table, recorder }: { table: () => Promise<ReadonlyMap<string, string>>; recorder: Pick<Recorder, 'record'> },
+): Promise<Response> => {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return notFound();
+
+  const path = new URL(request.url).pathname.replace(/\/+$/, '');
+  const destination = (await table()).get(path);
+  if (!destination) return notFound();
+
+  if (request.method === 'GET') {
+    await recorder.record(request, {
+      kind: 'conversion',
+      path,
+      source: 'api',
+      referrer: request.headers.get('referer'),
+      conversion: { type: 'outbound', target: path.slice('/go/'.length) },
+    });
+  }
+
+  return new Response(null, { status: 302, headers: { location: destination, 'cache-control': 'no-store' } });
+};
