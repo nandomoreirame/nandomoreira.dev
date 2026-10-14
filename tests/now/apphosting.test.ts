@@ -30,6 +30,19 @@ const literalNowValues = (source: string): string[] => {
   });
 };
 
+describe('apphosting.yaml analytics secrets', () => {
+  it.each(['ANALYTICS_HASH_SECRET', 'ANALYTICS_SELF_TOKEN'])(
+    'declares %s as a runtime secret, never a literal',
+    (variable) => {
+      const block = blocksOf(manifest).get(variable);
+      expect(block).toBeDefined();
+      expect(block).toContain('secret:');
+      expect(block).toContain('RUNTIME');
+      expect(block).not.toMatch(/^\s*value:/m);
+    },
+  );
+});
+
 describe('apphosting.yaml now secrets', () => {
   it('allows a now variable only as a runtime secret and does not require any of them', () => {
     expect(literalNowValues(manifest)).toEqual([]);

@@ -51,6 +51,19 @@ env:
     availability:
       - RUNTIME
 
+  # Visit counting. Declare only after the secret exists and the backend can
+  # read it; a missing one breaks the rollout. A short secret turns measurement
+  # off instead of crashing boot.
+  - variable: ANALYTICS_HASH_SECRET
+    secret: analytics-hash-secret
+    availability:
+      - RUNTIME
+
+  - variable: ANALYTICS_SELF_TOKEN
+    secret: analytics-self-token
+    availability:
+      - RUNTIME
+
 scripts:
   buildCommand: npm run build
   runCommand: node ./dist/server/entry.mjs
