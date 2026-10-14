@@ -3,3 +3,4 @@
 pub mod firestore;
 pub mod keys;
 pub mod model;
+pub mod pages;
