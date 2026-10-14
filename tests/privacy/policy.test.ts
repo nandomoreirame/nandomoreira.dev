@@ -68,6 +68,14 @@ describe('privacy policy content', () => {
     }
   });
 
+  it('never says the counting cannot identify anyone, since the journey joins a lead\'s name', () => {
+    const section = privacySections.find((candidate) => candidate.id === 'nao-coletado');
+    const text = (section?.paragraphs ?? []).join('\n');
+
+    expect(text).not.toMatch(/nada nela identifica/);
+    expect(text).toMatch(/formulário|currículo/);
+  });
+
   it('no longer claims there is no measurement', () => {
     expect(all()).not.toMatch(/não usa cookies, analytics/);
     expect(all()).not.toMatch(/não guardam nada sobre quem consulta/);

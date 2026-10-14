@@ -26,7 +26,7 @@ export const privacySections: PolicySection[] = [
     id: 'nao-coletado',
     title: 'O que não é coletado',
     paragraphs: [
-      'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor, e nada nela identifica quem você é.',
+      'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor e não guarda seu IP nem seu nome. Enquanto você só navega, ela não diz quem você é; se você enviar o formulário ou baixar o currículo, as páginas que viu naquele dia passam a ir junto com o nome e o e-mail que você informou.',
       'Fontes, estilos e o único script são servidos pelo próprio domínio. O script faz o efeito do ponteiro e o botão Copiar, e não envia nada a lugar nenhum.',
       'Uma exceção: um texto antigo do blog exibe uma imagem hospedada no CodePen. Ao abrir esse texto, seu navegador pede a imagem ao CodePen, que recebe seu endereço IP como em qualquer requisição.',
     ],
