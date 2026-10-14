@@ -32,6 +32,10 @@ stats
 
 Outro projeto do Google Cloud: `stats --project <id>`.
 
+Dados fictícios, sem login e sem rede, para demonstrar ou tirar print: `stats --demo`
+(ou `scripts/run-stats.sh --demo`). São 30 dias gerados com semente fixa, e um evento
+novo entra a cada atualização.
+
 Testes, sem rede e sem Firestore:
 
 ```bash

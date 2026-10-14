@@ -24,9 +24,42 @@ pub fn decode_counter_key(key: &str) -> String {
     String::from_utf8_lossy(&out).into_owned()
 }
 
+/// `counterKey` (src/lib/analytics/event.ts) for keys that start with `/` or
+/// a letter: `encodeURIComponent`, then `.` as `%2E`. Used by the demo data.
+pub fn encode_counter_key(key: &str) -> String {
+    let mut out = String::with_capacity(key.len() * 3);
+    for byte in key.bytes() {
+        match byte {
+            b'A'..=b'Z'
+            | b'a'..=b'z'
+            | b'0'..=b'9'
+            | b'-'
+            | b'_'
+            | b'!'
+            | b'~'
+            | b'*'
+            | b'\''
+            | b'('
+            | b')' => out.push(byte as char),
+            _ => out.push_str(&format!("%{byte:02X}")),
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
-    use super::decode_counter_key;
+    use super::{decode_counter_key, encode_counter_key};
+
+    #[test]
+    fn encodes_like_the_site_and_round_trips() {
+        assert_eq!(encode_counter_key("/lab/forja.md"), "%2Flab%2Fforja%2Emd");
+        assert_eq!(encode_counter_key("/sessões"), "%2Fsess%C3%B5es");
+        assert_eq!(encode_counter_key("lab/forja/repo"), "lab%2Fforja%2Frepo");
+        for key in ["/", "/o-falso-verde", "contato/github", "/sessões_do-x"] {
+            assert_eq!(decode_counter_key(&encode_counter_key(key)), key);
+        }
+    }
 
     #[test]
     fn decodes_slashes_and_dots() {

@@ -6,6 +6,7 @@ use ratatui::DefaultTerminal;
 use stats::app::{Action, App, Input, days_to_refresh, input_of};
 use stats::auth::{self, Runner, System};
 use stats::client::{Firestore, Unauthorized};
+use stats::demo::DemoWorld;
 use stats::funnel::Lead;
 use stats::lead::{collection_of, lead_detail};
 use stats::period::{Period, load_start, today};
@@ -23,11 +24,24 @@ struct Args {
     /// Projeto do Google Cloud (REQ-018).
     #[arg(long, default_value = "nandomoreira-dev")]
     project: String,
+
+    /// Dados fictícios gerados em memória, sem login e sem Firestore (para prints).
+    #[arg(long)]
+    demo: bool,
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
+    let palette = theme(std::env::var("COLORTERM").ok().as_deref());
+
+    if args.demo {
+        let mut terminal = ratatui::init();
+        let result = run_demo(&mut terminal, &palette).await;
+        ratatui::restore();
+        return result;
+    }
+
     let runner = System;
 
     // REQ-001, REQ-002: before any drawing, so the login can use the terminal.
@@ -36,7 +50,6 @@ async fn main() -> anyhow::Result<()> {
     auth::ensure_quota_project(&runner, adc.as_deref(), &args.project)?;
 
     let mut client = Firestore::new(&args.project, token);
-    let palette = theme(std::env::var("COLORTERM").ok().as_deref());
 
     // REQ-015: init installs a panic hook that restores the terminal too.
     let mut terminal = ratatui::init();
@@ -96,6 +109,44 @@ async fn run(
                         ticker.reschedule(Instant::now(), app.schedule.interval());
                     }
                     Action::OpenLead(lead) => open_lead(&mut app, client, runner, &mut session, &lead).await,
+                    Action::None => {}
+                },
+            },
+        }
+    }
+}
+
+/// `--demo`: the same screens and keys over made-up data. Each refresh adds
+/// one fresh visit, so the live tab moves; nothing touches the network.
+async fn run_demo(terminal: &mut DefaultTerminal, palette: &Theme) -> anyhow::Result<()> {
+    let mut world = DemoWorld::new(Utc::now());
+    let mut app = App::default();
+    world.load(&mut app);
+
+    let mut keys = EventStream::new();
+    let mut ticker = Ticker::new(Instant::now(), app.schedule.interval());
+    loop {
+        app.sync(Instant::now(), ticker.deadline());
+        terminal.draw(|frame| ui::draw(frame, &app, Utc::now(), palette))?;
+
+        tokio::select! {
+            _ = tokio::time::sleep_until(tokio::time::Instant::from_std(ticker.deadline())) => {
+                if let Some(notice) = app.schedule.expire(Instant::now()) {
+                    app.status = Some(notice.to_owned());
+                }
+                world.tick(Utc::now(), &mut app);
+                ticker.reschedule(Instant::now(), app.schedule.interval());
+            }
+            _ = tokio::time::sleep(Duration::from_secs(1)) => {}
+            event = keys.next() => match input_of(event) {
+                Input::Closed => return Ok(()),
+                Input::Redraw | Input::Ignore => {}
+                Input::Key(key) => match app.on_key(key, Instant::now(), Utc::now()) {
+                    Action::Quit => return Ok(()),
+                    Action::Refresh => ticker.reschedule(Instant::now(), app.schedule.interval()),
+                    Action::OpenLead(lead) => {
+                        app.detail = Some(lead_detail(&lead, world.record(&lead.ref_id), app.log.events()));
+                    }
                     Action::None => {}
                 },
             },
