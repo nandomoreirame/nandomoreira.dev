@@ -1,5 +1,6 @@
 //! Reader for the lead-analytics data (docs/specs/lead-analytics-reader).
 
+pub mod app;
 pub mod auth;
 pub mod client;
 pub mod firestore;

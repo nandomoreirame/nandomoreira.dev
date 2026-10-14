@@ -19,8 +19,9 @@ pub fn clock(at: DateTime<Utc>) -> String {
         .to_string()
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Period {
+    #[default]
     Today,
     Week,
     Month,
