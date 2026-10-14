@@ -69,7 +69,7 @@ SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-tok
 ```
 
 ```bash
-cargo run --release --manifest-path tools/stats/Cargo.toml   # nm-stats: visitas, funil e leads (TUI)
+cargo run --release --manifest-path tools/stats/Cargo.toml   # stats: visitas, funil e leads (TUI)
 cargo test --manifest-path tools/stats/Cargo.toml            # testes do leitor
 ```
 

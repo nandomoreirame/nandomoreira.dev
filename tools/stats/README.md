@@ -1,4 +1,4 @@
-# nm-stats
+# stats
 
 TUI local que lê as visitas, o funil e os leads do nandomoreira.dev. Os dados vêm do Firestore do lead-analytics (`analytics_events`, `analytics_daily` e, no detalhe de um lead, `hire_requests` ou `cv_downloads`). O programa só lê: `runQuery`, `batchGet` e `GET`.
 
@@ -7,7 +7,7 @@ TUI local que lê as visitas, o funil e os leads do nandomoreira.dev. Os dados v
 - Rust 1.88 ou superior (edition 2024).
 - `gcloud` no `PATH`, com permissão de leitura no projeto `nandomoreira-dev`.
 
-Sem token, o `nm-stats` roda `gcloud auth application-default login` no terminal, antes de desenhar qualquer coisa. Se o arquivo de credencial não tiver projeto de cota, ele define `nandomoreira-dev`. Com a TUI aberta, um token vencido não dispara login de novo: o erro vai para a barra de status.
+Sem token, o `stats` roda `gcloud auth application-default login` no terminal, antes de desenhar qualquer coisa. Se o arquivo de credencial não tiver projeto de cota, ele define `nandomoreira-dev`. Com a TUI aberta, um token vencido não dispara login de novo: o erro vai para a barra de status.
 
 ## Rodar
 
@@ -19,10 +19,10 @@ Para deixar o binário no `PATH`:
 
 ```bash
 cargo install --path tools/stats
-nm-stats
+stats
 ```
 
-Outro projeto do Google Cloud: `nm-stats --project <id>`.
+Outro projeto do Google Cloud: `stats --project <id>`.
 
 Testes, sem rede e sem Firestore:
 

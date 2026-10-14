@@ -94,7 +94,7 @@ Nenhum.
 ## Architecture Decisions
 
 - **TUI em Rust (ratatui 0.30, crossterm 0.29, tokio), não script `.sh`:** permite navegar entre abas, períodos e o detalhe de lead com o teclado; é a stack dos utilitários do autor (`tumodori`).
-- **Código em `tools/stats/` deste repositório, binário `nm-stats`:** o leitor fica versionado junto do contrato que lê; mudar o formato no site e no leitor acontece no mesmo commit. Rodado com `cargo run --release` ou instalado com `cargo install --path tools/stats`. Sem script no `package.json`.
+- **Código em `tools/stats/` deste repositório, binário `stats`:** o leitor fica versionado junto do contrato que lê; mudar o formato no site e no leitor acontece no mesmo commit. Rodado com `cargo run --release` ou instalado com `cargo install --path tools/stats`. Sem script no `package.json`.
 - **API REST do Firestore com a credencial padrão do gcloud:** sem SDK do Firebase e sem conta de serviço. O login, quando preciso, é o próprio `gcloud auth application-default login` rodado pela TUI; o `firebase login` não serve, porque guarda uma credencial que a API não lê pelo caminho padrão.
 - **Funil por visitante e por dia, a partir dos eventos brutos:** liga as etapas à mesma pessoa, o que os contadores diários não fazem. O preço é o limite de 30 dias e o corte na meia-noite.
 - **Tráfego e MCP a partir dos contadores diários:** uma leitura por dia do período, em vez de varrer eventos.
@@ -132,7 +132,7 @@ Nenhum.
   - contagem do funil e porcentagens, com fixtures de eventos;
   - soma de contadores diários de um período;
   - máquina de estados do intervalo (30 s, 5 s, desligamento em 30 min) com relógio injetado.
-- **Integração:** nenhuma automatizada contra o Firestore; a verificação final é rodar `nm-stats` contra produção e conferir os totais com o console.
+- **Integração:** nenhuma automatizada contra o Firestore; a verificação final é rodar `stats` contra produção e conferir os totais com o console.
 - **E2E:** não se aplica.
 
 ## Grilling Log
@@ -150,7 +150,7 @@ Decisões levantadas e resolvidas na pesquisa (2026-10-14).
 | 7 | Telas | Abas Ao vivo, Funil, Tráfego, MCP; períodos hoje, 7 e 30 dias | Cobre as quatro perguntas da medição. |
 | 8 | Autenticação | ADC do gcloud; a TUI roda o login e o projeto de cota quando faltam | Sem conta de serviço nem segredo novo. |
 | 9 | Identificar o lead | `Enter` abre nome, contato, briefing e percurso, só em memória | O que já chega por e-mail, junto do funil. |
-| 10 | Nome e execução | `nm-stats`, via `cargo`, sem script npm | Pedido do autor. |
+| 10 | Nome e execução | `stats`, via `cargo`, sem script npm | Pedido do autor. |
 | 11 | Visitante no feed | 6 primeiros caracteres do código do dia | Acompanhar a mesma pessoa sem identificá-la. |
 | 12 | Falha de rede | Mantém dados, erro na barra, tenta de novo | A TUI não fecha por instabilidade. |
 | 13 | Cores | Paleta do site, fallback ANSI | Coerência visual. |
