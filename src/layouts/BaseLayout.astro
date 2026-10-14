@@ -12,6 +12,7 @@ import sansBodyFont from '../assets/fonts/alegreya-sans-latin-400.woff2?url';
 import { webPageLd, type PageType } from '../lib/aeo/webpage-ld';
 import { displayNameOf } from '../lib/content/display-name';
 import { websiteLd } from '../lib/aeo/website-ld';
+import { showsPixel } from '../lib/analytics/pixel-placement';
 import { getAllPosts, getProfile } from '../lib/content';
 import '../styles/global.css';
 
@@ -161,5 +162,19 @@ const switcherView = view ?? 'human';
       )
     }
     <PointerField />
+    {
+      showsPixel({ isPrerendered: Astro.isPrerendered, view }) && (
+        <img
+          src="/v.gif"
+          alt=""
+          width="1"
+          height="1"
+          aria-hidden="true"
+          decoding="async"
+          referrerpolicy="strict-origin-when-cross-origin"
+          class="pointer-events-none absolute size-px opacity-0"
+        />
+      )
+    }
   </body>
 </html>
