@@ -1,8 +1,7 @@
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import type { APIRoute } from 'astro';
-import { mcpCalls } from '../../lib/analytics/mcp-usage';
+import { recordMcpUsage } from '../../lib/analytics/mcp-usage';
 import { recorder } from '../../lib/analytics/runtime';
-import { readLimitedText } from '../../lib/hire/read-body';
 import { closeWhenDrained } from '../../lib/mcp/lifecycle';
 import { createMcpServer } from '../../lib/mcp/server';
 
@@ -16,26 +15,7 @@ export const prerender = false;
  * clients, and this backend serves with concurrency 80 (REQ-006).
  */
 const handle = async (request: Request): Promise<Response> => {
-  if (request.method === 'POST') {
-    // A clone, so the transport still gets the untouched body (see below).
-    const body = await readLimitedText(request.clone()).catch(() => '');
-    await Promise.all(
-      mcpCalls(body).map((call) =>
-        recorder.record(request, {
-          kind: 'conversion',
-          path: '/api/mcp',
-          source: 'api',
-          referrer: null,
-          conversion: {
-            type: 'mcp',
-            target: call.method,
-            ...(call.tool ? { tool: call.tool } : {}),
-            ...(call.client ? { client: call.client } : {}),
-          },
-        }),
-      ),
-    );
-  }
+  await recordMcpUsage(request, recorder);
 
   const server = await createMcpServer();
   const transport = new WebStandardStreamableHTTPServerTransport({

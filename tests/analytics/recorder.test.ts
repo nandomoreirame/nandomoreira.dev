@@ -80,4 +80,24 @@ describe('createRecorder', () => {
     expect(journey).toContain('/sobre');
     expect(journey).not.toContain('/lab');
   });
+
+  it('writes several hits of one request in a single store call', async () => {
+    const batches: number[] = [];
+    const memory = memoryAnalyticsStore();
+    const store: AnalyticsStore = { ...memory.store, record: async (events) => void batches.push(events.length) };
+    const recorder = createRecorder({ store, config: { hashSecret: SECRET, selfToken: null }, now });
+
+    await recorder.recordAll(request(), [hit, { ...hit, path: '/lab' }, { ...hit, path: '/now' }]);
+
+    expect(batches).toEqual([3]);
+  });
+
+  it('says whether this request would be recorded at all', () => {
+    const on = createRecorder({ store: memoryAnalyticsStore().store, config: { hashSecret: SECRET, selfToken: null }, now });
+    const off = createRecorder({ store: memoryAnalyticsStore().store, config: { hashSecret: null, selfToken: null }, now });
+
+    expect(on.active(request())).toBe(true);
+    expect(on.active(request({ cookie: 'nm_self=1' }))).toBe(false);
+    expect(off.active(request())).toBe(false);
+  });
 });

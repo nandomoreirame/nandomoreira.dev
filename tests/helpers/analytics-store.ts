@@ -7,14 +7,16 @@ export const memoryAnalyticsStore = () => {
   const daily = new Map<string, Record<string, number>>();
 
   const store: AnalyticsStore = {
-    record: async (event) => {
-      if (keepsRawEvent(event)) events.push(event);
-      const counters = daily.get(event.day) ?? {};
-      for (const path of dailyIncrements(event)) {
-        const key = path.join('.');
-        counters[key] = (counters[key] ?? 0) + 1;
+    record: async (batch) => {
+      for (const event of batch) {
+        if (keepsRawEvent(event)) events.push(event);
+        const counters = daily.get(event.day) ?? {};
+        for (const path of dailyIncrements(event)) {
+          const key = path.join('.');
+          counters[key] = (counters[key] ?? 0) + 1;
+        }
+        daily.set(event.day, counters);
       }
-      daily.set(event.day, counters);
     },
     eventsOf: async (day, visitor) => events.filter((event) => event.day === day && event.visitor === visitor),
   };

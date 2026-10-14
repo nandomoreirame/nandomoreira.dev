@@ -39,7 +39,11 @@ export interface Hit {
 }
 
 export interface Recorder {
+  /** False when nothing would be written: no secret, or the author's cookie. */
+  active: (request: Request) => boolean;
   record: (request: Request, hit: Hit) => Promise<void>;
+  /** Several hits of one request in a single write. */
+  recordAll: (request: Request, hits: readonly Hit[]) => Promise<void>;
   /** Today's pages of the visitor behind this request, as notification text. */
   journey: (request: Request) => Promise<string>;
 }
@@ -58,18 +62,21 @@ export const createRecorder = ({
   const visitorOf = (secret: string, request: Request, day: string): string =>
     visitorHash({ secret, day, ip: clientIpOf(request.headers), userAgent: request.headers.get('user-agent') });
 
-  return {
-    record: async (request, hit) => {
-      const secret = config.hashSecret;
-      if (!secret || isSelf(request.headers)) return;
+  const active = (request: Request): boolean => config.hashSecret !== null && !isSelf(request.headers);
 
-      const at = now();
-      const day = saoPauloDay(at);
-      const event = buildEvent({
+  const recordAll = async (request: Request, hits: readonly Hit[]): Promise<void> => {
+    const secret = config.hashSecret;
+    if (!secret || hits.length === 0 || isSelf(request.headers)) return;
+
+    const at = now();
+    const day = saoPauloDay(at);
+    const visitor = visitorOf(secret, request, day);
+    const events = hits.map((hit) =>
+      buildEvent({
         kind: hit.kind,
         at,
         day,
-        visitor: visitorOf(secret, request, day),
+        visitor,
         userAgent: request.headers.get('user-agent'),
         source: hit.source,
         path: hit.path,
@@ -77,12 +84,18 @@ export const createRecorder = ({
         utm: utmOf(hit.search ?? new URLSearchParams()),
         country: request.headers.get('cf-ipcountry'),
         conversion: hit.conversion,
-      });
+      }),
+    );
 
-      // The 250 ms ceiling (REQ-001): Cloud Run throttles the CPU once the
-      // response is out, so an unawaited write could simply never happen.
-      await withTimeout(store.record(event), timeoutMs);
-    },
+    // The 250 ms ceiling (REQ-001): Cloud Run throttles the CPU once the
+    // response is out, so an unawaited write could simply never happen.
+    await withTimeout(store.record(events), timeoutMs);
+  };
+
+  return {
+    active,
+    recordAll,
+    record: (request, hit) => recordAll(request, [hit]),
 
     journey: async (request) => {
       const secret = config.hashSecret;
@@ -90,7 +103,11 @@ export const createRecorder = ({
 
       const day = saoPauloDay(now());
       const events = await withTimeout(store.eventsOf(day, visitorOf(secret, request, day)), timeoutMs);
-      return renderJourney(events ?? []);
+      try {
+        return renderJourney(events ?? []);
+      } catch {
+        return renderJourney([]);
+      }
     },
   };
 };
