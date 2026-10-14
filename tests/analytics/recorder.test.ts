@@ -44,10 +44,17 @@ describe('createRecorder', () => {
     expect(memory.daily.size).toBe(0);
   });
 
+  it('ignores the old nm_self cookie, which Firebase App Hosting never forwards', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+    await recorder.record(request({ cookie: 'nm_self=1' }), hit);
+    expect(memory.daily.size).toBe(1);
+  });
+
   it('records nothing for the author', async () => {
     const memory = memoryAnalyticsStore();
     const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
-    await recorder.record(request({ cookie: 'a=b; nm_self=1' }), hit);
+    await recorder.record(request({ cookie: 'a=b; __session=self' }), hit);
     expect(memory.daily.size).toBe(0);
   });
 
@@ -97,7 +104,7 @@ describe('createRecorder', () => {
     const off = createRecorder({ store: memoryAnalyticsStore().store, config: { hashSecret: null, selfToken: null }, now });
 
     expect(on.active(request())).toBe(true);
-    expect(on.active(request({ cookie: 'nm_self=1' }))).toBe(false);
+    expect(on.active(request({ cookie: '__session=self' }))).toBe(false);
     expect(off.active(request())).toBe(false);
   });
 });

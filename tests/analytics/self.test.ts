@@ -10,7 +10,7 @@ describe('handleSelf', () => {
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe('/');
     const cookie = response.headers.get('set-cookie') ?? '';
-    for (const part of ['nm_self=1', 'Path=/', 'Max-Age=31536000', 'HttpOnly', 'Secure', 'SameSite=Lax']) {
+    for (const part of ['__session=self', 'Path=/', 'Max-Age=31536000', 'HttpOnly', 'Secure', 'SameSite=Lax']) {
       expect(cookie).toContain(part);
     }
   });

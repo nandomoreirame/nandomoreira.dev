@@ -7,10 +7,16 @@ import { renderJourney } from './journey';
 import type { AnalyticsStore } from './store';
 import { visitorHash } from './visitor';
 
-export const SELF_COOKIE = 'nm_self';
+/**
+ * Firebase App Hosting forwards only the cookie named `__session` to the
+ * server and drops every other one from the request: an `nm_self` cookie
+ * reached the browser but never the recorder, so the author was counted.
+ */
+export const SELF_COOKIE = '__session';
+export const SELF_VALUE = 'self';
 
 export const isSelf = (headers: Headers): boolean =>
-  (headers.get('cookie') ?? '').split(';').some((pair) => pair.trim() === `${SELF_COOKIE}=1`);
+  (headers.get('cookie') ?? '').split(';').some((pair) => pair.trim() === `${SELF_COOKIE}=${SELF_VALUE}`);
 
 /** Resolves undefined on timeout or failure; measuring never breaks a response. */
 export const withTimeout = async <T>(work: Promise<T>, ms: number): Promise<T | undefined> => {

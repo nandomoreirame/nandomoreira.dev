@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto';
-import { SELF_COOKIE } from './recorder';
+import { SELF_COOKIE, SELF_VALUE } from './recorder';
 
 const sameToken = (given: string, expected: string): boolean => {
   const a = Buffer.from(given);
@@ -26,7 +26,7 @@ export const handleSelf = (request: Request, selfToken: string | null): Response
       'cache-control': 'no-store',
       // The token is in this URL; the next page must not send it on as a referer.
       'referrer-policy': 'no-referrer',
-      'set-cookie': `${SELF_COOKIE}=1; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax`,
+      'set-cookie': `${SELF_COOKIE}=${SELF_VALUE}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax`,
     },
   });
 };
