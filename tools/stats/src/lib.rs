@@ -6,3 +6,4 @@ pub mod keys;
 pub mod model;
 pub mod pages;
 pub mod period;
+pub mod totals;
