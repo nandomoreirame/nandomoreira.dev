@@ -73,7 +73,7 @@ const serviceProjects = projects.map((project) => ({
           </Button>
           {
             profiles.map((contact) => (
-              <Button href={contactGoPath(contact.kind)} variant="ghost" target="_blank" rel="noopener noreferrer">
+              <Button href={contactGoPath(contact.kind)} variant="ghost" target="_blank" rel="noopener">
                 <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
                 {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
               </Button>

@@ -10,6 +10,9 @@ interface Props {
 }
 
 const links = visibleLinks(Astro.props);
+// Through /go the referrer stays: it is same-site, and it ties the click to
+// this case page. A direct external link keeps noreferrer.
+const rel = Astro.props.goBase ? 'noopener' : 'noopener noreferrer';
 const ICONS = { repo: 'simple-icons:github', live: 'lucide:arrow-up-right' } as const;
 ---
 
@@ -18,7 +21,7 @@ const ICONS = { repo: 'simple-icons:github', live: 'lucide:arrow-up-right' } as 
     <ul class="flex flex-wrap items-center gap-md">
       {links.map((link) => (
         <li>
-          <Button href={link.href} variant={link.variant} target="_blank" rel="noopener noreferrer">
+          <Button href={link.href} variant={link.variant} target="_blank" rel={rel}>
             <Icon name={ICONS[link.kind]} class="size-4 shrink-0" aria-hidden="true" />
             {link.label}
           </Button>

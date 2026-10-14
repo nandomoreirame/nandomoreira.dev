@@ -43,9 +43,10 @@ describe('Contact', () => {
     await expect(render(Contact, { contacts: [] })).rejects.toThrow();
   });
 
-  it('marks external profile links as external', async () => {
+  it('opens profile links in a new tab and keeps the referrer for /go', async () => {
     const html = await render(Contact, { contacts });
-    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).toContain('rel="noopener"');
+    expect(html).not.toContain('noreferrer');
   });
 
   it('sends every contact through /go/contato', async () => {

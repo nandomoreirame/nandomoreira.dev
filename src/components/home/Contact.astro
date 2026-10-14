@@ -40,7 +40,7 @@ const LABELS: Record<string, string> = {
         <a
           href={contactGoPath(contact.kind)}
           target={contact.kind === 'email' ? undefined : '_blank'}
-          rel={contact.kind === 'email' ? undefined : 'noopener noreferrer'}
+          rel={contact.kind === 'email' ? undefined : 'noopener'}
           class="inline-flex min-h-11 items-center gap-xs rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {contactIconFor(contact.kind) && (

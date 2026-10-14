@@ -28,7 +28,8 @@ describe('/sobre', () => {
 
     expect(html).toContain('href="/go/contato/github"');
     expect(html).toContain('href="/go/contato/linkedin"');
-    expect(html).not.toContain('href="https://github.com/nandomoreirame"');
+    // Links go through /go; only the head's rel=me names the profile itself.
+    expect(html).not.toMatch(/<a[^>]*href="https:\/\/github\.com\/nandomoreirame"/);
   });
 
   it('sends "Entrar em contato" to the /contato page, not to a mail client', async () => {
@@ -49,6 +50,15 @@ describe('/sobre', () => {
     expect(img).toMatch(/width="\d+"/);
     expect(img).toMatch(/height="\d+"/);
     expect(html).toContain('type="image/avif"');
+  });
+
+  it('keeps the referrer on the profile links, which go through /go', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SobrePage);
+    const links = html.match(/<a[^>]*href="\/go\/contato\/[^"]*"[^>]*>/g) ?? [];
+
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) expect(link).not.toContain('noreferrer');
   });
 
   it('has exactly one h1', async () => {

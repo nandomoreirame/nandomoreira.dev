@@ -27,6 +27,14 @@ describe('LinkList', () => {
     expect(html).toContain('target="_blank"');
   });
 
+  it('keeps the referrer on links through /go, so the click is tied to the case page', async () => {
+    const html = await render({ repoUrl: 'https://github.com/x/y', liveUrl: null, goBase: '/go/lab/y' });
+
+    expect(html).toContain('href="/go/lab/y/repo"');
+    expect(html).toContain('rel="noopener"');
+    expect(html).not.toContain('noreferrer');
+  });
+
   it('uses meaningful link text', async () => {
     const html = await render({ repoUrl: 'https://github.com/x/y', liveUrl: null });
 
