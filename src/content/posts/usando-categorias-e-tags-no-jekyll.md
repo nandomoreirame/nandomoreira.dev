@@ -34,7 +34,7 @@ Você pode ver uma demonstração ao vivo nesta página.
 
 Aqui está um pequeno guia de como implementá-lo:
 
-#### 1. Adicione um pouco de lógica no template do seu layout post.html
+## 1. Adicione um pouco de lógica no template do seu layout post.html
 
 ```twig
 {% assign post = page %}
@@ -56,13 +56,13 @@ Aqui está um pequeno guia de como implementá-lo:
 {% endif %}
 ```
 
-#### 2. Coloque o conteúdo da variavel `tags_content` onde quiser dentro do seu layout `post.html`
+## 2. Coloque o conteúdo da variavel `tags_content` onde quiser dentro do seu layout `post.html`
 
 ```html
 <p id="post__meta">{{ tags_content }}</p>
 ```
 
-#### 3. Crie um layout chamado tag.html
+## 3. Crie um layout chamado tag.html
 
 ```twig
 <h1>Articles by tag :{{ page.tag }}</h1>
@@ -77,7 +77,7 @@ Aqui está um pequeno guia de como implementá-lo:
 </div>
 ```
 
-#### 4. Adicione em seu `post entry` o front-matter, como de costume.
+## 4. Adicione em seu `post entry` o front-matter, como de costume.
 
 ```yaml
 ---
@@ -88,14 +88,14 @@ tags: [github, github-pages, jekyll]
 
 ```
 
-#### 5. Para cada tag usada você tem que adicionar uma entrada dentro do arquivo `_data/tags.yml`
+## 5. Para cada tag usada você tem que adicionar uma entrada dentro do arquivo `_data/tags.yml`
 
 ```yaml
 - slug: github-pages
   name: GitHub Pages
 ```
 
-#### 6. Para cada tag usada você tem que adicionar um template vazio. Ex.: _blog/tag/github-pages.md_
+## 6. Para cada tag usada você tem que adicionar um template vazio. Ex.: _blog/tag/github-pages.md_
 
 ```yaml
 ---layout: blog_by_tag

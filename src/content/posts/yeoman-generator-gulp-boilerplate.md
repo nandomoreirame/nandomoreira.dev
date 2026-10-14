@@ -72,7 +72,7 @@ O generator vai criar todo o _"start"_ do projeto pra você, sem reclamar ;)
 
 Calma jovem, vou listar abaixo todos os pacotes e as tasks do Gulp Boilerplate pra você não ficar ai todo curioso:
 
-#### Pacotes gulp
+### Pacotes gulp
 
 - [browser-sync](https://browsersync.io/)
 - [gulp](https://npmjs.com/package/gulp)
@@ -94,7 +94,7 @@ Calma jovem, vou listar abaixo todos os pacotes e as tasks do Gulp Boilerplate p
 - [require-dir](https://npmjs.com/package/require-dir)
 - [run-sequence](https://npmjs.com/package/run-sequence)
 
-#### Tasks
+### Tasks
 
 - `gulp default` ou apenas `gulp`: executa a task `gulp serve`
 - `gulp serve`: executa o **watch** do projeto para os arquivos de `.jade`, `.sass` e `.js` e executa também um servidor usando o `browser-sync` e toda a vez que um arquivo HTML, CSS ou JS é alterado ele dá o _reload_ nos navegadores.

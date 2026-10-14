@@ -24,7 +24,7 @@ Vou explicar melhor, vem comigo.
 
 ## Plugins
 
-#### História
+### História
 
 O seu cliente, bem pomposo que é, quer uma página de galeria de imagens, e você, bem esperto vai no google procurar um plugin para criar tal página o mais rápido possível.
 
@@ -38,7 +38,7 @@ Outro ponto importante, se o cliente querer algo que não tem no plugin o que vo
 - ( ) - Remover o plugin e fazer na mão
 - ( x ) - Sentar e chorar, porque qualquer das opções acima te dará uma tremenda dor de cabeça e muito retrabalho.
 
-#### DICA:
+### DICA:
 
 O que você deve fazer em cada projeto é:
 

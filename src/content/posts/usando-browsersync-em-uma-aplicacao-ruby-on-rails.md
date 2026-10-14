@@ -23,13 +23,13 @@ Eu procurei pelo Google a fora uma Gem que fizesse essa magia toda, mas não enc
 
 > ℹ️ Se você é _front-end_ e não conhece o **Browsersync** eu recomendo fortemente que leia sobre ele e comece imediatamente a usar, é uma ferramenta indispensável no cinto de utilidades do Batman!
 
-### Ruby on Rails
+## Ruby on Rails
 
 O intuito desse post não é explicar sobre o Rails e suas ["Magic"](https://i.imgur.com/NpWtG3j.gif) Gems, e sim como integrar e usar o Browsersync dentro de uma app Rails.
 
 Primeiro de tudo você precisa de uma aplicação Rails já instalada em sua máquina (a vá! jura? 😱), logo após essa façanha instale o Browsersync global (sim tem que ser global).
 
-### Instalando o Browsersync
+## Instalando o Browsersync
 
 Para instalar o Browsersync global basta usar o comando abaixo.
 
@@ -45,7 +45,7 @@ $ browser-sync --version
 
 O comando acima irá te mostrar qual a versão do Browsersync foi instalada na sua máquina, aqui instalou a versão `2.13.0`.
 
-### Usando Browsersync dentro do Rails
+## Usando Browsersync dentro do Rails
 
 Se você ainda não sabe o Rails sobe um servidor nativo com o comando `rails server` ou apenas `rails s` e usa a porta `3000`, então precisaremos do servidor do rails inicializado para rodar o Browsersync.
 

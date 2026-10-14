@@ -15,7 +15,7 @@ cover:
 
 ![Usando o pseudo selector :target para criar modal apenas com CSS](../../assets/posts/2016/usando-o-selector-target-para-criar-modal-apenas-com-css.png)
 
-### O pseudo selector
+## O pseudo selector
 
 Um pseudo selector das CSS3 muito útil é o `:target`, ele fornece recursos de estilo para um elemento cujo o ID está visivel na url.
 
@@ -39,7 +39,7 @@ h2:target {
 
 ---
 
-### O Modal
+## O Modal
 
 Sendo assim, então podemos aplicar o `display: block` em nosso modal, certo? Isso mesmo.
 
