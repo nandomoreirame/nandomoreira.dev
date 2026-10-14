@@ -41,7 +41,7 @@ const social = contacts.filter((contact) => contact.kind in LABELS);
         <a
           href={contactGoPath(contact.kind)}
           target="_blank"
-          rel="noopener noreferrer me"
+          rel="noopener"
           class="inline-flex min-h-11 items-center gap-xs transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {contactIconFor(contact.kind) && (

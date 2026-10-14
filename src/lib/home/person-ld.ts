@@ -19,6 +19,13 @@ export interface PersonLd {
 
 const PUBLIC_PROFILE_KINDS = new Set(['github', 'linkedin', 'site']);
 
+/**
+ * The public profile URLs: sameAs in the JSON-LD and rel=me in the head. The
+ * visible links go through /go, so the identity assertion lives in the head.
+ */
+export const profileUrls = (contacts: Profile['contacts']): string[] =>
+  contacts.filter((contact) => PUBLIC_PROFILE_KINDS.has(contact.kind)).map((contact) => contact.value);
+
 export const personLd = (profile: Profile, site: string): PersonLd => ({
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -29,7 +36,5 @@ export const personLd = (profile: Profile, site: string): PersonLd => ({
   url: site,
   image: portraitUrl(site),
   knowsAbout: [...profile.stack],
-  sameAs: profile.contacts
-    .filter((contact) => PUBLIC_PROFILE_KINDS.has(contact.kind))
-    .map((contact) => contact.value),
+  sameAs: profileUrls(profile.contacts),
 });

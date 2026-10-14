@@ -54,4 +54,15 @@ describe('SiteFooter', () => {
   it('receives the year rather than reading the clock, so the build is reproducible', async () => {
     expect(await render({ year: 2030 })).toContain('2030');
   });
+
+  it('keeps the referrer on /go links and asserts no identity with a self-link', async () => {
+    const html = await render();
+    const links = html.match(/<a[^>]*href="\/go\/[^"]*"[^>]*>/g) ?? [];
+
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link).toContain('rel="noopener"');
+      expect(link).not.toMatch(/rel="[^"]*\bme\b/);
+    }
+  });
 });

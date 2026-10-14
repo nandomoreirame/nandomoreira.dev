@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { personLd } from '../../src/lib/home/person-ld';
+import { readFileSync } from 'node:fs';
+import { personLd, profileUrls } from '../../src/lib/home/person-ld';
 
 const profile = {
   name: 'Fernando Moreira Costa',
@@ -54,5 +55,20 @@ describe('personLd identity', () => {
   it('has a stable @id the articles point their author at', async () => {
     const { getProfile } = await import('../../src/lib/content');
     expect(personLd(await getProfile(), 'https://nandomoreira.dev')['@id']).toBe('https://nandomoreira.dev/#person');
+  });
+});
+
+describe('rel=me identity links', () => {
+  it('lists the public profile URLs, never the e-mail', () => {
+    expect(profileUrls((profile as { contacts: Parameters<typeof profileUrls>[0] }).contacts)).toEqual([
+      'https://github.com/nandomoreirame',
+      'https://linkedin.com/in/nandomoreirame',
+    ]);
+  });
+
+  it('declares them in the head of every page, since the visible links now go through /go', () => {
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(layout).toMatch(/<link rel="me" href=\{url\}/);
+    expect(layout).toContain('profileUrls(profile.contacts)');
   });
 });
