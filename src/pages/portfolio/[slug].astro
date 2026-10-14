@@ -6,6 +6,7 @@ import { collectionOfBlock } from '../../lib/catalog/groups';
 import { getAllProjects, getProfile } from '../../lib/content';
 import type { Project } from '../../content/schemas/project';
 import { displayNameOf } from '../../lib/content/display-name';
+import { pageTitle } from '../../lib/seo/meta';
 
 export const prerender = true;
 
@@ -32,7 +33,7 @@ const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title={`${project.title} | ${authorName}`}
+  title={pageTitle(project.title, authorName)}
   description={project.summary}
   markdownAlternate={`/portfolio/${project.slug}.md`}
 >

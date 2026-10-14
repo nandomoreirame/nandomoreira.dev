@@ -15,6 +15,8 @@ export const postSchema = ({ image }: SchemaContext) =>
         // Underscores allowed so historical Gatsby paths (e.g. wp_mail) stay intact.
         .regex(/^[a-z0-9]+([_-][a-z0-9]+)*$/, 'slug must be kebab-case (underscores allowed)'),
       title: z.string().min(1),
+      /** Shorter title for the browser tab and the SERP, when `title` is long. */
+      seoTitle: z.string().min(1).max(60, 'seoTitle must fit the 60 characters a SERP shows').optional(),
       summary: z.string().min(1),
       date: z
         .string()

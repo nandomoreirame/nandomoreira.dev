@@ -12,6 +12,7 @@ import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
 import { toHashtag } from '../lib/posts/tags';
 import { displayNameOf } from '../lib/content/display-name';
+import { pageTitle } from '../lib/seo/meta';
 
 export const prerender = true;
 
@@ -39,7 +40,7 @@ if (!live) {
 const post = live.data;
 const { Content } = await render(live);
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const jsonLd = serialiseJsonLd(jsonLdForPost(post, site));
+const jsonLd = serialiseJsonLd(jsonLdForPost(post, site, await getProfile()));
 const published = `publicado: ${toLongDate(post.date)}`;
 const related = relatedPosts(post, await getAllPosts());
 // Same generated drawing as the case pages, in the cover's place.
@@ -48,7 +49,7 @@ const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.a
 const authorName = displayNameOf(await getProfile());
 ---
 
-<BaseLayout title={`${post.title} | ${authorName}`} description={post.summary}>
+<BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary}>
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
   <nav class="mt-lg" aria-label="Trilha de navegação">

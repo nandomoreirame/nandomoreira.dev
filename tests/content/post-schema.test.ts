@@ -26,6 +26,11 @@ const base = {
 };
 
 describe('postSchema', () => {
+  it('accepts an seoTitle for the browser tab and rejects one past 60 characters', () => {
+    expect(schema.safeParse({ ...valid, seoTitle: 'Parênteses no Tailwind 4' }).success).toBe(true);
+    expect(schema.safeParse({ ...valid, seoTitle: 'x'.repeat(61) }).success).toBe(false);
+  });
+
   it('accepts a complete post', () => {
     expect(schema.safeParse(valid).success).toBe(true);
   });

@@ -186,3 +186,18 @@ describe('/[slug] post page', () => {
     expect(html).toMatch(/<img\b[^>]*alt="Meu desktop no CachyOS com o Niri/);
   });
 });
+
+describe('/[slug] post page title', () => {
+  it('uses the seoTitle in the browser tab and keeps the full title in the h1', async () => {
+    const entry = (await getAllPostEntries()).find(
+      (item) => item.data.slug === 'sessoes-do-red-dead-online-p2p-relays-e-nat-duplo',
+    )!;
+    const html = await renderEntry(entry);
+    const tab = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+
+    expect(entry.data.seoTitle).toBeDefined();
+    expect(tab.length).toBeLessThanOrEqual(60);
+    expect(tab).toContain(entry.data.seoTitle!);
+    expect(html).toMatch(new RegExp(`<h1[^>]*>[^<]*${entry.data.title.slice(0, 30)}`));
+  });
+});
