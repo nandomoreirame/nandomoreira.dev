@@ -1,6 +1,7 @@
 ---
 slug: rdo-solo-red-dead-online-sozinho-pelo-gateway
 title: "rdo-solo: Red Dead Online sozinho pelo gateway de casa, agora com código aberto"
+seoTitle: "rdo-solo: Red Dead Online sozinho pelo gateway de casa"
 summary: "Abri o rdo-solo, o controlador que me deixa sozinho numa sessão pública de Red Dead Online no Xbox. O console passa por um gateway Linux, o gateway derruba o P2P do jogo, e dá para ligar e desligar pelo terminal, por uma TUI em Rust ou pelo celular."
 date: "2026-10-11"
 markers:

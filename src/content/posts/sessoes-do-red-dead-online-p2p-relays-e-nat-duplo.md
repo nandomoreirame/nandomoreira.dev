@@ -1,6 +1,7 @@
 ---
 slug: sessoes-do-red-dead-online-p2p-relays-e-nat-duplo
 title: "Meu estudo sobre as sessões do Red Dead Online: P2P, relays da Rockstar e o NAT duplo que eu mesmo criei"
+seoTitle: "Sessões do Red Dead Online: P2P, relays e o NAT duplo"
 summary: "Passei dez dias olhando o tráfego do meu Xbox para entender como uma sessão do Red Dead Online se forma. Aprendi a separar jogador de relay numa captura, descobri que o meu gateway tinha derrubado o tipo de NAT para Moderado e que esconder o IP de casa custa um ajuste de MTU."
 date: "2026-10-13"
 publishedAt: "2026-10-13T00:12:00-03:00"

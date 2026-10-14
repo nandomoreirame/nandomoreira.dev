@@ -1,6 +1,7 @@
 ---
 slug: como-construi-meu-site-que-conversa-com-ia-via-mcp
 title: "Como eu construí meu novo site em 2026 que conversa com IA via MCP"
+seoTitle: "Como construí meu site que conversa com IA via MCP"
 summary: "Casa de ferreiro, espeto de pau: um engenheiro de IA sem site que conversa com IA. Como reconstruí o meu, com servidor MCP, versão para máquina de cada página e sete portões automatizados."
 date: "2026-10-10"
 publishedAt: "2026-10-10T11:12:35-03:00"

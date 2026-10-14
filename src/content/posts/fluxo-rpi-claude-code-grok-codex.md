@@ -1,6 +1,7 @@
 ---
 slug: fluxo-rpi-claude-code-grok-codex
 title: "Fluxo RPI com três agentes: o Claude Code planeja, o Grok implementa e o Codex revisa"
+seoTitle: "Fluxo RPI: o Claude Code planeja, o Grok implementa"
 summary: "Pesquisa e plano antes de qualquer feature, como eu já trabalhava. O Claude Code conduz, o Grok escreve, o Codex revisa, e o teste vem antes do código mesmo quando isso deixa a IA mais lenta."
 date: "2026-10-10"
 publishedAt: "2026-10-10T12:08:11-03:00"

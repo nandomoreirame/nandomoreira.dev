@@ -1,6 +1,7 @@
 ---
 slug: criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos
 title: "Criei quatro plugins para o Noctalia 100% com IA no meu CachyOS"
+seoTitle: "Quatro plugins para o Noctalia feitos 100% com IA"
 summary: "Quatro plugins para a barra e a área de trabalho do Noctalia: captura rápida e agenda, uso do plano do Claude Code e do Grok, gists do GitHub e notas adesivas. Todos feitos com IA, no fluxo RPI, e o que mais deu trabalho foi a interface."
 date: "2026-10-11"
 publishedAt: "2026-10-11T00:25:05-03:00"
