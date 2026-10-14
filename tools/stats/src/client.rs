@@ -40,6 +40,36 @@ pub fn document_url(project: &str, collection: &str, id: &str) -> String {
     format!("{API}/{}/{collection}/{id}", documents_root(project))
 }
 
+/// A 401 from Firestore: the access token expired before its time and must
+/// be renewed (the caller retries once).
+#[derive(Debug)]
+pub struct Unauthorized;
+
+impl std::fmt::Display for Unauthorized {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("token recusado pelo Firestore (401)")
+    }
+}
+
+impl std::error::Error for Unauthorized {}
+
+/// Ok(true) to read the body, Ok(false) for a document that does not exist.
+pub fn check_status(status: reqwest::StatusCode, body: &str) -> anyhow::Result<bool> {
+    if status == reqwest::StatusCode::NOT_FOUND {
+        return Ok(false);
+    }
+    if status == reqwest::StatusCode::UNAUTHORIZED {
+        return Err(Unauthorized.into());
+    }
+    if !status.is_success() {
+        bail!(
+            "Firestore {status}: {}",
+            body.chars().take(200).collect::<String>()
+        );
+    }
+    Ok(true)
+}
+
 /// Read-only Firestore client: runQuery, batchGet and GET, nothing else.
 pub struct Firestore {
     http: reqwest::Client,
@@ -67,17 +97,12 @@ impl Firestore {
             .send()
             .await?;
         let status = response.status();
-        if status == reqwest::StatusCode::NOT_FOUND {
-            return Ok(None);
+        if status.is_success() {
+            return Ok(Some(response.json().await?));
         }
-        if !status.is_success() {
-            let body = response.text().await.unwrap_or_default();
-            bail!(
-                "Firestore {status}: {}",
-                body.chars().take(200).collect::<String>()
-            );
-        }
-        Ok(Some(response.json().await?))
+        let body = response.text().await.unwrap_or_default();
+        check_status(status, &body)?;
+        Ok(None)
     }
 
     async fn post(&self, url: String, body: &Value) -> anyhow::Result<Value> {
@@ -165,5 +190,18 @@ mod tests {
             document_url("nandomoreira-dev", "cv_downloads", "cv-1"),
             "https://firestore.googleapis.com/v1/projects/nandomoreira-dev/databases/(default)/documents/cv_downloads/cv-1"
         );
+    }
+
+    #[test]
+    fn tells_a_missing_document_and_an_expired_token_apart_from_other_errors() {
+        assert!(check_status(reqwest::StatusCode::OK, "").unwrap());
+        assert!(!check_status(reqwest::StatusCode::NOT_FOUND, "").unwrap());
+
+        let expired = check_status(reqwest::StatusCode::UNAUTHORIZED, "token expired").unwrap_err();
+        assert!(expired.is::<Unauthorized>());
+
+        let denied = check_status(reqwest::StatusCode::FORBIDDEN, "no").unwrap_err();
+        assert!(!denied.is::<Unauthorized>());
+        assert!(denied.to_string().contains("403"));
     }
 }

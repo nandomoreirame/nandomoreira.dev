@@ -50,6 +50,30 @@ impl Schedule {
     }
 }
 
+/// When the next refresh is due. Kept outside the loop, so only a refresh
+/// (or a mode change) moves it; a fresh sleep per loop turn would restart the
+/// wait on every key press and starve the refreshes.
+#[derive(Debug, Clone, Copy)]
+pub struct Ticker {
+    deadline: Instant,
+}
+
+impl Ticker {
+    pub fn new(now: Instant, interval: Duration) -> Ticker {
+        Ticker {
+            deadline: now + interval,
+        }
+    }
+
+    pub fn deadline(&self) -> Instant {
+        self.deadline
+    }
+
+    pub fn reschedule(&mut self, now: Instant, interval: Duration) {
+        self.deadline = now + interval;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -93,5 +117,16 @@ mod tests {
         schedule.toggle(start + Duration::from_secs(20 * 60));
 
         assert_eq!(schedule.expire(start + Duration::from_secs(40 * 60)), None);
+    }
+
+    #[test]
+    fn keeps_its_deadline_until_rescheduled() {
+        let start = Instant::now();
+        let mut ticker = Ticker::new(start, NORMAL);
+        assert_eq!(ticker.deadline(), start + NORMAL);
+
+        // Nothing but a reschedule moves the deadline: key presses never do.
+        ticker.reschedule(start + Duration::from_secs(12), FAST);
+        assert_eq!(ticker.deadline(), start + Duration::from_secs(17));
     }
 }

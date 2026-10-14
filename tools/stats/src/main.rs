@@ -1,12 +1,14 @@
 use chrono::Utc;
 use clap::Parser;
-use crossterm::event::{Event as TermEvent, EventStream, KeyEventKind};
+use crossterm::event::EventStream;
 use futures::StreamExt;
-use nm_stats::app::{Action, App};
+use nm_stats::app::{Action, App, Input, days_to_refresh, input_of};
 use nm_stats::auth::{self, Runner, System};
-use nm_stats::client::Firestore;
+use nm_stats::client::{Firestore, Unauthorized};
+use nm_stats::funnel::Lead;
 use nm_stats::lead::{collection_of, lead_detail};
 use nm_stats::period::{Period, load_start, today};
+use nm_stats::schedule::Ticker;
 use nm_stats::theme::{Theme, theme};
 use nm_stats::ui;
 use ratatui::DefaultTerminal;
@@ -58,76 +60,86 @@ async fn run(
     };
     terminal.draw(|frame| ui::draw(frame, &app, Utc::now(), palette))?;
 
-    load_month(&mut app, client).await;
-    refresh(&mut app, client).await;
+    let mut session = Session {
+        token_at: Instant::now(),
+        last_day: None,
+    };
+    refresh(&mut app, client, runner, &mut session, true).await;
 
     let mut keys = EventStream::new();
-    let mut token_at = Instant::now();
+    let mut ticker = Ticker::new(Instant::now(), app.schedule.interval());
     loop {
         terminal.draw(|frame| ui::draw(frame, &app, Utc::now(), palette))?;
 
         tokio::select! {
-            _ = tokio::time::sleep(app.schedule.interval()) => {
+            _ = tokio::time::sleep_until(tokio::time::Instant::from_std(ticker.deadline())) => {
                 if let Some(notice) = app.schedule.expire(Instant::now()) {
                     app.status = Some(notice.to_owned());
                 }
-                if token_at.elapsed() >= TOKEN_TTL {
-                    match auth::refresh_token(runner) {
-                        Ok(token) => { client.set_token(token); token_at = Instant::now(); }
-                        Err(error) => app.status = Some(format!("erro: {error}")),
-                    }
+                if session.token_at.elapsed() >= TOKEN_TTL
+                    && let Err(error) = renew(client, runner, &mut session)
+                {
+                    app.status = Some(format!("erro: {error}"));
                 }
-                refresh(&mut app, client).await;
+                refresh(&mut app, client, runner, &mut session, false).await;
+                ticker.reschedule(Instant::now(), app.schedule.interval());
             }
-            Some(Ok(TermEvent::Key(key))) = keys.next() => {
-                if key.kind != KeyEventKind::Press {
-                    continue;
-                }
-                match app.on_key(key, Instant::now(), Utc::now()) {
+            event = keys.next() => match input_of(event) {
+                Input::Closed => return Ok(()),
+                Input::Redraw | Input::Ignore => {}
+                Input::Key(key) => match app.on_key(key, Instant::now(), Utc::now()) {
                     Action::Quit => return Ok(()),
-                    Action::Refresh => refresh(&mut app, client).await,
-                    Action::OpenLead(lead) => match client.document(collection_of(&lead.kind), &lead.ref_id).await {
-                        Ok(record) => app.detail = Some(lead_detail(&lead, record.as_ref(), app.log.events())),
-                        Err(error) => app.status = Some(format!("erro ao abrir o lead: {error}")),
-                    },
+                    Action::Refresh => {
+                        refresh(&mut app, client, runner, &mut session, false).await;
+                        ticker.reschedule(Instant::now(), app.schedule.interval());
+                    }
+                    Action::OpenLead(lead) => open_lead(&mut app, client, runner, &mut session, &lead).await,
                     Action::None => {}
-                }
-            }
+                },
+            },
         }
     }
 }
 
-/// The 30 days of daily counters, once: past days no longer change.
-async fn load_month(app: &mut App, client: &Firestore) {
-    match client.dailies(&Period::Month.days(Utc::now())).await {
-        Ok(dailies) => {
-            for daily in dailies {
-                app.dailies.insert(daily.day.clone(), daily);
-            }
-        }
-        Err(error) => app.status = Some(format!("erro ao ler os totais: {error}")),
-    }
+struct Session {
+    token_at: Instant,
+    /// The São Paulo day of the last refresh, to reread yesterday once after midnight.
+    last_day: Option<String>,
 }
 
-/// REQ-003: new events since the last one seen, and today's counters. A
-/// failure keeps what is on screen and goes to the status bar (REQ-014).
-async fn refresh(app: &mut App, client: &Firestore) {
-    let now = Utc::now();
-    let from = app.log.cursor().unwrap_or_else(|| load_start(now));
-    match client.events_since(&from).await {
-        Ok(documents) => {
-            app.log.merge(documents);
-        }
-        Err(error) => {
-            app.status = Some(format!("erro ao ler eventos: {error}"));
-            return;
-        }
+/// A new token from gcloud. The command blocks, so the runtime is told.
+fn renew(
+    client: &mut Firestore,
+    runner: &impl Runner,
+    session: &mut Session,
+) -> anyhow::Result<()> {
+    let token = tokio::task::block_in_place(|| auth::refresh_token(runner))?;
+    client.set_token(token);
+    session.token_at = Instant::now();
+    Ok(())
+}
+
+fn unauthorized<T>(result: &anyhow::Result<T>) -> bool {
+    matches!(result, Err(error) if error.is::<Unauthorized>())
+}
+
+/// REQ-003: new events since the last one seen, and the daily counters
+/// (all 30 days on the first load, then today's, plus yesterday's once after
+/// midnight). A 401 renews the token and tries once more; any other failure
+/// keeps what is on screen and goes to the status bar (REQ-014).
+async fn refresh(
+    app: &mut App,
+    client: &mut Firestore,
+    runner: &impl Runner,
+    session: &mut Session,
+    full: bool,
+) {
+    let mut result = try_refresh(app, client, session, full).await;
+    if unauthorized(&result) && renew(client, runner, session).is_ok() {
+        result = try_refresh(app, client, session, full).await;
     }
-    match client.dailies(&[today(now)]).await {
-        Ok(dailies) => {
-            for daily in dailies {
-                app.dailies.insert(daily.day.clone(), daily);
-            }
+    match result {
+        Ok(()) => {
             if app
                 .status
                 .as_deref()
@@ -136,6 +148,48 @@ async fn refresh(app: &mut App, client: &Firestore) {
                 app.status = None;
             }
         }
-        Err(error) => app.status = Some(format!("erro ao ler os totais de hoje: {error}")),
+        Err(error) => app.status = Some(format!("erro ao ler o Firestore: {error}")),
+    }
+}
+
+async fn try_refresh(
+    app: &mut App,
+    client: &Firestore,
+    session: &mut Session,
+    full: bool,
+) -> anyhow::Result<()> {
+    let now = Utc::now();
+    let from = app.log.cursor().unwrap_or_else(|| load_start(now));
+    app.log.merge(client.events_since(&from).await?);
+
+    let day = today(now);
+    let days = if full {
+        Period::Month.days(now)
+    } else {
+        days_to_refresh(session.last_day.as_deref(), &day)
+    };
+    for daily in client.dailies(&days).await? {
+        app.dailies.insert(daily.day.clone(), daily);
+    }
+    session.last_day = Some(day);
+    Ok(())
+}
+
+/// REQ-013: the lead's record, read on demand and held in memory only.
+async fn open_lead(
+    app: &mut App,
+    client: &mut Firestore,
+    runner: &impl Runner,
+    session: &mut Session,
+    lead: &Lead,
+) {
+    let collection = collection_of(&lead.kind);
+    let mut record = client.document(collection, &lead.ref_id).await;
+    if unauthorized(&record) && renew(client, runner, session).is_ok() {
+        record = client.document(collection, &lead.ref_id).await;
+    }
+    match record {
+        Ok(record) => app.detail = Some(lead_detail(lead, record.as_ref(), app.log.events())),
+        Err(error) => app.status = Some(format!("erro ao abrir o lead: {error}")),
     }
 }

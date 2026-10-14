@@ -6,7 +6,7 @@ use crate::period::{Period, today};
 use crate::schedule::Schedule;
 use crate::totals::{Totals, sum};
 use chrono::{DateTime, Utc};
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{Event as TermEvent, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use std::collections::{BTreeMap, HashSet};
 use std::time::Instant;
 
@@ -34,6 +34,38 @@ pub enum Action {
     Quit,
     Refresh,
     OpenLead(Lead),
+}
+
+/// What one terminal event means to the loop.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Input {
+    Key(KeyEvent),
+    /// A resize or focus change: draw again, nothing else.
+    Redraw,
+    Ignore,
+    /// The terminal stream ended or failed: quit.
+    Closed,
+}
+
+/// Every terminal event gets an answer. Matching only key presses in the
+/// loop's `select!` would disable that branch on a resize until the next
+/// refresh, leaving the keys dead for up to 30 s.
+pub fn input_of(event: Option<std::io::Result<TermEvent>>) -> Input {
+    match event {
+        Some(Ok(TermEvent::Key(key))) if key.kind == KeyEventKind::Press => Input::Key(key),
+        Some(Ok(TermEvent::Key(_))) => Input::Ignore,
+        Some(Ok(_)) => Input::Redraw,
+        Some(Err(_)) | None => Input::Closed,
+    }
+}
+
+/// The daily documents to read on a refresh: today's, plus yesterday's once
+/// right after midnight, so its last minutes are not lost.
+pub fn days_to_refresh(last: Option<&str>, today: &str) -> Vec<String> {
+    match last {
+        Some(previous) if previous != today => vec![previous.to_owned(), today.to_owned()],
+        _ => vec![today.to_owned()],
+    }
 }
 
 /// Events seen so far, deduplicated by document name.
@@ -113,6 +145,10 @@ impl App {
     /// One key press. A detail on screen takes the keys first: Esc, Enter or
     /// q close it, so q never quits from inside a lead.
     pub fn on_key(&mut self, key: KeyEvent, now: Instant, wall: DateTime<Utc>) -> Action {
+        // A key press acknowledges whatever notice is on the status bar; an
+        // error still there is set again by the next refresh that fails.
+        self.status = None;
+
         if self.detail.is_some() {
             if matches!(key.code, KeyCode::Esc | KeyCode::Enter | KeyCode::Char('q')) {
                 self.detail = None;
@@ -136,8 +172,8 @@ impl App {
                 Action::None
             }
             KeyCode::Char('r') => {
+                // The status bar already shows the mode (schedule.label()).
                 self.schedule.toggle(now);
-                self.status = Some(self.schedule.label().to_owned());
                 Action::Refresh
             }
             KeyCode::Char(']') => {
@@ -308,5 +344,49 @@ mod tests {
             Action::OpenLead(lead) => assert_eq!(lead.ref_id, "cv-1"),
             other => panic!("expected OpenLead, got {other:?}"),
         }
+    }
+
+    #[test]
+    fn turns_terminal_events_into_inputs() {
+        use crossterm::event::{Event as TermEvent, KeyEventKind};
+        let press = key(KeyCode::Char('q'));
+        let mut release = press;
+        release.kind = KeyEventKind::Release;
+
+        assert_eq!(input_of(Some(Ok(TermEvent::Key(press)))), Input::Key(press));
+        assert_eq!(input_of(Some(Ok(TermEvent::Key(release)))), Input::Ignore);
+        assert_eq!(input_of(Some(Ok(TermEvent::Resize(80, 24)))), Input::Redraw);
+        assert_eq!(input_of(Some(Ok(TermEvent::FocusGained))), Input::Redraw);
+        assert_eq!(
+            input_of(Some(Err(std::io::Error::other("tty")))),
+            Input::Closed
+        );
+        assert_eq!(input_of(None), Input::Closed);
+    }
+
+    #[test]
+    fn a_key_clears_a_notice_and_r_does_not_repeat_the_mode_in_the_status() {
+        let mut app = App {
+            status: Some("tempo real desligado após 30 min".into()),
+            ..App::default()
+        };
+        app.on_key(key(KeyCode::Char('2')), Instant::now(), now());
+        assert_eq!(app.status, None);
+
+        app.on_key(key(KeyCode::Char('r')), Instant::now(), now());
+        assert_eq!(app.status, None);
+    }
+
+    #[test]
+    fn rereads_yesterday_once_after_midnight() {
+        assert_eq!(
+            days_to_refresh(Some("2026-10-14"), "2026-10-14"),
+            vec!["2026-10-14"]
+        );
+        assert_eq!(
+            days_to_refresh(Some("2026-10-14"), "2026-10-15"),
+            vec!["2026-10-14", "2026-10-15"]
+        );
+        assert_eq!(days_to_refresh(None, "2026-10-15"), vec!["2026-10-15"]);
     }
 }
