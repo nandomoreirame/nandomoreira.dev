@@ -4,10 +4,12 @@ import PointerField from '../components/art/PointerField.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
-import { requireSite } from '../lib/aeo/urls';
+import { absoluteUrl, canonicalUrl, pagePath, requireSite } from '../lib/aeo/urls';
+import { metaDescription } from '../lib/seo/meta';
+import { ogImagePath } from '../lib/og/pages';
 import serifHeadingFont from '../assets/fonts/literata-latin-600.woff2?url';
 import sansBodyFont from '../assets/fonts/alegreya-sans-latin-400.woff2?url';
-import { webPageLd } from '../lib/aeo/webpage-ld';
+import { webPageLd, type PageType } from '../lib/aeo/webpage-ld';
 import { displayNameOf } from '../lib/content/display-name';
 import { websiteLd } from '../lib/aeo/website-ld';
 import { getAllPosts, getProfile } from '../lib/content';
@@ -23,6 +25,10 @@ interface Props {
   view?: 'human' | 'ai';
   /** Root-relative path used for the canonical URL when it differs from the request. */
   canonicalPath?: string;
+  /** schema.org type of the page: ProfilePage for /sobre, CollectionPage for listings. */
+  pageType?: PageType;
+  /** Root-relative paths a CollectionPage lists, in order. */
+  pageItems?: string[];
 }
 
 const {
@@ -32,14 +38,18 @@ const {
   markdownAlternate,
   view,
   canonicalPath,
+  pageType,
+  pageItems,
 } = Astro.props;
-const current = Astro.url?.pathname;
+const current = Astro.url?.pathname ? pagePath(Astro.url.pathname) : undefined;
 // Container tests may omit Astro.site; production always has config.site.
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
-const canonical = new URL(canonicalPath ?? Astro.url?.pathname ?? '/', site).toString();
+const canonical = canonicalUrl(site, canonicalPath ?? current ?? '/');
+// Noindex pages (the AI view, the 404) share the home card.
+const ogImage = absoluteUrl(site, ogImagePath(noindex ? '/' : new URL(canonical).pathname));
 const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
 const webPageJsonLd = serialiseJsonLd(
-  webPageLd({ site, path: new URL(canonical).pathname, title, description }),
+  webPageLd({ site, path: new URL(canonical).pathname, title, description, type: pageType, items: pageItems }),
 );
 const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
@@ -47,7 +57,7 @@ const year = new Date().getUTCFullYear();
 const hasPosts = posts.length > 0;
 // 404 is noindex without a view; every other page shows the switcher.
 const showSwitcher = !(noindex && view === undefined);
-const switcherHumanPath = canonicalPath ?? current ?? '/';
+const switcherHumanPath = canonicalPath ? pagePath(canonicalPath) : (current ?? '/');
 const switcherView = view ?? 'human';
 ---
 
@@ -60,16 +70,22 @@ const switcherView = view ?? 'human';
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={metaDescription(description)} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Blog de Fernando Moreira" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary" />
     <link
       rel="alternate"
