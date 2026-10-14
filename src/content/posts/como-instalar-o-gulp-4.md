@@ -17,7 +17,7 @@ cover:
 
 Gulp 4 não foi liberado ainda e se você não pode esperar para colocar suas mãos sobre ele, aqui vai como instalar o Gulp 4.
 
-### Instale o Gulp globalmente
+## Instale o Gulp globalmente
 
 Se você tiver uma versão anterior do Gulp instalado, desinstale primeiro. Talvez seja necessário executar este comando como um administrador ou um superusuário, dependendo do seu sistema.
 
@@ -27,7 +27,7 @@ npm install -g "gulpjs/gulp-cli#4.0"
 Na minha máquina (Linux Mint Rebecca), eu não tinha problemas contínuos usando Gulp < 4 depois de instalar globalmente Gulp 4.
 ```
 
-### Adicionar Gulp 4 em seus repositórios
+## Adicionar Gulp 4 em seus repositórios
 
 Se você usar uma versão anterior do Gulp (ie Gulp 3.8.x ou anterior), remova-o do repositório que você deseja atualizar. Não se esqueça de especificar --save-dev ou --save para que o seu package.json seja atualizado.
 
@@ -37,7 +37,7 @@ npm uninstall gulp --save-dev # removendo o gulp 3.8.x local
 npm install "gulpjs/gulp#4.0" --save-dev # instalando o gulp 4.0 local
 ```
 
-### Possíveis problemas ao desinstalar Gulp
+## Possíveis problemas ao desinstalar Gulp
 
 Na minha máquina, a versão anterior do Gulp não foi devidamente removida e eu comecei a ficar esse erro ao tentar executar:
 

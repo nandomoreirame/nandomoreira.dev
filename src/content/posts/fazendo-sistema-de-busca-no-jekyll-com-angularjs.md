@@ -41,7 +41,7 @@ app.config([
 
 Precisamos pegar todos os artigos do blog para alimentar nosso Javascript, criaremos um template para o Jekyll montando um `.json`.
 
-#### search.json
+### search.json
 
 ```liquid
 ---layout: null

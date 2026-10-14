@@ -15,7 +15,7 @@ cover:
 
 Iremos usar o comando `sass-convert` do próprio SASS para realizar a conversão dos arquivos, mas já sabemos que ele converte apenas um único arquivo, então vamos usar o terminal e com um simples loop iremos converter todos os arquivos de um diretório (ou vários diretórios) de uma só vez.
 
-### Em sistemas Unix (Mac e Linux)
+## Em sistemas Unix (Mac e Linux)
 
 Abra o terminal e execute o seguinte comando.
 
@@ -23,7 +23,7 @@ Abra o terminal e execute o seguinte comando.
 for file in path/to/scss/**/*.scss; do sass-convert $file ${file%scss}sass && rm $file; done
 ```
 
-### No Windows
+## No Windows
 
 ```bash
 for /r path\to\scss %I in (*) do sass-convert "%I" "%~dpnI.sass"

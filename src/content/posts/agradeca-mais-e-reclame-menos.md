@@ -37,7 +37,7 @@ Porque não agradecer por ter participado de uma olimpíada, poder correr ao lad
 
 ---
 
-### Pipefy
+## Pipefy
 
 Semana passada eu perdi meu emprego, um trabalho que eu amava apesar de tudo, uma empresa _cool_, divertida, com pessoas jovens e motivadas.
 
@@ -57,7 +57,7 @@ Eu poderia ficar triste por não contribuir mais com o crescimento do produto, m
 
 ---
 
-### Conclusão
+## Conclusão
 
 Sempre que acontece algo ruim no meio do caminho simplesmente não conseguimos enxergar o que aconteceu de bom, não por maldade isso é natural no ser humano.
 

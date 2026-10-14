@@ -17,7 +17,7 @@ Criar plugins para **[Jekyll](https://jekyllrb.com/)** é bem simples e fácil, 
 
 Hoje vamos [usar um plugin](https://gist.github.com/joelverhagen/1805814) bem bacana para incluir vídeos do [Youtube](https://www.youtube.com/) no seu blog Jekyll sem precisar copiar e colar o iframe do youtube, apenas usando o `ID` do vídeo.
 
-### O arquivo youtube.rb
+## O arquivo youtube.rb
 
 Crie um arquivo chamado `youtube.rb` dentro do diretório `_plugins` e coloque o código abaixo:
 
@@ -51,7 +51,7 @@ class YouTube < Liquid::Tag
 end
 ```
 
-### Exemplo de uso
+## Exemplo de uso
 
 Como eu falei logo acima, é bem simples, apenas com uma linha curta você inclui o iframe do youtube no HTML final do Jekyll.
 
