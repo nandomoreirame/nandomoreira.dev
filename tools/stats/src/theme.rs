@@ -34,17 +34,17 @@ mod tests {
 
     #[test]
     fn uses_the_site_palette_with_true_color() {
-        let theme = theme(Some("truecolor"));
-        assert_eq!(theme.bg, Color::Rgb(0x11, 0x0f, 0x0d));
-        assert_eq!(theme.fg, Color::Rgb(0xef, 0xeb, 0xe2));
-        assert_eq!(theme.accent, Color::Rgb(0xf0, 0xc3, 0x6f));
-        assert_eq!(theme(Some("24bit")).accent, theme.accent);
+        let palette = theme(Some("truecolor"));
+        assert_eq!(palette.bg, Color::Rgb(0x11, 0x0f, 0x0d));
+        assert_eq!(palette.fg, Color::Rgb(0xef, 0xeb, 0xe2));
+        assert_eq!(palette.accent, Color::Rgb(0xf0, 0xc3, 0x6f));
+        assert_eq!(theme(Some("24bit")).accent, palette.accent);
     }
 
     #[test]
     fn falls_back_to_ansi_colours() {
-        let theme = theme(None);
-        assert_eq!(theme.bg, Color::Reset);
-        assert_eq!(theme.accent, Color::Yellow);
+        let palette = theme(None);
+        assert_eq!(palette.bg, Color::Reset);
+        assert_eq!(palette.accent, Color::Yellow);
     }
 }
