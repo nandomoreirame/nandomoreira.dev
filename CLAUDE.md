@@ -162,6 +162,7 @@ portão que nunca falhou não é portão.
 ## Restrições que não são preferência
 
 - **JavaScript de cliente só por exceção nomeada.** Existe um único script, o do `PointerField`, em todas as páginas: o efeito de ponteiro (generative-case-art, 2026-10-07) e o botão Copiar da visão IA (ai-view, 2026-10-08), juntos em até 1,5 KB gzip. Funcionalidade nova entra nesse script ou exige decisão registrada. A única outra exceção é a prévia de áudio de `/now` (now-page, REQ-027, 2026-10-11): um segundo script, só nessa rota, em até 1 KB gzip, marcado por `data-now-preview`. O portão reprova qualquer outro script. Nenhuma diretiva `client:*`.
+- **A medição de visitas é server-side** (middleware, `/v.gif` e `/go`). O pixel é um `<img>`, não um script, e não entra na exceção de JavaScript de cliente.
 - **O token `border` (`#262626`) reprova WCAG AA**, com 1,31:1 sobre o fundo. Serve como separador decorativo e **nunca** como único delimitador de alvo interativo ou meio de transmitir informação. Contorno que precisa ser percebido usa `border-strong` ou `primary`.
 - **Nenhum número sem narrativa.** `StatItem` lança se receber `value` sem `context`. Cerca de 700 das 964 estrelas do GitHub vêm de temas Jekyll de 2018, e exibir o agregado sem contexto seria enganoso (RISK-004).
 - **Todo case precisa de ao menos um link.** `repoUrl` e `liveUrl` não podem ser ambos nulos: um case sem link não tem evidência verificável, e o schema falha o build.
@@ -280,6 +281,8 @@ disponível nesta superfície, rode `claude import` no terminal.
 As duas lições abaixo saíram do `CLAUDE.md` global em 12/08/2026. Elas são específicas
 deste projeto (Astro), então carregavam em toda sessão de toda máquina sem servir a
 ninguém fora daqui. Aqui carregam exatamente quando importam.
+
+- Cachear HTML na Cloudflare faz as visitas SSR servidas do cache deixarem de contar: a contagem acontece no middleware, e o pixel só cobre página pré-renderizada.
 
 ### Astro: `Astro.redirect` em página com `prerender = true` devolve 200 + meta refresh, nunca 301
 
