@@ -4,7 +4,7 @@ import { PORTRAIT, portraitUrl } from '../../src/lib/about/portrait';
 
 describe('PORTRAIT', () => {
   it('points every source and the fallback at a file that ships in public/', () => {
-    const files = [PORTRAIT.fallback, ...PORTRAIT.sources.flatMap((source) => source.srcset.split(', ').map((entry) => entry.split(' ')[0]!))];
+    const files = [PORTRAIT.fallback, PORTRAIT.share, ...PORTRAIT.sources.flatMap((source) => source.srcset.split(', ').map((entry) => entry.split(' ')[0]!))];
 
     for (const file of files) expect(existsSync(`public${file}`), file).toBe(true);
   });
@@ -20,7 +20,8 @@ describe('PORTRAIT', () => {
 });
 
 describe('portraitUrl', () => {
-  it('builds the absolute fallback URL, trimming the trailing slash of the site', () => {
-    expect(portraitUrl('https://nandomoreira.dev/')).toBe(`https://nandomoreira.dev${PORTRAIT.fallback}`);
+  it('builds the absolute URL of the opaque share image, trimming the trailing slash of the site', () => {
+    expect(portraitUrl('https://nandomoreira.dev/')).toBe(`https://nandomoreira.dev${PORTRAIT.share}`);
+    expect(PORTRAIT.share).toMatch(/\.jpg$/);
   });
 });

@@ -42,7 +42,7 @@ describe('personLd', () => {
   });
 
   it('points image at the absolute URL of the portrait', () => {
-    expect(personLd(profile, SITE).image).toBe(`${SITE}/profile/fernando-moreira-v2-960.jpg`);
+    expect(personLd(profile, SITE).image).toBe(`${SITE}/profile/fernando-moreira-v3-share.jpg`);
   });
 
   it('serialises to valid JSON', () => {
