@@ -106,8 +106,16 @@ describe('counterKey', () => {
     expect(counterKey('/lab/forja.md')).toBe('%2Flab%2Fforja%2Emd');
   });
 
-  it('escapes underscores and rejects empty or lone-surrogate keys', () => {
-    expect(counterKey('__proto__')).toBe('%5F%5Fproto%5F%5F');
+  it('follows the Data Contract (encodeURIComponent, dot as %2E) and leaves inner underscores alone', () => {
+    expect(counterKey('/posts/meu_texto')).toBe('%2Fposts%2Fmeu_texto');
+    expect(counterKey('contato/github')).toBe('contato%2Fgithub');
+  });
+
+  it('escapes a leading double underscore, reserved by Firestore and by object prototypes', () => {
+    expect(counterKey('__proto__')).toBe('%5F_proto__');
+  });
+
+  it('rejects empty or lone-surrogate keys', () => {
     expect(() => counterKey('a\ud800')).not.toThrow();
     expect(counterKey('')).toBe('%00');
   });
@@ -147,8 +155,8 @@ describe('dailyIncrements', () => {
       utm: { source: 'SomePodcast', medium: null, campaign: null },
     });
     expect(event.channel).toBe('utm:somepodcast');
-    expect(dailyIncrements(event)).toContainEqual(['channels', counterKey('utm:other')]);
-    expect(dailyIncrements(event)).not.toContainEqual(['channels', counterKey('utm:somepodcast')]);
+    expect(dailyIncrements(event)).toContainEqual(['channels', 'utm:other']);
+    expect(dailyIncrements(event)).not.toContainEqual(['channels', 'utm:somepodcast']);
   });
 
   it('counts a crawler only in traffic', () => {
@@ -168,8 +176,8 @@ describe('dailyIncrements', () => {
     });
     expect(dailyIncrements(event)).toEqual([
       ['conversions', 'mcp'],
-      ['mcp', 'methods', 'tools%2Fcall'],
-      ['mcp', 'tools', 'get%5Fprofile'],
+      ['mcp', 'methods', 'tools/call'],
+      ['mcp', 'tools', 'get_profile'],
       ['mcp', 'clients', 'claude-code'],
     ]);
   });
@@ -188,24 +196,39 @@ describe('dailyIncrements', () => {
       client: 'WeirdClient',
     });
     expect(dailyIncrements(event)).toEqual([
-      ['conversions', 'mcp'],
       ['mcp', 'methods', 'other'],
       ['mcp', 'tools', 'other'],
       ['mcp', 'clients', 'other'],
     ]);
   });
 
-  it('counts an mcp conversion with only a target', () => {
+  it('counts protocol chatter by method but never as a conversion: only tools/call is one', () => {
     const event = pageview({
       kind: 'conversion',
       source: 'api',
       userAgent: 'node',
       conversion: { type: 'mcp', target: 'tools/list' },
     });
-    expect(dailyIncrements(event)).toEqual([
-      ['conversions', 'mcp'],
-      ['mcp', 'methods', 'tools%2Flist'],
-    ]);
+    expect(dailyIncrements(event)).toEqual([['mcp', 'methods', 'tools/list']]);
+  });
+
+  it('keys bounded vocabularies literally, as the Data Contract names them', () => {
+    const event = pageview({ source: 'pixel', referrer: null, utm: { source: 'LinkedIn', medium: null, campaign: null } });
+    expect(dailyIncrements(event)).toContainEqual(['channels', 'utm:linkedin']);
+  });
+
+  it('recognises the names real MCP clients send', () => {
+    const clientOf = (client: string) =>
+      dailyIncrements(
+        pageview({ kind: 'conversion', source: 'api', userAgent: 'node', conversion: { type: 'mcp', target: 'initialize', client } }),
+      ).find((path) => path[1] === 'clients')?.[2];
+
+    expect(clientOf('Visual Studio Code')).toBe('vscode');
+    expect(clientOf('cursor-vscode')).toBe('cursor');
+    expect(clientOf('codex-mcp-client')).toBe('codex');
+    expect(clientOf('openai-mcp')).toBe('chatgpt');
+    expect(clientOf('Claude Code')).toBe('claude-code');
+    expect(clientOf('claude-ai')).toBe('claude-ai');
   });
 
   it('counts hire and cv conversions even from a bot', () => {

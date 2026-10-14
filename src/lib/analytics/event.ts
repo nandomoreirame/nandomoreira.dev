@@ -78,7 +78,11 @@ export const KNOWN_MCP_METHODS = [
   'prompts/list',
 ] as const;
 
-/** Bounded MCP clients for daily counters; unknowns fold to other. */
+/**
+ * Bounded MCP clients for daily counters; unknowns fold to other. A client
+ * name is lowercased and its spaces and underscores become hyphens before the
+ * lookup, then MCP_CLIENT_ALIASES maps the names real clients send.
+ */
 export const KNOWN_MCP_CLIENTS = [
   'claude-code',
   'claude-ai',
@@ -96,6 +100,15 @@ export const KNOWN_MCP_CLIENTS = [
   'continue',
   'goose',
 ] as const;
+
+export const MCP_CLIENT_ALIASES: Readonly<Record<string, (typeof KNOWN_MCP_CLIENTS)[number]>> = {
+  'visual-studio-code': 'vscode',
+  'cursor-vscode': 'cursor',
+  'codex-mcp-client': 'codex',
+  'openai-mcp': 'chatgpt',
+  'claude-desktop': 'claude',
+  'anthropic/claude': 'claude',
+};
 
 const KNOWN_UTM_SET = new Set<string>(KNOWN_UTM_SOURCES);
 const KNOWN_MCP_METHOD_SET = new Set<string>(KNOWN_MCP_METHODS);
@@ -116,12 +129,15 @@ export const dailyExpiry = (day: string): Date => {
 };
 
 /**
- * Safe Firestore map key from attacker-controlled input.
- * Empty keys are forbidden; dots and underscores would nest or collide with reserved names.
+ * `pathKey`/`targetKey` of the Data Contract: a map key from request-derived
+ * text. encodeURIComponent with `.` as `%2E` (a dot would nest the field). A
+ * leading `__` is escaped too: Firestore reserves `__name__`-like keys and a
+ * `__proto__` key would poison the object built for the write. Empty keys are
+ * forbidden, so the empty string gets a key of its own.
  */
 export const counterKey = (value: string): string => {
   if (value === '') return '%00';
-  return encodeURIComponent(value.toWellFormed()).replaceAll('.', '%2E').replaceAll('_', '%5F');
+  return encodeURIComponent(value.toWellFormed()).replaceAll('.', '%2E').replace(/^__/, '%5F_');
 };
 
 const definedConversion = (conversion: Conversion): Conversion => {
@@ -179,8 +195,11 @@ const mcpMethodCounter = (target: string): string =>
 
 const mcpToolCounter = (tool: string): string => (KNOWN_MCP_TOOL_SET.has(tool) ? tool : 'other');
 
-const mcpClientCounter = (client: string): string =>
-  KNOWN_MCP_CLIENT_SET.has(client.toLowerCase()) ? client.toLowerCase() : 'other';
+const mcpClientCounter = (client: string): string => {
+  const slug = client.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  const name = MCP_CLIENT_ALIASES[slug] ?? slug;
+  return KNOWN_MCP_CLIENT_SET.has(name) ? name : 'other';
+};
 
 export const dailyIncrements = (event: AnalyticsEvent): Increment[] => {
   const paths: Increment[] = [];
@@ -190,7 +209,9 @@ export const dailyIncrements = (event: AnalyticsEvent): Increment[] => {
     if (event.class === 'human') {
       paths.push(['pages', counterKey(event.path)], ['countries', event.country ?? 'unknown']);
       if (event.channel !== 'internal') {
-        paths.push(['channels', counterKey(channelCounter(event.channel))]);
+        // Channels come from a closed list (utm:<source> folds to utm:other), so
+        // the key is the literal value the Data Contract names.
+        paths.push(['channels', channelCounter(event.channel)]);
       }
     }
   }
@@ -202,12 +223,15 @@ export const dailyIncrements = (event: AnalyticsEvent): Increment[] => {
     // A link preview following /go/... is not interest in the destination.
     if (type === 'outbound' && event.class !== 'human') return paths;
 
-    paths.push(['conversions', type]);
+    // An MCP session sends initialize, tools/list and pings around each use;
+    // only an actual tool call is a conversion. The rest still counts by method.
+    if (type !== 'mcp' || target === 'tools/call') paths.push(['conversions', type]);
     if (type === 'outbound' && target) paths.push(['outbound', counterKey(target)]);
     if (type === 'mcp') {
-      if (target) paths.push(['mcp', 'methods', counterKey(mcpMethodCounter(target))]);
-      if (tool) paths.push(['mcp', 'tools', counterKey(mcpToolCounter(tool))]);
-      if (client) paths.push(['mcp', 'clients', counterKey(mcpClientCounter(client))]);
+      // Methods, tools and clients fold into closed lists: literal keys.
+      if (target) paths.push(['mcp', 'methods', mcpMethodCounter(target)]);
+      if (tool) paths.push(['mcp', 'tools', mcpToolCounter(tool)]);
+      if (client) paths.push(['mcp', 'clients', mcpClientCounter(client)]);
     }
   }
 
