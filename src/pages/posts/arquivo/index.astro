@@ -15,7 +15,9 @@ const authorName = displayNameOf(await getProfile());
 
 <BaseLayout
   title={`Arquivo | ${authorName}`}
-  description="Textos arquivados, agrupados por ano de publicação."
+  description="Tutoriais e textos de 2015 a 2019 sobre front-end, Sass, Gulp, Jekyll e WordPress, agrupados por ano e mantidos como registro."
+  pageType="CollectionPage"
+  pageItems={years.map(({ year }) => `/posts/arquivo/${year}`)}
 >
   <PageHeader
     eyebrow="Arquivo"

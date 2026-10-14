@@ -38,3 +38,11 @@ describe('collection copy', () => {
     expect(registry).not.toMatch(/const COLLECTION_COPY/);
   });
 });
+
+describe('collection meta descriptions', () => {
+  it.each(['portfolio', 'lab'] as const)('gives %s a meta description between 70 and 160 characters', (collection) => {
+    const { metaDescription } = COLLECTION_COPY[collection];
+    expect(metaDescription.length).toBeGreaterThanOrEqual(70);
+    expect(metaDescription.length).toBeLessThanOrEqual(160);
+  });
+});

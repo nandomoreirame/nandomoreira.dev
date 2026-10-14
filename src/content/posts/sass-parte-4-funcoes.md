@@ -1,7 +1,7 @@
 ---
 slug: sass-parte-4-funcoes
 title: "#4 - Conhecendo o pré processador SASS | Funções"
-summary: Conhecendo o pré-processador SASS-Parte 4
+summary: "Quarta parte da série sobre Sass: como escrever funções próprias com @function e @return, com exemplos de cálculo."
 date: "2015-09-05"
 markers:
   - sass

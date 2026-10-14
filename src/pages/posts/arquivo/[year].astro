@@ -4,6 +4,7 @@ import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getArchivedPostsByYear, getArchiveYears, getProfile } from '../../../lib/content';
 import { toCompactStamp } from '../../../lib/format/date';
+import { archiveYearDescription } from '../../../lib/posts/archive-copy';
 import { displayNameOf } from '../../../lib/content/display-name';
 
 export const prerender = true;
@@ -30,7 +31,9 @@ const authorName = displayNameOf(await getProfile());
 
 <BaseLayout
   title={`Arquivo ${year} | ${authorName}`}
-  description={`Textos publicados em ${year}.`}
+  description={archiveYearDescription(year, posts)}
+  pageType="CollectionPage"
+  pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
   <nav class="mt-lg" aria-label="Trilha de navegação">
     <a
