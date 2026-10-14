@@ -6,7 +6,7 @@ import { absoluteUrl } from '../aeo/urls';
  * or by the platform default, so changing a number here without changing that
  * is how the policy starts to lie.
  */
-export const POLICY_UPDATED_AT = '2026-10-11';
+export const POLICY_UPDATED_AT = '2026-10-14';
 
 export interface PolicySection {
   id: string;
@@ -26,9 +26,20 @@ export const privacySections: PolicySection[] = [
     id: 'nao-coletado',
     title: 'O que não é coletado',
     paragraphs: [
-      'O site não usa cookies, analytics, pixel de anúncio, gravação de sessão nem fingerprinting. Nada identifica quem você é enquanto navega.',
+      'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor, e nada nela identifica quem você é.',
       'Fontes, estilos e o único script são servidos pelo próprio domínio. O script faz o efeito do ponteiro e o botão Copiar, e não envia nada a lugar nenhum.',
       'Uma exceção: um texto antigo do blog exibe uma imagem hospedada no CodePen. Ao abrir esse texto, seu navegador pede a imagem ao CodePen, que recebe seu endereço IP como em qualquer requisição.',
+    ],
+  },
+  {
+    id: 'medicao',
+    title: 'Contagem de visitas',
+    paragraphs: [
+      'Para saber quais textos e canais trazem leitores, o servidor conta as visitas sem nenhum script e sem cookie. Nas páginas montadas a cada acesso, a contagem acontece na própria requisição; nos textos e cases, que são arquivos estáticos, uma imagem transparente de 1×1 pixel servida pelo próprio domínio faz a mesma contagem.',
+      'Em cada visita guardo a página, o horário, o site de onde você veio (só o domínio, como linkedin.com), os parâmetros utm_source, utm_medium e utm_campaign quando o link os trouxer, o país informado pela Cloudflare e o tipo de visitante (pessoa, agente de IA ou robô).',
+      'Para ligar as páginas de uma mesma visita sem cookie, calculo um código a partir do seu IP e do seu navegador, misturados com uma chave secreta que muda todo dia. O IP não é gravado, e o código de um dia não se liga ao do dia seguinte. Se você enviar o formulário ou baixar o currículo, o aviso que eu recebo inclui as páginas que você viu naquele dia.',
+      'Os cliques nos meus contatos e nos links dos projetos passam por um endereço /go/ do próprio site antes de seguir para o destino, para que eu saiba quais são usados.',
+      'Os registros de cada visita são apagados em 30 dias. Depois disso ficam só totais por dia, sem nenhum código de visitante, por 24 meses. Tudo fica no Firestore, do Google Cloud, nos Estados Unidos. Base legal: legítimo interesse (art. 7º, IX da LGPD).',
     ],
   },
   {
@@ -63,7 +74,7 @@ export const privacySections: PolicySection[] = [
     id: 'agentes',
     title: 'Rotas para agents',
     paragraphs: [
-      'O servidor MCP, o AGENTS.md, o llms.txt e as versões em markdown das páginas não guardam nada sobre quem consulta. Elas aparecem apenas nos registros técnicos descritos acima.',
+      'O servidor MCP, o AGENTS.md, o llms.txt e as versões em markdown das páginas entram na contagem de visitas como as demais páginas. Do MCP guardo o nome do método, da ferramenta chamada e do cliente que se identificou, nunca os argumentos enviados.',
     ],
   },
   {
@@ -92,7 +103,7 @@ export const privacySections: PolicySection[] = [
 ];
 
 export const POLICY_LEAD =
-  'Versão curta: este site não usa cookies nem analytics. Ele guarda apenas o que você envia de propósito, e apaga em até 12 meses.';
+  'Versão curta: este site não usa cookies nem analytics de terceiros. Ele conta visitas no próprio servidor, sem guardar seu IP, e guarda o que você envia de propósito por até 12 meses.';
 
 /** "8 de outubro de 2026", parsed as a calendar date so no timezone shifts it. */
 export const formatPolicyDate = (iso: string): string => {

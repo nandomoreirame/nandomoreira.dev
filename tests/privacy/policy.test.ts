@@ -15,6 +15,7 @@ describe('privacy policy content', () => {
     expect(titles).toEqual([
       'responsavel',
       'nao-coletado',
+      'medicao',
       'registros',
       'formulario',
       'curriculo',
@@ -56,7 +57,20 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-11');
+    expect(POLICY_UPDATED_AT).toBe('2026-10-14');
+  });
+
+  it('describes the visit measurement honestly', () => {
+    const section = privacySections.find((candidate) => candidate.id === 'medicao');
+    const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
+    for (const fact of ['sem nenhum script', 'sem cookie', 'IP não é gravado', 'muda todo dia', '30 dias', '24 meses', 'art. 7º, IX', '/go/', 'utm_source']) {
+      expect(text).toContain(fact);
+    }
+  });
+
+  it('no longer claims there is no measurement', () => {
+    expect(all()).not.toMatch(/não usa cookies, analytics/);
+    expect(all()).not.toMatch(/não guardam nada sobre quem consulta/);
   });
 });
 
@@ -78,7 +92,7 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('11 de outubro de 2026');
+    expect(await render()).toContain('14 de outubro de 2026');
   });
 });
 
