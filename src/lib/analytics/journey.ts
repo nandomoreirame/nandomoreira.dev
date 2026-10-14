@@ -14,7 +14,11 @@ const clock = (iso: string): string =>
  * overwrite where the person came from.
  */
 export const renderJourney = (events: readonly AnalyticsEvent[]): string => {
-  const views = events.filter((event) => event.kind === 'pageview').sort((a, b) => a.at.localeCompare(b.at));
+  // A stored document without a usable time (a manual fix, a future writer)
+  // is skipped: the lead mail must never fail over the journey (REQ-006).
+  const views = events
+    .filter((event) => event.kind === 'pageview' && typeof event.at === 'string' && !Number.isNaN(Date.parse(event.at)))
+    .sort((a, b) => a.at.localeCompare(b.at));
 
   if (views.length === 0) return ['Journey today', '-------------', 'No journey recorded today.'].join('\n');
 

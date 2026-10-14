@@ -41,4 +41,10 @@ describe('renderJourney', () => {
     const conversion = { ...view('2026-10-14T17:10:00Z', '/api/hire', null), kind: 'conversion' as const };
     expect(renderJourney([conversion])).toContain('No journey recorded today.');
   });
+
+  it('skips a stored event without a usable time instead of throwing', () => {
+    const broken = { kind: 'pageview', path: '/x', channel: 'direct', utm: null, country: null } as never;
+    expect(() => renderJourney([broken])).not.toThrow();
+    expect(renderJourney([broken])).toContain('No journey recorded today.');
+  });
 });

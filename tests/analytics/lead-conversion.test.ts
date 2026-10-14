@@ -58,6 +58,58 @@ describe('hire conversion', () => {
   });
 });
 
+describe('a failure while measuring never costs the lead', () => {
+  const broken = {
+    record: async () => {
+      throw new Error('analytics down');
+    },
+    journey: async () => {
+      throw new Error('journey down');
+    },
+  };
+
+  it('accepts and notifies a briefing once even when analytics throws', async () => {
+    sent.length = 0;
+    const response = await handleHire(
+      new Request('https://nandomoreira.dev/api/hire', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ from: 'Ada', contact: 'ada@example.com', brief: 'Oi' }),
+      }),
+      {
+        store: { save: async () => 'doc-3', markNotified: async () => {} },
+        notifier,
+        limiter: createLimiter({ max: 5, windowMs: 60_000 }),
+        now,
+        analytics: broken,
+      },
+    );
+
+    expect(response.status).toBe(202);
+    expect(sent).toEqual([{ id: 'doc-3', journey: undefined }]);
+  });
+
+  it('still notifies a CV download when analytics throws', async () => {
+    sent.length = 0;
+    await handleCvDownload(
+      new Request('https://nandomoreira.dev/api/cv', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: 'nome=Ada',
+      }),
+      {
+        store: { save: async () => 'cv-3', markNotified: async () => {} },
+        notifier,
+        limiter: createLimiter({ max: 5, windowMs: 60_000 }),
+        now,
+        analytics: broken,
+      },
+    );
+
+    expect(sent).toEqual([{ id: 'cv-3', journey: undefined }]);
+  });
+});
+
 describe('cv conversion', () => {
   it('records the download and passes the journey', async () => {
     sent.length = 0;

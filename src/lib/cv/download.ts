@@ -141,14 +141,21 @@ export const handleCvDownload = async (
 
   let journey: string | undefined;
   if (analytics) {
-    await analytics.record(request, {
-      kind: 'conversion',
-      path: '/api/cv',
-      source: 'api',
-      referrer: request.headers.get('referer'),
-      conversion: { type: 'cv', refId: id },
-    });
-    journey = await analytics.journey(request);
+    // Measuring never costs the lead (REQ-006, REQ-012): the record is already
+    // stored, so an analytics failure here must not turn into an error the
+    // caller would retry, duplicating it.
+    try {
+      await analytics.record(request, {
+        kind: 'conversion',
+        path: '/api/cv',
+        source: 'api',
+        referrer: request.headers.get('referer'),
+        conversion: { type: 'cv', refId: id },
+      });
+      journey = await analytics.journey(request);
+    } catch {
+      journey = undefined;
+    }
   }
 
   try {

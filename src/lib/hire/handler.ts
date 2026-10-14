@@ -143,15 +143,21 @@ export const handleHire = async (
 
   let journey: string | undefined;
   if (analytics) {
-    // Both calls swallow their own failures (REQ-012): a lead is never lost to measuring.
-    await analytics.record(request, {
-      kind: 'conversion',
-      path: '/api/hire',
-      source: 'api',
-      referrer: request.headers.get('referer'),
-      conversion: { type: 'hire', refId: id },
-    });
-    journey = await analytics.journey(request);
+    // Measuring never costs the lead (REQ-006, REQ-012): the record is already
+    // stored, so an analytics failure here must not turn into an error the
+    // caller would retry, duplicating it.
+    try {
+      await analytics.record(request, {
+        kind: 'conversion',
+        path: '/api/hire',
+        source: 'api',
+        referrer: request.headers.get('referer'),
+        conversion: { type: 'hire', refId: id },
+      });
+      journey = await analytics.journey(request);
+    } catch {
+      journey = undefined;
+    }
   }
 
   try {
