@@ -120,6 +120,8 @@ mod tests {
             path: path.into(),
             channel: channel.into(),
             country: Some("BR".into()),
+            city: None,
+            region: None,
             conversion: conversion.map(|(kind, reference)| Conversion {
                 kind: kind.into(),
                 target: None,

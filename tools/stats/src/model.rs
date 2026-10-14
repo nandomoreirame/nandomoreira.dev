@@ -25,6 +25,10 @@ pub struct Event {
     pub path: String,
     pub channel: String,
     pub country: Option<String>,
+    /// Approximate, from Cloudflare (cf-ipcity); only on raw events.
+    pub city: Option<String>,
+    /// The state (cf-region).
+    pub region: Option<String>,
     pub conversion: Option<Conversion>,
 }
 
@@ -62,8 +66,19 @@ impl Event {
             path: text(data, "path")?,
             channel: text(data, "channel").unwrap_or_else(|| "unknown".to_owned()),
             country: text(data, "country"),
+            city: text(data, "city"),
+            region: text(data, "region"),
             conversion,
         })
+    }
+
+    /// "City, State", or whichever of the two is known.
+    pub fn place(&self) -> Option<String> {
+        match (&self.city, &self.region) {
+            (Some(city), Some(region)) => Some(format!("{city}, {region}")),
+            (Some(only), None) | (None, Some(only)) => Some(only.clone()),
+            (None, None) => None,
+        }
     }
 
     pub fn is_conversion(&self, kinds: &[&str]) -> bool {
@@ -182,5 +197,18 @@ mod tests {
         assert_eq!(daily.get("mcp.clients", "claude-code"), 1);
         assert_eq!(daily.get("conversions", "cv"), 0);
         assert!(!daily.groups.contains_key("day"));
+    }
+
+    #[test]
+    fn reads_the_city_and_state_and_names_the_place() {
+        let mut with_place = data();
+        with_place["city"] = json!("Curitiba");
+        with_place["region"] = json!("Paraná");
+        let event = Event::from_data(&with_place).unwrap();
+        assert_eq!(event.place().as_deref(), Some("Curitiba, Paraná"));
+
+        let without = Event::from_data(&data()).unwrap();
+        assert_eq!(without.city, None);
+        assert_eq!(without.place(), None);
     }
 }

@@ -254,7 +254,7 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
                 e.visitor.chars().take(6).collect(),
                 e.path.clone(),
                 e.channel.clone(),
-                e.country.clone().unwrap_or_default(),
+                e.place().or_else(|| e.country.clone()).unwrap_or_default(),
                 conversion_label(e),
             ])
             .style(style)
@@ -265,7 +265,7 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
         Constraint::Length(6),
         Constraint::Min(28),
         Constraint::Length(14),
-        Constraint::Length(4),
+        Constraint::Length(22),
         Constraint::Length(24),
     ];
     let head = header_row(
@@ -275,7 +275,7 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
             "visit.",
             "página",
             "canal",
-            "país",
+            "local",
             "conversão",
         ]
         .map(str::to_owned)
@@ -450,10 +450,13 @@ fn draw_traffic(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, th
         Layout::horizontal([Constraint::Percentage(60), Constraint::Percentage(40)])
             .spacing(2)
             .areas(top);
-    let [countries, outbound] =
-        Layout::horizontal([Constraint::Percentage(40), Constraint::Percentage(60)])
-            .spacing(2)
-            .areas(bottom);
+    let [countries, cities_area, outbound] = Layout::horizontal([
+        Constraint::Percentage(22),
+        Constraint::Percentage(38),
+        Constraint::Percentage(40),
+    ])
+    .spacing(2)
+    .areas(bottom);
     let limit = top.height.saturating_sub(3) as usize;
     let period = app.period.label();
     ranking(
@@ -475,6 +478,14 @@ fn draw_traffic(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, th
         countries,
         "Países",
         totals.top("countries", limit),
+        theme,
+    );
+    // Cities come from the raw events (30 days), not the daily counters.
+    ranking(
+        frame,
+        cities_area,
+        "Cidades · pessoas",
+        crate::totals::cities(app.log.events(), &app.period.days(now), limit),
         theme,
     );
     ranking(
@@ -641,7 +652,8 @@ mod tests {
         let mut app = App::default();
         app.log.merge(vec![
             Document { name: "e/1".into(), data: json!({"kind": "pageview", "at": "2026-10-14T17:59:00.000Z", "day": "2026-10-14",
-                "visitor": "abcdef123456", "class": "human", "path": "/lab/forja", "channel": "linkedin", "country": "BR"}) },
+                "visitor": "abcdef123456", "class": "human", "path": "/lab/forja", "channel": "linkedin", "country": "BR",
+                "city": "Curitiba", "region": "Paraná"}) },
             Document { name: "e/2".into(), data: json!({"kind": "conversion", "at": "2026-10-14T17:59:30.000Z", "day": "2026-10-14",
                 "visitor": "abcdef123456", "class": "human", "path": "/api/cv", "channel": "internal", "country": "BR",
                 "conversion": {"type": "cv", "refId": "cv-1"}}) },
@@ -788,5 +800,15 @@ mod tests {
 
         app.sync(start, start + std::time::Duration::from_secs(5));
         assert!(screen(&app).contains("Atualização em: 5s"));
+    }
+
+    #[test]
+    fn shows_the_city_in_the_feed_and_ranks_cities_on_the_traffic_tab() {
+        let mut app = app();
+        assert!(screen(&app).contains("Curitiba, Paraná"));
+        app.tab = Tab::Traffic;
+        let text = screen(&app);
+        assert!(text.contains("Cidades"));
+        assert!(text.contains("Curitiba, Paraná"));
     }
 }

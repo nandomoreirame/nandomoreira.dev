@@ -1,6 +1,7 @@
 use crate::keys::decode_counter_key;
-use crate::model::Daily;
+use crate::model::{Daily, Event};
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 /// Groups whose keys are request-derived and stored through counterKey.
 const ENCODED_GROUPS: [&str; 2] = ["pages", "outbound"];
@@ -51,6 +52,27 @@ impl Totals {
     }
 }
 
+/// Cities ranked by people (distinct visitor-days of humans) within `days`.
+/// From the raw events: the city never reaches the daily counters, so this
+/// covers at most the 30 days the events live.
+pub fn cities(events: &[Event], days: &[String], limit: usize) -> Vec<(String, i64)> {
+    let mut seen: HashSet<(&str, &str, String)> = HashSet::new();
+    let mut counts: BTreeMap<String, i64> = BTreeMap::new();
+    for event in events
+        .iter()
+        .filter(|e| e.class == "human" && days.contains(&e.day))
+    {
+        let Some(place) = event.place() else { continue };
+        if seen.insert((&event.day, &event.visitor, place.clone())) {
+            *counts.entry(place).or_default() += 1;
+        }
+    }
+    let mut ranked: Vec<(String, i64)> = counts.into_iter().collect();
+    ranked.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    ranked.truncate(limit);
+    ranked
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,6 +114,35 @@ mod tests {
         assert_eq!(
             sum(&[&day]).top("countries", 2),
             vec![("BR".to_owned(), 2), ("US".to_owned(), 2)]
+        );
+    }
+
+    #[test]
+    fn ranks_cities_by_people_in_the_period_from_the_raw_events() {
+        let event = |visitor: &str, day: &str, city: Option<&str>| {
+            let mut data = json!({"kind": "pageview", "at": format!("{day}T12:00:00Z"), "day": day, "visitor": visitor,
+                                  "class": "human", "path": "/", "channel": "direct"});
+            if let Some(city) = city {
+                data["city"] = json!(city);
+                data["region"] = json!("São Paulo");
+            }
+            crate::model::Event::from_data(&data).unwrap()
+        };
+        let events = vec![
+            event("a", "2026-10-14", Some("Embu das Artes")),
+            event("a", "2026-10-14", Some("Embu das Artes")),
+            event("b", "2026-10-14", Some("Embu das Artes")),
+            event("c", "2026-10-14", Some("Campinas")),
+            event("d", "2026-10-14", None),
+            event("e", "2026-10-13", Some("Campinas")),
+        ];
+
+        assert_eq!(
+            cities(&events, &["2026-10-14".to_owned()], 10),
+            vec![
+                ("Embu das Artes, São Paulo".to_owned(), 2),
+                ("Campinas, São Paulo".to_owned(), 1)
+            ]
         );
     }
 }

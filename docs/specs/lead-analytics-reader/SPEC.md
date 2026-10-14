@@ -74,6 +74,8 @@ quanto os agentes usam o MCP.
 17. [REQ-017] QUANDO o terminal suporta true color ENTÃO o sistema DEVE usar a paleta do site (fundo `#110f0d`, texto `#efebe2`, destaque `#f0c36f`); sem true color DEVE cair para as 16 cores ANSI.
 18. [REQ-018] QUANDO o autor passa `--project <id>` ENTÃO o sistema DEVE ler desse projeto; o padrão é `nandomoreira-dev`.
 
+19. [REQ-019] QUANDO um evento traz `city`/`region` (cabeçalhos de localização da Cloudflare, desde 2026-10-14) ENTÃO o sistema DEVE mostrar "Cidade, Estado" na coluna local do feed (sem cidade, o país) e um ranking "Cidades · pessoas" na aba Tráfego, contando pares (dia, visitante) de pessoas a partir dos eventos brutos do período.
+
 ### P3 (Nice to Have)
 
 Nenhum.
@@ -179,3 +181,4 @@ Decisões levantadas e resolvidas na pesquisa (2026-10-14).
 | REQ-016 | Troca de abas | P1 | Pending |
 | REQ-017 | Paleta do site com fallback ANSI | P2 | Pending |
 | REQ-018 | `--project` | P2 | Pending |
+| REQ-019 | Cidade e estado no feed e na aba Tráfego | P2 | Done |

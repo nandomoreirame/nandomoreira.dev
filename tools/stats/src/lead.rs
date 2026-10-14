@@ -81,6 +81,8 @@ mod tests {
             path: path.into(),
             channel: "internal".into(),
             country: None,
+            city: None,
+            region: None,
             conversion: None,
         }
     }
