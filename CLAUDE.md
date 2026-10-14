@@ -68,6 +68,11 @@ Refresh token do Spotify para a página `/now`. Cadastre `http://127.0.0.1:8888/
 SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-token.mjs
 ```
 
+```bash
+cargo run --release --manifest-path tools/stats/Cargo.toml   # nm-stats: visitas, funil e leads (TUI)
+cargo test --manifest-path tools/stats/Cargo.toml            # testes do leitor
+```
+
 `verify-local-server.sh` usa `PORT=8080` por padrão. Se a porta estiver ocupada ele
 falha com `FAIL: the server died on startup` em vez de validar o processo alheio;
 passe `PORT=<livre>` para contornar.
