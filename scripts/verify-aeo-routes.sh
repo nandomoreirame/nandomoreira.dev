@@ -110,6 +110,24 @@ for route in "/api/resume.json" "/api/resume.txt"; do
   echo "OK sitemap lists ${route}"
 done
 
+# lead-analytics: pixel, outbound and self routes (REQ-003, REQ-008, REQ-010).
+pixel=$(curl -s -D /tmp/aeo-pixel-headers -o /dev/null -w '%{http_code} %{content_type}' "${BASE}/v.gif")
+[ "$pixel" = "200 image/gif" ] || { echo "FAIL: /v.gif answered '${pixel}'" >&2; exit 1; }
+grep -qi '^cache-control: no-store' /tmp/aeo-pixel-headers || { echo "FAIL: /v.gif is cacheable" >&2; exit 1; }
+echo "OK /v.gif"
+
+go=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "${BASE}/go/contato/github")
+case "$go" in
+  "302 https://github.com/"*) echo "OK /go/contato/github" ;;
+  *) echo "FAIL: /go/contato/github answered '${go}'" >&2; exit 1 ;;
+esac
+
+for route in /go/contato/nada "/go/https:/evil.example" "/eu" "/eu?token=wrong"; do
+  status=$(curl -s -o /dev/null -w '%{http_code}' "${BASE}${route}")
+  [ "$status" = "404" ] || { echo "FAIL: ${route} answered ${status}, expected 404" >&2; exit 1; }
+  echo "OK ${route} (404)"
+done
+
 # REQ-007/REQ-009 against what is actually served, not against the source.
 # Employer names (e.g. Liquid AI) are public; only clientName on confidential
 # cases is forbidden. Same source the unit leak gate reads.
