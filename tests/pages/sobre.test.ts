@@ -38,6 +38,17 @@ describe('/sobre', () => {
     expect(html).not.toContain('mailto:');
   });
 
+  it('shows the portrait with alt text, dimensions and modern formats', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SobrePage);
+    const img = html.match(/<img[^>]*src="\/profile\/[^"]+"[^>]*>/)?.[0] ?? '';
+
+    expect(img).toMatch(/alt="Ilustração de [^"]+"/);
+    expect(img).toMatch(/width="\d+"/);
+    expect(img).toMatch(/height="\d+"/);
+    expect(html).toContain('type="image/avif"');
+  });
+
   it('has exactly one h1', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);

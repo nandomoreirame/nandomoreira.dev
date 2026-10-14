@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { contactIconFor } from '../lib/ui/contact-icons';
 import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
+import Portrait from '../components/ui/Portrait.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
 import ServiceCards from '../components/ui/ServiceCards.astro';
@@ -31,50 +32,56 @@ const serviceProjects = projects.map((project) => ({
   description={profile.headline}
   pageType="ProfilePage"
 >
-  <article class="mt-2xl mb-3xl">
-    {
-      /* Eyebrow, then the claim. The name is already the wordmark on every
-         page, so spending the display size on it again says nothing. No rule
-         under the eyebrow: two horizontal lines that close read as a box. */
-    }
-    <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">Sobre</p>
+  <article class="relative isolate mt-2xl mb-3xl">
+    <div class="flex flex-col gap-lg">
+      <div class="lg:w-2/3">
+        {
+          /* Eyebrow, then the claim. The name is already the wordmark on every
+             page, so spending the display size on it again says nothing. No rule
+             under the eyebrow: two horizontal lines that close read as a box. */
+        }
+        <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">Sobre</p>
 
-    <h1 class="mt-sm text-h1 font-semibold text-balance text-foreground sm:text-display">
-      {profile.headline}
-    </h1>
+        <h1 class="mt-sm text-h1 font-semibold text-balance text-foreground sm:text-display lg:w-4/5">
+          {profile.headline}
+        </h1>
 
-    {
-      since && (
-        <p class="mt-md font-mono text-small uppercase tracking-eyebrow text-primary">
-          Construindo software desde {since}
-        </p>
-      )
-    }
+        {
+          since && (
+            <p class="mt-md font-mono text-small uppercase tracking-eyebrow text-primary">
+              Construindo software desde {since}
+            </p>
+          )
+        }
 
-    <div class="mt-lg">
-      <Prose>
-        <p>{profile.bio}</p>
-        <p>{profile.positioning}</p>
-      </Prose>
-    </div>
+        <div class="mt-lg">
+          <Prose>
+            <p>{profile.bio}</p>
+            <p>{profile.positioning}</p>
+          </Prose>
+        </div>
 
-    <div class="mt-lg flex flex-wrap items-center gap-md">
-      <Button href="/contato" variant="primary">
-        <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
-        Entrar em contato
-      </Button>
-      <Button href="/curriculo" variant="secondary">
-        <Icon name="lucide:file-down" class="size-4 shrink-0" aria-hidden="true" />
-        Baixar currículo (PDF)
-      </Button>
-      {
-        profiles.map((contact) => (
-          <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">
-            <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
-            {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
+        <div class="mt-lg flex flex-wrap items-center gap-md">
+          <Button href="/contato" variant="primary">
+            <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
+            Entrar em contato
           </Button>
-        ))
-      }
+          <Button href="/curriculo" variant="secondary">
+            <Icon name="lucide:file-down" class="size-4 shrink-0" aria-hidden="true" />
+            Baixar currículo (PDF)
+          </Button>
+          {
+            profiles.map((contact) => (
+              <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">
+                <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
+                {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
+              </Button>
+            ))
+          }
+        </div>
+      </div>
+
+      <Portrait name={displayNameOf(profile)} />
     </div>
 
     <section id="resultados" class="mt-2xl" aria-labelledby="resultados-heading">

@@ -1,4 +1,5 @@
 import type { Profile } from '../../content/schemas/profile';
+import { portraitUrl } from '../about/portrait';
 
 /** Stable identity of the author, referenced by every article's author. */
 export const personId = (site: string): string => `${site.replace(/\/+$/, '')}/#person`;
@@ -11,6 +12,7 @@ export interface PersonLd {
   jobTitle: string;
   description: string;
   url: string;
+  image: string;
   knowsAbout: string[];
   sameAs: string[];
 }
@@ -25,6 +27,7 @@ export const personLd = (profile: Profile, site: string): PersonLd => ({
   jobTitle: profile.headline,
   description: profile.bio,
   url: site,
+  image: portraitUrl(site),
   knowsAbout: [...profile.stack],
   sameAs: profile.contacts
     .filter((contact) => PUBLIC_PROFILE_KINDS.has(contact.kind))

@@ -1,0 +1,49 @@
+---
+import { PORTRAIT } from '../../lib/about/portrait';
+
+interface Props {
+  /** Display name, read out in the alt text. */
+  name: string;
+  /** Extra positioning from the page; it already starts at `top-0`. */
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+{
+  /* Decoration behind the intro copy, never the focus: the parent must be
+     `relative isolate`, so `-z-10` sits behind the text but above the page
+     background. On phones it is large and faint, pushed past the right edge so
+     only half the face shows (the body clips the overflow); from lg it takes
+     the right half, and on xl bleeds past the column. The bottom fades out
+     so the image never ends in a hard edge over the next section. Clicks pass
+     through. */
+}
+<picture
+  class:list={[
+    'pointer-events-none absolute top-0 left-1/4 -z-10 w-3/2 scale-150 opacity-30 mask-b-from-60%',
+    'sm:left-1/2 sm:w-3/4',
+    'lg:right-0 lg:left-auto lg:w-1/2 lg:opacity-40 xl:-right-48 xl:w-3/4',
+    className,
+  ]}
+>
+  {
+    PORTRAIT.sources.map((source) => (
+      <source
+        type={source.type}
+        srcset={source.srcset}
+        sizes="(min-width: 1280px) 720px, (min-width: 1024px) 480px, (min-width: 640px) 75vw, 150vw"
+      />
+    ))
+  }
+  <img
+    src={PORTRAIT.fallback}
+    width={PORTRAIT.width}
+    height={PORTRAIT.height}
+    alt={`Ilustração de ${name}: retrato de óculos e barba sobre fundo escuro com linhas âmbar`}
+    fetchpriority="high"
+    decoding="async"
+    class="h-auto w-full object-cover lg:rounded-lg"
+  />
+</picture>

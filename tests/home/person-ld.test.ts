@@ -41,6 +41,10 @@ describe('personLd', () => {
     expect(JSON.stringify(personLd(profile, SITE))).not.toContain('@nandomoreira.dev');
   });
 
+  it('points image at the absolute URL of the portrait', () => {
+    expect(personLd(profile, SITE).image).toBe(`${SITE}/profile/fernando-moreira-v2-960.jpg`);
+  });
+
   it('serialises to valid JSON', () => {
     expect(() => JSON.parse(JSON.stringify(personLd(profile, SITE)))).not.toThrow();
   });
