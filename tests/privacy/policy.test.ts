@@ -76,6 +76,13 @@ describe('privacy policy content', () => {
     expect(text).toMatch(/formulário|currículo/);
   });
 
+  it('says the city and state are approximate and kept only for 30 days', () => {
+    const section = privacySections.find((candidate) => candidate.id === 'medicao');
+    const text = (section?.paragraphs ?? []).join('\n');
+    expect(text).toMatch(/cidade e o estado aproximados/);
+    expect(text).toMatch(/só no registro de cada visita/);
+  });
+
   it('no longer claims there is no measurement', () => {
     expect(all()).not.toMatch(/não usa cookies, analytics/);
     expect(all()).not.toMatch(/não guardam nada sobre quem consulta/);
