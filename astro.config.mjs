@@ -17,10 +17,10 @@ export default defineConfig({
   // (2026-10-09); inlined, the CSS arrives with the HTML.
   build: {
     inlineStylesheets: 'always',
-    // `/x.html` instead of `/x/index.html`: with the directory format the Node
-    // adapter served every pre-rendered page at both /x and /x/, two URLs per
-    // page (SEO audit 2026-10-13).
-    format: 'file',
+    // Keep `/x/index.html`. The 'file' format (`/x.html`) broke every case whose
+    // images live in public/<collection>/<slug>/: the static server found that
+    // directory first, saw no index.html in it and answered 404 (2026-10-13).
+    format: 'directory',
   },
   // One URL per page: /x/ answers 301 to /x, matching the sitemap and links.
   trailingSlash: 'never',
