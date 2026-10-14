@@ -171,3 +171,17 @@ describe('buildSitemap', () => {
     expect(xml).not.toContain('/posts');
   });
 });
+
+describe('buildSitemap lastmod of living pages', () => {
+  const posts = [
+    { slug: 'novo', date: '2026-10-13', archived: false },
+    { slug: 'velho', date: '2017-03-01', archived: true },
+  ] as never[];
+
+  it('dates the blog by its newest post and the setup by its own date', () => {
+    const xml = buildSitemap({ site, projects, posts, setupUpdatedAt: '2026-10-13' });
+    expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/posts<\/loc>\s*<lastmod>2026-10-13<\/lastmod>/);
+    expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/setup<\/loc>\s*<lastmod>2026-10-13<\/lastmod>/);
+    expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/posts\/arquivo\/2017<\/loc>\s*<lastmod>2017-03-01<\/lastmod>/);
+  });
+});

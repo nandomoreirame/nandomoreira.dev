@@ -7,6 +7,8 @@ interface Input {
   site: URL;
   projects: readonly Project[];
   posts?: readonly Post[];
+  /** Date the /setup page was last revised (SETUP_UPDATED_AT). */
+  setupUpdatedAt?: string;
 }
 
 const escapeXml = (value: string): string =>
@@ -33,7 +35,7 @@ interface Entry {
  * still gets a route to the same facts. `/api/health` and `/api/hire` remain
  * absent, being a probe and a write endpoint.
  */
-export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
+export const buildSitemap = ({ site, projects, posts = [], setupUpdatedAt }: Input): string => {
   const entries: Entry[] = [
     { path: '/' },
     { path: '/portfolio' },
@@ -41,7 +43,7 @@ export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
     { path: '/sobre' },
     { path: '/contato' },
     { path: '/mcp' },
-    { path: '/setup' },
+    { path: '/setup', lastmod: setupUpdatedAt },
     { path: '/now' },
     { path: '/privacidade' },
     { path: '/api/resume.json' },
@@ -53,7 +55,10 @@ export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
   ];
 
   if (posts.length > 0) {
-    entries.push({ path: '/posts' });
+    // A listing changes when a post enters it: its date is the newest post's.
+    const newest = (list: readonly Post[]): string | undefined =>
+      list.map((post) => post.date).sort().at(-1);
+    entries.push({ path: '/posts', lastmod: newest(posts.filter((post) => !post.archived)) });
 
     const years = new Set(
       posts.filter((post) => post.archived).map((post) => post.date.slice(0, 4)),
@@ -61,7 +66,10 @@ export const buildSitemap = ({ site, projects, posts = [] }: Input): string => {
     if (years.size > 0) {
       entries.push({ path: '/posts/arquivo' });
       for (const year of [...years].sort().reverse()) {
-        entries.push({ path: `/posts/arquivo/${year}` });
+        entries.push({
+          path: `/posts/arquivo/${year}`,
+          lastmod: newest(posts.filter((post) => post.archived && post.date.startsWith(year))),
+        });
       }
     }
 
