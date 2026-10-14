@@ -25,9 +25,8 @@ const prerendered = (dir = CLIENT, route = ''): PageScripts[] =>
     if (statSync(path).isDirectory()) {
       return entry === '_astro' ? [] : prerendered(path, `${route}/${entry}`);
     }
-    // build.format 'file': a pre-rendered page is <route>.html.
-    if (!entry.endsWith('.html')) return [];
-    return [{ route: `${route}/${entry.slice(0, -'.html'.length)}`, scripts: executableScripts(readFileSync(path, 'utf8'), readSrc) }];
+    if (entry !== 'index.html') return [];
+    return [{ route: route || '/', scripts: executableScripts(readFileSync(path, 'utf8'), readSrc) }];
   });
 
 const served = async (route: string): Promise<PageScripts> => {
