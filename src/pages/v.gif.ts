@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { sitemapEntries } from '../lib/aeo/sitemap';
 import { OWN_HOSTS } from '../lib/analytics/channel';
+import { cachedUnlessRejected } from '../lib/analytics/memo';
 import { handlePixel } from '../lib/analytics/pixel';
 import { recorder } from '../lib/analytics/runtime';
 import { getAllPosts, getAllProjects } from '../lib/content';
@@ -12,10 +13,10 @@ export const prerender = false;
 const limiter = createLimiter({ max: 30, windowMs: 10 * 60 * 1000 });
 
 /** The sitemap's pages, computed once per process: content only changes with a deploy. */
-let known: Promise<ReadonlySet<string>> | undefined;
-const knownPaths = () =>
-  (known ??= Promise.all([getAllProjects(), getAllPosts()]).then(
-    ([projects, posts]) => new Set(sitemapEntries({ projects, posts }).map((entry) => entry.path)),
-  ));
+const knownPaths = cachedUnlessRejected(() =>
+  Promise.all([getAllProjects(), getAllPosts()]).then(
+    ([projects, posts]): ReadonlySet<string> => new Set(sitemapEntries({ projects, posts }).map((entry) => entry.path)),
+  ),
+);
 
 export const ALL: APIRoute = ({ request }) => handlePixel(request, { recorder, limiter, knownPaths, ownHosts: OWN_HOSTS });

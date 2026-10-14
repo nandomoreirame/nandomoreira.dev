@@ -55,4 +55,21 @@ describe('handlePixel', () => {
     for (let i = 0; i < 4; i += 1) expect((await pixel('https://nandomoreira.dev/lab/forja')).status).toBe(200);
     expect(hits).toHaveLength(2);
   });
+
+  it('still answers the GIF when the page list cannot be loaded', async () => {
+    const hits: Hit[] = [];
+    const response = await handlePixel(
+      new Request('https://nandomoreira.dev/v.gif', { headers: { referer: 'https://nandomoreira.dev/lab/forja' } }),
+      {
+        recorder: { record: async (_request: Request, hit: Hit) => void hits.push(hit) },
+        limiter: createLimiter({ max: 30, windowMs: 60_000 }),
+        knownPaths: () => Promise.reject(new Error('content store down')),
+        ownHosts: OWN_HOSTS,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('image/gif');
+    expect(hits).toEqual([]);
+  });
 });

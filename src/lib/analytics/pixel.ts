@@ -39,8 +39,11 @@ export const handlePixel = async (
   },
 ): Promise<Response> => {
   const page = request.method === 'GET' ? refererPage(request.headers.get('referer'), deps.ownHosts) : null;
+  // Without the page list nothing can be checked, so nothing is recorded; the
+  // GIF still goes out, since a broken image would be visible on the page.
+  const known = page ? await deps.knownPaths().catch(() => null) : null;
 
-  if (page && (await deps.knownPaths()).has(page.path) && deps.limiter.check(clientIpOf(request.headers))) {
+  if (page && known?.has(page.path) && deps.limiter.check(clientIpOf(request.headers))) {
     await deps.recorder.record(request, { kind: 'pageview', path: page.path, source: 'pixel', referrer: null, search: page.search });
   }
 
