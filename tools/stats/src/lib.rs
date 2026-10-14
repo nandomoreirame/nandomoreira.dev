@@ -5,6 +5,7 @@ pub mod client;
 pub mod firestore;
 pub mod funnel;
 pub mod keys;
+pub mod lead;
 pub mod model;
 pub mod pages;
 pub mod period;
