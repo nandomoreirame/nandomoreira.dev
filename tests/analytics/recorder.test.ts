@@ -37,6 +37,15 @@ describe('createRecorder', () => {
     expect(JSON.stringify(memory.events[0])).not.toContain('203.0.113.7');
   });
 
+  it('records the city and state from the Cloudflare location headers', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+
+    await recorder.record(request({ 'cf-ipcity': 'Curitiba', 'cf-region': 'Paraná' }), hit);
+
+    expect(memory.events[0]).toMatchObject({ city: 'Curitiba', region: 'Paraná' });
+  });
+
   it('records nothing without the secret', async () => {
     const memory = memoryAnalyticsStore();
     const recorder = createRecorder({ store: memory.store, config: { hashSecret: null, selfToken: null }, now });

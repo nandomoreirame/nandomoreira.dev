@@ -89,6 +89,9 @@ export const createRecorder = ({
         referrer: hit.referrer,
         utm: utmOf(hit.search ?? new URLSearchParams()),
         country: request.headers.get('cf-ipcountry'),
+        // Sent only with Cloudflare's "Add visitor location headers" on.
+        city: request.headers.get('cf-ipcity'),
+        region: request.headers.get('cf-region'),
         conversion: hit.conversion,
       }),
     );

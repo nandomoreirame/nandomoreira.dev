@@ -3,6 +3,7 @@ import {
   buildEvent,
   counterKey,
   countryOf,
+  placeOf,
   dailyExpiry,
   dailyIncrements,
   keepsRawEvent,
@@ -40,7 +41,15 @@ describe('buildEvent', () => {
       channel: 'linkedin',
       utm: null,
       country: 'BR',
+      city: null,
+      region: null,
     });
+  });
+
+  it('keeps the city and state Cloudflare reports, for the 30-day raw event only', () => {
+    const event = pageview({ city: 'Curitiba', region: 'Paraná' });
+    expect(event).toMatchObject({ city: 'Curitiba', region: 'Paraná' });
+    expect(JSON.stringify(dailyIncrements(event))).not.toContain('Curitiba');
   });
 
   it('never sets conversion when there is none, since Firestore rejects undefined', () => {
@@ -77,6 +86,21 @@ describe('buildEvent', () => {
         utm: { source: 'SomePodcast', medium: null, campaign: null },
       }).channel,
     ).toBe('utm:somepodcast');
+  });
+});
+
+describe('placeOf', () => {
+  it('cleans a city or state name and caps it', () => {
+    expect(placeOf('  Embu das Artes ')).toBe('Embu das Artes');
+    expect(placeOf('São\u0000 Paulo')).toBe('São Paulo');
+    expect(placeOf('x'.repeat(100))).toHaveLength(64);
+    expect(placeOf('')).toBeNull();
+    expect(placeOf(null)).toBeNull();
+  });
+
+  it('repairs UTF-8 that arrived read as Latin-1 in a header', () => {
+    expect(placeOf('SÃ£o Paulo')).toBe('São Paulo');
+    expect(placeOf('ParanÃ¡')).toBe('Paraná');
   });
 });
 

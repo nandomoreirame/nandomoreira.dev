@@ -112,6 +112,8 @@ analytics_events/<auto-id>
   channel: string       google | bing | duckduckgo | linkedin | github | x | bluesky | other | direct | unknown | internal | utm:<source>
   utm: { source, medium, campaign } | null
   country: string | null   ISO 3166-1 alpha-2; null vira a chave unknown no agregado
+  city: string | null      cf-ipcity, aproximada; só no evento bruto (30 dias), nunca no agregado
+  region: string | null    cf-region (estado); só no evento bruto
   conversion?: { type: 'hire' | 'cv' | 'outbound' | 'mcp', target?: string, refId?: string, tool?: string, client?: string }
 
 analytics_daily/<YYYY-MM-DD>
@@ -159,6 +161,7 @@ somando as repetições. Um lote JSON-RPC de 20 mensagens é um commit, não 20.
 - Os links que passam pelo `/go` usam `rel="noopener"`, sem `noreferrer`, para o clique chegar com o Referer da página (canal `internal`). A identidade `rel="me"` mora no `<head>`, porque os links visíveis apontam para o próprio site.
 - Briefing enviado por agente via API normalmente vem sem percurso.
 - `cf-ipcountry` ausente ou `XX`/`T1`: o evento guarda `country: null` e o agregado usa a chave `unknown`.
+- `cf-ipcity`/`cf-region` só existem com a transformação gerenciada "Add visitor location headers" ligada na Cloudflare (ligada em 2026-10-14); sem ela, `city` e `region` ficam `null`. Cidade não entra nos totais diários: não tem conjunto fechado e incharia o documento do dia. Um nome em UTF-8 lido como Latin-1 no cabeçalho é reparado (`placeOf`).
 - Se a Cloudflare passar a cachear HTML, as visitas SSR servidas do cache deixam de contar.
 - Cold start soma latência ao primeiro request; o teto de 250 ms vale só para a gravação.
 

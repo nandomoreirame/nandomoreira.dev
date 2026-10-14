@@ -27,6 +27,10 @@ export interface AnalyticsEvent {
   channel: string;
   utm: Utm | null;
   country: string | null;
+  /** Cloudflare's guess from the IP (cf-ipcity); raw event only, never a daily counter. */
+  city: string | null;
+  /** The state or province (cf-region); raw event only. */
+  region: string | null;
   conversion?: Conversion;
 }
 
@@ -41,6 +45,8 @@ export interface EventInput {
   referrer: string | null;
   utm: Utm | null;
   country: string | null;
+  city?: string | null;
+  region?: string | null;
   conversion?: Conversion;
 }
 
@@ -121,6 +127,33 @@ export const countryOf = (raw: string | null): string | null => {
   return /^[A-Z]{2}$/.test(code) && code !== 'XX' && code !== 'T1' ? code : null;
 };
 
+const MAX_PLACE = 64;
+
+/**
+ * A header carrying UTF-8 can reach the server read as Latin-1 ("SÃ£o Paulo").
+ * When every character fits in a byte and the bytes are valid UTF-8, the
+ * UTF-8 reading is the one meant.
+ */
+const repairUtf8 = (text: string): string => {
+  if (![...text].some((char) => char.charCodeAt(0) >= 0x80) || [...text].some((char) => char.charCodeAt(0) > 0xff)) {
+    return text;
+  }
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(text, (char) => char.charCodeAt(0)));
+  } catch {
+    return text;
+  }
+};
+
+/** A city or state name from a Cloudflare location header: repaired, cleaned, capped. */
+export const placeOf = (raw: string | null): string | null => {
+  if (raw === null) return null;
+  const text = Array.from(repairUtf8(raw).replace(/[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Zl}\p{Zp}]/gu, '').trim())
+    .slice(0, MAX_PLACE)
+    .join('');
+  return text === '' ? null : text;
+};
+
 /** São Paulo has had no daylight saving since 2019, so the offset is fixed. */
 export const dailyExpiry = (day: string): Date => {
   const end = new Date(`${day}T23:59:59.999-03:00`);
@@ -172,6 +205,8 @@ export const buildEvent = (input: EventInput): AnalyticsEvent => ({
       : channelOf({ referrer: input.referrer, utm: input.utm, ownHosts: OWN_HOSTS }),
   utm: input.utm,
   country: countryOf(input.country),
+  city: placeOf(input.city ?? null),
+  region: placeOf(input.region ?? null),
   ...(input.conversion ? { conversion: definedConversion(input.conversion) } : {}),
 });
 
