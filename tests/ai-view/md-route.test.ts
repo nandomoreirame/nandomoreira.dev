@@ -62,3 +62,10 @@ describe('GET /[...path].md', () => {
     expect(source).not.toContain('getCollection(');
   });
 });
+
+describe('GET /[...path].md canonical', () => {
+  it('points search engines at the human page with a Link header', async () => {
+    expect((await invoke('sobre')).headers.get('link')).toBe('<https://nandomoreira.dev/sobre>; rel="canonical"');
+    expect((await invoke('index')).headers.get('link')).toBe('<https://nandomoreira.dev/>; rel="canonical"');
+  });
+});

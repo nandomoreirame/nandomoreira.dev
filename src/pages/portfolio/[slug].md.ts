@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { buildCaseMarkdown } from '../../lib/aeo/case-markdown';
-import { requireSite } from '../../lib/aeo/urls';
+import { canonicalUrl, requireSite } from '../../lib/aeo/urls';
 import { collectionOfBlock } from '../../lib/catalog/groups';
 import { getProject } from '../../lib/content';
 
@@ -23,8 +23,12 @@ export const GET: APIRoute = async ({ params, site }) => {
     });
   }
 
-  return new Response(buildCaseMarkdown({ site: requireSite(site), project }), {
+  const root = requireSite(site);
+  return new Response(buildCaseMarkdown({ site: root, project }), {
     status: 200,
-    headers: { 'content-type': 'text/markdown; charset=utf-8' },
+    headers: {
+      'content-type': 'text/markdown; charset=utf-8',
+      link: `<${canonicalUrl(root, `/portfolio/${project.slug}`)}>; rel="canonical"`,
+    },
   });
 };
