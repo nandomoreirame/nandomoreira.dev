@@ -19,7 +19,7 @@ const escapeXml = (value: string): string =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;');
 
-interface Entry {
+export interface SitemapEntry {
   path: string;
   lastmod?: string;
 }
@@ -35,8 +35,12 @@ interface Entry {
  * still gets a route to the same facts. `/api/health` and `/api/hire` remain
  * absent, being a probe and a write endpoint.
  */
-export const buildSitemap = ({ site, projects, posts = [], setupUpdatedAt }: Input): string => {
-  const entries: Entry[] = [
+export const sitemapEntries = ({
+  projects,
+  posts = [],
+  setupUpdatedAt,
+}: Omit<Input, 'site'>): SitemapEntry[] => {
+  const entries: SitemapEntry[] = [
     { path: '/' },
     { path: '/portfolio' },
     { path: '/lab' },
@@ -80,6 +84,12 @@ export const buildSitemap = ({ site, projects, posts = [], setupUpdatedAt }: Inp
       });
     }
   }
+
+  return entries;
+};
+
+export const buildSitemap = ({ site, ...rest }: Input): string => {
+  const entries = sitemapEntries(rest);
 
   const urls = entries
     .map(({ path, lastmod }) => {
