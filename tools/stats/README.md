@@ -11,6 +11,14 @@ Sem token, o `stats` roda `gcloud auth application-default login` no terminal, a
 
 ## Rodar
 
+Instalar a versão deste checkout e abrir, num passo só:
+
+```bash
+scripts/run-stats.sh
+```
+
+Os argumentos vão direto para o `stats` (`scripts/run-stats.sh --project <id>`).
+
 ```bash
 cargo run --release --manifest-path tools/stats/Cargo.toml
 ```

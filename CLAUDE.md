@@ -69,6 +69,7 @@ SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-tok
 ```
 
 ```bash
+bash scripts/run-stats.sh                                     # instala o stats e abre a TUI (visitas, funil e leads)
 cargo run --release --manifest-path tools/stats/Cargo.toml   # stats: visitas, funil e leads (TUI)
 cargo test --manifest-path tools/stats/Cargo.toml            # testes do leitor
 ```
