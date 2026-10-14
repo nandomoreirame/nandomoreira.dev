@@ -55,6 +55,18 @@ describe('outbound', () => {
     }
   });
 
+  it('leaves out the links of a discontinued case, as the case page does', () => {
+    const withGone = outboundTable({
+      contacts: [],
+      projects: [
+        { slug: 'velho', block: 'ai-product', repoUrl: 'https://github.com/x/velho', liveUrl: 'https://velho.example', discontinued: true },
+        { slug: 'vivo', block: 'ai-product', repoUrl: null, liveUrl: 'https://vivo.example' },
+      ] as never,
+    });
+
+    expect([...withGone.keys()]).toEqual(['/go/portfolio/vivo/live']);
+  });
+
   it('does not record a HEAD', async () => {
     const { response, hits } = await go('/go/contato/github', 'HEAD');
     expect(response.status).toBe(302);

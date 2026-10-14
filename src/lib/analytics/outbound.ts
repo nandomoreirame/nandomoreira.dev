@@ -18,20 +18,23 @@ export const caseGoPath = (collection: string, slug: string, link: 'repo' | 'liv
 /**
  * Every destination /go can reach, built from the profile and the projects
  * only. Nothing from the request ever becomes a Location, which is what keeps
- * this from being an open redirect (REQ-010).
+ * this from being an open redirect (REQ-010). A discontinued case gets no
+ * entry, as its page shows no links: a URL left behind in the frontmatter may
+ * point at a domain someone else now owns.
  */
 export const outboundTable = ({
   contacts,
   projects,
 }: {
   contacts: readonly ContactLink[];
-  projects: ReadonlyArray<Pick<Project, 'slug' | 'block' | 'repoUrl' | 'liveUrl'>>;
+  projects: ReadonlyArray<Pick<Project, 'slug' | 'block' | 'repoUrl' | 'liveUrl' | 'discontinued'>>;
 }): Map<string, string> => {
   const table = new Map<string, string>();
 
   for (const contact of contacts) table.set(contactGoPath(contact.kind), contactUrl(contact));
 
   for (const project of projects) {
+    if (project.discontinued === true) continue;
     const collection = collectionOfBlock(project.block);
     if (project.repoUrl) table.set(caseGoPath(collection, project.slug, 'repo'), project.repoUrl);
     if (project.liveUrl) table.set(caseGoPath(collection, project.slug, 'live'), project.liveUrl);
