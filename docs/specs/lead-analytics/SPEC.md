@@ -119,21 +119,33 @@ analytics_daily/<YYYY-MM-DD>
   expiresAt: Timestamp  fim do dia + 24 meses (TTL)
   traffic.<class>: number
   pages.<pathKey>: number          só human
-  channels.<channel>: number       só human; internal não entra
+  channels.<channel>: number       só human; internal não entra; utm:<source> fora da lista vira utm:other
   countries.<cc>: number           só human; sem país a chave é unknown
   machine.<class>: number
-  conversions.<type>: number
+  conversions.<type>: number       mcp conta só tools/call
   outbound.<targetKey>: number     só quando class é human
-  mcp.methods.<method>: number
-  mcp.tools.<tool>: number
-  mcp.clients.<name>: number       (P2)
+  mcp.methods.<method>: number     fora da lista vira other
+  mcp.tools.<tool>: number         fora do catálogo vira other
+  mcp.clients.<name>: number       (P2) fora da lista vira other
 ```
 
 `outbound` só incrementa o agregado (`conversions.outbound` e `outbound.<targetKey>`) quando
 `class` é `human`. Clique de outra classe não entra nesses contadores.
 
 `pathKey` e `targetKey` são `encodeURIComponent(valor)` com `.` trocado por `%2E`, porque o
-ponto quebra o field path do `update`.
+ponto quebra o field path do `update`, e um `__` inicial trocado por `%5F_`, porque o Firestore
+reserva chaves `__nome__` e `__proto__` envenenaria o objeto da escrita.
+
+As chaves de `channels`, `mcp.methods`, `mcp.tools` e `mcp.clients` são o valor literal, sem
+codificação: elas vêm de listas fechadas em `src/lib/analytics/event.ts`
+(`KNOWN_UTM_SOURCES`, `KNOWN_MCP_METHODS`, o catálogo `MCP_TOOLS` e `KNOWN_MCP_CLIENTS`), e
+o que fica fora delas vira `other` (`utm:other` nos canais). Assim o leitor procura
+`mcp.methods.tools/call`, `mcp.tools.get_profile` e `channels.utm:linkedin` como estão.
+Antes da busca, o nome do cliente MCP vai para minúsculas, com espaço e `_` virando `-`, e
+passa por `MCP_CLIENT_ALIASES` (por exemplo, `Visual Studio Code` vira `vscode`).
+
+Uma requisição grava todos os seus eventos num único batch, com um incremento por caminho
+somando as repetições. Um lote JSON-RPC de 20 mensagens é um commit, não 20.
 
 ## Edge Cases
 
@@ -142,7 +154,9 @@ ponto quebra o field path do `update`.
 - Prefetch (`Sec-Purpose: prefetch` ou `Purpose: prefetch`) e `HEAD` não contam.
 - Bloqueador de imagem ou Referer removido por extensão apaga a visita do pixel, sem erro.
 - Pico viral passa de cerca de 1 escrita/s no doc diário e pode causar contenção: o incremento perdido é aceito, o evento bruto fica.
-- JSON-RPC em lote no MCP conta cada mensagem.
+- JSON-RPC em lote no MCP conta cada mensagem em `mcp.methods`, numa única escrita; só `tools/call` soma em `conversions.mcp`, porque `initialize`, `tools/list` e `ping` acompanham todo uso.
+- Um case `discontinued` não ganha entrada no `/go`, como a página dele não mostra links: a URL que sobrou no frontmatter pode apontar para um domínio que hoje é de outra pessoa.
+- Os links que passam pelo `/go` usam `rel="noopener"`, sem `noreferrer`, para o clique chegar com o Referer da página (canal `internal`). A identidade `rel="me"` mora no `<head>`, porque os links visíveis apontam para o próprio site.
 - Briefing enviado por agente via API normalmente vem sem percurso.
 - `cf-ipcountry` ausente ou `XX`/`T1`: o evento guarda `country: null` e o agregado usa a chave `unknown`.
 - Se a Cloudflare passar a cachear HTML, as visitas SSR servidas do cache deixam de contar.

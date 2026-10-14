@@ -8,13 +8,28 @@ spec_path: docs/specs/lead-analytics/SPEC.md
 plan_path: docs/plans/2026-10-14-lead-analytics.md
 ---
 
-# State: lead-analytics
+# Estado: lead-analytics
 
-Spec approved on 2026-10-14 after a grilling pass (17 decisions, see the Grilling Log).
-Plan saved with 20 tasks in 5 batches. Task 19 creates Google Cloud resources and runs
-only with the author's go-ahead. The data reader (sh/Rust/TUI) is deliberately out of
-scope and will be its own feature.
+Spec aprovada em 2026-10-14 depois de uma rodada de grilling (17 decisões, ver o Grilling
+Log). Plano salvo com 20 tarefas em 5 lotes. A tarefa 19 cria recursos no Google Cloud e só
+roda com o aval do autor. O leitor dos dados (sh, Rust ou TUI) fica de fora de propósito e
+será uma feature própria.
 
-Implemented on 2026-10-14. Commits, in order: `6dc06c0` classify, `17f470c` visitor hash, `08c524a` channel and UTM, `865af37` events and increments, `7749b56` what counts, `f768d12` journey text, `02b36be` store, `df0646b` recorder, `bcb9eb1` SSR middleware, `f2af95b` `/v.gif`, `16493d0` pixel placement, `de70c4b` `/eu`, `a5325b3` `/go`, `0ff6ba5` catalog links, `51dede7` contact links, `884bc80` journey on lead mail, `730fad5` MCP usage, `5fd52a4` privacy policy, `8a033b5` HTTP checks, `a8eac25` runtime secrets.
+Implementada em 2026-10-14. Commits, em ordem: `6dc06c0` classificação, `17f470c` hash do
+visitante, `08c524a` canal e UTM, `865af37` eventos e incrementos, `7749b56` o que conta,
+`f768d12` texto do percurso, `02b36be` store, `df0646b` recorder, `bcb9eb1` middleware SSR,
+`f2af95b` `/v.gif`, `16493d0` posição do pixel, `de70c4b` `/eu`, `a5325b3` `/go`, `0ff6ba5`
+links do catálogo, `51dede7` links de contato, `884bc80` percurso no e-mail do lead,
+`730fad5` uso do MCP, `5fd52a4` política de privacidade, `8a033b5` verificações HTTP,
+`a8eac25` segredos em runtime.
 
-Secrets `analytics-hash-secret` and `analytics-self-token` exist in Secret Manager and the App Hosting backend `nandomoreira-dev` (`us-east4`) can read them. `expiresAt` TTL is enabled on `analytics_events` and `analytics_daily` in the `(default)` database. The self token stays only in `~/.config/nandomoreira/self-token` (mode 0600).
+Os segredos `analytics-hash-secret` e `analytics-self-token` existem no Secret Manager, e o
+backend `nandomoreira-dev` do App Hosting (`us-east4`) tem acesso a eles. O TTL por
+`expiresAt` está ligado em `analytics_events` e `analytics_daily` no banco `(default)`. O
+token de autor fica só em `~/.config/nandomoreira/self-token` (modo 0600).
+
+Revisão de código de 2026-10-14 (10 achados) corrigida: cache de tabela que guardava a
+falha, erro de analytics depois de salvar o lead, contagem do MCP (só `tools/call` é
+conversão, um batch por requisição), chaves literais no contrato, nomes reais de clientes
+MCP, `/go` sem cases descontinuados, Referer mantido nos links do `/go`, `rel="me"` no
+`<head>`, contradição na política e este arquivo, que estava em inglês.
