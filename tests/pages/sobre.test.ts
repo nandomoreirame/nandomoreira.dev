@@ -26,7 +26,9 @@ describe('/sobre', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);
 
-    expect(html).toMatch(/contato|mailto:|#contato|href="\/#contato"/i);
+    expect(html).toContain('href="/go/contato/github"');
+    expect(html).toContain('href="/go/contato/linkedin"');
+    expect(html).not.toContain('href="https://github.com/nandomoreirame"');
   });
 
   it('sends "Entrar em contato" to the /contato page, not to a mail client', async () => {

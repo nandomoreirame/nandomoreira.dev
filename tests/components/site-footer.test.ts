@@ -38,8 +38,9 @@ describe('SiteFooter', () => {
   it('lists the profile social channels', async () => {
     const html = await render();
 
-    expect(html).toContain('github.com/nandomoreirame');
-    expect(html).toContain('linkedin.com/in/nandomoreirame');
+    expect(html).toContain('href="/go/contato/github"');
+    expect(html).toContain('href="/go/contato/linkedin"');
+    expect(html).not.toContain('github.com/nandomoreirame');
   });
 
   it('never publishes the email address in the footer', async () => {

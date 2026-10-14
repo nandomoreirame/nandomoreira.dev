@@ -52,16 +52,14 @@ describe('contextual icons', () => {
 
   it('shows brand logos on the footer channels', async () => {
     const html = await render(SiteFooter, { name: 'N', year: 2026, contacts });
-    expect(anchor(html, 'https://github.com/x')).toContain('data-icon="simple-icons:github"');
-    expect(anchor(html, 'https://www.linkedin.com/in/x')).toContain(
-      'data-icon="simple-icons:linkedin"',
-    );
+    expect(anchor(html, '/go/contato/github')).toContain('data-icon="simple-icons:github"');
+    expect(anchor(html, '/go/contato/linkedin')).toContain('data-icon="simple-icons:linkedin"');
   });
 
   it('shows an icon on every home contact channel', async () => {
     const html = await render(Contact, { contacts });
-    expect(anchor(html, 'mailto:oi@example.com')).toContain('data-icon="lucide:mail"');
-    expect(anchor(html, 'https://github.com/x')).toContain('data-icon="simple-icons:github"');
+    expect(anchor(html, '/go/contato/email')).toContain('data-icon="lucide:mail"');
+    expect(anchor(html, '/go/contato/github')).toContain('data-icon="simple-icons:github"');
   });
 
   it('draws the AI bar actions from Lucide', async () => {

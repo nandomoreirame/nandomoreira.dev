@@ -3,6 +3,7 @@ import Button from '../components/ui/Button.astro';
 import EmptyState from '../components/ui/EmptyState.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
+import { contactGoPath } from '../lib/analytics/outbound';
 import { requireSite } from '../lib/aeo/urls';
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -205,7 +206,7 @@ const hireBrief = buildHireBrief({
           <Button type="submit">Enviar mensagem</Button>
           {
             email && (
-              <Button href={`mailto:${email.value}`} variant="secondary">
+              <Button href={contactGoPath('email')} variant="secondary">
                 Prefiro e-mail
               </Button>
             )

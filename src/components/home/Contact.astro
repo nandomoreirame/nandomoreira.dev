@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { contactGoPath } from '../../lib/analytics/outbound';
 import { contactIconFor } from '../../lib/ui/contact-icons';
 import SectionHeader from '../ui/SectionHeader.astro';
 
@@ -14,9 +15,6 @@ if (contacts.length === 0) {
     'The home needs at least one direct contact channel: US-005 requires it.',
   );
 }
-
-const hrefFor = (contact: { kind: string; value: string }): string =>
-  contact.kind === 'email' ? `mailto:${contact.value}` : contact.value;
 
 const LABELS: Record<string, string> = {
   email: 'E-mail',
@@ -40,7 +38,7 @@ const LABELS: Record<string, string> = {
     {contacts.map((contact) => (
       <li>
         <a
-          href={hrefFor(contact)}
+          href={contactGoPath(contact.kind)}
           target={contact.kind === 'email' ? undefined : '_blank'}
           rel={contact.kind === 'email' ? undefined : 'noopener noreferrer'}
           class="inline-flex min-h-11 items-center gap-xs rounded-md border border-border-strong px-md py-sm text-body text-foreground transition-[border-color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

@@ -34,7 +34,7 @@ describe('Contact', () => {
   it('offers a direct channel with no form', async () => {
     const html = await render(Contact, { contacts });
 
-    expect(html).toContain('mailto:oi@nandomoreira.dev');
+    expect(html).toContain('href="/go/contato/email"');
     expect(html).not.toContain('<form');
     expect(html).not.toContain('<input');
   });
@@ -46,6 +46,12 @@ describe('Contact', () => {
   it('marks external profile links as external', async () => {
     const html = await render(Contact, { contacts });
     expect(html).toContain('rel="noopener noreferrer"');
+  });
+
+  it('sends every contact through /go/contato', async () => {
+    const html = await render(Contact, { contacts });
+    expect(html).toContain('href="/go/contato/github"');
+    expect(html).not.toContain('href="https://github.com/nandomoreirame"');
   });
 
   it('never turns the email into an external target', async () => {

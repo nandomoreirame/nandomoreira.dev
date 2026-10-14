@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { contactGoPath } from '../../lib/analytics/outbound';
 import { contactIconFor } from '../../lib/ui/contact-icons';
 
 interface Props {
@@ -38,7 +39,7 @@ const social = contacts.filter((contact) => contact.kind in LABELS);
     <nav class="flex items-center gap-lg" aria-label="Canais">
       {social.map((contact) => (
         <a
-          href={contact.value}
+          href={contactGoPath(contact.kind)}
           target="_blank"
           rel="noopener noreferrer me"
           class="inline-flex min-h-11 items-center gap-xs transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

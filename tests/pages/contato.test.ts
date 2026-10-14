@@ -142,7 +142,7 @@ describe('/contato', () => {
   });
 
   it('keeps a direct channel on the page, per the PRD rule against a mandatory form', async () => {
-    expect(await render()).toContain('mailto:');
+    expect(await render()).toContain('href="/go/contato/email"');
   });
 
   it('ships no client JavaScript besides the pointer effect', async () => {

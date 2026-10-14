@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { contactGoPath } from '../lib/analytics/outbound';
 import { contactIconFor } from '../lib/ui/contact-icons';
 import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
@@ -72,7 +73,7 @@ const serviceProjects = projects.map((project) => ({
           </Button>
           {
             profiles.map((contact) => (
-              <Button href={contact.value} variant="ghost" target="_blank" rel="noopener noreferrer">
+              <Button href={contactGoPath(contact.kind)} variant="ghost" target="_blank" rel="noopener noreferrer">
                 <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
                 {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
               </Button>
