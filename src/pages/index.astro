@@ -4,6 +4,7 @@ import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
 import Hero from '../components/home/Hero.astro';
+import { displayNameOf } from '../lib/content/display-name';
 import LatestPosts from '../components/home/LatestPosts.astro';
 import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
@@ -64,6 +65,7 @@ const hireBrief = buildHireBrief({
   <script type="application/ld+json" is:inline set:html={organizationJsonLd} />
 
   <Hero
+    name={displayNameOf(profile)}
     headline={profile.headline}
     positioning={profile.positioning}
     availability={profile.availability}

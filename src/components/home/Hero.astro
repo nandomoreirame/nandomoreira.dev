@@ -1,14 +1,17 @@
 ---
 import type { Availability } from '../../lib/content';
 import Button from '../ui/Button.astro';
+import Portrait from '../ui/Portrait.astro';
 
 interface Props {
+  /** Display name, for the portrait's alt text. */
+  name: string;
   headline: string;
   positioning: string;
   availability: Availability;
 }
 
-const { headline, positioning, availability } = Astro.props;
+const { name, headline, positioning, availability } = Astro.props;
 
 const STATUS_LABEL: Record<Availability['status'], string> = {
   open: 'Disponível para novos projetos',
@@ -23,35 +26,39 @@ const STATUS_DOT: Record<Availability['status'], string> = {
 };
 ---
 
-<section id="inicio" class="flex flex-col gap-lg py-2xl lg:py-3xl">
-  {/* The availability is also the way in for agents: it leads to /mcp,
-      the page that explains how to plug this site into an MCP client. */}
-  <p>
-    <a
-      href="/mcp"
-      class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-caption text-muted-foreground sm:text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      <span
-        class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
-        aria-hidden="true"
-      ></span>
-      <span>{STATUS_LABEL[availability.status]}</span>
-      {/* Phones drop the MCP hint, which wrapped the pill onto two lines; the
-          arrow stays, so the pill still reads as a link (to /mcp). */}
-      <span class="hidden sm:inline" aria-hidden="true">·</span>
-      <span class="hidden sm:inline">conectar via MCP</span>
-      <span aria-hidden="true">↗</span>
-    </a>
-  </p>
+<section id="inicio" class="relative isolate py-2xl lg:py-3xl">
+  <div class="flex flex-col gap-lg lg:w-2/3">
+    {/* The availability is also the way in for agents: it leads to /mcp,
+        the page that explains how to plug this site into an MCP client. */}
+    <p>
+      <a
+        href="/mcp"
+        class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-caption text-muted-foreground sm:text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <span
+          class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
+          aria-hidden="true"
+        ></span>
+        <span>{STATUS_LABEL[availability.status]}</span>
+        {/* Phones drop the MCP hint, which wrapped the pill onto two lines; the
+            arrow stays, so the pill still reads as a link (to /mcp). */}
+        <span class="hidden sm:inline" aria-hidden="true">·</span>
+        <span class="hidden sm:inline">conectar via MCP</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </p>
 
-  <h1 class="font-serif text-h1 font-semibold text-foreground sm:text-display lg:text-[3.75rem]">
-    {headline}
-  </h1>
+    <h1 class="font-serif text-h1 font-semibold text-balance text-foreground sm:text-display">
+      {headline}
+    </h1>
 
-  <p class="max-w-[68ch] text-body text-muted-foreground">{positioning}</p>
+    <p class="max-w-[68ch] text-body text-muted-foreground">{positioning}</p>
 
-  <div class="flex flex-wrap items-center gap-md">
-    <Button href="/portfolio" variant="primary">Ver o que eu construí</Button>
-    <Button href="/contato" variant="ghost">Dizer olá</Button>
+    <div class="flex flex-wrap items-center gap-md">
+      <Button href="/portfolio" variant="primary">Ver o que eu construí</Button>
+      <Button href="/contato" variant="ghost">Dizer olá</Button>
+    </div>
   </div>
+
+  <Portrait name={name} class="lg:scale-130" />
 </section>

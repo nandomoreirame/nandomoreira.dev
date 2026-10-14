@@ -4,6 +4,7 @@ import Hero from '../../src/components/home/Hero.astro';
 
 const render = async (
   props: Record<string, unknown> = {
+    name: 'Fernando Moreira',
     headline: 'Engenheiro de produto com agentes de IA',
     positioning: 'Construo ferramental de agentes e produtos com IA em produção.',
     availability: { status: 'open', detail: 'Aberto a consultoria.', updatedAt: '2026-08-08' },
@@ -19,6 +20,10 @@ describe('Hero', () => {
     const link = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
     expect(link).toContain('Disponível para novos projetos');
     expect(link).toContain('min-h-11');
+  });
+
+  it('shows the portrait beside the headline', async () => {
+    expect(await render()).toMatch(/<img[^>]*alt="Ilustração de Fernando Moreira:/);
   });
 
   it('carries the only h1 of the page', async () => {

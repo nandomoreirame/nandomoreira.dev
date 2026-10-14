@@ -14,7 +14,10 @@ const { posts } = Astro.props;
 
 {
   posts.length > 0 && (
-    <section id="blog" class="py-2xl lg:py-3xl">
+    // `relative` paints this section after the hero's portrait, which is
+    // positioned and runs past the hero's bottom edge; without it the
+    // faded image would sit on top of this text.
+    <section id="blog" class="relative py-2xl lg:py-3xl">
       <SectionHeader
         title="Blog"
         level={2}
