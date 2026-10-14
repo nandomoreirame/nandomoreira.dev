@@ -1,0 +1,26 @@
+[package]
+name = "nm-stats"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "Terminal reader for the nandomoreira.dev lead analytics"
+publish = false
+
+[lib]
+name = "nm_stats"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nm-stats"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+clap = { version = "4", features = ["derive"] }
+crossterm = { version = "0.29", features = ["event-stream"] }
+futures = "0.3"
+ratatui = "0.30"
+reqwest = { version = "0.13", features = ["json"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
