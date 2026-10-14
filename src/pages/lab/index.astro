@@ -3,6 +3,7 @@ import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import OpenSourceList from '../../components/catalog/OpenSourceList.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { collectionOfBlock } from '../../lib/catalog/groups';
 import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
 import { getAllProjects, getProfile } from '../../lib/content';
 import { displayNameOf } from '../../lib/content/display-name';
@@ -15,6 +16,8 @@ const authorName = displayNameOf(await getProfile());
 <BaseLayout
   title={`Laboratório | ${authorName}`}
   description={COLLECTION_COPY.lab.metaDescription}
+  pageType="CollectionPage"
+  pageItems={projects.filter((project) => collectionOfBlock(project.block) === 'lab').map((project) => `/lab/${project.slug}`)}
 >
   <PageHeader
     eyebrow="Laboratório"

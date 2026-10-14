@@ -45,3 +45,27 @@ describe('jsonLdForPost', () => {
     expect(output).not.toContain('<script>');
   });
 });
+
+describe('jsonLdForPost authorship', () => {
+  const author = { name: 'Fernando Moreira Costa' };
+
+  it('names the author and the publisher as the Person of the home page', () => {
+    const ld = jsonLdForPost(post, site, author);
+    expect(ld.author).toEqual({ '@type': 'Person', '@id': 'https://nandomoreira.dev/#person', name: author.name, url: 'https://nandomoreira.dev/' });
+    expect(ld.publisher).toEqual(ld.author);
+  });
+
+  it('carries the share card, the language, the page and both dates', () => {
+    const ld = jsonLdForPost(post, site, author);
+    expect(ld.image).toBe('https://nandomoreira.dev/og/por-que-parenteses-no-tailwind.png');
+    expect(ld.inLanguage).toBe('pt-BR');
+    expect(ld.mainEntityOfPage).toBe('https://nandomoreira.dev/por-que-parenteses-no-tailwind');
+    expect(ld.dateModified).toBe(post.date);
+  });
+
+  it('prefers publishedAt for both dates when the post has a timestamp', () => {
+    const ld = jsonLdForPost({ ...post, publishedAt: '2026-08-09T10:00:00-03:00' }, site, author);
+    expect(ld.datePublished).toBe('2026-08-09T10:00:00-03:00');
+    expect(ld.dateModified).toBe('2026-08-09T10:00:00-03:00');
+  });
+});

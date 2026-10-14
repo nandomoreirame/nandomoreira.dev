@@ -17,6 +17,8 @@ const authorName = displayNameOf(await getProfile());
 <BaseLayout
   title={`Blog | ${authorName}`}
   description={BLOG_COPY.metaDescription}
+  pageType="CollectionPage"
+  pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
   <PageHeader
     eyebrow="Blog"

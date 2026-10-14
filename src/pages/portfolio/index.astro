@@ -2,6 +2,7 @@
 import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { collectionOfBlock } from '../../lib/catalog/groups';
 import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
 import { getAllProjects, getProfile } from '../../lib/content';
 import { displayNameOf } from '../../lib/content/display-name';
@@ -14,6 +15,8 @@ const authorName = displayNameOf(await getProfile());
 <BaseLayout
   title={`Portfólio | ${authorName}`}
   description={COLLECTION_COPY.portfolio.metaDescription}
+  pageType="CollectionPage"
+  pageItems={projects.filter((project) => collectionOfBlock(project.block) === 'portfolio').map((project) => `/portfolio/${project.slug}`)}
 >
   <PageHeader
     eyebrow="Portfólio"

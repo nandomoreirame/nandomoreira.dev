@@ -45,3 +45,10 @@ describe('personLd', () => {
     expect(() => JSON.parse(JSON.stringify(personLd(profile, SITE)))).not.toThrow();
   });
 });
+
+describe('personLd identity', () => {
+  it('has a stable @id the articles point their author at', async () => {
+    const { getProfile } = await import('../../src/lib/content');
+    expect(personLd(await getProfile(), 'https://nandomoreira.dev')['@id']).toBe('https://nandomoreira.dev/#person');
+  });
+});
