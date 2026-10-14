@@ -11,4 +11,5 @@ pub mod model;
 pub mod pages;
 pub mod period;
 pub mod schedule;
+pub mod theme;
 pub mod totals;
