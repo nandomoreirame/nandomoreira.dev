@@ -42,6 +42,18 @@ describe('PointerField', () => {
   });
 });
 
+describe('Portrait tilt in the single site script', () => {
+  it('writes the pointer position relative to each [data-tilt] element, centred and clamped', () => {
+    expect(source).toContain("'[data-tilt]'");
+    for (const variable of ['--tx', '--ty']) expect(source).toContain(`'${variable}'`);
+    expect(source).toMatch(/Math\.max\(-0\.5,\s*Math\.min\(0\.5/);
+  });
+
+  it('straightens the portrait when the pointer leaves', () => {
+    expect(source).toMatch(/pointerleave[\s\S]*removeProperty\('--tx'\)/);
+  });
+});
+
 describe('PointerField on the whole page', () => {
   it('loads on every page and marks the body as the field', () => {
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');

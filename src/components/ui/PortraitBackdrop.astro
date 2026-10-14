@@ -1,0 +1,162 @@
+---
+/*
+ * The scenery behind the cut-out portrait: orbits around the head, waveforms,
+ * two node graphs, terminal-like lines and loose dots. Drawn on the same
+ * 1000×1000 square as the portrait, so the head sits at its centre. Colours
+ * come from the theme tokens; nothing here is interactive or meaningful, so
+ * the whole drawing is hidden from assistive technology.
+ *
+ * Motion is CSS only (no client script), from the shared scenery rules in
+ * global.css, and only under `prefers-reduced-motion: no-preference`: the
+ * code lines type themselves in,
+ * row after row, and everything else drifts on its own timing. Timings come
+ * from a fixed hash of each element's index, so the page renders the same on
+ * every request while nothing moves in lockstep.
+ */
+const WAVES = [0, 14, 28, 42, 56, 70];
+const RIGHT_NODES = [
+  [790, 300], [860, 360], [820, 420], [900, 450], [840, 520], [760, 470], [930, 330],
+] as const;
+const RIGHT_EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 2], [1, 6], [6, 3], [0, 5], [2, 4]] as const;
+const LEFT_NODES = [
+  [170, 600], [240, 560], [300, 630], [220, 690], [330, 700],
+] as const;
+const LEFT_EDGES = [[0, 1], [1, 2], [2, 3], [3, 0], [2, 4], [3, 4], [1, 3]] as const;
+const TERMINAL = [
+  { x: 60, y: 760, widths: [70, 150, 110], start: 0 },
+  { x: 730, y: 560, widths: [90, 160, 120, 60], start: 2.5 },
+  { x: 700, y: 170, widths: [60, 140, 100], start: 5 },
+];
+/** Seconds between two rows of the same block starting to type. */
+const ROW_GAP = 0.9;
+/** Vertical distance between two code lines, in viewBox units. */
+const LINE_HEIGHT = 9;
+const DOTS = [
+  [120, 280, 5], [680, 90, 4], [930, 560, 4], [700, 820, 5], [90, 470, 3], [880, 140, 3], [400, 120, 3],
+] as const;
+
+/** Deterministic value in [min, max) for element `index` of a group `salt`. */
+const vary = (index: number, salt: number, min: number, max: number): number => {
+  const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return min + (x - Math.floor(x)) * (max - min);
+};
+const timing = (index: number, salt: number, min: number, max: number): string =>
+  `--duration: ${vary(index, salt, min, max).toFixed(1)}s; --delay: -${vary(index, salt + 1, 0, max).toFixed(1)}s`;
+
+const NODES = [...RIGHT_NODES, ...LEFT_NODES];
+const EDGES = [
+  ...RIGHT_EDGES.map(([a, b]) => [RIGHT_NODES[a], RIGHT_NODES[b]] as const),
+  ...LEFT_EDGES.map(([a, b]) => [LEFT_NODES[a], LEFT_NODES[b]] as const),
+];
+---
+
+<svg
+  viewBox="0 0 1000 1000"
+  aria-hidden="true"
+  focusable="false"
+  class="absolute inset-0 size-full"
+  fill="none"
+  stroke-linecap="round"
+>
+  <g stroke="var(--color-primary)">
+    {/* Parallax layers: each group shifts by its own --depth against the
+        pointer (see Portrait.astro); the portrait moves the other way. */}
+    <g data-parallax style="--depth: -0.015">
+    <g data-spin style="--duration: 90s">
+      <g transform="rotate(-14 500 430)">
+        <ellipse cx="500" cy="430" rx="430" ry="150" stroke-width="2" opacity="0.8" />
+        <circle cx="930" cy="430" r="9" fill="var(--color-primary)" stroke="none" />
+        <circle cx="160" cy="520" r="7" fill="var(--color-primary)" stroke="none" />
+      </g>
+    </g>
+    <g data-spin data-reverse style="--duration: 120s">
+      <g transform="rotate(16 500 430)">
+        <ellipse cx="500" cy="430" rx="340" ry="110" stroke-width="1.5" opacity="0.5" />
+        <circle cx="790" cy="370" r="6" fill="var(--color-primary)" stroke="none" />
+      </g>
+    </g>
+    </g>
+
+    <g data-parallax style="--depth: -0.03">
+
+    {
+      WAVES.map((offset, index) => (
+        <path
+          data-sway
+          style={timing(index, 1, 6, 11)}
+          d={`M0 ${560 + offset * 0.4} C 120 ${470 + offset}, 240 ${660 - offset}, 400 ${590 + offset * 0.3}`}
+          stroke-width="1"
+          opacity={0.35 + offset / 200}
+        />
+      ))
+    }
+    {
+      WAVES.map((offset, index) => (
+        <path
+          data-sway
+          style={timing(index, 3, 6, 11)}
+          d={`M620 ${700 - offset * 0.3} C 760 ${640 - offset}, 860 ${470 + offset}, 1000 ${380 - offset * 0.5}`}
+          stroke-width="1"
+          opacity={0.35 + offset / 200}
+        />
+      ))
+    }
+    </g>
+
+    <g data-parallax style="--depth: -0.045">
+    <g stroke-width="1" opacity="0.45">
+      {EDGES.map(([from, to]) => <line x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} />)}
+    </g>
+    {/* A packet of light runs along each edge, like data between nodes. */}
+    <g stroke-width="2.5" opacity="0.9">
+      {
+        EDGES.map(([from, to], index) => (
+          <line
+            data-packet
+            style={timing(index, 5, 2.5, 6)}
+            pathLength="100"
+            x1={from[0]}
+            y1={from[1]}
+            x2={to[0]}
+            y2={to[1]}
+          />
+        ))
+      }
+    </g>
+    <g stroke-width="1.5" opacity="0.6" fill="var(--color-background)">
+      {NODES.map(([cx, cy], index) => <circle data-pulse style={timing(index, 7, 2.5, 5.5)} cx={cx} cy={cy} r="9" />)}
+    </g>
+    </g>
+  </g>
+
+  <g data-parallax style="--depth: -0.06" fill="var(--color-primary)">
+    {
+      TERMINAL.map(({ x, y, widths, start }) => [
+        ...widths.map((width, row) => (
+          <rect
+            data-typing
+            style={`--delay: ${(start + row * ROW_GAP).toFixed(1)}s`}
+            x={x + (row % 2) * 20}
+            y={y + row * LINE_HEIGHT}
+            width={width}
+            height="5"
+            rx="1"
+            fill-opacity={0.85 - row * 0.15}
+          />
+        )),
+        <rect
+          data-cursor
+          x={x + ((widths.length - 1) % 2) * 20 + widths.at(-1)! + 8}
+          y={y + (widths.length - 1) * LINE_HEIGHT - 2}
+          width="6"
+          height="9"
+        />,
+      ])
+    }
+    {
+      DOTS.map(([cx, cy, r], index) => (
+        <circle data-float style={timing(index, 9, 5, 9)} cx={cx} cy={cy} r={r} opacity="0.8" />
+      ))
+    }
+  </g>
+</svg>

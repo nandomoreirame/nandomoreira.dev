@@ -1,8 +1,8 @@
 ---
 /**
  * The only client script the site ships (docs/specs/generative-case-art,
- * REQ-012), on every page since 2026-10-08. It writes four CSS variables and nothing else: the dot grid and
- * the parallax are CSS. Removing this component removes the effect and
+ * REQ-012), on every page since 2026-10-08. It writes CSS variables and nothing else: the dot grid,
+ * the parallax and the portrait tilt are CSS. Removing this component removes the effect and
  * nothing more (REQ-017). Without JavaScript, on touch, or with reduced motion,
  * the art simply stays still (REQ-008).
  */
@@ -47,6 +47,12 @@
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (fine && !calm) {
+    // The portrait (home, /sobre) turns toward the pointer: its position
+    // relative to the portrait's own box, centred on 0 and clamped to ±0.5 so
+    // the turn stays small when the mouse is far away.
+    const tilts = document.querySelectorAll<HTMLElement>('[data-tilt]');
+    const clamp = (value: number) => Math.max(-0.5, Math.min(0.5, value)).toFixed(3);
+
     document.querySelectorAll<HTMLElement>('[data-pointer-field]').forEach((field) => {
       let last: PointerEvent | null = null;
       let frame = 0;
@@ -73,6 +79,12 @@
         field.style.setProperty('--gx', `${last.clientX}px`);
         field.style.setProperty('--gy', `${last.clientY}px`);
 
+        tilts.forEach((tilt) => {
+          const box = tilt.getBoundingClientRect();
+          tilt.style.setProperty('--tx', clamp((last!.clientX - box.left) / box.width - 0.5));
+          tilt.style.setProperty('--ty', clamp((last!.clientY - box.top) / box.height - 0.5));
+        });
+
         const art = (last.target as Element | null)?.closest<HTMLElement>('[data-art]') ?? null;
         if (art !== current) release();
         if (art) {
@@ -95,6 +107,10 @@
         delete field.dataset.active;
         delete field.dataset.snap;
         release();
+        tilts.forEach((tilt) => {
+          tilt.style.removeProperty('--tx');
+          tilt.style.removeProperty('--ty');
+        });
       });
     });
   }

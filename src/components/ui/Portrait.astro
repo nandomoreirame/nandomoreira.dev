@@ -1,5 +1,6 @@
 ---
 import { PORTRAIT } from '../../lib/about/portrait';
+import PortraitBackdrop from './PortraitBackdrop.astro';
 
 interface Props {
   /** Display name, read out in the alt text. */
@@ -16,11 +17,14 @@ const { name, class: className } = Astro.props;
      `relative isolate`, so `-z-10` sits behind the text but above the page
      background. On phones it is large and faint, pushed past the right edge so
      only half the face shows (the body clips the overflow); from lg it takes
-     the right half, and on xl bleeds past the column. The bottom fades out
-     so the image never ends in a hard edge over the next section. Clicks pass
-     through. */
+     the right half, and on xl bleeds past the column. The drawing is a
+     cut-out over an SVG backdrop, so the scenery follows the theme. The bottom
+     fades out so it never ends in a hard edge over the next section. Clicks
+     pass through. With a mouse, the layers drift apart as it moves (the
+     scenery rules in global.css). */
 }
-<picture
+<div
+  data-portrait
   class:list={[
     'pointer-events-none absolute top-0 left-1/4 -z-10 w-3/2 scale-150 opacity-30 mask-b-from-60%',
     'sm:left-1/2 sm:w-3/4',
@@ -28,22 +32,25 @@ const { name, class: className } = Astro.props;
     className,
   ]}
 >
-  {
-    PORTRAIT.sources.map((source) => (
-      <source
-        type={source.type}
-        srcset={source.srcset}
-        sizes="(min-width: 1280px) 720px, (min-width: 1024px) 480px, (min-width: 640px) 75vw, 150vw"
-      />
-    ))
-  }
-  <img
-    src={PORTRAIT.fallback}
-    width={PORTRAIT.width}
-    height={PORTRAIT.height}
-    alt={`Ilustração de ${name}: retrato de óculos e barba sobre fundo escuro com linhas âmbar`}
-    fetchpriority="high"
-    decoding="async"
-    class="h-auto w-full object-cover lg:rounded-lg"
-  />
-</picture>
+  <PortraitBackdrop />
+  <picture data-parallax data-tilt style="--depth: 0.02" class="relative block">
+    {
+      PORTRAIT.sources.map((source) => (
+        <source
+          type={source.type}
+          srcset={source.srcset}
+          sizes="(min-width: 1280px) 720px, (min-width: 1024px) 480px, (min-width: 640px) 75vw, 150vw"
+        />
+      ))
+    }
+    <img
+      src={PORTRAIT.fallback}
+      width={PORTRAIT.width}
+      height={PORTRAIT.height}
+      alt={`Ilustração de ${name}: retrato de óculos e barba sobre fundo escuro com linhas âmbar`}
+      fetchpriority="high"
+      decoding="async"
+      class="h-auto w-full"
+    />
+  </picture>
+</div>
