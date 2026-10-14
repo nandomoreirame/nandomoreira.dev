@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // A pre-rendered page reflects exactly what the server sends for SSR ones.
-const PAGE = 'dist/client/lab/forja/index.html';
+const PAGE = 'dist/client/lab/forja.html';
 
 describe('built page delivery (PageSpeed mobile)', () => {
   const html = readFileSync(PAGE, 'utf8');

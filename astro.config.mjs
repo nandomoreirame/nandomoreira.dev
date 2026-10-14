@@ -17,7 +17,13 @@ export default defineConfig({
   // (2026-10-09); inlined, the CSS arrives with the HTML.
   build: {
     inlineStylesheets: 'always',
+    // `/x.html` instead of `/x/index.html`: with the directory format the Node
+    // adapter served every pre-rendered page at both /x and /x/, two URLs per
+    // page (SEO audit 2026-10-13).
+    format: 'file',
   },
+  // One URL per page: /x/ answers 301 to /x, matching the sitemap and links.
+  trailingSlash: 'never',
   // App Hosting ends TLS at its proxy and forwards plain HTTP. Astro trusts
   // X-Forwarded-Proto/Host only for these domains; without them it rebuilds the
   // request origin as http://, the form's https Origin never matches, and the

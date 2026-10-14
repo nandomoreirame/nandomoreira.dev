@@ -17,3 +17,18 @@ export const absoluteUrl = (site: URL, path: string): string => {
 
   return new URL(normalized, site).toString();
 };
+
+/**
+ * The public path of a page. Pre-rendered pages see `/x.html` at build time
+ * (build.format 'file') and a request may carry `/x/`; the sitemap and the
+ * internal links use `/x`, so the canonical, the nav state and the AI view
+ * switcher all go through this.
+ */
+export const pagePath = (pathname: string): string => {
+  const trimmed = pathname.replace(/(?:\/index)?\.html$/, '').replace(/\/+$/, '');
+
+  return trimmed === '' ? '/' : trimmed;
+};
+
+/** Absolute canonical URL of a page, always in its public form (see pagePath). */
+export const canonicalUrl = (site: URL, path: string): string => absoluteUrl(site, pagePath(path));
