@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { recorder } from '../../lib/analytics/runtime';
 import { firestoreCvStore, handleCvDownload, resendCvNotifier } from '../../lib/cv/download';
 import { readHireConfig } from '../../lib/hire/config';
 import { createLimiter } from '../../lib/hire/rate-limit';
@@ -16,6 +17,7 @@ const dependencies = {
   notifier: resendCvNotifier(config),
   limiter,
   now: () => new Date(),
+  analytics: recorder,
 };
 
 export const ALL: APIRoute = ({ request }) => handleCvDownload(request, dependencies);

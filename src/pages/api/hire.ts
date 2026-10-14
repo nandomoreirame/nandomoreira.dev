@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { recorder } from '../../lib/analytics/runtime';
 import { readHireConfig } from '../../lib/hire/config';
 import { handleHire } from '../../lib/hire/handler';
 import { resendNotifier } from '../../lib/hire/notify';
@@ -21,6 +22,7 @@ const dependencies = {
   notifier: resendNotifier(config),
   limiter,
   now: () => new Date(),
+  analytics: recorder,
 };
 
 export const ALL: APIRoute = ({ request }) => handleHire(request, dependencies);

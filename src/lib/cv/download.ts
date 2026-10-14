@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import type { Recorder } from '../analytics/recorder';
 import { z } from 'zod';
 import type { HireConfig } from '../hire/config';
 import { getFirestoreClient } from '../hire/firestore';
@@ -57,7 +58,7 @@ export interface CvStore {
 }
 
 export interface CvNotifier {
-  send: (download: CvDownload, id: string) => Promise<void>;
+  send: (download: CvDownload, id: string, journey?: string) => Promise<void>;
 }
 
 export interface CvDependencies {
@@ -65,6 +66,8 @@ export interface CvDependencies {
   notifier: CvNotifier;
   limiter: Limiter;
   now: () => Date;
+  /** Optional so tests and a site without the analytics secret behave as before. */
+  analytics?: Pick<Recorder, 'record' | 'journey'>;
 }
 
 const RETENTION_MONTHS = 12;
@@ -100,7 +103,7 @@ export const toCvDownload = (
  */
 export const handleCvDownload = async (
   request: Request,
-  { store, notifier, limiter, now }: CvDependencies,
+  { store, notifier, limiter, now, analytics }: CvDependencies,
 ): Promise<Response> => {
   if (request.method !== 'POST') return redirect(CV_PAGE);
 
@@ -136,8 +139,20 @@ export const handleCvDownload = async (
     return outcome('ok');
   }
 
+  let journey: string | undefined;
+  if (analytics) {
+    await analytics.record(request, {
+      kind: 'conversion',
+      path: '/api/cv',
+      source: 'api',
+      referrer: request.headers.get('referer'),
+      conversion: { type: 'cv', refId: id },
+    });
+    journey = await analytics.journey(request);
+  }
+
   try {
-    await notifier.send(download, id);
+    await (journey ? notifier.send(download, id, journey) : notifier.send(download, id));
     await store.markNotified(id);
   } catch {
     // The record survives with notified: false, so it can still be found.
@@ -156,7 +171,7 @@ export const firestoreCvStore = (): CvStore => ({
   },
 });
 
-export const renderCvNotification = (download: CvDownload, id: string): string =>
+export const renderCvNotification = (download: CvDownload, id: string, journey?: string): string =>
   [
     'Someone downloaded your CV from /curriculo and left their details.',
     '',
@@ -165,6 +180,7 @@ export const renderCvNotification = (download: CvDownload, id: string): string =
     `Received: ${download.receivedAt}`,
     `Record:   ${id}`,
     '',
+    ...(journey ? [journey, ''] : []),
   ].join('\n');
 
 /** Same Resend account and addresses as the contact form (HireConfig). */
@@ -172,12 +188,12 @@ export const resendCvNotifier = (config: HireConfig): CvNotifier => {
   const client = new Resend(config.apiKey);
 
   return {
-    send: async (download, id) => {
+    send: async (download, id, journey) => {
       const { error } = await client.emails.send({
         from: config.notifyFrom,
         to: config.notifyTo,
         subject: `CV downloaded by ${download.name ?? download.email}`,
-        text: renderCvNotification(download, id),
+        text: renderCvNotification(download, id, journey),
       });
 
       // The SDK reports failure in the payload rather than by throwing.

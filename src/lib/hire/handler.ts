@@ -1,3 +1,4 @@
+import type { Recorder } from '../analytics/recorder';
 import { type FormOutcome, formRedirect, formToPayload } from './form';
 import type { Notifier } from './notify';
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from './read-body';
@@ -12,6 +13,8 @@ export interface Dependencies {
   now: () => Date;
   /** Overridable so a test can prove the slow-read cutoff without waiting for it. */
   readTimeoutMs?: number;
+  /** Optional so tests and a site without the analytics secret behave as before. */
+  analytics?: Pick<Recorder, 'record' | 'journey'>;
 }
 
 /**
@@ -64,7 +67,7 @@ const syntheticId = (): string =>
 
 export const handleHire = async (
   request: Request,
-  { store, notifier, limiter, now, readTimeoutMs }: Dependencies,
+  { store, notifier, limiter, now, readTimeoutMs, analytics }: Dependencies,
 ): Promise<Response> => {
   const fromForm = isForm(request);
 
@@ -138,8 +141,21 @@ export const handleHire = async (
     return fail('unavailable');
   }
 
+  let journey: string | undefined;
+  if (analytics) {
+    // Both calls swallow their own failures (REQ-012): a lead is never lost to measuring.
+    await analytics.record(request, {
+      kind: 'conversion',
+      path: '/api/hire',
+      source: 'api',
+      referrer: request.headers.get('referer'),
+      conversion: { type: 'hire', refId: id },
+    });
+    journey = await analytics.journey(request);
+  }
+
   try {
-    await notifier.send(briefing, id);
+    await (journey ? notifier.send(briefing, id, journey) : notifier.send(briefing, id));
     await store.markNotified(id);
   } catch {
     /**

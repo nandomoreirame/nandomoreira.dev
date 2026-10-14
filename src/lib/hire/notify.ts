@@ -3,7 +3,7 @@ import type { HireConfig } from './config';
 import type { StoredBriefing } from './store';
 
 export interface Notifier {
-  send: (briefing: StoredBriefing, id: string) => Promise<void>;
+  send: (briefing: StoredBriefing, id: string, journey?: string) => Promise<void>;
 }
 
 /**
@@ -11,7 +11,7 @@ export interface Notifier {
  * (REQ-012): having to open the database to read what someone wrote defeats
  * the point of being notified.
  */
-export const renderNotification = (briefing: StoredBriefing, id: string): string =>
+export const renderNotification = (briefing: StoredBriefing, id: string, journey?: string): string =>
   [
     `New briefing via /api/hire`,
     '',
@@ -26,6 +26,7 @@ export const renderNotification = (briefing: StoredBriefing, id: string): string
     `Agent:     ${briefing.userAgent ?? 'not declared'}`,
     `Record:    ${id}`,
     '',
+    ...(journey ? [journey, ''] : []),
     'Briefing',
     '--------',
     briefing.brief,
@@ -36,12 +37,12 @@ export const resendNotifier = (config: HireConfig): Notifier => {
   const client = new Resend(config.apiKey);
 
   return {
-    send: async (briefing, id) => {
+    send: async (briefing, id, journey) => {
       const { error } = await client.emails.send({
         from: config.notifyFrom,
         to: config.notifyTo,
         subject: `Briefing from ${briefing.from}`,
-        text: renderNotification(briefing, id),
+        text: renderNotification(briefing, id, journey),
       });
 
       // The SDK reports failure in the payload rather than by throwing, so a
