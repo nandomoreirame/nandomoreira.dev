@@ -33,6 +33,16 @@ impl Schedule {
         }
     }
 
+    /// How long the fast mode still has before it turns itself off.
+    pub fn remaining(&self, now: Instant) -> Option<Duration> {
+        self.fast_since
+            .map(|since| FAST_LIMIT.saturating_sub(now.duration_since(since)))
+    }
+
+    pub fn is_fast(&self) -> bool {
+        self.fast_since.is_some()
+    }
+
     pub fn interval(&self) -> Duration {
         if self.fast_since.is_some() {
             FAST
@@ -128,5 +138,21 @@ mod tests {
         // Nothing but a reschedule moves the deadline: key presses never do.
         ticker.reschedule(start + Duration::from_secs(12), FAST);
         assert_eq!(ticker.deadline(), start + Duration::from_secs(17));
+    }
+
+    #[test]
+    fn tells_how_long_the_fast_mode_has_left() {
+        let start = Instant::now();
+        let mut schedule = Schedule::default();
+        assert_eq!(schedule.remaining(start), None);
+        schedule.toggle(start);
+        assert_eq!(
+            schedule.remaining(start + Duration::from_secs(60)),
+            Some(Duration::from_secs(29 * 60))
+        );
+        assert_eq!(
+            schedule.remaining(start + Duration::from_secs(31 * 60)),
+            Some(Duration::ZERO)
+        );
     }
 }

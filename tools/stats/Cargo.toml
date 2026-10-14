@@ -1,5 +1,5 @@
 [package]
-name = "nm-stats"
+name = "stats"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
@@ -7,11 +7,11 @@ description = "Terminal reader for the nandomoreira.dev lead analytics"
 publish = false
 
 [lib]
-name = "nm_stats"
+name = "stats"
 path = "src/lib.rs"
 
 [[bin]]
-name = "nm-stats"
+name = "stats"
 path = "src/main.rs"
 
 [dependencies]

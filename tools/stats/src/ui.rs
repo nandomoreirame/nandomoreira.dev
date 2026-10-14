@@ -1,69 +1,187 @@
 use crate::app::{App, TAB_TITLES, Tab};
+use crate::bignum::{big_number, big_width};
 use crate::funnel::{STAGES, pass_rate};
+use crate::lead::LeadDetail;
 use crate::model::Event;
 use crate::period::clock;
 use crate::theme::Theme;
 use chrono::{DateTime, Utc};
 use ratatui::Frame;
-use ratatui::layout::{Constraint, Layout, Rect};
+use ratatui::layout::{Alignment, Constraint, Layout, Margin, Rect};
 use ratatui::style::{Modifier, Style};
-use ratatui::text::Line;
-use ratatui::widgets::{Block, Borders, Clear, Paragraph, Row, Table, Tabs, Wrap};
+use ratatui::text::{Line, Span};
+use ratatui::widgets::{Block, BorderType, Clear, Padding, Paragraph, Row, Table, Wrap};
+
+/// The headline cards of the live tab, in order.
+const HEADLINE: [&str; 7] = [
+    "Pessoas hoje",
+    "Páginas vistas",
+    "Agentes",
+    "Robôs",
+    "Cliques no /go",
+    "Leads",
+    "Tools MCP",
+];
 
 const HELP: &str = "1-4 abas · r tempo real · [ ] período · Enter lead · q sai";
+/// Width of the bar beside a ranked counter.
+const BAR: usize = 16;
 
 pub fn draw(frame: &mut Frame, app: &App, now: DateTime<Utc>, theme: &Theme) {
-    let base = Style::new().fg(theme.fg).bg(theme.bg);
-    frame.render_widget(Block::new().style(base), frame.area());
-    let [tabs, body, status] = Layout::vertical([
+    frame.render_widget(
+        Block::new().style(Style::new().fg(theme.fg).bg(theme.bg)),
+        frame.area(),
+    );
+
+    // Breathing room around everything, and a blank line under the header.
+    let area = frame.area().inner(Margin::new(2, 1));
+    let [header, _, body, _, status] = Layout::vertical([
+        Constraint::Length(1),
         Constraint::Length(1),
         Constraint::Min(0),
         Constraint::Length(1),
+        Constraint::Length(1),
     ])
-    .areas(frame.area());
+    .areas(area);
 
-    let titles: Vec<Line> = TAB_TITLES
-        .iter()
-        .enumerate()
-        .map(|(i, title)| Line::from(format!(" {} {title} ", i + 1)))
-        .collect();
+    let countdown = countdown_line(app, theme);
+    let [tabs, clock_area] = Layout::horizontal([
+        Constraint::Min(0),
+        Constraint::Length(countdown.width() as u16),
+    ])
+    .areas(header);
+    frame.render_widget(Paragraph::new(header_line(app, theme)), tabs);
     frame.render_widget(
-        Tabs::new(titles)
-            .select(app.tab.index())
-            .style(Style::new().fg(theme.muted))
-            .highlight_style(Style::new().fg(theme.accent).add_modifier(Modifier::BOLD))
-            .divider(""),
-        tabs,
+        Paragraph::new(countdown).alignment(Alignment::Right),
+        clock_area,
     );
-
     match app.tab {
         Tab::Live => draw_live(frame, body, app, now, theme),
         Tab::Funnel => draw_funnel(frame, body, app, now, theme),
         Tab::Traffic => draw_traffic(frame, body, app, now, theme),
         Tab::Mcp => draw_mcp(frame, body, app, now, theme),
     }
-
-    let line = format!(
-        " {} · {} · {}",
-        app.schedule.label(),
-        app.period.label(),
-        app.status.as_deref().unwrap_or(HELP)
-    );
-    frame.render_widget(
-        Paragraph::new(line).style(Style::new().fg(theme.muted)),
-        status,
-    );
+    frame.render_widget(Paragraph::new(status_line(app, theme)), status);
 
     if let Some(detail) = &app.detail {
         draw_detail(frame, detail, theme);
     }
 }
 
-fn titled(title: &str, theme: &Theme) -> Block<'static> {
-    Block::new()
-        .borders(Borders::ALL)
-        .border_style(Style::new().fg(theme.muted))
-        .title(format!(" {title} "))
+/// The app name, then the tabs as pills: the active one filled in amber.
+fn header_line(app: &App, theme: &Theme) -> Line<'static> {
+    let mut spans = vec![
+        Span::styled(
+            " nandomoreira.dev ",
+            Style::new().fg(theme.accent).add_modifier(Modifier::BOLD),
+        ),
+        Span::raw("   "),
+    ];
+    for (i, title) in TAB_TITLES.iter().enumerate() {
+        let style = if i == app.tab.index() {
+            Style::new()
+                .fg(theme.bg)
+                .bg(theme.accent)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::new().fg(theme.muted).bg(theme.surface)
+        };
+        spans.push(Span::styled(format!(" {} {title} ", i + 1), style));
+        spans.push(Span::raw(" "));
+    }
+    Line::from(spans)
+}
+
+/// Seconds to the next refresh, top right: amber in the fast mode.
+fn countdown_line(app: &App, theme: &Theme) -> Line<'static> {
+    let style = if app.fast_left_minutes.is_some() {
+        Style::new().fg(theme.accent).add_modifier(Modifier::BOLD)
+    } else {
+        Style::new().fg(theme.muted)
+    };
+    Line::from(Span::styled(
+        format!("Atualização em: {}s ", app.refresh_in_secs),
+        style,
+    ))
+}
+
+/// The refresh mode leads the status bar: in the fast mode it is a filled
+/// amber badge with the minutes left, so turning it on is visible at once.
+fn status_line(app: &App, theme: &Theme) -> Line<'static> {
+    let mode = match app.fast_left_minutes {
+        Some(minutes) => Span::styled(
+            format!(" ● TEMPO REAL · 5 s · desliga em {minutes} min "),
+            Style::new()
+                .fg(theme.bg)
+                .bg(theme.accent)
+                .add_modifier(Modifier::BOLD),
+        ),
+        None => Span::styled(
+            " atualiza a cada 30 s ",
+            Style::new().fg(theme.muted).bg(theme.surface),
+        ),
+    };
+    let period = Span::styled(
+        format!("  {}  ", app.period.label()),
+        Style::new().fg(theme.muted),
+    );
+    let message = match &app.status {
+        Some(notice) => Span::styled(notice.clone(), Style::new().fg(theme.accent)),
+        None => Span::styled(HELP, Style::new().fg(theme.muted)),
+    };
+    Line::from(vec![mode, period, message])
+}
+
+/// A rounded panel with a bold title and room inside.
+fn panel(title: &str, theme: &Theme) -> Block<'static> {
+    Block::bordered()
+        .border_type(BorderType::Rounded)
+        .border_style(Style::new().fg(theme.surface))
+        .title(
+            Line::from(format!(" {title} "))
+                .style(Style::new().fg(theme.fg).add_modifier(Modifier::BOLD)),
+        )
+        .padding(Padding::new(2, 2, 1, 0))
+}
+
+/// A headline number: big digits centred in a rounded card, amber when it
+/// highlights a conversion, with an optional caption under it.
+fn card(
+    frame: &mut Frame,
+    area: Rect,
+    label: &str,
+    value: i64,
+    highlight: bool,
+    caption: Option<String>,
+    theme: &Theme,
+) {
+    let block = Block::bordered()
+        .border_type(BorderType::Rounded)
+        .border_style(Style::new().fg(if highlight {
+            theme.accent
+        } else {
+            theme.surface
+        }))
+        .title(Line::from(format!(" {label} ")).style(Style::new().fg(theme.muted)))
+        .padding(Padding::top(1));
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+
+    let colour = if highlight { theme.accent } else { theme.fg };
+    let mut lines: Vec<Line> = if big_width(value) <= inner.width as usize {
+        big_number(value).into_iter().map(Line::from).collect()
+    } else {
+        vec![Line::from(value.to_string()).style(Style::new().add_modifier(Modifier::BOLD))]
+    };
+    if let Some(caption) = caption {
+        lines.push(Line::from(caption).style(Style::new().fg(theme.muted)));
+    }
+    frame.render_widget(
+        Paragraph::new(lines)
+            .alignment(Alignment::Center)
+            .style(Style::new().fg(colour)),
+        inner,
+    );
 }
 
 fn conversion_label(event: &Event) -> String {
@@ -77,31 +195,58 @@ fn conversion_label(event: &Event) -> String {
     }
 }
 
+fn header_row(cells: Vec<String>, theme: &Theme) -> Row<'static> {
+    Row::new(cells)
+        .style(Style::new().fg(theme.muted))
+        .bottom_margin(1)
+}
+
 fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
-    let [header, feed] = Layout::vertical([Constraint::Length(3), Constraint::Min(0)]).areas(area);
+    let [cards, _, feed] = Layout::vertical([
+        Constraint::Length(7),
+        Constraint::Length(1),
+        Constraint::Min(0),
+    ])
+    .areas(area);
     let count = |group: &str, key: &str| app.today(now).map_or(0, |d| d.get(group, key));
-    let robots = count("traffic", "search_crawler") + count("traffic", "other_bot");
-    let summary = format!(
-        "pessoas {} · agentes {} · robôs {} · cliques {} · CV {} · briefings {} · MCP {}",
-        count("traffic", "human"),
-        count("traffic", "ai_agent"),
-        robots,
-        count("conversions", "outbound"),
-        count("conversions", "cv"),
-        count("conversions", "hire"),
-        count("conversions", "mcp"),
-    );
-    frame.render_widget(Paragraph::new(summary).block(titled("Hoje", theme)), header);
+    let leads = count("conversions", "cv") + count("conversions", "hire");
+    let headline: [(&str, i64, bool); HEADLINE.len()] = [
+        ("Pessoas hoje", app.people_today(now) as i64, false),
+        ("Páginas vistas", count("traffic", "human"), false),
+        ("Agentes", count("traffic", "ai_agent"), false),
+        (
+            "Robôs",
+            count("traffic", "search_crawler") + count("traffic", "other_bot"),
+            false,
+        ),
+        ("Cliques no /go", count("conversions", "outbound"), true),
+        ("Leads", leads, true),
+        ("Tools MCP", count("conversions", "mcp"), true),
+    ];
+    let slots = Layout::horizontal([Constraint::Ratio(1, HEADLINE.len() as u32); HEADLINE.len()])
+        .spacing(1)
+        .split(cards);
+    for ((label, value, conversion), slot) in headline.into_iter().zip(slots.iter()) {
+        card(
+            frame,
+            *slot,
+            label,
+            value,
+            conversion && value > 0,
+            None,
+            theme,
+        );
+    }
 
     let rows = app
         .log
-        .recent(feed.height.saturating_sub(3) as usize)
+        .recent(feed.height.saturating_sub(5) as usize)
         .into_iter()
         .map(|e| {
             let style = if e.conversion.is_some() {
                 Style::new().fg(theme.accent)
             } else {
-                Style::new()
+                Style::new().fg(theme.fg)
             };
             Row::new(vec![
                 clock(e.at),
@@ -115,93 +260,124 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
             .style(style)
         });
     let widths = [
-        Constraint::Length(9),
-        Constraint::Length(9),
-        Constraint::Length(7),
-        Constraint::Min(30),
+        Constraint::Length(8),
+        Constraint::Length(8),
+        Constraint::Length(6),
+        Constraint::Min(28),
         Constraint::Length(14),
         Constraint::Length(4),
         Constraint::Length(24),
     ];
-    let header_row = Row::new([
-        "hora",
-        "classe",
-        "visit.",
-        "página",
-        "canal",
-        "país",
-        "conversão",
-    ])
-    .style(Style::new().fg(theme.muted));
+    let head = header_row(
+        [
+            "hora",
+            "classe",
+            "visit.",
+            "página",
+            "canal",
+            "país",
+            "conversão",
+        ]
+        .map(str::to_owned)
+        .to_vec(),
+        theme,
+    );
     frame.render_widget(
         Table::new(rows, widths)
-            .header(header_row)
-            .block(titled("Eventos", theme)),
+            .header(head)
+            .column_spacing(2)
+            .block(panel("Eventos", theme)),
         feed,
     );
 }
 
 fn draw_funnel(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
     let funnel = app.funnel(now);
-    let [stages, channels, leads] = Layout::vertical([
-        Constraint::Length(7),
-        Constraint::Length(10),
+    let [cards, _, bottom] = Layout::vertical([
+        Constraint::Length(8),
+        Constraint::Length(1),
         Constraint::Min(0),
     ])
     .areas(area);
 
-    let stage_rows = STAGES.iter().enumerate().map(|(i, stage)| {
-        let rate = pass_rate(&funnel.total, i).map_or(String::new(), |r| format!("{r}%"));
-        Row::new(vec![stage.to_string(), funnel.total[i].to_string(), rate])
-    });
-    frame.render_widget(
-        Table::new(
-            stage_rows,
-            [
-                Constraint::Length(16),
-                Constraint::Length(8),
-                Constraint::Length(8),
-            ],
-        )
-        .block(titled(&format!("Funil · {}", app.period.label()), theme)),
-        stages,
-    );
+    let slots = Layout::horizontal([Constraint::Ratio(1, 4); 4])
+        .spacing(1)
+        .split(cards);
+    for (i, stage) in STAGES.iter().enumerate() {
+        let caption = match pass_rate(&funnel.total, i) {
+            _ if i == 0 => format!("visitas · {}", app.period.label()),
+            Some(rate) => format!("{rate}% da anterior"),
+            None => "—".to_owned(),
+        };
+        let value = funnel.total[i] as i64;
+        card(
+            frame,
+            slots[i],
+            stage,
+            value,
+            i == STAGES.len() - 1 && value > 0,
+            Some(caption),
+            theme,
+        );
+    }
+
+    let [channels, leads] =
+        Layout::horizontal([Constraint::Percentage(55), Constraint::Percentage(45)])
+            .spacing(2)
+            .areas(bottom);
 
     let channel_rows = funnel.by_channel.iter().map(|(channel, counts)| {
         let mut cells = vec![channel.clone()];
         cells.extend(counts.iter().map(usize::to_string));
         Row::new(cells)
     });
-    let channel_header = Row::new(["canal", STAGES[0], STAGES[1], STAGES[2], STAGES[3]])
-        .style(Style::new().fg(theme.muted));
+    let mut head = vec!["canal".to_owned()];
+    head.extend(STAGES.iter().map(|s| s.to_string()));
     frame.render_widget(
         Table::new(
             channel_rows,
             [
-                Constraint::Length(16),
                 Constraint::Length(14),
+                Constraint::Length(8),
                 Constraint::Length(14),
-                Constraint::Length(14),
-                Constraint::Length(14),
+                Constraint::Length(6),
+                Constraint::Length(11),
             ],
         )
-        .header(channel_header)
-        .block(titled("Por canal de chegada", theme)),
+        .header(header_row(head, theme))
+        .column_spacing(2)
+        .block(panel("Por canal de chegada", theme)),
         channels,
     );
 
+    if funnel.leads.is_empty() {
+        let message = format!(
+            "nenhum lead em {}: aparece aqui quem baixar o CV ou mandar briefing",
+            app.period.label()
+        );
+        frame.render_widget(
+            Paragraph::new(message)
+                .style(Style::new().fg(theme.muted))
+                .wrap(Wrap { trim: true })
+                .block(panel("Leads", theme)),
+            leads,
+        );
+        return;
+    }
     let lead_rows = funnel.leads.iter().enumerate().map(|(i, lead)| {
         let style = if i == app.selected {
-            Style::new().fg(theme.bg).bg(theme.accent)
-        } else {
             Style::new()
+                .fg(theme.bg)
+                .bg(theme.accent)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::new().fg(theme.fg)
         };
         Row::new(vec![
             lead.day.clone(),
             clock(lead.at),
             lead.kind.clone(),
             lead.entry.clone(),
-            lead.visitor.chars().take(6).collect(),
         ])
         .style(style)
     });
@@ -209,38 +385,84 @@ fn draw_funnel(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, the
         Table::new(
             lead_rows,
             [
-                Constraint::Length(11),
-                Constraint::Length(9),
-                Constraint::Length(6),
-                Constraint::Length(16),
-                Constraint::Length(7),
+                Constraint::Length(10),
+                Constraint::Length(8),
+                Constraint::Length(5),
+                Constraint::Min(10),
             ],
         )
-        .block(titled("Leads (Enter abre)", theme)),
+        .header(header_row(
+            ["dia", "hora", "tipo", "canal"].map(str::to_owned).to_vec(),
+            theme,
+        ))
+        .column_spacing(2)
+        .block(panel("Leads · ↑ ↓ e Enter", theme)),
         leads,
     );
 }
 
+/// The largest counters of a group, each with a bar scaled to the largest.
 fn ranking(frame: &mut Frame, area: Rect, title: &str, rows: Vec<(String, i64)>, theme: &Theme) {
-    let rows = rows
-        .into_iter()
-        .map(|(key, count)| Row::new(vec![key, count.to_string()]));
+    if rows.is_empty() {
+        frame.render_widget(
+            Paragraph::new("nada no período")
+                .style(Style::new().fg(theme.muted))
+                .block(panel(title, theme)),
+            area,
+        );
+        return;
+    }
+    let max = rows
+        .iter()
+        .map(|(_, count)| *count)
+        .max()
+        .unwrap_or(1)
+        .max(1);
+    let rows = rows.into_iter().map(|(key, count)| {
+        let filled = ((count as usize * BAR).div_ceil(max as usize)).max(1);
+        let bar = Line::from(vec![
+            Span::styled("█".repeat(filled), Style::new().fg(theme.accent)),
+            Span::styled("█".repeat(BAR - filled), Style::new().fg(theme.surface)),
+        ]);
+        Row::new(vec![Line::from(key), bar, Line::from(count.to_string())])
+    });
     frame.render_widget(
-        Table::new(rows, [Constraint::Min(20), Constraint::Length(8)]).block(titled(title, theme)),
+        Table::new(
+            rows,
+            [
+                Constraint::Min(14),
+                Constraint::Length(BAR as u16),
+                Constraint::Length(6),
+            ],
+        )
+        .column_spacing(2)
+        .block(panel(title, theme)),
         area,
     );
 }
 
 fn draw_traffic(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
     let totals = app.totals(now);
-    let [top, bottom] =
-        Layout::vertical([Constraint::Percentage(50), Constraint::Percentage(50)]).areas(area);
+    let [top, bottom] = Layout::vertical([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .spacing(1)
+        .areas(area);
     let [pages, channels] =
-        Layout::horizontal([Constraint::Percentage(60), Constraint::Percentage(40)]).areas(top);
+        Layout::horizontal([Constraint::Percentage(60), Constraint::Percentage(40)])
+            .spacing(2)
+            .areas(top);
     let [countries, outbound] =
-        Layout::horizontal([Constraint::Percentage(40), Constraint::Percentage(60)]).areas(bottom);
-    let limit = (top.height.saturating_sub(2)) as usize;
-    ranking(frame, pages, "Páginas", totals.top("pages", limit), theme);
+        Layout::horizontal([Constraint::Percentage(40), Constraint::Percentage(60)])
+            .spacing(2)
+            .areas(bottom);
+    let limit = top.height.saturating_sub(3) as usize;
+    let period = app.period.label();
+    ranking(
+        frame,
+        pages,
+        &format!("Páginas · {period}"),
+        totals.top("pages", limit),
+        theme,
+    );
     ranking(
         frame,
         channels,
@@ -266,26 +488,43 @@ fn draw_traffic(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, th
 
 fn draw_mcp(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
     let totals = app.totals(now);
-    let [header, lists] = Layout::vertical([Constraint::Length(3), Constraint::Min(0)]).areas(area);
-    frame.render_widget(
-        Paragraph::new(format!(
-            "chamadas de tool (conversões MCP): {}",
-            totals.get("conversions", "mcp")
-        ))
-        .block(titled(&format!("MCP · {}", app.period.label()), theme)),
-        header,
-    );
-    let [tools, clients, methods] = Layout::horizontal([
-        Constraint::Ratio(1, 3),
-        Constraint::Ratio(1, 3),
-        Constraint::Ratio(1, 3),
+    let [cards, _, lists] = Layout::vertical([
+        Constraint::Length(7),
+        Constraint::Length(1),
+        Constraint::Min(0),
     ])
-    .areas(lists);
-    let limit = lists.height.saturating_sub(2) as usize;
+    .areas(area);
+
+    let calls = totals.get("conversions", "mcp");
+    let messages: i64 = totals
+        .top("mcp.methods", usize::MAX)
+        .iter()
+        .map(|(_, n)| n)
+        .sum();
+    let clients = totals.top("mcp.clients", usize::MAX).len() as i64;
+    let [a, b, c] = Layout::horizontal([Constraint::Ratio(1, 3); 3])
+        .spacing(1)
+        .areas(cards);
+    card(
+        frame,
+        a,
+        &format!("Chamadas de tool · {}", app.period.label()),
+        calls,
+        calls > 0,
+        None,
+        theme,
+    );
+    card(frame, b, "Mensagens MCP", messages, false, None, theme);
+    card(frame, c, "Clientes distintos", clients, false, None, theme);
+
+    let [tools, clients_area, methods] = Layout::horizontal([Constraint::Ratio(1, 3); 3])
+        .spacing(2)
+        .areas(lists);
+    let limit = lists.height.saturating_sub(3) as usize;
     ranking(frame, tools, "Tools", totals.top("mcp.tools", limit), theme);
     ranking(
         frame,
-        clients,
+        clients_area,
         "Clientes",
         totals.top("mcp.clients", limit),
         theme,
@@ -299,7 +538,7 @@ fn draw_mcp(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme:
     );
 }
 
-fn draw_detail(frame: &mut Frame, detail: &crate::lead::LeadDetail, theme: &Theme) {
+fn draw_detail(frame: &mut Frame, detail: &LeadDetail, theme: &Theme) {
     let area = frame.area();
     let popup = Rect::new(
         area.width / 8,
@@ -308,38 +547,51 @@ fn draw_detail(frame: &mut Frame, detail: &crate::lead::LeadDetail, theme: &Them
         area.height * 3 / 4,
     );
     let dash = |value: &Option<String>| value.clone().unwrap_or_else(|| "—".to_owned());
+    let label = |text: &str| Span::styled(format!("{text:<10}"), Style::new().fg(theme.muted));
 
-    let mut lines = vec![
-        Line::from(format!(
-            "tipo: {} · chegou por: {}",
-            detail.kind, detail.entry
-        )),
-        Line::from(if detail.found {
-            String::new()
-        } else {
-            "registro não encontrado (expirou ou foi apagado)".to_owned()
-        }),
-        Line::from(format!("nome: {}", dash(&detail.name))),
-        Line::from(format!("contato: {}", dash(&detail.contact))),
-    ];
+    let mut lines = vec![Line::from(vec![
+        label("tipo"),
+        Span::raw(format!("{} · chegou por {}", detail.kind, detail.entry)),
+    ])];
+    if !detail.found {
+        lines.push(
+            Line::from("registro não encontrado (expirou ou foi apagado)")
+                .style(Style::new().fg(theme.accent)),
+        );
+    }
+    lines.push(Line::from(vec![
+        label("nome"),
+        Span::styled(
+            dash(&detail.name),
+            Style::new().add_modifier(Modifier::BOLD),
+        ),
+    ]));
+    lines.push(Line::from(vec![
+        label("contato"),
+        Span::raw(dash(&detail.contact)),
+    ]));
     if detail.kind == "hire" {
-        lines.push(Line::from(format!(
-            "empresa: {} · orçamento: {}",
-            dash(&detail.company),
-            dash(&detail.budget)
-        )));
-        lines.push(Line::from(format!("briefing: {}", dash(&detail.brief))));
+        lines.push(Line::from(vec![
+            label("empresa"),
+            Span::raw(dash(&detail.company)),
+        ]));
+        lines.push(Line::from(vec![
+            label("orçamento"),
+            Span::raw(dash(&detail.budget)),
+        ]));
+        lines.push(Line::from(""));
+        lines.push(Line::from(dash(&detail.brief)));
     }
     lines.push(Line::from(""));
-    lines.push(Line::from("percurso do dia:"));
+    lines.push(Line::from("percurso do dia").style(Style::new().fg(theme.muted)));
     if detail.pages.is_empty() {
-        lines.push(Line::from("  nenhuma página registrada"));
+        lines.push(Line::from("nenhuma página registrada"));
     }
     lines.extend(
         detail
             .pages
             .iter()
-            .map(|(time, path)| Line::from(format!("  {time}  {path}"))),
+            .map(|(time, path)| Line::from(format!("{time}  {path}"))),
     );
 
     frame.render_widget(Clear, popup);
@@ -347,7 +599,11 @@ fn draw_detail(frame: &mut Frame, detail: &crate::lead::LeadDetail, theme: &Them
         Paragraph::new(lines)
             .wrap(Wrap { trim: false })
             .style(Style::new().fg(theme.fg).bg(theme.bg))
-            .block(titled("Lead (Esc fecha)", theme).border_style(Style::new().fg(theme.accent))),
+            .block(
+                panel("Lead · Esc fecha", theme)
+                    .border_style(Style::new().fg(theme.accent))
+                    .padding(Padding::new(3, 3, 1, 1)),
+            ),
         popup,
     );
 }
@@ -417,8 +673,14 @@ mod tests {
         assert!(text.contains("/lab/forja"));
         assert!(text.contains("abcdef"));
         assert!(!text.contains("abcdef1"));
-        assert!(text.contains("pessoas 7"));
-        assert!(text.contains("agentes 2"));
+        // The headline numbers are cards with big digits, not inline text.
+        for label in HEADLINE {
+            assert!(text.contains(label), "card {label} missing");
+        }
+        assert!(text.contains("Agentes"));
+        for row in crate::bignum::big_number(7) {
+            assert!(text.contains(&row), "big 7 row {row:?} missing");
+        }
     }
 
     #[test]
@@ -464,5 +726,67 @@ mod tests {
         let text = screen(&app);
         assert!(text.contains("Ada"));
         assert!(text.contains("Preciso de um MCP"));
+    }
+
+    #[test]
+    fn makes_the_fast_mode_stand_out_with_its_countdown() {
+        let start = std::time::Instant::now();
+        let mut app = App::default();
+        app.on_key(
+            crossterm::event::KeyEvent::new(
+                crossterm::event::KeyCode::Char('r'),
+                crossterm::event::KeyModifiers::NONE,
+            ),
+            start,
+            now(),
+        );
+        app.sync(start, start + std::time::Duration::from_secs(5));
+        let text = screen(&app);
+        assert!(text.contains("TEMPO REAL"), "{text}");
+        assert!(text.contains("desliga em 30 min"));
+    }
+
+    #[test]
+    fn says_there_are_no_leads_instead_of_an_empty_list() {
+        let app = App {
+            tab: Tab::Funnel,
+            ..App::default()
+        };
+        assert!(screen(&app).contains("nenhum lead em hoje"));
+    }
+
+    #[test]
+    fn names_the_app_in_the_header() {
+        assert!(screen(&App::default()).contains("nandomoreira.dev"));
+    }
+
+    #[test]
+    fn shows_each_stage_as_a_card_with_its_pass_rate() {
+        let mut app = app();
+        app.tab = Tab::Funnel;
+        assert!(screen(&app).contains("100% da anterior"));
+    }
+
+    #[test]
+    fn draws_a_bar_beside_each_ranked_counter() {
+        let mut app = app();
+        app.tab = Tab::Traffic;
+        assert!(screen(&app).contains("████"));
+    }
+
+    #[test]
+    fn shows_the_countdown_to_the_next_refresh_in_the_top_right_corner() {
+        let start = std::time::Instant::now();
+        let mut app = App::default();
+        app.sync(start, start + std::time::Duration::from_secs(30));
+        let text = screen(&app);
+        let first_line = text.lines().nth(1).unwrap_or_default();
+        assert!(
+            first_line.trim_end().ends_with("Atualização em: 30s"),
+            "{first_line:?}"
+        );
+
+        app.sync(start, start + std::time::Duration::from_secs(5));
+        assert!(screen(&app).contains("Atualização em: 5s"));
     }
 }

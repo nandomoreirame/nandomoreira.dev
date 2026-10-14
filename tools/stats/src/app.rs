@@ -36,6 +36,9 @@ pub enum Action {
     OpenLead(Lead),
 }
 
+/// Shown when ↑, ↓ or Enter are pressed outside the funnel, where they do nothing.
+pub const ELSEWHERE_HINT: &str = "↑ ↓ e Enter escolhem um lead na aba 2 Funil";
+
 /// What one terminal event means to the loop.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Input {
@@ -122,9 +125,39 @@ pub struct App {
     pub status: Option<String>,
     pub selected: usize,
     pub detail: Option<LeadDetail>,
+    /// Whole minutes the fast mode has left, for the status bar; set by `sync`.
+    pub fast_left_minutes: Option<u64>,
+    /// Whole seconds to the next refresh, for the top-right countdown; set by `sync`.
+    pub refresh_in_secs: u64,
 }
 
 impl App {
+    /// Brings the clock-derived fields up to date before a draw.
+    /// `next_refresh` is the loop's refresh deadline (schedule::Ticker).
+    pub fn sync(&mut self, now: Instant, next_refresh: Instant) {
+        self.fast_left_minutes = self
+            .schedule
+            .remaining(now)
+            .map(|left| left.as_secs().div_ceil(60));
+        self.refresh_in_secs = next_refresh
+            .saturating_duration_since(now)
+            .as_millis()
+            .div_ceil(1000) as u64;
+    }
+
+    /// Distinct people (human visitor codes) seen today. `traffic.human` in
+    /// the daily counter counts page views, not people.
+    pub fn people_today(&self, now: DateTime<Utc>) -> usize {
+        let day = today(now);
+        self.log
+            .events()
+            .iter()
+            .filter(|e| e.class == "human" && e.day == day)
+            .map(|e| e.visitor.as_str())
+            .collect::<HashSet<_>>()
+            .len()
+    }
+
     pub fn funnel(&self, now: DateTime<Utc>) -> Funnel {
         funnel(self.log.events(), &self.period.days(now))
     }
@@ -172,8 +205,17 @@ impl App {
                 Action::None
             }
             KeyCode::Char('r') => {
-                // The status bar already shows the mode (schedule.label()).
                 self.schedule.toggle(now);
+                // The loop reschedules right after this key; show the new interval meanwhile.
+                self.sync(now, now + self.schedule.interval());
+                self.status = Some(
+                    if self.schedule.is_fast() {
+                        "tempo real ligado: atualiza a cada 5 s por até 30 min"
+                    } else {
+                        "tempo real desligado: atualiza a cada 30 s"
+                    }
+                    .to_owned(),
+                );
                 Action::Refresh
             }
             KeyCode::Char(']') => {
@@ -195,12 +237,20 @@ impl App {
                 self.selected = self.selected.saturating_sub(1);
                 Action::None
             }
-            KeyCode::Enter if self.tab == Tab::Funnel => self
-                .funnel(wall)
-                .leads
-                .get(self.selected)
-                .cloned()
-                .map_or(Action::None, Action::OpenLead),
+            KeyCode::Enter if self.tab == Tab::Funnel => {
+                match self.funnel(wall).leads.get(self.selected).cloned() {
+                    Some(lead) => Action::OpenLead(lead),
+                    None => {
+                        self.status =
+                            Some(format!("nenhum lead para abrir em {}", self.period.label()));
+                        Action::None
+                    }
+                }
+            }
+            KeyCode::Up | KeyCode::Down | KeyCode::Enter => {
+                self.status = Some(ELSEWHERE_HINT.to_owned());
+                Action::None
+            }
             _ => Action::None,
         }
     }
@@ -374,7 +424,19 @@ mod tests {
         assert_eq!(app.status, None);
 
         app.on_key(key(KeyCode::Char('r')), Instant::now(), now());
-        assert_eq!(app.status, None);
+        assert!(
+            app.status
+                .as_deref()
+                .unwrap()
+                .starts_with("tempo real ligado")
+        );
+        app.on_key(key(KeyCode::Char('r')), Instant::now(), now());
+        assert!(
+            app.status
+                .as_deref()
+                .unwrap()
+                .starts_with("tempo real desligado")
+        );
     }
 
     #[test]
@@ -388,5 +450,65 @@ mod tests {
             vec!["2026-10-14", "2026-10-15"]
         );
         assert_eq!(days_to_refresh(None, "2026-10-15"), vec!["2026-10-15"]);
+    }
+
+    #[test]
+    fn says_why_enter_does_nothing_without_leads() {
+        let mut app = App {
+            tab: Tab::Funnel,
+            ..App::default()
+        };
+        assert_eq!(
+            app.on_key(key(KeyCode::Enter), Instant::now(), now()),
+            Action::None
+        );
+        assert_eq!(
+            app.status.as_deref(),
+            Some("nenhum lead para abrir em hoje")
+        );
+    }
+
+    #[test]
+    fn points_to_the_funnel_when_arrows_or_enter_are_pressed_elsewhere() {
+        let mut app = App::default();
+        for code in [KeyCode::Down, KeyCode::Up, KeyCode::Enter] {
+            app.on_key(key(code), Instant::now(), now());
+            assert_eq!(app.status.as_deref(), Some(ELSEWHERE_HINT));
+        }
+    }
+
+    #[test]
+    fn counts_down_the_minutes_left_in_the_fast_mode() {
+        let start = Instant::now();
+        let mut app = App::default();
+        app.sync(start, start);
+        assert_eq!(app.fast_left_minutes, None);
+
+        app.on_key(key(KeyCode::Char('r')), start, now());
+        app.sync(start + std::time::Duration::from_secs(61), start);
+        assert_eq!(app.fast_left_minutes, Some(29));
+    }
+
+    #[test]
+    fn counts_the_seconds_to_the_next_refresh_rounding_up() {
+        let start = Instant::now();
+        let mut app = App::default();
+        app.sync(start, start + std::time::Duration::from_millis(29_200));
+        assert_eq!(app.refresh_in_secs, 30);
+        app.sync(start, start + std::time::Duration::from_secs(4));
+        assert_eq!(app.refresh_in_secs, 4);
+        app.sync(start + std::time::Duration::from_secs(9), start);
+        assert_eq!(app.refresh_in_secs, 0);
+    }
+
+    #[test]
+    fn counts_people_today_as_distinct_visitors_not_page_views() {
+        let mut app = App::default();
+        app.log.merge(vec![
+            doc("e/1", "2026-10-14T12:00:00.000Z", None),
+            doc("e/2", "2026-10-14T12:01:00.000Z", None),
+            doc("e/3", "2026-10-14T12:02:00.000Z", None),
+        ]);
+        assert_eq!(app.people_today(now()), 1);
     }
 }

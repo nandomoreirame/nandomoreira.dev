@@ -2,6 +2,7 @@
 
 pub mod app;
 pub mod auth;
+pub mod bignum;
 pub mod client;
 pub mod firestore;
 pub mod funnel;

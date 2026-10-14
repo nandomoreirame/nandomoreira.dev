@@ -53,7 +53,7 @@ pub fn access_token(runner: &impl Runner) -> anyhow::Result<String> {
     }
     if !runner.interactive("gcloud", &LOGIN_ARGS)? {
         bail!(
-            "o login do gcloud falhou ou foi cancelado; rode `{LOGIN_COMMAND}` e abra o nm-stats de novo"
+            "o login do gcloud falhou ou foi cancelado; rode `{LOGIN_COMMAND}` e abra o stats de novo"
         );
     }
     try_token(runner)?.ok_or_else(|| anyhow!("sem token depois do login; rode `{LOGIN_COMMAND}`"))

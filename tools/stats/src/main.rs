@@ -2,26 +2,23 @@ use chrono::Utc;
 use clap::Parser;
 use crossterm::event::EventStream;
 use futures::StreamExt;
-use nm_stats::app::{Action, App, Input, days_to_refresh, input_of};
-use nm_stats::auth::{self, Runner, System};
-use nm_stats::client::{Firestore, Unauthorized};
-use nm_stats::funnel::Lead;
-use nm_stats::lead::{collection_of, lead_detail};
-use nm_stats::period::{Period, load_start, today};
-use nm_stats::schedule::Ticker;
-use nm_stats::theme::{Theme, theme};
-use nm_stats::ui;
 use ratatui::DefaultTerminal;
+use stats::app::{Action, App, Input, days_to_refresh, input_of};
+use stats::auth::{self, Runner, System};
+use stats::client::{Firestore, Unauthorized};
+use stats::funnel::Lead;
+use stats::lead::{collection_of, lead_detail};
+use stats::period::{Period, load_start, today};
+use stats::schedule::Ticker;
+use stats::theme::{Theme, theme};
+use stats::ui;
 use std::time::{Duration, Instant};
 
 /// Gcloud access tokens last an hour; renew well before.
 const TOKEN_TTL: Duration = Duration::from_secs(45 * 60);
 
 #[derive(Parser)]
-#[command(
-    name = "nm-stats",
-    about = "Visitas, funil e leads do nandomoreira.dev"
-)]
+#[command(name = "stats", about = "Visitas, funil e leads do nandomoreira.dev")]
 struct Args {
     /// Projeto do Google Cloud (REQ-018).
     #[arg(long, default_value = "nandomoreira-dev")]
@@ -58,6 +55,8 @@ async fn run(
         status: Some("carregando os últimos 30 dias…".to_owned()),
         ..App::default()
     };
+    let start = Instant::now();
+    app.sync(start, start + app.schedule.interval());
     terminal.draw(|frame| ui::draw(frame, &app, Utc::now(), palette))?;
 
     let mut session = Session {
@@ -69,6 +68,7 @@ async fn run(
     let mut keys = EventStream::new();
     let mut ticker = Ticker::new(Instant::now(), app.schedule.interval());
     loop {
+        app.sync(Instant::now(), ticker.deadline());
         terminal.draw(|frame| ui::draw(frame, &app, Utc::now(), palette))?;
 
         tokio::select! {
@@ -84,6 +84,8 @@ async fn run(
                 refresh(&mut app, client, runner, &mut session, false).await;
                 ticker.reschedule(Instant::now(), app.schedule.interval());
             }
+            // Redraw every second so the countdown in the corner moves.
+            _ = tokio::time::sleep(Duration::from_secs(1)) => {}
             event = keys.next() => match input_of(event) {
                 Input::Closed => return Ok(()),
                 Input::Redraw | Input::Ignore => {}

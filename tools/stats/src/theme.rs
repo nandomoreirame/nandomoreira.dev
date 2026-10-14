@@ -8,6 +8,8 @@ pub struct Theme {
     pub fg: Color,
     pub muted: Color,
     pub accent: Color,
+    /// A step above the background: pills, inactive tabs, bar tracks.
+    pub surface: Color,
 }
 
 /// `colorterm` is the value of $COLORTERM.
@@ -18,12 +20,14 @@ pub fn theme(colorterm: Option<&str>) -> Theme {
             fg: Color::Rgb(0xef, 0xeb, 0xe2),
             muted: Color::Rgb(0xa2, 0x9e, 0x96),
             accent: Color::Rgb(0xf0, 0xc3, 0x6f),
+            surface: Color::Rgb(0x21, 0x1f, 0x1c),
         },
         _ => Theme {
             bg: Color::Reset,
             fg: Color::White,
             muted: Color::DarkGray,
             accent: Color::Yellow,
+            surface: Color::DarkGray,
         },
     }
 }
