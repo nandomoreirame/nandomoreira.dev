@@ -13,3 +13,4 @@ pub mod period;
 pub mod schedule;
 pub mod theme;
 pub mod totals;
+pub mod ui;
