@@ -3,12 +3,12 @@ slug: memoria-para-agentes-em-4-camadas
 title: "Memória para agentes: um backbone em quatro camadas"
 summary: "Como o Claude Code lembra decisões entre sessões sem carregar tudo no contexto: o que é sempre lido, o que só entra quando alguém pergunta, e a migração que só terminou quando um portão deixou."
 date: "2026-10-11"
+publishedAt: "2026-10-11T02:01:30-03:00"
 art: map
 markers:
   - claude code
   - memória
   - agentes
-draft: true
 ---
 
 Em 1º de junho eu salvei duas memórias no meu Claude Code. Uma dizia que a barra do meu Niri é o Noctalia, e não a Waybar. A outra, que o gerenciador de versões da máquina é o mise, e que ele nunca deve procurar nvm, pyenv ou asdf. Parecem bobas, e existem porque o agente, sem elas, presumia o contrário: toda sessão nova começava do zero, e do zero o palpite padrão para um desktop Linux é Waybar e nvm.
