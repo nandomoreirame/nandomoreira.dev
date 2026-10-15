@@ -301,8 +301,9 @@ quebrada.
 |-------|---------|--------|-----|
 | `fast` | 150ms | ease-out | Hover, mudança de cor |
 | `base` | 250ms | ease-out | Entrada de elemento, revelação em scroll |
+| `slow` | 500ms | ease-out | Transição de página, entrada dos blocos da página, sublinhado do menu |
 
-Duas durações apenas. Mais que isso ninguém aplica com consistência.
+Três durações apenas (a `slow` entrou em 2026-10-15, porque 250ms deixava a entrada e o sublinhado rápidos demais). Mais que isso ninguém aplica com consistência.
 
 **Regras:**
 
@@ -312,8 +313,23 @@ Duas durações apenas. Mais que isso ninguém aplica com consistência.
   existe para cobrir. Alvo de 60fps.
 - `prefers-reduced-motion: reduce` remove o movimento e mantém a mudança de estado.
   Não é opcional: é requisito de acessibilidade e o site já se compromete com WCAG AA.
-- Nenhuma animação atrasa a leitura do conteúdo. Texto não entra com fade a partir
-  do invisível.
+- Nenhuma animação atrasa a leitura do conteúdo. A única entrada a partir do
+  invisível é a da página (decisão do autor em 2026-10-15): os elementos sobem
+  1.5rem com fade, de cima para baixo, em cinco níveis. O nível soma a posição do
+  bloco em `<main>` (0, 2, 3, 4; o segundo começa em 2 para que um cabeçalho curto
+  termine antes do bloco de baixo) com a posição do elemento dentro do bloco, até
+  4. Cada nível dura de 0,8 a 1,6 vez o `slow` (400 a 800ms) e começa 100ms depois
+  do anterior, então o topo está legível em 400ms e o último nível termina em
+  1,2s. Os `<script>` dentro de `<main>` não contam posição.
+- **Navegação entre páginas** usa View Transitions entre documentos
+  (`@view-transition { navigation: auto }`), só CSS: a página que sai some subindo,
+  a que entra aparece por fade, e o cabeçalho (`view-transition-name: site-header`)
+  fica parado. Navegador sem suporte navega como antes. Tudo fica sob
+  `prefers-reduced-motion: no-preference`.
+- **Sublinhado do menu principal** (desktop): um traço de 1px em `primary` que entra
+  pela esquerda no hover e no foco e sai pela direita, animado por
+  `transform: scaleX` com `transform-origin` trocado, nunca por `width`. No item da
+  página atual (`aria-current="page"`) o traço fica desenhado.
 
 ---
 

@@ -145,6 +145,8 @@
   /* Motion */
   --duration-fast: 150ms;
   --duration-base: 250ms;
+  /* Page transitions, element entrances and the menu underline (2026-10-15). */
+  --duration-slow: 500ms;
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
 
   /* Layout */
@@ -576,6 +578,121 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* Page transitions (2026-10-15). Cross-document view transitions, CSS only:
+   no router script, so the client JS gate is untouched. A browser without
+   support navigates as before. The header keeps its own name, so it holds
+   still while the page under it changes. */
+[data-site-header] {
+  view-transition-name: site-header;
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Each element of the page rises into place, top to bottom, in tiers. The
+   first tier is legible within 400ms. */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: page-leave var(--duration-slow) var(--ease-out) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-enter var(--duration-slow) var(--ease-out) both;
+  }
+
+  /* Tiers, top to bottom: --block ranks the children of main, --item ranks
+     the elements inside each one (the second block starts at 2, so a short
+     header above it finishes first), and their sum (capped at 4) picks one of
+     five durations, 0.8x to 1.6x the slow token, each 100ms later than the
+     one above. CSS has no global order across parents, so the sum stands in
+     for it. `of :not(script)` keeps a JSON-LD script from taking a rank. */
+  main > :nth-child(2 of :not(script)) {
+    --block: 2;
+  }
+
+  main > :nth-child(3 of :not(script)) {
+    --block: 3;
+  }
+
+  main > :nth-child(n + 4 of :not(script)) {
+    --block: 4;
+  }
+
+  main > * > :nth-child(2 of :not(script)) {
+    --item: 1;
+  }
+
+  main > * > :nth-child(3 of :not(script)) {
+    --item: 2;
+  }
+
+  main > * > :nth-child(4 of :not(script)) {
+    --item: 3;
+  }
+
+  main > * > :nth-child(5 of :not(script)) {
+    --item: 4;
+  }
+
+  /* The elements of each block move; a block with no element children (a
+     lone paragraph of text) moves itself. */
+  main > * > :not(script), main > :not(script):not(:has(> *)) {
+    --tier: min(var(--block, 0) + var(--item, 0), 4);
+    animation: enter-rise calc(var(--duration-slow) * (0.8 + 0.2 * var(--tier))) var(--ease-out) both;
+    animation-delay: calc(var(--tier) * 100ms);
+  }
+}
+
+/* Main menu underline (2026-10-15): grows in from the left on hover and
+   leaves to the right. Scale, not width, so no layout runs per frame. Under
+   reduced motion the global block makes the change instant. */
+.nav-underline {
+  position: relative;
+}
+
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.625rem;
+  height: 1px;
+  background-color: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* The current page keeps its rule drawn, with or without the pointer. */
+.nav-underline[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+.nav-underline:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* Generative case art (docs/specs/generative-case-art). Colours only through

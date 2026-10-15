@@ -40,6 +40,7 @@ const RADIUS_TOKENS = {
 const MOTION_TOKENS = {
   '--duration-fast': '150ms',
   '--duration-base': '250ms',
+  '--duration-slow': '500ms',
 };
 
 describe('design tokens', () => {
@@ -59,9 +60,9 @@ describe('design tokens', () => {
     expect(css).toContain(`${token}: ${value}`);
   });
 
-  it('declares only two motion durations, per DESIGN-GUIDELINES', () => {
+  it('declares only three motion durations, per DESIGN-GUIDELINES', () => {
     const durations = css.match(/--duration-[a-z]+:/g) ?? [];
-    expect(durations).toHaveLength(2);
+    expect(durations).toHaveLength(3);
   });
 
   it('ships a single dark theme, with no light-mode override', () => {

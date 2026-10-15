@@ -92,6 +92,18 @@ describe('SiteNav label alignment', () => {
   });
 });
 
+describe('SiteNav underline', () => {
+  it('gives every desktop link the animated underline, and none of the mobile ones', async () => {
+    const html = await render({ hasPosts: true });
+    const desktop = html.slice(0, html.indexOf('id="site-menu"'));
+    const mobile = html.slice(html.indexOf('id="site-menu"'));
+    const desktopLinks = desktop.match(/<a\b[^>]*>/g) ?? [];
+    expect(desktopLinks.length).toBeGreaterThan(0);
+    for (const link of desktopLinks) expect(link).toMatch(/class="[^"]*\bnav-underline\b/);
+    expect(mobile).not.toContain('nav-underline');
+  });
+});
+
 describe('SiteNav item boxes', () => {
   it('makes each item a flex box, so the inline link adds no descender gap below it', async () => {
     const items = (await render({ hasPosts: true })).match(/<li[^>]*>/g) ?? [];
