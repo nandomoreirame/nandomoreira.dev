@@ -17,6 +17,7 @@ import {
   timer,
   usage,
   gists,
+  chat,
   wave,
   windows,
   wireframe,
@@ -56,6 +57,7 @@ export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
   calendar,
   usage,
   gists,
+  chat,
 };
 
 /** Fallback when a case declares no `art`: one motif per block. */

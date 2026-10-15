@@ -24,6 +24,7 @@ export const ART_MOTIFS = [
   'calendar',
   'usage',
   'gists',
+  'chat',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];

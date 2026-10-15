@@ -613,3 +613,55 @@ export const gists: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** Chat channel fed by a webhook: a server rail, the channel header and embeds with a coloured stripe, the best one lit. */
+export const chat: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const rail = width * 0.05;
+  const left = width * 0.14;
+  const right = width * 0.92;
+
+  // Server icons down the left rail, the current one brighter.
+  const servers = intBetween(random, 4, 6);
+  for (let server = 0; server < servers; server += 1) {
+    shapes.push({ kind: 'dot', x: rail, y: height * 0.1 + server * 9, r: 2.6, layer: 1, weight: server === 0 ? 0.25 : 0.03 });
+  }
+
+  // Channel header: the hash, the name, and the rule under it.
+  shapes.push({ kind: 'bar', x: left, y: height * 0.06, w: 2.4, h: 2.4, layer: 1, weight: 0.05 });
+  shapes.push({ kind: 'bar', x: left + 5, y: height * 0.06, w: (right - left) * between(random, 0.18, 0.26), h: 2.4, layer: 2, weight: 0.3 });
+  shapes.push({ kind: 'line', x1: left - 2, y1: height * 0.15, x2: width * 0.98, y2: height * 0.15, layer: 0, weight: 0 });
+
+  const embeds = intBetween(random, 2, 3);
+  const top = height * 0.2;
+  const rowH = (height * 0.77) / embeds;
+  const best = intBetween(random, 0, embeds - 1);
+  const embedLeft = left + 8;
+
+  for (let embed = 0; embed < embeds; embed += 1) {
+    const y = top + embed * rowH;
+    const lit = embed === best;
+
+    // Bot avatar, its name and the timestamp.
+    shapes.push({ kind: 'ring', x: left + 2.5, y: y + 2.5, r: 2.5, layer: 1, weight: lit ? 0.4 : 0.04 });
+    shapes.push({ kind: 'bar', x: embedLeft, y: y + 1, w: (right - left) * 0.14, h: 1.8, layer: 1, weight: 0.06 });
+    shapes.push({ kind: 'bar', x: embedLeft + (right - left) * 0.17, y: y + 1.3, w: (right - left) * 0.1, h: 1.2, layer: 0, weight: 0.02 });
+
+    // The embed: stripe, title, description lines and the fields.
+    const cardTop = y + 5;
+    const cardBottom = y + rowH - 2;
+    shapes.push({ kind: 'line', x1: embedLeft, y1: cardTop, x2: embedLeft, y2: cardBottom, layer: 2, weight: lit ? 0.7 : 0.08 });
+    shapes.push({ kind: 'bar', x: embedLeft + 3, y: cardTop + 1, w: (right - embedLeft - 3) * between(random, 0.55, 0.85), h: 2, layer: 2, weight: lit ? 1 : 0.1 + random() * 0.1 });
+    const lines = Math.max(2, Math.min(5, Math.floor((cardBottom - cardTop - 8) / 3.2)));
+    for (let line = 0; line < lines; line += 1) {
+      const w = (right - embedLeft - 3) * (line === lines - 1 ? between(random, 0.3, 0.6) : between(random, 0.8, 0.98));
+      shapes.push({ kind: 'bar', x: embedLeft + 3, y: cardTop + 5 + line * 3.2, w, h: 1.2, layer: 0, weight: 0.02 });
+    }
+  }
+
+  const dust = intBetween(random, 8, 14);
+  for (let i = 0; i < dust; i += 1) {
+    shapes.push({ kind: 'dot', x: random() * width, y: random() * height, r: 0.4, layer: 0, weight: 0 });
+  }
+  return shapes;
+};
