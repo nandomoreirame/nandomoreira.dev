@@ -1,14 +1,14 @@
 ---
 slug: job-radar-radar-de-vagas-em-python-puro
-title: "job-radar: um radar de vagas em Python puro que só me mostra o que passou nos meus cortes"
+title: "job-radar: parei de rolar lista de vaga e deixei o Python descartar por mim"
 summary: "Sete fontes de vagas, filtros que descartam antes da nota, o currículo como lista de qualificações e um canal do Discord que recebe só o que sobrou. Sem nenhuma dependência para rodar, e com o código aberto."
-date: "2026-10-11"
+date: "2026-10-15"
+publishedAt: "2026-10-15T12:51:08-03:00"
 markers:
   - python
   - automação
   - open source
-art: storefront
-draft: true
+art: chat
 ---
 
 Algumas vezes por dia, um canal do Discord recebe as vagas que sobreviveram aos meus cortes. Quem varre os sites é o [job-radar](https://github.com/nandomoreirame/job-radar): ele lê sete fontes, joga fora o que eu não me candidataria, dá nota de 0 a 100 para o resto e publica as melhores. Roda em Python 3.12 só com a biblioteca padrão, e em 8 de outubro o repositório ganhou licença MIT.
@@ -58,6 +58,8 @@ Na Gupy, a API antiga, `employability-portal.gupy.io/api/v1/jobs`, passou a resp
 Havia também um problema mais silencioso: cada conector engolia erro de rede e devolvia uma lista vazia, e o aviso de "nada encontrado" não tinha como saber se a fonte estava fora ou se simplesmente não havia vaga. Ganhou um `health.py` que conta, por fonte, requisições, erros, vagas degradadas (empresa vazia, HTML no título, URL inválida) e respostas que vieram com status 200 mas sem o payload esperado, que é o sinal de que o contrato mudou. Quando a varredura não acha nada, o canal recebe o funil da rodada. **Silêncio passou a significar "não rodou", nunca "rodou e não achou"**, que são problemas diferentes e indistinguíveis sem isso.
 
 No Discord foram dois. O Cloudflare na frente do webhook responde 403 ao User-Agent padrão do urllib (`Python-urllib/3.x`), então um User-Agent identificável é obrigatório. E sem `wait=true` na URL o Discord responde vazio, a mensagem fica órfã e o webhook não consegue apagá-la depois, porque só apaga o que postou se tiver guardado o ID.
+
+![O canal job-radar no Discord com uma mensagem do webhook: o card de uma vaga de engenharia de IA sênior, com a descrição, a modalidade remota, o motivo do encaixe (15 qualificações casadas, entre elas agentes de IA, BigQuery e GCP), o link para se candidatar e o rodapé com a fonte e a compatibilidade de 100/100, e abaixo o começo do card da vaga seguinte](../../assets/posts/2026/job-radar-discord.webp)
 
 ## Fixture gravada, nunca imaginada
 
