@@ -685,8 +685,9 @@
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
-/* The current page keeps its rule drawn, with or without the pointer. */
-.nav-underline[aria-current='page']::after {
+/* The current page, or the section a case or post belongs to, keeps its rule
+   drawn, with or without the pointer. */
+.nav-underline[aria-current]::after {
   transform: scaleX(1);
 }
 

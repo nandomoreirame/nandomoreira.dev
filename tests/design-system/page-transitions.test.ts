@@ -92,8 +92,9 @@ describe('main menu underline', () => {
     expect(after).not.toMatch(/transition:[^;]*width/);
   });
 
-  it('stays drawn under the link of the current page', () => {
-    expect(rule(".nav-underline[aria-current='page']::after")).toMatch(/transform:\s*scaleX\(1\)/);
+  it('stays drawn under the link of the current page or section', () => {
+    // The page itself ("page") and a section the visitor is inside ("true").
+    expect(rule('.nav-underline[aria-current]::after')).toMatch(/transform:\s*scaleX\(1\)/);
   });
 
   it('grows in from the left on hover and focus, and leaves to the right', () => {

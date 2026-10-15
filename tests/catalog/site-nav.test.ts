@@ -92,6 +92,41 @@ describe('SiteNav label alignment', () => {
   });
 });
 
+describe('SiteNav section items', () => {
+  const linkTo = (html: string, href: string) => html.match(new RegExp(`<a\\b[^>]*href="${href}"[^>]*>`))?.[0] ?? '';
+
+  it('marks Lab and Portfólio as the current location on their case pages', async () => {
+    expect(linkTo(await render({ current: '/lab/job-radar' }), '/lab')).toContain('aria-current="true"');
+    expect(linkTo(await render({ current: '/portfolio/play-manager' }), '/portfolio')).toContain('aria-current="true"');
+  });
+
+  it('marks Blog as the current location on a post, which lives at the root', async () => {
+    expect(linkTo(await render({ hasPosts: true, current: '/o-falso-verde', section: '/posts' }), '/posts')).toContain('aria-current="true"');
+  });
+
+  it('paints a section item like the current page', async () => {
+    expect(linkTo(await render({ current: '/lab/job-radar' }), '/lab')).toContain('aria-[current=true]:text-primary');
+  });
+});
+
+describe('BaseLayout section', () => {
+  it('hands the section a page declares down to the main menu', async () => {
+    const { experimental_AstroContainer: AstroContainer } = await import('astro/container');
+    const { default: BaseLayout } = await import('../../src/layouts/BaseLayout.astro');
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(BaseLayout, {
+      props: { title: 'Post', description: 'Um post', section: '/posts' },
+      slots: { default: '<p>x</p>' },
+    });
+    expect(html).toMatch(/<a\b[^>]*href="\/posts"[^>]*aria-current="true"/);
+  });
+
+  it('is declared by the post page', async () => {
+    const { readFileSync } = await import('node:fs');
+    expect(readFileSync('src/pages/[slug].astro', 'utf8')).toMatch(/<BaseLayout\b[^>]*section="\/posts"/);
+  });
+});
+
 describe('SiteNav underline', () => {
   it('gives every desktop link the animated underline, and none of the mobile ones', async () => {
     const html = await render({ hasPosts: true });

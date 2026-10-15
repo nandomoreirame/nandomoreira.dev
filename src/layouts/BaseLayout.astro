@@ -31,6 +31,8 @@ interface Props {
   pageType?: PageType;
   /** Root-relative paths a CollectionPage lists, in order. */
   pageItems?: string[];
+  /** Main-menu item this page belongs to when its path does not say so (a post lives at the root). */
+  section?: string;
 }
 
 const {
@@ -42,6 +44,7 @@ const {
   canonicalPath,
   pageType,
   pageItems,
+  section,
 } = Astro.props;
 const current = Astro.url?.pathname ? pagePath(Astro.url.pathname) : undefined;
 // Container tests may omit Astro.site; production always has config.site.
@@ -148,6 +151,7 @@ const switcherView = view ?? 'human';
           name={profile.wordmark ?? profile.name}
           accent="moreira"
           current={current}
+          section={section}
           hasPosts={hasPosts}
         />
       )

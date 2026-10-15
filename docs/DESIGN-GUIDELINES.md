@@ -329,7 +329,9 @@ Três durações apenas (a `slow` entrou em 2026-10-15, porque 250ms deixava a e
 - **Sublinhado do menu principal** (desktop): um traço de 1px em `primary` que entra
   pela esquerda no hover e no foco e sai pela direita, animado por
   `transform: scaleX` com `transform-origin` trocado, nunca por `width`. No item da
-  página atual (`aria-current="page"`) o traço fica desenhado.
+  página atual (`aria-current="page"`) e no da seção em que o visitante está
+  (`aria-current="true"`: Blog num post, Lab e Portfólio nos seus cases) o traço
+  fica desenhado. O post declara a seção (`section="/posts"`), porque mora na raiz.
 
 ---
 

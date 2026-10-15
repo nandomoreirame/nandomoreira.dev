@@ -8,10 +8,11 @@ interface Props {
   /** Part of the brand painted in the primary colour. */
   accent?: string;
   current?: string;
+  section?: string;
   hasPosts?: boolean;
 }
 
-const { name, accent, current, hasPosts = false } = Astro.props;
+const { name, accent, current, section, hasPosts = false } = Astro.props;
 const brand = splitWordmark(name, accent);
 
 const wordmarkClass =
@@ -36,7 +37,7 @@ const wordmarkClass =
       <span>{brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}</span>
     </a>
 
-    <SiteNav current={current} hasPosts={hasPosts}>
+    <SiteNav current={current} section={section} hasPosts={hasPosts}>
       <a href="/" slot="wordmark" class={wordmarkClass}>
         <BrandMark />
         <span>{brand.before}{brand.accent && <span class="text-primary">{brand.accent}</span>}{brand.after}</span>

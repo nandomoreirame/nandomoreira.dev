@@ -49,7 +49,7 @@ const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.a
 const authorName = displayNameOf(await getProfile());
 ---
 
-<BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary}>
+<BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary} section="/posts">
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
   <nav class="mt-lg" aria-label="Trilha de navegação">

@@ -1,12 +1,15 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { navCurrent } from '../../lib/layout/nav-current';
 
 interface Props {
   current?: string;
+  /** Menu item a page belongs to when its path does not say so (a post). */
+  section?: string;
   hasPosts?: boolean;
 }
 
-const { current, hasPosts = false } = Astro.props;
+const { current, section, hasPosts = false } = Astro.props;
 
 const items = [
   ...(hasPosts ? [{ href: '/posts', label: 'Blog' }] : []),
@@ -41,8 +44,8 @@ const iconButton =
         <li class="flex">
           <a
             href={item.href}
-            aria-current={current === item.href ? 'page' : undefined}
-            class={`nav-underline inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground ${linkFocus} aria-[current=page]:text-primary`}
+            aria-current={navCurrent(item.href, { current, section })}
+            class={`nav-underline inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground ${linkFocus} aria-[current=page]:text-primary aria-[current=true]:text-primary`}
           >
             <span class="text-trim-cap">{item.label}</span>
           </a>
@@ -74,8 +77,8 @@ const iconButton =
           <li class="flex flex-1 border-b border-border first:border-t">
             <a
               href={item.href}
-              aria-current={current === item.href ? 'page' : undefined}
-              class={`flex min-h-16 w-full items-center justify-center font-serif text-h1 text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary ${linkFocus} aria-[current=page]:text-primary`}
+              aria-current={navCurrent(item.href, { current, section })}
+              class={`flex min-h-16 w-full items-center justify-center font-serif text-h1 text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary ${linkFocus} aria-[current=page]:text-primary aria-[current=true]:text-primary`}
             >
               <span class="text-trim-cap">{item.label}</span>
             </a>
