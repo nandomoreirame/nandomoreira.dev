@@ -9,9 +9,9 @@ interface Props {
 const { current, hasPosts = false } = Astro.props;
 
 const items = [
+  ...(hasPosts ? [{ href: '/posts', label: 'Blog' }] : []),
   { href: '/portfolio', label: 'Portfólio' },
   { href: '/lab', label: 'Lab' },
-  ...(hasPosts ? [{ href: '/posts', label: 'Blog' }] : []),
   { href: '/setup', label: 'Setup' },
   { href: '/now', label: 'Agora' },
   { href: '/sobre', label: 'Sobre' },

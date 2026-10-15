@@ -36,6 +36,9 @@ describe('SiteNav', () => {
     expect(withPosts).not.toContain('>Posts<');
     expect(withPosts).toContain('href="/posts"');
 
+    // Blog leads the menu, ahead of Portfólio.
+    expect(withPosts.indexOf('href="/posts"')).toBeLessThan(withPosts.indexOf('href="/portfolio"'));
+
     const without = await render({ hasPosts: false });
     expect(without).not.toContain('href="/posts"');
     expect(without).not.toContain('>Blog<');
@@ -159,7 +162,7 @@ describe('SiteNav mobile hamburger menu', () => {
       )?.[1] ?? '';
     const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
 
-    expect(hrefs).toEqual(['/portfolio', '/lab', '/posts', '/setup', '/now', '/sobre', '/mcp', '/contato']);
+    expect(hrefs).toEqual(['/posts', '/portfolio', '/lab', '/setup', '/now', '/sobre', '/mcp', '/contato']);
   });
 
   it('still ships with no client script', async () => {
