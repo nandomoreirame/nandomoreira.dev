@@ -67,17 +67,21 @@ Frontmatter: `draft: true` always, no `publishedAt`. Pick an `art` motif from `s
 2. `curl -s -o /dev/null -w '%{http_code}' http://localhost:4321/<slug>` must answer 200, and the page must show the "Rascunho" badge.
 3. Stop the dev server, run `npx vitest run tests/content tests/posts` (the test store is written on shutdown), then start `npm run dev` again and leave it running.
 
+## 4.5 Write the LinkedIn post
+
+The `blog-post-writer` skill ends by invoking the `linkedin-post-writer` skill; do it here if it was not done already. Run it in its draft mode (its section 1, item 2): write the LinkedIn post that shares this draft, with the link the post will have, and save it to `~/dev/career/linkedin/<YYYY-MM-DD>-<slug>.md` with the link marked as pending. Do not curl the public URL (the draft answers 404 and the Firebase Hosting CDN would cache it) and do not touch the clipboard: he is not there.
+
 ## 5. Hard limits
 
 - Never publish: `draft: true` stays.
 - Never run git write commands (commit, push, add, branch, stash).
 - Never run `scripts/deploy-staging.sh`: he deploys the homelab staging himself.
-- Never edit files other than the new post. Do not touch `docs/ideas/posts.md`; propose the status change in the report instead.
+- Never edit files other than the new post and its LinkedIn file in `~/dev/career/linkedin/`. Do not touch `docs/ideas/posts.md`; propose the status change in the report instead.
 - Confidentiality rules of `post-ideas.md` section 3 apply to the post text too: no client names or data, no link to the private `~/.claude` repository, no machine paths, Liquid AI in the past tense and no framing around his exit.
 
 ## 6. Report
 
-Lead with the file path and the chosen title. Then:
+Lead with the file path and the chosen title, and the path of the LinkedIn post file. Then:
 
 - the choice: the category count of the current posts, how many ideas were eligible, and a table with each eligible idea (title, category, score with the per-criterion breakdown), the chosen one first;
 - the sources behind each main claim (`path:line` or `repo@hash`);
