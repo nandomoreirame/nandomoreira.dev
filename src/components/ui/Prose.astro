@@ -7,14 +7,15 @@ interface Props {
 const { wide = false } = Astro.props;
 const measure = wide ? 'max-w-none' : 'max-w-[68ch]';
 
-// Rendered markdown (posts, cases, the AI view) gets its rhythm here: wide gaps
-// between paragraphs, a section-opening h2 well apart from the text above and
-// close to its own first paragraph (after rubenmarcus.dev, 2026-10-10).
+// Body reads in Alegreya Sans at 18px since 2026-10-15; headings stay in Literata.
+// Wide gaps between paragraphs, a section-opening h2 well apart from the text
+// above and close to its own first paragraph (after rubenmarcus.dev, 2026-10-10).
 const flow = [
-  '[&_p]:mt-lg',
+  '[&_p]:mt-paragraph',
   '[&_a]:text-primary [&_a]:underline',
-  '[&_strong]:font-semibold',
-  '[&_h2]:mt-2xl [&_h2]:text-h2 sm:[&_h2]:text-h1 [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:text-balance',
+  '[&_strong]:font-bold',
+  '[&_:is(h2,h3)]:font-serif',
+  '[&_h2]:mt-2xl [&_h2]:text-h2 [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:text-balance',
   '[&_h3]:mt-xl [&_h3]:text-h3 [&_h3]:font-semibold [&_h3]:leading-snug',
   '[&_:is(h2,h3)+:is(p,ul,ol,pre,blockquote,.code-block)]:mt-sm',
   // The reset strips list styling; without it a list reads as loose lines.
@@ -24,7 +25,7 @@ const flow = [
   '[&_table]:mt-lg [&_table]:block [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-small',
   '[&_table]:rounded-md [&_table]:border [&_table]:border-border-strong [&_table]:bg-surface',
   '[&_:is(th,td)]:px-md [&_:is(th,td)]:py-xs [&_:is(th,td)]:align-top',
-  '[&_th]:text-left [&_th]:font-semibold [&_th]:bg-surface-elevated [&_th]:border-b [&_th]:border-border-strong',
+  '[&_th]:text-left [&_th]:font-bold [&_th]:bg-surface-elevated [&_th]:border-b [&_th]:border-border-strong',
   '[&_td]:border-b [&_td]:border-border [&_tr:last-child>td]:border-b-0',
 ];
 
@@ -32,12 +33,12 @@ const flow = [
 // code-contrast.test.ts); this only frames and spaces them.
 const code = [
   '[&_.code-block]:my-lg [&_pre]:my-0 [&_pre]:rounded-md [&_pre]:border [&_pre]:border-border-strong [&_pre]:p-md [&_pre]:pl-sm [&_pre]:font-mono [&_pre]:text-small [&_pre]:leading-normal',
-  '[&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:border [&_:not(pre)>code]:border-border-strong [&_:not(pre)>code]:bg-surface-elevated [&_:not(pre)>code]:px-xs [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-small',
+  '[&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:border [&_:not(pre)>code]:border-border-strong [&_:not(pre)>code]:bg-surface-elevated [&_:not(pre)>code]:px-xs [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-code-inline',
 ];
 ---
 
 <div
-  class={`${measure} font-serif text-body leading-relaxed text-foreground ${flow.join(' ')} ${code.join(' ')}`}
+  class={`${measure} font-sans text-prose text-foreground ${flow.join(' ')} ${code.join(' ')}`}
 >
   <slot />
 </div>

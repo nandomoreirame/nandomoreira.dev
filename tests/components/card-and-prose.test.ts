@@ -54,14 +54,30 @@ describe('Prose rhythm and headings', () => {
   };
 
   it('separates paragraphs with more room than a line break', async () => {
-    expect(await classes()).toContain('[&_p]:mt-lg');
+    expect(await classes()).toContain('[&_p]:mt-paragraph');
   });
 
   it('opens each section with a large semibold h2, far from what came before', async () => {
     const list = await classes();
-    for (const name of ['[&_h2]:mt-2xl', '[&_h2]:text-h2', 'sm:[&_h2]:text-h1', '[&_h2]:font-semibold', '[&_h2]:leading-tight', '[&_h2]:text-balance']) {
+    for (const name of ['[&_h2]:mt-2xl', '[&_h2]:text-h2', '[&_h2]:font-semibold', '[&_h2]:leading-tight', '[&_h2]:text-balance', '[&_:is(h2,h3)]:font-serif']) {
       expect(list).toContain(name);
     }
+    expect(list).not.toContain('sm:[&_h2]:text-h1');
+  });
+
+  it('reads in Alegreya Sans at the prose size', async () => {
+    const list = await classes();
+    expect(list).toContain('font-sans');
+    expect(list).toContain('text-prose');
+    expect(list).not.toContain('font-serif');
+    expect(list).not.toContain('text-body');
+  });
+
+  it('sets strong and inline code for the sans body', async () => {
+    const list = await classes();
+    expect(list).toContain('[&_strong]:font-bold');
+    expect(list).toContain('[&_:not(pre)>code]:text-code-inline');
+    expect(list).not.toContain('[&_:not(pre)>code]:text-small');
   });
 
   it('keeps a heading close to its first paragraph', async () => {
@@ -78,7 +94,7 @@ describe('Prose rhythm and headings', () => {
       '[&_:is(th,td)]:py-xs',
       '[&_:is(th,td)]:align-top',
       '[&_th]:text-left',
-      '[&_th]:font-semibold',
+      '[&_th]:font-bold',
       '[&_th]:border-b',
       '[&_th]:border-border-strong',
       '[&_td]:border-b',

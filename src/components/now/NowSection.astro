@@ -9,6 +9,6 @@ const { id, title } = Astro.props;
 
 <section aria-labelledby={id} class="flex flex-col gap-md">
   {/* Sized here, not by Prose: Ouvindo and Jogando render outside it. Same scale as Prose's h2. */}
-  <h2 id={id} class="text-h2 font-semibold leading-tight text-balance sm:text-h1">{title}</h2>
+  <h2 id={id} class="font-serif text-h2 font-semibold leading-tight text-balance">{title}</h2>
   <slot />
 </section>

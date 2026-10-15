@@ -154,8 +154,8 @@ A Literata tem 600 e é onde ele é usado.
 
 | Superfície | Família |
 |------------|---------|
-| Marca do cabeçalho, `h1` do hero, título de case na listagem, corpo de nota e de case | Literata |
-| Parágrafos de apoio, resumos, rótulos de botão, texto de interface | Alegreya Sans |
+| Marca do cabeçalho, `h1` do hero, título de post e de case, títulos de seção do texto longo | Literata |
+| Corpo de post, de case e de página de texto (via `Prose`), parágrafos de apoio, resumos, rótulos de botão, texto de interface | Alegreya Sans |
 | Navegação, sobrescrito de seção, data, tecnologias, contador, código | JetBrains Mono |
 
 **Carregamento:** fontes servidas localmente com `font-display: swap` e subset
@@ -171,8 +171,15 @@ vazar visita a terceiros.
 | `h2` | 1.5rem | 1.3 | Seção |
 | `h3` | 1.25rem | 1.4 | Subseção, título de card |
 | `body` | 1rem | 1.625 | Corpo |
+| `prose` | 1.125rem | 1.7 | Corpo de texto longo (`Prose`) |
+| `code-inline` | 0.875em | herda | Código em linha dentro do texto |
 | `small` | 0.875rem | 1.5 | Metadado, legenda |
 | `mono` | 0.875rem | 1.6 | Código e endpoint em linha |
+
+Desde 2026-10-15 o corpo de texto longo é Alegreya Sans 18px/1.7: o autor comparou
+lado a lado com o corpo em Literata 16px e a sem serifa leu melhor no fundo escuro;
+a caixa mais estreita também mantém cerca de 40 caracteres por linha num telefone
+de 390px, onde a Literata dava 36.
 
 **Medida de linha:** 65 a 75 caracteres no corpo dos cases. É o texto que a persona
 principal realmente lê, e é onde a legibilidade decide se ela termina a leitura.
