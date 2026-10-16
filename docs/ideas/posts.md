@@ -45,7 +45,7 @@ linkar o repositório.
 
 ## Sugeridas pelo agente `post-ideas` (2026-10-11)
 
-Levantadas pelo agente `.claude/agents/post-ideas.md` a partir do trabalho dos últimos 90
+Levantadas pelo agente `~/.claude/agents/post-ideas.md` a partir do trabalho dos últimos 90
 dias. As evidências são as que ele citou; confira antes de escrever.
 
 | # | Tema | Material | Status |
