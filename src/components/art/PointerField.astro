@@ -43,6 +43,29 @@
     window.addEventListener('scroll', sync, { passive: true });
   }
 
+  // Reading mode (posts): the switch and the radios already work through CSS.
+  // This only remembers the choices and leaves the mode on Escape. Storage can
+  // throw (private window, blocked site data), and the mode works without it.
+  const reader = document.getElementById('reader-on') as HTMLInputElement | null;
+  if (reader) {
+    document.querySelectorAll<HTMLInputElement>('[data-reader] input[type=radio]').forEach((input) => {
+      try {
+        if (localStorage.getItem(input.name) === input.value) input.checked = true;
+      } catch {}
+      input.addEventListener('change', () => {
+        try {
+          localStorage.setItem(input.name, input.value);
+        } catch {}
+      });
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && reader.checked) {
+        reader.checked = false;
+        reader.focus();
+      }
+    });
+  }
+
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import ListRow from '../components/ui/ListRow.astro';
 import Prose from '../components/ui/Prose.astro';
+import ReaderMode from '../components/posts/ReaderMode.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
@@ -52,7 +53,7 @@ const authorName = displayNameOf(await getProfile());
 <BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary} section="/posts">
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
-  <nav class="mt-lg" aria-label="Trilha de navegação">
+  <nav class="mt-lg" aria-label="Trilha de navegação" data-reader-hide>
     <a
       href={post.archived ? '/posts/arquivo' : '/posts'}
       class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -62,7 +63,7 @@ const authorName = displayNameOf(await getProfile());
     </a>
   </nav>
 
-  <article class="mt-2xl flex flex-col gap-xl">
+  <article class="mt-2xl flex flex-col gap-xl" data-reader-article>
     <header class="flex flex-col gap-md">
       {
         post.draft && (
@@ -92,9 +93,10 @@ const authorName = displayNameOf(await getProfile());
           )
         }
       </p>
+      <ReaderMode />
       {
         post.cover && (
-          <figure class="m-0 mt-md overflow-hidden rounded-md border border-border">
+          <figure class="m-0 mt-md overflow-hidden rounded-md border border-border" data-reader-hide>
             {/*
               The cover sits under the title, still above the fold, and is the
               LCP element. Astro defaults an Image to loading="lazy", which
@@ -118,6 +120,7 @@ const authorName = displayNameOf(await getProfile());
         art && (
           <div
             data-art
+            data-reader-hide
             class="art-banner mt-md w-full overflow-hidden rounded-md border border-border bg-surface"
             set:html={art}
           />
@@ -131,7 +134,7 @@ const authorName = displayNameOf(await getProfile());
 
   {
     related.length > 0 && (
-      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl">
+      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl" data-reader-hide>
         <h2 id="related-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
           Posts relacionados
         </h2>

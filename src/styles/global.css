@@ -156,6 +156,228 @@
   --container-page: 62.5rem;
 }
 
+/* Reading mode on a post (2026-10-16). The switch and the radios in
+   ReaderMode.astro hold the state, so it works with CSS alone; the site script
+   only remembers the choices and adds Escape. Unlayered, so hiding wins over the
+   display utilities. Every choice applies only while the switch is on: a
+   remembered choice never restyles the page outside the mode. */
+.reader-icon-leave,
+.reader-settings {
+  display: none;
+}
+
+.reader-settings > summary::-webkit-details-marker {
+  display: none;
+}
+
+:root:has(#reader-on:checked) :is([data-site-header], [data-reader-hide]) {
+  display: none;
+}
+
+:root:has(#reader-on:checked) [data-pointer-field]::before,
+:root:has(#reader-on:checked) [data-pointer-field]::after {
+  display: none;
+}
+
+/* The title shares the text column. */
+:root:has(#reader-on:checked) [data-reader-article] {
+  max-width: var(--reader-measure, 640px);
+  margin-inline: auto;
+  padding-block: var(--spacing-3xl);
+  font-size: var(--text-prose);
+}
+
+:root:has(#reader-on:checked) [data-prose] {
+  max-width: none;
+}
+
+/* enter-rise animates transform, and an animated ancestor would become the
+   containing block of the pinned controls, holding them to the post header. */
+:root:has(#reader-on:checked) :has([data-reader]) {
+  animation: none;
+}
+
+:root:has(#reader-on:checked) [data-reader] {
+  position: fixed;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 20;
+}
+
+:root:has(#reader-on:checked) .reader-settings {
+  display: block;
+}
+
+:root:has(#reader-on:checked) .reader-icon-enter {
+  display: none;
+}
+
+:root:has(#reader-on:checked) .reader-icon-leave {
+  display: inline-block;
+}
+
+/* Background. Each palette re-points the colour tokens, so links, inline code
+   and the controls follow; contrast is measured in reader-mode.test.ts. The
+   site's dark ramp is the default and needs no rule. Code blocks keep their
+   Shiki colours on every background. */
+:root:has(#reader-on:checked):has(#reader-theme-black:checked) {
+  --color-background: #000000;
+  --color-surface: #0d0c0b;
+  --color-surface-elevated: #171615;
+  --color-border: #262422;
+  --color-border-strong: #5f5b56;
+  --color-foreground: #e6e2d9;
+  --color-muted-foreground: #9c988f;
+  --color-primary: #f0c36f;
+}
+
+:root:has(#reader-on:checked):has(#reader-theme-sepia:checked) {
+  color-scheme: light;
+  --color-background: #f4ecd8;
+  --color-surface: #ebe1c8;
+  --color-surface-elevated: #e4d8bc;
+  --color-border: #d8cbab;
+  --color-border-strong: #8c7b5c;
+  --color-foreground: #3b2f22;
+  --color-muted-foreground: #6b5a45;
+  --color-primary: #8a5300;
+}
+
+:root:has(#reader-on:checked):has(#reader-theme-light:checked) {
+  color-scheme: light;
+  --color-background: #fbfaf7;
+  --color-surface: #f1efea;
+  --color-surface-elevated: #e9e6df;
+  --color-border: #dcd8cf;
+  --color-border-strong: #8a857c;
+  --color-foreground: #1c1a17;
+  --color-muted-foreground: #5e5a53;
+  --color-primary: #865700;
+}
+
+/* Steppers: each radio is followed by its − value + row, and only the
+   checked one shows. The ring follows the focused radio onto its row. */
+.reader-step {
+  display: none;
+}
+
+.reader-stepper > input:checked + .reader-step {
+  display: flex;
+}
+
+.reader-stepper > input:focus-visible + .reader-step {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* The line height reads in px of the chosen size: the counter rounds the
+   product of the size and the ratio to a whole px. */
+[data-value="leading"]::after {
+  counter-reset: reader-leading calc(var(--reader-px, 18) * var(--text-prose--line-height));
+  content: counter(reader-leading) "px";
+}
+
+/* Text size scales the root so the prose lands on the chosen px (it is
+   1.125rem); headings, spacing and the controls grow with it, as browser zoom
+   would. 18px is the site and needs no rule. */
+
+:root:has(#reader-on:checked):has(#reader-size-14:checked) {
+  --reader-px: 14;
+  font-size: calc(100% * 14 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-16:checked) {
+  --reader-px: 16;
+  font-size: calc(100% * 16 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-20:checked) {
+  --reader-px: 20;
+  font-size: calc(100% * 20 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-22:checked) {
+  --reader-px: 22;
+  font-size: calc(100% * 22 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-24:checked) {
+  --reader-px: 24;
+  font-size: calc(100% * 24 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-26:checked) {
+  --reader-px: 26;
+  font-size: calc(100% * 26 / 18);
+}
+
+:root:has(#reader-on:checked):has(#reader-size-28:checked) {
+  --reader-px: 28;
+  font-size: calc(100% * 28 / 18);
+}
+
+
+/* Line height as a ratio of the text size; 1.7 is the prose default. */
+
+:root:has(#reader-on:checked):has(#reader-leading-13:checked) {
+  --text-prose--line-height: 1.3;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-14:checked) {
+  --text-prose--line-height: 1.4;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-15:checked) {
+  --text-prose--line-height: 1.5;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-16:checked) {
+  --text-prose--line-height: 1.6;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-18:checked) {
+  --text-prose--line-height: 1.8;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-19:checked) {
+  --text-prose--line-height: 1.9;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-20:checked) {
+  --text-prose--line-height: 2.0;
+}
+
+:root:has(#reader-on:checked):has(#reader-leading-21:checked) {
+  --text-prose--line-height: 2.1;
+}
+
+
+/* Width of the column in px, never wider than the screen; 640 is the default. */
+
+:root:has(#reader-on:checked):has(#reader-width-480:checked) {
+  --reader-measure: 480px;
+}
+
+:root:has(#reader-on:checked):has(#reader-width-560:checked) {
+  --reader-measure: 560px;
+}
+
+:root:has(#reader-on:checked):has(#reader-width-720:checked) {
+  --reader-measure: 720px;
+}
+
+:root:has(#reader-on:checked):has(#reader-width-800:checked) {
+  --reader-measure: 800px;
+}
+
+:root:has(#reader-on:checked):has(#reader-width-880:checked) {
+  --reader-measure: 880px;
+}
+
+:root:has(#reader-on:checked):has(#reader-width-960:checked) {
+  --reader-measure: 960px;
+}
+
 /* AI view tabs (docs/specs/ai-view, REQ-005): the radios in the top bar do the
    switching, so Rendered/Source works with no script. They sit outside <main>,
    hence :root:has(). Without :has() support the rendered panel stays. */
