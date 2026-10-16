@@ -89,9 +89,9 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('job-radar-radar-de-vagas-em-python-puro');
-    expect(second.slug).toBe('analytics-sem-script-medindo-no-servidor-e-lendo-no-terminal');
-    expect(third.slug).toBe('sessoes-do-red-dead-online-p2p-relays-e-nat-duplo');
+    expect(first.slug).toBe('de-cinco-dias-para-trinta-minutos');
+    expect(second.slug).toBe('job-radar-radar-de-vagas-em-python-puro');
+    expect(third.slug).toBe('analytics-sem-script-medindo-no-servidor-e-lendo-no-terminal');
   });
 });
 
