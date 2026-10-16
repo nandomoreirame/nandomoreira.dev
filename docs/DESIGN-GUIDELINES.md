@@ -128,6 +128,35 @@ nos divisores de cabeçalho, título e rodapé; foi recuado para 1,44:1, entre o
 - Texto secundário nunca abaixo de `muted-foreground`. Cinzas mais escuros que
   isso reprovam sobre `surface`.
 
+### Modo leitura (2026-10-16)
+
+O post tem um modo leitura: um switch sob o título esconde cabeçalho, menu,
+trilha, imagem principal, posts relacionados, rodapé e a grade de pontos, e fixa
+no canto os controles de fundo, tamanho do texto, entrelinha e largura. É a
+única exceção ao escuro exclusivo, e vale só dentro do modo.
+
+| Fundo | `background` | `foreground` | `primary` |
+|---|---|---|---|
+| Escuro | o do site | o do site | o do site |
+| Preto | `#000000` | `#e6e2d9` | `#f0c36f` |
+| Sépia | `#f4ecd8` | `#3b2f22` | `#8a5300` |
+| Claro | `#fbfaf7` | `#1c1a17` | `#865700` |
+
+- Cada fundo reaponta os tokens de cor, então links, código inline e controles
+  acompanham. Os blocos de código mantêm as cores do Shiki.
+- O estado é CSS (switch e radios com `:has()`). O script do site só guarda as
+  escolhas no `localStorage` e sai do modo com Esc; sem JavaScript, o modo
+  funciona e esquece as escolhas ao recarregar.
+- Tamanho, entrelinha e largura são steppers: − à esquerda, + à direita e o
+  valor em px no meio. Cada passo é um radio, e − e + são rótulos dos vizinhos;
+  no teclado, as setas andam pelos passos.
+- Tamanho do texto de 14 a 28px, de 2 em 2 (padrão 18): escala a fonte da raiz,
+  como o zoom do navegador, para o texto cair no px escolhido.
+- Entrelinha de 1,3 a 2,1 vezes o texto (padrão 1,7), mostrada em px do tamanho
+  escolhido, arredondada pelo contador do CSS.
+- Largura da coluna de 480 a 960px, de 80 em 80 (padrão 640), nunca maior que a
+  tela.
+
 ---
 
 ## Typography
