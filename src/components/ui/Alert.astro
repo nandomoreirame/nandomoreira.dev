@@ -1,0 +1,26 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** Says what the alert is about; the colour alone never carries it. */
+  title: string;
+  /** One tone for now; add another only when a page needs it. */
+  tone?: 'success';
+}
+
+const { title, tone = 'success' } = Astro.props;
+
+const tones = {
+  success: { box: 'border-success/40 bg-success/10', ink: 'text-success', icon: 'lucide:circle-check' },
+} as const;
+const { box, ink, icon } = tones[tone];
+---
+
+{/* Spans, not <p>: inside Prose a paragraph gets the flow margin and drifts down. */}
+<div data-alert data-tone={tone} class={`flex items-start gap-sm rounded-md border px-md py-sm ${box}`}>
+  <Icon name={icon} class={`mt-xs size-4 shrink-0 ${ink}`} aria-hidden="true" />
+  <span class="flex flex-col">
+    <strong class={`font-bold ${ink}`}>{title}</strong>
+    <span class="text-foreground"><slot /></span>
+  </span>
+</div>
