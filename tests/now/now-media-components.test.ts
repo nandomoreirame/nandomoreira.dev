@@ -15,7 +15,7 @@ const cover = (id: string) => `/api/now/cover/spotify/${id}`;
 const music = (): NowSnapshot['music'] => ({
   topArtists: {
     state: 'ok',
-    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita'].map((name, index) => ({
+    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico'].map((name, index) => ({
       name,
       url: `https://open.spotify.com/artist/${name.toLowerCase()}`,
       cover: cover(String(index + 1).repeat(40)),
@@ -47,41 +47,51 @@ const game = (name: string, progress?: RecentGame['progress']): RecentGame => ({
 });
 
 describe('NowMusic', () => {
-  it('renders six local artist photos and the album line, with no third-party image', async () => {
+  it('renders the twelve local artist photos, with no third-party image', async () => {
     const html = await render(NowMusic, { music: music() });
     const sources = [...html.matchAll(/<img\b[^>]*\bsrc="([^"]*)"/g)].map((match) => match[1]);
 
-    expect(sources.filter((src) => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(7);
+    expect(sources.filter((src) => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(12);
     expect(html).toContain('alt=""');
     expect(html).not.toMatch(/src="[^"]*(?:scdn\.co|s-microsoft\.com)/);
-    expect(html).toContain('Artist A · Album One (1999)');
-    expect(html).toContain('href="https://open.spotify.com/track/t1"');
     expect(html).toContain('Artistas do mês');
   });
 
-  it('lays six artists in two full rows of three on a phone and in one row from sm', async () => {
+  // Only the six artists since 2026-10-16 (author): the recent tracks left the page.
+  it('never lists the recent tracks, even when Spotify returned them', async () => {
     const html = await render(NowMusic, { music: music() });
-    const grid = html.split('Artistas do mês')[1]?.match(/<ul\b[^>]*>/)?.[0] ?? '';
+
+    expect(html).not.toContain('Same Song');
+    expect(html).not.toContain('Artist A · Album One (1999)');
+    expect(html).not.toContain('href="https://open.spotify.com/track/t1"');
+  });
+
+  it('lays twelve artists in two rows of six from sm, and only the first six on a phone', async () => {
+    const html = await render(NowMusic, { music: music() });
+    const list = html.split('Artistas do mês')[1]?.split('</ul>')[0] ?? '';
+    const grid = list.match(/<ul\b[^>]*>/)?.[0] ?? '';
+    const items = [...list.matchAll(/<li\b[^>]*>/g)].map((match) => match[0]);
 
     expect(grid).toContain('grid-cols-3');
     expect(grid).toContain('sm:grid-cols-6');
+    expect(items).toHaveLength(12);
+    // Two full rows of three on a phone; the second half appears from sm.
+    for (const item of items.slice(0, 6)) expect(item).not.toContain('max-sm:hidden');
+    for (const item of items.slice(6)) expect(item).toContain('max-sm:hidden');
   });
 
-  it('hides the artist block when that source is empty and still lists tracks', async () => {
+  it('says there is no data when the artists are missing, tracks or not', async () => {
     const data = music();
     data.topArtists = { state: 'empty' };
     const html = await render(NowMusic, { music: data });
 
     expect(html).not.toContain('Artistas do mês');
-    expect(html).toContain('Same Song');
-    expect(html).toContain('hoje');
+    expect(html).not.toContain('Same Song');
+    expect(html).toContain('Sem dados no momento.');
   });
 
-  it('says there is no data when the recent tracks are empty', async () => {
-    const html = await render(NowMusic, {
-      music: { recent: { state: 'empty' }, topArtists: { state: 'empty' } },
-    });
-    expect(html).toContain('Sem dados no momento.');
+  it('shows no empty line when the artists are there', async () => {
+    expect(await render(NowMusic, { music: music() })).not.toContain('Sem dados no momento.');
   });
 });
 
@@ -195,25 +205,10 @@ describe('NowMusic preview button', () => {
     return base;
   };
 
-  it('puts a hidden, labelled toggle over the cover of a track Deezer can play', async () => {
+  it('puts no toggle on a track, since the tracks are not on the page', async () => {
     const html = await render(NowMusic, { music: withPreview() });
-    const buttons = [...html.matchAll(/<button\b[^>]*>/g)].map((match) => match[0]);
-
-    expect(buttons).toHaveLength(1);
-    const button = buttons[0]!;
-    expect(button).toContain('type="button"');
-    expect(button).toContain('data-now-preview="/api/now/preview/GBUM70812423"');
-    expect(button).toContain('aria-pressed="false"');
-    expect(button).toContain('aria-label="Ouvir prévia de Same Song"');
-    // Without JavaScript it never promises an action; the script reveals it.
-    expect(button).toMatch(/\shidden(\s|>|=)/);
-  });
-
-  it('draws both icons so CSS can swap play for pause while it plays', async () => {
-    const html = await render(NowMusic, { music: withPreview() });
-    const button = html.match(/<button\b[\s\S]*?<\/button>/)?.[0] ?? '';
-    expect(button.match(/<svg\b/g)).toHaveLength(2);
-    expect(button).toContain('group-aria-pressed/preview:');
+    expect(html).not.toContain('data-now-preview="/api/now/preview/GBUM70812423"');
+    expect(html).not.toContain('Ouvir prévia de Same Song');
   });
 
   it('shows no Deezer credit under the tracks, even with previews (REQ-031 revoked)', async () => {
@@ -252,6 +247,13 @@ describe('NowMusic artist previews', () => {
     // No button inside a link: the name links to Spotify on its own.
     expect(artists).not.toMatch(/<a\b[^>]*>(?:(?!<\/a>)[\s\S])*<button/);
     expect(artists).toMatch(/<a\b[^>]*href="https:\/\/open\.spotify\.com\/artist\/raul"[^>]*>[\s\S]*?Raul[\s\S]*?<\/a>/);
+  });
+
+  it('draws both icons so CSS can swap play for pause while it plays', async () => {
+    const html = await render(NowMusic, { music: withArtistPreview() });
+    const button = html.match(/<button\b[\s\S]*?<\/button>/)?.[0] ?? '';
+    expect(button.match(/<svg\b/g)).toHaveLength(2);
+    expect(button).toContain('group-aria-pressed/preview:');
   });
 
   it('keeps one button per previewable artist and none for the others', async () => {

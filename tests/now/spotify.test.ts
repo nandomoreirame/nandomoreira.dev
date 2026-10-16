@@ -132,7 +132,7 @@ const artistImage = (width: number, hex: string) => ({
 });
 
 const topArtists = {
-  items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Evil', 'Rita', 'Lia'].map((name, index) => ({
+  items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Evil', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico', 'Milton'].map((name, index) => ({
     name,
     external_urls: {
       spotify: name === 'Evil' ? 'javascript:alert(1)' : `https://open.spotify.com/artist/${name.toLowerCase()}`,
@@ -145,16 +145,18 @@ const topArtists = {
 };
 
 describe('parseTopArtists', () => {
-  it('keeps six artists and the image closest to 320 px, as a local cover', () => {
+  it('keeps twelve artists and the image closest to 320 px, as a local cover', () => {
     const artists = parseTopArtists(topArtists);
-    expect(artists.map((artist) => artist.name)).toEqual(['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita']);
+    expect(artists.map((artist) => artist.name)).toEqual([
+      'Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico',
+    ]);
     expect(artists[0]?.cover).toBe(`/api/now/cover/spotify/${'1'.repeat(40)}`);
     expect(JSON.stringify(artists)).not.toContain('i.scdn.co');
   });
 });
 
 describe('fetchTopArtists', () => {
-  it('refreshes once and asks for the short-term top six', async () => {
+  it('refreshes once and asks for the short-term top twelve', async () => {
     const fetchImpl = vi.fn(async (url: string, _init?: RequestInit) => {
       if (String(url).includes('/api/token')) {
         return { ok: true, status: 200, json: async () => ({ access_token: 'access-1' }) };
@@ -169,9 +171,9 @@ describe('fetchTopArtists', () => {
       refreshToken: 'ref',
     });
 
-    expect(artists).toHaveLength(6);
+    expect(artists).toHaveLength(12);
     const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('/top/artists'));
-    expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=6');
+    expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=12');
     expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
   });
 });
@@ -296,7 +298,7 @@ describe('fetchTopArtists previews', () => {
       refreshToken: 'ref',
       previews: new Map(),
     });
-    expect(result).toHaveLength(6);
+    expect(result).toHaveLength(12);
     expect(result.every((artist) => artist.preview === undefined)).toBe(true);
   });
 });

@@ -27,9 +27,6 @@ const previewToggle = [
   'aria-pressed:bg-background/60 aria-pressed:text-primary aria-pressed:opacity-100',
   focus,
 ].join(' ');
-
-const albumLine = (artists: string, album: string, year: string | undefined): string =>
-  year ? `${artists} · ${album} (${year})` : `${artists} · ${album}`;
 ---
 
 {
@@ -37,7 +34,9 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
     <div class="flex flex-col gap-md">
       <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Artistas do mês</p>
       <ul class="grid grid-cols-3 gap-md sm:grid-cols-6">
-        {music.topArtists.items.map((artist) => {
+        {music.topArtists.items.map((artist, index) => {
+          // Two full rows of three on a phone; the rest appears from sm.
+          const phone = index >= 6 ? 'max-sm:hidden' : '';
           const photo = localCover(artist.cover);
           const preview = localPreview(artist.preview);
           const portrait = photo ? (
@@ -58,7 +57,7 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
           // With a preview the photo is the play toggle and the name is the link:
           // a button cannot live inside a link.
           return preview ? (
-            <li class="flex flex-col items-center gap-sm">
+            <li class:list={['flex flex-col items-center gap-sm', phone]}>
               <div class="group relative">
                 {portrait}
                 <button
@@ -82,7 +81,7 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
               </a>
             </li>
           ) : (
-            <li>
+            <li class:list={[phone]}>
               <a href={artist.url} {...externalAttrs} class:list={['group flex flex-col items-center gap-sm', focus]}>
                 {portrait}
                 <span class="line-clamp-2 text-center text-small">{artist.name}</span>
@@ -95,63 +94,8 @@ const albumLine = (artists: string, album: string, year: string | undefined): st
   )
 }
 
-{
-  music.recent.state === 'empty' ? (
-    <p class="text-muted-foreground">Sem dados no momento.</p>
-  ) : (
-    <ul class="divide-y divide-border overflow-hidden rounded-lg border border-border-strong bg-surface">
-      {music.recent.items.map((track) => {
-        const photo = localCover(track.cover);
-        const preview = localPreview(track.preview);
-        return (
-          <li class="flex items-center gap-md p-md">
-            <div class="relative size-14 shrink-0">
-              {photo ? (
-                <img
-                  src={photo}
-                  width="56"
-                  height="56"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  class="size-14 rounded-sm bg-surface-elevated object-cover"
-                />
-              ) : (
-                <span class="block size-14 rounded-sm bg-surface-elevated" aria-hidden="true" />
-              )}
-              {preview && (
-                <button
-                  type="button"
-                  data-now-preview={preview}
-                  aria-pressed="false"
-                  aria-label={`Ouvir prévia de ${track.title}`}
-                  hidden
-                  class:list={[previewToggle, 'rounded-sm']}
-                >
-                  <Icon name="lucide:play" class="size-6 group-aria-pressed/preview:hidden" aria-hidden="true" />
-                  <Icon name="lucide:pause" class="hidden size-6 group-aria-pressed/preview:block" aria-hidden="true" />
-                </button>
-              )}
-            </div>
-            <div class="min-w-0 flex-1">
-              <a
-                href={track.url}
-                {...externalAttrs}
-                class:list={['block truncate text-foreground underline-offset-4 hover:text-primary hover:underline', focus]}
-              >
-                {track.title}
-              </a>
-              <p class="truncate text-small text-muted-foreground">
-                {albumLine(track.artists, track.album, track.year)}
-              </p>
-            </div>
-            <span class="shrink-0 font-mono text-caption text-muted-foreground">{track.day}</span>
-          </li>
-        );
-      })}
-    </ul>
-  )
-}
+{/* Only the six artists since 2026-10-16 (author): the recent tracks left the page. */}
+{music.topArtists.state !== 'ok' && <p class="text-muted-foreground">Sem dados no momento.</p>}
 
 <script>
   // Audio preview, /now only (docs/specs/now-page, REQ-027): the one script

@@ -176,7 +176,7 @@ const coverClosestTo = (
   return usable[0]?.path;
 };
 
-export const parseTopArtists = (json: unknown, { limit = 6 }: { limit?: number } = {}): TopArtist[] => {
+export const parseTopArtists = (json: unknown, { limit = 12 }: { limit?: number } = {}): TopArtist[] => {
   const parsed = artistsSchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
@@ -197,7 +197,8 @@ export const parseTopArtists = (json: unknown, { limit = 6 }: { limit?: number }
     .slice(0, limit);
 };
 
-const TOP_URL = 'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=6';
+// Twelve since 2026-10-16: two rows of six from sm, the first six on a phone.
+const TOP_URL = 'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=12';
 const TOP_TRACKS_URL = 'https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=';
 
 const ownTrackSchema = z.object({
