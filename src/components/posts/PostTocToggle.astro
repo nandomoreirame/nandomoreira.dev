@@ -1,0 +1,16 @@
+---
+import { Icon } from 'astro-icon/components';
+import { POST_TOC_ID } from '../../lib/posts/toc';
+---
+
+{/* Below 768px only: the index popover's switch, fixed bottom left, mirroring the
+    view switcher bottom right. */}
+<button
+  type="button"
+  popovertarget={POST_TOC_ID}
+  aria-label="Índice do post"
+  data-reader-hide
+  class="fixed bottom-lg left-lg z-10 inline-flex size-11 items-center justify-center rounded-md border border-border-strong bg-surface/90 text-muted-foreground backdrop-blur-md transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden"
+>
+  <Icon name="lucide:table-of-contents" class="size-4" aria-hidden="true" />
+</button>

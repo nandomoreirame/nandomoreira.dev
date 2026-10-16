@@ -386,6 +386,75 @@
   --reader-measure: 960px;
 }
 
+/* Post index (2026-10-16). One element, two shapes: below 768px a native
+   popover opened by the fixed toggle bottom left; from md the same element,
+   never opened, is forced visible as a sticky column left of the text. A
+   closed popover is only hidden by the UA sheet, which author CSS overrides. */
+[data-toc][popover] {
+  inset: auto auto calc(var(--spacing-lg) + 2.75rem + var(--spacing-sm)) var(--spacing-lg);
+  margin: 0;
+  width: min(20rem, calc(100vw - 2 * var(--spacing-lg)));
+  max-height: 60dvh;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-elevated);
+  color: var(--color-foreground);
+}
+
+@media (width >= 48rem) {
+  [data-toc][popover] {
+    /* inset before top: the shorthand would reset it. */
+    inset: auto;
+    position: sticky;
+    top: var(--spacing-3xl);
+    display: block;
+    align-self: start;
+    width: auto;
+    max-height: calc(100dvh - 2 * var(--spacing-3xl));
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+}
+
+/* The section being read is marked like the current page in the main menu:
+   honey text and a rule that stays; hover grows the same rule in from the left.
+   The site script sets aria-current as the headings pass the header. */
+.toc-underline {
+  position: relative;
+}
+
+.toc-underline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.toc-underline:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.toc-underline[aria-current] {
+  color: var(--color-primary);
+}
+
+.toc-underline[aria-current]::after {
+  transform: scaleX(1);
+}
+
+:root:has(#reader-on:checked) [data-toc-layout] {
+  display: block;
+}
+
 /* AI view tabs (docs/specs/ai-view, REQ-005): the radios in the top bar do the
    switching, so Rendered/Source works with no script. They sit outside <main>,
    hence :root:has(). Without :has() support the rendered panel stays. */

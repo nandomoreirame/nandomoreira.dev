@@ -1,0 +1,29 @@
+---
+import { POST_TOC_ID, type TocItem } from '../../lib/posts/toc';
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{/* A native popover below 768px, opened by PostTocToggle; from md the stylesheet
+    turns the same element into a sticky column ("Post index" in global.css). */}
+<nav id={POST_TOC_ID} popover aria-label="Índice" data-toc data-reader-hide>
+  <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Índice</p>
+  <ul class="mt-sm flex list-none flex-col gap-xs p-0">
+    {
+      items.map((item) => (
+        <li data-depth={item.depth} class={item.depth === 3 ? 'pl-md' : ''}>
+          <a
+            href={`#${item.slug}`}
+            class="toc-underline inline-block py-xs text-small leading-snug text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            {item.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

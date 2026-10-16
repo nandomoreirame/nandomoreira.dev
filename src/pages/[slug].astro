@@ -5,6 +5,8 @@ import ListRow from '../components/ui/ListRow.astro';
 import Prose from '../components/ui/Prose.astro';
 import ReaderMode from '../components/posts/ReaderMode.astro';
 import AiSummaryLink from '../components/posts/AiSummaryLink.astro';
+import PostToc from '../components/posts/PostToc.astro';
+import PostTocToggle from '../components/posts/PostTocToggle.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
@@ -12,6 +14,7 @@ import { generateArt } from '../lib/art';
 import { toLongDate, toShortDate } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
+import { tocFrom } from '../lib/posts/toc';
 import { toHashtag } from '../lib/posts/tags';
 import { displayNameOf } from '../lib/content/display-name';
 import { pageTitle } from '../lib/seo/meta';
@@ -40,7 +43,14 @@ if (!live) {
 }
 
 const post = live.data;
-const { Content } = await render(live);
+const { Content, headings } = await render(live);
+const toc = tocFrom(headings);
+// The index takes a column left of the text from md, wider from lg; without one,
+// the text keeps the width.
+const tocLayout =
+  toc.length > 0
+    ? 'md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-2xl'
+    : '';
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForPost(post, site, await getProfile()));
 const published = `publicado: ${toLongDate(post.date)}`;
@@ -131,9 +141,13 @@ const authorName = displayNameOf(await getProfile());
         )
       }
     </header>
-    <Prose>
-      <Content />
-    </Prose>
+    <div data-toc-layout class={tocLayout}>
+      {toc.length > 0 && <PostToc items={toc} />}
+      <Prose>
+        <Content />
+      </Prose>
+    </div>
+    {toc.length > 0 && <PostTocToggle />}
   </article>
 
   {

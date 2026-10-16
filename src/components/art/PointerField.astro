@@ -66,6 +66,36 @@
     });
   }
 
+  // Post index. Below 768px a jump closes the popover, so it does not cover the
+  // section it just opened (from md it is never open, and this is a no-op).
+  const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc] a')];
+  tocLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const toc = link.closest<HTMLElement>('[popover]');
+      if (toc?.matches(':popover-open')) toc.hidePopover();
+    });
+  });
+
+  // The section being read gets aria-current, styled like the main menu's
+  // current page: the last heading that has passed under the sticky header
+  // (96px, the root scroll padding, plus a little). Recomputed on scroll, once
+  // per frame, so a jump, an anchor or a restored position all land right.
+  const sections = tocLinks.flatMap((link) => {
+    const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    return heading ? [{ link, heading }] : [];
+  });
+  if (sections.length) {
+    let pending = 0;
+    const markCurrent = () => {
+      pending = 0;
+      const index = sections.findLastIndex(({ heading }) => heading.getBoundingClientRect().top <= 120);
+      sections.forEach(({ link }, at) =>
+        at === index ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current'),
+      );
+    };
+    window.addEventListener('scroll', () => (pending ||= requestAnimationFrame(markCurrent)), { passive: true });
+  }
+
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
