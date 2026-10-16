@@ -54,71 +54,70 @@ Tokens semânticos. Nenhuma cor solta em componente.
 
 ### Paleta base
 
-A paleta vem do tema `Exquisitus for Starlight` (OFL/MIT, `anaxite/starlight-theme-exquisitus`),
-adotada em 2026-08-09 no lugar dos cinzas neutros originais. A rampa é escrita
-em OKLCH na origem e convertida para hex sRGB aqui, porque o portão de contraste
-lê hex: a razão que ele calcula é a que o browser renderiza, não uma aproximação.
-A lógica da paleta é que **as superfícies são quase neutras e o calor mora na
-tinta e no acento**, nunca no papel. Sem creme, sem areia.
+Desde 2026-10-16 a paleta é a **Terminal Noir**, do redesign feito no Stitch
+(`docs/specs/terminal-noir-redesign/`), no lugar da rampa quente do tema
+Exquisitus. Superfícies neutras e frias, separadas por degraus de luminância, e
+todo o calor concentrado no acento âmbar. Os valores são hex sRGB porque o portão
+de contraste lê hex.
 
-| Token | Valor | OKLCH de origem | Uso |
-|-------|-------|-----------------|-----|
-| `background` | `#110f0d` | `0.17 0.006 80` | Fundo da página |
-| `surface` | `#191714` | `0.205 0.006 80` | Cards, painéis |
-| `surface-elevated` | `#211f1c` | `0.24 0.007 80` | Popovers, elementos flutuantes |
-| `border` | `#332f2c` | `0.31 0.007 80` | Divisores e contornos |
-| `border-strong` | `#6c6863` | `0.52 0.01 82` | Contorno de elemento em foco ou hover |
-| `foreground` | `#efebe2` | `0.94 0.012 85` | Texto primário |
-| `muted-foreground` | `#a29e96` | `0.7 0.012 82` | Texto secundário, metadados |
+Duas cores do arquivo do Stitch reprovam e **não foram copiadas**: o `text-muted`
+(`#71717A`, 4,07:1) e o `border-strong` (`#3F3F46`, 1,88:1). O texto secundário
+usa o `text-secondary` do Stitch, e o contorno forte foi clareado até passar de 3:1.
+
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `background` | `#0b0b0c` | Fundo da página |
+| `surface` | `#121214` | Cards, painéis |
+| `surface-elevated` | `#18181b` | Popovers, elementos flutuantes |
+| `border` | `#222226` | Divisores e contornos decorativos |
+| `border-strong` | `#6b6b74` | Contorno de elemento em foco ou hover, campo de formulário |
+| `foreground` | `#f4f4f5` | Texto primário |
+| `muted-foreground` | `#a1a1aa` | Texto secundário, metadados |
 
 ### Acento
 
-| Token | Valor | OKLCH de origem | Uso |
-|-------|-------|-----------------|-----|
-| `primary` | `#f0c36f` | `0.84 0.115 82` | CTA, links, comandos, indicador de foco |
-| `primary-foreground` | `#110f0d` | `0.17 0.006 80` | Texto sobre o acento |
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `primary` | `#f5a623` | CTA, links, comandos, indicador de foco |
+| `primary-foreground` | `#0b0b0c` | Texto sobre o acento |
 
-**Por que âmbar:** continuidade com a identidade original. O tom mudou do âmbar
-saturado (`#f59e0b`) para o mel do Exquisitus, que é mais claro e sobe o contraste
-sobre o fundo quase preto de 9,22:1 para 11,60:1. **É ajustável**, e continua sendo
-a decisão mais barata de trocar em todo o projeto, já que existe num único token.
-Q3 do PRD.
+**Por que âmbar:** continuidade com a identidade original. O Terminal Noir voltou
+ao âmbar saturado, mais perto do `#f59e0b` original do que do mel do Exquisitus.
+Continua sendo a decisão mais barata de trocar, já que existe num único token.
 
 ### Semânticas
 
-Vêm das rampas `-high` do Exquisitus, que são as calibradas para superfície escura.
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `success` | `#34d399` | Estado disponível, build passando |
+| `warning` | `#facf9e` | Aviso, projeto arquivado |
+| `destructive` | `#ffb7b0` | Erro de formulário, estado de falha |
 
-| Token | Valor | OKLCH de origem | Uso |
-|-------|-------|-----------------|-----|
-| `success` | `#a9ddb2` | `0.85 0.08 150` | Estado disponível, build passando |
-| `warning` | `#facf9e` | `0.88 0.08 70` | Aviso, projeto arquivado |
-| `destructive` | `#ffb7b0` | `0.85 0.09 25` | Erro de formulário, estado de falha |
+`success` é o esmeralda do Stitch; `warning` e `destructive` mantêm as rampas
+claras anteriores, que leem bem sobre quase preto.
 
 ### Contraste verificado
 
-Calculado sobre `background` (`#110f0d`), fórmula de luminância relativa WCAG 2.1.
+Calculado sobre `background` (`#0b0b0c`), fórmula de luminância relativa WCAG 2.1.
 
 | Par | Razão | Situação |
 |-----|-------|----------|
-| `foreground` sobre `background` | 16,08:1 | Aprova AA e AAA |
-| `muted-foreground` sobre `background` | 7,17:1 | Aprova AA e AAA |
-| `muted-foreground` sobre `surface` | 6,70:1 | Aprova AA e AAA |
-| `primary` sobre `background` | 11,60:1 | Aprova AA e AAA |
-| `primary` sobre `surface` | 10,85:1 | Aprova AA e AAA |
-| `primary-foreground` sobre `primary` | 11,60:1 | Aprova AA e AAA (texto do botão) |
-| `success` sobre `background` | 12,45:1 | Aprova AA e AAA |
-| `warning` sobre `background` | 13,19:1 | Aprova AA e AAA |
-| `destructive` sobre `background` | 11,52:1 | Aprova AA e AAA |
-| `border-strong` sobre `background` | 3,46:1 | Aprova 3:1 para componente gráfico |
-| `border` sobre `background` | **1,44:1** | **Reprova.** Ver regra abaixo |
+| `foreground` sobre `background` | 17,90:1 | Aprova AA e AAA |
+| `muted-foreground` sobre `background` | 7,68:1 | Aprova AA e AAA |
+| `muted-foreground` sobre `surface` | 7,30:1 | Aprova AA e AAA |
+| `primary` sobre `background` | 9,71:1 | Aprova AA e AAA |
+| `primary` sobre `surface` | 9,23:1 | Aprova AA e AAA |
+| `primary-foreground` sobre `primary` | 9,71:1 | Aprova AA e AAA (texto do botão) |
+| `success` sobre `background` | 10,23:1 | Aprova AA e AAA |
+| `warning` sobre `background` | 13,57:1 | Aprova AA e AAA |
+| `destructive` sobre `background` | 11,85:1 | Aprova AA e AAA |
+| `border-strong` sobre `background` | 3,73:1 | Aprova 3:1 para componente gráfico |
+| `border` sobre `background` | **1,24:1** | **Reprova.** Ver regra abaixo |
 
-**Regra decorrente:** `border` (`#332f2c`) tem contraste de 1,44:1 e portanto
+**Regra decorrente:** `border` (`#222226`) tem contraste de 1,24:1 e portanto
 **nunca pode ser o único meio de transmitir informação ou delimitar um alvo
 interativo**. Serve como separador decorativo. Contorno que precisa ser percebido
-(campo de formulário, elemento em foco) usa `border-strong` ou `primary`. A troca
-de paleta subiu esse valor para 1,91:1 e o fio passou a competir com o conteúdo
-nos divisores de cabeçalho, título e rodapé; foi recuado para 1,44:1, entre o
-1,31:1 original e o pico do tema. A regra não muda: 1,44 continua abaixo de 3:1.
+(campo de formulário, elemento em foco) usa `border-strong` ou `primary`.
 
 ### Regras de uso
 
@@ -138,7 +137,7 @@ no canto os controles de fundo, tamanho do texto, entrelinha e largura. É a
 | Fundo | `background` | `foreground` | `primary` |
 |---|---|---|---|
 | Escuro | o do site | o do site | o do site |
-| Preto | `#000000` | `#e6e2d9` | `#f0c36f` |
+| Preto | `#000000` | `#e6e2d9` | `#f5a623` |
 | Sépia | `#f4ecd8` | `#3b2f22` | `#8a5300` |
 | Claro | `#fbfaf7` | `#1c1a17` | `#865700` |
 
@@ -165,26 +164,25 @@ no canto os controles de fundo, tamanho do texto, entrelinha e largura. É a
 
 | Papel | Fonte | Token | Fallback | Pesos |
 |-------|-------|-------|----------|-------|
-| Leitura e títulos de peso | Literata | `--font-serif` | Georgia, Times New Roman, serif | 400, 600 |
-| Interface, corpo e registro | Alegreya Sans | `--font-sans` | system-ui, sans-serif | 400, 500, 700 |
+| Títulos | Newsreader | `--font-serif` | Georgia, Times New Roman, serif | 400 a 500 (variável) |
+| Corpo, interface e registro | Inter | `--font-sans` | system-ui, sans-serif | 400 a 600 (variável) |
 | Código, comando, dado | JetBrains Mono | `--font-mono` | ui-monospace, monospace | 400, 500 |
 
-Três famílias desde 2026-08-09, adotadas do tema `Exquisitus for Starlight`, que
-substituiu a Inter. **Uma fonte por trabalho**: a serifada carrega a leitura e o
-peso editorial, a sem serifa carrega o registro e o chrome, a monoespaçada carrega
-a voz de máquina. As duas primeiras são humanistas e compartilham DNA caligráfico,
-então contrastam no eixo serifa/sem-serifa sem colidir.
+Desde 2026-10-16 (Terminal Noir), no lugar de Literata e Alegreya Sans. **Uma
+fonte por trabalho**: a serifada editorial dá peso aos títulos, a sem serifa
+carrega o corpo e o chrome, a monoespaçada carrega a voz de máquina.
 
-**Atenção ao peso 600:** Alegreya Sans não tem corte 600. Ênfase em texto sem
-serifa mapeia para 500 ou 700, nunca 600, sob pena de o browser sintetizar o peso.
-A Literata tem 600 e é onde ele é usado.
+Newsreader e Inter são fontes variáveis, um arquivo cada, cortadas aos eixos que o
+site usa: Newsreader com peso de 400 a 500 e tamanho óptico de 24 a 72 (o menor
+título tem 20px), Inter de 400 a 600. **Título em serifa pede peso 400 ou 500**:
+um `font-semibold` cai para 500, o teto do arquivo.
 
 **Onde cada uma aparece:**
 
 | Superfície | Família |
 |------------|---------|
-| Marca do cabeçalho, `h1` do hero, título de post e de case, títulos de seção do texto longo | Literata |
-| Corpo de post, de case e de página de texto (via `Prose`), parágrafos de apoio, resumos, rótulos de botão, texto de interface | Alegreya Sans |
+| `h1` do hero, título de página, de post e de case, títulos de seção do texto longo | Newsreader |
+| Corpo de post, de case e de página de texto (via `Prose`), parágrafos de apoio, resumos, rótulos de botão, texto de interface | Inter |
 | Navegação, sobrescrito de seção, data, tecnologias, contador, código | JetBrains Mono |
 
 **Carregamento:** fontes servidas localmente com `font-display: swap` e subset
@@ -205,10 +203,9 @@ vazar visita a terceiros.
 | `small` | 0.875rem | 1.5 | Metadado, legenda |
 | `mono` | 0.875rem | 1.6 | Código e endpoint em linha |
 
-Desde 2026-10-15 o corpo de texto longo é Alegreya Sans 18px/1.7: o autor comparou
-lado a lado com o corpo em Literata 16px e a sem serifa leu melhor no fundo escuro;
-a caixa mais estreita também mantém cerca de 40 caracteres por linha num telefone
-de 390px, onde a Literata dava 36.
+O corpo de texto longo é sem serifa, 18px/1.7, desde 2026-10-15 (o autor comparou
+com o corpo em serifa e a sem serifa leu melhor no fundo escuro). Desde 2026-10-16
+a sem serifa é a Inter.
 
 **Medida de linha:** 65 a 75 caracteres no corpo dos cases. É o texto que a persona
 principal realmente lê, e é onde a legibilidade decide se ela termina a leitura.
@@ -237,8 +234,8 @@ parecer inacabado sem que se saiba dizer por quê.
 | Token | Valor | Uso |
 |-------|-------|-----|
 | `sm` | 0.25rem | Badge, tag de tecnologia |
-| `md` | 0.5rem | Botão, input, card |
-| `lg` | 0.75rem | Painel, bloco de código |
+| `md` | 0.375rem | Botão, input, card |
+| `lg` | 0.5rem | Painel, bloco de código |
 | `full` | 9999px | Avatar, indicador de status |
 
 ---
@@ -379,6 +376,26 @@ leitura 1,62 vez mais larga que a da referência visual do projeto, o que fazia 
 site parecer outro layout mesmo com paleta, tipografia e componentes corretos. O
 cabeçalho e o rodapé mantêm a régua atravessando a viewport inteira, com o
 container aplicado à linha interna, e não ao elemento que carrega a borda.
+
+**Moldura em 1104px (`--container-frame: 69rem`), desde 2026-10-16.** Cabeçalho e
+rodapé usam uma faixa mais larga que o conteúdo, como no Stitch. O conteúdo
+continua em `--container-page` (hoje 1000px).
+
+### Cabeçalho e rodapé (Terminal Noir, 2026-10-16)
+
+- **Marca:** um ponto de status seguido do nome em JetBrains Mono, com "moreira"
+  no acento. O ponto (`StatusDot`) tem a cor da disponibilidade do perfil (verde
+  disponível, âmbar limitado, vermelho indisponível) e pulsa só enquanto ela
+  está aberta. O mesmo componente marca as pills de disponibilidade do
+  cabeçalho e do hero. A pulsação é um anel em CSS, só `transform` e `opacity`,
+  e fica parada sob `prefers-reduced-motion`. Escolhido em 2026-10-16 entre
+  três glifos (ponto, ícone de prompt e til).
+- **Cabeçalho:** marca e navegação à esquerda, pill de disponibilidade à direita
+  (só a partir de 1280px, onde a linha tem espaço; ela leva a `/mcp`, como a do
+  hero). O fio inferior fica sempre visível; o fundo translúcido e o desfoque
+  entram com a rolagem.
+- **Rodapé:** uma linha em mono, sem ícones: copyright e Privacidade à esquerda;
+  GitHub, LinkedIn, RSS, AGENTS.md e Topo à direita.
 
 Mobile-first. Nenhum scroll horizontal em nenhum viewport suportado, verificado a
 partir de 320px.
