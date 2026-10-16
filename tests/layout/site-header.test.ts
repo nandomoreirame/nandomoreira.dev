@@ -32,23 +32,40 @@ describe('SiteHeader', () => {
     expect(link.replace(/<[^>]+>/g, '').replace(/\s+/g, '')).toBe('nandomoreira.dev');
   });
 
-  it('opens the wordmark with the favicon glyph as an inline SVG, hidden from screen readers', async () => {
-    const html = await render({ name: 'nandomoreira.dev', accent: 'moreira' });
+  it('opens the wordmark with the availability dot, hidden from screen readers', async () => {
+    const html = await render({ name: 'nandomoreira.dev', accent: 'moreira', availability: { status: 'open' } });
     const links = html.match(/<a[^>]*href="\/"[^>]*>[\s\S]*?<\/a>/g) ?? [];
 
     // Desktop wordmark and the copy inside the mobile menu.
     expect(links.length).toBe(2);
     for (const link of links) {
-      const svg = link.match(/<svg[^>]*>[\s\S]*?<\/svg>/)?.[0] ?? '';
-      expect(svg).toMatch(/aria-hidden="true"/);
-      expect(svg).toContain('viewBox="0 0 32 32"');
-      // The two strokes of the favicon: the chevron and the underscore.
-      expect(svg).toContain('d="M8 10l6 6-6 6"');
-      expect(svg).toContain('d="M17 22h7"');
-      // A primary outline lifts the tile off the header background.
-      expect(svg).toMatch(/<rect[^>]*class="[^"]*stroke-primary\/50\b/);
-      expect(link.indexOf('<svg')).toBeLessThan(link.indexOf('nando'));
+      expect(link).toMatch(/<span[^>]*aria-hidden="true"[^>]*data-status-dot/);
+      expect(link).toContain('text-success');
+      expect(link).toContain('data-pulse');
+      expect(link.indexOf('data-status-dot')).toBeLessThan(link.indexOf('nando'));
     }
+  });
+
+  it('sets the wordmark in the mono face, like a prompt', async () => {
+    const html = await render({ name: 'nandomoreira.dev' });
+    const link = html.match(/<a[^>]*href="\/"[^>]*>/)?.[0] ?? '';
+
+    expect(link).toContain('font-mono');
+    expect(link).not.toContain('font-serif');
+  });
+
+  it('shows the availability pill, linked to /mcp, only where the row has room', async () => {
+    const html = await render({ availability: { status: 'open' } });
+    const pill = html.match(/<a[^>]*href="\/mcp"[^>]*data-header-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(pill).toContain('Disponível para novos projetos');
+    expect(pill).toContain('data-status-dot');
+    expect(pill).toContain('text-success');
+    expect(pill).toMatch(/class="[^"]*\bhidden\b[^"]*\bxl:inline-flex\b/);
+  });
+
+  it('leaves the pill out when no availability is given', async () => {
+    expect(await render()).not.toContain('data-header-availability');
   });
 
   it('places the wordmark before the navigation, so it reads on the left', async () => {
@@ -73,13 +90,14 @@ describe('SiteHeader', () => {
     expect(html).toMatch(/aria-label="Abrir menu"/);
   });
 
-  it('caps its inner row at the layout token, keeping the border full-bleed', async () => {
+  it('caps its inner row at the frame token, keeping the hairline full-bleed and always on', async () => {
     const html = await render();
 
     // The border sits on <header>; the container lives on the row inside it, so
-    // the rule spans the viewport while the content stays on the measure.
-    expect(html).toMatch(/<header[^>]*\bborder-b\b/);
-    expect(html).toContain('max-w-page');
+    // the rule spans the viewport while the content stays on the frame.
+    expect(html).toMatch(/<header[^>]*\bborder-b\b[^>]*\bborder-border\b/);
+    expect(html).not.toMatch(/<header[^>]*\bborder-transparent\b/);
+    expect(html).toContain('max-w-frame');
   });
 
   it('ships no theme toggle, per the dark-only decision', async () => {

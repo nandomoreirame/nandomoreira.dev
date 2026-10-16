@@ -50,10 +50,12 @@ describe('contextual icons', () => {
     expect(anchor(html, 'https://y.app')).toContain('data-icon="lucide:arrow-up-right"');
   });
 
-  it('shows brand logos on the footer channels', async () => {
+  // Terminal Noir (2026-10-16): the footer is one line of mono text, as in
+  // the Stitch file; the logos stay on the home contact channels.
+  it('keeps the footer channels as text, without logos', async () => {
     const html = await render(SiteFooter, { name: 'N', year: 2026, contacts });
-    expect(anchor(html, '/go/contato/github')).toContain('data-icon="simple-icons:github"');
-    expect(anchor(html, '/go/contato/linkedin')).toContain('data-icon="simple-icons:linkedin"');
+    expect(anchor(html, '/go/contato/github')).not.toContain('data-icon');
+    expect(anchor(html, '/go/contato/linkedin')).not.toContain('data-icon');
   });
 
   it('shows an icon on every home contact channel', async () => {

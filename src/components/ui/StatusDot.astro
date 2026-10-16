@@ -1,0 +1,24 @@
+---
+import type { Availability } from '../../lib/content';
+import { AVAILABILITY_TONE } from '../../lib/layout/availability';
+
+/**
+ * The availability dot: the brand mark in the header and the dot in the
+ * availability pills. Toned by status through currentColor, and pulsing only
+ * while open for hire (the ring lives in global.css, under reduced motion it
+ * stays still). Decorative: the text beside it, or the pill, says the status.
+ */
+interface Props {
+  status?: Availability['status'];
+}
+
+const { status } = Astro.props;
+const tone = status ? AVAILABILITY_TONE[status] : 'text-primary';
+---
+
+<span
+  aria-hidden="true"
+  data-status-dot
+  data-pulse={status === 'open' ? '' : undefined}
+  class={`relative inline-block size-2 shrink-0 rounded-full bg-current ${tone}`}
+></span>

@@ -65,4 +65,22 @@ describe('SiteFooter', () => {
       expect(link).not.toMatch(/rel="[^"]*\bme\b/);
     }
   });
+
+  it('links the machine-readable entry points: RSS and AGENTS.md', async () => {
+    const html = await render();
+
+    expect(html).toMatch(/<a[^>]*href="\/rss\.xml"[^>]*>\s*RSS\s*<\/a>/);
+    expect(html).toMatch(/<a[^>]*href="\/AGENTS\.md"[^>]*>\s*AGENTS\.md\s*<\/a>/);
+  });
+
+  it('reads as one line of mono text, without icons', async () => {
+    const html = await render();
+
+    expect(html).not.toContain('<svg');
+    expect(html).toContain('font-mono');
+  });
+
+  it('caps its inner row at the frame token, like the header', async () => {
+    expect(await render()).toMatch(/<footer[^>]*>\s*<div[^>]*max-w-frame/);
+  });
 });

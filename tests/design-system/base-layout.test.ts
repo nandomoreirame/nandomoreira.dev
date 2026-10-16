@@ -88,8 +88,8 @@ describe('BaseLayout', () => {
     expect(unclosedDivsBefore('<footer')).toBe(0);
 
     // And each owns a container on its inner row.
-    expect(html).toMatch(/<header[^>]*>\s*<div[^>]*max-w-page/);
-    expect(html).toMatch(/<footer[^>]*>\s*<div[^>]*max-w-page/);
+    expect(html).toMatch(/<header[^>]*>\s*<div[^>]*max-w-frame/);
+    expect(html).toMatch(/<footer[^>]*>\s*<div[^>]*max-w-frame/);
   });
 
   it('renders the footer on every page', async () => {

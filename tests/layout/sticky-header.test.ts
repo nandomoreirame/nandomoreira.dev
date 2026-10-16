@@ -21,22 +21,24 @@ describe('SiteHeader stickiness', () => {
     expect(await render()).toMatch(/<header[^>]*\bz-\d+/);
   });
 
-  it('is bare at the top of the page: no background, no rule, no blur', async () => {
+  // Terminal Noir (2026-10-16): the hairline is always on, as in the Stitch
+  // file; only the fill and the blur wait for the scroll.
+  it('keeps the hairline at the top of the page, with no background and no blur yet', async () => {
     const header = (await render()).match(/<header[^>]*>/)?.[0] ?? '';
     const classes = header.match(/class="([^"]*)"/)?.[1].split(/\s+/) ?? [];
 
     expect(header).toContain('data-site-header');
+    expect(classes).toContain('border-border');
     for (const unconditional of classes.filter((name) => !name.includes(':'))) {
-      expect(unconditional).not.toMatch(/^(bg-background|border-border|backdrop-blur)/);
+      expect(unconditional).not.toMatch(/^(bg-background|backdrop-blur)/);
     }
   });
 
-  it('gains the translucent background, the rule and the blur once scrolled', async () => {
+  it('gains the translucent background and the blur once scrolled', async () => {
     const header = (await render()).match(/<header[^>]*>/)?.[0] ?? '';
 
     expect(header).toMatch(/\bdata-scrolled:bg-background\/(\d+)\b/);
     expect(Number(header.match(/data-scrolled:bg-background\/(\d+)/)?.[1])).toBeLessThanOrEqual(50);
-    expect(header).toMatch(/\bdata-scrolled:border-border\b/);
     expect(header).toMatch(/\bdata-scrolled:backdrop-blur-(md|lg|xl)\b/);
     expect(header).toMatch(/\btransition-\[[^\]]*background-color/);
   });

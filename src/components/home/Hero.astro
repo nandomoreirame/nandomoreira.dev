@@ -2,6 +2,8 @@
 import type { Availability } from '../../lib/content';
 import Button from '../ui/Button.astro';
 import Portrait from '../ui/Portrait.astro';
+import StatusDot from '../ui/StatusDot.astro';
+import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
 
 interface Props {
   /** Display name, for the portrait's alt text. */
@@ -12,18 +14,6 @@ interface Props {
 }
 
 const { name, headline, positioning, availability } = Astro.props;
-
-const STATUS_LABEL: Record<Availability['status'], string> = {
-  open: 'Disponível para novos projetos',
-  limited: 'Disponibilidade limitada',
-  closed: 'Indisponível no momento',
-};
-
-const STATUS_DOT: Record<Availability['status'], string> = {
-  open: 'bg-success',
-  limited: 'bg-warning',
-  closed: 'bg-destructive',
-};
 ---
 
 <section id="inicio" class="relative isolate py-2xl lg:py-3xl">
@@ -35,11 +25,8 @@ const STATUS_DOT: Record<Availability['status'], string> = {
         href="/mcp"
         class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-caption text-muted-foreground sm:text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
-        <span
-          class={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[availability.status]}`}
-          aria-hidden="true"
-        ></span>
-        <span>{STATUS_LABEL[availability.status]}</span>
+        <StatusDot status={availability.status} />
+        <span>{AVAILABILITY_LABEL[availability.status]}</span>
         {/* Phones drop the MCP hint, which wrapped the pill onto two lines; the
             arrow stays, so the pill still reads as a link (to /mcp). */}
         <span class="hidden sm:inline" aria-hidden="true">·</span>

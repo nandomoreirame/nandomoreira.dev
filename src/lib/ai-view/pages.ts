@@ -12,12 +12,7 @@ import type { ArchiveYear } from '../content';
 import { COLOPHON } from '../about/colophon';
 import { absoluteUrl } from '../aeo/urls';
 import { MCP_TOOLS } from '../mcp/catalog';
-
-const AVAILABILITY_LABEL: Record<Profile['availability']['status'], string> = {
-  open: 'Disponível para novos projetos',
-  limited: 'Disponibilidade limitada',
-  closed: 'Indisponível no momento',
-};
+import { AVAILABILITY_LABEL } from '../layout/availability';
 
 const frontmatter = (title: string, url: string): string[] => [
   '---',
