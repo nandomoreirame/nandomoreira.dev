@@ -65,7 +65,7 @@ describe('Prose rhythm and headings', () => {
     expect(list).not.toContain('sm:[&_h2]:text-h1');
   });
 
-  it('reads in Alegreya Sans at the prose size', async () => {
+  it('reads in Inter at the prose size', async () => {
     const list = await classes();
     expect(list).toContain('font-sans');
     expect(list).toContain('text-prose');

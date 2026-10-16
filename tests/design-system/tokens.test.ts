@@ -3,19 +3,20 @@ import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 
-// Exquisitus dark ramp, converted from OKLCH to sRGB hex. Surfaces stay
-// near-neutral; the warmth lives in the ink and the honey accent.
+// Terminal Noir (Stitch, 2026-10-16): cold neutral surfaces and an amber accent.
+// text-muted (#71717A, 4.07:1) and border-strong (#3F3F46, 1.88:1) from the
+// Stitch file fail AA, so they were lightened instead of copied.
 const COLOR_TOKENS = {
-  '--color-background': '#110f0d',
-  '--color-surface': '#191714',
-  '--color-surface-elevated': '#211f1c',
-  '--color-border': '#332f2c',
-  '--color-border-strong': '#6c6863',
-  '--color-foreground': '#efebe2',
-  '--color-muted-foreground': '#a29e96',
-  '--color-primary': '#f0c36f',
-  '--color-primary-foreground': '#110f0d',
-  '--color-success': '#a9ddb2',
+  '--color-background': '#0b0b0c',
+  '--color-surface': '#121214',
+  '--color-surface-elevated': '#18181b',
+  '--color-border': '#222226',
+  '--color-border-strong': '#6b6b74',
+  '--color-foreground': '#f4f4f5',
+  '--color-muted-foreground': '#a1a1aa',
+  '--color-primary': '#f5a623',
+  '--color-primary-foreground': '#0b0b0c',
+  '--color-success': '#34d399',
   '--color-warning': '#facf9e',
   '--color-destructive': '#ffb7b0',
 };
@@ -32,8 +33,8 @@ const SPACING_TOKENS = {
 
 const RADIUS_TOKENS = {
   '--radius-sm': '0.25rem',
-  '--radius-md': '0.5rem',
-  '--radius-lg': '0.75rem',
+  '--radius-md': '0.375rem',
+  '--radius-lg': '0.5rem',
   '--radius-full': '9999px',
 };
 
@@ -80,6 +81,9 @@ const NEW_TOKENS = {
   // Widened to 62.5rem (1000px) on 2026-10-08 so the portfolio rows fit art
   // and text side by side (generative-case-art amendment).
   '--container-page': '62.5rem',
+  // Terminal Noir (2026-10-16): header and footer span a wider frame than the
+  // content, 1104px as in the Stitch file.
+  '--container-frame': '69rem',
 };
 
 describe('tokens introduced by the restyle', () => {

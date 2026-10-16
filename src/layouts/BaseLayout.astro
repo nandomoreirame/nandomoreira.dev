@@ -7,8 +7,8 @@ import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { absoluteUrl, canonicalUrl, pagePath, requireSite } from '../lib/aeo/urls';
 import { metaDescription } from '../lib/seo/meta';
 import { ogImagePath } from '../lib/og/pages';
-import serifHeadingFont from '../assets/fonts/literata-latin-600.woff2?url';
-import sansBodyFont from '../assets/fonts/alegreya-sans-latin-400.woff2?url';
+import serifHeadingFont from '../assets/fonts/newsreader-latin-variable.woff2?url';
+import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
 import { webPageLd, type PageType } from '../lib/aeo/webpage-ld';
 import { displayNameOf } from '../lib/content/display-name';
 import { websiteLd } from '../lib/aeo/website-ld';
@@ -153,6 +153,7 @@ const switcherView = view ?? 'human';
           current={current}
           section={section}
           hasPosts={hasPosts}
+          availability={profile.availability}
         />
       )
     }

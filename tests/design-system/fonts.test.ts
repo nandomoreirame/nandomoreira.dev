@@ -3,16 +3,23 @@ import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 
-// Exquisitus pairing: a humanist serif carries the reading surfaces, a humanist
-// sans carries the register, and JetBrains Mono carries the machine voice.
+// Terminal Noir pairing (2026-10-16): Newsreader carries the headings, Inter
+// carries the body and the interface, JetBrains Mono carries the machine voice.
+// Newsreader and Inter ship as variable fonts, instanced to the weights the
+// site uses (Newsreader 400-500 and opsz 24-72, Inter 400-600), one file each.
 const FONT_FILES = [
+  'src/assets/fonts/newsreader-latin-variable.woff2',
+  'src/assets/fonts/inter-latin-variable.woff2',
+  'src/assets/fonts/jetbrains-mono-latin-400.woff2',
+  'src/assets/fonts/jetbrains-mono-latin-500.woff2',
+];
+
+const RETIRED_FILES = [
   'src/assets/fonts/literata-latin-400.woff2',
   'src/assets/fonts/literata-latin-600.woff2',
   'src/assets/fonts/alegreya-sans-latin-400.woff2',
   'src/assets/fonts/alegreya-sans-latin-500.woff2',
   'src/assets/fonts/alegreya-sans-latin-700.woff2',
-  'src/assets/fonts/jetbrains-mono-latin-400.woff2',
-  'src/assets/fonts/jetbrains-mono-latin-500.woff2',
 ];
 
 describe('fonts', () => {
@@ -37,8 +44,8 @@ describe('fonts', () => {
   it('preloads the above-the-fold faces through their fingerprinted URLs', () => {
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     expect(layout).not.toContain('href="/fonts/');
-    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/literata-latin-600\.woff2\?url'/);
-    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/alegreya-sans-latin-400\.woff2\?url'/);
+    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/newsreader-latin-variable\.woff2\?url'/);
+    expect(layout).toMatch(/from '\.\.\/assets\/fonts\/inter-latin-variable\.woff2\?url'/);
   });
 
   it('swaps rather than blocking, so text is never invisible while loading', () => {
@@ -49,16 +56,22 @@ describe('fonts', () => {
     }
   });
 
-  it('declares one family per job: reading, register and machine voice', () => {
-    expect(css).toMatch(/--font-serif:\s*"Literata"/);
-    expect(css).toMatch(/--font-sans:\s*"Alegreya Sans"/);
+  it('declares the variable faces with the weight range they were instanced to', () => {
+    const face = (family: string) =>
+      (css.match(/@font-face\s*\{[^}]*\}/g) ?? []).find((block) => block.includes(`"${family}"`)) ?? '';
+    expect(face('Newsreader')).toMatch(/font-weight:\s*400 500;/);
+    expect(face('Inter')).toMatch(/font-weight:\s*400 600;/);
+  });
+
+  it('declares one family per job: headings, body and machine voice', () => {
+    expect(css).toMatch(/--font-serif:\s*"Newsreader"/);
+    expect(css).toMatch(/--font-sans:\s*"Inter"/);
     expect(css).toMatch(/--font-mono:\s*"JetBrains Mono"/);
   });
 
-  it('drops Inter entirely rather than leaving a dead face behind', () => {
-    expect(css).not.toContain('Inter');
-    for (const weight of ['400', '500', '600']) {
-      expect(existsSync(`src/assets/fonts/inter-latin-${weight}.woff2`)).toBe(false);
-    }
+  it('drops Literata and Alegreya Sans entirely rather than leaving dead faces behind', () => {
+    expect(css).not.toContain('Literata');
+    expect(css).not.toContain('Alegreya');
+    for (const file of RETIRED_FILES) expect(existsSync(file)).toBe(false);
   });
 });

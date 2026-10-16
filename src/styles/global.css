@@ -4,49 +4,22 @@
 @source not "../../docs";
 @source not "../../tests";
 
-/* Reading surfaces — Literata (humanist serif). */
+/* Headings — Newsreader (editorial serif). Variable font instanced to
+   wght 400-500 and opsz 24-72: headings never go below 20px or above 500. */
 @font-face {
-  font-family: "Literata";
-  src: url("../assets/fonts/literata-latin-400.woff2") format("woff2");
-  font-weight: 400;
+  font-family: "Newsreader";
+  src: url("../assets/fonts/newsreader-latin-variable.woff2") format("woff2");
+  font-weight: 400 500;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
 }
 
+/* Body and interface — Inter. Variable font instanced to wght 400-600. */
 @font-face {
-  font-family: "Literata";
-  src: url("../assets/fonts/literata-latin-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
-}
-
-/* Register and UI chrome — Alegreya Sans (humanist sans). No 600 cut exists,
-   so emphasis maps to 500 and 700, never 600. */
-@font-face {
-  font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-latin-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
-}
-
-@font-face {
-  font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-latin-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
-}
-
-@font-face {
-  font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-latin-700.woff2") format("woff2");
-  font-weight: 700;
+  font-family: "Inter";
+  src: url("../assets/fonts/inter-latin-variable.woff2") format("woff2");
+  font-weight: 400 600;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2122;
@@ -71,29 +44,32 @@
 }
 
 @theme {
-  /* Base palette — Exquisitus dark ramp, authored in OKLCH and converted to
-     sRGB hex so the contrast gate can parse it. Surfaces stay near-neutral;
-     the warmth lives in the ink and in the honey accent, never in the paper. */
-  --color-background: #110f0d; /* oklch(0.17 0.006 80) */
-  --color-surface: #191714; /* oklch(0.205 0.006 80) */
-  --color-surface-elevated: #211f1c; /* oklch(0.24 0.007 80) */
-  --color-border: #332f2c; /* oklch(0.31 0.007 80) — hairline, 1.44:1 */
-  --color-border-strong: #6c6863; /* oklch(0.52 0.01 82) */
-  --color-foreground: #efebe2; /* oklch(0.94 0.012 85) */
-  --color-muted-foreground: #a29e96; /* oklch(0.7 0.012 82) */
+  /* Base palette — Terminal Noir (Stitch, 2026-10-16): cold neutral surfaces
+     stepped by luminance, an amber accent and an emerald status colour.
+     Stitch's text-muted (#71717A, 4.07:1) and border-strong (#3F3F46, 1.88:1)
+     fail AA here, so muted-foreground takes its text-secondary and
+     border-strong was lightened until it clears 3:1. */
+  --color-background: #0b0b0c;
+  --color-surface: #121214;
+  --color-surface-elevated: #18181b;
+  --color-border: #222226; /* hairline, 1.24:1 */
+  --color-border-strong: #6b6b74; /* 3.73:1, delimits interactive targets */
+  --color-foreground: #f4f4f5;
+  --color-muted-foreground: #a1a1aa;
 
-  /* Accent — honey, brightened for dark surfaces */
-  --color-primary: #f0c36f; /* oklch(0.84 0.115 82) */
-  --color-primary-foreground: #110f0d;
+  /* Accent — amber */
+  --color-primary: #f5a623;
+  --color-primary-foreground: #0b0b0c;
 
-  /* Semantic — the theme's own -high ramps, which read on near-black */
-  --color-success: #a9ddb2; /* oklch(0.85 0.08 150) */
+  /* Semantic — success is the Stitch emerald; warning and destructive keep
+     the previous high ramps, which read on near-black. */
+  --color-success: #34d399;
   --color-warning: #facf9e; /* oklch(0.88 0.08 70) */
   --color-destructive: #ffb7b0; /* oklch(0.85 0.09 25) */
 
-  /* Families — one per job. Serif reads, sans registers, mono speaks machine. */
-  --font-serif: "Literata", Georgia, "Times New Roman", serif;
-  --font-sans: "Alegreya Sans", system-ui, sans-serif;
+  /* Families — one per job. Serif titles, sans reads and registers, mono speaks machine. */
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* Type scale */
@@ -138,8 +114,8 @@
 
   /* Radius */
   --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
   --radius-full: 9999px;
 
   /* Motion */
@@ -154,6 +130,9 @@
      and needed the room. Long-form text keeps its own measure through Prose,
      so widening the page does not widen the reading line. */
   --container-page: 62.5rem;
+  /* Header and footer span a wider frame than the content (Terminal Noir,
+     2026-10-16): 1104px, as in the Stitch file. */
+  --container-frame: 69rem;
 }
 
 /* Reading mode on a post (2026-10-16). The switch and the radios in
@@ -236,7 +215,7 @@
   --color-border-strong: #5f5b56;
   --color-foreground: #e6e2d9;
   --color-muted-foreground: #9c988f;
-  --color-primary: #f0c36f;
+  --color-primary: #f5a623;
 }
 
 :root:has(#reader-on:checked):has(#reader-theme-sepia:checked) {
@@ -1264,5 +1243,30 @@
 @keyframes scenery-float {
   to {
     transform: translate(6px, -12px);
+  }
+}
+
+/* Availability pulse (StatusDot, 2026-10-16): a ring that grows out of the
+   dot and fades, only while open for hire. Transform and opacity only; under
+   reduced motion the dot stays still and keeps its colour. */
+@keyframes status-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-status-dot][data-pulse]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: currentColor;
+    animation: status-pulse 2s var(--ease-out) infinite;
   }
 }

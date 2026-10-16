@@ -37,14 +37,14 @@ describe('contrastRatio', () => {
 
 describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
   const PASSING: Array<[string, string, string, number]> = [
-    ['foreground', token('foreground'), BACKGROUND, 16.08],
-    ['muted-foreground', token('muted-foreground'), BACKGROUND, 7.17],
-    ['muted-foreground on surface', token('muted-foreground'), SURFACE, 6.7],
-    ['primary', token('primary'), BACKGROUND, 11.6],
-    ['primary on surface', token('primary'), SURFACE, 10.85],
-    ['success', token('success'), BACKGROUND, 12.45],
-    ['warning', token('warning'), BACKGROUND, 13.19],
-    ['destructive', token('destructive'), BACKGROUND, 11.52],
+    ['foreground', token('foreground'), BACKGROUND, 17.9],
+    ['muted-foreground', token('muted-foreground'), BACKGROUND, 7.68],
+    ['muted-foreground on surface', token('muted-foreground'), SURFACE, 7.3],
+    ['primary', token('primary'), BACKGROUND, 9.71],
+    ['primary on surface', token('primary'), SURFACE, 9.23],
+    ['success', token('success'), BACKGROUND, 10.23],
+    ['warning', token('warning'), BACKGROUND, 13.57],
+    ['destructive', token('destructive'), BACKGROUND, 11.85],
   ];
 
   it.each(PASSING)('%s hits the documented ratio', (_name, fg, bg, expected) => {
@@ -56,15 +56,14 @@ describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
   });
 
   it('reads primary-foreground against primary, since the CTA inverts them', () => {
-    expect(contrastRatio(BACKGROUND, '#f0c36f')).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(token('primary-foreground'), token('primary'))).toBeGreaterThanOrEqual(4.5);
   });
 
   it('confirms border still fails AA, so it can never delimit a target alone', () => {
-    // Softened from the Exquisitus 1.91 back towards the original 1.31: the
-    // dividers on header, section titles and footer read as rules, not as
-    // structure. Still nowhere near 3:1, so the rule it protects is unchanged.
+    // The Terminal Noir hairline (#222226) is fainter still: dividers read as
+    // rules, not as structure. Nowhere near 3:1, so the rule it protects holds.
     const ratio = contrastRatio(token('border'), BACKGROUND);
-    expect(ratio).toBeCloseTo(1.44, 1);
+    expect(ratio).toBeCloseTo(1.24, 1);
     expect(ratio).toBeLessThan(3);
   });
 
