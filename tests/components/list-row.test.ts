@@ -34,6 +34,11 @@ describe('ListRow', () => {
     expect(html.indexOf('data-stamp')).toBeLessThan(html.indexOf('data-title'));
   });
 
+  it('widens the leading column for a full date, so every post row aligns', async () => {
+    const row = (await render({ stamp: '16 out. 2026' })).match(/<a[^>]*>/)?.[0] ?? '';
+    expect(row).toContain('sm:grid-cols-[7rem_1fr_auto]');
+  });
+
   it('keeps the stamp in its own leading column from sm', async () => {
     const html = await render();
     const content = html.match(/<span[^>]*data-content[^>]*>/)?.[0] ?? '';

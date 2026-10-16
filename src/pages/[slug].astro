@@ -9,7 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { generateArt } from '../lib/art';
-import { toCompactStamp, toLongDate } from '../lib/format/date';
+import { toLongDate, toShortDate } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
 import { toHashtag } from '../lib/posts/tags';
@@ -149,7 +149,7 @@ const authorName = displayNameOf(await getProfile());
                 href={`/${item.slug}`}
                 title={item.title}
                 summary={item.summary}
-                stamp={toCompactStamp(item.date)}
+                stamp={toShortDate(item.date)}
               />
             </li>
           ))}

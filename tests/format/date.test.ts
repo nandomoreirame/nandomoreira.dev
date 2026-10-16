@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toCompactStamp, toLongDate } from '../../src/lib/format/date';
+import { toCompactStamp, toLongDate, toShortDate } from '../../src/lib/format/date';
 
 describe('toCompactStamp', () => {
   it('renders an ISO date as MM/YYYY', () => {
@@ -32,5 +32,30 @@ describe('toLongDate', () => {
 
   it('rejects anything that is not a calendar date', () => {
     expect(() => toLongDate('11/10/2026')).toThrow(/ISO-8601/);
+  });
+});
+
+describe('toShortDate', () => {
+  it('reads in pt-BR order: day, abbreviated month, year', () => {
+    expect(toShortDate('2026-10-16')).toBe('16 out. 2026');
+  });
+
+  it('pads the day, so every stamp has the same width in mono', () => {
+    expect(toShortDate('2026-05-03')).toBe('03 mai. 2026');
+  });
+
+  it('names every month', () => {
+    const months = Array.from({ length: 12 }, (_, index) =>
+      toShortDate(`2026-${String(index + 1).padStart(2, '0')}-01`).split(' ')[1],
+    );
+    expect(months).toEqual(['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.']);
+  });
+
+  it('keeps the first day of the year in that year, whatever the timezone', () => {
+    expect(toShortDate('2026-01-01')).toBe('01 jan. 2026');
+  });
+
+  it('rejects a malformed date', () => {
+    expect(() => toShortDate('16/10/2026')).toThrow();
   });
 });

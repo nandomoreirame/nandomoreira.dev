@@ -15,8 +15,9 @@ const { href, title, summary, markers = [], badge, stamp } = Astro.props;
 // empty fixed column would leave a hole in the notes listing (REQ-022).
 // Below sm the stamp sits on its own row above the title, so a long title gets
 // the full width of a phone instead of wrapping into a narrow column.
+// A full date (posts, "16 out. 2026") needs a wider column than MM/YYYY (cases).
 const columns = stamp
-  ? 'grid-cols-[1fr_auto] sm:grid-cols-[4.5rem_1fr_auto] gap-x-md gap-y-xs sm:gap-y-md'
+  ? `grid-cols-[1fr_auto] ${stamp.length > 7 ? 'sm:grid-cols-[7rem_1fr_auto]' : 'sm:grid-cols-[4.5rem_1fr_auto]'} gap-x-md gap-y-xs sm:gap-y-md`
   : 'grid-cols-[1fr_auto] gap-md';
 const contentPlacement = stamp ? 'col-start-1 row-start-2 sm:col-start-2 sm:row-start-1' : '';
 const arrowPlacement = stamp ? 'col-start-2 row-start-2 sm:col-start-3 sm:row-start-1' : '';

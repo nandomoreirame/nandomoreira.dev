@@ -39,7 +39,7 @@ describe('LatestPosts', () => {
     expect(html).toContain('href="/meu-post"');
     expect(html).toContain('Meu post');
     expect(html).toContain('Um resumo.');
-    expect(html).toContain('08/2026');
+    expect(html).toContain('01 ago. 2026');
   });
 
   it('offers a plain text link to /posts, never a primary button', async () => {

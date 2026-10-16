@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import { getArchivedPosts, getCurrentPosts } from '../../src/lib/content';
-import { toCompactStamp } from '../../src/lib/format/date';
+import { toShortDate } from '../../src/lib/format/date';
 import PostsPage from '../../src/pages/posts/index.astro';
 
 const source = readFileSync('src/pages/posts/index.astro', 'utf8');
@@ -29,7 +29,7 @@ describe('/posts listing', () => {
     for (const post of current) {
       expect(html).toContain(`href="/${post.slug}"`);
       expect(html).toContain(post.title);
-      expect(html).toContain(toCompactStamp(post.date));
+      expect(html).toContain(toShortDate(post.date));
       expect(html).not.toContain(`href="/posts/${post.slug}"`);
     }
 

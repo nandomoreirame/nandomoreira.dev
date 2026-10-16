@@ -4,7 +4,7 @@ import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
 import { getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
-import { toCompactStamp } from '../../lib/format/date';
+import { toShortDate } from '../../lib/format/date';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import { displayNameOf } from '../../lib/content/display-name';
 
@@ -41,7 +41,7 @@ const authorName = displayNameOf(await getProfile());
               summary={post.summary}
               markers={post.markers}
               badge={post.draft ? 'Rascunho' : undefined}
-              stamp={toCompactStamp(post.date)}
+              stamp={toShortDate(post.date)}
             />
           </li>
         ))}

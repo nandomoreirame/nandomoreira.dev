@@ -1,6 +1,6 @@
 ---
 import type { Post } from '../../content/schemas/post';
-import { toCompactStamp } from '../../lib/format/date';
+import { toShortDate } from '../../lib/format/date';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import ListRow from '../ui/ListRow.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
@@ -31,7 +31,7 @@ const { posts } = Astro.props;
               href={`/${post.slug}`}
               title={post.title}
               summary={post.summary}
-              stamp={toCompactStamp(post.date)}
+              stamp={toShortDate(post.date)}
             />
           </li>
         ))}
