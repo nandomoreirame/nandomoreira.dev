@@ -5,7 +5,7 @@ import { READER_SETTINGS, READER_SWITCH_ID, readerInputId } from '../../lib/post
 // Off, this is one switch under the post title. On, the stylesheet pins it to
 // the top corner with the settings beside it (global.css, "Reading mode").
 const control =
-  'inline-flex min-h-11 cursor-pointer items-center gap-xs rounded-md border border-border-strong bg-surface px-md font-mono text-small text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary';
+  'inline-flex min-h-8 cursor-pointer items-center gap-xs rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary';
 const chip =
   'inline-flex min-h-11 flex-1 cursor-pointer items-center justify-center rounded-md border border-border-strong px-sm font-mono text-small text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:text-foreground has-checked:border-primary has-checked:text-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary';
 const step =
@@ -15,14 +15,14 @@ const step =
 <div data-reader class="reader flex flex-wrap items-start gap-sm">
   <label class={control}>
     <input type="checkbox" role="switch" id={READER_SWITCH_ID} class="sr-only" />
-    <Icon name="lucide:book-open" class="reader-icon-enter size-4 shrink-0" aria-hidden="true" />
-    <Icon name="lucide:x" class="reader-icon-leave size-4 shrink-0" aria-hidden="true" />
+    <Icon name="lucide:book-open" class="reader-icon-enter size-3.5 shrink-0" aria-hidden="true" />
+    <Icon name="lucide:x" class="reader-icon-leave size-3.5 shrink-0" aria-hidden="true" />
     <span>Modo leitura</span>
   </label>
 
   <details class="reader-settings relative">
     <summary class={`${control} list-none`}>
-      <Icon name="lucide:a-large-small" class="size-4 shrink-0" aria-hidden="true" />
+      <Icon name="lucide:a-large-small" class="size-3.5 shrink-0" aria-hidden="true" />
       <span class="sr-only">Ajustes de leitura</span>
     </summary>
     <div
