@@ -21,70 +21,64 @@ Este texto conta como foi, sem nomes de cliente e sem dados. O que importa aqui 
 
 A esteira transforma bases de incorporadoras em indicadores de financiamento imobiliário dentro dos produtos da empresa. São mais de vinte clientes, e cada um manda seus dados do seu jeito: formatos diferentes, colunas com nomes diferentes, convenções diferentes para a mesma informação.
 
-Antes, cada base era um pequeno projeto. Alguém recebia o arquivo, entendia o formato daquela vez, extraía, ajustava, normalizava e só então colocava na pipeline. Caso a caso, à mão. Na prática, a maioria dos clientes mandava um .xlsx, às vezes até um .txt, e o tratamento era um projeto inteiro de notebooks Jupyter rodados no VS Code, um cliente de cada vez. Só alguns tinham a base extraída por nós, num desses notebooks conectado direto no banco do cliente. O conhecimento de "como a base do cliente X costuma vir" morava na cabeça de quem já tinha feito.
+Antes, cada base era um pequeno projeto. Alguém recebia o arquivo, quase sempre uma planilha, entendia o formato daquela vez, tratava os dados à mão e só então colocava na pipeline. O tratamento era um conjunto de notebooks rodados um cliente de cada vez, e o conhecimento de "como a base do cliente X costuma vir" morava na cabeça de quem já tinha feito.
 
 E o controle de tudo isso vivia numa ferramenta de terceiros, desconectada do trabalho. Saber em que fase estava cada base, quem era o responsável e se ia atrasar dependia de alguém atualizar um quadro.
 
 Cinco dias não eram cinco dias de processamento. Eram cinco dias de fila, de espera e de retrabalho.
 
-![Fluxo de antes, de cima para baixo: o cliente manda a base, quase sempre um arquivo .xlsx e às vezes até um .txt, alguém entende o formato daquela vez, abre o arquivo ou, para os poucos clientes com acesso ao banco, extrai com um notebook Jupyter, ajusta e normaliza em mais notebooks rodados no VS Code, cliente por cliente, sobe o arquivo e dispara a pipeline à mão, a pipeline gera os indicadores (a única parte automática) e a validação, que manda o erro de volta para a extração. Entre as etapas, esperas por pessoas. Ao lado, o controle num quadro de terceiros atualizado à mão. Total: cerca de cinco dias](../../assets/posts/2026/esteira-etl-antes.svg)
+![Fluxo de antes, de cima para baixo: o cliente manda a base em vários formatos, quase sempre planilha; alguém entende o formato daquela vez; trata os dados à mão em notebooks, um cliente de cada vez; sobe e dispara a pipeline também à mão; a pipeline gera os indicadores, a única parte automática; e a validação, que manda o erro de volta para o tratamento. Entre as etapas, esperas por pessoas. Ao lado, o controle num quadro de terceiros atualizado à mão. Total: cerca de cinco dias](../../assets/posts/2026/esteira-etl-antes.svg)
 
 ## Primeiro, a automação. Depois, a IA
 
-A tentação, em 2026, é começar pela IA. Eu comecei pelo contrário: automatizar por API tudo o que era determinístico.
+A tentação, em 2026, é começar pela IA. Eu comecei pelo contrário: automatizar tudo o que era previsível.
 
-Extração e pré-normalização viraram serviços, disparados por chamada e não por pessoa. A engine de pré-normalização é escrita em Python, com FastAPI e Polars, roda no Cloud Run e segue arquitetura hexagonal com DDD. Essa escolha não é estética: com fontes heterogêneas, o que muda de um cliente para outro precisa ficar nas bordas, nos adaptadores, e o domínio da normalização precisa ficar estável no meio. Cliente novo vira adaptador novo, não um `if` a mais no meio da regra.
+A leitura e a preparação dos dados viraram serviços, disparados por chamada e não por pessoa. O desenho separa o que muda do que não muda: o jeito de ler a base de cada cliente fica nas bordas, e a regra que prepara os dados fica estável no meio. Cliente novo vira uma peça nova na borda, não um `if` a mais no meio da regra. (O nome disso é arquitetura hexagonal; a engine é escrita em Python e roda no Google Cloud.)
 
-A IA entra depois, assistindo a extração e a pré-normalização naquilo que é ambíguo: o que uma regra fixa não resolve bem porque cada cliente descreve a mesma coisa de um jeito. Ela acelera a parte que antes exigia uma pessoa interpretando o arquivo. O que é determinístico continua determinístico.
+A IA entra depois, ajudando naquilo que é ambíguo: o que uma regra fixa não resolve bem, porque cada cliente descreve a mesma coisa de um jeito. Ela acelera a parte que antes exigia uma pessoa interpretando o arquivo. O que é previsível continua em regra fixa.
 
 Essa ordem importa. IA em cima de um processo manual só deixa o processo manual mais rápido de errar. IA em cima de um processo automatizado resolve a sobra que a automação não alcança.
 
 ## A operação ganhou um produto
 
-O segundo movimento foi tirar o controle da ferramenta de terceiros e trazer para dentro de casa. Construí o Play Manager, um produto interno que virou a fonte da verdade da operação: fase, responsável, prazo e saúde de cada base, num lugar só, para o time e para a liderança.
+O segundo movimento foi tirar o controle da ferramenta de terceiros e trazer para dentro de casa. Construí o Play Manager, um produto interno que virou a fonte da verdade da operação: fase, responsável, prazo e saúde de cada base, num lugar só, para o time e para a liderança. (Por baixo, React 19 e uma API própria em Hono sobre Firebase, com controle de acesso por papel e um editor de insights assistido por IA.)
 
-Ele é feito em React 19, com API própria em Hono sobre Firebase, controle de acesso por papel e um editor de insights assistido por IA.
-
-O passo que fez diferença foi levar a automação para dentro dele. Extração e pré-normalização passaram a ser disparadas pela própria interface, e não por alguém rodando um script. Por baixo, três propriedades sustentam isso:
+O passo que fez diferença foi levar a automação para dentro dele. A preparação dos dados passou a ser disparada pela própria tela, e não por alguém rodando um script. Três propriedades sustentam isso:
 
 - **Fila.** Cada base entra numa fila em vez de competir por atenção, e nada se perde porque alguém esqueceu.
-- **Idempotência.** Disparar duas vezes a mesma etapa não duplica resultado. Isso parece detalhe até alguém clicar duas vezes num botão, ou até uma etapa falhar no meio e precisar ser repetida.
-- **Enfileiramento automático.** Quando uma etapa termina, a próxima entra na fila sozinha. A esteira anda sem alguém empurrar.
+- **Repetir não estraga.** Disparar duas vezes a mesma etapa não duplica o resultado. Parece detalhe até alguém clicar duas vezes num botão, ou até uma etapa falhar no meio e precisar ser refeita. (Em engenharia, isso se chama idempotência.)
+- **Uma etapa puxa a próxima.** Quando uma etapa termina, a próxima entra na fila sozinha. A esteira anda sem alguém empurrar.
 
 É aqui que boa parte dos cinco dias desaparece. Não porque algo processa mais rápido, mas porque a base não fica parada esperando a próxima pessoa.
 
 ## Como as peças se conectam
 
-![Arquitetura de depois, de cima para baixo: o Play Manager (React 19, Hono e Firebase) é a fonte da verdade. Um botão no card ou o encadeamento automático põe a base na fila de extração (uma por fonte) e na fila de pré-normalização (duas por vez). As duas alimentam a engine de pré-normalização (Python, FastAPI e Polars no Cloud Run), hexagonal: nas bordas, o arquivo subido pelo card, três adaptadores de fonte e a IA, o domínio estável no meio e a saída no contrato da pipeline, com mais de 4.800 testes. O arquivo sobe sem o gatilho e entra na fila de gatilho, que libera uma base por vez, só sem job em voo e de forma idempotente por base e mês. A pipeline de indicadores roda, e cada passo concluído avança o card e enfileira o próximo. Validação reprovada vira alerta, não trava. Resultado: até 30 minutos](../../assets/posts/2026/esteira-etl-depois.svg)
+![Fluxo de depois, de cima para baixo: a entrada de dados, em vários formatos, de cada cliente; o Play Manager, com o card de cada base mostrando fase, responsável e prazo; as filas, em que cada etapa concluída puxa a próxima sozinha; a engine de preparação dos dados, com regra fixa no que é previsível, IA só no que é ambíguo e mais de 4.800 testes automáticos; e os indicadores prontos, na mesma pipeline de antes. Uma seta volta dos indicadores para o card, que avança sozinho. Resultado: até 30 minutos](../../assets/posts/2026/esteira-etl-depois.svg)
 
-A maioria dos clientes continua mandando um arquivo, que sobe pelo próprio card. A decisão que desenhou o resto foi onde morar a extração dos que não mandam. Cada fonte de dados espera de um jeito: uma dispara um serviço e só depois deixa ler o resultado, outra roda de forma assíncrona e com duração variável, a terceira é uma API REST paginada. Pus essa fachada dentro da engine de pré-normalização, e não no Play Manager. A engine já tinha o padrão de tarefa, consulta e download, a chave de API e o registro de configuração de cada cliente. O app passou a falar com uma API só, e não ganhou credencial de nuvem nenhuma.
-
-Nem o botão do card nem o encadeamento automático chamam a engine na hora: todo trabalho passa por uma fila, e cada fila tem a vazão que o gargalo dela permite. A extração anda uma por fonte, porque uma das fontes recusa chamadas concorrentes. A pré-normalização roda duas por vez. E a fila de gatilho libera uma base por vez para a pipeline de indicadores, só quando nenhum processamento está em andamento.
-
-Uma base que falha na extração ou na pré-normalização não segura as outras, porque essas filas seguem andando. E validação reprovada ou volume diferente do esperado não travam a esteira: viram alerta no card. **O controle é a ação aparecer só quando dá para executá-la**, em vez de um bloqueio que alguém precisa destravar.
+Os dados continuam chegando em vários formatos, e quase sempre sobem pelo próprio card da base. Dali em diante, nada depende de alguém lembrar: todo trabalho entra numa fila, cada etapa concluída avança o card e põe a próxima na fila, e uma base com problema não segura as outras. Quando algo sai do esperado, o card mostra um alerta em vez de travar a esteira. **O controle é a ação aparecer só quando dá para executá-la**, em vez de um bloqueio que alguém precisa destravar.
 
 ## O prazo virou regra do produto
 
 Prazo em planilha é uma intenção. Descobre-se o atraso depois que ele aconteceu.
 
-No Play Manager, o prazo de entrega é regra do sistema. Cada etapa tem um orçamento de tempo, e cada base é classificada automaticamente em uma de três situações: **no prazo**, **em risco** ou **atrasada**.
+No Play Manager, o prazo de entrega é regra do sistema. Cada fase tem um orçamento de tempo, e cada base é classificada automaticamente em uma de três situações: **no prazo**, **em risco** ou **atrasada**.
 
-![A esteira de oito etapas no card: 1 receber a base, 2 pré-normalizar, 3 sincronizar os dados, 4 gerar os indicadores, 5 gerar a base, 6 gerar o relatório, 7 gerar os insights com o editor assistido por IA, 8 enviar o relatório, e concluída. As etapas 1 a 3 são do ETL e as de 4 a 8 dos analistas, e as de 1 a 4 são disparadas do card. O responsável troca sozinho quando a base muda de etapa. Cada etapa tem um orçamento de tempo, e o card mostra no prazo, em risco ou atrasada](../../assets/posts/2026/esteira-etl-etapas.svg)
+![A esteira no card em três fases: 1, preparar a base, com o time de dados; 2, gerar indicadores e relatório, com os analistas; 3, entregar o relatório, com os analistas; e concluída. O responsável troca sozinho quando a base muda de fase. Cada fase tem um orçamento de tempo, e o card mostra no prazo, em risco ou atrasada](../../assets/posts/2026/esteira-etl-etapas.svg)
 
-São oito etapas, e cada uma tem dono: as três primeiras são do ETL, da quarta em diante são dos analistas. O responsável troca sozinho quando a base muda de etapa, então ninguém precisa lembrar de passar o bastão.
+Cada fase tem dono: preparar a base é do time de dados, e daí em diante é dos analistas. O responsável troca sozinho quando a base muda de fase, então ninguém precisa lembrar de passar o bastão.
 
 A diferença entre "em risco" e "atrasada" é o ponto todo. Com ela, a gestão vê o atraso chegando enquanto ainda dá para agir, em vez de constatá-lo depois do vencimento. A conversa deixa de ser "por que atrasou?" e vira "o que fazemos com essa que está em risco?".
 
 ## Onde a IA pode errar, testes
 
-Uma esteira de dados tem um modo de falha cruel: ela não quebra, ela entrega errado. Um número normalizado de um jeito sutilmente diferente passa por todas as etapas, chega ao indicador e ninguém percebe.
+Uma esteira de dados tem um modo de falha cruel: ela não quebra, ela entrega errado. Um número preparado de um jeito sutilmente diferente passa por todas as etapas, chega ao indicador e ninguém percebe.
 
 Por isso a velocidade veio junto com uma rede de testes:
 
-- A engine de pré-normalização é sustentada por mais de **4.800 casos de teste**, entre unitários, integração, regressão e paridade. Os de paridade são os que mais importam numa mudança assim: comparam resultados para garantir que uma alteração não muda o que deveria continuar igual.
-- Dois pipelines de extração e integração rodavam em produção **sem nenhum teste automatizado**. Escrevi 920 casos e levei a cobertura de 0% para **84% e 92%**, com portão de cobertura no CI a cada pull request e deploy bloqueado quando a suíte falha.
+- A engine de preparação é sustentada por mais de **4.800 testes automáticos**. Os que mais importam numa mudança assim são os que comparam o resultado de antes com o de depois, para garantir que uma alteração não muda o que deveria continuar igual.
+- Dois pipelines que já rodavam em produção não tinham **nenhum teste automatizado**. Escrevi 920 testes, levei a cobertura de 0% para **84% e 92%**, e o deploy passou a ser bloqueado sempre que a suíte falhava.
 
-Com IA no meio do processo, isso deixa de ser boa prática e vira requisito. O teste é o que permite deixar a IA ajudar sem ter que conferir cada saída à mão.
+Com IA no meio do processo, isso deixa de ser boa prática e vira requisito. O teste é o que permite deixar a IA ajudar sem ter que conferir cada saída à mão. Vale para o código também: o que eu escrevia com IA passava por teste antes e por portões antes de cada commit, e contei esse fluxo em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex).
 
 ## A virada sem trauma
 
@@ -94,19 +88,13 @@ Conduzi a migração replicando no Play Manager os padrões de interação que o
 
 Não foi a parte mais interessante tecnicamente, mas foi uma das que mais pesaram no resultado. Um produto melhor que ninguém adota não reduz prazo nenhum.
 
-## Como o código é escrito
-
-Por trás de tudo isso havia uma forma de trabalhar. Desenvolvi com um framework próprio de desenvolvimento assistido por IA sobre o Claude Code: cada mudança passava por pesquisa, plano e implementação, com teste escrito antes do código e portões de lint, tipos, testes e build antes de cada commit.
-
-Isso importa aqui por um motivo específico: numa esteira de dados, a pressa é o que introduz o erro silencioso. Ter o portão como ferramenta, e não como disciplina, é o que deixa ir rápido sem quebrar o que já funciona. Escrevi sobre esse fluxo em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex).
-
 ## O que fica
 
 Se eu tivesse que resumir em três decisões:
 
-1. **Automatizar antes de pôr IA.** A IA resolve a sobra ambígua; o que é determinístico vira código.
-2. **Tirar a fila da cabeça das pessoas.** Fila, idempotência e enfileiramento automático fazem a base andar sozinha.
-3. **Transformar intenção em regra.** Prazo com orçamento por etapa, cobertura com portão no CI. O que depende de alguém lembrar acaba esquecido.
+1. **Automatizar antes de pôr IA.** A IA resolve a sobra ambígua; o que é previsível vira código.
+2. **Tirar a fila da cabeça das pessoas.** Fila, repetição segura e uma etapa puxando a próxima fazem a base andar sozinha.
+3. **Transformar intenção em regra.** Prazo com orçamento por fase, deploy bloqueado quando o teste falha. O que depende de alguém lembrar acaba esquecido.
 
 Os cinco dias não sumiram porque um modelo ficou mais esperto. Sumiram porque o trabalho parou de esperar.
 

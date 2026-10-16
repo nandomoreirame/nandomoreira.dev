@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="1080" viewBox="0 0 640 1080" font-family="Alegreya Sans, system-ui, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="970" viewBox="0 0 640 970" font-family="Alegreya Sans, system-ui, sans-serif">
   <title>Antes: cada base era um pequeno projeto</title>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
@@ -9,7 +9,7 @@
     </marker>
   </defs>
 
-  <rect width="640" height="1080" fill="#191714"/>
+  <rect width="640" height="970" fill="#191714"/>
 
   <text x="40" y="52" fill="#a29e96" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="2">ANTES</text>
   <text x="40" y="84" fill="#efebe2" font-family="Literata, Georgia, serif" font-size="26" font-weight="600">Cada base, um pequeno projeto</text>
@@ -18,31 +18,27 @@
   <g font-size="21">
     <rect x="40" y="120" width="480" height="76" rx="10" fill="#211f1c" stroke="#6c6863"/>
     <text x="64" y="152" fill="#efebe2">Cliente manda a base</text>
-    <text x="64" y="178" fill="#a29e96" font-size="17">quase sempre um .xlsx, às vezes até um .txt</text>
+    <text x="64" y="178" fill="#a29e96" font-size="17">em vários formatos, quase sempre planilha</text>
 
     <rect x="40" y="236" width="480" height="76" rx="10" fill="#211f1c" stroke="#f0c36f"/>
     <text x="64" y="268" fill="#efebe2">Alguém entende o formato</text>
     <text x="64" y="294" fill="#a29e96" font-size="17">daquela vez, cliente por cliente</text>
 
     <rect x="40" y="352" width="480" height="76" rx="10" fill="#211f1c" stroke="#f0c36f"/>
-    <text x="64" y="384" fill="#efebe2">Abre o arquivo ou extrai</text>
-    <text x="64" y="410" fill="#a29e96" font-size="17">só alguns pelo banco, num notebook Jupyter</text>
+    <text x="64" y="384" fill="#efebe2">Trata os dados à mão</text>
+    <text x="64" y="410" fill="#a29e96" font-size="17">em notebooks, um cliente de cada vez</text>
 
     <rect x="40" y="468" width="480" height="76" rx="10" fill="#211f1c" stroke="#f0c36f"/>
-    <text x="64" y="500" fill="#efebe2">Ajusta e normaliza</text>
-    <text x="64" y="526" fill="#a29e96" font-size="17">mais notebooks, rodados no VS Code</text>
+    <text x="64" y="500" fill="#efebe2">Sobe e dispara a pipeline</text>
+    <text x="64" y="526" fill="#a29e96" font-size="17">também à mão</text>
 
-    <rect x="40" y="584" width="480" height="76" rx="10" fill="#211f1c" stroke="#f0c36f"/>
-    <text x="64" y="616" fill="#efebe2">Sobe e dispara a pipeline</text>
-    <text x="64" y="642" fill="#a29e96" font-size="17">upload e gatilho à mão</text>
+    <rect x="40" y="584" width="480" height="76" rx="10" fill="#211f1c" stroke="#a9ddb2"/>
+    <text x="64" y="616" fill="#efebe2">Pipeline gera os indicadores</text>
+    <text x="64" y="642" fill="#a29e96" font-size="17">a única parte automática</text>
 
-    <rect x="40" y="700" width="480" height="76" rx="10" fill="#211f1c" stroke="#a9ddb2"/>
-    <text x="64" y="732" fill="#efebe2">Pipeline gera os indicadores</text>
-    <text x="64" y="758" fill="#a29e96" font-size="17">a única parte automática</text>
-
-    <rect x="40" y="816" width="480" height="76" rx="10" fill="#211f1c" stroke="#6c6863"/>
-    <text x="64" y="848" fill="#efebe2">Validação</text>
-    <text x="64" y="874" fill="#a29e96" font-size="17">achou erro, volta para a extração</text>
+    <rect x="40" y="700" width="480" height="76" rx="10" fill="#211f1c" stroke="#6c6863"/>
+    <text x="64" y="732" fill="#efebe2">Validação</text>
+    <text x="64" y="758" fill="#a29e96" font-size="17">achou erro, volta para o tratamento</text>
   </g>
 
   <!-- Arrows between steps, with the waits where a person hands off -->
@@ -52,22 +48,21 @@
     <path d="M200 428 V464"/>
     <path d="M200 544 V580"/>
     <path d="M200 660 V696"/>
-    <path d="M200 776 V812"/>
   </g>
   <g fill="#facf9e" font-family="JetBrains Mono, ui-monospace, monospace" font-size="14">
     <text x="216" y="220">espera alguém pegar</text>
-    <text x="216" y="568">espera quem sobe</text>
-    <text x="216" y="800">espera a validação</text>
+    <text x="216" y="452">espera quem sobe</text>
+    <text x="216" y="684">espera a validação</text>
   </g>
 
-  <!-- Rework loop: validation back to extraction -->
-  <path d="M520 854 H580 V390 H524" stroke="#ffb7b0" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#arrow-warn)"/>
-  <text x="604" y="640" fill="#ffb7b0" font-family="JetBrains Mono, ui-monospace, monospace" font-size="14" transform="rotate(-90 604 640)" text-anchor="middle">retrabalho</text>
+  <!-- Rework loop: validation back to the manual work -->
+  <path d="M520 738 H580 V390 H524" stroke="#ffb7b0" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#arrow-warn)"/>
+  <text x="604" y="564" fill="#ffb7b0" font-family="JetBrains Mono, ui-monospace, monospace" font-size="14" transform="rotate(-90 604 564)" text-anchor="middle">retrabalho</text>
 
   <!-- The board, off to the side of the work -->
-  <rect x="40" y="932" width="560" height="80" rx="10" fill="none" stroke="#6c6863" stroke-dasharray="6 5"/>
-  <text x="64" y="964" fill="#efebe2" font-size="20">Controle num quadro de terceiros</text>
-  <text x="64" y="990" fill="#a29e96" font-size="17">atualizado à mão, depois que a coisa já aconteceu</text>
+  <rect x="40" y="816" width="560" height="80" rx="10" fill="none" stroke="#6c6863" stroke-dasharray="6 5"/>
+  <text x="64" y="848" fill="#efebe2" font-size="20">Controle num quadro de terceiros</text>
+  <text x="64" y="874" fill="#a29e96" font-size="17">atualizado à mão, depois que a coisa já aconteceu</text>
 
-  <text x="40" y="1052" fill="#f0c36f" font-family="Literata, Georgia, serif" font-size="22" font-weight="600">≈ 5 dias de fila, espera e retrabalho</text>
+  <text x="40" y="936" fill="#f0c36f" font-family="Literata, Georgia, serif" font-size="22" font-weight="600">≈ 5 dias de fila, espera e retrabalho</text>
 </svg>
