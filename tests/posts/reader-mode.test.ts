@@ -143,6 +143,13 @@ describe('reading mode styles', () => {
     expect(rule(`${on} :has([data-reader])`)).toMatch(/animation:\s*none/);
   });
 
+  it('starts the article close to the top: no margin on phones, lg from sm up', () => {
+    expect(rule(`${on} [data-reader-article]`)).toMatch(/margin-top:\s*0/);
+    expect(css).toMatch(
+      /@media \(width >= 40rem\) \{\s*:root:has\(#reader-on:checked\) \[data-reader-article\] \{\s*margin-top: var\(--spacing-lg\);/,
+    );
+  });
+
   it('is unlayered, so hiding wins over the display utilities', () => {
     // Rules inside @layer or @media are indented in this file; top-level ones are not.
     expect(css).toContain(`\n${on} :is([data-site-header], [data-reader-hide]) {`);

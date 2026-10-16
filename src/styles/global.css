@@ -183,8 +183,16 @@
 :root:has(#reader-on:checked) [data-reader-article] {
   max-width: var(--reader-measure, 640px);
   margin-inline: auto;
-  padding-block: var(--spacing-3xl);
+  margin-top: 0;
+  /* Clears the pinned controls (2rem tall, 1rem from the top) on phones. */
+  padding-block: var(--spacing-2xl) var(--spacing-3xl);
   font-size: var(--text-prose);
+}
+
+@media (width >= 40rem) {
+  :root:has(#reader-on:checked) [data-reader-article] {
+    margin-top: var(--spacing-lg);
+  }
 }
 
 :root:has(#reader-on:checked) [data-prose] {
