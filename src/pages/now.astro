@@ -4,6 +4,7 @@ Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 import NowGames from '../components/now/NowGames.astro';
 import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
+import Alert from '../components/ui/Alert.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
@@ -40,7 +41,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
         <ul>
           {data.focus.declining.map((item) => <li>{item}</li>)}
         </ul>
-        <p>Disponibilidade: {data.focus.availability}</p>
+        <Alert title="Disponibilidade">{data.focus.availability}</Alert>
       </NowSection>
 
       <NowSection id="projetos" title="Projetos em andamento">
@@ -74,6 +75,18 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             )
           }
           {data.writing.drafts.map((title) => <li>{title}</li>)}
+        </ul>
+      </NowSection>
+
+      <NowSection id="estudando" title="Estudando">
+        <ul>
+          {
+            data.studying.map((study) => (
+              <li>
+                <a href={study.url} {...externalAttrs}>{study.topic}</a>: {study.note}
+              </li>
+            ))
+          }
         </ul>
       </NowSection>
     </Prose>

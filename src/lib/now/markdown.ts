@@ -84,6 +84,12 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   for (const title of data.writing.drafts) writing.push(`- ${title}`);
   pushSection(lines, 'Escrevendo', writing);
 
+  const studying = data.studying.flatMap((study) => {
+    if (leaksToMachine(study.topic) || leaksToMachine(study.note) || leaksToMachine(study.url)) return [];
+    return [`- [${machineText(study.topic)}](${study.url}): ${machineText(study.note)}`];
+  });
+  pushSection(lines, 'Estudando', studying);
+
   const music: string[] = [];
   if (data.music.topArtists.state === 'ok') {
     const artists = data.music.topArtists.items.flatMap((artist) => {

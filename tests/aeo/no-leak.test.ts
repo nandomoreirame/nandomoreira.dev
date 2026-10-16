@@ -114,6 +114,7 @@ const outputs = () => [
       games: { state: 'empty' },
       writing: { latest: undefined, drafts: [] },
       focus: { items: ['Foco'], declining: ['Fora'], availability: 'Aberto.' },
+      studying: [{ topic: 'Tema', note: 'dúvidas para x@y.com', url: 'https://example.com/leitura' }],
     },
   }),
 ];

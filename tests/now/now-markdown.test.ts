@@ -43,10 +43,11 @@ const snapshot = (availability: string): NowSnapshot => ({
     drafts: ['Rascunho sem link'],
   },
   focus: { items: ['Foco um'], declining: ['Declínio um'], availability },
+  studying: [{ topic: 'Tema um', note: 'o porquê do tema', url: 'https://example.com/leitura' }],
 });
 
 describe('nowMarkdown', () => {
-  it('lists the five sections in page order, with links only where a human can open them', () => {
+  it('lists the six sections in page order, with links only where a human can open them', () => {
     const markdown = nowMarkdown({ site, data: snapshot('Aberto a projetos.') });
     const headings = [...markdown.matchAll(/^## .+$/gm)].map((match) => match[0]);
 
@@ -54,6 +55,7 @@ describe('nowMarkdown', () => {
       '## Foco',
       '## Projetos em andamento',
       '## Escrevendo',
+      '## Estudando',
       '## Ouvindo',
       '## Jogando',
     ]);
@@ -68,6 +70,7 @@ describe('nowMarkdown', () => {
     expect(markdown).toContain('](https://nandomoreira.dev/post-publicado)');
     expect(markdown).not.toContain('/posts/');
     expect(markdown).toMatch(/^- Rascunho sem link$/m);
+    expect(markdown).toMatch(/^- \[Tema um\]\(https:\/\/example\.com\/leitura\): o porquê do tema$/m);
     expect(markdown).not.toContain('[Rascunho sem link]');
     expect(markdown).not.toContain('TODO');
     expect(markdown.toLowerCase()).not.toContain('api');

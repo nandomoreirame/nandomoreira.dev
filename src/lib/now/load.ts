@@ -7,7 +7,7 @@ import { readNowConfig, type NowConfig } from './config';
 import { dayLabel } from './day';
 import { fetchActiveRepos, type ActiveRepo } from './github';
 import { logSourceError } from './http';
-import { NOW_DECLINING, NOW_FAILURE_TTL_MS, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_TTL } from './now';
+import { NOW_DECLINING, NOW_FAILURE_TTL_MS, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_STUDYING, NOW_TTL } from './now';
 import { fetchRecentTracks, fetchTopArtists, type RecentTrack, type TopArtist } from './spotify';
 import { fetchXbox, type PlayingNow, type RecentGame } from './xbox';
 
@@ -36,6 +36,7 @@ export interface NowSnapshot {
   games: GamesSection;
   writing: { latest: Post | undefined; drafts: string[] };
   focus: { items: readonly string[]; declining: readonly string[]; availability: string };
+  studying: typeof NOW_STUDYING;
 }
 
 const arraySection = <T>(items: readonly T[]): Section<T[]> =>
@@ -161,6 +162,7 @@ export const createNowLoader = ({
         declining: NOW_DECLINING,
         availability: availability.detail,
       },
+      studying: NOW_STUDYING,
     };
   };
 };

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { Post } from '../../src/content/schemas/post';
 import { readNowConfig } from '../../src/lib/now/config';
 import { createNowLoader } from '../../src/lib/now/load';
-import { NOW_FOCUS } from '../../src/lib/now/now';
+import { NOW_FOCUS, NOW_STUDYING } from '../../src/lib/now/now';
 
 const readJson = (name: string) =>
   JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -76,6 +76,7 @@ describe('loadNow', () => {
     expect(urls.some((url) => url.includes('spotify.com'))).toBe(false);
     expect(urls.some((url) => url.includes('xbl.io'))).toBe(false);
     expect(data.focus.items).toEqual(NOW_FOCUS);
+    expect(data.studying).toEqual(NOW_STUDYING);
     expect(data.focus.availability.length).toBeGreaterThan(0);
   });
 

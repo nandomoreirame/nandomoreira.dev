@@ -6,7 +6,7 @@
 export const NOW_PATH = '/now';
 
 /** Bump when the curated text changes. */
-export const NOW_UPDATED_AT = '2026-10-11';
+export const NOW_UPDATED_AT = '2026-10-16';
 
 export const NOW_LEAD =
   'O que eu contaria a um amigo que não vejo há um ano, no espírito do /now de Derek Sivers: https://nownownow.com/about.';
@@ -22,6 +22,38 @@ export const NOW_FOCUS = [
 export const NOW_DECLINING = [
   'Trabalho de IA que fica em demonstração e não chega em produção.',
   'Projeto sem escopo fechado. O que eu aceito é escopo fechado, ou uma posição sênior, CLT ou PJ.',
+];
+
+/**
+ * What is being studied, in order (2026-10-16). Each links to a public reading:
+ * the study pages themselves live on the homelab and open for no one else.
+ */
+export const NOW_STUDYING: ReadonlyArray<{ topic: string; note: string; url: string }> = [
+  {
+    topic: 'RAG e busca vetorial',
+    note: 'embeddings, busca híbrida e pgvector, começando por uma busca semântica nos posts deste blog.',
+    url: 'https://www.anthropic.com/news/contextual-retrieval',
+  },
+  {
+    topic: 'Evals de LLM',
+    note: 'o teste automatizado de sistemas com modelo, com casos do domínio, nota por código e juiz calibrado.',
+    url: 'https://hamel.dev/blog/posts/evals/',
+  },
+  {
+    topic: 'Observabilidade com OpenTelemetry',
+    note: 'traces, métricas e os quatro sinais de ouro, aplicados ao servidor MCP deste site.',
+    url: 'https://opentelemetry.io/docs/concepts/observability-primer/',
+  },
+  {
+    topic: 'Kubernetes e Terraform',
+    note: 'o homelab descrito em arquivo, do contêiner ao cluster.',
+    url: 'https://kubernetes.io/docs/tutorials/kubernetes-basics/',
+  },
+  {
+    topic: 'C# e .NET no Linux',
+    note: 'o caminho de quem vem de TypeScript, até um servidor MCP em C#.',
+    url: 'https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-javascript-developers',
+  },
 ];
 
 /** The author fills this when a fallback list is wanted. Empty leaves Jogando empty. */

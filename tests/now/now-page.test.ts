@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getCurrentPosts, getUpcomingPosts } from '../../src/lib/content';
-import { NOW_DECLINING, NOW_UPDATED_AT } from '../../src/lib/now/now';
+import { NOW_DECLINING, NOW_STUDYING, NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
 
@@ -110,23 +110,25 @@ describe('/now page', () => {
     const text = visibleText(html.split('<article')[1]?.split('</article>')[0] ?? '');
     expect(text).not.toContain(' ,');
     expect(text).not.toContain(' :');
-    expect(text).not.toContain(' .');
+    // A stray period before a space or the end; ".NET" in Estudando is a name, not a separator.
+    expect(text).not.toMatch(/ \.(\s|$)/);
     // A description or an artist that already ends in a period gets no second one.
     expect(text).not.toContain('..');
-    expect(text).toContain('Artist A Jr. · Album (1999)');
-    expect(text).toContain('hoje');
+    // The recent tracks left the page (2026-10-16); only the artists stay.
+    expect(text).not.toContain('Artist A Jr. · Album (1999)');
     expect(text).toContain('11 de outubro');
     expect(html).toContain('/api/now/cover/spotify/');
     expect(html).not.toContain('scdn.co');
     expect(html).not.toContain('s-microsoft.com');
   });
 
-  it('renders the five sections in order, the update date, and the games fallback', async () => {
+  it('renders the six sections in order, the update date, and the games fallback', async () => {
     const html = await render(NowPage);
     expect(headings(html)).toEqual([
       'Foco',
       'Projetos em andamento',
       'Escrevendo',
+      'Estudando',
       'Ouvindo',
       'Jogando',
     ]);
@@ -134,6 +136,18 @@ describe('/now page', () => {
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
     const playing = html.split('>Jogando<')[1]?.split('</section>')[0] ?? '';
     expect(playing).toContain('Sem dados no momento.');
+  });
+
+  it('lists each study with its reading, opened outside the site', async () => {
+    const html = await render(NowPage);
+    const studying = html.split('id="estudando"')[1]?.split('</section>')[0] ?? '';
+
+    for (const study of NOW_STUDYING) {
+      const link = studying.match(new RegExp(`<a[^>]*href="${study.url.replace(/[.?+]/g, '\\$&')}"[^>]*>`))?.[0] ?? '';
+      expect(link, study.topic).toContain('rel="nofollow noopener noreferrer"');
+      expect(studying).toContain(study.topic);
+      expect(studying).toContain(study.note);
+    }
   });
 
   it('labels what is being declined inside Foco', async () => {
@@ -145,13 +159,22 @@ describe('/now page', () => {
     expect(foco).toContain('<h3');
     expect(heading).toBeGreaterThan(-1);
     expect(declining).toBeGreaterThan(heading);
-    expect(foco).toContain('Disponibilidade:');
+  });
+
+  it('shows the availability in a green alert, after what is declined', async () => {
+    const html = await render(NowPage);
+    const foco = html.split('id="foco"')[1]?.split('id="projetos"')[0] ?? '';
+    const alert = foco.split('data-alert')[1] ?? '';
+
+    expect(alert).toContain('data-tone="success"');
+    expect(alert).toContain('>Disponibilidade<');
+    expect(foco.indexOf('data-alert')).toBeGreaterThan(foco.indexOf('>Recusando agora<'));
   });
 
   it('links the latest post at /slug and never under /posts', async () => {
     const latest = (await getCurrentPosts()).find((post) => post.draft !== true);
     const html = await render(NowPage);
-    const writing = html.split('id="escrevendo"')[1]?.split('id="ouvindo"')[0] ?? '';
+    const writing = html.split('id="escrevendo"')[1]?.split('id="estudando"')[0] ?? '';
 
     expect(latest).toBeDefined();
     expect(writing).toContain(`href="/${latest!.slug}"`);
@@ -161,7 +184,7 @@ describe('/now page', () => {
   it('lists draft titles without a link', async () => {
     const drafts = (await getUpcomingPosts()).slice(0, 5);
     const html = await render(NowPage);
-    const writing = html.split('>Escrevendo<')[1]?.split('>Ouvindo<')[0] ?? '';
+    const writing = html.split('>Escrevendo<')[1]?.split('>Estudando<')[0] ?? '';
 
     expect(drafts.length).toBeGreaterThan(0);
     for (const draft of drafts) {
@@ -199,7 +222,7 @@ describe('/now section headings', () => {
     const html = await container.renderToString(NowPage);
     vi.unstubAllGlobals();
     const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map((match) => match[0]);
-    expect(h2s).toHaveLength(5);
+    expect(h2s).toHaveLength(6);
     for (const tag of h2s) expect(tag).toContain('text-h2');
   });
 });

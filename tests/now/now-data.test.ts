@@ -7,6 +7,7 @@ import {
   NOW_LEAD,
   NOW_PATH,
   NOW_REPO_EXCLUDE,
+  NOW_STUDYING,
   NOW_TTL,
   NOW_UPDATED_AT,
 } from '../../src/lib/now/now';
@@ -16,6 +17,7 @@ const curated = [
   ...NOW_FOCUS,
   ...NOW_DECLINING,
   ...NOW_GAMES.flatMap((game) => [game.name, game.note ?? '']),
+  ...NOW_STUDYING.flatMap((study) => [study.topic, study.note]),
 ];
 
 describe('now curated data', () => {
@@ -37,6 +39,17 @@ describe('now curated data', () => {
       expect(text.toLowerCase()).not.toContain('estou na liquid');
     }
     expect(NOW_LEAD).toContain('https://nownownow.com/about');
+  });
+
+  it('lists what is being studied, each with a public reading a visitor can open', () => {
+    expect(NOW_STUDYING.length).toBeGreaterThan(0);
+    for (const study of NOW_STUDYING) {
+      expect(study.topic.length).toBeGreaterThan(0);
+      expect(study.note.length).toBeGreaterThan(0);
+      expect(new URL(study.url).protocol).toBe('https:');
+      // estudos.home lives on the homelab: a link to it would 404 for everyone else.
+      expect(study.url).not.toContain('.home');
+    }
   });
 
   it('matches the source TTLs and the exclusion lists from the spec', () => {
