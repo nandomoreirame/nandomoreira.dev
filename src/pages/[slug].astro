@@ -4,6 +4,7 @@ import { render } from 'astro:content';
 import ListRow from '../components/ui/ListRow.astro';
 import Prose from '../components/ui/Prose.astro';
 import ReaderMode from '../components/posts/ReaderMode.astro';
+import AiSummaryLink from '../components/posts/AiSummaryLink.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
@@ -93,7 +94,10 @@ const authorName = displayNameOf(await getProfile());
           )
         }
       </p>
-      <ReaderMode />
+      <div class="flex flex-wrap items-start gap-sm">
+        <ReaderMode />
+        <AiSummaryLink markdownUrl={`${site}/${post.slug}.md`} />
+      </div>
       {
         post.cover && (
           <figure class="m-0 mt-md overflow-hidden rounded-md border border-border" data-reader-hide>

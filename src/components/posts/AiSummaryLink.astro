@@ -1,0 +1,25 @@
+---
+import { Icon } from 'astro-icon/components';
+import { aiSummaryUrl } from '../../lib/posts/ai-summary';
+
+interface Props {
+  /** Absolute URL of the post's markdown view (/<slug>.md). */
+  markdownUrl: string;
+}
+
+const { markdownUrl } = Astro.props;
+---
+
+{/* Same weight as the reading mode switch beside it. Hidden in reading mode. */}
+<a
+  href={aiSummaryUrl(markdownUrl)}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-reader-hide
+  class="inline-flex min-h-8 items-center gap-xs rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <Icon name="lucide:sparkles" class="size-3.5 shrink-0" aria-hidden="true" />
+  <span>Resumir com IA</span>
+  <span class="sr-only">(abre o Claude em nova aba)</span>
+  <Icon name="lucide:arrow-up-right" class="size-3 shrink-0" aria-hidden="true" />
+</a>
