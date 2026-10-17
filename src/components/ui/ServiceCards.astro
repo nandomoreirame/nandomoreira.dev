@@ -11,6 +11,14 @@ interface Props {
 
 const { services, projects } = Astro.props;
 
+// Glyphs from the Stitch home, keyed by the proving case. A service without a
+// mapping stays text-only rather than wearing a glyph that does not match it.
+const SERVICE_ICONS: Record<string, string> = {
+  bragstack: 'lucide:layers',
+  'financial-normalization': 'lucide:workflow',
+  'amnesia-claude-code': 'lucide:terminal',
+};
+
 assertServicesHaveCases(
   services,
   projects.map((project) => project.slug),
@@ -21,8 +29,14 @@ assertServicesHaveCases(
   {
     services.map((service) => {
       const href = serviceCaseHref(service.caseSlug, projects);
+      const icon = SERVICE_ICONS[service.caseSlug];
       return (
         <Card as="li" interactive class="flex flex-col gap-sm">
+          {icon && (
+            <span class="inline-flex size-8 items-center justify-center rounded-sm border border-border bg-surface-elevated text-primary">
+              <Icon name={icon} aria-hidden="true" class="size-5" />
+            </span>
+          )}
           <h3 class="text-h3 font-semibold text-foreground">{service.title}</h3>
           <p class="text-body text-muted-foreground">{service.description}</p>
           {href && (
