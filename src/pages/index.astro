@@ -3,6 +3,7 @@ import CollectionSection from '../components/home/CollectionSection.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
+import SectionRule from '../components/ui/SectionRule.astro';
 import Hero from '../components/home/Hero.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import LatestPosts from '../components/home/LatestPosts.astro';
@@ -71,15 +72,21 @@ const hireBrief = buildHireBrief({
     availability={profile.availability}
     stack={profile.stack}
   />
+  <SectionRule />
   <LatestPosts posts={blogPosts} />
+  <SectionRule />
   <CollectionSection
     collection="portfolio"
     projects={portfolio}
     totalCount={portfolio.length}
     index={1}
   />
+  <SectionRule />
   <CollectionSection collection="lab" projects={lab} totalCount={lab.length} index={2} />
+  <SectionRule />
   <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
+  <SectionRule />
   <Services services={profile.services} projects={serviceProjects} />
+  <SectionRule />
   <AgentBrief brief={hireBrief} />
 </BaseLayout>
