@@ -2,8 +2,13 @@ import { codeToHtml } from 'shiki';
 import { describe, expect, it } from 'vitest';
 import { CODE_TOOLBAR_LABELS, codeToolbar, svgBody } from '../../src/lib/code/toolbar';
 
-const highlight = (code: string) =>
-  codeToHtml(code, { lang: 'python', theme: 'github-dark-default', transformers: [codeToolbar()] });
+const highlight = (code: string, lang = 'python', meta?: string) =>
+  codeToHtml(code, {
+    lang,
+    theme: 'github-dark-default',
+    meta: meta ? { __raw: meta } : undefined,
+    transformers: [codeToolbar()],
+  });
 
 describe('svgBody', () => {
   it('turns an icon body, nested groups included, into hast elements', () => {
@@ -19,20 +24,40 @@ describe('svgBody', () => {
 });
 
 describe('codeToolbar', () => {
-  it('wraps the block with a toolbar of icon actions', async () => {
+  it('puts a header bar above the code, always in the markup', async () => {
     const html = await highlight('print("oi")');
-
     expect(html).toMatch(/^<div[^>]*class="code-block"[^>]*data-code-block/);
-    expect(html).toMatch(/<div[^>]*class="code-toolbar"/);
-    expect(html.indexOf('code-toolbar')).toBeLessThan(html.indexOf('<pre'));
+    expect(html).toMatch(/<div class="code-header">/);
+    expect(html.indexOf('code-header')).toBeLessThan(html.indexOf('<pre'));
+  });
+
+  it('labels the bar with the fence title', async () => {
+    const html = await highlight('wid=1', 'bash', 'title="bin/scratchpad.sh — scratchpad_toggle()"');
+    expect(html).toMatch(/<span class="code-title">bin\/scratchpad\.sh — scratchpad_toggle\(\)<\/span>/);
+  });
+
+  it('falls back to the language, and to "texto" without one', async () => {
+    expect(await highlight('a', 'bash')).toMatch(/<span class="code-title">bash<\/span>/);
+    expect(await highlight('a', 'text')).toMatch(/<span class="code-title">texto<\/span>/);
+    expect(await highlight('a', 'plaintext')).toMatch(/<span class="code-title">texto<\/span>/);
+  });
+
+  it('draws a decorative dot before the label', async () => {
+    expect(await highlight('a')).toMatch(/<span class="code-dot" aria-hidden="true"><\/span>\s*<span class="code-title">/);
+  });
+
+  it('shows Raw and Copiar as text actions on the right, no tooltip', async () => {
+    const html = await highlight('print("oi")');
+    const actions = html.match(/<div class="code-actions">[\s\S]*?<\/div>/)?.[0] ?? '';
+    expect(actions).toMatch(/<label class="code-action"><input type="checkbox" class="code-raw-toggle sr-only"[^>]*>Raw<\/label>/);
+    expect(actions).toMatch(/<button[^>]*class="code-action"[^>]*><span>Copiar<\/span><\/button>/);
+    expect(html).not.toContain('code-tooltip');
   });
 
   it('copies the block through the site script, by the id of its <pre>', async () => {
     const html = await highlight('print("oi")');
     const id = html.match(/<pre[^>]*id="([^"]+)"/)?.[1];
-
     expect(id).toMatch(/^code-\d+$/);
-    // Ships hidden: only the script reveals it, so without JS it promises nothing.
     expect(html).toMatch(new RegExp(`<button[^>]*type="button"[^>]*data-copy="${id}"[^>]*hidden`));
     expect(html).toContain(`data-label-copied="${CODE_TOOLBAR_LABELS.copied}"`);
   });
@@ -42,30 +67,8 @@ describe('codeToolbar', () => {
     expect(new Set(ids).size).toBe(2);
   });
 
-  it('toggles the raw view with a checkbox, so it needs no script', async () => {
-    const html = await highlight('print("oi")');
-    expect(html).toMatch(/<label[^>]*class="code-action"[^>]*><input[^>]*type="checkbox"[^>]*class="code-raw-toggle sr-only"/);
-  });
-
-  it('names each action by its tooltip, which is the visible label', async () => {
-    const html = await highlight('print("oi")');
-    const tooltips = [...html.matchAll(/<span class="code-tooltip">([^<]+)<\/span>/g)].map((match) => match[1]);
-
-    expect(tooltips).toEqual([CODE_TOOLBAR_LABELS.raw, CODE_TOOLBAR_LABELS.copy]);
-  });
-
-  it('draws the icons as decorative inline SVG', async () => {
-    const svgs = (await highlight('print("oi")')).match(/<svg\b[^>]*>/g) ?? [];
-
-    expect(svgs).toHaveLength(3); // raw, copy, and the check shown after copying
-    for (const svg of svgs) {
-      expect(svg).toContain('aria-hidden="true"');
-      expect(svg).toContain('viewBox="0 0 24 24"');
-    }
-  });
-
   it('labels the actions in Portuguese', () => {
-    expect(CODE_TOOLBAR_LABELS).toEqual({ raw: 'Raw', copy: 'Copiar', copied: 'Copiado' });
+    expect(CODE_TOOLBAR_LABELS).toEqual({ raw: 'Raw', copy: 'Copiar', copied: 'Copiado', plain: 'texto' });
   });
 });
 

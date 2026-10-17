@@ -25,9 +25,10 @@ describe('Prose code blocks', () => {
   // happens to be monospaced (2026-10-10).
   it('pads, frames and spaces every block apart from the text around it', async () => {
     const list = await classes();
-    for (const name of ['[&_.code-block]:my-lg', '[&_pre]:my-0', '[&_pre]:p-md', '[&_pre]:pl-sm', '[&_pre]:rounded-md', '[&_pre]:border', '[&_pre]:border-border-strong']) {
+    for (const name of ['[&_.code-block]:my-lg', '[&_pre]:my-0', '[&_pre]:p-md', '[&_pre]:pl-sm']) {
       expect(list).toContain(name);
     }
+    expect(list).not.toContain('[&_pre]:border');
   });
 
   it('sets code in the mono face, a size smaller, with code line-height, not prose line-height', async () => {

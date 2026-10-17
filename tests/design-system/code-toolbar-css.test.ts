@@ -8,21 +8,25 @@ const rule = (selector: string): string => {
 };
 
 describe('code toolbar styles', () => {
-  it('pins the toolbar to the top right of the block, outside the scrolling area', () => {
-    expect(rule('.code-block')).toMatch(/position:\s*relative/);
-    expect(rule('.code-toolbar')).toMatch(/position:\s*absolute/);
+  it('frames the whole block, header included, and clips the corners', () => {
+    const block = rule('.code-block');
+    expect(block).toMatch(/border:\s*1px solid var\(--color-border-strong\)/);
+    expect(block).toMatch(/border-radius:\s*var\(--radius-md\)/);
+    expect(block).toMatch(/overflow:\s*hidden/);
   });
 
-  // It sits over the first lines of code, so it stays out of the way until wanted.
-  it('hides the toolbar until the block is hovered or reached by keyboard', () => {
-    const toolbar = rule('.code-toolbar');
-    expect(toolbar).toMatch(/opacity:\s*0/);
-    expect(toolbar).toMatch(/pointer-events:\s*none/);
-    expect(css).toMatch(/\.code-block:hover \.code-toolbar,\s*\.code-block:focus-within \.code-toolbar\s*\{[^}]*opacity:\s*1[^}]*pointer-events:\s*auto/);
+  it('keeps the header visible, with a hairline under it', () => {
+    const header = rule('.code-header');
+    expect(header).toMatch(/display:\s*flex/);
+    expect(header).toMatch(/border-bottom:\s*1px solid var\(--color-border\)/);
+    expect(header).not.toMatch(/opacity:\s*0/);
+    expect(css).not.toContain('.code-toolbar');
+    expect(css).not.toContain('.code-tooltip');
   });
 
-  it('shows the tooltip on hover and on keyboard focus', () => {
-    expect(css).toMatch(/\.code-action:hover \.code-tooltip,\s*\.code-action:has\(:focus-visible\) \.code-tooltip/);
+  it('draws the dot in the accent and pushes the actions right', () => {
+    expect(rule('.code-dot')).toMatch(/background-color:\s*var\(--color-primary\)/);
+    expect(rule('.code-actions')).toMatch(/margin-left:\s*auto/);
   });
 
   it('draws a focus ring on the action when its control has keyboard focus', () => {

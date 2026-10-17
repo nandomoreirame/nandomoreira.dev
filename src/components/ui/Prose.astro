@@ -2,9 +2,11 @@
 interface Props {
   /** Fill the container instead of the 68ch reading measure (the AI view). */
   wide?: boolean;
+  /** A hairline between the h2 sections (the post page). */
+  ruled?: boolean;
 }
 
-const { wide = false } = Astro.props;
+const { wide = false, ruled = false } = Astro.props;
 const measure = wide ? 'max-w-none' : 'max-w-[68ch]';
 
 // Body reads in Inter at 18px since 2026-10-16; headings in Newsreader.
@@ -32,13 +34,14 @@ const flow = [
 // Code blocks come from Shiki with their own colours (measured in
 // code-contrast.test.ts); this only frames and spaces them.
 const code = [
-  '[&_.code-block]:my-lg [&_pre]:my-0 [&_pre]:rounded-md [&_pre]:border [&_pre]:border-border-strong [&_pre]:p-md [&_pre]:pl-sm [&_pre]:font-mono [&_pre]:text-small [&_pre]:leading-normal',
+  '[&_.code-block]:my-lg [&_pre]:my-0 [&_pre]:p-md [&_pre]:pl-sm [&_pre]:font-mono [&_pre]:text-small [&_pre]:leading-normal',
   '[&_:not(pre)>code]:rounded-md [&_:not(pre)>code]:border [&_:not(pre)>code]:border-border-strong [&_:not(pre)>code]:bg-surface-elevated [&_:not(pre)>code]:px-xs [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-code-inline',
 ];
 ---
 
 <div
   data-prose
+  data-prose-ruled={ruled ? '' : undefined}
   class={`${measure} font-sans text-prose text-foreground ${flow.join(' ')} ${code.join(' ')}`}
 >
   <slot />

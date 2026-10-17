@@ -3,15 +3,27 @@ import type { Element, ElementContent, Properties } from 'hast';
 import type { ShikiTransformer } from 'shiki';
 
 /**
- * Icon actions on every code block, added at build time by Shiki. Raw is a
- * checkbox read by CSS (no script); Copy reuses the [data-copy] handler of the
- * site's single script, which swaps the tooltip text for the confirmation.
+ * Text actions on a bar above every code block, added at build time by Shiki.
+ * Raw is a checkbox read by CSS (no script); Copy reuses the [data-copy]
+ * handler of the site's single script, which swaps the first span for the
+ * confirmation.
  */
 export const CODE_TOOLBAR_LABELS = {
   raw: 'Raw',
   copy: 'Copiar',
   copied: 'Copiado',
+  /** Header label of a block with neither a title nor a language. */
+  plain: 'texto',
 } as const;
+
+const PLAIN_LANGS = new Set(['text', 'plaintext', 'txt', 'plain']);
+
+/** `title="..."` from the fence meta (```bash title="bin/x.sh"), if any. */
+export const fenceTitle = (meta: string | undefined): string | undefined =>
+  meta?.match(/title="([^"]+)"/)?.[1];
+
+const headerLabel = (meta: string | undefined, lang: string | undefined): string =>
+  fenceTitle(meta) ?? (lang && !PLAIN_LANGS.has(lang) ? lang : CODE_TOOLBAR_LABELS.plain);
 
 const element = (tagName: string, properties: Properties, children: ElementContent[] = []): Element => ({
   type: 'element',
@@ -65,9 +77,6 @@ export const icon = (name: string, className: string): Element => {
   );
 };
 
-const tooltip = (label: string): Element =>
-  element('span', { className: ['code-tooltip'] }, [{ type: 'text', value: label }]);
-
 let sequence = 0;
 
 export const codeToolbar = (): ShikiTransformer => ({
@@ -82,32 +91,34 @@ export const codeToolbar = (): ShikiTransformer => ({
     const id = `code-${sequence}`;
     pre.properties.id = id;
 
+    const label = headerLabel(this.options.meta?.__raw, this.options.lang);
+
     const raw = element('label', { className: ['code-action'] }, [
       element('input', { type: 'checkbox', className: ['code-raw-toggle', 'sr-only'] }),
-      icon('file-text', 'code-icon'),
-      tooltip(CODE_TOOLBAR_LABELS.raw),
+      { type: 'text', value: CODE_TOOLBAR_LABELS.raw },
     ]);
 
+    // The site script swaps the text of the first <span> for "Copiado".
     const copy = element(
       'button',
       {
         type: 'button',
-        className: ['code-action', 'group/copy'],
+        className: ['code-action'],
         dataCopy: id,
         dataLabelCopied: CODE_TOOLBAR_LABELS.copied,
         ariaLive: 'polite',
         hidden: true,
       },
-      [
-        icon('copy', 'code-icon group-data-copied/copy:hidden'),
-        icon('check', 'code-icon hidden text-success group-data-copied/copy:block'),
-        tooltip(CODE_TOOLBAR_LABELS.copy),
-      ],
+      [element('span', {}, [{ type: 'text', value: CODE_TOOLBAR_LABELS.copy }])],
     );
 
     root.children = [
       element('div', { className: ['code-block'], dataCodeBlock: '' }, [
-        element('div', { className: ['code-toolbar'] }, [raw, copy]),
+        element('div', { className: ['code-header'] }, [
+          element('span', { className: ['code-dot'], ariaHidden: 'true' }),
+          element('span', { className: ['code-title'] }, [{ type: 'text', value: label }]),
+          element('div', { className: ['code-actions'] }, [raw, copy]),
+        ]),
         pre,
       ]),
     ];

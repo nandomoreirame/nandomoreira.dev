@@ -204,6 +204,13 @@
   z-index: 20;
 }
 
+/* The switch leaves the toolbar; drop the frame so no empty bordered box stays. */
+:root:has(#reader-on:checked) [data-post-toolbar] {
+  border: 0;
+  padding: 0;
+  background: none;
+}
+
 :root:has(#reader-on:checked) .reader-settings {
   display: block;
 }
@@ -378,10 +385,11 @@
   --reader-measure: 960px;
 }
 
-/* Post index (2026-10-16). One element, two shapes: below 768px a native
-   popover opened by the fixed toggle bottom left; from md the same element,
-   never opened, is forced visible as a sticky column left of the text. A
-   closed popover is only hidden by the UA sheet, which author CSS overrides. */
+/* Post index (2026-10-16, card from post-detail-redesign). One element, two
+   shapes: below 768px a native popover opened by the fixed toggle bottom left;
+   from md the same element, never opened, is a card. The sticky column is the
+   page <aside>, which also holds the snapshot. A closed popover is only hidden
+   by the UA sheet, which author CSS overrides. */
 [data-toc][popover] {
   inset: auto auto calc(var(--spacing-lg) + 2.75rem + var(--spacing-sm)) var(--spacing-lg);
   margin: 0;
@@ -397,54 +405,56 @@
 
 @media (width >= 48rem) {
   [data-toc][popover] {
-    /* inset before top: the shorthand would reset it. */
+    /* inset before the rest: the shorthand would reset what follows. */
     inset: auto;
-    position: sticky;
-    top: var(--spacing-3xl);
+    position: static;
     display: block;
-    align-self: start;
     width: auto;
-    max-height: calc(100dvh - 2 * var(--spacing-3xl));
-    padding: 0;
-    border: 0;
-    background-color: transparent;
+    max-height: none;
+    overflow: visible;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
   }
 }
 
 /* The section being read is marked like the current page in the main menu:
    honey text and a rule that stays; hover grows the same rule in from the left.
-   The site script sets aria-current as the headings pass the header. */
-.toc-underline {
-  position: relative;
+   The site script sets aria-current as the headings pass the header. The rule
+   is a background on the inline label, so it runs under the words of every
+   line of a wrapped title; a ::after on the link box ran the whole column
+   width under the last line (2026-10-17). */
+.toc-label {
+  padding-bottom: 2px;
+  background: linear-gradient(var(--color-primary), var(--color-primary)) right bottom / 0 1px no-repeat;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--duration-slow) var(--ease-out);
 }
 
-.toc-underline::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 1px;
-  background-color: var(--color-primary);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-
-.toc-underline:is(:hover, :focus-visible)::after {
-  transform: scaleX(1);
-  transform-origin: left;
+.toc-underline:is(:hover, :focus-visible) .toc-label {
+  background-position-x: left;
+  background-size: 100% 1px;
 }
 
 .toc-underline[aria-current] {
   color: var(--color-primary);
 }
 
-.toc-underline[aria-current]::after {
-  transform: scaleX(1);
+.toc-underline[aria-current] .toc-label {
+  background-size: 100% 1px;
 }
 
 :root:has(#reader-on:checked) [data-toc-layout] {
   display: block;
+}
+
+/* Sections of a post (post-detail-redesign REQ-007): a hairline above every
+   h2 but the first. No numbers, by the author's call. */
+[data-prose-ruled] h2 ~ h2 {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-xl);
 }
 
 /* AI view tabs (docs/specs/ai-view, REQ-005): the radios in the top bar do the
@@ -529,54 +539,68 @@
     counter-reset: code-line;
   }
 
-  /* Code toolbar (src/lib/code/toolbar.ts): Raw and Copy as icons, labelled
-     by a tooltip. The toolbar sits on the block, not inside the <pre>, so it
-     stays put while a long line scrolls sideways. */
+  /* Code block (src/lib/code/toolbar.ts, after the Stitch post screen): a bar
+     on top with a dot, the file name (fence title, else the language) and the
+     Raw and Copiar actions as text. The frame is the block's, bar included. */
   .code-block {
-    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
   }
 
-  /* Hidden until the block is hovered or reached by keyboard: it sits over
-     the first lines of code. focus-within keeps it reachable without a mouse. */
-  .code-toolbar {
-    position: absolute;
-    top: var(--spacing-xs);
-    right: var(--spacing-xs);
+  .code-header {
     display: flex;
-    gap: var(--spacing-xs);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--duration-fast) ease-out;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-muted-foreground);
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
   }
 
-  .code-block:hover .code-toolbar,
-  .code-block:focus-within .code-toolbar {
-    opacity: 1;
-    pointer-events: auto;
+  .code-dot {
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+  }
+
+  .code-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .code-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--spacing-xs);
+    margin-left: auto;
   }
 
   .code-action {
-    position: relative;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-md);
-    background: var(--color-background);
-    color: var(--color-muted-foreground);
+    min-height: 2rem;
+    padding-inline: var(--spacing-sm);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: inherit;
+    font: inherit;
     cursor: pointer;
-    transition:
-      color var(--duration-fast) ease-out,
-      border-color var(--duration-fast) ease-out;
+    transition: color var(--duration-fast) ease-out;
   }
 
   .code-action:hover {
     color: var(--color-primary);
-    border-color: var(--color-primary);
   }
 
+  .code-action:focus-visible,
   .code-action:has(:focus-visible) {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
@@ -584,35 +608,6 @@
 
   .code-action:has(.code-raw-toggle:checked) {
     color: var(--color-primary);
-    border-color: var(--color-primary);
-  }
-
-  .code-icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .code-tooltip {
-    position: absolute;
-    top: calc(100% + var(--spacing-xs));
-    right: 0;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-elevated);
-    color: var(--color-foreground);
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    line-height: 1;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--duration-fast) ease-out;
-  }
-
-  .code-action:hover .code-tooltip,
-  .code-action:has(:focus-visible) .code-tooltip {
-    opacity: 1;
   }
 
 
