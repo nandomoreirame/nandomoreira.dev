@@ -8,21 +8,21 @@ const render = async (props: Record<string, unknown>) => {
 };
 
 const base = {
-  eyebrow: 'Laboratório',
+  path: '/lab',
   title: 'Coçando as minhas próprias coceiras',
   description: 'Ferramental para agentes de IA e utilitários de terminal.',
 };
 
 describe('PageHeader', () => {
-  it('names the page in a small eyebrow, then states it in the only h1', async () => {
+  it('names the page as a terminal path before the only h1, in the accent and lower case', async () => {
     const html = await render(base);
-    const eyebrow = html.indexOf('Laboratório');
-    const h1 = html.indexOf('<h1');
+    const eyebrow = html.match(/<p[^>]*data-page-path[^>]*>([^<]*)<\/p>/);
 
-    expect(eyebrow).toBeGreaterThan(-1);
-    expect(eyebrow).toBeLessThan(h1);
+    expect(eyebrow?.[1]).toBe('~/lab');
+    expect(eyebrow?.[0]).toContain('text-primary');
+    expect(eyebrow?.[0]).not.toContain('uppercase');
+    expect(html.indexOf('data-page-path')).toBeLessThan(html.indexOf('<h1'));
     expect(html.match(/<h1/g)).toHaveLength(1);
-    expect(html).toContain('tracking-eyebrow');
     expect(html).toContain('text-display');
   });
 

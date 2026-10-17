@@ -1,20 +1,23 @@
 ---
+import { terminalPath } from '../../lib/layout/terminal-path';
+
 interface Props {
-  /** The page name, small: the nav already says where you are. */
-  eyebrow: string;
+  /** Page path, when the header is rendered off its route. Defaults to the request URL. */
+  path?: string;
   /** What the page is about, in the only h1. Never the page name again. */
   title: string;
   /** The lead under the title. */
   description: string;
 }
 
-const { eyebrow, title, description } = Astro.props;
+const { path, title, description } = Astro.props;
+const shown = terminalPath(path ?? Astro.url.pathname);
 ---
 
-{/* Same opening as /sobre: eyebrow, then the claim, then the lead. No rule
-    under the eyebrow: two horizontal lines that close read as a box. */}
+{/* Same opening as /sobre: path, then the claim, then the lead. No rule
+    under the path: two horizontal lines that close read as a box. */}
 <header class="mt-2xl mb-xl">
-  <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">{eyebrow}</p>
+  <p data-page-path class="font-mono text-small text-primary">{shown}</p>
   <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">{title}</h1>
   <p data-page-lead class="mt-md max-w-[68ch] text-h3 text-muted-foreground">{description}</p>
 </header>

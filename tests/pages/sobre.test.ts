@@ -81,17 +81,25 @@ describe('/sobre', () => {
     expect(h1).not.toContain(profile.name);
   });
 
-  it('labels the page with a small eyebrow that carries no divider', async () => {
+  it('names the page as ~/sobre before the h1', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SobrePage);
+    expect(html).toMatch(/<p[^>]*data-page-path[^>]*>~\/sobre<\/p>/);
+  });
+
+  it('labels the page with a terminal path and no divider under it', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);
 
     // Anchored inside <article>: the nav also renders the word "Sobre", and
     // the header above it legitimately carries a border-b.
     const article = html.slice(html.indexOf('<article'), html.indexOf('<h1'));
+    const path = article.match(/<p[^>]*data-page-path[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
 
-    expect(article).toMatch(/Sobre/);
-    expect(article).toMatch(/tracking-eyebrow/);
-    // The rule under the eyebrow competed with the headline right below it.
+    expect(path).toContain('~/sobre');
+    expect(path).toContain('text-primary');
+    expect(path).not.toContain('uppercase');
+    // The rule under the path competed with the headline right below it.
     expect(article).not.toMatch(/border-b/);
   });
 

@@ -13,7 +13,7 @@ const site = new URL('https://nandomoreira.dev');
 
 const render = async () => {
   const container = await AstroContainer.create();
-  return container.renderToString(SetupPage);
+  return container.renderToString(SetupPage, { request: new Request('https://nandomoreira.dev/setup') });
 };
 
 describe('setup data', () => {
@@ -71,10 +71,10 @@ describe('/setup page', () => {
     expect(existsSync('src/content/posts/apps-que-uso.md')).toBe(false);
   });
 
-  it('opens with the Setup eyebrow, one h1 and a heading per section', async () => {
+  it('opens with the ~/setup path, one h1 and a heading per section', async () => {
     const html = await render();
     const main = html.slice(html.indexOf('<main'));
-    expect(main).toContain('Setup');
+    expect(main).toContain('~/setup');
     expect(main.match(/<h1/g)).toHaveLength(1);
     for (const section of SETUP_SECTIONS) expect(main).toContain(`id="${section.id}"`);
   });

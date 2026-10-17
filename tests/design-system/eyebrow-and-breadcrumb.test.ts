@@ -25,41 +25,39 @@ const render = async (Component: unknown, props?: Record<string, unknown>) => {
   return container.renderToString(Component as never, props ? { props } : undefined);
 };
 
-/**
- * Opening tag of the first eyebrow inside <article>. Anchored on the tracking
- * token rather than on position: the case wraps its label in a <header>, the
- * about page does not, and the wrapper is not what this test is about.
- */
-const firstEyebrowTag = (html: string) => {
+/** Opening tag of the page path, or of the case category label. */
+const tagAt = (html: string, marker: string) => {
   const article = html.indexOf('<article');
-  const hit = html.indexOf('tracking-eyebrow', article);
+  const hit = html.indexOf(marker, article);
 
-  expect(hit, 'no eyebrow found inside <article>').toBeGreaterThan(article);
+  expect(hit, `no ${marker} inside <article>`).toBeGreaterThan(article);
 
   const tagStart = html.lastIndexOf('<', hit);
-  return html.slice(tagStart, html.indexOf('>', hit) + 1);
+  return html.slice(tagStart, html.indexOf('</p>', hit) + 4);
 };
 
 describe('eyebrow', () => {
-  it('labels the case detail exactly as the about page does', async () => {
+  it('names /sobre as a terminal path and keeps the case category in muted caps', async () => {
     const [about, tumodori] = await Promise.all([
       render(SobrePage),
       render(CaseArticle, { project }),
     ]);
 
-    // Same job, same type treatment: small mono caps in muted ink. Drifting
-    // apart is what makes a set of pages look like separate sites.
-    for (const html of [about, tumodori]) {
-      const eyebrow = firstEyebrowTag(html);
+    const path = tagAt(about, 'data-page-path');
+    expect(path).toContain('~/sobre');
+    expect(path).toContain('font-mono');
+    expect(path).toContain('text-small');
+    expect(path).toContain('text-primary');
+    expect(path).not.toContain('uppercase');
 
-      expect(eyebrow).toContain('font-mono');
-      expect(eyebrow).toContain('text-small');
-      expect(eyebrow).toContain('uppercase');
-      expect(eyebrow).toContain('tracking-eyebrow');
-      expect(eyebrow).toContain('text-muted-foreground');
-      // Accent on a label competes with the headline right under it.
-      expect(eyebrow).not.toContain('text-primary');
-    }
+    // The case category is a label, not the page path: it stays small mono caps.
+    const category = tagAt(tumodori, 'tracking-eyebrow');
+    expect(category).toContain('font-mono');
+    expect(category).toContain('text-small');
+    expect(category).toContain('uppercase');
+    expect(category).toContain('tracking-eyebrow');
+    expect(category).toContain('text-muted-foreground');
+    expect(category).not.toContain('text-primary');
   });
 });
 
