@@ -52,4 +52,32 @@ describe('PageHeader', () => {
   it('draws no rule under the eyebrow, since two close lines read as a box', async () => {
     expect(await render(base)).not.toMatch(/border-b/);
   });
+
+  it('puts the update date between the title and the lead, as in the Stitch /now', async () => {
+    const html = await render({ ...base, updatedAt: '2026-10-16' });
+    const date = html.indexOf('<time datetime="2026-10-16"');
+    expect(date).toBeGreaterThan(html.indexOf('</h1>'));
+    expect(date).toBeLessThan(html.indexOf('data-page-lead'));
+    expect(html).toContain('Atualizada em');
+    expect(html).toMatch(/<div[^>]*data-page-updated[^>]*class="[^"]*\bmt-lg\b/);
+    expect(html).toMatch(/<p[^>]*data-page-lead[^>]*class="[^"]*\bmt-lg\b/);
+  });
+
+  it('shows no date without updatedAt', async () => {
+    const html = await render(base);
+    expect(html).not.toContain('data-page-updated');
+    expect(html).not.toContain('Atualizada em');
+  });
+});
+
+
+describe('pages with an update date', () => {
+  it.each(['src/pages/now.astro', 'src/pages/setup.astro', 'src/pages/privacidade.astro'])(
+    '%s hands the date to PageHeader instead of a loose UpdatedAt',
+    async (file) => {
+      const source = (await import('node:fs')).readFileSync(file, 'utf8');
+      expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);
+      expect(source).not.toContain('<UpdatedAt');
+    },
+  );
 });

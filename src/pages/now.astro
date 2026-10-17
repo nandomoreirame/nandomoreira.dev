@@ -7,7 +7,6 @@ import NowSection from '../components/now/NowSection.astro';
 import AvailabilityCard from '../components/ui/AvailabilityCard.astro';
 import Card from '../components/ui/Card.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
-import UpdatedAt from '../components/ui/UpdatedAt.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllProjects, getProfile } from '../lib/content';
@@ -27,9 +26,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 
 <BaseLayout title={`Agora | ${displayNameOf(profile)}`} description={NOW_LEAD}>
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} />
-
-    <UpdatedAt date={NOW_UPDATED_AT} />
+    <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} updatedAt={NOW_UPDATED_AT} />
 
     <NowSection id="foco" title="Foco" step={1}>
       <ul>

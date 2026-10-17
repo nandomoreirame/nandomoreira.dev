@@ -1,5 +1,6 @@
 ---
 import { terminalPath } from '../../lib/layout/terminal-path';
+import UpdatedAt from './UpdatedAt.astro';
 
 interface Props {
   /** Page path, when the header is rendered off its route. Defaults to the request URL. */
@@ -8,16 +9,26 @@ interface Props {
   title: string;
   /** The lead under the title. */
   description: string;
+  /** ISO date the page was last updated, shown between the title and the lead. */
+  updatedAt?: string;
 }
 
-const { path, title, description } = Astro.props;
+const { path, title, description, updatedAt } = Astro.props;
 const shown = terminalPath(path ?? Astro.url.pathname);
 ---
 
 {/* Same opening as /sobre: path, then the claim, then the lead. No rule
-    under the path: two horizontal lines that close read as a box. */}
+    under the path: two horizontal lines that close read as a box. A dated
+    page shows the date under the claim, before the lead (Stitch /now). */}
 <header class="mt-2xl mb-xl">
   <p data-page-path class="font-mono text-small text-muted-foreground">{shown}</p>
   <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">{title}</h1>
-  <p data-page-lead class="mt-md text-h3 text-muted-foreground">{description}</p>
+  {
+    updatedAt && (
+      <div data-page-updated class="mt-lg">
+        <UpdatedAt date={updatedAt} />
+      </div>
+    )
+  }
+  <p data-page-lead class={`${updatedAt ? 'mt-lg' : 'mt-md'} text-h3 text-muted-foreground`}>{description}</p>
 </header>
