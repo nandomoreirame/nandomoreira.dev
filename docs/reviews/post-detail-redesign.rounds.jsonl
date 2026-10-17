@@ -1,0 +1,2 @@
+{"round": 1, "implementer": "grok", "reviewer": "claude", "identities": ["src/pages/[slug].astro:174", "src/pages/[slug].astro:113"], "open_count": 2}
+{"round": 2, "implementer": "grok", "reviewer": "claude", "identities": [], "open_count": 0}
