@@ -1,4 +1,5 @@
 ---
+import StatusDot from '../ui/StatusDot.astro';
 import TechBadge from '../ui/TechBadge.astro';
 
 interface Props {
@@ -14,9 +15,11 @@ interface Props {
   status?: string[];
   /** Art on the right from sm up; listings alternate it row by row. */
   flip?: boolean;
+  /** Host the case is live on, shown as "No ar · host". */
+  live?: string;
 }
 
-const { href, title, stamp, summary, art, tags = [], status = [], flip = false } = Astro.props;
+const { href, title, stamp, summary, art, tags = [], status = [], flip = false, live } = Astro.props;
 
 // A flipped row pushes its text towards the art: the title, with the date
 // still to its right, and the summary and tags align right. Below sm the row
@@ -46,6 +49,12 @@ const mirror = flip
       </span>
       <span class="font-mono text-small text-muted-foreground">{stamp}</span>
     </span>
+    {live && (
+      <span data-live class={`inline-flex items-center gap-sm font-mono text-small text-success ${mirror.heading}`}>
+        <StatusDot status="open" />
+        <span>No ar · {live}</span>
+      </span>
+    )}
     <span class="text-body text-muted-foreground">{summary}</span>
     {
       (tags.length > 0 || status.length > 0) && (

@@ -1,4 +1,5 @@
 ---
+import ClosingCta from '../../components/catalog/ClosingCta.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import OpenSourceList from '../../components/catalog/OpenSourceList.astro';
@@ -26,4 +27,5 @@ const authorName = displayNameOf(await getProfile());
   />
   <CollectionListing collection="lab" projects={projects} />
   <OpenSourceList />
+  <ClosingCta collection="lab" />
 </BaseLayout>

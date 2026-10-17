@@ -8,6 +8,7 @@ import {
   collectionOfBlock,
   type CatalogCollection,
 } from '../../lib/catalog/groups';
+import { liveHost } from '../../lib/catalog/live-host';
 import { toCompactStamp } from '../../lib/format/date';
 
 interface Props {
@@ -50,6 +51,7 @@ const statusOf = (project: Project): string[] => [
               tags={project.tech}
               status={statusOf(project)}
               art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
+              live={project.discontinued ? undefined : liveHost(project.liveUrl)}
               flip={index % 2 === 1}
             />
           </li>

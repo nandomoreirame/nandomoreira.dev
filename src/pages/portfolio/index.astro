@@ -1,4 +1,5 @@
 ---
+import ClosingCta from '../../components/catalog/ClosingCta.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import CollectionListing from '../../components/catalog/CollectionListing.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -24,4 +25,5 @@ const authorName = displayNameOf(await getProfile());
     description={COLLECTION_COPY.portfolio.description}
   />
   <CollectionListing collection="portfolio" projects={projects} />
+  <ClosingCta collection="portfolio" />
 </BaseLayout>

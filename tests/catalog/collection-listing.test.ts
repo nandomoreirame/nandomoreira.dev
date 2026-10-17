@@ -139,6 +139,42 @@ describe('CollectionListing', () => {
     expect(html).toContain('Lab Case');
     expect(html).not.toContain('Client Case');
   });
+
+  it('hides the live host on a discontinued case even when liveUrl remains', async () => {
+    const html = await render({
+      collection: 'portfolio',
+      projects: [
+        project({
+          slug: 'old-shop',
+          title: 'Old Shop',
+          block: 'professional',
+          discontinued: true,
+          liveUrl: 'https://www.old-shop.example/',
+          repoUrl: null,
+        }),
+      ],
+    });
+
+    expect(html).toContain('Descontinuado');
+    expect(html).not.toContain('data-live');
+    expect(html).not.toContain('No ar');
+  });
+
+  it('shows the live host on a published case that has a liveUrl', async () => {
+    const html = await render({
+      collection: 'lab',
+      projects: [
+        project({
+          slug: 'live-app',
+          title: 'Live App',
+          liveUrl: 'https://www.bragstack.app/',
+        }),
+      ],
+    });
+
+    expect(html).toMatch(/<span[^>]*data-live/);
+    expect(html).toContain('No ar · bragstack.app');
+  });
 });
 
 describe('/portfolio and /lab pages', () => {
