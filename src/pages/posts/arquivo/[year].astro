@@ -35,36 +35,38 @@ const authorName = displayNameOf(await getProfile());
   pageType="CollectionPage"
   pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
-  <nav class="mt-lg" aria-label="Trilha de navegação">
-    <a
-      href="/posts/arquivo"
-      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      <span aria-hidden="true">←</span>
-      Arquivo
-    </a>
-  </nav>
+  <div class="mx-auto w-full max-w-list">
+    <nav class="mt-lg" aria-label="Trilha de navegação">
+      <a
+        href="/posts/arquivo"
+        class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <span aria-hidden="true">←</span>
+        Arquivo
+      </a>
+    </nav>
 
-  <PageHeader
-    eyebrow="Arquivo"
-    title={`Textos de ${year}`}
-    description={`${posts.length === 1 ? 'Um texto publicado' : `${posts.length} textos publicados`} em ${year}, mantidos como registro com a data à vista.`}
-  />
+    <PageHeader
+      eyebrow="Arquivo"
+      title={`Textos de ${year}`}
+      description={`${posts.length === 1 ? 'Um texto publicado' : `${posts.length} textos publicados`} em ${year}, mantidos como registro com a data à vista.`}
+    />
 
-  <ul class="mb-3xl list-none p-0">
-    {
-      posts.map((post) => (
-        <li>
-          <ListRow
-            href={`/${post.slug}`}
-            title={post.title}
-            summary={post.summary}
-            markers={post.markers}
-            badge={post.draft ? 'Rascunho' : undefined}
-            stamp={toShortDate(post.date)}
-          />
-        </li>
-      ))
-    }
-  </ul>
+    <ul class="mb-3xl list-none p-0">
+      {
+        posts.map((post) => (
+          <li>
+            <ListRow
+              href={`/${post.slug}`}
+              title={post.title}
+              summary={post.summary}
+              markers={post.markers}
+              badge={post.draft ? 'Rascunho' : undefined}
+              stamp={toShortDate(post.date)}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 </BaseLayout>

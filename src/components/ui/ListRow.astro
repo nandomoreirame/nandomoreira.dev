@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 interface Props {
   href: string;
   title: string;
@@ -21,6 +23,7 @@ const columns = stamp
   : 'grid-cols-[1fr_auto] gap-md';
 const contentPlacement = stamp ? 'col-start-1 row-start-2 sm:col-start-2 sm:row-start-1' : '';
 const arrowPlacement = stamp ? 'col-start-2 row-start-2 sm:col-start-3 sm:row-start-1' : '';
+const shownMarkers = markers.slice(0, 3);
 ---
 
 <a
@@ -42,7 +45,7 @@ const arrowPlacement = stamp ? 'col-start-2 row-start-2 sm:col-start-3 sm:row-st
         {summary}
       </span>
     )}
-    {(badge || markers.length > 0) && (
+    {(badge || shownMarkers.length > 0) && (
       <span data-markers class="mt-xs flex flex-wrap items-center gap-xs font-mono text-micro text-muted-foreground">
         {
           badge && (
@@ -51,7 +54,19 @@ const arrowPlacement = stamp ? 'col-start-2 row-start-2 sm:col-start-3 sm:row-st
             </span>
           )
         }
-        {markers.length > 0 && <span>{markers.slice(0, 3).join(' · ')}</span>}
+        {
+          shownMarkers.map((marker, index) => (
+            <>
+              {index > 0 && <span aria-hidden="true">·</span>}
+              <span
+                data-marker
+                class="inline-flex items-center rounded-sm border border-border bg-surface px-sm py-xs font-mono text-micro leading-none text-muted-foreground"
+              >
+                {marker}
+              </span>
+            </>
+          ))
+        }
       </span>
     )}
   </span>
@@ -60,6 +75,6 @@ const arrowPlacement = stamp ? 'col-start-2 row-start-2 sm:col-start-3 sm:row-st
     aria-hidden="true"
     class={`${arrowPlacement} text-muted-foreground transition-transform group-hover:translate-x-xs group-hover:text-primary`}
   >
-    →
+    <Icon name="lucide:arrow-right" aria-hidden="true" class="size-4 shrink-0" />
   </span>
 </a>

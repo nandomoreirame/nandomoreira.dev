@@ -77,15 +77,60 @@ describe('ListRow', () => {
     expect(markers).not.toBe('');
     expect(markers).not.toContain('hidden');
     expect(html.indexOf('data-markers')).toBeGreaterThan(html.indexOf('data-title'));
-    expect(html).toContain('Rust · Tauri');
+  });
+
+  it('renders each of the first three markers as its own chip', async () => {
+    const html = await render({ markers: ['Rust', 'Tauri', 'Astro'] });
+    // Boolean attr renders as `data-marker` (no =); avoid matching `data-markers`.
+    const chips = [...html.matchAll(/<span data-marker\b[^>]*>/g)];
+
+    expect(chips).toHaveLength(3);
+    expect(html).toContain('>Rust<');
+    expect(html).toContain('>Tauri<');
+    expect(html).toContain('>Astro<');
+    for (const [chip] of chips) {
+      expect(chip).toContain('rounded-sm');
+      expect(chip).toContain('border-border');
+      expect(chip).toContain('bg-surface');
+      expect(chip).toContain('font-mono');
+      expect(chip).toContain('text-micro');
+    }
+  });
+
+  it('caps marker chips at three when the item has more', async () => {
+    const html = await render({ markers: ['a', 'b', 'c', 'd', 'e'] });
+    expect([...html.matchAll(/<span data-marker\b/g)]).toHaveLength(3);
+    expect(html).not.toContain('>d<');
+    expect(html).not.toContain('>e<');
+  });
+
+  it('puts decorative separators between marker chips, never at the ends', async () => {
+    const html = await render({ markers: ['Rust', 'Tauri', 'Astro'] });
+    const markersBlock =
+      html.match(/<span[^>]*data-markers[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';
+    const separators = [...markersBlock.matchAll(/<span[^>]*aria-hidden="true"[^>]*>·<\/span>/g)];
+
+    expect(separators).toHaveLength(2);
+    expect(markersBlock).not.toMatch(/^[\s\S]*data-markers[^>]*>\s*<span[^>]*aria-hidden="true"[^>]*>·/);
+  });
+
+  it('keeps the draft badge before the marker chips', async () => {
+    const html = await render({ badge: 'Rascunho', markers: ['Rust'] });
+    const chip = html.indexOf('<span data-marker ');
+    expect(chip).toBeGreaterThan(-1);
+    expect(html.indexOf('Rascunho')).toBeLessThan(chip);
   });
 
   it('exposes a visible focus ring, since the row is a link', async () => {
     expect(await render()).toContain('focus-visible:outline-primary');
   });
 
-  it('marks the advance indicator as decorative', async () => {
-    expect(await render()).toContain('aria-hidden="true"');
+  it('marks the advance indicator as decorative and uses the Lucide arrow', async () => {
+    const html = await render();
+
+    expect(html).toContain('data-icon="lucide:arrow-right"');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).not.toContain('→');
   });
 
   it('renders no marker column when the item has none', async () => {

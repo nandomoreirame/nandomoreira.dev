@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import type { Post } from '../../content/schemas/post';
 import { toShortDate } from '../../lib/format/date';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
@@ -17,7 +18,7 @@ const { posts } = Astro.props;
     // `relative` paints this section after the hero's portrait, which is
     // positioned and runs past the hero's bottom edge; without it the
     // faded image would sit on top of this text.
-    <section id="blog" class="relative py-2xl lg:py-3xl">
+    <section id="blog" class="relative mx-auto w-full max-w-list py-2xl lg:py-3xl">
       <SectionHeader
         title="Blog"
         level={2}
@@ -40,9 +41,14 @@ const { posts } = Astro.props;
       <p class="mt-lg">
         <a
           href="/posts"
-          class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Ver todos os posts
+          <Icon
+            name="lucide:arrow-right"
+            aria-hidden="true"
+            class="size-4 shrink-0 transition-transform duration-(--duration-fast) ease-out group-hover/more:translate-x-xs"
+          />
         </a>
       </p>
     </section>

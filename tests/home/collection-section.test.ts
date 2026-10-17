@@ -66,6 +66,19 @@ describe('CollectionSection', () => {
     expect(portfolio).toContain('href="/portfolio"');
   });
 
+  it('styles the see-all link as mono with a trailing Lucide arrow', async () => {
+    const html = await render('lab', [project()], 9);
+    const link =
+      html.match(/<a[^>]*href="\/lab"[^>]*>[\s\S]*?<\/a>/)?.[0] ??
+      html.match(/<a[^>]*href="\/lab"[^>]*>/)?.[0] ??
+      '';
+
+    expect(link).toContain('href="/lab"');
+    expect(link).toContain('font-mono');
+    expect(link).toContain('data-icon="lucide:arrow-right"');
+    expect(link).toContain('Ver todos');
+  });
+
   it('lists rows instead of cards', async () => {
     const html = await render('lab', [project()]);
 

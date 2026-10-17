@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import type { Project } from '../../content/schemas/project';
 import {
   COLLECTION_LABELS,
@@ -45,7 +46,7 @@ const shown = projects.slice(0, 5);
 const hasMore = totalCount > shown.length;
 ---
 
-<section id={collection} class="py-2xl lg:py-3xl">
+<section id={collection} class="mx-auto w-full max-w-list py-2xl lg:py-3xl">
   <SectionHeader
     title={title}
     level={2}
@@ -80,9 +81,14 @@ const hasMore = totalCount > shown.length;
       <p class="mt-lg">
         <a
           href={href}
-          class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Ver todos
+          <Icon
+            name="lucide:arrow-right"
+            aria-hidden="true"
+            class="size-4 shrink-0 transition-transform duration-(--duration-fast) ease-out group-hover/more:translate-x-xs"
+          />
         </a>
       </p>
     )

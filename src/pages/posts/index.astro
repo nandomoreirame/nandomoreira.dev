@@ -20,43 +20,45 @@ const authorName = displayNameOf(await getProfile());
   pageType="CollectionPage"
   pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
-  <PageHeader
-    eyebrow="Blog"
-    title={BLOG_COPY.title}
-    description={BLOG_COPY.description}
-  />
+  <div class="mx-auto w-full max-w-list">
+    <PageHeader
+      eyebrow="Blog"
+      title={BLOG_COPY.title}
+      description={BLOG_COPY.description}
+    />
 
-  {
-    posts.length === 0 ? (
-      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
-        Nenhum post corrente no momento.
-      </p>
-    ) : (
-      <ul class="list-none p-0">
-        {posts.map((post) => (
-          <li>
-            <ListRow
-              href={`/${post.slug}`}
-              title={post.title}
-              summary={post.summary}
-              markers={post.markers}
-              badge={post.draft ? 'Rascunho' : undefined}
-              stamp={toShortDate(post.date)}
-            />
-          </li>
-        ))}
-      </ul>
-    )
-  }
+    {
+      posts.length === 0 ? (
+        <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+          Nenhum post corrente no momento.
+        </p>
+      ) : (
+        <ul class="list-none p-0">
+          {posts.map((post) => (
+            <li>
+              <ListRow
+                href={`/${post.slug}`}
+                title={post.title}
+                summary={post.summary}
+                markers={post.markers}
+                badge={post.draft ? 'Rascunho' : undefined}
+                stamp={toShortDate(post.date)}
+              />
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
-  <UpcomingPosts titles={upcoming.map((post) => post.title)} />
+    <UpcomingPosts titles={upcoming.map((post) => post.title)} />
 
-  <p class="mt-2xl mb-3xl text-body text-muted-foreground">
-    <a
-      href="/posts/arquivo"
-      class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      Arquivo por ano
-    </a>
-  </p>
+    <p class="mt-2xl mb-3xl text-body text-muted-foreground">
+      <a
+        href="/posts/arquivo"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Arquivo por ano
+      </a>
+    </p>
+  </div>
 </BaseLayout>

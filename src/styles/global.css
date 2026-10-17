@@ -129,13 +129,16 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
 
   /* Layout */
-  /* 1000px since 2026-10-08: the portfolio rows put art and text side by side
-     and needed the room. Long-form text keeps its own measure through Prose,
-     so widening the page does not widen the reading line. */
-  --container-page: 62.5rem;
-  /* Header and footer span a wider frame than the content (Terminal Noir,
-     2026-10-16): 1104px, as in the Stitch file. */
+  /* Since 2026-10-17 the content shares the header frame (Terminal Noir):
+     69rem / 1104px, so the brand and the page column line up. Long-form text
+     keeps its own measure through Prose. */
+  --container-page: 69rem;
+  /* Header and footer span 1104px (Terminal Noir, 2026-10-16), as in the
+     Stitch file. Same value as page since 2026-10-17. */
   --container-frame: 69rem;
+  /* Centred column for list sections: blog, portfolio and lab on the home,
+     and the blog index, as in the Stitch file. */
+  --container-list: 53rem;
 
   /* Amber halo on the primary button hover, the only glow in the system:
      depth comes from tone and hairline, never from drop shadows. */

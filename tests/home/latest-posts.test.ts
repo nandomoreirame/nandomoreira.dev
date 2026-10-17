@@ -53,6 +53,19 @@ describe('LatestPosts', () => {
     expect(html).not.toContain('bg-primary');
   });
 
+  it('styles the see-all link as mono with a trailing Lucide arrow', async () => {
+    const html = await render([post({ slug: 'a', title: 'A', date: '2026-01-01' })]);
+    const link =
+      html.match(/<a[^>]*href="\/posts"[^>]*>[\s\S]*?<\/a>/)?.[0] ??
+      html.match(/<a[^>]*href="\/posts"[^>]*>/)?.[0] ??
+      '';
+
+    expect(link).toContain('href="/posts"');
+    expect(link).toContain('font-mono');
+    expect(link).toContain('data-icon="lucide:arrow-right"');
+    expect(link).toContain('Ver todos os posts');
+  });
+
   it('describes the blog with the same text as /posts, from one source', async () => {
     const html = await render([post({ slug: 'a', title: 'A', date: '2026-10-01' })]);
     expect(html).toContain(BLOG_COPY.description.replace(':)', ''));

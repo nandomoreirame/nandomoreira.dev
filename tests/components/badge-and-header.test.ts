@@ -22,6 +22,12 @@ describe('TechBadge', () => {
   it('uses the mono family, per the typography rules', async () => {
     expect(await render(TechBadge, { name: 'Zod' })).toContain('font-mono');
   });
+
+  it('uses the caption size so the chip stays compact', async () => {
+    const html = await render(TechBadge, { name: 'Zod' });
+    expect(html).toContain('text-caption');
+    expect(html).not.toContain('text-small');
+  });
 });
 
 describe('SectionHeader', () => {

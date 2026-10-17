@@ -19,38 +19,40 @@ const authorName = displayNameOf(await getProfile());
   pageType="CollectionPage"
   pageItems={years.map(({ year }) => `/posts/arquivo/${year}`)}
 >
-  <PageHeader
-    eyebrow="Arquivo"
-    title={title}
-    description="Tutoriais da época em que eu escrevia sobre front-end, Sass, Gulp e WordPress. Ficam aqui como registro, com a data à vista, porque parte do que ensinam envelheceu."
-  />
+  <div class="mx-auto w-full max-w-list">
+    <PageHeader
+      eyebrow="Arquivo"
+      title={title}
+      description="Tutoriais da época em que eu escrevia sobre front-end, Sass, Gulp e WordPress. Ficam aqui como registro, com a data à vista, porque parte do que ensinam envelheceu."
+    />
 
-  {
-    years.length === 0 ? (
-      <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
-        Nenhum texto arquivado ainda.
-      </p>
-    ) : (
-      <ul class="list-none p-0">
-        {years.map((year) => (
-          <li>
-            <ListRow
-              href={`/posts/arquivo/${year.year}`}
-              title={year.year}
-              summary={`${year.count} ${year.count === 1 ? 'texto' : 'textos'}`}
-            />
-          </li>
-        ))}
-      </ul>
-    )
-  }
+    {
+      years.length === 0 ? (
+        <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+          Nenhum texto arquivado ainda.
+        </p>
+      ) : (
+        <ul class="list-none p-0">
+          {years.map((year) => (
+            <li>
+              <ListRow
+                href={`/posts/arquivo/${year.year}`}
+                title={year.year}
+                summary={`${year.count} ${year.count === 1 ? 'texto' : 'textos'}`}
+              />
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
-  <p class="mt-2xl mb-3xl text-body text-muted-foreground">
-    <a
-      href="/posts"
-      class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      Voltar aos posts correntes
-    </a>
-  </p>
+    <p class="mt-2xl mb-3xl text-body text-muted-foreground">
+      <a
+        href="/posts"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Voltar aos posts correntes
+      </a>
+    </p>
+  </div>
 </BaseLayout>

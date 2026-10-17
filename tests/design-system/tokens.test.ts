@@ -77,15 +77,15 @@ const NEW_TOKENS = {
   '--text-micro': '0.6875rem',
   // Lead paragraph under a hero or page title (Terminal Noir body-lead).
   '--text-lead': '1.125rem',
-  // The reference theme caps every surface at max-w-3xl (48rem). The original
-  // 1200px produced a measure 1.62x wider than the reference, which is what
-  // made the restyle read as a different layout rather than the same one.
-  // Widened to 62.5rem (1000px) on 2026-10-08 so the portfolio rows fit art
-  // and text side by side (generative-case-art amendment).
-  '--container-page': '62.5rem',
+  // Since 2026-10-17 the content shares the header frame (Terminal Noir):
+  // 69rem / 1104px, so the brand and the page column line up.
+  '--container-page': '69rem',
   // Terminal Noir (2026-10-16): header and footer span a wider frame than the
-  // content, 1104px as in the Stitch file.
+  // content, 1104px as in the Stitch file. Same value as page since 2026-10-17.
   '--container-frame': '69rem',
+  // Centred column for list sections: blog, portfolio and lab on the home,
+  // and the blog index, as in the Stitch file (848px).
+  '--container-list': '53rem',
   // Amber halo on the primary button hover, the only glow in the system.
   '--shadow-glow': '0 0 24px rgb(245 166 35 / 0.25)',
 };
