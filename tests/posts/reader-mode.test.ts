@@ -115,10 +115,21 @@ describe('reading mode styles', () => {
 
   it('marks the post chrome and the cover or art for hiding', () => {
     expect(page).toContain('<ReaderMode');
-    // Breadcrumb, cover, art banner and related posts.
-    expect(page.match(/data-reader-hide/g)?.length).toBe(4);
+    // Toolbar AI/copy group, hairline, cover, art banner, side column, related posts,
+    // and the toolbar's inner divider that would leave an empty bordered box.
+    expect(page.match(/data-reader-hide/g)?.length).toBe(7);
     expect(readFileSync('src/components/layout/SiteFooter.astro', 'utf8')).toContain('data-reader-hide');
     expect(readFileSync('src/components/ai-view/AiSwitcher.astro', 'utf8')).toContain('data-reader-hide');
+  });
+
+  it('neutralises the toolbar frame so reading mode keeps only the switch', () => {
+    // The switch is position:fixed; without this the border/bg/padding stay as
+    // an empty box above the article.
+    const body = rule(`${on} [data-post-toolbar]`);
+    expect(body).toMatch(/border:\s*0/);
+    expect(body).toMatch(/padding:\s*0/);
+    expect(body).toMatch(/background:\s*none/);
+    expect(css).toContain(`\n${on} [data-post-toolbar] {`);
   });
 
   it('has a rule for every choice that is not the initial one', () => {

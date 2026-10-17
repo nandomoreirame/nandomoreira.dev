@@ -1,0 +1,42 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Post } from '../../content/schemas/post';
+import { toShortDate } from '../../lib/format/date';
+import { toHashtag } from '../../lib/posts/tags';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const marker = post.markers[0];
+---
+
+{/* Same stretched-link pattern as PostCard: the title is the only link, so the
+    whole card clicks with one tab stop. */}
+<article
+  data-related-post
+  class="group relative flex h-full flex-col gap-sm rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong"
+>
+  <p class="flex items-center justify-between gap-sm font-mono text-caption text-muted-foreground">
+    <time datetime={post.date}>{toShortDate(post.date)}</time>
+    {marker && <span class="text-primary">{toHashtag(marker)}</span>}
+  </p>
+  <h3 class="font-sans text-body font-medium text-pretty text-foreground transition-colors group-hover:text-primary">
+    <a
+      href={`/${post.slug}`}
+      class="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-primary"
+    >
+      {post.title}
+    </a>
+  </h3>
+  <p class="line-clamp-3 text-small text-muted-foreground">{post.summary}</p>
+  <span
+    data-read-cue
+    aria-hidden="true"
+    class="mt-auto flex items-center justify-between border-t border-border pt-sm font-mono text-caption text-muted-foreground group-hover:text-primary"
+  >
+    Ler artigo
+    <Icon name="lucide:arrow-right" class="size-3.5 shrink-0" />
+  </span>
+</article>

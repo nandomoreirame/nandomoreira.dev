@@ -20,6 +20,8 @@ export interface AiSummaryTarget {
   name: string;
   /** Tooltip and accessible name; Gemini's names where it really lands. */
   label: string;
+  /** Visible text on the post page toolbar (post-detail-redesign REQ-003). */
+  short: string;
   icon: string;
   url: (prompt: string) => string;
 }
@@ -29,6 +31,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     id: 'claude',
     name: 'Claude',
     label: 'Resumir com Claude',
+    short: 'Resumir com Claude',
     icon: 'simple-icons:claude',
     url: (prompt) => `https://claude.ai/new?q=${encodeURIComponent(prompt)}`,
   },
@@ -38,6 +41,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     id: 'gemini',
     name: 'Gemini',
     label: 'Resumir com a IA do Google',
+    short: 'Google AI',
     icon: 'simple-icons:googlegemini',
     url: (prompt) => `https://www.google.com/search?udm=50&q=${encodeURIComponent(prompt)}`,
   },
@@ -46,6 +50,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     id: 'chatgpt',
     name: 'ChatGPT',
     label: 'Resumir com ChatGPT',
+    short: 'ChatGPT',
     icon: 'simple-icons:openai',
     url: (prompt) => `https://chatgpt.com/?hints=search&q=${encodeURIComponent(prompt)}`,
   },

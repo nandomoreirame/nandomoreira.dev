@@ -94,11 +94,24 @@ describe('AiSummaryLink', () => {
   it('leaves the page in reading mode', async () => {
     expect(await render()).toContain('data-reader-hide');
   });
+
+  it('shows the short name as text when labelled, the accessible name starting with it', async () => {
+    const html = await (await AstroContainer.create()).renderToString(AiSummaryLink, {
+      props: { markdownUrl: MARKDOWN, labelled: true },
+    });
+    expect(AI_SUMMARY_TARGETS.map((target) => target.short)).toEqual(['Resumir com Claude', 'Google AI', 'ChatGPT']);
+    for (const { short } of AI_SUMMARY_TARGETS) {
+      expect(html).toMatch(new RegExp(`<span[^>]*aria-hidden="true"[^>]*>✨</span>\\s*${short}\\s*<span class="sr-only">, abre em nova aba</span>`));
+    }
+    expect(html).not.toContain('aria-label=');
+    expect(html).not.toContain('group-hover/ai:opacity-100');
+    expect(html).toContain('data-reader-hide');
+  });
 });
 
 describe('post page', () => {
-  it('puts the link beside the reading mode switch, with the post markdown', () => {
+  it('puts the labelled links in the toolbar, beside the reading mode switch, with the post markdown', () => {
     const page = readFileSync('src/pages/[slug].astro', 'utf8');
-    expect(page).toMatch(/<ReaderMode \/>\s*<AiSummaryLink markdownUrl=\{/);
+    expect(page).toMatch(/<ReaderMode \/>[\s\S]*?<AiSummaryLink labelled markdownUrl=\{markdownUrl\} \/>/);
   });
 });

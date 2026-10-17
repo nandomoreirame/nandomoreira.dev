@@ -1,19 +1,24 @@
 ---
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
-import ListRow from '../components/ui/ListRow.astro';
+import { Icon } from 'astro-icon/components';
 import Prose from '../components/ui/Prose.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
 import ReaderMode from '../components/posts/ReaderMode.astro';
 import AiSummaryLink from '../components/posts/AiSummaryLink.astro';
 import PostToc from '../components/posts/PostToc.astro';
 import PostTocToggle from '../components/posts/PostTocToggle.astro';
+import PostSnapshot from '../components/posts/PostSnapshot.astro';
+import AuthorBox from '../components/posts/AuthorBox.astro';
+import RelatedPostCard from '../components/posts/RelatedPostCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import type { PostEntry } from '../lib/content';
 import { generateArt } from '../lib/art';
-import { toLongDate, toShortDate } from '../lib/format/date';
+import { toLongDate } from '../lib/format/date';
 import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
 import { relatedPosts } from '../lib/posts/related';
+import { readingMinutes } from '../lib/posts/reading-time';
 import { tocFrom } from '../lib/posts/toc';
 import { toHashtag } from '../lib/posts/tags';
 import { displayNameOf } from '../lib/content/display-name';
@@ -45,34 +50,28 @@ if (!live) {
 const post = live.data;
 const { Content, headings } = await render(live);
 const toc = tocFrom(headings);
-// The index takes a column left of the text from md, wider from lg; without one,
-// the text keeps the width.
-const tocLayout =
-  toc.length > 0
-    ? 'md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-2xl'
-    : '';
+const hasAside = toc.length > 0 || Boolean(post.snapshot);
+// A side column left of the text from md (index, snapshot), wider from lg;
+// below md the column comes after the text. Without either, the text keeps the width.
+const layout = hasAside
+  ? 'flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl'
+  : '';
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const jsonLd = serialiseJsonLd(jsonLdForPost(post, site, await getProfile()));
-const published = `publicado: ${toLongDate(post.date)}`;
+const profile = await getProfile();
+const email = profile.contacts.find((contact) => contact.kind === 'email')?.value;
+const minutes = readingMinutes(live.body ?? '');
+const markdownUrl = `${site}/${post.slug}.md`;
+const canonical = `${site}/${post.slug}`;
+const jsonLd = serialiseJsonLd(jsonLdForPost(post, site, profile));
 const related = relatedPosts(post, await getAllPosts());
 // Same generated drawing as the case pages, in the cover's place.
 const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.art, aspect: 'banner' }) : undefined;
 
-const authorName = displayNameOf(await getProfile());
+const authorName = displayNameOf(profile);
 ---
 
 <BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary} section="/posts">
   <script type="application/ld+json" is:inline set:html={jsonLd} />
-
-  <nav class="mt-lg" aria-label="Trilha de navegação" data-reader-hide>
-    <a
-      href={post.archived ? '/posts/arquivo' : '/posts'}
-      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      <span aria-hidden="true">←</span>
-      {post.archived ? 'Voltar ao arquivo' : 'Voltar aos posts'}
-    </a>
-  </nav>
 
   <article class="mt-2xl flex flex-col gap-xl" data-reader-article>
     <header class="flex flex-col gap-md">
@@ -90,24 +89,49 @@ const authorName = displayNameOf(await getProfile());
           </span>
         )
       }
-      <h1 class="font-serif text-h1 font-normal tracking-tight text-foreground">{post.title}</h1>
-      <p class="flex flex-wrap items-center gap-x-sm gap-y-xs font-mono text-small text-muted-foreground">
-        <time datetime={post.date}>{published}</time>
+      <p data-post-meta class="flex flex-wrap items-center gap-x-sm gap-y-xs font-mono text-small text-muted-foreground">
+        <time datetime={post.date}>{toLongDate(post.date)}</time>
         {
-          post.markers && post.markers.length > 0 && (
+          post.markers.length > 0 && (
             <Fragment>
-              <span aria-hidden="true">|</span>
+              <span aria-hidden="true">•</span>
               {post.markers.map((marker) => (
                 <span>{toHashtag(marker)}</span>
               ))}
             </Fragment>
           )
         }
+        <span aria-hidden="true">•</span>
+        <span class="inline-flex items-center gap-xs">
+          <Icon name="lucide:clock" class="size-3.5 shrink-0" aria-hidden="true" />
+          {minutes} min de leitura
+        </span>
       </p>
-      <div class="flex flex-wrap items-start gap-sm">
+      <h1 class="font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">{post.title}</h1>
+      <p data-post-lead class="text-h3 text-muted-foreground">{post.summary}</p>
+
+      <div
+        data-post-toolbar
+        class="mt-md flex flex-col gap-md rounded-lg border border-border bg-surface p-md md:flex-row md:items-start md:justify-between md:p-lg"
+      >
         <ReaderMode />
-        <AiSummaryLink markdownUrl={`${site}/${post.slug}.md`} />
+        <div data-reader-hide class="flex flex-wrap items-center gap-sm md:border-l md:border-border md:pl-lg">
+          <AiSummaryLink labelled markdownUrl={markdownUrl} />
+          <div data-reader-hide class="flex flex-wrap gap-xs">
+            <span id="post-url" hidden>{canonical}</span>
+            <CopyButton target="post-url" text="Copiar link" compact />
+            <a
+              href={`/${post.slug}.md`}
+              class="inline-flex min-h-8 items-center rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              .md
+            </a>
+          </div>
+        </div>
       </div>
+      <span data-post-toolbar-end hidden></span>
+      <hr class="m-0 border-border" data-reader-hide />
+
       {
         post.cover && (
           <figure class="m-0 mt-md overflow-hidden rounded-md border border-border" data-reader-hide>
@@ -141,30 +165,55 @@ const authorName = displayNameOf(await getProfile());
         )
       }
     </header>
-    <div data-toc-layout class={tocLayout}>
-      {toc.length > 0 && <PostToc items={toc} />}
-      <Prose>
-        <Content />
-      </Prose>
+    <div data-toc-layout class={layout}>
+      {
+        hasAside && (
+          <aside
+            data-post-aside
+            data-reader-hide
+            class={`md:sticky md:top-3xl md:self-start ${
+              post.snapshot
+                ? 'order-last flex flex-col gap-md md:order-none'
+                : 'contents md:flex md:flex-col md:gap-md'
+            }`}
+          >
+            {toc.length > 0 && <PostToc items={toc} />}
+            {post.snapshot && <PostSnapshot snapshot={post.snapshot} />}
+          </aside>
+        )
+      }
+      <div>
+        <Prose ruled>
+          <Content />
+        </Prose>
+        <AuthorBox site={site} email={email} />
+      </div>
     </div>
     {toc.length > 0 && <PostTocToggle />}
   </article>
 
   {
     related.length > 0 && (
-      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl" data-reader-hide>
-        <h2 id="related-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
-          Posts relacionados
-        </h2>
-        <ul class="mt-md list-none p-0">
+      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl border-t border-border pt-2xl" data-reader-hide>
+        <div class="flex flex-wrap items-end justify-between gap-md">
+          <div>
+            <p class="font-mono text-small uppercase tracking-eyebrow text-primary">
+              <span aria-hidden="true">{'// '}</span>LEITURA COMPLEMENTAR
+            </p>
+            <h2 id="related-heading" class="mt-xs font-serif text-h2 font-normal text-foreground">Posts relacionados</h2>
+          </div>
+          <a
+            href="/posts"
+            class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Ver todos no blog
+            <Icon name="lucide:arrow-right" aria-hidden="true" class="size-4 shrink-0" />
+          </a>
+        </div>
+        <ul class="mt-lg grid list-none grid-cols-1 gap-md p-0 md:grid-cols-3">
           {related.map((item) => (
             <li>
-              <ListRow
-                href={`/${item.slug}`}
-                title={item.title}
-                summary={item.summary}
-                stamp={toShortDate(item.date)}
-              />
+              <RelatedPostCard post={item} />
             </li>
           ))}
         </ul>

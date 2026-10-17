@@ -1,0 +1,33 @@
+---
+import type { Post } from '../../content/schemas/post';
+
+interface Props {
+  snapshot: NonNullable<Post['snapshot']>;
+}
+
+const { snapshot } = Astro.props;
+---
+
+{/* What the post ran on (post-detail-redesign REQ-005), under the index from md
+    and after the text below it. */}
+<section
+  data-post-snapshot
+  data-reader-hide
+  aria-label="Stack do post"
+  class="flex flex-col gap-sm rounded-lg border border-border bg-surface p-md font-mono text-caption"
+>
+  <div class="flex items-center justify-between gap-sm border-b border-border pb-sm">
+    <span class="text-primary"><span aria-hidden="true">// </span>stack snapshot</span>
+    {snapshot.version && <span class="text-muted-foreground">{snapshot.version}</span>}
+  </div>
+  <dl class="m-0 flex flex-col gap-xs">
+    {
+      snapshot.items.map((item) => (
+        <div class="flex items-baseline justify-between gap-sm">
+          <dt class="text-muted-foreground">{item.label}:</dt>
+          <dd class="m-0 text-right text-foreground">{item.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

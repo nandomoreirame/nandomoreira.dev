@@ -104,7 +104,10 @@ describe('/[slug] post page', () => {
     const section = html.slice(start, html.indexOf('</section>', start));
 
     expect(section).toContain('Posts relacionados');
-    const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map((m) => m[1]);
+    expect(section).toContain('LEITURA COMPLEMENTAR');
+    expect(section.match(/data-related-post/g)).toHaveLength(3);
+    expect(section).toMatch(/<a[^>]*href="\/posts"[^>]*>[\s\S]*?Ver todos no blog/);
+    const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map((m) => m[1]).filter((slug) => slug !== 'posts');
     expect(links).toHaveLength(3);
     expect(links).not.toContain('fluxo-rpi-claude-code-grok-codex');
   });
@@ -119,6 +122,7 @@ describe('/[slug] post page', () => {
     expect(html).toMatch(/<div[^>]*data-art/);
     expect(html).toContain(`data-motif="${coverless!.data.art}"`);
     expect(html.search(/data-art/)).toBeGreaterThan(html.search(/<time\b/i));
+    expect(html.search(/data-art/)).toBeGreaterThan(html.indexOf('data-post-toolbar-end'));
   });
 
   it('keeps the cover and draws no art when a post has one', async () => {
@@ -129,20 +133,102 @@ describe('/[slug] post page', () => {
     expect(html).not.toMatch(/data-motif=/);
   });
 
-  it('shows the full publication date on the post, labelled', async () => {
-    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway');
-    expect(post).toBeDefined();
-    const html = await renderEntry(post!);
-    expect(html).toMatch(/<time[^>]*datetime="2026-10-11"[^>]*>\s*publicado: 11 de outubro de 2026\s*<\/time>/);
+  it('opens with date, tags and reading time, no prompt and no "publicado:"', async () => {
+    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway')!;
+    const html = await renderEntry(post);
+    const meta = html.match(/<p[^>]*data-post-meta[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
+    expect(meta).toMatch(/<time[^>]*datetime="2026-10-11"[^>]*>\s*11 de outubro de 2026\s*<\/time>/);
+    expect([...meta.matchAll(/>(#[^<]+)</g)].map((m) => m[1])).toEqual(['#linux', '#redes', '#open-source']);
+    expect(meta).toMatch(/data-icon="lucide:clock"[\s\S]*\d+ min de leitura/);
+    expect(meta.match(/<span[^>]*aria-hidden="true"[^>]*>•<\/span>/g)).toHaveLength(2);
+    expect(html).not.toContain('publicado:');
+    expect(html).not.toContain('&lt;!--');
+    expect(html.indexOf('data-post-meta')).toBeLessThan(html.search(/<h1\b/));
   });
 
-  it('follows the date with the post tags as hashtags, after a | that screen readers skip', async () => {
-    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway');
-    const html = await renderEntry(post!);
-    const meta = html.slice(html.indexOf('publicado:'), html.indexOf('publicado:') + 600);
-    expect(meta).toMatch(/<span[^>]*aria-hidden="true"[^>]*>\|<\/span>/);
-    const tags = [...meta.matchAll(/>(#[^<]+)</g)].map((m) => m[1]);
-    expect(tags).toEqual(['#linux', '#redes', '#open-source']);
+  it('has no back trail: the menu already marks the blog', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const html = await renderEntry(entry);
+    expect(html).not.toContain('Voltar aos posts');
+    expect(html).not.toContain('Trilha de navegação');
+  });
+
+  it('puts the summary under the title as the lead', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const html = await renderEntry(entry);
+    const lead = html.match(/<p[^>]*data-post-lead[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '';
+    expect(lead.trim()).toBe(entry.data.summary);
+    expect(html.search(/<h1\b/)).toBeLessThan(html.indexOf('data-post-lead'));
+    const h1 = html.match(/<h1[^>]*>/)?.[0] ?? '';
+    const leadTag = html.match(/<p[^>]*data-post-lead[^>]*>/)?.[0] ?? '';
+    expect(h1).not.toContain('max-w-list');
+    expect(leadTag).not.toContain('max-w-list');
+  });
+
+  it('groups the reader switch, the labelled AI links, copy link and .md in one toolbar', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const html = await renderEntry(entry);
+    const bar = html.slice(html.indexOf('data-post-toolbar'), html.indexOf('data-post-toolbar-end'));
+    expect(bar).toContain('id="reader-on"');
+    expect(bar).toContain('Resumir com Claude');
+    expect(bar).toMatch(/<button[^>]*data-copy="post-url"[^>]*hidden/);
+    expect(bar).toContain('Copiar link');
+    expect(bar).toMatch(/<a[^>]*href="\/fluxo-rpi-claude-code-grok-codex\.md"/);
+    expect(html).toMatch(/<span id="post-url" hidden>https:\/\/nandomoreira\.dev\/fluxo-rpi-claude-code-grok-codex<\/span>/);
+  });
+
+  it('rules the body sections and closes with the author box before the related posts', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const html = await renderEntry(entry);
+    expect(html).toContain('data-prose-ruled');
+    const box = html.indexOf('data-author-box');
+    expect(box).toBeGreaterThan(html.indexOf('data-prose'));
+    expect(box).toBeLessThan(html.search(/aria-labelledby="related-heading"/));
+  });
+
+  it('shows the snapshot card in the side column when the post has one', async () => {
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'scratchpad-no-niri-janelas-que-somem-com-um-atalho')!;
+    expect(entry.data.snapshot).toBeDefined();
+    const html = await renderEntry(entry);
+    const aside = html.match(/<aside[^>]*data-post-aside[^>]*>[\s\S]*?<\/aside>/)?.[0] ?? '';
+    expect(aside).toContain('data-toc');
+    expect(aside).toContain('data-post-snapshot');
+  });
+
+  it('keeps the phone index popover out of a bare hidden ancestor when there is no snapshot', async () => {
+    // A popover under display:none opens but paints at width 0 (Chromium).
+    // Archived posts with an index and no snapshot hit that path below md.
+    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'comece-com-gulp')!;
+    expect(entry.data.snapshot).toBeUndefined();
+
+    const html = await renderEntry(entry);
+    const asideAt = html.indexOf('data-post-aside');
+    // Prefer the attribute form so `data-toc-layout` does not win.
+    const tocAt = html.search(/\sdata-toc[\s>]/);
+    expect(asideAt).toBeGreaterThan(-1);
+    expect(tocAt).toBeGreaterThan(asideAt);
+
+    // The aside is the wrapper that used to carry `hidden` below md. Walk every
+    // open tag still open at data-toc; none may list a bare `hidden` class.
+    const voidish = /^(?:area|base|br|col|embed|hr|img|input|link|meta|path|source|track|wbr)$/;
+    const stack: string[] = [];
+    for (const m of html.slice(0, tocAt).matchAll(/<\/?([a-zA-Z][\w:-]*)\b[^>]*>/g)) {
+      const tag = m[0];
+      const name = m[1].toLowerCase();
+      if (tag.startsWith('</')) {
+        stack.pop();
+        continue;
+      }
+      if (tag.endsWith('/>') || voidish.test(name)) continue;
+      stack.push(tag);
+    }
+
+    expect(stack.some((open) => open.includes('data-post-aside')), 'aside must wrap data-toc').toBe(true);
+
+    for (const open of stack) {
+      const cls = /\bclass="([^"]*)"/.exec(open)?.[1] ?? '';
+      expect(cls.split(/\s+/), open).not.toContain('hidden');
+    }
   });
 
   it('puts the title and date above the cover', async () => {
@@ -157,7 +243,8 @@ describe('/[slug] post page', () => {
 
     expect(heading).toBeGreaterThan(-1);
     expect(figure).toBeGreaterThan(time);
-    expect(time).toBeGreaterThan(heading);
+    expect(time).toBeLessThan(heading);
+    expect(figure).toBeGreaterThan(html.indexOf('data-post-toolbar-end'));
   });
 
   it('omits the cover image when the post has no cover', async () => {

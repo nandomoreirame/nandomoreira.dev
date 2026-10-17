@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { POST_TOC_ID, type TocItem } from '../../lib/posts/toc';
 
 interface Props {
@@ -9,9 +10,14 @@ const { items } = Astro.props;
 ---
 
 {/* A native popover below 768px, opened by PostTocToggle; from md the stylesheet
-    turns the same element into a sticky column ("Post index" in global.css). */}
+    turns the same element into a card in the side column ("Post index" in global.css). */}
 <nav id={POST_TOC_ID} popover aria-label="Índice" data-toc data-reader-hide>
-  <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Índice</p>
+  <div class="border-b border-border pb-sm">
+    <p class="flex items-center gap-xs font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">
+      <Icon name="lucide:list" class="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+      Índice
+    </p>
+  </div>
   <ul class="mt-sm flex list-none flex-col gap-xs p-0">
     {
       items.map((item) => (
@@ -20,7 +26,7 @@ const { items } = Astro.props;
             href={`#${item.slug}`}
             class="toc-underline inline-block py-xs text-small leading-snug text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            {item.text}
+            <span class="toc-label">{item.text}</span>
           </a>
         </li>
       ))

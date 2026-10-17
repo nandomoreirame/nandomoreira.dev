@@ -5,31 +5,47 @@ import { AI_SUMMARY_TARGETS, aiSummaryUrl } from '../../lib/posts/ai-summary';
 interface Props {
   /** Absolute URL of the post's markdown view (/<slug>.md). */
   markdownUrl: string;
+  /** Text buttons (post toolbar) instead of icons with a tooltip (cards). */
+  labelled?: boolean;
 }
 
-const { markdownUrl } = Astro.props;
+const { markdownUrl, labelled = false } = Astro.props;
 ---
 
-{/* Icon only, same height as the reading mode switch beside it; the label
-    shows as a tooltip on hover and focus. Hidden in reading mode. */}
-<div data-reader-hide class="flex gap-xs">
+{/* Icon only by default, same height as the reading mode switch, the label as a
+    tooltip. Labelled, the visible text starts the accessible name (WCAG 2.5.3).
+    Hidden in reading mode either way. */}
+<div data-reader-hide class="flex flex-wrap gap-xs">
   {
-    AI_SUMMARY_TARGETS.map((target) => (
-      <a
-        href={aiSummaryUrl(target, markdownUrl)}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`${target.label}, abre em nova aba`}
-        class="group/ai relative inline-flex size-8 items-center justify-center rounded-md border border-border-strong bg-surface text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        <Icon name={target.icon} class="size-3.5" aria-hidden="true" />
-        <span
-          aria-hidden="true"
-          class="pointer-events-none absolute top-full left-1/2 z-10 mt-xs -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-elevated px-sm py-xs font-mono text-caption text-foreground opacity-0 transition-opacity duration-(--duration-fast) ease-out group-hover/ai:opacity-100 group-focus-visible/ai:opacity-100"
+    AI_SUMMARY_TARGETS.map((target) =>
+      labelled ? (
+        <a
+          href={aiSummaryUrl(target, markdownUrl)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-8 items-center gap-xs rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          ✨ {target.label}
-        </span>
-      </a>
-    ))
+          <span aria-hidden="true">✨</span>
+          {target.short}
+          <span class="sr-only">, abre em nova aba</span>
+        </a>
+      ) : (
+        <a
+          href={aiSummaryUrl(target, markdownUrl)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${target.label}, abre em nova aba`}
+          class="group/ai relative inline-flex size-8 items-center justify-center rounded-md border border-border-strong bg-surface text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          <Icon name={target.icon} class="size-3.5" aria-hidden="true" />
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute top-full left-1/2 z-10 mt-xs -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-elevated px-sm py-xs font-mono text-caption text-foreground opacity-0 transition-opacity duration-(--duration-fast) ease-out group-hover/ai:opacity-100 group-focus-visible/ai:opacity-100"
+          >
+            ✨ {target.label}
+          </span>
+        </a>
+      ),
+    )
   }
 </div>

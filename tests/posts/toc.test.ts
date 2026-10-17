@@ -52,6 +52,17 @@ describe('PostToc', () => {
   it('leaves the page in reading mode', async () => {
     expect(await render()).toContain('data-reader-hide');
   });
+
+  it('heads the card with the icon and "Índice" alone, no section count', async () => {
+    const html = await render();
+    expect(html).toMatch(/<p[^>]*>\s*<svg[^>]*data-icon="lucide:list"[\s\S]*?<\/svg>\s*Índice\s*<\/p>/);
+    expect(html).not.toContain('seções');
+    expect(html).not.toContain('Índice de conteúdo');
+  });
+
+  it('never numbers the items (author, 2026-10-17)', async () => {
+    expect(await render()).not.toMatch(/>\s*\d{2}\.?\s*</);
+  });
 });
 
 describe('PostTocToggle', () => {
@@ -77,11 +88,11 @@ describe('post page', () => {
     expect(page).toContain('tocFrom(headings)');
   });
 
-  it('puts the index in a column left of the text from md, wider from lg, only when there is one', () => {
-    expect(page).toContain(
-      "'md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-2xl'",
-    );
-    expect(page).toMatch(/<PostToc items=\{toc\} \/>\}\s*<Prose>/);
+  it('puts a sticky side column left of the text from md when there is an index or a snapshot', () => {
+    expect(page).toContain('const hasAside = toc.length > 0 || Boolean(post.snapshot);');
+    expect(page).toContain("'flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl'");
+    expect(page).toMatch(/<aside[^>]*data-post-aside[^>]*md:sticky md:top-3xl md:self-start/);
+    expect(page).toMatch(/<Prose ruled>/);
   });
 
   it('keeps the phone toggle a direct child of the article, outside the animated blocks', () => {
@@ -92,14 +103,14 @@ describe('post page', () => {
 });
 
 describe('index styles', () => {
-  it('turns the popover into a sticky column from 768px', () => {
+  it('turns the popover into a card in the side column from 768px', () => {
     const at = css.indexOf('@media (width >= 48rem) {\n  [data-toc][popover] {');
     expect(at).toBeGreaterThan(-1);
     const block = css.slice(at, css.indexOf('}', at));
-    expect(block).toMatch(/position:\s*sticky/);
+    expect(block).toMatch(/position:\s*static/);
     expect(block).toMatch(/display:\s*block/);
-    // The inset shorthand resets top, so it has to come first (measured: the column scrolled away).
-    expect(block.indexOf('inset: auto')).toBeLessThan(block.indexOf('top: var(--spacing-3xl)'));
+    expect(block).toMatch(/border:\s*1px solid var\(--color-border\)/);
+    expect(block).toMatch(/background-color:\s*var\(--color-surface\)/);
   });
 
   it('adds no scroll margin of its own: the root scroll padding already clears the header', () => {
@@ -114,8 +125,21 @@ describe('index styles', () => {
 
 describe('active section', () => {
   it('underlines the current item like the main menu does, through aria-current', () => {
-    expect(css).toMatch(/\.toc-underline\[aria-current\]::after \{\s*transform: scaleX\(1\);/);
     expect(css).toMatch(/\.toc-underline\[aria-current\] \{\s*color: var\(--color-primary\);/);
+    expect(css).toMatch(/\.toc-underline\[aria-current\] \.toc-label\s*\{\s*background-size: 100% 1px;/);
+  });
+
+  it('draws the underline under the words, line by line, not under the link box', async () => {
+    // A ::after on the inline-block link spanned the whole column under a
+    // wrapped title (2026-10-17). An inline label with a background rule
+    // follows each line instead.
+    expect(css).not.toContain('.toc-underline::after');
+    const label = css.match(/\.toc-label \{([^}]*)\}/)?.[1] ?? '';
+    expect(label).toMatch(/box-decoration-break: clone/);
+    expect(label).toMatch(/\/ 0 1px no-repeat/);
+    const items = tocFrom([heading(2, 'a', 'Um título'), heading(2, 'b')]);
+    const html = await (await AstroContainer.create()).renderToString(PostToc, { props: { items } });
+    expect(html).toMatch(/<a[^>]*toc-underline[^>]*>\s*<span class="toc-label">Um título<\/span>\s*<\/a>/);
   });
 
   it('gives every index link the underline class', async () => {

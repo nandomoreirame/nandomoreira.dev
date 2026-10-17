@@ -1,0 +1,44 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '../ui/Button.astro';
+
+interface Props {
+  /** Site origin, shown in the curl line. */
+  site: string;
+  /** The profile's e-mail contact; absent, the link is left out. */
+  email?: string;
+}
+
+const { site, email } = Astro.props;
+const link =
+  'inline-flex min-h-11 items-center gap-xs rounded-md border border-border-strong bg-background px-md font-mono text-caption transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+---
+
+{/* The post's closing invitation: the same copy on every post. Contato is the
+    only primary action (post-detail-tweaks REQ-003); e-mail and the agent brief stay secondary. */}
+<aside
+  data-author-box
+  data-reader-hide
+  aria-labelledby="author-box-title"
+  class="mt-2xl flex flex-col gap-md rounded-lg border border-border bg-surface p-lg"
+>
+  <div class="flex items-center gap-sm">
+    <Icon name="lucide:square-terminal" class="size-5 shrink-0 text-primary" aria-hidden="true" />
+    <h2 id="author-box-title" class="font-sans text-body font-semibold text-foreground">Conversar com o autor</h2>
+  </div>
+  <p class="text-small text-muted-foreground">
+    Ficou alguma dúvida, achou um erro ou quer propor uma melhoria? Me chama por e-mail ou entrega este site para o seu agente.
+  </p>
+  <div class="flex flex-wrap gap-sm">
+    <Button href="/contato">Contato</Button>
+    {
+      email && (
+        <a href={`mailto:${email}`} class={`${link} text-foreground hover:text-primary`}>
+          {email}
+          <span aria-hidden="true">↗</span>
+        </a>
+      )
+    }
+    <a href="/AGENTS.md" class={`${link} text-success`}>$ curl {site}/AGENTS.md</a>
+  </div>
+</aside>

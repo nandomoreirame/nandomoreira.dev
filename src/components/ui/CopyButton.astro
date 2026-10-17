@@ -9,11 +9,19 @@ interface Props {
   label?: string;
   /** A 44px square with the icon alone; the label stays for screen readers. */
   iconOnly?: boolean;
+  /** Visible text; defaults to the AI view's "Copiar". */
+  text?: string;
+  /** 32px high, caption text: a toolbar beside the reading mode switch. */
+  compact?: boolean;
 }
 
-const { target, label, iconOnly = false } = Astro.props;
+const { target, label, iconOnly = false, text = AI_VIEW_LABELS.copy, compact = false } = Astro.props;
 
-const shape = iconOnly ? 'size-11 justify-center' : 'min-h-11 gap-xs px-md';
+const shape = iconOnly
+  ? 'size-11 justify-center text-small'
+  : compact
+    ? 'min-h-8 gap-xs px-sm text-caption'
+    : 'min-h-11 gap-xs px-md text-small';
 ---
 
 {/* Ships hidden: the site script (PointerField) reveals it and wires the copy,
@@ -26,13 +34,17 @@ const shape = iconOnly ? 'size-11 justify-center' : 'min-h-11 gap-xs px-md';
   aria-label={label}
   aria-live="polite"
   hidden
-  class={`group/copy inline-flex shrink-0 items-center ${shape} rounded-md border border-border-strong bg-surface font-mono text-small text-foreground transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+  class={`group/copy inline-flex shrink-0 items-center ${shape} rounded-md border border-border-strong bg-surface font-mono text-foreground transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
 >
-  <Icon name="lucide:copy" class="size-4 shrink-0 group-data-copied/copy:hidden" aria-hidden="true" />
   <Icon
-    name="lucide:check"
-    class="hidden size-4 shrink-0 text-success group-data-copied/copy:block"
+    name="lucide:copy"
+    class={`${compact ? 'size-3.5' : 'size-4'} shrink-0 group-data-copied/copy:hidden`}
     aria-hidden="true"
   />
-  <span class={iconOnly ? 'sr-only' : undefined}>{AI_VIEW_LABELS.copy}</span>
+  <Icon
+    name="lucide:check"
+    class={`hidden ${compact ? 'size-3.5' : 'size-4'} shrink-0 text-success group-data-copied/copy:block`}
+    aria-hidden="true"
+  />
+  <span class={iconOnly ? 'sr-only' : undefined}>{text}</span>
 </button>
