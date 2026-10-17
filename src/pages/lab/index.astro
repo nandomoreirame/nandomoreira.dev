@@ -21,7 +21,6 @@ const authorName = displayNameOf(await getProfile());
   pageItems={projects.filter((project) => collectionOfBlock(project.block) === 'lab').map((project) => `/lab/${project.slug}`)}
 >
   <PageHeader
-    eyebrow="Laboratório"
     title={COLLECTION_COPY.lab.title}
     description={COLLECTION_COPY.lab.description}
   />

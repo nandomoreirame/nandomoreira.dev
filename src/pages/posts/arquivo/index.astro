@@ -19,9 +19,8 @@ const authorName = displayNameOf(await getProfile());
   pageType="CollectionPage"
   pageItems={years.map(({ year }) => `/posts/arquivo/${year}`)}
 >
-  <div class="mx-auto w-full max-w-list">
+  <div>
     <PageHeader
-      eyebrow="Arquivo"
       title={title}
       description="Tutoriais da época em que eu escrevia sobre front-end, Sass, Gulp e WordPress. Ficam aqui como registro, com a data à vista, porque parte do que ensinam envelheceu."
     />
