@@ -11,9 +11,12 @@ interface Props {
   headline: string;
   positioning: string;
   availability: Availability;
+  /** Optional tech stack line under the CTAs; shows at most five items. */
+  stack?: string[];
 }
 
-const { name, headline, positioning, availability } = Astro.props;
+const { name, headline, positioning, availability, stack } = Astro.props;
+const stackLine = stack && stack.length > 0 ? stack.slice(0, 5).join(', ') : null;
 ---
 
 <section id="inicio" class="relative isolate py-2xl lg:py-3xl">
@@ -35,16 +38,24 @@ const { name, headline, positioning, availability } = Astro.props;
       </a>
     </p>
 
-    <h1 class="font-serif text-h1 font-semibold text-balance text-foreground sm:text-display">
+    <h1 class="font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">
       {headline}
     </h1>
 
-    <p class="max-w-[68ch] text-body text-muted-foreground">{positioning}</p>
+    <p class="max-w-[68ch] text-lead text-muted-foreground">{positioning}</p>
 
     <div class="flex flex-wrap items-center gap-md">
-      <Button href="/portfolio" variant="primary">Ver o que eu construí</Button>
-      <Button href="/contato" variant="ghost">Dizer olá</Button>
+      <Button href="/portfolio" variant="primary" arrow>Ver o que eu construí</Button>
+      <Button href="/contato" variant="secondary">Dizer olá</Button>
     </div>
+
+    {
+      stackLine && (
+        <p data-hero-stack class="border-t border-border pt-md font-mono text-caption text-muted-foreground">
+          <span class="text-primary">Stack:</span> {stackLine}
+        </p>
+      )
+    }
   </div>
 
   <Portrait name={name} class="lg:scale-130" />

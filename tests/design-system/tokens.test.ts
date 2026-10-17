@@ -75,6 +75,8 @@ describe('design tokens', () => {
 const NEW_TOKENS = {
   '--tracking-eyebrow': '0.2em',
   '--text-micro': '0.6875rem',
+  // Lead paragraph under a hero or page title (Terminal Noir body-lead).
+  '--text-lead': '1.125rem',
   // The reference theme caps every surface at max-w-3xl (48rem). The original
   // 1200px produced a measure 1.62x wider than the reference, which is what
   // made the restyle read as a different layout rather than the same one.
