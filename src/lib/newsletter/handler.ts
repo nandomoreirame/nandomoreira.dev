@@ -12,12 +12,26 @@ export interface SubscribeDependencies {
   now: () => Date;
 }
 
-/** The card lives at the end of /posts; the page reads `assinatura`. */
-const back = (outcome: SubscribeOutcome): Response =>
-  new Response(null, {
-    status: 303,
-    headers: { location: `/posts?assinatura=${outcome}#novidades`, 'cache-control': 'no-store' },
-  });
+/**
+ * Pages that carry the card and read `assinatura`. The form names its page in
+ * ?origem on the action, so the answer comes back even before the body is read
+ * (the rate limit); anything off this list falls back to /posts, so the field
+ * is never an open redirect.
+ */
+const ORIGINS = new Set(['/', '/posts']);
+
+const originOf = (request: Request): string => {
+  const origem = new URL(request.url).searchParams.get('origem') ?? '';
+  return ORIGINS.has(origem) ? origem : '/posts';
+};
+
+const backTo =
+  (origin: string) =>
+  (outcome: SubscribeOutcome): Response =>
+    new Response(null, {
+      status: 303,
+      headers: { location: `${origin}?assinatura=${outcome}#novidades`, 'cache-control': 'no-store' },
+    });
 
 const isForm = (request: Request): boolean =>
   (request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded');
@@ -26,6 +40,7 @@ export const handleSubscribe = async (
   request: Request,
   { store, limiter, now }: SubscribeDependencies,
 ): Promise<Response> => {
+  const back = backTo(originOf(request));
   if (request.method !== 'POST' || !isForm(request)) return back('erro');
   if (!limiter.check(clientIpOf(request.headers))) return back('limite');
 

@@ -58,4 +58,35 @@ describe('handleSubscribe', () => {
     const response = await handleSubscribe(new Request('https://nandomoreira.dev/api/subscribe'), deps());
     expect(location(response)).toBe('/posts?assinatura=erro#novidades');
   });
+
+  it('sends a home subscriber back to the home, from ?origem=/ on the form action', async () => {
+    const request = new Request('https://nandomoreira.dev/api/subscribe?origem=/', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-forwarded-for': '203.0.113.7' },
+      body: new URLSearchParams({ email: 'fulano@exemplo.com' }).toString(),
+    });
+    expect(location(await handleSubscribe(request, deps()))).toBe('/?assinatura=ok#novidades');
+  });
+
+  it('also sends the rate-limit answer back to the origin', async () => {
+    const request = new Request('https://nandomoreira.dev/api/subscribe?origem=/', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-forwarded-for': '203.0.113.7' },
+      body: 'email=a%40b.com',
+    });
+    const d = deps({ limiter: { check: vi.fn().mockReturnValue(false) } });
+    expect(location(await handleSubscribe(request, d))).toBe('/?assinatura=limite#novidades');
+  });
+
+  it('ignores an origin outside the allowlist, so it is never an open redirect', async () => {
+    for (const origem of ['https://evil.example', '//evil.example', '/contato', '']) {
+      const request = new Request(`https://nandomoreira.dev/api/subscribe?origem=${encodeURIComponent(origem)}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-forwarded-for': '203.0.113.7' },
+        body: 'email=a%40b.com',
+      });
+      expect(location(await handleSubscribe(request, deps()))).toBe('/posts?assinatura=ok#novidades');
+    }
+  });
 });
+
