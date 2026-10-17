@@ -380,9 +380,12 @@ site parecer outro layout mesmo com paleta, tipografia e componentes corretos. O
 cabeçalho e o rodapé mantêm a régua atravessando a viewport inteira, com o
 container aplicado à linha interna, e não ao elemento que carrega a borda.
 
-**Moldura em 1104px (`--container-frame: 69rem`), desde 2026-10-16.** Cabeçalho e
-rodapé usam uma faixa mais larga que o conteúdo, como no Stitch. O conteúdo
-continua em `--container-page` (hoje 1000px).
+**Moldura em 1104px (`--container-frame: 69rem`), desde 2026-10-16.** Desde
+2026-10-17 o conteúdo (`--container-page`) tem a mesma largura, então a marca do
+cabeçalho e a coluna da página alinham. As seções de lista (blog, portfólio e lab
+na home, o índice do blog e o arquivo) ficam numa coluna centralizada de 848px
+(`--container-list: 53rem`), como no Stitch. Portfólio e lab, com a arte dos
+cases, usam a largura inteira.
 
 ### Cabeçalho e rodapé (Terminal Noir, 2026-10-16)
 

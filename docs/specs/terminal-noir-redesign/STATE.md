@@ -48,7 +48,7 @@ Contraste sobre `#0B0B0C` (surface-base do Stitch):
 | 2. Moldura | Header (marca em mono, nav, pill de disponibilidade) e footer em uma linha | site inteiro | feita em 2026-10-16, `npm run verify` verde; marca escolhida: ponto de status que pulsa enquanto disponível; `/design` removida, volta para os eyebrows |
 | 3. Componentes compartilhados | `PageHeader` em Newsreader 400, `Button` com halo e seta, `Card`, `TerminalWindow`, `StatusDot`; primeiros usos nos cards de serviço e no AGENTS.md | site inteiro | feita em 2026-10-16, `npm run verify` verde; numeração `01 //` do `SectionHeader` adiada para Setup e Agora |
 | 3b. Hero | Só a coluna de texto: título em serifa 400, lead de 18px (`--text-lead`), CTA primário com seta e halo, "Dizer olá" com borda, linha de stack (os cinco primeiros de `profile.stack`) | home | feita em 2026-10-17, `npm run verify` verde; localização fora (o perfil não tem o campo) |
-| 4. Linhas | Data mono, hover âmbar, seta que anda 4px, chips; colunas de 720 e 1080px; arte dos cases mantida | blog, portfólio, lab | a planejar |
+| 4. Linhas | Conteúdo em 1104px (igual à moldura), coluna de lista de 848px, marcadores em chips, seta em ícone, `TechBadge` menor, "Ver todos" em mono; arte dos cases mantida | blog, portfólio, lab | feita em 2026-10-17, `npm run verify` verde |
 | 5. Cards | Trajetória 3x2 com números em Newsreader; Serviços com ícone e link uniforme | home | a planejar |
 | 6. AGENTS.md | Janela de terminal com realce no servidor e Copiar do script existente | home | a planejar |
 | 7. Propagação | Post, case, /now, /setup, arquivos e /ia com os tokens novos; paletas do modo leitura | site inteiro | a planejar |
