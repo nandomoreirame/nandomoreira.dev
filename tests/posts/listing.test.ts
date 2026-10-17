@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
-import { getArchivedPosts, getCurrentPosts } from '../../src/lib/content';
+import { getAllPosts, getArchivedPosts, getCurrentPosts } from '../../src/lib/content';
 import { toShortDate } from '../../src/lib/format/date';
 import PostsPage from '../../src/pages/posts/index.astro';
 
@@ -97,6 +97,7 @@ describe('/posts listing', () => {
   it('keeps the post count on the whole blog, not the page', async () => {
     const html = await render('?pagina=2');
     expect(html).toMatch(/data-post-count[^>]*>\s*\d+ artigos?\s*</);
-    expect(html.match(/data-post-count[^>]*>\s*(\d+)/)?.[1]).toBe(String(48));
+    const published = (await getAllPosts()).filter((post) => !post.draft).length;
+    expect(html.match(/data-post-count[^>]*>\s*(\d+)/)?.[1]).toBe(String(published));
   });
 });
