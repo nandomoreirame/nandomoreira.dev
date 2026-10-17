@@ -1,14 +1,18 @@
 ---
 import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
 import EmptyState from '../components/ui/EmptyState.astro';
+import StatusDot from '../components/ui/StatusDot.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { contactGoPath } from '../lib/analytics/outbound';
-import { requireSite } from '../lib/aeo/urls';
+import { absoluteUrl, requireSite } from '../lib/aeo/urls';
 import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
+import { AVAILABILITY_LABEL } from '../lib/layout/availability';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../lib/hire/form';
 
@@ -22,10 +26,12 @@ const sent = outcome?.role === 'status';
 const field =
   'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide text-muted-foreground';
+const site = requireSite(Astro.site ?? new URL('https://nandomoreira.dev'));
 const hireBrief = buildHireBrief({
-  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  site,
   profile,
 });
+const mcpUrl = absoluteUrl(site, '/api/mcp');
 ---
 
 <BaseLayout
@@ -42,10 +48,12 @@ const hireBrief = buildHireBrief({
     {/* Posts natively to the same endpoint agents use, so the form works with
         no JavaScript; the handler answers a form post with a redirect back here
         carrying `envio`, read above. */}
-    <section
+    <div class="grid grid-cols-1 gap-xl lg:grid-cols-5">
+    <Card
+      as="section"
+      class="flex flex-col gap-lg lg:col-span-3"
       aria-labelledby={sent ? undefined : 'form-heading'}
       aria-label={sent ? 'Mensagem enviada' : undefined}
-      class="flex flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg"
     >
       {
         sent && outcome ? (
@@ -72,6 +80,14 @@ const hireBrief = buildHireBrief({
         <p class="font-mono text-micro text-muted-foreground">
           Os campos com * são obrigatórios.
         </p>
+      </div>
+
+      <div data-contact-availability class="flex items-start gap-sm rounded-md border border-border bg-background p-md">
+        <span class="pt-sm"><StatusDot status={profile.availability.status} /></span>
+        <span class="flex flex-col">
+          <span class="text-body text-foreground">{AVAILABILITY_LABEL[profile.availability.status]}</span>
+          <span class="text-small text-muted-foreground">{profile.availability.detail}</span>
+        </span>
       </div>
 
       {
@@ -216,8 +232,20 @@ const hireBrief = buildHireBrief({
       </>
         )
       }
-    </section>
+    </Card>
 
-    <AgentBrief brief={hireBrief} />
+    <div class="flex flex-col gap-lg lg:col-span-2">
+      <AgentBrief brief={hireBrief} variant="panel" />
+      <Card class="flex flex-col gap-sm">
+        <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">MCP</h2>
+        <p class="text-small text-muted-foreground">Conecte seu cliente MCP ao servidor deste site.</p>
+        <div class="flex items-center justify-between gap-sm rounded-md border border-border bg-background px-md py-sm">
+          <code id="mcp-url" class="min-w-0 truncate font-mono text-small text-foreground">{mcpUrl}</code>
+          <CopyButton target="mcp-url" label="Copiar a URL do servidor MCP" iconOnly />
+        </div>
+        <a href="/mcp" class="font-mono text-small text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Como conectar</a>
+      </Card>
+    </div>
+    </div>
   </article>
 </BaseLayout>

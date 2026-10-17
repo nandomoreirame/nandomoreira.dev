@@ -1,43 +1,44 @@
 ---
-import CopyButton from '../ui/CopyButton.astro';
-import TerminalWindow from '../ui/TerminalWindow.astro';
+import AgentBriefWindow from './AgentBriefWindow.astro';
 
 interface Props {
   /** Machine text from buildHireBrief; English on purpose. */
   brief: string;
+  /** `panel` is the terminal alone, for the contact page's side column. */
+  variant?: 'section' | 'panel';
 }
 
-const { brief } = Astro.props;
+const { brief, variant = 'section' } = Astro.props;
 ---
 
-<section
-  aria-labelledby="agents-heading"
-  class="grid grid-cols-1 gap-xl py-2xl lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:py-3xl"
->
-  <div class="flex flex-col gap-md">
-    <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
-      AGENTS.md
-    </p>
-    <h2 id="agents-heading" class="font-serif text-h2 font-semibold text-foreground">
-      Me contrate pelo seu agent.
-    </h2>
-    <p class="text-body text-muted-foreground">
-      Cole este brief no ChatGPT, no Claude ou no seu próprio harness. Qualquer agent
-      consegue ler e começar a conversa por você, pela API.
-    </p>
-    <p class="text-small text-muted-foreground">
-      O contrato completo está em{' '}
-      <a
-        href="/AGENTS.md"
-        class="text-foreground underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >/AGENTS.md</a
-      >.
-    </p>
-  </div>
+{variant === 'panel' ? (
+  <AgentBriefWindow brief={brief} />
+) : (
+  <section
+    aria-labelledby="agents-heading"
+    class="grid grid-cols-1 gap-xl py-2xl lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:py-3xl"
+  >
+    <div class="flex flex-col gap-md">
+      <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        AGENTS.md
+      </p>
+      <h2 id="agents-heading" class="font-serif text-h1 font-normal tracking-tight text-foreground">
+        Me contrate pelo seu agent.
+      </h2>
+      <p class="text-body text-muted-foreground">
+        Cole este brief no ChatGPT, no Claude ou no seu próprio harness. Qualquer agent
+        consegue ler e começar a conversa por você, pela API.
+      </p>
+      <p class="text-small text-muted-foreground">
+        O contrato completo está em{' '}
+        <a
+          href="/AGENTS.md"
+          class="text-foreground underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >/AGENTS.md</a
+        >.
+      </p>
+    </div>
 
-  <TerminalWindow filename="AGENTS.md">
-    <CopyButton slot="actions" target="agent-brief" label="Copiar o brief AGENTS.md" />
-    <pre
-      class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-foreground"><code id="agent-brief">{brief}</code></pre>
-  </TerminalWindow>
-</section>
+    <AgentBriefWindow brief={brief} />
+  </section>
+)}
