@@ -114,6 +114,9 @@
   --spacing-xl: 2.5rem;
   --spacing-2xl: 4rem;
   --spacing-3xl: 6rem;
+  /* Hero breathing room on desktop (REQ-015): 200px above the text, 120px below. */
+  --spacing-hero-top: 12.5rem;
+  --spacing-hero-bottom: 7.5rem;
 
   /* Radius */
   --radius-sm: 0.25rem;
@@ -487,22 +490,29 @@
     }
   }
 
-  /* Topic chips on /contato: checkbox plus label, state from CSS only. The
-     colours live here, not in utilities, for the same layer reason as the tabs. */
-  .chip {
+  /* Interest checkboxes on /contato: the native input is sr-only and the box
+     beside it shows the state, from CSS only. The colours live here, not in
+     utilities, for the same layer reason as the tabs. border-strong clears
+     the 3:1 a control contour needs. */
+  .check-box {
     border-color: var(--color-border-strong);
-    color: var(--color-muted-foreground);
+    background-color: var(--color-background);
+    color: transparent;
   }
 
-  .chip-input:checked + .chip {
+  .check-input:checked + .check-box {
     border-color: var(--color-primary);
-    color: var(--color-foreground);
-    background-color: var(--color-surface-elevated);
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
   }
 
-  .chip-input:focus-visible + .chip {
+  .check-input:focus-visible + .check-box {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+
+  label:hover > .check-input:not(:checked) + .check-box {
+    border-color: var(--color-primary);
   }
 
   /* Code blocks (Shiki, class astro-code): lines stay as written and a long
@@ -1113,6 +1123,13 @@
   .art-banner .art-drift {
     animation: art-drift 18s ease-in-out infinite alternate;
   }
+}
+
+/* The big 404 (REQ-013): Newsreader at three times the display size, 1.5x
+   the first cut, with a soft amber glow. Decorative: the h1 below says it. */
+.not-found-code {
+  font-size: calc(var(--text-display) * 3);
+  text-shadow: 0 0 32px color-mix(in oklab, var(--color-primary) 35%, transparent);
 }
 
 /*

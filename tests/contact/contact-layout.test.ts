@@ -31,10 +31,56 @@ describe('/contato layout', () => {
     expect(html).toMatch(/<button[^>]*data-copy="mcp-url"/);
   });
 
-  it('shows the availability with its dot and detail inside the form card', async () => {
+  it('shows the availability in the AGENTS.md column, above the brief', async () => {
     const html = await render();
     const box = html.match(/<div[^>]*data-contact-availability[^>]*>[\s\S]*?<\/div>/)?.[0] ?? '';
+    const open = box.match(/^<div[^>]*>/)?.[0] ?? '';
+    expect(open).toContain('data-availability-card');
     expect(box).toContain('data-status-dot');
     expect(box).toMatch(/Disponível para novos projetos|Disponibilidade limitada|Indisponível no momento/);
+
+    const column = html.match(/<div class="[^"]*\blg:col-span-3\b[^"]*">[\s\S]*?id="agent-brief"/)?.[0] ?? '';
+    expect(column).toContain('data-contact-availability');
+    expect(column.indexOf('data-contact-availability')).toBeLessThan(column.indexOf('id="agent-brief"'));
+    expect(html.indexOf('id="form-heading"')).toBeLessThan(html.indexOf('data-contact-availability'));
+  });
+
+  it('puts the status dot on the same line as the availability title', async () => {
+    const html = await render();
+    const titleRow = html.match(/<span[^>]*data-availability-title[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';
+    expect(titleRow).toContain('items-center');
+    expect(titleRow).toContain('data-status-dot');
+    expect(titleRow).toMatch(/Disponível para novos projetos|Disponibilidade limitada|Indisponível no momento/);
+  });
+
+  it('gives the AGENTS.md column the wider share, with the form narrower', async () => {
+    const html = await render();
+    const formCard = html.match(/<section[^>]*class="[^"]*"[^>]*aria-labelledby="form-heading"|<section[^>]*aria-labelledby="form-heading"[^>]*class="[^"]*"/)?.[0] ?? '';
+    expect(formCard).toContain('lg:col-span-2');
+    expect(html).toMatch(/<div class="[^"]*\blg:col-span-3\b[^"]*">[\s\S]*?id="agent-brief"/);
+  });
+
+  it('stacks every form field, one below the other', async () => {
+    const html = await render();
+    const form = html.match(/<form[\s\S]*?<\/form>/)?.[0] ?? '';
+    expect(form).not.toMatch(/\bsm:grid-cols-2\b/);
+  });
+
+  it('stacks the form title over the required-fields note, so the narrow card never squeezes it', async () => {
+    const html = await render();
+    const row = html.match(/<div class="([^"]*)">\s*<h2[^>]*id="form-heading"/)?.[1] ?? '';
+    expect(row).toContain('flex-col');
+    expect(row).not.toMatch(/\bsm:flex-row\b/);
+  });
+
+  it('titles the form card "Formulário de contato"', async () => {
+    const html = await render();
+    expect(html).toMatch(/<h2[^>]*id="form-heading"[^>]*>\s*Formulário de contato\s*<\/h2>/);
+    expect(html).not.toContain('Iniciar uma conversa');
+  });
+
+  it('keeps the message field about a quarter shorter, at four rows', async () => {
+    const textarea = (await render()).match(/<textarea[^>]*id="contato-mensagem"[^>]*>/)?.[0] ?? '';
+    expect(textarea).toMatch(/\brows="4"/);
   });
 });

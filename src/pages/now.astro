@@ -4,7 +4,7 @@ Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 import NowGames from '../components/now/NowGames.astro';
 import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
-import Alert from '../components/ui/Alert.astro';
+import AvailabilityCard from '../components/ui/AvailabilityCard.astro';
 import Card from '../components/ui/Card.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import UpdatedAt from '../components/ui/UpdatedAt.astro';
@@ -27,21 +27,19 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 
 <BaseLayout title={`Agora | ${displayNameOf(profile)}`} description={NOW_LEAD}>
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader eyebrow="Agora" title="O que estou fazendo agora" description={NOW_LEAD} />
+    <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} />
 
     <UpdatedAt date={NOW_UPDATED_AT} />
 
     <NowSection id="foco" title="Foco" step={1}>
-      <Card>
-        <ul>
-          {data.focus.items.map((item) => <li>{item}</li>)}
-        </ul>
-        <h3>Recusando agora</h3>
-        <ul>
-          {data.focus.declining.map((item) => <li>{item}</li>)}
-        </ul>
-        <Alert title="Disponibilidade">{data.focus.availability}</Alert>
-      </Card>
+      <ul>
+        {data.focus.items.map((item) => <li>{item}</li>)}
+      </ul>
+      <h3>Recusando agora</h3>
+      <ul>
+        {data.focus.declining.map((item) => <li>{item}</li>)}
+      </ul>
+      <AvailabilityCard status={profile.availability.status} detail={data.focus.availability} />
     </NowSection>
 
     <NowSection id="projetos" title="Projetos em andamento" step={2}>

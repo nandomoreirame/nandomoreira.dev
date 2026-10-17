@@ -50,6 +50,11 @@ describe('PostRow', () => {
     expect(summary).not.toContain('line-clamp');
   });
 
+  it('lets the summary use the full row width, with no measure cap', async () => {
+    const summary = (await render()).match(/<span[^>]*data-summary[^>]*>/)?.[0] ?? '';
+    expect(summary).not.toMatch(/\bmax-w-/);
+  });
+
   it('shows the extras line only when given, the first one in the accent', async () => {
     expect(await render()).not.toContain('data-extras');
     const extras = (await render({ extras: ['5 dias → 30 min', 'Python'] })).match(/<span[^>]*data-extras[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';

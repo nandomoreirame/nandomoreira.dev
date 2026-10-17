@@ -75,24 +75,31 @@ describe('/contato', () => {
     }
   });
 
-  it('swaps the interest chips for a multiple select on phones', async () => {
+  it('offers the interests as a list of custom checkboxes, the same on every screen', async () => {
     const html = await render();
-    const select = html.match(/<select[^>]*name="interesse"[^>]*>[\s\S]*?<\/select>/)?.[0] ?? '';
-    const open = select.match(/<select[^>]*>/)?.[0] ?? '';
+    const fieldset = html.match(/<fieldset[\s\S]*?<\/fieldset>/)?.[0] ?? '';
 
-    expect(open).toMatch(/\bmultiple\b/);
-    expect(open).toMatch(/\bsm:hidden\b/);
-    expect(open).toMatch(/aria-labelledby="contato-interesse-legenda"/);
+    expect(fieldset).not.toMatch(/<select[^>]*name="interesse"/);
+    expect(fieldset).not.toContain('chip');
     for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting']) {
-      expect(select).toContain(`value="${value}"`);
+      const label = fieldset.match(new RegExp(`<label[^>]*>\\s*<input[^>]*type="checkbox"[^>]*value="${value}"[^>]*>[\\s\\S]*?<\\/label>`))?.[0] ?? '';
+      expect(label).toMatch(/name="interesse"/);
+      expect(label).toMatch(/class="[^"]*\bcheck-input\b[^"]*\bsr-only\b/);
+      expect(label).toMatch(/<span[^>]*aria-hidden="true"[^>]*class="[^"]*\bcheck-box\b/);
     }
-    // The chips are the same choice for wider screens, hidden on phones.
-    expect(html).toMatch(/<div class="hidden flex-wrap gap-sm sm:flex">/);
-    expect(html).toMatch(/<legend[^>]*id="contato-interesse-legenda"/);
   });
 
-  it('groups the interest chips under a legend', async () => {
+  it('groups the interests under a legend', async () => {
     expect(await render()).toMatch(/<fieldset[\s\S]*?<legend[\s\S]*?Tenho interesse em/);
+  });
+
+  it('leaves every colour of the checkbox box to the stylesheet, with no bg or text utility on it', async () => {
+    const boxes = (await render()).match(/<span[^>]*class="[^"]*\bcheck-box\b[^"]*"/g) ?? [];
+    expect(boxes.length).toBe(5);
+    for (const box of boxes) {
+      expect(box).not.toMatch(/\bbg-[a-z]/);
+      expect(box).not.toMatch(/\btext-(?:primary|foreground|muted|background)/);
+    }
   });
 
   it('labels the budget select', async () => {

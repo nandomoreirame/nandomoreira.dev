@@ -35,20 +35,28 @@ describe('Cap-height trim for labels set beside an icon', () => {
   });
 });
 
-describe('Contact interest chips, pure CSS', () => {
-  it('styles the chip at rest from the stylesheet', () => {
-    expect(rule('.chip')).toMatch(/border-color:\s*var\(--color-border-strong\)/);
-    expect(rule('.chip')).toMatch(/color:\s*var\(--color-muted-foreground\)/);
+describe('Contact interest checkboxes, pure CSS', () => {
+  it('draws the box at rest with a contour that clears 3:1', () => {
+    expect(rule('.check-box')).toMatch(/border-color:\s*var\(--color-border-strong\)/);
+    expect(rule('.check-box')).toMatch(/color:\s*transparent/);
   });
 
-  it('marks a checked chip with the accent, not colour alone', () => {
-    const checked = rule('.chip-input:checked + .chip');
+  it('paints the resting background in the rule, so a utility cannot beat the checked state', () => {
+    expect(rule('.check-box')).toMatch(/background-color:\s*var\(--color-background\)/);
+  });
+
+  it('fills a checked box with the accent and shows the check mark', () => {
+    const checked = rule('.check-input:checked + .check-box');
     expect(checked).toMatch(/border-color:\s*var\(--color-primary\)/);
-    expect(checked).toMatch(/color:\s*var\(--color-foreground\)/);
-    expect(checked).toMatch(/background-color:\s*var\(--color-surface-elevated\)/);
+    expect(checked).toMatch(/background-color:\s*var\(--color-primary\)/);
+    expect(checked).toMatch(/color:\s*var\(--color-primary-foreground\)/);
   });
 
-  it('reflects keyboard focus from the hidden checkbox onto the chip', () => {
-    expect(rule('.chip-input:focus-visible + .chip')).toMatch(/outline:\s*2px solid var\(--color-primary\)/);
+  it('reflects keyboard focus from the hidden checkbox onto the box', () => {
+    expect(rule('.check-input:focus-visible + .check-box')).toMatch(/outline:\s*2px solid var\(--color-primary\)/);
+  });
+
+  it('drops the old chip rules', () => {
+    expect(rule('.chip')).toBe('');
   });
 });

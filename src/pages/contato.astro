@@ -1,9 +1,10 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
 import CopyButton from '../components/ui/CopyButton.astro';
+import AvailabilityCard from '../components/ui/AvailabilityCard.astro';
 import EmptyState from '../components/ui/EmptyState.astro';
-import StatusDot from '../components/ui/StatusDot.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { contactGoPath } from '../lib/analytics/outbound';
@@ -12,7 +13,6 @@ import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
-import { AVAILABILITY_LABEL } from '../lib/layout/availability';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../lib/hire/form';
 
@@ -40,7 +40,6 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
 >
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader
-      eyebrow="Contato"
       title="Vamos conversar"
       description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
     />
@@ -51,7 +50,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
     <div class="grid grid-cols-1 gap-xl lg:grid-cols-5">
     <Card
       as="section"
-      class="flex flex-col gap-lg lg:col-span-3"
+      class="flex flex-col gap-lg lg:col-span-2"
       aria-labelledby={sent ? undefined : 'form-heading'}
       aria-label={sent ? 'Mensagem enviada' : undefined}
     >
@@ -70,24 +69,16 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
           </EmptyState>
         ) : (
       <>
-      <div class="flex flex-col gap-xs sm:flex-row sm:items-baseline sm:justify-between">
+      <div class="flex flex-col gap-xs">
         <h2
           id="form-heading"
           class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
         >
-          Iniciar uma conversa
+          Formulário de contato
         </h2>
         <p class="font-mono text-micro text-muted-foreground">
           Os campos com * são obrigatórios.
         </p>
-      </div>
-
-      <div data-contact-availability class="flex items-start gap-sm rounded-md border border-border bg-background p-md">
-        <span class="pt-sm"><StatusDot status={profile.availability.status} /></span>
-        <span class="flex flex-col">
-          <span class="text-body text-foreground">{AVAILABILITY_LABEL[profile.availability.status]}</span>
-          <span class="text-small text-muted-foreground">{profile.availability.detail}</span>
-        </span>
       </div>
 
       {
@@ -103,7 +94,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
       }
 
       <form action="/api/hire" method="post" class="flex flex-col gap-lg">
-        <div class="grid grid-cols-1 gap-lg sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-lg">
           <div>
             <label for="contato-nome" class={labelClass}>Nome <span aria-hidden="true">*</span></label>
             <input
@@ -155,38 +146,24 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
 
         <fieldset>
           <legend id="contato-interesse-legenda" class={labelClass}>Tenho interesse em</legend>
-          {/* Phones get a native multiple select, which iOS and Android open as a
-              checklist, like the budget select above; wider screens keep the chips.
-              Both send `interesse`, and the server drops repeated values. */}
-          <select
-            id="contato-interesse"
-            name="interesse"
-            multiple
-            size={INTEREST_OPTIONS.length}
-            aria-labelledby="contato-interesse-legenda"
-            class={`${field} sm:hidden`}
-          >
+          {/* Custom checkboxes: the native input stays (sr-only) for the form
+              post, the keyboard and screen readers; the box beside it is
+              decoration painted from global.css. One list for every screen. */}
+          <div class="flex flex-col gap-xs">
             {INTEREST_OPTIONS.map((option) => (
-              <option value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          <div class="hidden flex-wrap gap-sm sm:flex">
-            {INTEREST_OPTIONS.map((option) => (
-              <div>
+              <label for={`contato-interesse-${option.value}`} class="flex min-h-11 cursor-pointer items-center gap-sm text-body text-foreground">
                 <input
                   type="checkbox"
                   id={`contato-interesse-${option.value}`}
                   name="interesse"
                   value={option.value}
-                  class="chip-input sr-only"
+                  class="check-input sr-only"
                 />
-                <label
-                  for={`contato-interesse-${option.value}`}
-                  class="chip inline-flex min-h-11 cursor-pointer items-center rounded-full border px-md font-mono text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary"
-                >
-                  {option.label}
-                </label>
-              </div>
+                <span aria-hidden="true" class="check-box inline-flex size-5 shrink-0 items-center justify-center rounded-sm border transition-[border-color,background-color,color] duration-(--duration-fast) ease-out">
+                  <Icon name="lucide:check" class="size-4" />
+                </span>
+                {option.label}
+              </label>
             ))}
           </div>
         </fieldset>
@@ -196,7 +173,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
           <textarea
             id="contato-mensagem"
             name="mensagem"
-            rows="6"
+            rows="4"
             maxlength="8000"
             required
             placeholder="O que você está construindo, como é o sucesso para você e para quando precisa?"
@@ -234,7 +211,9 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
       }
     </Card>
 
-    <div class="flex flex-col gap-lg lg:col-span-2">
+    <div class="flex flex-col gap-lg lg:col-span-3">
+      {/* Availability heads the machine-contact column, above the brief. */}
+      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" />
       <AgentBrief brief={hireBrief} variant="panel" />
       <Card class="flex flex-col gap-sm">
         <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">MCP</h2>

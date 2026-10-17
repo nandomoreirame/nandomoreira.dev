@@ -168,14 +168,13 @@ describe('/now page', () => {
     expect(declining).toBeGreaterThan(heading);
   });
 
-  it('shows the availability in a green alert, after what is declined', async () => {
+  it('shows the availability with the shared AvailabilityCard, after what is declined', async () => {
     const html = await render(NowPage);
     const foco = html.split('id="foco"')[1]?.split('id="projetos"')[0] ?? '';
-    const alert = foco.split('data-alert')[1] ?? '';
-
-    expect(alert).toContain('data-tone="success"');
-    expect(alert).toContain('>Disponibilidade<');
-    expect(foco.indexOf('data-alert')).toBeGreaterThan(foco.indexOf('>Recusando agora<'));
+    expect(foco).not.toContain('data-alert');
+    expect(foco).toContain('data-availability-card');
+    expect(foco).toContain('data-status-dot');
+    expect(foco.indexOf('data-availability-card')).toBeGreaterThan(foco.indexOf('>Recusando agora<'));
   });
 
   it('links the latest post at /slug and never under /posts', async () => {

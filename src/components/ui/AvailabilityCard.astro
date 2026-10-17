@@ -1,0 +1,24 @@
+---
+import type { Availability } from '../../lib/content';
+import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
+import StatusDot from './StatusDot.astro';
+
+/** The availability box shared by /contato and /now: dot beside the label, detail underneath. */
+interface Props {
+  status: Availability['status'];
+  detail: string;
+  /** Extra data hook for a page that targets this box in its own tests. */
+  hook?: string;
+}
+
+const { status, detail, hook } = Astro.props;
+const extra = hook ? { [`data-${hook}`]: '' } : {};
+---
+
+<div data-availability-card {...extra} class="flex flex-col gap-xs rounded-md border border-border bg-surface p-md">
+  <span data-availability-title class="flex items-center gap-sm text-body text-foreground">
+    <StatusDot status={status} />
+    <span>{AVAILABILITY_LABEL[status]}</span>
+  </span>
+  <span class="text-small text-muted-foreground">{detail}</span>
+</div>
