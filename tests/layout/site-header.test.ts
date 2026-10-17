@@ -54,14 +54,30 @@ describe('SiteHeader', () => {
     expect(link).not.toContain('font-serif');
   });
 
-  it('shows the availability pill, linked to /mcp, only where the row has room', async () => {
+  it('shows the availability pill, linked to /mcp, on the right at every width', async () => {
     const html = await render({ availability: { status: 'open' } });
     const pill = html.match(/<a[^>]*href="\/mcp"[^>]*data-header-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const tag = pill.match(/<a[^>]*>/)?.[0] ?? '';
 
-    expect(pill).toContain('Disponível para novos projetos');
     expect(pill).toContain('data-status-dot');
     expect(pill).toContain('text-success');
-    expect(pill).toMatch(/class="[^"]*\bhidden\b[^"]*\bxl:inline-flex\b/);
+    expect(tag).toMatch(/class="[^"]*\binline-flex\b/);
+    expect(tag).not.toMatch(/\bhidden\b/);
+    expect(tag).toContain('max-md:ml-auto');
+  });
+
+  it('says only "Disponível" below lg and the full label from lg, which is also its accessible name', async () => {
+    const html = await render({ availability: { status: 'open' } });
+    const pill = html.match(/<a[^>]*data-header-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(pill).toMatch(/<span class="lg:hidden">Disponível<\/span>/);
+    expect(pill).toMatch(/<span class="hidden lg:inline">Disponível para novos projetos<\/span>/);
+    expect(pill).toContain('aria-label="Disponível para novos projetos"');
+  });
+
+  it('keeps the menu toggle after the pill on phones', async () => {
+    const html = await render({ availability: { status: 'open' } });
+    expect(html).toMatch(/<div[^>]*class="[^"]*\bmax-md:order-last\b[^"]*"[^>]*>\s*<button[^>]*popovertarget="site-menu"/);
   });
 
   it('leaves the pill out when no availability is given', async () => {
@@ -113,5 +129,32 @@ describe('SiteHeader', () => {
 
     expect(html).toContain('href="/posts"');
     expect(html).toContain('aria-current="page"');
+  });
+});
+
+describe('AVAILABILITY_SHORT', () => {
+  it('gives the header a one-word status per state', async () => {
+    const { AVAILABILITY_SHORT } = await import('../../src/lib/layout/availability');
+    expect(AVAILABILITY_SHORT).toEqual({ open: 'Disponível', limited: 'Limitado', closed: 'Indisponível' });
+  });
+});
+
+describe('SiteHeader mobile menu', () => {
+  it('keeps the availability pill in the open menu, between the wordmark and the close button', async () => {
+    const html = await render({ availability: { status: 'open' } });
+    const menu = html.slice(html.indexOf('id="site-menu"'));
+    const row = menu.slice(0, menu.indexOf('aria-label="Fechar menu"'));
+    const pill = row.match(/<a[^>]*data-menu-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(row.indexOf('href="/"')).toBeLessThan(row.indexOf('data-menu-availability'));
+    expect(pill).toMatch(/href="\/mcp"/);
+    expect(pill).toContain('aria-label="Disponível para novos projetos"');
+    expect(pill).toMatch(/<span class="lg:hidden">Disponível<\/span>/);
+    expect(pill.match(/<a[^>]*>/)?.[0]).toContain('ml-auto');
+    expect(pill).not.toContain('slot=');
+  });
+
+  it('leaves the menu without a pill when no availability is given', async () => {
+    expect(await render()).not.toContain('data-menu-availability');
   });
 });

@@ -2,8 +2,7 @@
 import SiteNav from './SiteNav.astro';
 import Wordmark from './Wordmark.astro';
 import type { Availability } from '../../lib/content';
-import StatusDot from '../ui/StatusDot.astro';
-import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
+import AvailabilityPill from './AvailabilityPill.astro';
 
 interface Props {
   name: string;
@@ -12,7 +11,7 @@ interface Props {
   current?: string;
   section?: string;
   hasPosts?: boolean;
-  /** Tones the brand dot, and shows as a pill on the right edge where the row has room. */
+  /** Tones the brand dot, and shows as a pill on the right edge: one word below lg, the full label from it. */
   availability?: Availability;
 }
 
@@ -25,7 +24,6 @@ const {
   availability,
 } = Astro.props;
 
-const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 {/* The rule sits on <header> so it spans the viewport; the container is the row
@@ -37,25 +35,14 @@ const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
   data-site-header
   class="sticky top-0 z-40 border-b border-border transition-[background-color] duration-(--duration-base) ease-out data-scrolled:bg-background/40 data-scrolled:backdrop-blur-lg"
 >
-  <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-xl px-lg py-sm">
+  <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm xl:gap-xl">
     <Wordmark name={name} accent={accent} status={availability?.status} />
 
     <SiteNav current={current} section={section} hasPosts={hasPosts}>
       <Wordmark slot="wordmark" name={name} accent={accent} status={availability?.status} />
+      {availability && <AvailabilityPill slot="availability" status={availability.status} data-menu-availability class="ml-auto" />}
     </SiteNav>
 
-    {
-      availability && (
-        <a
-          href="/mcp"
-          data-header-availability
-          class={`hidden min-h-8 shrink-0 items-center gap-sm rounded-full border border-border bg-surface px-md font-mono text-caption text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong xl:inline-flex ${focus}`}
-        >
-          <StatusDot status={availability.status} />
-          <span>{AVAILABILITY_LABEL[availability.status]}</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-      )
-    }
+    {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
   </div>
 </header>

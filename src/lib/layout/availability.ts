@@ -9,6 +9,13 @@ export const AVAILABILITY_LABEL: Record<Status, string> = {
   closed: 'Indisponível no momento',
 };
 
+/** One word for the header pill, which has room for little on phones and tablets. */
+export const AVAILABILITY_SHORT: Record<Status, string> = {
+  open: 'Disponível',
+  limited: 'Limitado',
+  closed: 'Indisponível',
+};
+
 /** Text colour, so a dot painted with bg-current takes the status tone. */
 export const AVAILABILITY_TONE: Record<Status, string> = {
   open: 'text-success',

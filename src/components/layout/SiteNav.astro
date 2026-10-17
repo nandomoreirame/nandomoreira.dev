@@ -28,7 +28,7 @@ const iconButton =
   `inline-flex size-11 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary ${linkFocus}`;
 ---
 
-<div class="flex flex-1 items-center justify-end md:justify-start">
+<div class="flex items-center justify-end max-md:order-last md:flex-1 md:justify-start">
   <button
     type="button"
     popovertarget="site-menu"
@@ -39,7 +39,7 @@ const iconButton =
   </button>
 
   <nav aria-label="Navegação principal" class="hidden w-full md:block md:w-auto">
-    <ul class="hidden items-center gap-lg md:flex">
+    <ul class="hidden items-center gap-md md:flex lg:gap-lg">
       {items.map((item) => (
         <li class="flex">
           <a
@@ -55,8 +55,9 @@ const iconButton =
   </nav>
 
   <div id="site-menu" popover role="dialog" aria-label="Menu" class="site-menu">
-    <div class="mx-auto flex w-full max-w-frame items-center justify-between px-lg py-sm">
+    <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm">
       <slot name="wordmark" />
+      <slot name="availability" />
       <button
         type="button"
         popovertarget="site-menu"
