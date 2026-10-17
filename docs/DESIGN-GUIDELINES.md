@@ -267,7 +267,7 @@ arrasta uma biblioteca inteira junto.
 | `TechBadge` | Tecnologia no card | — | Sempre com rótulo textual, nunca só cor |
 | `SectionHeader` | Título de seção | — | Numeração opcional no estilo terminal |
 | `CodeBlock` | Endpoint, payload de exemplo | — | Monoespaçado, com rótulo de linguagem |
-| `StatItem` | Número da trajetória | — | Número mais contexto; nunca número solto |
+| `StatItem` | Número da trajetória | — | Número em Newsreader (`text-h1`, acento), mais rótulo e contexto; nunca número solto |
 | `Prose` | Corpo do case | — | Medida de linha limitada |
 | `Card` | Superfície elevada (camada 1) | `interactive` | `surface` com fio `border`; interativo sobe o fio para `border-strong` no hover. Sem sombra |
 | `TerminalWindow` | Janela de terminal (camada 2) | — | Barra com três pontos, nome do arquivo e slot `actions`; corpo em `background` |
@@ -386,6 +386,13 @@ cabeçalho e a coluna da página alinham. As seções de lista (blog, portfólio
 na home, o índice do blog e o arquivo) ficam numa coluna centralizada de 848px
 (`--container-list: 53rem`), como no Stitch. Portfólio e lab, com a arte dos
 cases, usam a largura inteira.
+
+**Trajetória e serviços (Terminal Noir, 2026-10-17).** Na home, os seis números
+da trajetória ficam em cards `Card`, numa grade que vira 3×2 a partir de `lg`.
+O valor é Newsreader 400 no acento (`StatItem`); o rótulo é semibold e o
+contexto continua obrigatório. Os serviços levam um ícone Lucide de 20px numa
+caixa de 32px (camadas, fluxo, terminal), escolhido pelo slug do case que
+comprova a frente. O link "Ver o case que comprova" é o mesmo nos três cards.
 
 ### Cabeçalho e rodapé (Terminal Noir, 2026-10-16)
 
