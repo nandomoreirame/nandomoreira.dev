@@ -97,7 +97,7 @@ describe('/sobre', () => {
     const path = article.match(/<p[^>]*data-page-path[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
 
     expect(path).toContain('~/sobre');
-    expect(path).toContain('text-primary');
+    expect(path).toContain('text-muted-foreground');
     expect(path).not.toContain('uppercase');
     // The rule under the path competed with the headline right below it.
     expect(article).not.toMatch(/border-b/);

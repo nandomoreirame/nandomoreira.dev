@@ -10,7 +10,7 @@ import Posts from '../../src/pages/posts/index.astro';
 const PAGES = [
   ['/portfolio', Portfolio, '~/portfolio'],
   ['/lab', Lab, '~/lab'],
-  ['/posts', Posts, '~/posts'],
+  ['/posts', Posts, '~/blog'],
   ['/posts/arquivo', Arquivo, '~/posts/arquivo'],
   ['/contato', Contato, '~/contato'],
   ['/mcp', Mcp, '~/mcp'],

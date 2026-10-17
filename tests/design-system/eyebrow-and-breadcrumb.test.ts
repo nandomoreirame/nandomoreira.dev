@@ -47,7 +47,7 @@ describe('eyebrow', () => {
     expect(path).toContain('~/sobre');
     expect(path).toContain('font-mono');
     expect(path).toContain('text-small');
-    expect(path).toContain('text-primary');
+    expect(path).toContain('text-muted-foreground');
     expect(path).not.toContain('uppercase');
 
     // The case category is a label, not the page path: it stays small mono caps.

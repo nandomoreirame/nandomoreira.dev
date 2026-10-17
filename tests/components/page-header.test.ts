@@ -14,12 +14,12 @@ const base = {
 };
 
 describe('PageHeader', () => {
-  it('names the page as a terminal path before the only h1, in the accent and lower case', async () => {
+  it('names the page as a terminal path before the only h1, muted and lower case', async () => {
     const html = await render(base);
     const eyebrow = html.match(/<p[^>]*data-page-path[^>]*>([^<]*)<\/p>/);
 
     expect(eyebrow?.[1]).toBe('~/lab');
-    expect(eyebrow?.[0]).toContain('text-primary');
+    expect(eyebrow?.[0]).toContain('text-muted-foreground');
     expect(eyebrow?.[0]).not.toContain('uppercase');
     expect(html.indexOf('data-page-path')).toBeLessThan(html.indexOf('<h1'));
     expect(html.match(/<h1/g)).toHaveLength(1);
@@ -38,6 +38,11 @@ describe('PageHeader', () => {
     const html = await render(base);
     expect(html.indexOf('Ferramental para agentes')).toBeGreaterThan(html.indexOf('</h1>'));
     expect(html).toContain('data-page-lead');
+  });
+
+  it('lets the lead run the container width, no 68ch measure leaving a gap on the right', async () => {
+    const lead = (await render(base)).match(/<p[^>]*data-page-lead[^>]*>/)?.[0] ?? '';
+    expect(lead).not.toContain('max-w-');
   });
 
   it('shows only the page name in the eyebrow, never a count', async () => {
