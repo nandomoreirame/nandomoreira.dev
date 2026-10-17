@@ -38,7 +38,11 @@ describe('now curated data', () => {
       expect(text.toLowerCase()).not.toContain('trabalho na liquid');
       expect(text.toLowerCase()).not.toContain('estou na liquid');
     }
-    expect(NOW_LEAD).toContain('https://nownownow.com/about');
+    // The Derek Sivers explanation moved to the card at the end of the page
+    // (2026-10-17); the lead says what the page covers instead.
+    expect(NOW_LEAD).not.toContain('nownownow');
+    expect(NOW_LEAD).toContain('estudando');
+    expect(NOW_LEAD.length).toBeLessThanOrEqual(160);
   });
 
   it('lists what is being studied, each with a public reading a visitor can open', () => {

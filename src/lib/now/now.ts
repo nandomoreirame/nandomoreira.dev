@@ -6,10 +6,10 @@
 export const NOW_PATH = '/now';
 
 /** Bump when the curated text changes. */
-export const NOW_UPDATED_AT = '2026-10-16';
+export const NOW_UPDATED_AT = '2026-10-17';
 
 export const NOW_LEAD =
-  'O que eu contaria a um amigo que não vejo há um ano, no espírito do /now de Derek Sivers: https://nownownow.com/about.';
+  'No que estou focado neste momento, os projetos e posts em andamento, o que estou estudando e até o que ando ouvindo e jogando.';
 
 /** Present priorities, only facts already on the profile or the cases. */
 export const NOW_FOCUS = [
