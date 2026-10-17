@@ -1,4 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import Hero from '../../src/components/home/Hero.astro';
 
@@ -7,7 +8,6 @@ const render = async (
     name: 'Fernando Moreira',
     headline: 'Engenheiro de produto com agentes de IA',
     positioning: 'Construo ferramental de agentes e produtos com IA em produção.',
-    availability: { status: 'open', detail: 'Aberto a consultoria.', updatedAt: '2026-08-08' },
   },
 ) => {
   const container = await AstroContainer.create();
@@ -15,11 +15,22 @@ const render = async (
 };
 
 describe('Hero', () => {
-  it('turns the availability label into the way in for agents, at /mcp', async () => {
+  it('leaves availability to the header pill: no MCP link and no status dot in the hero', async () => {
     const html = await render();
-    const link = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-    expect(link).toContain('Disponível para novos projetos');
-    expect(link).toContain('min-h-11');
+    expect(html).not.toContain('href="/mcp"');
+    expect(html).not.toContain('data-status-dot');
+  });
+
+  it('gives the text 200px above and 120px below on desktop, from spacing tokens', async () => {
+    const html = await render();
+    const section = html.match(/<section[^>]*id="inicio"[^>]*>/)?.[0] ?? '';
+    expect(section).toMatch(/\blg:pt-hero-top\b/);
+    expect(section).toMatch(/\blg:pb-hero-bottom\b/);
+    expect(html.match(/<h1\b[^>]*>/)?.[0]).not.toContain('lg:mt-lg');
+
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    expect(css).toContain('--spacing-hero-top: 12.5rem;');
+    expect(css).toContain('--spacing-hero-bottom: 7.5rem;');
   });
 
   it('shows the portrait beside the headline', async () => {
@@ -53,14 +64,6 @@ describe('Hero', () => {
     expect(html).not.toContain('animate-');
   });
 
-  it('shows availability as a visual marker accompanied by a text label', async () => {
-    const html = await render();
-
-    expect(html).toMatch(/dispon[ií]vel/i);
-    // Colour alone is forbidden: the status text must be present.
-    expect(html).toMatch(/bg-success|text-success|rounded-full/);
-  });
-
   it('sets the headline in Newsreader at regular weight with tight tracking', async () => {
     const html = await render();
     const h1 = html.match(/<h1\b[^>]*>/)?.[0] ?? '';
@@ -91,21 +94,10 @@ describe('Hero', () => {
     expect(link).toContain('border-border-strong');
   });
 
-  it('lists at most five stack items when stack is given', async () => {
-    const html = await render({
-      name: 'Fernando Moreira',
-      headline: 'Engenheiro de produto com agentes de IA',
-      positioning: 'Construo ferramental de agentes e produtos com IA em produção.',
-      availability: { status: 'open', detail: 'Aberto a consultoria.', updatedAt: '2026-08-08' },
-      stack: ['TypeScript', 'Python', 'React', 'Next.js', 'Astro', 'Node.js'],
-    });
-    const stack = html.match(/<p\b[^>]*data-hero-stack[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
-
-    expect(stack).toContain('TypeScript, Python, React, Next.js, Astro');
-    expect(stack).not.toContain('Node.js');
-  });
-
-  it('omits the stack line when stack is absent', async () => {
-    expect(await render()).not.toContain('data-hero-stack');
+  it('shows the Stitch facts line: STACK in the accent, LOCATION in success', async () => {
+    const line = (await render()).match(/<p[^>]*data-hero-stack[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
+    expect(line).toMatch(/<span class="text-primary">STACK:<\/span>\s*TS, Py, Rust, LLM ops/);
+    expect(line).toMatch(/<span class="text-success">LOCATION:<\/span>\s*São Paulo \/ Remote/);
+    expect(line).toContain('font-mono');
   });
 });

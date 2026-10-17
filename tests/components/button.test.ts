@@ -114,13 +114,18 @@ describe('Button hover fill', () => {
 
 describe('Outline links fill on hover', () => {
   it.each([
-    'src/components/home/Hero.astro',
     'src/components/home/Contact.astro',
     'src/components/ai-view/AiBar.astro',
   ])('%s', async (file) => {
     const { readFileSync } = await import('node:fs');
     const source = readFileSync(file, 'utf8');
     expect(source).toMatch(/\bhover:bg-surface-elevated\b/);
+  });
+
+  it('leaves the hero without a raw outline link, so the fill stays on Button', async () => {
+    const { readFileSync } = await import('node:fs');
+    const source = readFileSync('src/components/home/Hero.astro', 'utf8');
+    expect(source).not.toMatch(/<a\b/);
   });
 
   it('passes download through on a link, so a file is saved instead of opened', async () => {

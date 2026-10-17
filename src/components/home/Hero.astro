@@ -1,43 +1,20 @@
 ---
-import type { Availability } from '../../lib/content';
+import { HERO_FACTS } from '../../lib/home/hero';
 import Button from '../ui/Button.astro';
 import Portrait from '../ui/Portrait.astro';
-import StatusDot from '../ui/StatusDot.astro';
-import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
 
 interface Props {
   /** Display name, for the portrait's alt text. */
   name: string;
   headline: string;
   positioning: string;
-  availability: Availability;
-  /** Optional tech stack line under the CTAs; shows at most five items. */
-  stack?: string[];
 }
 
-const { name, headline, positioning, availability, stack } = Astro.props;
-const stackLine = stack && stack.length > 0 ? stack.slice(0, 5).join(', ') : null;
+const { name, headline, positioning } = Astro.props;
 ---
 
-<section id="inicio" class="relative isolate py-2xl lg:py-3xl">
+<section id="inicio" class="relative isolate py-2xl lg:pt-hero-top lg:pb-hero-bottom">
   <div class="flex flex-col gap-lg lg:w-2/3">
-    {/* The availability is also the way in for agents: it leads to /mcp,
-        the page that explains how to plug this site into an MCP client. */}
-    <p>
-      <a
-        href="/mcp"
-        class="inline-flex min-h-11 items-center gap-sm rounded-full border border-border-strong px-md font-mono text-caption text-muted-foreground sm:text-small transition-[border-color,color,background-color] duration-(--duration-fast) ease-out hover:border-primary hover:bg-surface-elevated hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        <StatusDot status={availability.status} />
-        <span>{AVAILABILITY_LABEL[availability.status]}</span>
-        {/* Phones drop the MCP hint, which wrapped the pill onto two lines; the
-            arrow stays, so the pill still reads as a link (to /mcp). */}
-        <span class="hidden sm:inline" aria-hidden="true">·</span>
-        <span class="hidden sm:inline">conectar via MCP</span>
-        <span aria-hidden="true">↗</span>
-      </a>
-    </p>
-
     <h1 class="font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">
       {headline}
     </h1>
@@ -49,13 +26,10 @@ const stackLine = stack && stack.length > 0 ? stack.slice(0, 5).join(', ') : nul
       <Button href="/contato" variant="secondary">Dizer olá</Button>
     </div>
 
-    {
-      stackLine && (
-        <p data-hero-stack class="border-t border-border pt-md font-mono text-caption text-muted-foreground">
-          <span class="text-primary">Stack:</span> {stackLine}
-        </p>
-      )
-    }
+    <p data-hero-stack class="flex flex-wrap gap-x-lg gap-y-xs border-t border-border pt-md font-mono text-caption text-muted-foreground">
+      <span><span class="text-primary">STACK:</span> {HERO_FACTS.stack}</span>
+      <span><span class="text-success">LOCATION:</span> {HERO_FACTS.location}</span>
+    </p>
   </div>
 
   <Portrait name={name} class="lg:scale-130" />
