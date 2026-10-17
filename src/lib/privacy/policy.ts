@@ -71,6 +71,15 @@ export const privacySections: PolicySection[] = [
     ],
   },
   {
+    id: 'novidades',
+    title: 'Novidades por e-mail',
+    paragraphs: [
+      'No fim da página /posts dá para deixar um e-mail para receber os próximos artigos. Ele só é gravado se você enviar o formulário, e a base é o seu consentimento (art. 7º, I da LGPD).',
+      'Fica no Firestore só o e-mail, a data e de onde veio a assinatura, e não guardo o IP nem o user agent desse envio; o IP serve apenas para limitar tentativas seguidas e não é gravado.',
+      'O envio dos artigos ainda não está ligado: por enquanto a lista só é guardada. O e-mail fica até você pedir para sair, pelo mesmo canal de contato do fim desta página, e cada envio, quando começar, vai trazer um link de saída.',
+    ],
+  },
+  {
     id: 'agentes',
     title: 'Rotas para agents',
     paragraphs: [

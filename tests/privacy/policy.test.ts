@@ -19,6 +19,7 @@ describe('privacy policy content', () => {
       'registros',
       'formulario',
       'curriculo',
+      'novidades',
       'agentes',
       'compartilhamento',
       'direitos',

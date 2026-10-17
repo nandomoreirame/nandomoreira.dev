@@ -8,6 +8,7 @@ interface Props {
   as?: 'div' | 'li' | 'article' | 'section' | 'aside';
   interactive?: boolean;
   class?: string;
+  id?: string;
   'aria-labelledby'?: string;
   'aria-label'?: string;
 }
@@ -16,6 +17,7 @@ const {
   as: Tag = 'div',
   interactive = false,
   class: extra,
+  id,
   'aria-labelledby': ariaLabelledby,
   'aria-label': ariaLabel,
 } = Astro.props;
@@ -31,4 +33,4 @@ const classes = [
   .join(' ');
 ---
 
-<Tag class={classes} aria-labelledby={ariaLabelledby} aria-label={ariaLabel}><slot /></Tag>
+<Tag id={id} class={classes} aria-labelledby={ariaLabelledby} aria-label={ariaLabel}><slot /></Tag>

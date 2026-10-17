@@ -1,10 +1,12 @@
 ---
 import { Icon } from 'astro-icon/components';
+import NewsletterCard from '../../components/posts/NewsletterCard.astro';
 import PostRow from '../../components/posts/PostRow.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
 import { getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
+import { outcomeOf } from '../../lib/newsletter/copy';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import { displayNameOf } from '../../lib/content/display-name';
 
@@ -13,6 +15,7 @@ const upcoming = await getUpcomingPosts();
 const publishedCount = posts.filter((post) => !post.draft).length;
 
 const authorName = displayNameOf(await getProfile());
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
 ---
 
 <BaseLayout
@@ -21,9 +24,8 @@ const authorName = displayNameOf(await getProfile());
   pageType="CollectionPage"
   pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
-  <div class="mx-auto w-full max-w-list">
+  <div>
     <PageHeader
-      eyebrow="Blog"
       title={BLOG_COPY.title}
       description={BLOG_COPY.description}
     />
@@ -68,7 +70,7 @@ const authorName = displayNameOf(await getProfile());
 
     <UpcomingPosts titles={upcoming.map((post) => post.title)} />
 
-    <p class="mt-2xl mb-3xl text-body text-muted-foreground">
+    <p class="mt-2xl text-body text-muted-foreground">
       <a
         href="/posts/arquivo"
         class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -76,5 +78,7 @@ const authorName = displayNameOf(await getProfile());
         Arquivo por ano
       </a>
     </p>
+
+    <NewsletterCard outcome={outcome} />
   </div>
 </BaseLayout>

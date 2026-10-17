@@ -9,6 +9,12 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Subscribers are written only by the backend (Admin SDK). The list holds
+    // strangers' email addresses: no client path may ever read it.
+    match /newsletter_subscribers/{doc} {
+      allow read, write: if false;
+    }
+
     // Anything not matched above is denied too, but saying it explicitly means
     // a new collection cannot become world-readable by being forgotten here.
     match /{document=**} {

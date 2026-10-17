@@ -30,4 +30,8 @@ describe('Card', () => {
   it('never shadows the card: depth comes from tone and hairline', async () => {
     expect(await render({ interactive: true })).not.toMatch(/\bshadow-/);
   });
+
+  it('forwards an id, so a card can be the target of a fragment', async () => {
+    expect(await render({ id: 'x' })).toContain('id="x"');
+  });
 });

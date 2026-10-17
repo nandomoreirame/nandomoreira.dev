@@ -1,0 +1,50 @@
+---
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+import { FORM_HONEYPOT } from '../../lib/hire/form';
+import type { SubscribeOutcome } from '../../lib/newsletter/handler';
+import { NEWSLETTER_COPY, NEWSLETTER_OUTCOMES } from '../../lib/newsletter/copy';
+
+interface Props {
+  outcome?: SubscribeOutcome;
+}
+
+const { outcome } = Astro.props;
+const result = outcome ? NEWSLETTER_OUTCOMES[outcome] : undefined;
+---
+
+<Card as="section" id="novidades" class="mb-3xl flex flex-col gap-lg lg:flex-row lg:items-center lg:justify-between" aria-labelledby="novidades-titulo">
+  <div class="flex flex-col gap-xs">
+    <p class="flex items-center gap-sm font-mono text-small uppercase tracking-wide text-primary">
+      <Icon name="lucide:mail" aria-hidden="true" class="size-4 shrink-0" />
+      {NEWSLETTER_COPY.eyebrow}
+    </p>
+    <h2 id="novidades-titulo" class="text-h3 font-medium text-foreground">{NEWSLETTER_COPY.title}</h2>
+    <p class="text-body text-muted-foreground">{NEWSLETTER_COPY.text}</p>
+    <p class="text-small text-muted-foreground">
+      Ao assinar, você concorda com a <a href="/privacidade#novidades" class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">política de privacidade</a>.
+    </p>
+    {result && <p role={result.role} class="text-small text-foreground">{result.text}</p>}
+  </div>
+
+  <form action="/api/subscribe" method="post" class="flex w-full flex-col gap-sm sm:flex-row lg:w-auto">
+    <label for="novidades-email" class="sr-only">E-mail</label>
+    <input
+      id="novidades-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      maxlength="320"
+      required
+      placeholder={NEWSLETTER_COPY.placeholder}
+      class="min-h-11 w-full rounded-md border border-border-strong bg-background px-md font-mono text-small text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-72"
+    />
+    <input type="text" name={FORM_HONEYPOT} tabindex="-1" autocomplete="off" aria-hidden="true" class="sr-only" />
+    <button
+      type="submit"
+      class="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-md text-body font-medium text-primary-foreground transition-[opacity,box-shadow] duration-(--duration-fast) ease-out hover:opacity-90 hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      {NEWSLETTER_COPY.button}
+    </button>
+  </form>
+</Card>
