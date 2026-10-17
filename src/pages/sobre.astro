@@ -4,6 +4,7 @@ import { contactGoPath } from '../lib/analytics/outbound';
 import { contactIconFor } from '../lib/ui/contact-icons';
 import Experience from '../components/about/Experience.astro';
 import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
 import Portrait from '../components/ui/Portrait.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
@@ -43,7 +44,7 @@ const serviceProjects = projects.map((project) => ({
         }
         <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">Sobre</p>
 
-        <h1 class="mt-sm text-h1 font-semibold text-balance text-foreground sm:text-display lg:w-4/5">
+        <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display lg:w-4/5">
           {profile.headline}
         </h1>
 
@@ -95,9 +96,9 @@ const serviceProjects = projects.map((project) => ({
       <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {
           profile.trajectory.map((stat) => (
-            <li class="rounded-md border border-border bg-surface p-lg">
+            <Card as="li">
               <StatItem value={stat.value} label={stat.label} context={stat.context} />
-            </li>
+            </Card>
           ))
         }
       </ul>

@@ -12,26 +12,29 @@ const { work } = Astro.props;
 
 <section id="experiencia" class="mt-2xl" aria-labelledby="experiencia-heading">
   <SectionHeader id="experiencia-heading" title="Experiência" level={2} count={work.length} />
-  <ol class="flex flex-col gap-xl">
+  <ol class="ml-xs flex flex-col gap-xl border-l border-border pl-lg">
     {
       work.map((job) => (
-        <li class="grid grid-cols-1 gap-sm md:grid-cols-4 md:gap-lg">
-          {/* Period leads the row, in mono, so the eye scans the timeline first. */}
-          <p class="font-mono text-small text-muted-foreground">
-            {formatPeriod(job.startDate, job.endDate)}
-          </p>
-          <div class="flex flex-col gap-sm md:col-span-3">
+        <li class="relative flex flex-col gap-sm">
+          {/* Marker on the rule; the current role (no end date) in the accent. */}
+          <span
+            data-timeline-marker
+            aria-hidden="true"
+            class={`absolute top-sm -left-lg size-2 -translate-x-1/2 rounded-full ${job.endDate ? 'bg-border-strong' : 'bg-primary'}`}
+          ></span>
+          <div class="flex flex-wrap items-center gap-sm">
+            <span data-period class="inline-flex items-center font-mono rounded-sm border border-border bg-surface px-sm py-xs text-small leading-none text-muted-foreground">
+              {formatPeriod(job.startDate, job.endDate)}
+            </span>
             <h3 class="text-h3 font-semibold text-foreground">{job.position}</h3>
-            <p class="text-body text-muted-foreground">{job.name}</p>
-            {job.summary && <p class="max-w-[68ch] text-body text-foreground">{job.summary}</p>}
-            {job.highlights && job.highlights.length > 0 && (
-              <ul class="flex max-w-[68ch] list-disc flex-col gap-xs pl-lg text-body text-muted-foreground">
-                {job.highlights.map((highlight) => (
-                  <li>{highlight}</li>
-                ))}
-              </ul>
-            )}
           </div>
+          <p class="text-body text-muted-foreground">{job.name}</p>
+          {job.summary && <p class="max-w-[68ch] text-body text-foreground">{job.summary}</p>}
+          {job.highlights && job.highlights.length > 0 && (
+            <ul class="flex max-w-[68ch] list-disc flex-col gap-xs pl-lg text-body text-muted-foreground">
+              {job.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          )}
         </li>
       ))
     }
