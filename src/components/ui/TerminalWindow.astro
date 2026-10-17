@@ -1,0 +1,26 @@
+---
+/**
+ * Layer 2 of the Terminal Noir elevation: a window recessed into the canvas,
+ * with a title bar naming the file. The three dots are decoration; the
+ * actions slot (a Copy button) sits at the end of the bar.
+ */
+interface Props {
+  filename: string;
+  class?: string;
+}
+
+const { filename, class: extra } = Astro.props;
+---
+
+<div class={`min-w-0 overflow-hidden rounded-lg border border-border bg-background ${extra ?? ''}`}>
+  <div data-terminal-bar class="flex items-center gap-md border-b border-border bg-surface px-md py-sm">
+    <span aria-hidden="true" class="flex shrink-0 items-center gap-xs">
+      <span data-terminal-dot class="inline-block size-2.5 rounded-full bg-border-strong"></span>
+      <span data-terminal-dot class="inline-block size-2.5 rounded-full bg-border-strong"></span>
+      <span data-terminal-dot class="inline-block size-2.5 rounded-full bg-border-strong"></span>
+    </span>
+    <span class="min-w-0 truncate font-mono text-small text-muted-foreground">{filename}</span>
+    <span class="ml-auto flex shrink-0 items-center"><slot name="actions" /></span>
+  </div>
+  <slot />
+</div>

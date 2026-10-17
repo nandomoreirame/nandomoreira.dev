@@ -1,0 +1,26 @@
+---
+/**
+ * Layer 1 of the Terminal Noir elevation: a raised surface bounded by the
+ * hairline, never a drop shadow. An interactive card lifts its border to the
+ * strong token on hover; the hairline alone never delimits a target.
+ */
+interface Props {
+  as?: 'div' | 'li' | 'article' | 'section';
+  interactive?: boolean;
+  class?: string;
+}
+
+const { as: Tag = 'div', interactive = false, class: extra } = Astro.props;
+
+const classes = [
+  'rounded-md border border-border bg-surface p-lg',
+  interactive
+    ? 'transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong'
+    : '',
+  extra ?? '',
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}><slot /></Tag>

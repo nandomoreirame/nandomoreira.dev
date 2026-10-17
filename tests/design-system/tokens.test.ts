@@ -84,6 +84,8 @@ const NEW_TOKENS = {
   // Terminal Noir (2026-10-16): header and footer span a wider frame than the
   // content, 1104px as in the Stitch file.
   '--container-frame': '69rem',
+  // Amber halo on the primary button hover, the only glow in the system.
+  '--shadow-glow': '0 0 24px rgb(245 166 35 / 0.25)',
 };
 
 describe('tokens introduced by the restyle', () => {

@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 interface Props {
   href?: string;
   variant?: 'primary' | 'secondary' | 'ghost';
@@ -11,18 +13,20 @@ interface Props {
   download?: string;
   /** Only meaningful on a <button>; defaults to "button" so nothing submits by accident. */
   type?: 'button' | 'submit';
+  /** Trailing arrow that steps forward on hover, as on the Stitch CTAs. */
+  arrow?: boolean;
 }
 
-const { href, variant = 'primary', disabled = false, label, target, rel, download, type = 'button' } = Astro.props;
+const { href, variant = 'primary', disabled = false, label, target, rel, download, type = 'button', arrow = false } = Astro.props;
 
 const isLink = Boolean(href);
 const isDisabledLink = isLink && disabled;
 
 const base = [
-  'inline-flex items-center justify-center gap-xs',
+  'group/button inline-flex items-center justify-center gap-xs',
   'min-h-11 min-w-11 px-md py-sm',
   'rounded-md text-body font-medium',
-  'transition-[transform,opacity,background-color,border-color]',
+  'transition-[transform,opacity,background-color,border-color,box-shadow]',
   'duration-(--duration-fast) ease-out',
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
   // Real <button disabled> picks these up; disabled links need the unconditional pair below.
@@ -35,7 +39,7 @@ const base = [
 const variants = {
   primary: {
     base: 'bg-primary text-primary-foreground',
-    interactive: 'hover:opacity-90 active:opacity-80',
+    interactive: 'hover:opacity-90 hover:shadow-glow active:opacity-80',
   },
   secondary: {
     base: 'border border-border-strong bg-surface text-foreground',
@@ -69,4 +73,13 @@ const Tag = isLink ? 'a' : 'button';
   type={isLink ? undefined : type}
 >
   <slot />
+  {
+    arrow && (
+      <Icon
+        name="lucide:arrow-right"
+        aria-hidden="true"
+        class="size-4 shrink-0 transition-transform duration-(--duration-fast) ease-out group-hover/button:translate-x-xs"
+      />
+    )
+  }
 </Tag>

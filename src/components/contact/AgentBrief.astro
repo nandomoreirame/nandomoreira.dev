@@ -1,5 +1,6 @@
 ---
 import CopyButton from '../ui/CopyButton.astro';
+import TerminalWindow from '../ui/TerminalWindow.astro';
 
 interface Props {
   /** Machine text from buildHireBrief; English on purpose. */
@@ -34,12 +35,9 @@ const { brief } = Astro.props;
     </p>
   </div>
 
-  <div class="min-w-0 overflow-hidden rounded-lg border border-border-strong bg-surface">
-    <div class="flex items-center justify-between gap-sm border-b border-border px-md py-sm">
-      <span class="font-mono text-small text-muted-foreground">AGENTS.md</span>
-      <CopyButton target="agent-brief" label="Copiar o brief AGENTS.md" />
-    </div>
+  <TerminalWindow filename="AGENTS.md">
+    <CopyButton slot="actions" target="agent-brief" label="Copiar o brief AGENTS.md" />
     <pre
       class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-foreground"><code id="agent-brief">{brief}</code></pre>
-  </div>
+  </TerminalWindow>
 </section>

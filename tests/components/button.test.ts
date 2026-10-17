@@ -27,6 +27,25 @@ describe('Button', () => {
     expect(await render()).toContain('focus-visible:outline-primary');
   });
 
+  it('lights the amber halo on hover, on the primary variant only', async () => {
+    const classes = async (variant: string) =>
+      ((await render({ variant })).match(/class="([^"]*)"/)?.[1] ?? '').split(/\s+/);
+
+    expect(await classes('primary')).toContain('hover:shadow-glow');
+    expect(await classes('secondary')).not.toContain('hover:shadow-glow');
+    expect(await classes('ghost')).not.toContain('hover:shadow-glow');
+  });
+
+  it('adds a trailing arrow on request, hidden from screen readers, that moves on hover', async () => {
+    const html = await render({ arrow: true });
+    const arrow = html.match(/<svg[^>]*data-icon="lucide:arrow-right"[^>]*>/)?.[0] ?? '';
+
+    expect(arrow).toContain('aria-hidden="true"');
+    expect(arrow).toMatch(/group-hover\/button:translate-x-/);
+    expect(html.indexOf('Ver projetos')).toBeLessThan(html.indexOf('lucide:arrow-right'));
+    expect(await render()).not.toContain('lucide:arrow-right');
+  });
+
   it('meets the 44px touch target', async () => {
     expect(await render()).toContain('min-h-11');
   });

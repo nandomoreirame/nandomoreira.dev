@@ -26,6 +26,14 @@ describe('PageHeader', () => {
     expect(html).toContain('text-display');
   });
 
+  it('sets the title in the editorial serif at its regular weight (Terminal Noir)', async () => {
+    const h1 = (await render(base)).match(/<h1[^>]*>/)?.[0] ?? '';
+
+    expect(h1).toContain('font-serif');
+    expect(h1).toContain('font-normal');
+    expect(h1).not.toContain('font-semibold');
+  });
+
   it('follows the title with a large lead description', async () => {
     const html = await render(base);
     expect(html.indexOf('Ferramental para agentes')).toBeGreaterThan(html.indexOf('</h1>'));

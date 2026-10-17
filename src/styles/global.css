@@ -133,6 +133,10 @@
   /* Header and footer span a wider frame than the content (Terminal Noir,
      2026-10-16): 1104px, as in the Stitch file. */
   --container-frame: 69rem;
+
+  /* Amber halo on the primary button hover, the only glow in the system:
+     depth comes from tone and hairline, never from drop shadows. */
+  --shadow-glow: 0 0 24px rgb(245 166 35 / 0.25);
 }
 
 /* Reading mode on a post (2026-10-16). The switch and the radios in
