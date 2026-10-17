@@ -50,6 +50,12 @@ export const postSchema = ({ image }: SchemaContext) =>
           alt: z.string().min(1, 'A cover image is content, never decoration'),
         })
         .optional(),
+      /**
+       * Up to two short lines shown under the summary in the blog listing
+       * (REQ-010): a measured result first, then a detail. Written by the
+       * author per post; absent means no line.
+       */
+      extras: z.array(z.string().min(1).max(60)).min(1).max(2).optional(),
     })
     .refine((post) => !post.publishedAt || post.publishedAt.slice(0, 10) === post.date, {
       message: 'publishedAt must fall on the post date',

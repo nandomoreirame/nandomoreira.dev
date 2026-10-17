@@ -1,9 +1,8 @@
 ---
-import ListRow from '../../../components/ui/ListRow.astro';
+import PostRow from '../../../components/posts/PostRow.astro';
 import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getArchivedPostsByYear, getArchiveYears, getProfile } from '../../../lib/content';
-import { toShortDate } from '../../../lib/format/date';
 import { archiveYearDescription } from '../../../lib/posts/archive-copy';
 import { displayNameOf } from '../../../lib/content/display-name';
 
@@ -56,13 +55,15 @@ const authorName = displayNameOf(await getProfile());
       {
         posts.map((post) => (
           <li>
-            <ListRow
+            <PostRow
               href={`/${post.slug}`}
               title={post.title}
               summary={post.summary}
+              date={post.date}
+              readingMinutes={post.readingMinutes}
               markers={post.markers}
-              badge={post.draft ? 'Rascunho' : undefined}
-              stamp={toShortDate(post.date)}
+              extras={post.extras}
+              draft={post.draft}
             />
           </li>
         ))

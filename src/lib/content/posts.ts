@@ -1,8 +1,12 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Post } from '../../content/schemas/post';
+import { readingMinutes } from '../posts/reading-time';
 import { assertUniqueSlugs } from './validate';
 
 export type PostEntry = CollectionEntry<'posts'>;
+
+/** A loaded post plus the minutes it takes to read (REQ-008). */
+export type PostSummary = Post & { readingMinutes: number };
 
 export type ArchiveYear = {
   year: string;
@@ -20,7 +24,7 @@ export const showDrafts = (env: { DEV: boolean; MODE: string }): boolean =>
 
 const SHOW_DRAFTS = showDrafts(import.meta.env);
 
-export const publishedPosts = (posts: readonly Post[], includeDrafts = false): Post[] =>
+export const publishedPosts = <T extends Post>(posts: readonly T[], includeDrafts = false): T[] =>
   includeDrafts ? [...posts] : posts.filter((post) => post.draft !== true);
 
 /**
@@ -32,22 +36,22 @@ const publishedInstant = (post: Post): number =>
   Date.parse(post.publishedAt ?? `${post.date}T00:00:00-03:00`);
 
 /** Newest first, by the full timestamp. Equal instants keep insertion order. */
-export const sortPosts = (posts: readonly Post[]): Post[] =>
+export const sortPosts = <T extends Post>(posts: readonly T[]): T[] =>
   posts
     .map((post, index) => ({ post, index }))
     .sort((a, b) => publishedInstant(b.post) - publishedInstant(a.post) || a.index - b.index)
     .map(({ post }) => post);
 
 /** Not archived. Drafts only when the caller opts in (the dev server). */
-export const currentOf = (posts: readonly Post[], includeDrafts = false): Post[] =>
+export const currentOf = <T extends Post>(posts: readonly T[], includeDrafts = false): T[] =>
   publishedPosts(posts, includeDrafts).filter((post) => post.archived !== true);
 
 /** Archived. Drafts only when the caller opts in (the dev server). */
-export const archivedOf = (posts: readonly Post[], includeDrafts = false): Post[] =>
+export const archivedOf = <T extends Post>(posts: readonly T[], includeDrafts = false): T[] =>
   publishedPosts(posts, includeDrafts).filter((post) => post.archived === true);
 
 /** Drafts above published posts, each group keeping its order (dev only has drafts). */
-export const draftsFirst = (posts: readonly Post[]): Post[] => [
+export const draftsFirst = <T extends Post>(posts: readonly T[]): T[] => [
   ...posts.filter((post) => post.draft === true),
   ...posts.filter((post) => post.draft !== true),
 ];
@@ -93,15 +97,20 @@ const loadEntries = async (): Promise<PostEntry[]> => {
   return [...visible].sort((a, b) => (order.get(a.data.slug) ?? 0) - (order.get(b.data.slug) ?? 0));
 };
 
-const load = async (): Promise<Post[]> => (await loadEntries()).map((entry) => entry.data);
+const toSummary = (entry: PostEntry): PostSummary => ({
+  ...entry.data,
+  readingMinutes: readingMinutes(entry.body ?? ''),
+});
+
+const load = async (): Promise<PostSummary[]> => (await loadEntries()).map(toSummary);
 
 /** All visible posts (current + archived; drafts only in dev). Used by sitemap, RSS, detail routes. */
-export const getAllPosts = async (): Promise<Post[]> => load();
+export const getAllPosts = async (): Promise<PostSummary[]> => load();
 
-export const getCurrentPosts = async (): Promise<Post[]> =>
+export const getCurrentPosts = async (): Promise<PostSummary[]> =>
   draftsFirst(sortPosts(currentOf(await load(), SHOW_DRAFTS)));
 
-export const getArchivedPosts = async (): Promise<Post[]> =>
+export const getArchivedPosts = async (): Promise<PostSummary[]> =>
   draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS)));
 
 export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveYears(await load(), SHOW_DRAFTS);
@@ -113,10 +122,10 @@ export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveY
 export const getUpcomingPosts = async (): Promise<Post[]> =>
   draftsOf((await loadAllEntries()).map((entry) => entry.data));
 
-export const getArchivedPostsByYear = async (year: string): Promise<Post[]> =>
+export const getArchivedPostsByYear = async (year: string): Promise<PostSummary[]> =>
   draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS).filter((post) => post.date.startsWith(year))));
 
-export const getPost = async (slug: string): Promise<Post | undefined> =>
+export const getPost = async (slug: string): Promise<PostSummary | undefined> =>
   (await load()).find((post) => post.slug === slug);
 
 /** Full collection entry for body rendering; drafts only in dev. */

@@ -1,15 +1,16 @@
 ---
-import ListRow from '../../components/ui/ListRow.astro';
+import { Icon } from 'astro-icon/components';
+import PostRow from '../../components/posts/PostRow.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
 import { getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
-import { toShortDate } from '../../lib/format/date';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import { displayNameOf } from '../../lib/content/display-name';
 
 const posts = await getCurrentPosts();
 const upcoming = await getUpcomingPosts();
+const publishedCount = posts.filter((post) => !post.draft).length;
 
 const authorName = displayNameOf(await getProfile());
 ---
@@ -27,6 +28,19 @@ const authorName = displayNameOf(await getProfile());
       description={BLOG_COPY.description}
     />
 
+    <p class="-mt-md mb-xl flex flex-wrap items-center gap-sm font-mono text-small">
+      <a
+        href="/rss.xml"
+        class="inline-flex min-h-11 items-center gap-xs rounded-sm border border-border-strong px-sm text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+        RSS
+      </a>
+      <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
+        {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
+      </span>
+    </p>
+
     {
       posts.length === 0 ? (
         <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
@@ -36,13 +50,15 @@ const authorName = displayNameOf(await getProfile());
         <ul class="list-none p-0">
           {posts.map((post) => (
             <li>
-              <ListRow
+              <PostRow
                 href={`/${post.slug}`}
                 title={post.title}
                 summary={post.summary}
+                date={post.date}
+                readingMinutes={post.readingMinutes}
                 markers={post.markers}
-                badge={post.draft ? 'Rascunho' : undefined}
-                stamp={toShortDate(post.date)}
+                extras={post.extras}
+                draft={post.draft}
               />
             </li>
           ))}

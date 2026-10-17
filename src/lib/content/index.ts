@@ -15,7 +15,7 @@ export {
   getPostEntry,
   getUpcomingPosts,
 } from './posts';
-export type { ArchiveYear, PostEntry } from './posts';
+export type { ArchiveYear, PostEntry, PostSummary } from './posts';
 export { getAvailability, getProfile } from './profile';
 export type { BlockGroup } from './projects';
 export type { Availability } from './profile';

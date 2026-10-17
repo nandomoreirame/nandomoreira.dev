@@ -1,0 +1,61 @@
+---
+import { Icon } from 'astro-icon/components';
+import { toShortDate } from '../../lib/format/date';
+
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  date: string;
+  readingMinutes: number;
+  markers?: string[];
+  extras?: string[];
+  draft?: boolean;
+}
+
+const { href, title, summary, date, readingMinutes, markers = [], extras, draft = false } = Astro.props;
+const chip = 'inline-flex items-center rounded-sm border border-border bg-surface px-sm py-xs font-mono text-micro leading-none text-muted-foreground';
+---
+
+{/* Blog listing row (Terminal Noir, REQ-009): the whole row is the link, so
+    there is one tab stop and no trailing arrow. */}
+<a
+  href={href}
+  class="group flex flex-col gap-sm border-b border-border py-xl transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <span class="flex flex-wrap items-center justify-between gap-sm">
+    <span data-post-meta class="flex flex-wrap items-center gap-sm font-mono text-small text-muted-foreground">
+      {draft && (
+        <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">Rascunho</span>
+      )}
+      <time datetime={date}>{toShortDate(date)}</time>
+      <span aria-hidden="true">/</span>
+      <span class="inline-flex items-center gap-xs">
+        <Icon name="lucide:clock" aria-hidden="true" class="size-4 shrink-0" />
+        {readingMinutes} min de leitura
+      </span>
+    </span>
+    {markers.length > 0 && (
+      <span class="flex flex-wrap gap-xs">
+        {markers.slice(0, 3).map((marker) => <span data-marker class={chip}>{marker}</span>)}
+      </span>
+    )}
+  </span>
+
+  <span data-title class="font-serif text-h2 font-normal tracking-tight text-pretty text-foreground transition-colors group-hover:text-primary sm:text-h1">
+    {title}
+  </span>
+
+  <span data-summary class="max-w-[68ch] text-body text-muted-foreground">{summary}</span>
+
+  {extras && extras.length > 0 && (
+    <span data-extras class="flex flex-wrap items-center gap-sm font-mono text-small text-muted-foreground">
+      {extras.map((extra, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true">•</span>}
+          <span class={index === 0 ? 'text-primary' : undefined}>{extra}</span>
+        </>
+      ))}
+    </span>
+  )}
+</a>
