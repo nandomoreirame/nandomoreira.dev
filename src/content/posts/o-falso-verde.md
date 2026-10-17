@@ -2,13 +2,32 @@
 slug: o-falso-verde
 title: "O falso verde: quando o portão diz PASS e nada rodou"
 summary: "Em fluxo com agentes, o teste vermelho alguém investiga. O perigo é o verde que ninguém questiona: o portão que pulou tudo, o pipeline que mascarou o erro, o teste que leu o fonte em vez de fazer a requisição."
-date: "2026-10-11"
+date: "2026-10-09"
+publishedAt: "2026-10-09T10:00:00-03:00"
 art: chart
 markers:
   - qualidade
   - agentes
   - testes
-draft: true
+extras:
+  - "7 testes vermelhos sob um portão verde"
+  - "rpi-gates.sh · npm test · curl"
+keyPoints:
+  - "Até 19 de agosto o tier1 rodava lint, type-check e build, sem a suíte de testes: o verde só provava que compilava."
+  - "Um passo pulado não é um passo verde: o script deu result: PASS sem rodar nenhuma verificação."
+  - "A evidência é uma linha de marca ou o código de saída do build salvo em arquivo, nunca o status de um pipe."
+snapshot:
+  items:
+    - label: "Portões"
+      value: "rpi-gates.sh"
+    - label: "Testes"
+      value: "npm test"
+    - label: "Formatação"
+      value: "prettier"
+    - label: "Tipos"
+      value: "tsc"
+    - label: "HTTP"
+      value: "curl"
 ---
 
 Em agosto, uma rodada de revisão de um projeto fechou com `result: PASS`. Lint verde, type-check verde, build verde. E sete testes vermelhos, quebrando contra uma rota que a própria rodada tinha removido. Quem pegou foi um `npm test` rodado por fora do fluxo.

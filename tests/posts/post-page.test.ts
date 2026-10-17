@@ -27,7 +27,7 @@ describe('/[slug] post page', () => {
     expect(slugs).toContain('fluxo-rpi-claude-code-grok-codex');
     expect(slugs).toContain('comece-com-gulp');
     // A draft's slug must never be a public path.
-    expect(slugs).not.toContain('o-falso-verde');
+    expect(slugs).not.toContain('revisao-cruzada-entre-modelos');
     expect(slugs).not.toContain('exemplo');
   });
 
