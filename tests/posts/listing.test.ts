@@ -70,7 +70,7 @@ describe('/posts listing', () => {
 
   it('keeps the drafts apart from the newsletter', async () => {
     const html = await render();
-    expect(html).toMatch(/<div[^>]*class="mt-2xl"[^>]*>\s*<section[^>]*id="novidades"/);
+    expect(html).toMatch(/<div[^>]*class="mt-2xl mb-3xl"[^>]*>\s*<section[^>]*id="novidades"/);
   });
 
   it('names the page Blog in the browser tab', async () => {

@@ -3,6 +3,7 @@ import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
 import Hero from '../components/home/Hero.astro';
+import NewsletterCard from '../components/posts/NewsletterCard.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import LatestPosts from '../components/home/LatestPosts.astro';
 import Services from '../components/home/Services.astro';
@@ -14,6 +15,7 @@ import { homeMeta } from '../lib/home/meta';
 import { organizationLd } from '../lib/home/organization-ld';
 import { personLd } from '../lib/home/person-ld';
 import { latestPosts } from '../lib/posts/latest';
+import { outcomeOf } from '../lib/newsletter/copy';
 
 const [profile, allProjects, allPosts] = await Promise.all([
   getProfile(),
@@ -27,6 +29,7 @@ const serviceProjects = allProjects.map((project) => ({
 }));
 
 const recentPosts = latestPosts(allPosts, 3);
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
 
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
@@ -50,6 +53,10 @@ const hireBrief = buildHireBrief({
     positioning={profile.positioning}
   />
   <LatestPosts posts={recentPosts} site={site} />
+  {/* Quiet submit: the hero keeps the home's one primary CTA. */}
+  <div class="pt-2xl lg:pt-3xl">
+    <NewsletterCard outcome={outcome} quiet returnTo="/" />
+  </div>
   <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
   <Services services={profile.services} projects={serviceProjects} />
   <AgentBrief brief={hireBrief} />

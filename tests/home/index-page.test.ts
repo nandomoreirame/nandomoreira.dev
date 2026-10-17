@@ -15,6 +15,7 @@ describe('home page assembly', () => {
     const order = [
       'Hero',
       'LatestPosts',
+      'NewsletterCard',
       'Trajectory',
       'Services',
     ];
@@ -22,6 +23,11 @@ describe('home page assembly', () => {
 
     expect(positions.every((position) => position > -1)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+  });
+
+  it('puts a quiet newsletter card under the recent posts, posting back to the home', () => {
+    expect(page).toMatch(/<NewsletterCard outcome=\{outcome\} quiet returnTo="\/" \/>/);
+    expect(page).toContain("outcomeOf(Astro.url.searchParams.get('assinatura'))");
   });
 
   it('leaves portfolio and lab to their own listings', () => {

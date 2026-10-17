@@ -61,4 +61,22 @@ describe('NewsletterCard', () => {
       expect(card).not.toMatch(/\brole="(?:status|alert)"/);
     },
   );
+
+  it('posts back to the page it sits on when told to, the home included', async () => {
+    expect(await render({ returnTo: '/' })).toMatch(/<form[^>]*action="\/api\/subscribe\?origem=\/"/);
+    expect(await render()).toMatch(/<form[^>]*action="\/api\/subscribe"/);
+  });
+
+  it('turns the submit into a secondary button when quiet, keeping one primary CTA on the home', async () => {
+    const quiet = await render({ quiet: true });
+    const button = quiet.match(/<button[^>]*type="submit"[^>]*>/)?.[0] ?? '';
+    expect(button).not.toContain('bg-primary');
+    expect(button).toContain('border-border-strong');
+    expect((await render()).match(/<button[^>]*type="submit"[^>]*>/)?.[0]).toContain('bg-primary');
+  });
+
+  it('leaves its outer spacing to the page', async () => {
+    expect((await render()).match(/<section[^>]*id="novidades"[^>]*>/)?.[0]).not.toContain('mb-3xl');
+  });
 });
+

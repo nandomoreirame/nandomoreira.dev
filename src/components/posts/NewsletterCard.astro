@@ -7,13 +7,21 @@ import { NEWSLETTER_COPY, NEWSLETTER_OUTCOMES } from '../../lib/newsletter/copy'
 
 interface Props {
   outcome?: SubscribeOutcome;
+  /** A secondary submit, for a page that already has its one primary CTA (the home). */
+  quiet?: boolean;
+  /** Page the answer comes back to; /posts when absent. */
+  returnTo?: '/' | '/posts';
 }
 
-const { outcome } = Astro.props;
+const { outcome, quiet = false, returnTo } = Astro.props;
+const action = returnTo ? `/api/subscribe?origem=${returnTo}` : '/api/subscribe';
+const submit = quiet
+  ? 'border border-border-strong bg-surface text-foreground hover:border-primary hover:bg-surface-elevated'
+  : 'bg-primary text-primary-foreground hover:opacity-90 hover:shadow-glow';
 const result = outcome ? NEWSLETTER_OUTCOMES[outcome] : undefined;
 ---
 
-<Card as="section" id="novidades" class="mb-3xl flex flex-col gap-lg lg:flex-row lg:items-center lg:justify-between" aria-labelledby="novidades-titulo">
+<Card as="section" id="novidades" class="flex flex-col gap-lg lg:flex-row lg:items-center lg:justify-between" aria-labelledby="novidades-titulo">
   <div class="flex flex-col gap-xs">
     <p class="flex items-center gap-sm font-mono text-small uppercase tracking-wide text-primary">
       <Icon name="lucide:mail" aria-hidden="true" class="size-4 shrink-0" />
@@ -27,7 +35,7 @@ const result = outcome ? NEWSLETTER_OUTCOMES[outcome] : undefined;
     {result && <p role={result.role} class="text-small text-foreground">{result.text}</p>}
   </div>
 
-  <form action="/api/subscribe" method="post" class="flex w-full flex-col gap-sm sm:flex-row lg:w-auto">
+  <form action={action} method="post" class="flex w-full flex-col gap-sm sm:flex-row lg:w-auto">
     <label for="novidades-email" class="sr-only">E-mail</label>
     <input
       id="novidades-email"
@@ -42,7 +50,7 @@ const result = outcome ? NEWSLETTER_OUTCOMES[outcome] : undefined;
     <input type="text" name={FORM_HONEYPOT} tabindex="-1" autocomplete="off" aria-hidden="true" class="sr-only" />
     <button
       type="submit"
-      class="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-md text-body font-medium text-primary-foreground transition-[opacity,box-shadow] duration-(--duration-fast) ease-out hover:opacity-90 hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class={`inline-flex min-h-11 items-center justify-center rounded-md px-md text-body font-medium transition-[opacity,box-shadow,border-color,background-color] duration-(--duration-fast) ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${submit}`}
     >
       {NEWSLETTER_COPY.button}
     </button>
