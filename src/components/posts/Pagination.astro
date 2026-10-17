@@ -1,0 +1,57 @@
+---
+interface Props {
+  page: number;
+  totalPages: number;
+  first: number;
+  last: number;
+  total: number;
+}
+
+const { page, totalPages, first, last, total } = Astro.props;
+// Page 1 is /posts itself, never /posts?pagina=1: one URL per page.
+const hrefOf = (target: number) => (target === 1 ? '/posts' : `/posts?pagina=${target}`);
+const prev = page > 1 ? hrefOf(page - 1) : undefined;
+const next = page < totalPages ? hrefOf(page + 1) : undefined;
+const range = first === last ? `artigo ${first}` : `artigos ${first}-${last}`;
+
+const step =
+  'inline-flex min-h-11 items-center rounded-sm border px-md font-mono text-small transition-[border-color,color] duration-(--duration-fast) ease-out';
+const active = `${step} border-border-strong bg-surface text-foreground hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`;
+const inactive = `${step} border-border text-muted-foreground opacity-60`;
+---
+
+{/* Older and newer pages of the current posts, as in the Stitch listing:
+    the steps on the left, where the reader is on the right. */}
+<nav
+  aria-label="Paginação"
+  data-pagination
+  class="mt-2xl flex flex-wrap items-center justify-between gap-md border-t border-border pt-xl"
+>
+  <div class="flex flex-wrap gap-sm">
+    {
+      prev ? (
+        <a href={prev} rel="prev" class={active}>
+          ← Mais recentes
+        </a>
+      ) : (
+        <span aria-disabled="true" class={inactive}>
+          ← Mais recentes
+        </span>
+      )
+    }
+    {
+      next ? (
+        <a href={next} rel="next" class={active}>
+          Mais antigos →
+        </a>
+      ) : (
+        <span aria-disabled="true" class={inactive}>
+          Mais antigos →
+        </span>
+      )
+    }
+  </div>
+  <p class="font-mono text-small text-muted-foreground">
+    Página <span class="text-primary">{page}</span> de {totalPages} ({range} de {total})
+  </p>
+</nav>

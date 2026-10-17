@@ -1,47 +1,65 @@
 ---
 import { Icon } from 'astro-icon/components';
 import NewsletterCard from '../../components/posts/NewsletterCard.astro';
-import PostRow from '../../components/posts/PostRow.astro';
+import Pagination from '../../components/posts/Pagination.astro';
+import PostCard from '../../components/posts/PostCard.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
-import { getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
+import { getAllPosts, getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
 import { outcomeOf } from '../../lib/newsletter/copy';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
+import { paginate, parsePage } from '../../lib/posts/paginate';
 import { displayNameOf } from '../../lib/content/display-name';
 
 const posts = await getCurrentPosts();
+const page = paginate(posts, parsePage(Astro.url.searchParams.get('pagina')));
 const upcoming = await getUpcomingPosts();
-const publishedCount = posts.filter((post) => !post.draft).length;
+// The whole blog, archive included, not just the current posts listed here.
+const publishedCount = (await getAllPosts()).filter((post) => !post.draft).length;
 
 const authorName = displayNameOf(await getProfile());
 const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+// RSS and the archive share one shape beside the post count.
+const headerLink =
+  'inline-flex min-h-11 items-center gap-xs rounded-sm border border-border-strong px-sm text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 <BaseLayout
   title={`Blog | ${authorName}`}
   description={BLOG_COPY.metaDescription}
   pageType="CollectionPage"
-  pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
+  pageItems={page.items.filter((post) => !post.draft).map((post) => `/${post.slug}`)}
 >
   <div>
     <PageHeader
+      path="/blog"
       title={BLOG_COPY.title}
       description={BLOG_COPY.description}
     />
 
-    <p class="-mt-md mb-xl flex flex-wrap items-center gap-sm font-mono text-small">
+    <div data-listing-bar class="-mt-md mb-xl flex flex-wrap items-center justify-between gap-sm font-mono text-small">
       <a
         href="/rss.xml"
-        class="inline-flex min-h-11 items-center gap-xs rounded-sm border border-border-strong px-sm text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        class={headerLink}
       >
         <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-        RSS
+        RSS FEED
       </a>
-      <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
-        {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
-      </span>
-    </p>
+      <div class="flex flex-wrap items-center gap-sm">
+        <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
+          {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
+        </span>
+        <a
+          href="/posts/arquivo"
+          class={headerLink}
+        >
+          <Icon name="lucide:archive" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+          Arquivo por ano
+        </a>
+      </div>
+    </div>
 
     {
       posts.length === 0 ? (
@@ -49,36 +67,26 @@ const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
           Nenhum post corrente no momento.
         </p>
       ) : (
-        <ul class="list-none p-0">
-          {posts.map((post) => (
+        <ul class="flex list-none flex-col gap-md p-0">
+          {page.items.map((post) => (
             <li>
-              <PostRow
-                href={`/${post.slug}`}
-                title={post.title}
-                summary={post.summary}
-                date={post.date}
-                readingMinutes={post.readingMinutes}
-                markers={post.markers}
-                extras={post.extras}
-                draft={post.draft}
-              />
+              <PostCard post={post} site={site} />
             </li>
           ))}
         </ul>
       )
     }
 
+    {
+      posts.length > 0 && (
+        <Pagination page={page.page} totalPages={page.totalPages} first={page.first} last={page.last} total={page.total} />
+      )
+    }
+
     <UpcomingPosts titles={upcoming.map((post) => post.title)} />
 
-    <p class="mt-2xl text-body text-muted-foreground">
-      <a
-        href="/posts/arquivo"
-        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        Arquivo por ano
-      </a>
-    </p>
-
-    <NewsletterCard outcome={outcome} />
+    <div class="mt-2xl">
+      <NewsletterCard outcome={outcome} />
+    </div>
   </div>
 </BaseLayout>

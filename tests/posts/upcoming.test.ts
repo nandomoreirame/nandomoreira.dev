@@ -31,10 +31,10 @@ describe('UpcomingPosts', () => {
     expect((await render([])).trim()).toBe('');
   });
 
-  it('closes the posts page, before the archive link', () => {
+  it('closes the posts list, before the newsletter', () => {
     const page = readFileSync('src/pages/posts/index.astro', 'utf8');
     expect(page).toContain('<UpcomingPosts');
-    expect(page.indexOf('<UpcomingPosts')).toBeLessThan(page.indexOf('Arquivo por ano'));
+    expect(page.indexOf('<UpcomingPosts')).toBeLessThan(page.indexOf('<NewsletterCard'));
   });
 });
 
