@@ -7,52 +7,20 @@ const render = async () => {
   return container.renderToString(Index, {});
 };
 
-describe('home splits portfolio from lab', () => {
-  it('renders both collection sections', async () => {
+// Portfolio and lab left the home on 2026-10-17 (home-latest-post): the
+// latest post leads, and each collection lives on its own listing.
+describe('home without the collection sections', () => {
+  it('renders neither the portfolio nor the lab section', async () => {
     const html = await render();
 
-    expect(html).toContain('id="portfolio"');
-    expect(html).toContain('id="lab"');
+    expect(html).not.toContain('id="portfolio"');
+    expect(html).not.toContain('id="lab"');
   });
 
-  it('puts portfolio before lab, since delivered work leads', async () => {
-    const html = await render();
-    expect(html.indexOf('id="portfolio"')).toBeLessThan(html.indexOf('id="lab"'));
-  });
-
-  it('drops the merged section, which mixed both collections', async () => {
+  it('keeps the merged section gone too', async () => {
     const html = await render();
 
     expect(html).not.toContain('id="projetos"');
     expect(html).not.toMatch(/Trabalho selecionado/i);
-  });
-
-  it('never shows a lab case inside portfolio, or the reverse', async () => {
-    const html = await render();
-    const portfolio = html.slice(html.indexOf('id="portfolio"'), html.indexOf('id="lab"'));
-    // Stop at the next home section: Services now links to real /portfolio
-    // cases, and would false-fail a slice that runs to the end of the page.
-    const labEnd = html.indexOf('id="trajetoria"');
-    const lab = html.slice(
-      html.indexOf('id="lab"'),
-      labEnd === -1 ? html.length : labEnd,
-    );
-
-    // Asserting on the hrefs alone is not enough: the row href is built from
-    // the section, so a mixed-in case still renders a section-shaped link
-    // (a dead one). CollectionSection throws on a foreign case; the assertion
-    // that this actually holds lives in collection-section.test.ts.
-    expect(portfolio).not.toMatch(/href="\/lab\//);
-    expect(lab).not.toMatch(/href="\/portfolio\//);
-  });
-
-  it('never sends a section to the other collection listing', async () => {
-    const html = await render();
-    const portfolio = html.slice(html.indexOf('id="portfolio"'), html.indexOf('id="lab"'));
-
-    // The see-all link only appears once a collection outgrows the five the
-    // home shows, so assert the invariant that holds either way: whatever
-    // listing link a section carries, it is its own.
-    expect(portfolio).not.toMatch(/href="\/lab"/);
   });
 });

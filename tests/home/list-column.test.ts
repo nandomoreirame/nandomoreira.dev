@@ -32,15 +32,18 @@ const project = (overrides: Partial<Project> = {}): Project =>
   }) as Project;
 
 describe('home list column', () => {
-  it('constrains LatestPosts to the centred list measure', async () => {
+  it('lets LatestPosts span the page container, as wide as the header', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(LatestPosts, {
-      props: { posts: [post({ slug: 'a', title: 'A', date: '2026-01-01' })] },
+      props: {
+        posts: [{ ...post({ slug: 'a', title: 'A', date: '2026-01-01' }), readingMinutes: 1 }],
+        site: 'https://nandomoreira.dev',
+      },
     });
     const section = html.match(/<section[^>]*id="blog"[^>]*>/)?.[0] ?? '';
 
-    expect(section).toContain('max-w-list');
-    expect(section).toContain('mx-auto');
+    expect(section).not.toContain('max-w-list');
+    expect(section).toContain('w-full');
   });
 
   it('constrains CollectionSection to the centred list measure', async () => {

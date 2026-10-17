@@ -1,9 +1,7 @@
 ---
-import CollectionSection from '../components/home/CollectionSection.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import { buildHireBrief } from '../lib/aeo/hire-brief';
 import { requireSite } from '../lib/aeo/urls';
-import SectionRule from '../components/ui/SectionRule.astro';
 import Hero from '../components/home/Hero.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import LatestPosts from '../components/home/LatestPosts.astro';
@@ -11,7 +9,6 @@ import Services from '../components/home/Services.astro';
 import Trajectory from '../components/home/Trajectory.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
-import { collectionOfBlock } from '../lib/catalog/groups';
 import { getAllPosts, getAllProjects, getProfile } from '../lib/content';
 import { homeMeta } from '../lib/home/meta';
 import { organizationLd } from '../lib/home/organization-ld';
@@ -29,25 +26,7 @@ const serviceProjects = allProjects.map((project) => ({
   block: project.block,
 }));
 
-/**
- * Featured first, then by date. Applied per collection: a single merged list
- * let one grouping crowd out the other, which is what mixed four lab cases
- * with one portfolio case on the home.
- */
-const rank = (projects: typeof allProjects) =>
-  [...projects].sort((a, b) => {
-    if (a.featured !== b.featured) return a.featured ? -1 : 1;
-    return b.date.localeCompare(a.date);
-  });
-
-const portfolio = rank(
-  allProjects.filter((project) => collectionOfBlock(project.block) === 'portfolio'),
-);
-const lab = rank(
-  allProjects.filter((project) => collectionOfBlock(project.block) === 'lab'),
-);
-
-const blogPosts = latestPosts(allPosts, 4);
+const recentPosts = latestPosts(allPosts, 3);
 
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(personLd(profile, site));
@@ -70,20 +49,8 @@ const hireBrief = buildHireBrief({
     headline={profile.headline}
     positioning={profile.positioning}
   />
-  <LatestPosts posts={blogPosts} />
-  <SectionRule />
-  <CollectionSection
-    collection="portfolio"
-    projects={portfolio}
-    totalCount={portfolio.length}
-    index={1}
-  />
-  <SectionRule />
-  <CollectionSection collection="lab" projects={lab} totalCount={lab.length} index={2} />
-  <SectionRule />
+  <LatestPosts posts={recentPosts} site={site} />
   <Trajectory stats={profile.trajectory} narrative={profile.positioning} />
-  <SectionRule />
   <Services services={profile.services} projects={serviceProjects} />
-  <SectionRule />
   <AgentBrief brief={hireBrief} />
 </BaseLayout>

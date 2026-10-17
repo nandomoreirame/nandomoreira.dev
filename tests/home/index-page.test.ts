@@ -15,7 +15,6 @@ describe('home page assembly', () => {
     const order = [
       'Hero',
       'LatestPosts',
-      'CollectionSection',
       'Trajectory',
       'Services',
     ];
@@ -25,14 +24,8 @@ describe('home page assembly', () => {
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 
-  it('puts proof before offer: projects come before services', () => {
-    expect(page.lastIndexOf('<CollectionSection')).toBeLessThan(page.lastIndexOf('<Services'));
-  });
-
-  it('puts the latest posts above the portfolio section', () => {
-    expect(page.lastIndexOf('<LatestPosts')).toBeLessThan(
-      page.lastIndexOf('<CollectionSection'),
-    );
+  it('leaves portfolio and lab to their own listings', () => {
+    expect(page).not.toContain('<CollectionSection');
   });
 
   it('embeds the Person structured data', () => {
@@ -47,5 +40,11 @@ describe('home page assembly', () => {
   it('no longer mounts the home About or Contact sections', () => {
     expect(page).not.toContain('<About');
     expect(page).not.toContain('<Contact');
+  });
+
+  it('feeds LatestPosts the three newest posts and the site origin', () => {
+    expect(page).toContain('const recentPosts = latestPosts(allPosts, 3);');
+    expect(page).toContain('<LatestPosts posts={recentPosts} site={site} />');
+    expect(page).not.toContain('latestPosts(allPosts, 4)');
   });
 });

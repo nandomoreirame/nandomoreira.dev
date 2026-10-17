@@ -1,0 +1,124 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { PostSummary } from '../../lib/content';
+import { toShortDate } from '../../lib/format/date';
+import AiSummaryLink from './AiSummaryLink.astro';
+
+interface Props {
+  post: PostSummary;
+  /** Site origin, for the markdown view the AI summary links read. */
+  site: string;
+}
+
+const { post, site } = Astro.props;
+---
+
+{/* The title link is stretched over the card by ::after, so the whole
+    card is clickable with one tab stop; the footer controls sit above
+    it with relative z-10 (REQ-007). */}
+<article
+  data-latest-post
+  class="group relative rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong md:p-xl"
+>
+  <p data-post-meta class="flex flex-wrap items-center gap-sm font-mono text-small text-muted-foreground">
+    {post.draft && (
+      <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">Rascunho</span>
+    )}
+    <time datetime={post.date}>{toShortDate(post.date)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{post.readingMinutes} min de leitura</span>
+    {post.extras?.[0] && (
+      <>
+        <span aria-hidden="true" class="text-border-strong">|</span>
+        <span data-badge class="inline-flex items-center gap-xs rounded-sm border border-border bg-background px-sm py-xs text-caption leading-none text-success">
+          <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full bg-success" />
+          {post.extras[0]}
+        </span>
+      </>
+    )}
+  </p>
+
+  <h3 class="mt-md font-serif text-h2 font-normal tracking-tight text-pretty text-foreground transition-colors group-hover:text-primary sm:text-h1">
+    <a
+      href={`/${post.slug}`}
+      class="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-primary"
+    >
+      {post.title}
+    </a>
+  </h3>
+
+  <p class="mt-sm text-body text-muted-foreground">{post.summary}</p>
+
+  {/* Quick preview: a native checkbox and its label, the reader mode's
+      pattern. The label sits beside the read cue and the panel opens
+      below the whole row; group-has-checked shows it, no script. */}
+  <div data-post-footer class="group/footer mt-lg flex flex-col gap-md border-t border-border pt-md">
+    {/* group/toggle holds only the checkbox and the row, so focus on the
+        AI links inside the panel does not ring the toggle. */}
+    <div class="group/toggle">
+    {post.keyPoints && (
+      <input
+        type="checkbox"
+        id={`preview-${post.slug}`}
+        data-preview-toggle
+        aria-controls={`preview-panel-${post.slug}`}
+        class="peer sr-only"
+      />
+    )}
+    <div class="flex flex-wrap items-center justify-between gap-md">
+      <ul class="flex list-none flex-wrap gap-xs p-0">
+        {post.markers.slice(0, 3).map((marker) => (
+          <li data-marker class="rounded-sm border border-border bg-surface-elevated px-sm py-xs font-mono text-micro leading-none text-muted-foreground">
+            #{marker}
+          </li>
+        ))}
+      </ul>
+      <div data-post-actions class="flex flex-wrap items-center gap-md">
+        {post.keyPoints && (
+          <label
+            for={`preview-${post.slug}`}
+            class="relative z-10 inline-flex h-8 cursor-pointer items-center gap-xs rounded-sm border border-border bg-surface-elevated px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-border-strong hover:text-foreground group-has-checked/footer:border-primary group-has-checked/footer:text-foreground group-has-focus-visible/toggle:outline-2 group-has-focus-visible/toggle:outline-offset-2 group-has-focus-visible/toggle:outline-primary"
+          >
+            <Icon name="lucide:terminal" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+            Preview rápido
+          </label>
+        )}
+        <span data-read-cue aria-hidden="true" class="inline-flex items-center gap-xs font-mono text-small text-primary">
+          Ler artigo completo
+          <Icon
+            name="lucide:arrow-right"
+            class="size-4 shrink-0 transition-transform duration-(--duration-fast) ease-out group-hover:translate-x-xs"
+          />
+        </span>
+      </div>
+    </div>
+    </div>
+    {post.keyPoints && (
+      <div
+        id={`preview-panel-${post.slug}`}
+        data-post-preview
+        class="relative z-10 hidden flex-col gap-md rounded-lg border border-border bg-background p-md font-mono text-caption group-has-checked/footer:flex"
+      >
+        <p class="flex items-center gap-sm text-micro uppercase tracking-eyebrow text-primary">
+          <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full bg-current" />
+          TL;DR // PONTOS-CHAVE
+        </p>
+        <ul class="flex list-none flex-col gap-xs p-0 text-muted-foreground">
+          {post.keyPoints.map((point) => (
+            <li class="flex items-start gap-sm">
+              <span aria-hidden="true" class="text-success">→</span>
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="flex flex-wrap items-center justify-between gap-sm border-t border-border pt-sm">
+          <span class="inline-flex items-center gap-xs text-muted-foreground">
+            <Icon name="lucide:sparkles" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+            Resumir com IA:
+          </span>
+          <AiSummaryLink markdownUrl={`${site}/${post.slug}.md`} />
+        </div>
+      </div>
+    )}
+  </div>
+</article>

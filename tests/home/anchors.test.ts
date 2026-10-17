@@ -5,12 +5,11 @@ import Index from '../../src/pages/index.astro';
 
 // `projetos` gave way to one anchor per collection when the home stopped
 // merging portfolio and lab into a single "Trabalho selecionado" section.
-// About and contact moved to /sobre and /contato; blog sits above portfolio.
+// About and contact moved to /sobre and /contato. Portfolio and lab left the
+// home on 2026-10-17 (home-latest-post); their listings are /portfolio and /lab.
 const EXPECTED_ANCHORS = [
   'inicio',
   'blog',
-  'portfolio',
-  'lab',
   'trajetoria',
   'servicos',
 ];
