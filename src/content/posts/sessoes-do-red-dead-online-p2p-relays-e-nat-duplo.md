@@ -11,6 +11,25 @@ markers:
   - homelab
   - xbox
 art: terminal
+extras:
+  - "10 dias de captura do tráfego do Xbox"
+  - "iptables · tcpdump · WireGuard"
+keyPoints:
+  - "A sessão tem duas camadas: TCP 80 e 443 com a Rockstar, e P2P em UDP 6672 e 61455 a 61458 entre jogadores."
+  - "O masquerade do gateway somado ao NAT do modem virou NAT duplo e derrubou o Xbox para Moderado."
+  - "Esconder o IP de casa numa VPN exige MSS clamp: o túnel tem MTU 1280, e o pacote grande do TLS morria calado."
+snapshot:
+  items:
+    - label: Gateway
+      value: Linux
+    - label: Filtro
+      value: iptables
+    - label: Túnel
+      value: WireGuard
+    - label: VPN
+      value: AirVPN
+    - label: Console
+      value: Xbox
 ---
 
 Com dois colegas na sessão, a captura devolveu quatro IPs. Dois deles trocaram 1.805 e 1.664 pacotes com o meu Xbox; os outros dois, seis e quatro. Eu esperava três endereços (eu e mais dois), e foi o quarto que me fez parar de tratar o Red Dead Online como uma caixa preta.

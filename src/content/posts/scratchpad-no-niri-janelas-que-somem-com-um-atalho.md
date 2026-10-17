@@ -10,6 +10,25 @@ markers:
   - shell
   - linux
 art: panels
+extras:
+  - "7 atalhos, 1 script, 15 testes em BATS"
+  - "Niri · Bash · jq"
+keyPoints:
+  - "O Niri não minimiza janela: um workspace nomeado e escondido faz o papel do scratchpad do i3 e do Sway."
+  - "A janela volta no monitor em foco com move-window-to-monitor, e não num índice de workspace, que se repete por monitor."
+  - "Apps com bandeja fecham para ela; o resto vai para o scratch, e quem decide é uma linha no preset."
+snapshot:
+  items:
+    - label: OS
+      value: CachyOS
+    - label: Compositor
+      value: Niri
+    - label: Testes
+      value: 15 testes em BATS
+    - label: Consulta
+      value: niri msg --json
+    - label: Filtro
+      value: jq
 ---
 
 Eu aperto `Mod+Shift+A` e o WhatsApp aparece flutuando, centralizado no monitor em que eu estou. Aperto de novo e ele some, e o foco volta para o terminal de onde eu saí. São sete atalhos assim no meu Niri: YouTube no `Y`, YouTube Music no `U`, WhatsApp no `A`, Obsidian no `O`, Discord no `D`, Spotify no `S` e LocalSend no `L`, todos com `Mod+Shift`.
@@ -20,7 +39,7 @@ Procurar "como minimizar janela no Niri" não leva a lugar nenhum, porque o Niri
 
 O esconderijo é um workspace nomeado, declarado no `config.kdl`:
 
-```kdl
+```kdl title="config.kdl"
 workspace "scratch" {
     open-on-output "eDP-1"
 }

@@ -9,6 +9,25 @@ markers:
   - automação
   - open source
 art: chat
+extras:
+  - "7 fontes, 0 dependências, 328 testes"
+  - "Python 3.12 · biblioteca padrão"
+keyPoints:
+  - "Filtros duros decidem se a vaga entra; a nota de 0 a 100 só ordena o que passou."
+  - "As qualificações saem da tabela de stack do próprio currículo, sem uma lista paralela para envelhecer."
+  - "A deduplicação usa três chaves: empresa e título, URL canônica e SimHash da descrição em 90 dias."
+snapshot:
+  items:
+    - label: Linguagem
+      value: Python 3.12
+    - label: Runtime
+      value: biblioteca padrão
+    - label: Testes
+      value: 328 funções de teste
+    - label: Publicação
+      value: Discord
+    - label: Fonte
+      value: Gupy
 ---
 
 Algumas vezes por dia, um canal do Discord recebe as vagas que sobreviveram aos meus cortes. Quem varre os sites é o [job-radar](https://github.com/nandomoreirame/job-radar): ele lê sete fontes, joga fora o que eu não me candidataria, dá nota de 0 a 100 para o resto e publica as melhores. Roda em Python 3.12 só com a biblioteca padrão, e em 8 de outubro o repositório ganhou licença MIT.

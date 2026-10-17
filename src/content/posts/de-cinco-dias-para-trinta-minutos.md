@@ -9,6 +9,25 @@ markers:
   - etl
   - dados
   - ia
+extras:
+  - "5 dias → 30 min por base"
+  - "4.800+ testes · cobertura de 0% a 92%"
+keyPoints:
+  - "Automação antes da IA: regra fixa no que é previsível, IA só no que é ambíguo."
+  - "Fila, repetição segura e uma etapa puxando a próxima tiraram a espera, que era a maior parte dos cinco dias."
+  - "O prazo virou regra do produto: cada fase tem orçamento, e a base aparece no prazo, em risco ou atrasada."
+snapshot:
+  items:
+    - label: Linguagem
+      value: Python
+    - label: Nuvem
+      value: Google Cloud
+    - label: Interface
+      value: React 19
+    - label: Banco
+      value: Firebase
+    - label: Testes
+      value: 4.800 testes automáticos
 ---
 
 Quando assumi a operação de dados na Liquid AI, receber a base de um cliente e entregá-la pronta na pipeline levava em torno de cinco dias. Quando saí, em setembro de 2026, levava até trinta minutos.

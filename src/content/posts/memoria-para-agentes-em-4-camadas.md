@@ -9,6 +9,25 @@ markers:
   - claude code
   - memória
   - agentes
+extras:
+  - "4 camadas, 5 comandos, 1 regra de recall"
+  - "Claude Code · Markdown · YAML"
+keyPoints:
+  - "Self, Workspace e Project carregam sempre; Entity só entra quando pedida, para não inflar o contexto base."
+  - "Uma regra obriga o agente a chamar /memory recall quando cito uma entidade que ainda não está carregada."
+  - "O /memory verify confere se arquivos e funções citados ainda existem e acusa a memória que envelheceu."
+snapshot:
+  items:
+    - label: Agente
+      value: Claude Code
+    - label: Formato
+      value: Markdown
+    - label: Frontmatter
+      value: YAML
+    - label: Camadas
+      value: quatro camadas
+    - label: Comandos
+      value: cinco comandos
 ---
 
 Em 1º de junho eu salvei duas memórias no meu Claude Code. Uma dizia que a barra do meu Niri é o Noctalia, e não a Waybar. A outra, que o gerenciador de versões da máquina é o mise, e que ele nunca deve procurar nvm, pyenv ou asdf. Parecem bobas, e existem porque o agente, sem elas, presumia o contrário: toda sessão nova começava do zero, e do zero o palpite padrão para um desktop Linux é Waybar e nvm.

@@ -10,6 +10,25 @@ markers:
   - open source
 art: play
 publishedAt: "2026-10-11T10:59:08-03:00"
+extras:
+  - "3 formas de controle: shell, TUI e web"
+  - "iptables · Rust · Next.js"
+keyPoints:
+  - "Com o modo solo ligado, o gateway Linux derruba o P2P em UDP do jogo e o console continua online."
+  - "Uma whitelist só de amigos falha: a sessão depende de um host desconhecido e dos relays da Rockstar."
+  - "Script, TUI e painel web dividem o mesmo estado, então dá para ligar por um e desligar por outro."
+snapshot:
+  items:
+    - label: Gateway
+      value: Linux
+    - label: Filtro
+      value: iptables
+    - label: TUI
+      value: Rust
+    - label: Painel
+      value: Next.js
+    - label: Console
+      value: Xbox
 ---
 
 > **Aviso**

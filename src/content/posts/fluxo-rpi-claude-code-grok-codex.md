@@ -10,6 +10,25 @@ markers:
   - claude code
   - rpi
   - agentes
+extras:
+  - "3 modelos, 1 tarefa por vez, teste primeiro"
+  - "Claude Code · Grok · Codex"
+keyPoints:
+  - "Pesquisa e spec antes do código: na hora de implementar, não sobra decisão para o agente tomar."
+  - "O Grok implementa, o Codex revisa em sandbox e só o Claude commita; a escrita no git é bloqueada por permissão."
+  - "Saída 3 é indisponibilidade e troca o executor; outra falha volta para correção, até duas rodadas."
+snapshot:
+  items:
+    - label: Orquestrador
+      value: Claude Code
+    - label: Implementa
+      value: Grok
+    - label: Revisa
+      value: Codex
+    - label: Scripts
+      value: shell
+    - label: Formato
+      value: markdown
 ---
 
 Eu já criei muitos projetos em que a pesquisa e o planejamento vêm antes de qualquer feature. O RPI saiu disso. Não teve um projeto, nem um diff que eu olhei e pensei "agora vou inventar um método". Como dev sênior, essa ordem já era a minha. Passar ela para o agente foi natural.
@@ -57,7 +76,7 @@ Em feature média ou grande entra uma etapa que eu chamo de grilling, adaptada d
 
 O resultado é `docs/specs/<slug>/SPEC.md`. Neste site os requisitos são em português, no formato `QUANDO [evento] ENTÃO o sistema DEVE [resposta]`:
 
-```markdown
+```markdown title="docs/specs/<slug>/SPEC.md"
 1. [REQ-001] QUANDO qualquer página coberta renderiza ENTÃO o sistema DEVE
    exibir um switcher fixo no canto inferior direito, **Humano | IA**, com
    "Humano" marcado como atual e "IA" como link para `<página>/ia`.
@@ -153,7 +172,7 @@ Na visão IA deste site eu percebi de cara, porque estava no terminal. O Grok fe
 
 O estado fica em `docs/specs/<slug>/STATE.md`:
 
-```yaml
+```yaml title="docs/specs/<slug>/STATE.md"
 ---
 feature: ai-view
 phase: none

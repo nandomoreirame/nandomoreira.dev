@@ -13,6 +13,25 @@ markers:
 cover:
   src: ../../assets/posts/2026/stats-ao-vivo.webp
   alt: "A aba Ao vivo do stats no terminal, com dados fictícios do modo de demonstração: sete cards com números grandes (pessoas hoje, páginas vistas, agentes, robôs, cliques no /go, leads e tools MCP) e abaixo o feed de eventos com hora, classe, visitante, página, canal e cidade, com um clique de saída para o e-mail destacado em âmbar"
+extras:
+  - "0 script no navegador, 1 pixel de 1×1"
+  - "Astro · Firestore · TUI em Rust"
+keyPoints:
+  - "A contagem mora no middleware; as páginas pré-renderizadas usam um pixel /v.gif servido pelo próprio domínio."
+  - "Um código diário feito de IP, navegador e chave secreta liga as páginas da visita sem cookie e sem gravar o IP."
+  - "As visitas ficam 30 dias no Firestore e são lidas no terminal por uma TUI em Rust com quatro abas."
+snapshot:
+  items:
+    - label: Framework
+      value: Astro
+    - label: Banco
+      value: Firestore
+    - label: Leitor
+      value: TUI em Rust
+    - label: Interface
+      value: ratatui
+    - label: Hosting
+      value: Firebase App Hosting
 ---
 
 Abri o `stats` no terminal, apertei `r` para atualizar a cada 5 segundos e fui navegar pelo site no celular. `/now`, `/sobre`, `/contato`, `/mcp`: cada página aparecia no painel poucos segundos depois. Era exatamente o que eu queria ver funcionando, e era exatamente o que não devia aparecer, porque aquele celular estava marcado para não ser contado.

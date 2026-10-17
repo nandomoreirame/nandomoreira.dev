@@ -10,6 +10,25 @@ markers:
   - astro
   - mcp
   - ia
+extras:
+  - "5 tools MCP, 7 portões automatizados"
+  - "Astro 7 · App Hosting · MCP"
+keyPoints:
+  - "Um servidor MCP com cinco tools deixa um agente consultar perfil, cases e currículo sem adivinhar o HTML."
+  - "Toda página tem versão .md e /ia, ligadas por uma tabela única; caminho fora dela responde 404."
+  - "Sete portões transformam em teste regras que só existiam em documento, e cada um foi visto vermelho antes de valer."
+snapshot:
+  items:
+    - label: Framework
+      value: Astro 7
+    - label: Hosting
+      value: Firebase App Hosting
+    - label: Protocolo
+      value: MCP
+    - label: Adapter
+      value: "@astrojs/node"
+    - label: Portões
+      value: sete portões
 ---
 
 Casa de ferreiro, espeto de pau. Eu trabalho com engenharia de IA e desenvolvimento de software, e o meu site não conversava com IA nenhuma. Era uma página que vendia "desenvolvedor web full-stack" para quem abrisse, e para um agente fazendo triagem era só HTML para raspar e adivinhar.

@@ -10,6 +10,26 @@ markers:
   - linux
   - noctalia
   - produtividade
+extras:
+  - "4 plugins, 627+ testes, 0 código à mão"
+  - "Noctalia 4.7.7 · QML · Vitest"
+keyPoints:
+  - "Daybar, AI Bar, Gistbar e Desktop Sticky Notes trazem para a barra o que me fazia trocar de app."
+  - "A lógica fica em funções JavaScript puras testadas com Vitest; o QML é só a tela."
+  - "O que mais voltou foi a interface: 19 commits de ajuste visual, que viraram um kit de componentes."
+snapshot:
+  version: "4.7.7"
+  items:
+    - label: OS
+      value: CachyOS
+    - label: Compositor
+      value: Niri
+    - label: Shell
+      value: Noctalia
+    - label: Interface
+      value: QML
+    - label: Testes
+      value: Vitest
 ---
 
 Eu uso muito o teclado. O meu `config.kdl` do Niri tem mais de 140 linhas de atalho: abro os apps que mais uso direto pela tecla, e o que não tem atalho próprio vai pelo launcher do Noctalia (`Ctrl+Space`). Obsidian, WhatsApp e YouTube Music ficam em scratchpads, janelas que aparecem e somem com um atalho sem ocupar uma coluna. A barra é a outra metade: fica sempre à vista, então o que eu consultava várias vezes por dia fazia sentido estar ali, a um atalho ou a um clique.
@@ -90,7 +110,7 @@ A v0.3.0 do Daybar, a do timer e do relógio destacado, foi mais 42 commits, das
 
 Um plugin do Noctalia é uma pasta com um `manifest.json` e alguns arquivos QML. Este é o manifesto inteiro do Gistbar:
 
-```json
+```json title="manifest.json"
 {
   "id": "gistbar",
   "name": "Gistbar",

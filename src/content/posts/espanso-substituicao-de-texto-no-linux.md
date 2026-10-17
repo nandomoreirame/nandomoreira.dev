@@ -10,6 +10,26 @@ markers:
   - produtividade
   - wayland
 art: gists
+extras:
+  - "41 atalhos do iPhone migrados para YAML"
+  - "espanso 2.4.1 · Wayland · Niri"
+keyPoints:
+  - "No Wayland o espanso lê o teclado por evdev e precisa de setcap; sem ele, roda sem ver nenhuma tecla."
+  - "O primeiro start sai com código 0 e o daemon parado: quem diz se subiu é o espanso status."
+  - "No us-intl as aspas são teclas mortas, então o texto entra pela área de transferência para não chegar estragado."
+snapshot:
+  version: "2.4.1"
+  items:
+    - label: OS
+      value: CachyOS
+    - label: Compositor
+      value: Niri
+    - label: Linguagem
+      value: Rust
+    - label: Sessão
+      value: Wayland
+    - label: Pacote
+      value: espanso-wayland
 ---
 
 No iPhone eu digito `vc` e sai "você", digito `.email` e sai meu e-mail inteiro. Usei o macOS por alguns anos com a mesma "Substituição de texto" configurada, e a lista cresceu junto: endereço, CNPJ, link do WhatsApp, `(╯°□°)╯︵ ┻━┻` para os dias difíceis. No CachyOS, isso não existia, e fazia falta.
@@ -104,7 +124,7 @@ Clicar na janela resolve do mesmo jeito. O arquivo é para quando a instalação
 
 Esta é a minha `config/default.yml`, com o porquê de cada linha:
 
-```yaml
+```yaml title="config/default.yml"
 keyboard_layout:
   layout: "us,br"
   variant: "intl,"
@@ -142,7 +162,7 @@ Os atalhos sem ponto, como `vc` e `tbm`, pedem a palavra inteira (`word: true`),
     propagate_case: true
 ```
 
-![O arquivo abbrev.yml aberto no VS Code, com os atalhos hj, tbm, tbom e td, cada um com word: true e propagate_case: true](../../assets/posts/2026/espanso-abbrev-yml.webp)
+![O arquivo abbrev.yml com os atalhos hj, tbm, tbom, td, tdb, vc, vcs e vdd, cada um com word: true e propagate_case: true](../../assets/posts/2026/espanso-abbrev-yml.webp)
 
 Uma coisa eu descobri testando, e conto porque vai acontecer com quem vem do iPhone. Lá a troca acontece quando você digita o espaço depois do atalho. Testei o `@@` depois de uma palavra e saiu `contato @nandomoreira.dev`, com um espaço sobrando. O espaço era meu: eu digitava achando que era ele que disparava a troca. No espanso, o atalho com ponto expande no instante em que você termina de digitar, sem esperar espaço nenhum. Só os de palavra inteira (`word: true`) esperam um separador, e esse separador fica no texto.
 
