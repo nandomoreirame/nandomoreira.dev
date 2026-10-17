@@ -1,0 +1,3 @@
+{"round": 1, "implementer": "grok", "reviewer": "claude", "identities": [], "open_count": 0}
+{"round": 2, "implementer": "grok", "reviewer": "claude", "identities": ["src/lib/newsletter/copy.ts:19"], "open_count": 1}
+{"round": 3, "implementer": "grok", "reviewer": "claude", "identities": [], "open_count": 0}
