@@ -262,13 +262,16 @@ arrasta uma biblioteca inteira junto.
 
 | Componente | Uso | Variantes | Observação |
 |------------|-----|-----------|------------|
-| `Button` | CTA, download | primary, secondary, ghost | Alvo de toque mínimo 44px |
+| `Button` | CTA, download | primary, secondary, ghost | Alvo de toque mínimo 44px; `primary` acende o halo `--shadow-glow` no hover (único brilho do sistema); `arrow` põe uma seta que avança no hover |
 | `ProjectCard` | Item do catálogo | com imagem, sem imagem | Fallback determinístico quando não há imagem |
 | `TechBadge` | Tecnologia no card | — | Sempre com rótulo textual, nunca só cor |
 | `SectionHeader` | Título de seção | — | Numeração opcional no estilo terminal |
 | `CodeBlock` | Endpoint, payload de exemplo | — | Monoespaçado, com rótulo de linguagem |
 | `StatItem` | Número da trajetória | — | Número mais contexto; nunca número solto |
 | `Prose` | Corpo do case | — | Medida de linha limitada |
+| `Card` | Superfície elevada (camada 1) | `interactive` | `surface` com fio `border`; interativo sobe o fio para `border-strong` no hover. Sem sombra |
+| `TerminalWindow` | Janela de terminal (camada 2) | — | Barra com três pontos, nome do arquivo e slot `actions`; corpo em `background` |
+| `StatusDot` | Ponto de disponibilidade | status | Cor do status por `currentColor`; pulsa só enquanto disponível |
 
 ### Tags globais são estilizadas no CSS, não na marcação
 
