@@ -2,13 +2,13 @@
 import Button from '../components/ui/Button.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
+import UpdatedAt from '../components/ui/UpdatedAt.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import {
   POLICY_LEAD,
   POLICY_UPDATED_AT,
-  formatPolicyDate,
   privacySections,
 } from '../lib/privacy/policy';
 
@@ -23,9 +23,7 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader eyebrow="Privacidade" title="Política de privacidade" description={POLICY_LEAD} />
 
-    <p class="font-mono text-small text-muted-foreground">
-      Atualizada em <time datetime={POLICY_UPDATED_AT}>{formatPolicyDate(POLICY_UPDATED_AT)}</time>.
-    </p>
+    <UpdatedAt date={POLICY_UPDATED_AT} />
 
     <Prose>
       {

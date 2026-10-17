@@ -5,8 +5,9 @@ import NowGames from '../components/now/NowGames.astro';
 import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
 import Alert from '../components/ui/Alert.astro';
+import Card from '../components/ui/Card.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
-import Prose from '../components/ui/Prose.astro';
+import UpdatedAt from '../components/ui/UpdatedAt.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllProjects, getProfile } from '../lib/content';
@@ -28,12 +29,10 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader eyebrow="Agora" title="O que estou fazendo agora" description={NOW_LEAD} />
 
-    <p class="font-mono text-small text-muted-foreground">
-      Atualizada em <time datetime={NOW_UPDATED_AT}>{formatPolicyDate(NOW_UPDATED_AT)}</time>.
-    </p>
+    <UpdatedAt date={NOW_UPDATED_AT} />
 
-    <Prose>
-      <NowSection id="foco" title="Foco">
+    <NowSection id="foco" title="Foco" step={1}>
+      <Card>
         <ul>
           {data.focus.items.map((item) => <li>{item}</li>)}
         </ul>
@@ -42,9 +41,10 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
           {data.focus.declining.map((item) => <li>{item}</li>)}
         </ul>
         <Alert title="Disponibilidade">{data.focus.availability}</Alert>
-      </NowSection>
+      </Card>
+    </NowSection>
 
-      <NowSection id="projetos" title="Projetos em andamento">
+    <NowSection id="projetos" title="Projetos em andamento" step={2}>
         {
           data.projects.state === 'empty' ? (
             <p class="text-muted-foreground">Sem dados no momento.</p>
@@ -63,9 +63,9 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             </ul>
           )
         }
-      </NowSection>
+    </NowSection>
 
-      <NowSection id="escrevendo" title="Escrevendo">
+    <NowSection id="escrevendo" title="Escrevendo" step={3}>
         <ul>
           {
             data.writing.latest && (
@@ -76,9 +76,9 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
           }
           {data.writing.drafts.map((title) => <li>{title}</li>)}
         </ul>
-      </NowSection>
+    </NowSection>
 
-      <NowSection id="estudando" title="Estudando">
+    <NowSection id="estudando" title="Estudando" step={4}>
         <ul>
           {
             data.studying.map((study) => (
@@ -88,15 +88,22 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
             ))
           }
         </ul>
-      </NowSection>
-    </Prose>
+    </NowSection>
 
-    <NowSection id="ouvindo" title="Ouvindo">
+    <NowSection id="ouvindo" title="Ouvindo" step={5} prose={false}>
       <NowMusic music={data.music} />
     </NowSection>
 
-    <NowSection id="jogando" title="Jogando">
+    <NowSection id="jogando" title="Jogando" step={6} prose={false}>
       <NowGames games={data.games} />
     </NowSection>
+
+    <Card as="aside" class="flex flex-col gap-sm">
+      <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">O que é uma página Agora?</h2>
+      <p class="text-body text-muted-foreground">
+        Uma página Agora diz no que a pessoa está focada neste momento, e não tudo o que já fez. A ideia é do Derek
+        Sivers, e o <a href="https://nownownow.com" target="_blank" rel="nofollow noopener noreferrer" class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">nownownow.com</a> reúne as que existem.
+      </p>
+    </Card>
   </article>
 </BaseLayout>

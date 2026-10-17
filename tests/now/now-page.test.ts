@@ -22,7 +22,13 @@ const render = async (page: typeof NowPage) => {
 const visibleText = (html: string): string => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
 
 const headings = (html: string): string[] =>
-  [...html.matchAll(/<h2\b[^>]*>(.*?)<\/h2>/g)].map((match) => match[1] ?? '');
+  [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((match) =>
+    (match[1] ?? '')
+      .replace(/<span[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/g, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
 
 describe('/now page', () => {
   beforeEach(() => {
@@ -131,6 +137,7 @@ describe('/now page', () => {
       'Estudando',
       'Ouvindo',
       'Jogando',
+      'O que é uma página Agora?',
     ]);
     expect(html).toContain('Atualizada em');
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
@@ -215,14 +222,16 @@ describe('/now page', () => {
 });
 
 describe('/now section headings', () => {
-  // Ouvindo and Jogando sit outside Prose, which is what sized the h2 before.
+  // Numbered sections take their size from SectionHeader (text-h3). The closing
+  // note is an eyebrow, not a seventh section.
   it('styles every section h2 itself, inside or outside Prose', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     const container = await AstroContainer.create();
     const html = await container.renderToString(NowPage);
     vi.unstubAllGlobals();
     const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map((match) => match[0]);
-    expect(h2s).toHaveLength(6);
-    for (const tag of h2s) expect(tag).toContain('text-h2');
+    expect(h2s).toHaveLength(7);
+    for (const tag of h2s.slice(0, 6)) expect(tag).toContain('text-h3');
+    expect(h2s[6]).toContain('tracking-eyebrow');
   });
 });

@@ -5,12 +5,20 @@
  * strong token on hover; the hairline alone never delimits a target.
  */
 interface Props {
-  as?: 'div' | 'li' | 'article' | 'section';
+  as?: 'div' | 'li' | 'article' | 'section' | 'aside';
   interactive?: boolean;
   class?: string;
+  'aria-labelledby'?: string;
+  'aria-label'?: string;
 }
 
-const { as: Tag = 'div', interactive = false, class: extra } = Astro.props;
+const {
+  as: Tag = 'div',
+  interactive = false,
+  class: extra,
+  'aria-labelledby': ariaLabelledby,
+  'aria-label': ariaLabel,
+} = Astro.props;
 
 const classes = [
   'rounded-md border border-border bg-surface p-lg',
@@ -23,4 +31,4 @@ const classes = [
   .join(' ');
 ---
 
-<Tag class={classes}><slot /></Tag>
+<Tag class={classes} aria-labelledby={ariaLabelledby} aria-label={ariaLabel}><slot /></Tag>

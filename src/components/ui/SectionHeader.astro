@@ -5,19 +5,25 @@ interface Props {
   count?: number;
   description?: string;
   index?: number;
+  /** Shows "01 //" before the title and sets it in the sans, as on the Stitch Setup and Now screens. */
+  step?: number;
   id?: string;
 }
 
-const { title, level = 2, count, description, id } = Astro.props;
+const { title, level = 2, count, description, step, id } = Astro.props;
 const Heading = `h${level}` as 'h2' | 'h3';
+const numbered = typeof step === 'number';
+const headingClass = numbered
+  ? 'flex items-baseline gap-sm text-h3 font-medium text-foreground'
+  : 'font-mono text-small uppercase tracking-eyebrow text-muted-foreground';
 ---
 
 <header class="mb-xl">
   <div class="flex items-baseline justify-between border-b border-border pb-sm">
-    <Heading
-      id={id}
-      class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
-    >
+    <Heading id={id} class={headingClass}>
+      {numbered && (
+        <span aria-hidden="true" class="font-mono text-small text-primary">{String(step).padStart(2, '0')} //</span>
+      )}
       {title}
     </Heading>
     {typeof count === 'number' && (

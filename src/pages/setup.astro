@@ -1,10 +1,11 @@
 ---
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import UpdatedAt from '../components/ui/UpdatedAt.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
-import { formatPolicyDate } from '../lib/privacy/policy';
 import { SETUP_LEAD, SETUP_SECTIONS, SETUP_UPDATED_AT } from '../lib/setup/setup';
 
 const profile = await getProfile();
@@ -17,15 +18,13 @@ const profile = await getProfile();
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader eyebrow="Setup" title="O que eu uso" description={SETUP_LEAD} />
 
-    <p class="font-mono text-small text-muted-foreground">
-      Atualizada em <time datetime={SETUP_UPDATED_AT}>{formatPolicyDate(SETUP_UPDATED_AT)}</time>.
-    </p>
+    <UpdatedAt date={SETUP_UPDATED_AT} />
 
-    <Prose>
-      {
-        SETUP_SECTIONS.map((section) => (
-          <section aria-labelledby={section.id}>
-            <h2 id={section.id}>{section.title}</h2>
+    {
+      SETUP_SECTIONS.map((section, index) => (
+        <section aria-labelledby={section.id}>
+          <SectionHeader id={section.id} title={section.title} step={index + 1} />
+          <Prose>
             {section.intro && <p>{section.intro}</p>}
             <ul>
               {section.items.map((item) => (
@@ -68,9 +67,9 @@ const profile = await getProfile();
                 .
               </p>
             )}
-          </section>
-        ))
-      }
-    </Prose>
+          </Prose>
+        </section>
+      ))
+    }
   </article>
 </BaseLayout>

@@ -1,0 +1,16 @@
+---
+import { Icon } from 'astro-icon/components';
+import { formatPolicyDate } from '../../lib/privacy/policy';
+
+interface Props {
+  /** ISO date, YYYY-MM-DD. */
+  date: string;
+}
+
+const { date } = Astro.props;
+---
+
+<p class="flex items-center gap-sm border-l-2 border-primary pl-md font-mono text-small text-muted-foreground">
+  <Icon name="lucide:clock" aria-hidden="true" class="size-4 shrink-0" />
+  <span>Atualizada em <time datetime={date}>{formatPolicyDate(date)}</time>.</span>
+</p>

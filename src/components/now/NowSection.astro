@@ -1,14 +1,19 @@
 ---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Prose from '../ui/Prose.astro';
+
 interface Props {
   id: string;
   title: string;
+  step: number;
+  /** Wraps the body in Prose; off for the media sections that bring their own layout. */
+  prose?: boolean;
 }
 
-const { id, title } = Astro.props;
+const { id, title, step, prose = true } = Astro.props;
 ---
 
-<section aria-labelledby={id} class="flex flex-col gap-md">
-  {/* Sized here, not by Prose: Ouvindo and Jogando render outside it. Same scale as Prose's h2. */}
-  <h2 id={id} class="font-serif text-h2 font-semibold leading-tight text-balance">{title}</h2>
-  <slot />
+<section aria-labelledby={id} class="flex flex-col">
+  <SectionHeader id={id} title={title} step={step} />
+  {prose ? <Prose><slot /></Prose> : <slot />}
 </section>
