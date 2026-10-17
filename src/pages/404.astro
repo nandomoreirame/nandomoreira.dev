@@ -1,5 +1,7 @@
 ---
-import PageHeader from '../components/ui/PageHeader.astro';
+import Button from '../components/ui/Button.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
+import TerminalWindow from '../components/ui/TerminalWindow.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
@@ -7,6 +9,9 @@ import { getProfile } from '../lib/content';
 Astro.response.status = 404;
 
 const authorName = displayNameOf(await getProfile());
+// The requested path is caller-controlled: Astro escapes it, and the cap keeps a long probe from stretching the page.
+const requested = Astro.url.pathname.slice(0, 200);
+const curl = `$ curl -I https://nandomoreira.dev${requested}\nHTTP/2 404 Not Found`;
 ---
 
 <BaseLayout
@@ -14,10 +19,24 @@ const authorName = displayNameOf(await getProfile());
   description="A página solicitada não existe."
   noindex
 >
-  <PageHeader
-    eyebrow="Erro 404"
-    title="Página não encontrada"
-    description="O endereço acessado não corresponde a nenhuma página deste site."
-  />
-  <a href="/portfolio" class="text-body text-primary underline">Ver o portfólio</a>
+  <section class="mx-auto my-3xl flex w-full max-w-list flex-col items-center gap-lg text-center">
+    <p aria-hidden="true" class="not-found-code font-serif leading-none text-primary">404</p>
+    <p class="inline-flex items-center gap-sm rounded-full border border-primary px-md py-xs font-mono text-caption uppercase tracking-wide text-primary">
+      <span aria-hidden="true" class="inline-block size-2 rounded-full bg-current"></span>
+      STATUS: 404 NOT_FOUND
+    </p>
+    <h1 class="font-serif text-h1 font-normal tracking-tight text-foreground">Página não encontrada</h1>
+    <p class="max-w-[60ch] text-body text-muted-foreground">O endereço acessado não corresponde a nenhuma página deste site.</p>
+
+    <TerminalWindow filename="curl" class="w-full text-left">
+      <CopyButton slot="actions" target="not-found-curl" label="Copiar o comando curl" iconOnly />
+      <pre class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-muted-foreground"><code id="not-found-curl">{curl}</code></pre>
+    </TerminalWindow>
+
+    <div class="flex flex-wrap items-center justify-center gap-md border-t border-border pt-lg">
+      <Button href="/" variant="primary" arrow>Voltar para a home</Button>
+      <Button href="/portfolio" variant="secondary">Explorar portfólio</Button>
+      <a href="/lab" class="inline-flex min-h-11 items-center font-mono text-small text-muted-foreground underline transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver laboratório</a>
+    </div>
+  </section>
 </BaseLayout>
