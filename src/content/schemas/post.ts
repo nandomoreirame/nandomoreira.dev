@@ -56,6 +56,26 @@ export const postSchema = ({ image }: SchemaContext) =>
        * author per post; absent means no line.
        */
       extras: z.array(z.string().min(1).max(60)).min(1).max(2).optional(),
+      /**
+       * Up to three short takeaways for the "Preview rápido" of the home card
+       * (home-latest-post REQ-005). Written by the author per post; absent
+       * means the card has no preview.
+       */
+      keyPoints: z.array(z.string().min(1).max(140)).min(1).max(3).optional(),
+      /**
+       * The "// stack snapshot" card beside the post index (post-detail-redesign
+       * REQ-004): what the post ran on, taken from its own text. Absent means
+       * no card.
+       */
+      snapshot: z
+        .object({
+          version: z.string().min(1).max(16).optional(),
+          items: z
+            .array(z.object({ label: z.string().min(1).max(20), value: z.string().min(1).max(32) }))
+            .min(1)
+            .max(6),
+        })
+        .optional(),
     })
     .refine((post) => !post.publishedAt || post.publishedAt.slice(0, 10) === post.date, {
       message: 'publishedAt must fall on the post date',
