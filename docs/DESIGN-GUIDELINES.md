@@ -265,13 +265,17 @@ arrasta uma biblioteca inteira junto.
 | `Button` | CTA, download | primary, secondary, ghost | Alvo de toque mínimo 44px; `primary` acende o halo `--shadow-glow` no hover (único brilho do sistema); `arrow` põe uma seta que avança no hover |
 | `ProjectCard` | Item do catálogo | com imagem, sem imagem | Fallback determinístico quando não há imagem |
 | `TechBadge` | Tecnologia no card | — | Sempre com rótulo textual, nunca só cor |
-| `SectionHeader` | Título de seção | — | Numeração opcional no estilo terminal |
+| `SectionHeader` | Título de seção | `step` | Com `step`, mostra `01 //` em mono no acento (oculto de leitor de tela) e o título em Inter (`text-h3`); sem `step`, continua o eyebrow, inclusive na home, que passa `index` |
 | `CodeBlock` | Endpoint, payload de exemplo | — | Monoespaçado, com rótulo de linguagem |
 | `StatItem` | Número da trajetória | — | Número em Newsreader (`text-h1`, acento), mais rótulo e contexto; nunca número solto |
 | `Prose` | Corpo do case | — | Medida de linha limitada |
 | `Card` | Superfície elevada (camada 1) | `interactive` | `surface` com fio `border`; interativo sobe o fio para `border-strong` no hover. Sem sombra |
-| `TerminalWindow` | Janela de terminal (camada 2) | — | Barra com três pontos, nome do arquivo e slot `actions`; corpo em `background` |
+| `TerminalWindow` | Janela de terminal (camada 2) | — | Barra com três pontos, nome do arquivo e slot `actions`; corpo em `background`. O brief AGENTS.md dentro dela tem realce feito no servidor (`highlightBrief`): título, chaves e rótulos no acento, método HTTP em `success`, strings em `foreground`, o resto em `muted-foreground`; o texto copiado não muda |
 | `StatusDot` | Ponto de disponibilidade | status | Cor do status por `currentColor`; pulsa só enquanto disponível |
+| `PostRow` | Linha do blog e do arquivo por ano | rascunho, `extras` | A linha inteira é o link, sem seta. Meta em mono (chip "Rascunho", data, tempo de leitura), até três marcadores, título em Newsreader 400 que fica âmbar no hover, resumo inteiro. `extras` (uma ou duas linhas) aparece abaixo, a primeira no acento. A home continua com `ListRow` |
+| `UpdatedAt` | Faixa "Atualizada em" | — | Mono, ícone de relógio e fio âmbar à esquerda. Setup, Agora e Privacidade |
+| `SectionRule` | Fio entre seções da home | — | Hairline `border` de ponta a ponta, decorativo (`aria-hidden`), depois do hero |
+| `ClosingCta` | Fecho de Portfólio e Lab | `portfolio`, `lab` | `Card` com eyebrow mono, título em Newsreader e um `Button` primário com seta para `/contato` |
 
 ### Tags globais são estilizadas no CSS, não na marcação
 
@@ -393,6 +397,16 @@ O valor é Newsreader 400 no acento (`StatItem`); o rótulo é semibold e o
 contexto continua obrigatório. Os serviços levam um ícone Lucide de 20px numa
 caixa de 32px (camadas, fluxo, terminal), escolhido pelo slug do case que
 comprova a frente. O link "Ver o case que comprova" é o mesmo nos três cards.
+
+**Páginas internas (Terminal Noir, 2026-10-17).** O visual das telas internas do Stitch, com o conteúdo que o site já tinha:
+
+- **Setup e Agora** numeram as seções com `SectionHeader` (`step`). O corpo fica no `Prose`; o cabeçalho fica fora dele. Em Agora, "Foco" fica num `Card`, e a página fecha com o card "O que é uma página Agora?" apontando para o nownownow.com.
+- **Sobre** traz o título em Newsreader 400, a experiência como linha do tempo (fio vertical, marcador por cargo, o cargo sem data de fim no acento, período num chip mono) e os resultados em `Card`.
+- **Contato** em duas colunas a partir de `lg`: o formulário à esquerda, num `Card`, com a disponibilidade do perfil; à direita, o brief em `TerminalWindow` (`AgentBrief` `panel`, sem a coluna do pitch) e um card MCP com a URL do servidor e Copiar. Abaixo de `lg`, o formulário vem primeiro.
+- **Blog e arquivo** usam `PostRow`. O índice mostra o RSS e a contagem de artigos publicados. O tempo de leitura vem da camada de acesso (200 palavras por minuto, mínimo 1).
+- **Post e case** usam o `h1` em Newsreader 400. Case com `liveUrl` mostra "No ar" e o domínio na listagem.
+- **Portfólio e Lab** fecham com `ClosingCta`.
+- **Home** separa as seções depois do hero com `SectionRule`.
 
 ### Cabeçalho e rodapé (Terminal Noir, 2026-10-16)
 

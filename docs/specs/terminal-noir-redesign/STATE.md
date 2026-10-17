@@ -18,6 +18,7 @@ decisions:
 blockers: []
 transitions:
   - "2026-10-16: research, leitura do Stitch via MCP e comparação com a home em produção"
+  - "2026-10-17: fase 7, páginas internas (terminal-noir-pages) implementadas"
 ---
 
 # Estado: terminal-noir-redesign
@@ -50,8 +51,8 @@ Contraste sobre `#0B0B0C` (surface-base do Stitch):
 | 3b. Hero | Só a coluna de texto: título em serifa 400, lead de 18px (`--text-lead`), CTA primário com seta e halo, "Dizer olá" com borda, linha de stack (os cinco primeiros de `profile.stack`) | home | feita em 2026-10-17, `npm run verify` verde; localização fora (o perfil não tem o campo) |
 | 4. Linhas | Conteúdo em 1104px (igual à moldura), coluna de lista de 848px, marcadores em chips, seta em ícone, `TechBadge` menor, "Ver todos" em mono; arte dos cases mantida | blog, portfólio, lab | feita em 2026-10-17, `npm run verify` verde |
 | 5. Cards | Trajetória 3x2 com números em Newsreader; Serviços com ícone e link uniforme | home | feita em 2026-10-17; ícone também em `/sobre`, porque `ServiceCards` e `StatItem` são compartilhados |
-| 6. AGENTS.md | Janela de terminal com realce no servidor e Copiar do script existente | home | a planejar |
-| 7. Propagação | Post, case, /now, /setup, arquivos e /ia com os tokens novos; paletas do modo leitura | site inteiro | a planejar |
+| 6. AGENTS.md | Janela de terminal com realce no servidor (`src/lib/aeo/brief-highlight.ts`) e Copiar do script existente; título em Newsreader 400 | home e /contato | feita em 2026-10-17, `npm run verify` verde |
+| 7. Propagação | Páginas internas no visual do Stitch: Setup, Agora, Sobre, Contato, blog, portfólio, lab, post e case (`terminal-noir-pages`) | site inteiro | feita em 2026-10-17 |
 | 8. Verificação | Comparação com o Stitch em 1280 e 390px; `npm run verify` | site inteiro | a planejar |
 
 ## Telas lidas em 2026-10-16 (segunda leitura)
