@@ -2,13 +2,32 @@
 slug: o-fone-mudo-e-o-jack-p2-no-pipewire
 title: "O fone mudo por 78 dias: um script que segue o jack P2 no PipeWire"
 summary: "No meu notebook, fone e alto-falante moram em perfis diferentes da placa de som, e o WirePlumber nunca troca sozinho. O conserto de março era justamente o que travava o fone. Hoje um vigia de 164 linhas escuta o conector e decide o perfil por mim."
-date: "2026-10-11"
+date: "2026-10-09"
+publishedAt: "2026-10-09T09:00:00-03:00"
 markers:
   - linux
   - pipewire
   - shell
 art: wave
-draft: true
+extras:
+  - "78 dias de fone mudo, 164 linhas de vigia"
+  - "PipeWire · WirePlumber · bats"
+keyPoints:
+  - "Fone e alto-falante ficam em perfis diferentes da placa, e o WirePlumber não troca de perfil quando o jack muda."
+  - "Escolher o perfil na mão grava a escolha, e o WirePlumber para de trocar sozinho: foi isso que deixou o fone mudo."
+  - "O vigia escuta o alsactl monitor, compara o jack com o perfil ativo e só troca quando os dois divergem."
+snapshot:
+  items:
+    - label: "Notebook"
+      value: "Dell Latitude 3450"
+    - label: "Codec"
+      value: "Realtek ALC3204"
+    - label: "Áudio"
+      value: "PipeWire"
+    - label: "Compositor"
+      value: "Niri"
+    - label: "Testes"
+      value: "bats"
 ---
 
 O fone de ouvido do meu notebook ficou sem som de 3 de junho a 20 de agosto de 2026. Foram 78 dias com a entrada P2 de um Dell Latitude 3450 sem saída nenhuma, e o comando que travou tudo era o mesmo que eu tinha guardado num script, em março, para consertar o áudio.
