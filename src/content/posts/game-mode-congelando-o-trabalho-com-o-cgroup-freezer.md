@@ -2,13 +2,32 @@
 slug: game-mode-congelando-o-trabalho-com-o-cgroup-freezer
 title: "game-mode: congelo o trabalho para jogar, sem fechar nenhuma janela"
 summary: "Um atalho no Niri congela o Chrome, o Slack e os terminais com o freezer do cgroup v2, apaga os monitores que sobram e liga o não perturbe. A Steam e a música continuam. Chegar nisso custou uma Steam pintada de preto e um modo jogo que nem o próprio comando desligava."
-date: "2026-10-15"
+date: "2026-10-17"
+publishedAt: "2026-10-17T20:07:22-03:00"
 markers:
   - linux
   - shell
   - niri
 art: windows
-draft: true
+extras:
+  - "Script de 309 linhas com o freezer do cgroup v2"
+  - "Niri · Noctalia · PipeWire"
+keyPoints:
+  - "Congela scope por scope em app.slice, não o slice inteiro, para o próprio atalho de saída não nascer congelado."
+  - "Steam, emuladores, o Noctalia e quem está tocando som no PipeWire ficam de fora do congelamento."
+  - "Abrir um app com o app.slice congelado pinta a janela de preto; por isso o script só congela e nunca abre o jogo."
+snapshot:
+  items:
+    - label: "OS"
+      value: "CachyOS"
+    - label: "Compositor"
+      value: "Niri"
+    - label: "Shell"
+      value: "Noctalia"
+    - label: "Freezer"
+      value: "cgroup v2"
+    - label: "Script"
+      value: "309 linhas"
 ---
 
 Quando eu aperto `Mod+Alt+G`, o Chrome, o Slack, os terminais e o resto do meu dia de trabalho param de usar CPU, mas continuam abertos exatamente onde estavam. Os monitores que eu não estou olhando apagam, o Noctalia liga o não perturbe e segura a tela acordada. A Steam, o RetroArch e a música seguem rodando. Aperto de novo e tudo volta, inclusive as abas.
