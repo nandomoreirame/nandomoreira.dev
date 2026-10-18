@@ -171,7 +171,7 @@ Alguns problemas só apareceram em produção:
 
 ## Como foi construído
 
-Com agentes, num fluxo de pesquisa, plano e implementação em que o Claude Code conduz, o Grok escreve e o Codex revisa. Contei como funciona em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex). Em números: mais de 300 commits, 16 specs, 16 planos e mais de 1.400 testes.
+Com agentes, num fluxo de pesquisa, plano e implementação em que o Claude Code conduz, o Grok escreve e o Codex revisa. Contei como funciona em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex). Em números: 16 specs, 16 planos e mais de 1.400 testes.
 
 ## Tendência ou demonstração
 

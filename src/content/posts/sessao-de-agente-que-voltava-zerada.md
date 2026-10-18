@@ -53,7 +53,7 @@ Na volta do cache, a tela só era limpa quando as dimensões mudavam. Só que o 
 
 ## A correção
 
-Saiu em dois commits na manhã de 31 de março e entrou na v1.9.3, de 1º de abril.
+Entrou na v1.9.3, de 1º de abril, e mexeu em dois lados.
 
 Do lado da sessão, o dispatcher ganhou um handler de saída permanente, que recebe o evento quando a aba não tem handler próprio:
 

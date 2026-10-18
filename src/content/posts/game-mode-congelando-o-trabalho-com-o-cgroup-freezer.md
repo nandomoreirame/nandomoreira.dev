@@ -107,7 +107,7 @@ O `game-mode` tem um irmão para o trabalho, o `focus-mode` (`Mod+Alt+F`), que f
 
 ## A Steam pintada de preto
 
-O `game-mode` que entrou no repositório em 6 de julho já era um toggle que não abre nada. As versões que abriam o jogo nunca chegaram a ser commitadas, e foram duas.
+A versão do `game-mode` que eu uso hoje já nasceu como um toggle que não abre nada. Antes dela houve duas que abriam o jogo, e nenhuma chegou ao repositório.
 
 A primeira era o script abrir o jogo. `game-mode on` lançaria a Steam no modo Big Picture e congelaria o resto. A Big Picture abriu com a tela inteira preta e um cursor gigante, de uns 60 pixels. O log da Steam entregava uma parte: `desktop: { size: 5176,1920 }`, a caixa que soma todos os meus monitores. Ela se posicionava fora da tela visível. Tentei isolar no `gamescope`, que resolve exatamente isso, e ele travou logo depois de `scriptmgr: Loading scripts`, sem nunca chegar no Vulkan. Apaguei os monitores extras antes de abrir: o cursor voltou ao normal, a janela continuou preta. Troquei a Big Picture pelo cliente comum da Steam: preto também.
 

@@ -16,7 +16,7 @@ extras:
 keyPoints:
   - "Daybar, AI Bar, Gistbar e Desktop Sticky Notes trazem para a barra o que me fazia trocar de app."
   - "A lógica fica em funções JavaScript puras testadas com Vitest; o QML é só a tela."
-  - "O que mais voltou foi a interface: 19 commits de ajuste visual, que viraram um kit de componentes."
+  - "O que mais voltou foi a interface: 19 correções de ajuste visual, que viraram um kit de componentes."
 snapshot:
   version: "4.7.7"
   items:
@@ -102,9 +102,9 @@ Todo acesso ao GitHub passa pelo `gh`, então o plugin nunca toca num token.
 
 Eu não escrevi o código desses plugins à mão. Todos saíram do mesmo fluxo que uso em qualquer projeto: pesquisa e spec no Claude Code (`/rpi:research`), plano com tarefas pequenas e teste antes do código (`/rpi:plan`), e implementação no Grok (`/rpi:implement`), com o Claude Code conferindo e commitando. Contei como funciona em [Fluxo RPI com três agentes](/fluxo-rpi-claude-code-grok-codex).
 
-O `git log` mostra o ritmo. O Daybar teve 107 commits num dia só, das 11h31 às 21h52, passando por três specs (o MVP, depois favoritos e notas, depois apagar evento do calendário). O AI Bar foi do primeiro ao último commit em cerca de uma hora e meia, e o Gistbar em menos de uma hora, os dois reaproveitando a base que o Daybar deixou.
+Foi rápido. O Daybar saiu num dia só, da manhã até a noite, passando por três specs (o MVP, depois favoritos e notas, depois apagar evento do calendário). O AI Bar ficou pronto em cerca de uma hora e meia, e o Gistbar em menos de uma hora, os dois reaproveitando a base que o Daybar deixou.
 
-A v0.3.0 do Daybar, a do timer e do relógio destacado, foi mais 42 commits, das 19h28 do dia 11 até a tag no começo da tarde do dia 12. Essa rodada saiu sem dois dos três agentes: o Grok respondeu `402 Payment Required: Grok Build usage balance exhausted` já na primeira tarefa, e o Codex bateu o limite de uso. O fluxo prevê isso (cada etapa cai para o Claude Code quando a ferramenta não responde), então ele implementou e revisou tudo sozinho.
+A v0.3.0 do Daybar, a do timer e do relógio destacado, levou uma noite e uma manhã. Essa rodada saiu sem dois dos três agentes: o Grok respondeu `402 Payment Required: Grok Build usage balance exhausted` já na primeira tarefa, e o Codex bateu o limite de uso. O fluxo prevê isso (cada etapa cai para o Claude Code quando a ferramenta não responde), então ele implementou e revisou tudo sozinho.
 
 ## O que um plugin precisa
 
@@ -143,9 +143,9 @@ Se isso é simples, eu não sei dizer: escrevi tudo com IA e não tenho com o qu
 
 ## O que mais deu trabalho foi a interface
 
-O código funcionava. O que voltava toda hora era a UI dos painéis da barra: sempre tinha alguma inconsistência que eu precisava corrigir até ficar visualmente aceitável. Somando os quatro repositórios, foram 19 commits só de ajuste visual e de correção de interface, 11 deles no Daybar.
+O código funcionava. O que voltava toda hora era a UI dos painéis da barra: sempre tinha alguma inconsistência que eu precisava corrigir até ficar visualmente aceitável. Somando os quatro plugins, foram 19 correções só de ajuste visual e de interface, 11 delas no Daybar.
 
-Os títulos contam a história: "show a pointer cursor on note and bookmark rows", "dim and italicize the empty-day message", "center the timer, controls and task picker", "keep lists stable while a delete bubble is open and reachable by Tab". Nenhum deles é bug de lógica. É o tipo de detalhe que a IA não vê, porque ela não olha a tela (quem olha sou eu).
+As correções eram deste tipo: cursor de ponteiro nas linhas de nota e de favorito, a mensagem de dia vazio mais apagada e em itálico, timer e controles centralizados, listas que não pulam enquanto a confirmação de apagar está aberta e alcançável pelo Tab. Nenhum deles é bug de lógica. É o tipo de detalhe que a IA não vê, porque ela não olha a tela (quem olha sou eu).
 
 A saída foi juntar esses acertos num kit de componentes (`components/ui/`: card, chip, campo, linha de lista, botão com confirmação, estado vazio) dentro do Daybar. Como o Noctalia não tem um jeito de um plugin importar componentes de outro, o kit foi copiado para o AI Bar e para o Gistbar, e foi por isso que os dois já nasceram com a aparência certa e saíram em uma tarde.
 
