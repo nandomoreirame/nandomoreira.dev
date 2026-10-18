@@ -36,7 +36,6 @@ export const MORE_WORK: readonly PastWork[] = [
   { slug: 'coletivo-inclusao', name: 'Coletivo Inclusão', kind: 'Site institucional', alt: 'Página inicial do Coletivo Inclusão, organização social' },
   { slug: 'canto-das-emocoes', name: 'Canto das Emoções', kind: 'Site de produto educativo', alt: 'Página do Canto das Emoções, recurso lúdico para educação infantil' },
   { slug: 'puruna-investimentos', name: 'Puruna Investimentos', kind: 'Site institucional', alt: 'Página inicial da Puruna Investimentos' },
-  { slug: 'gatman-corp', name: 'Gatman Corp', kind: 'Site corporativo', alt: 'Página inicial do site corporativo da Gatman Corp' },
   { slug: 'agenda-rio-2030', name: 'Agenda Rio 2030', kind: 'Portal', alt: 'Portal da Agenda Rio 2030, da Casa Fluminense' },
   { slug: 'php-pr', name: 'PHP PR', kind: 'Portal de comunidade', alt: 'Portal da comunidade PHP do Paraná, com artigos e avisos' },
   { slug: 'ogg-digital', name: 'OGG Digital', kind: 'Site de agência', alt: 'Página inicial da agência OGG Digital' },

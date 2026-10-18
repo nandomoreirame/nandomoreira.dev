@@ -17,11 +17,17 @@ describe('TESTIMONIALS', () => {
 
 describe('MORE_WORK', () => {
   it('lists only client work, each with a real image', () => {
-    expect(MORE_WORK.length).toBe(10);
+    expect(MORE_WORK.length).toBe(9);
+    expect(MORE_WORK.map((work) => work.slug)).not.toContain('gatman-corp');
     for (const work of MORE_WORK) {
       expect(existsSync(`public/servicos/trabalhos/${work.slug}.webp`), work.slug).toBe(true);
       expect(work.alt.length, work.slug).toBeGreaterThan(10);
     }
+  });
+
+  it('ships no image for a work that left the gallery', () => {
+    expect(existsSync('public/servicos/trabalhos/gatman-corp.webp')).toBe(false);
+    expect(existsSync('public/servicos/trabalhos/gatman-corp-ampliada.webp')).toBe(false);
   });
 
   it('links nothing: the gallery is a sample, not a list of live sites', () => {
