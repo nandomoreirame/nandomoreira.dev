@@ -1,7 +1,7 @@
 ---
 slug: scripts-que-automatizam-meu-linux
-title: "Os scripts que automatizam meu Linux: um compilado pra você roubar ideias"
-summary: "Áudio que troca sozinho, notificação que some quando eu entro em call, backup que roda sem eu lembrar. Um passeio pelos scripts do meu dotfiles, sem entrar em detalhe, pra servir de inspiração."
+title: "Automatize os seus próprios problemas: um guia com os scripts que rodam no meu Linux"
+summary: "Como achar o que vale automatizar, escrever a versão mais simples que funciona, escolher entre shell, Python e Rust e fazer o script rodar sem você. Com os scripts do meu dotfiles como exemplo e uma lista de ideias pra roubar."
 date: "2026-10-17"
 markers:
   - linux
@@ -10,88 +10,161 @@ markers:
 draft: true
 ---
 
-Quando eu entro numa call, as notificações somem e a tela para de apagar. Quando eu tiro o fone do notebook, o som volta pro alto-falante. Quando eu ligo o notebook na tomada, o perfil de energia vai pra performance. Eu não aperto nada disso: são scripts do meu dotfiles rodando em segundo plano.
+Quando eu entro numa call, as notificações somem e a tela para de apagar. Quando acaba, volta tudo. Eu não aperto nada: um script de 58 linhas olha o microfone a cada poucos segundos e faz isso por mim.
 
-Este post é uma vitrine, sem tutorial de cada um. Alguns já ganharam post próprio (o link está no item), os outros cabem em uma ou duas frases. A ideia é você bater o olho e pensar "isso eu também faço na mão toda semana". **Se você digita a mesma coisa duas vezes por semana, ela merece virar script**, e quase sempre o script é menor do que você imagina. O meu dotfiles é privado, então não tem link pro código; o que vale aqui é a ideia.
+Esse script não é especial. Ele resolve um problema meu, do jeito mais simples que funcionou, e é isso que eu quero que você faça com os seus. **Ferramenta pronta resolve o problema de todo mundo; script resolve o seu**, e o seu problema quase nunca está numa ferramenta pronta. Não importa se você escreve em shell, Python, Rust ou outra coisa: o caminho é o mesmo, e ele cabe em cinco passos. No fim tem a lista do que roda no meu Linux, pra você roubar ideias.
 
-## Onde um script mora decide como ele roda
+## Ache o problema que se repete
 
-Antes da lista, o que mais me ajudou a automatizar foi entender que cada script tem uma "porta de entrada", e ela muda tudo:
+Um bom candidato a script tem uma destas caras:
 
-| Porta | Como eu uso | Exemplo |
+- **Uma sequência de comandos que você digita igual toda vez.** Abre o histórico do terminal (`history | less`) depois de uma semana de trabalho e procura o que se repete. Os meus [scripts de Gitflow](/meus-scripts-de-gitflow-de-31-linhas-a-uma-skill) nasceram assim, lá por 2019: eram a sequência que eu digitava toda vez que abria uma branch.
+- **Uma coisa que você esquece de fazer.** Backup, limpar cache, apagar screenshot velho. Se depende de você lembrar, não vai acontecer.
+- **Uma irritação pequena que se repete todo dia.** Ligar o "Não perturbe" antes da call, trocar a saída de áudio quando pluga o fone, procurar a janela do Spotify. Cada uma custa segundos, e elas se repetem o dia inteiro.
+- **Uma tarefa que você faz uma vez por ano e sempre tem que pesquisar de novo.** Gerar chave SSH, instalar um AppImage direito. O script vira a documentação que você não escreveu.
+
+## Escreva a versão mais burra que funciona
+
+O primeiro script não precisa tratar erro, ter ajuda nem aceitar opção. Ele precisa fazer o que você fazia na mão. O meu primeiro script de Gitflow tinha 31 linhas: validava o argumento e rodava em sequência os mesmos comandos que eu digitava. Usei aquilo por anos antes de ele crescer.
+
+Em shell, o mínimo é isto:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+[ -n "${1:-}" ] || { echo "uso: $(basename "$0") <nome>" >&2; exit 1; }
+
+# os comandos que você já digita, na mesma ordem
+```
+
+O `set -euo pipefail` faz o script parar no primeiro erro, em vez de seguir executando o resto em cima de um estado quebrado. É a linha que mais vale no shell.
+
+## Escolha a linguagem pelo problema
+
+Eu escrevo muito shell porque gosto, mas não é a única ferramenta da caixa. A régua que eu uso:
+
+| Se o script… | Eu uso | Exemplo meu |
 |---|---|---|
-| PATH | Tudo em `bin/` vira comando no terminal | `git-release`, `hd-backup` |
-| Atalho de teclado | O [Niri](https://github.com/YaLTeR/niri) chama o script com `spawn-sh` | `niri-scratchpad`, `rdo-solo-toggle` |
-| Ao iniciar a sessão | O Niri sobe com `spawn-at-startup` e o script fica vigiando algo | `niri-mic-dnd`, `audio-jack-autoswitch` |
-| Timer do systemd | Roda num horário, sem terminal nenhum | `sys-btrfs-backup` |
-| Hook | O git ou o shell chamam num evento | `git-strip-ai-signatures`, `podman-shutdown` |
+| Cola comandos que já existem (git, pacman, ssh, pw-dump) | Shell | quase tudo em `bin/` do dotfiles |
+| Mexe com dados, HTTP, JSON, texto de verdade | Python | o [job-radar](/job-radar-radar-de-vagas-em-python-puro), que varre sites de vaga só com a biblioteca padrão |
+| Precisa de uma interface no terminal ou fica rodando muito tempo | Rust | a TUI do dotfiles, a do `rdo-solo` no homelab e o [`stats`](/analytics-sem-script-medindo-no-servidor-e-lendo-no-terminal), que lê o analytics do blog |
 
-Um script que você precisa lembrar de rodar ainda depende de você. Os que mais me ajudam são os das três últimas linhas, que rodam sozinhos.
+Quando o shell começa a ficar cheio de `sed` e `awk` pra destrinchar um formato, é hora de trocar. E não precisa escolher uma só: os meus scripts de shell chamam `jq` pra ler JSON o tempo todo, e a TUI em Rust do dotfiles chama os scripts de shell em vez de reescrever eles.
 
-## Git
+Qualquer linguagem vira comando do mesmo jeito: uma primeira linha dizendo quem executa o arquivo (o shebang), permissão de execução e uma pasta no PATH.
 
-- **`git-feature`, `git-bugfix`, `git-hotfix`, `git-release`:** o Gitflow inteiro num comando, de criar a branch até o merge, a tag e o changelog. Ele nasceu lá por 2019, e contei a história dele em [meus scripts de Gitflow](/meus-scripts-de-gitflow-de-31-linhas-a-uma-skill).
-- **`git-push`:** manda a branch pra todos os remotos configurados de uma vez (útil quando o projeto tem espelho).
-- **`git-rollback`:** volta a `master` pra uma tag, quando uma versão dá ruim.
-- **`git-strip-ai-signatures`:** um hook global de `commit-msg` que tira as assinaturas automáticas que as ferramentas de IA colocam na mensagem de commit.
+```bash
+#!/usr/bin/env python3
+```
 
-## Instalar e configurar
+```bash
+chmod +x ~/bin/meu-script
+export PATH="$HOME/bin:$PATH"   # no seu .zshrc ou .bashrc
+```
 
-- **`dotfiles`:** cria os symlinks das configs, instala os pacotes de cada gerenciador e roda os scripts de setup de máquina nova. Tem uma série inteira sobre ele, começando por [seu sistema tem memória?](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles).
-- **`sys-ssh-keys` e `sys-gpg-keys`:** geram a chave, adicionam no agent, copiam a pública e configuram o git pra assinar commits.
-- **`appimage-install`:** pega um AppImage, guarda em `~/.local/opt`, cria o link no PATH e o atalho no lançador de apps.
-- **`webapp-install`, `webapp-launch`, `webapp-remove`:** transformam um site num "app" com janela própria e ícone no lançador (o Chromium em modo app por baixo).
+No meu dotfiles, cada subpasta de `bin/` entra no PATH pelo `.zshrc`, e o script fica disponível em qualquer terminal.
 
-## Um desktop que reage sozinho
+## Dê uma porta de entrada pro script
 
-Esses rodam desde o login e vigiam alguma coisa:
+Um script que você precisa lembrar de rodar ainda depende de você. O que mais me ajudou a automatizar foi pensar em como cada script é chamado:
 
-- **`niri-mic-dnd`:** microfone em uso liga o "Não perturbe" e impede a tela de apagar. Acabou a call, volta tudo.
-- **`niri-dnd-screenshare`:** mesma coisa quando a tela está sendo compartilhada ou gravada, pra nenhuma notificação aparecer no meio da apresentação.
-- **`niri-dnd-retroarch`:** "Não perturbe" enquanto o emulador está em foco.
-- **`niri-keepawake-tasks`:** segura a tela acordada enquanto uma tarefa longa roda.
-- **`niri-power-autoprofile`:** na tomada, perfil de performance; na bateria, economia.
-- **`niri-hdmi-automode`:** a TV e o monitor ultrawide dividem o mesmo cabo HDMI, e o script aplica a resolução certa conforme o aparelho que respondeu.
-- **`nocta-hold`:** o juiz dos scripts acima. Quando dois pedem o "Não perturbe" ao mesmo tempo, o primeiro a terminar não pode desligar o que o outro ainda precisa, então ele conta quantos pedidos estão ativos (e não mexe num "Não perturbe" que eu liguei na mão).
+| Porta | Como funciona | Exemplo meu |
+|---|---|---|
+| Terminal | Está no PATH, você digita | `git-release`, `hd-backup` |
+| Atalho de teclado | O gerenciador de janelas chama o script | `niri-scratchpad` no `Mod+Shift+S` |
+| Login | Sobe com a sessão e fica vigiando algo | `niri-mic-dnd`, `audio-jack-autoswitch` |
+| Timer | O systemd roda num horário, sem terminal | o backup diário do sistema |
+| Hook | Um programa chama no momento certo | o `commit-msg` do git, o desligamento da máquina |
 
-## Janelas e atalhos
+No Niri, o atalho e o login são uma linha cada no `config.kdl`:
 
-- **`niri-scratchpad`:** um atalho mostra e esconde Spotify, WhatsApp, Discord e companhia, mesmo o Niri não tendo minimizar. Virou o post [scratchpad no Niri](/scratchpad-no-niri-janelas-que-somem-com-um-atalho).
-- **`niri-workspace-wrap`:** chegou no último workspace, o próximo é o primeiro.
-- **`niri-browser-focus`:** abre o link no Chrome e puxa a janela pro foco (link de login que abria escondido atrás de tudo).
-- **`gsr-toggle`:** um atalho começa e para a gravação de tela.
+```kdl
+spawn-at-startup "sh" "-c" "~/.dotfiles/bin/utils/niri-mic-dnd"
+```
 
-## Áudio
+Se você usa GNOME, KDE ou outro, o equivalente é o atalho personalizado das configurações e um `.desktop` em `~/.config/autostart/`. Pra timer, um `.service` mais um `.timer` do systemd (ou o bom e velho `cron`).
 
-- **`audio-jack-autoswitch`:** plugou o fone no P2, perfil de fone; tirou, alto-falante. O [PipeWire](https://pipewire.org) não fazia isso sozinho nesse notebook, e a caçada virou [o fone mudo e o jack P2](/o-fone-mudo-e-o-jack-p2-no-pipewire).
-- **`bt-audio`:** joga a saída e o microfone pro fone Bluetooth conectado, ignorando mouse e teclado que também são Bluetooth.
+## Faça ele rodar sozinho
 
-## Modos de uso
+Os scripts que vigiam alguma coisa seguem quase sempre o mesmo desenho: um loop que olha o estado, compara com o anterior e só age quando ele muda. O meu do microfone, sem os comentários:
 
-- **`game-mode`:** congela os apps de trabalho pra liberar CPU e memória pro jogo, sem fechar nada. Quando eu volto, está tudo onde eu deixei: [game mode com o freezer do cgroup](/game-mode-congelando-o-trabalho-com-o-cgroup-freezer).
-- **`focus-mode`:** o irmão do `game-mode` ao contrário. Congela só uma lista curta de distrações (Steam, Telegram), liga o "Não perturbe" e deixa a música tocando.
+```bash
+main() {
+  local using prev="unknown"
+  while true; do
+    if mic_in_use; then using=1; else using=0; fi
 
-## Backup e faxina
+    if [ "$using" = 1 ] && [ "$prev" != 1 ]; then
+      hold dnd acquire mic
+      hold awake acquire mic
+    elif [ "$using" = 0 ] && [ "$prev" = 1 ]; then
+      hold dnd release mic
+      hold awake release mic
+    fi
 
-- **`sys-btrfs-backup`:** todo dia, um snapshot do sistema vai incremental pro meu [homelab](/meu-homelab-num-mac-mini-de-2018) pelo [Tailscale](https://tailscale.com).
-- **`hd-backup`:** compacta uma pasta e manda pra outro disco ou outra máquina por SSH, com uma barra de progresso pra compressão e outra pra cópia. Fiz pra tirar dados de um HD antes de formatar.
-- **`sys-clean-cache`:** limpa cache de gerenciador de pacotes, miniaturas, navegador, ferramentas de build, logs do journald e do pacman.
-- **`clean-screenshots`:** apaga screenshots com mais de uma semana.
-- **`clean-claude-sessions`:** apaga sessões antigas do Claude Code do projeto atual (ou de todos), mostrando a lista e pedindo confirmação antes.
-- **`podman-shutdown`:** para os containers com calma antes de desligar a máquina, em vez de deixar o desligamento matar tudo.
+    prev="$using"
+    sleep "$INTERVAL"
+  done
+}
+```
 
-## Pequenos utilitários
+Agir só na mudança é o que impede o script de ligar o "Não perturbe" de novo a cada volta do loop. E como ele sobe no login, tem um `flock` no começo pra garantir que só exista uma cópia rodando.
 
-- **`downloads`:** recebe um `.txt` com uma URL por linha e baixa tudo em paralelo (com o `aria2c`), com uma barra de progresso por arquivo.
-- **`utils-password`:** gera uma senha aleatória e já copia pro clipboard.
-- **`utils-tempo`:** a previsão do tempo no terminal, via [wttr.in](https://wttr.in).
+O cuidado que mais importa nesse tipo de script é definir bem o que conta como "estado". A barra do meu desktop tem um visualizador de áudio, e ele também captura som (o que sai do alto-falante, pra desenhar as ondas). Se o script contasse qualquer captura como microfone em uso, o "Não perturbe" ficaria ligado pra sempre, como se eu estivesse numa call eterna. Por isso a consulta ao PipeWire ignora as capturas do alto-falante. Antes de escrever o seu vigia, pergunte o que mais no sistema parece com o que você está vigiando.
 
-## Homelab e jogo
+Quando um script desses passa a importar de verdade, vale escrever teste pra ele. Contei como eu testo os meus em [tratando dotfiles como software](/tratando-dotfiles-como-software).
 
-- **`rdo-solo`:** controla do notebook o filtro que deixa o Red Dead Online numa sessão só minha, rodando no gateway do homelab. Tem atalho de teclado e widget na barra. Contei em [Red Dead Online sozinho pelo gateway](/rdo-solo-red-dead-online-sozinho-pelo-gateway).
+## Ideias pra roubar
 
-## Por onde começar o seu
+Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código, mas a ideia é o que vale. Alguns viraram post próprio, e o link está no item.
 
-Não comece pelo script mais legal da lista. Comece pelo mais chato da sua semana. Os meus primeiros instalavam o básico de uma máquina nova (git, curl, PHP), e o de Gitflow era só a sequência de comandos que eu já digitava, colada num arquivo. Os que reagem sozinhos vieram anos depois. Quando um script já funciona no terminal, a pergunta seguinte é se ele pode rodar sem você: num atalho, no login, num timer.
+**Git**
+
+- `git-feature`, `git-bugfix`, `git-hotfix`, `git-release`: o Gitflow inteiro num comando, da branch ao merge, à tag e ao changelog ([a história deles](/meus-scripts-de-gitflow-de-31-linhas-a-uma-skill)).
+- `git-push`: manda a branch pra todos os remotos configurados de uma vez.
+- `git-rollback`: volta a `master` pra uma tag.
+- `git-strip-ai-signatures`: hook global de `commit-msg` que tira as assinaturas que as ferramentas de IA colocam no commit.
+
+**Instalar e configurar**
+
+- `dotfiles`: symlinks das configs, pacotes de cada gerenciador e scripts de máquina nova ([a série sobre ele](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles)).
+- `sys-ssh-keys` e `sys-gpg-keys`: geram a chave, adicionam no agent, copiam a pública e configuram o git pra assinar commits.
+- `appimage-install`: guarda o AppImage em `~/.local/opt`, cria o link no PATH e o atalho no lançador.
+- `webapp-install`: transforma um site num app com janela própria e ícone no lançador.
+
+**Um desktop que reage sozinho**
+
+- `niri-mic-dnd` e `niri-dnd-screenshare`: "Não perturbe" durante a call e enquanto a tela é compartilhada ou gravada.
+- `niri-keepawake-tasks`: segura a tela acordada enquanto uma tarefa longa roda.
+- `niri-power-autoprofile`: na tomada, perfil de performance; na bateria, economia.
+- `niri-hdmi-automode`: a TV e o monitor dividem o mesmo cabo, e ele aplica a resolução certa pro aparelho conectado.
+- `nocta-hold`: o juiz dos de cima. Conta quantos scripts pediram o "Não perturbe", pra o primeiro que termina não desligar o que outro ainda precisa.
+
+**Janelas, áudio e modos**
+
+- `niri-scratchpad`: um atalho mostra e esconde Spotify, WhatsApp e Discord ([scratchpad no Niri](/scratchpad-no-niri-janelas-que-somem-com-um-atalho)).
+- `audio-jack-autoswitch`: plugou o fone, perfil de fone; tirou, alto-falante ([o fone mudo e o jack P2](/o-fone-mudo-e-o-jack-p2-no-pipewire)).
+- `bt-audio`: joga saída e microfone pro fone Bluetooth, ignorando mouse e teclado.
+- `game-mode`: congela os apps de trabalho pra liberar a máquina pro jogo, sem fechar nada ([game mode com o freezer do cgroup](/game-mode-congelando-o-trabalho-com-o-cgroup-freezer)).
+- `focus-mode`: congela só as distrações (Steam, Telegram), liga o "Não perturbe" e deixa a música tocando.
+
+**Backup e faxina**
+
+- `sys-btrfs-backup`: snapshot diário do sistema, incremental, pro meu [homelab](/meu-homelab-num-mac-mini-de-2018).
+- `hd-backup`: compacta uma pasta e manda pra outro disco ou máquina, com barra de progresso.
+- `sys-clean-cache`, `clean-screenshots` e `clean-claude-sessions`: faxina de cache, de screenshots com mais de uma semana e de sessões antigas do Claude Code.
+- `podman-shutdown`: para os containers com calma antes de desligar a máquina.
+
+**Pequenos utilitários**
+
+- `downloads`: baixa em paralelo uma lista de URLs de um `.txt`, com barra de progresso por arquivo.
+- `utils-password`: gera uma senha e já copia pro clipboard.
+- `utils-tempo`: previsão do tempo no terminal, via [wttr.in](https://wttr.in).
+- `rdo-solo`: controla do notebook o filtro que deixa o Red Dead Online numa sessão só minha ([Red Dead Online sozinho pelo gateway](/rdo-solo-red-dead-online-sozinho-pelo-gateway)).
+
+## Comece pelo mais chato
+
+Não comece pelo script mais legal da lista. Comece pelo que mais te irrita na semana. Os meus primeiros instalavam o básico de uma máquina nova (git, curl, PHP), e o de Gitflow era só a sequência que eu já digitava, colada num arquivo. Os que reagem sozinhos vieram anos depois, um problema de cada vez.
 
 `exit 0`
