@@ -6,9 +6,9 @@ import { UPCOMING_LIMIT } from '../../src/components/posts/upcoming-limit';
 
 const draft = (title: string) => ({ title, slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-') });
 
-const render = async (titles: string[], linked = false) => {
+const render = async (titles: string[], linked = false, all = false) => {
   const container = await AstroContainer.create();
-  return container.renderToString(UpcomingPosts, { props: { posts: titles.map(draft), linked } });
+  return container.renderToString(UpcomingPosts, { props: { posts: titles.map(draft), linked, all } });
 };
 
 describe('UpcomingPosts', () => {
@@ -40,6 +40,16 @@ describe('UpcomingPosts', () => {
     expect(UPCOMING_LIMIT).toBe(5);
     const html = await render(['1', '2', '3', '4', '5', '6', '7']);
     expect(html.match(/<li\b/g)).toHaveLength(5);
+  });
+
+  it('lists every draft where the author reviews them (dev, staging)', async () => {
+    const html = await render(['1', '2', '3', '4', '5', '6', '7'], true, true);
+    expect(html.match(/<li\b/g)).toHaveLength(7);
+  });
+
+  it('lists every draft only where draft pages exist', () => {
+    const page = readFileSync('src/pages/posts/index.astro', 'utf8');
+    expect(page).toContain('all={showDrafts(import.meta.env)}');
   });
 
   it('links each draft to its page when linked, which is dev and staging only', async () => {

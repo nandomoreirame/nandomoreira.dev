@@ -7,10 +7,12 @@ interface Props {
   posts: { title: string; slug: string }[];
   /** Link each title to its page; true only where draft pages exist (dev, staging). */
   linked?: boolean;
+  /** List every draft instead of the newest few; true where the author reviews them (dev, staging). */
+  all?: boolean;
 }
 
-const { linked = false } = Astro.props;
-const posts = Astro.props.posts.slice(0, UPCOMING_LIMIT);
+const { linked = false, all = false } = Astro.props;
+const posts = all ? Astro.props.posts : Astro.props.posts.slice(0, UPCOMING_LIMIT);
 ---
 
 {/* Names what is coming. Draft pages exist only in dev and staging, so the

@@ -89,6 +89,7 @@ const headerLink =
     <UpcomingPosts
       posts={upcoming.map((post) => ({ title: post.title, slug: post.slug }))}
       linked={showDrafts(import.meta.env)}
+      all={showDrafts(import.meta.env)}
     />
 
     <div class="mt-2xl mb-3xl">
