@@ -5,6 +5,8 @@ import Contato from '../../src/pages/contato.astro';
 import Home from '../../src/pages/index.astro';
 import Mcp from '../../src/pages/mcp.astro';
 import Privacidade from '../../src/pages/privacidade.astro';
+import ServiceDetailPage from '../../src/pages/servicos/[slug].astro';
+import SalesLanding from '../../src/pages/servicos/index.astro';
 import Sobre from '../../src/pages/sobre.astro';
 
 /**
@@ -27,11 +29,23 @@ describe('inline spacing survives HTML compression', () => {
     ['/contato', Contato],
     ['/mcp', Mcp],
     ['/privacidade', Privacidade],
+    ['/servicos', SalesLanding],
   ])('%s has no word glued to a link or code', async (_path, page) => {
     const container = await AstroContainer.create();
     const html = visibleBody(
       await container.renderToString(page as never, {
         request: new Request('https://nandomoreira.dev/'),
+      }),
+    );
+    expect(html.match(GLUED)?.[0] ?? null).toBeNull();
+  });
+
+  it('/servicos/site-institucional has no word glued to a link or code', async () => {
+    const container = await AstroContainer.create();
+    const html = visibleBody(
+      await container.renderToString(ServiceDetailPage as never, {
+        params: { slug: 'site-institucional' },
+        request: new Request('https://nandomoreira.dev/servicos/site-institucional'),
       }),
     );
     expect(html.match(GLUED)?.[0] ?? null).toBeNull();
