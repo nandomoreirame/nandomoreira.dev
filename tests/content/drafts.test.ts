@@ -40,7 +40,7 @@ describe('showDrafts', () => {
 
   it('is off in this test run, so the suite sees what production sees', async () => {
     const slugs = (await getCurrentPosts()).map((item) => item.slug);
-    expect(slugs).not.toContain('revisao-cruzada-entre-modelos');
+    expect(slugs).not.toContain('sessao-de-agente-que-voltava-zerada');
   });
 });
 
