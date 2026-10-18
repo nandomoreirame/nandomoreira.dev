@@ -1,0 +1,95 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { SalesService, ServiceDetail } from '../../lib/sales/catalog';
+import { salesPath } from '../../lib/sales/host';
+import SectionIntro from './SectionIntro.astro';
+
+interface Props {
+  service: SalesService & { detail: ServiceDetail };
+}
+
+const { service } = Astro.props;
+const { detail } = service;
+const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl';
+---
+
+<section aria-labelledby="detalhe-title" class="mx-auto flex w-full max-w-page flex-col gap-lg px-lg py-2xl lg:py-3xl">
+  <nav aria-label="Trilha" class="font-mono text-small text-muted-foreground">
+    <a href={`${salesPath()}#servicos`} class="hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary">Serviços</a>
+    <span aria-hidden="true"> / </span><span aria-current="page" class="text-foreground">{service.title}</span>
+  </nav>
+  <h1 id="detalhe-title" class="max-w-3xl font-serif text-display font-normal text-foreground">{detail.hero.title}</h1>
+  <p class="max-w-2xl text-lead text-muted-foreground">{detail.hero.lead}</p>
+  <div class="flex flex-wrap gap-md">
+    <a href="#contato" class="inline-flex min-h-11 items-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{detail.hero.cta}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
+    <a href="#incluso" class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver o que está incluso</a>
+  </div>
+</section>
+
+<section aria-labelledby="anatomia-title" class="border-t border-border">
+  <div class={wrap}>
+    <SectionIntro id="anatomia-title" eyebrow="Anatomia do projeto" title="O que é, na prática" lead="Um site institucional organiza a sua presença em quatro partes, cada uma com um trabalho a fazer pelo seu negócio." />
+    <ol class="grid gap-md sm:grid-cols-2 lg:grid-cols-4">
+      {detail.anatomy.map((part, index) => (
+        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
+          <span class="font-mono text-micro uppercase tracking-eyebrow text-primary">Parte {String(index + 1).padStart(2, '0')}</span>
+          <h3 class="text-h3 font-semibold text-foreground">{part.title}</h3>
+          <p class="text-small text-muted-foreground">{part.text}</p>
+          <p class="mt-auto border-t border-border pt-sm font-mono text-micro text-muted-foreground">{part.note}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section aria-labelledby="para-voce-title" class="border-t border-border">
+  <div class={wrap}>
+    <SectionIntro id="para-voce-title" eyebrow="Diagnóstico" title="É para você se..." />
+    <ul class="grid gap-md md:grid-cols-2">
+      {detail.fit.map((item) => (
+        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg">
+          <h3 class="text-body font-semibold text-foreground">{item.title}</h3>
+          <p class="text-small text-muted-foreground">{item.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section id="incluso" aria-labelledby="incluso-title" class="scroll-mt-2xl border-t border-border">
+  <div class={wrap}>
+    <SectionIntro id="incluso-title" eyebrow="Escopo do serviço" title="O que está incluso" />
+    <ul class="grid gap-md md:grid-cols-2">
+      {detail.included.map((item) => (
+        <li class="flex items-start gap-sm rounded-md border border-border bg-surface p-lg">
+          <Icon name="lucide:circle-check" class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
+          <div><h3 class="text-body font-semibold text-foreground">{item.title}</h3><p class="text-small text-muted-foreground">{item.text}</p></div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section aria-labelledby="extras-title" class="border-t border-border">
+  <div class={wrap}>
+    <SectionIntro id="extras-title" eyebrow="Módulos extras" title="O que pode ser adicionado" lead="Opcionais combinados conforme o momento do seu negócio, sempre sob consulta." />
+    <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
+      {detail.addons.map((item) => (
+        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg">
+          <h3 class="text-body font-semibold text-foreground">{item.title}</h3>
+          <p class="text-small text-muted-foreground">{item.text}</p>
+          <p class="mt-auto pt-sm font-mono text-micro text-muted-foreground">Sob consulta</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section aria-labelledby="por-baixo-title" class="border-t border-border">
+  <div class={wrap}>
+    <SectionIntro id="por-baixo-title" eyebrow="Infraestrutura descomplicada" title="Como funciona por baixo: sem sustos no fim do mês" />
+    <div class="flex max-w-2xl flex-col gap-md">
+      {detail.underTheHood.map((paragraph) => <p class="text-body text-muted-foreground">{paragraph}</p>)}
+    </div>
+  </div>
+</section>

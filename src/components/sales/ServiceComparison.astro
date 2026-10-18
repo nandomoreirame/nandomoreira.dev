@@ -1,0 +1,40 @@
+---
+import type { ServiceDetail } from '../../lib/sales/catalog';
+import SectionIntro from './SectionIntro.astro';
+
+interface Props {
+  comparison: ServiceDetail['comparison'];
+}
+
+const { comparison } = Astro.props;
+---
+
+<section aria-labelledby="comparando-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="comparando-title" eyebrow="Orientação" title="Comparando: qual escolher?" />
+    {/* Stacks into one block per criterion on phones, so the page never scrolls sideways (REQ-018). */}
+    <table class="w-full text-left text-small">
+      <caption class="sr-only">{comparison.caption}</caption>
+      <thead class="hidden md:table-header-group">
+        <tr>
+          <th scope="col" class="p-md font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Critério</th>
+          {comparison.columns.map((column, index) => (
+            <th scope="col" class:list={['p-md font-mono text-micro uppercase tracking-eyebrow', index === 0 ? 'text-primary' : 'text-muted-foreground']}>{column}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {comparison.rows.map((row) => (
+          <tr class="grid border-t border-border md:table-row">
+            <th scope="row" class="p-md font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">{row.criterion}</th>
+            {row.values.map((value, index) => (
+              <td class:list={['p-md', index === 0 ? 'bg-surface-elevated text-foreground' : 'text-muted-foreground']}>
+                <span class="mb-xs block font-mono text-micro uppercase text-muted-foreground md:hidden">{comparison.columns[index]}</span>{value}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
