@@ -7,13 +7,16 @@ import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
 import { getAllPosts, getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
+import { showDrafts } from '../../lib/content/posts';
 import { outcomeOf } from '../../lib/newsletter/copy';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
 import { paginate, parsePage } from '../../lib/posts/paginate';
 import { displayNameOf } from '../../lib/content/display-name';
 
 const posts = await getCurrentPosts();
-const page = paginate(posts, parsePage(Astro.url.searchParams.get('pagina')));
+// Drafts stay out of the list in every mode; in dev they are linked from the drafts card below.
+const listed = posts.filter((post) => !post.draft);
+const page = paginate(listed, parsePage(Astro.url.searchParams.get('pagina')));
 const upcoming = await getUpcomingPosts();
 // The whole blog, archive included, not just the current posts listed here.
 const publishedCount = (await getAllPosts()).filter((post) => !post.draft).length;
@@ -40,17 +43,7 @@ const headerLink =
     />
 
     <div data-listing-bar class="-mt-md mb-xl flex flex-wrap items-center justify-between gap-sm font-mono text-small">
-      <a
-        href="/rss.xml"
-        class={headerLink}
-      >
-        <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-        RSS FEED
-      </a>
       <div class="flex flex-wrap items-center gap-sm">
-        <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
-          {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
-        </span>
         <a
           href="/posts/arquivo"
           class={headerLink}
@@ -58,11 +51,21 @@ const headerLink =
           <Icon name="lucide:archive" aria-hidden="true" class="size-4 shrink-0 text-primary" />
           Arquivo por ano
         </a>
+        <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
+          {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
+        </span>
       </div>
+      <a
+        href="/rss.xml"
+        class={headerLink}
+      >
+        <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+        RSS FEED
+      </a>
     </div>
 
     {
-      posts.length === 0 ? (
+      listed.length === 0 ? (
         <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
           Nenhum post corrente no momento.
         </p>
@@ -78,12 +81,15 @@ const headerLink =
     }
 
     {
-      posts.length > 0 && (
+      listed.length > 0 && (
         <Pagination page={page.page} totalPages={page.totalPages} first={page.first} last={page.last} total={page.total} />
       )
     }
 
-    <UpcomingPosts titles={upcoming.map((post) => post.title)} />
+    <UpcomingPosts
+      posts={upcoming.map((post) => ({ title: post.title, slug: post.slug }))}
+      linked={showDrafts(import.meta.env)}
+    />
 
     <div class="mt-2xl mb-3xl">
       <NewsletterCard outcome={outcome} />

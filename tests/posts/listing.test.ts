@@ -54,18 +54,20 @@ describe('/posts listing', () => {
     const archive = row.match(/<a[^>]*href="\/posts\/arquivo"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
     expect(archive).toMatch(/data-icon="lucide:archive"[\s\S]*Arquivo por ano/);
     expect(archive.match(/class="([^"]*)"/)?.[1]).toBe(rss.match(/class="([^"]*)"/)?.[1]);
-    expect(row.indexOf('data-post-count')).toBeLessThan(row.indexOf('href="/posts/arquivo"'));
+    expect(row.indexOf('href="/posts/arquivo"')).toBeLessThan(row.indexOf('data-post-count'));
     expect(html.match(/href="\/posts\/arquivo"/g)).toHaveLength(1);
   });
 
-  it('keeps the feed alone on the left, the count and the archive on the right', async () => {
+  it('puts the archive then the count on the left, the feed alone on the right', async () => {
     const html = await render();
     const bar = html.match(/<div[^>]*data-listing-bar[^>]*>/)?.[0] ?? '';
     expect(bar).toContain('justify-between');
-    const right = html.match(/<div class="flex flex-wrap items-center gap-sm">[\s\S]*?<\/div>/)?.[0] ?? '';
-    expect(right).toContain('data-post-count');
-    expect(right).toContain('href="/posts/arquivo"');
-    expect(right).not.toContain('href="/rss.xml"');
+    const left = html.match(/<div class="flex flex-wrap items-center gap-sm">[\s\S]*?<\/div>/)?.[0] ?? '';
+    expect(left).toContain('href="/posts/arquivo"');
+    expect(left).toContain('data-post-count');
+    expect(left).not.toContain('href="/rss.xml"');
+    const row = html.slice(html.indexOf('data-listing-bar'), html.indexOf('data-latest-post'));
+    expect(row.indexOf('data-post-count')).toBeLessThan(row.indexOf('href="/rss.xml"'));
   });
 
   it('keeps the drafts apart from the newsletter', async () => {
