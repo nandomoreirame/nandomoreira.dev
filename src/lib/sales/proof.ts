@@ -2,7 +2,8 @@
  * Social proof carried over from the previous sales page
  * (svelte-nandomoreira.dev, /sites-profissionais-lojas-virtuais-blogs-aplicativos-web).
  * The testimonials are verbatim; the gallery is client work only, without years,
- * because the old dates were not reliable (sales-landing, REQ-036 and REQ-037).
+ * because the old dates were not reliable, and without links: it is a sample,
+ * not a list of live sites (sales-landing, REQ-036 to REQ-038).
  */
 export interface Testimonial {
   name: string;
@@ -15,8 +16,6 @@ export interface PastWork {
   name: string;
   kind: string;
   alt: string;
-  /** Only for sites still online. */
-  url?: string;
 }
 
 export const TESTIMONIALS: readonly Testimonial[] = [
@@ -34,7 +33,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
 
 export const MORE_WORK: readonly PastWork[] = [
   { slug: 'atelie-eh-pique', name: 'Ateliê éh Pique', kind: 'Loja virtual', alt: 'Página inicial da loja Ateliê éh Pique, de artes digitais para máquinas de corte' },
-  { slug: 'coletivo-inclusao', name: 'Coletivo Inclusão', kind: 'Site institucional', alt: 'Página inicial do Coletivo Inclusão, organização social', url: 'https://www.coletivoinclusao.org.br' },
+  { slug: 'coletivo-inclusao', name: 'Coletivo Inclusão', kind: 'Site institucional', alt: 'Página inicial do Coletivo Inclusão, organização social' },
   { slug: 'canto-das-emocoes', name: 'Canto das Emoções', kind: 'Site de produto educativo', alt: 'Página do Canto das Emoções, recurso lúdico para educação infantil' },
   { slug: 'puruna-investimentos', name: 'Puruna Investimentos', kind: 'Site institucional', alt: 'Página inicial da Puruna Investimentos' },
   { slug: 'gatman-corp', name: 'Gatman Corp', kind: 'Site corporativo', alt: 'Página inicial do site corporativo da Gatman Corp' },

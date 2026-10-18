@@ -62,7 +62,9 @@ A landing é uma superfície separada do site: moldura própria, servida em
 - **REQ-016** QUANDO as dúvidas frequentes renderizarem ENTÃO cada pergunta DEVE ser um `<details>`/`<summary>` nativo, com as respostas do Anexo B.
 
 - **REQ-036** QUANDO a landing renderizar ENTÃO, depois dos projetos reais, DEVE haver a seção "O que dizem" com os dois depoimentos reais publicados no site antigo (`svelte-nandomoreira.dev`, `src/lib/data/testimonials.ts`), com texto, nome e empresa exatos, marcados com `<figure>`, `<blockquote>` e `<figcaption>`: Yara Santiago (Ateliê éh Pique) e Edson Luiz (Contador).
-- **REQ-037** QUANDO a landing renderizar ENTÃO, depois dos depoimentos, DEVE haver a galeria "Outros trabalhos" com projetos de cliente do site antigo: imagem real em `public/servicos/trabalhos/<slug>.webp`, nome e tipo, sem ano (as datas do site antigo não são confiáveis) e com link só para o que está no ar (Coletivo Inclusão). Ficam fora templates, temas, projetos pessoais e páginas "em construção" (Nutritionist, GRGit, temas Nuxt e WordPress, blog pessoal, Sob Medida, Beholddy), porque apresentá-los como trabalho de cliente seria enganoso (RISK-004).
+- **REQ-037** QUANDO a landing renderizar ENTÃO, depois dos depoimentos, DEVE haver a galeria "Outros trabalhos" com projetos de cliente do site antigo: imagem real em `public/servicos/trabalhos/<slug>.webp`, nome e tipo, sem ano (as datas do site antigo não são confiáveis) e sem link nenhum: é amostra, não lista de sites no ar (ajuste do Fernando em 2026-10-18). Ficam fora templates, temas, projetos pessoais e páginas "em construção" (Nutritionist, GRGit, temas Nuxt e WordPress, blog pessoal, Sob Medida, Beholddy), porque apresentá-los como trabalho de cliente seria enganoso (RISK-004).
+
+- **REQ-038** QUANDO alguém clicar numa imagem da galeria "Outros trabalhos" ENTÃO ela DEVE abrir ampliada num lightbox sem JavaScript (Popover API, mesmas classes `.lightbox` dos posts), com rótulo "Ampliar imagem: <nome>", `role="dialog"`, botão Fechar e fechamento por Esc e clique fora; a versão ampliada (`<slug>-ampliada.webp`) só carrega quando o lightbox abre.
 
 ### Página de detalhe (`/servicos/site-institucional`)
 
@@ -173,7 +175,7 @@ Decisões levantadas e resolvidas no grilling (2026-10-18).
 | 13 | Imagens dos projetos | Screenshots reais capturados dos sites no ar | O ascode não tem as imagens; as do Stitch são falsas |
 | 14 | Preço | Sem valor fechado, faixa ou prazo em lugar nenhum | O valor varia com a negociação e o escopo |
 | 17 | Depoimentos | Os dois reais do site antigo, texto exato (REQ-036) | Prova social para cliente leigo; não são inventados |
-| 18 | Mais projetos | Galeria "Outros trabalhos" com os projetos de cliente do site antigo, link só no que está no ar (REQ-037) | Mostra volume de trabalho sem promover o que saiu do ar |
+| 18 | Mais projetos | Galeria "Outros trabalhos" com os projetos de cliente do site antigo, sem links, com lightbox nas imagens (REQ-037, REQ-038) | Mostra volume de trabalho sem promover o que saiu do ar |
 | 19 | Imagens | ascode.com.br para BragStack, PortfolioSnap, Encantos Brincantes e Ateliê éh Pique; screenshot do Fernando para o Mousai; site antigo para a galeria | Reaproveita capturas reais em vez de gerar novas |
 | 16 | Testar no endereço próprio em localhost | `contrate.nandomoreira.local:4321`, ativo sempre, com `::1` no `/etc/hosts` | Revisar o conteúdo como o cliente vai ver, sem ligar a flag |
 | 15 | Nota do formulário | "Respondo pessoalmente, pelo canal que você escolher." | Sem prometer prazo de retorno |

@@ -24,8 +24,14 @@ describe('MORE_WORK', () => {
     }
   });
 
-  it('links only what is still online', () => {
-    expect(MORE_WORK.filter((work) => work.url).map((work) => work.slug)).toEqual(['coletivo-inclusao']);
+  it('links nothing: the gallery is a sample, not a list of live sites', () => {
+    expect(MORE_WORK.some((work) => 'url' in work)).toBe(false);
+  });
+
+  it('has a full-size image for the lightbox of each work', () => {
+    for (const work of MORE_WORK) {
+      expect(existsSync(`public/servicos/trabalhos/${work.slug}-ampliada.webp`), work.slug).toBe(true);
+    }
   });
 
   it('never shows a template, a theme or a personal project as client work', () => {

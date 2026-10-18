@@ -20,14 +20,23 @@ describe('MoreWork', () => {
   it('shows ten works, each image with alt text and lazy loading', async () => {
     const html = await render(MoreWork);
     expect(html).toContain('id="trabalhos-title"');
-    expect(html.match(/<img/g)).toHaveLength(10);
+    expect(html.match(/<img[^>]*src="\/servicos\/trabalhos\/[a-z0-9-]+(?<!-ampliada)\.webp"/g)).toHaveLength(10);
     expect(html).not.toMatch(/<img(?![^>]*alt="[^"]+")/);
     expect(html).not.toMatch(/<img(?![^>]*loading="lazy")/);
   });
 
-  it('links only the work still online, in a new tab', async () => {
+  it('links nowhere', async () => {
+    expect((await render(MoreWork)).match(/<a /g)).toBeNull();
+  });
+
+  it('opens each image in a script-free lightbox (Popover API)', async () => {
     const html = await render(MoreWork);
-    expect(html.match(/<a /g)).toHaveLength(1);
-    expect(html).toMatch(/href="https:\/\/www\.coletivoinclusao\.org\.br"[^>]*rel="noopener noreferrer"/);
+    expect(html).not.toContain('<script');
+    expect(html.match(/<button[^>]*popovertarget="trabalho-[a-z0-9-]+"(?![^>]*popovertargetaction)/g)).toHaveLength(10);
+    expect(html.match(/id="trabalho-[a-z0-9-]+"[^>]*popover/g)).toHaveLength(10);
+    expect(html).toMatch(/aria-label="Ampliar imagem: Ateliê éh Pique"/);
+    expect(html).toMatch(/role="dialog"/);
+    expect(html.match(/popovertargetaction="hide"[^>]*aria-label="Fechar"|aria-label="Fechar"[^>]*popovertargetaction="hide"/g)).toHaveLength(10);
+    expect(html).toContain('src="/servicos/trabalhos/atelie-eh-pique-ampliada.webp"');
   });
 });

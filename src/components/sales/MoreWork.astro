@@ -2,6 +2,8 @@
 import { Icon } from 'astro-icon/components';
 import { MORE_WORK } from '../../lib/sales/proof';
 import SectionIntro from './SectionIntro.astro';
+
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 <section aria-labelledby="trabalhos-title" class="border-t border-border">
@@ -10,17 +12,21 @@ import SectionIntro from './SectionIntro.astro';
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {MORE_WORK.map((work) => (
         <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-md">
-          <img src={`/servicos/trabalhos/${work.slug}.webp`} alt={work.alt} width="800" height="500" loading="lazy" decoding="async" class="aspect-video w-full rounded-sm border border-border object-cover object-top" />
-          <div class="flex items-center justify-between gap-sm">
-            <div>
-              <h3 class="text-body font-semibold text-foreground">{work.name}</h3>
-              <p class="font-mono text-micro text-muted-foreground">{work.kind}</p>
-            </div>
-            {work.url && (
-              <a href={work.url} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center gap-xs text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                Visitar<span class="sr-only"> {work.name}</span><Icon name="lucide:external-link" class="size-4" aria-hidden="true" />
-              </a>
-            )}
+          {/* Same script-free lightbox as the post images (Popover API, .lightbox
+              in global.css): Esc and a click outside close it. The full-size
+              image is lazy inside a closed popover, so it only loads on open. */}
+          <button type="button" popovertarget={`trabalho-${work.slug}`} aria-label={`Ampliar imagem: ${work.name}`} class={`block w-full cursor-zoom-in rounded-sm ${focusRing}`}>
+            <img src={`/servicos/trabalhos/${work.slug}.webp`} alt={work.alt} width="800" height="500" loading="lazy" decoding="async" class="aspect-video w-full rounded-sm border border-border object-cover object-top" />
+          </button>
+          <span id={`trabalho-${work.slug}`} popover role="dialog" aria-label={work.name} class="lightbox">
+            <img src={`/servicos/trabalhos/${work.slug}-ampliada.webp`} alt={work.alt} loading="lazy" decoding="async" />
+            <button type="button" popovertarget={`trabalho-${work.slug}`} popovertargetaction="hide" aria-label="Fechar" class={`lightbox-close inline-flex size-11 items-center justify-center rounded-md border border-border-strong bg-background text-foreground hover:border-primary ${focusRing}`}>
+              <Icon name="lucide:x" class="size-5" aria-hidden="true" />
+            </button>
+          </span>
+          <div>
+            <h3 class="text-body font-semibold text-foreground">{work.name}</h3>
+            <p class="font-mono text-micro text-muted-foreground">{work.kind}</p>
           </div>
         </li>
       ))}
