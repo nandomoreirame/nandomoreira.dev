@@ -2,14 +2,29 @@
 
 As páginas de vendas (`docs/specs/sales-landing/SPEC.md`) respondem hoje em
 `https://nandomoreira.dev/servicos`. Este roteiro move a landing para o subdomínio próprio.
-Enquanto `SALES_HOST_LIVE` estiver `false`, nada aqui muda o comportamento do site.
+Enquanto `SALES_HOST_LIVE` estiver `false`, nada muda em produção.
 
-Para revisar antes, sem ligar nada: `http://contrate.nandomoreira.local:4321` no `astro dev`
-(com `contrate.nandomoreira.local` no `/etc/hosts`) e `http://contrate.nandomoreira.home` na
-homologação (`bash scripts/deploy-staging.sh`).
+Em dev e na homologação o subdomínio já funciona, com a flag ligada ou desligada: o link
+"Ver os serviços" da home e de `/contato` aponta para o host de vendas do ambiente
+(`salesLink` em `src/lib/sales/host.ts`), e `/servicos` no host principal responde 301 para ele.
 
-1. Firebase console → App Hosting → backend `nandomoreira-dev` → Settings → Domains → Add custom domain `contrate.nandomoreira.dev`.
-2. Criar no DNS os registros que o console mostrar e esperar o certificado ficar `ACTIVE`.
+| Ambiente | Host principal | Host de vendas |
+|---|---|---|
+| dev (`astro dev`) | `http://localhost:4321` | `http://contrate.nandomoreira.local:4321` (no `/etc/hosts`) |
+| homologação | `http://nandomoreira.home` | `http://contrate.nandomoreira.home` (`bash scripts/deploy-staging.sh`) |
+| produção | `https://nandomoreira.dev` | `https://contrate.nandomoreira.dev`, só com `SALES_HOST_LIVE` |
+
+O domínio de produção entra no **Firebase Hosting** (site `nandomoreira-dev`), como o apex,
+`www`, `blog` e `links`: o `firebase.json` repassa tudo ao serviço do App Hosting. Na lista de
+domínios do backend do App Hosting só existe o `*.hosted.app`.
+
+1. Firebase console → Hosting → site `nandomoreira-dev` → Add custom domain `contrate.nandomoreira.dev` (sem redirecionar). Pela API:
+   ```bash
+   curl -s -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+     -H "x-goog-user-project: nandomoreira-dev" -H 'Content-Type: application/json' -d '{}' \
+     "https://firebasehosting.googleapis.com/v1beta1/projects/nandomoreira-dev/sites/nandomoreira-dev/customDomains?customDomainId=contrate.nandomoreira.dev"
+   ```
+2. No Cloudflare, criar os registros que o console mostrar (em `requiredDnsUpdates` pela API) com a nuvem **cinza** (DNS only) até o certificado ficar `CERT_ACTIVE`; SSL em Full (strict). Depois disso o proxy pode voltar a laranja, como no apex.
 3. Confirmar que o domínio já chega ao backend: `curl -s -o /dev/null -w '%{http_code}' https://contrate.nandomoreira.dev/` responde 200 (com a flag desligada, ele serve a home do site).
 4. Em `src/lib/sales/host.ts`, trocar `SALES_HOST_LIVE` para `true`; rodar `npx vitest run` e `npm run build`.
 5. Push em `main` e, depois do rollout, conferir:

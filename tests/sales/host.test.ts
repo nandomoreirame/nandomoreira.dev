@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SALES_DEV_HOST, SALES_HOST, SALES_STAGING_HOST, SALES_HOST_LIVE, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
+import { SALES_DEV_HOST, SALES_HOST, SALES_STAGING_HOST, SALES_HOST_LIVE, salesLink, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
 
 const at = (url: string) => new URL(url);
 
@@ -77,10 +77,60 @@ describe('salesRouting', () => {
   });
 
   it('scopes the redirect to the main host only (REQ-004)', () => {
-    expect(salesRouting(at('http://localhost:4321/servicos'), true)).toBeUndefined();
     expect(
       salesRouting(at('https://nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app/servicos'), true),
     ).toBeUndefined();
+  });
+});
+
+describe('salesLink', () => {
+  it('points the dev main host at the local sales host on the same port', () => {
+    expect(salesLink(at('http://localhost:4321/'))).toBe('http://contrate.nandomoreira.local:4321/');
+    expect(salesLink(at('http://127.0.0.1:4321/contato'), 'site-institucional')).toBe(
+      'http://contrate.nandomoreira.local:4321/site-institucional',
+    );
+  });
+
+  it('points the staging main host at the staging sales host', () => {
+    expect(salesLink(at('http://nandomoreira.home/'))).toBe('http://contrate.nandomoreira.home/');
+  });
+
+  it('follows the flag in production', () => {
+    expect(salesLink(at('https://nandomoreira.dev/'), undefined, false)).toBe('https://nandomoreira.dev/servicos');
+    expect(salesLink(at('https://nandomoreira.dev/contato'), undefined, true)).toBe('https://contrate.nandomoreira.dev/');
+  });
+
+  it('keeps the backend host on the production address', () => {
+    expect(salesLink(at('https://nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app/'), undefined, false)).toBe(
+      'https://nandomoreira.dev/servicos',
+    );
+  });
+});
+
+describe('dev and staging main hosts', () => {
+  it('send /servicos to the local sales host whatever the flag says', () => {
+    expect(salesRouting(at('http://localhost:4321/servicos'), false)).toEqual({
+      redirect: 'http://contrate.nandomoreira.local:4321/',
+    });
+    expect(salesRouting(at('http://localhost:4321/servicos/site-institucional?envio=ok'), true)).toEqual({
+      redirect: 'http://contrate.nandomoreira.local:4321/site-institucional?envio=ok',
+    });
+  });
+
+  it('send /servicos to the staging sales host', () => {
+    expect(salesRouting(at('http://nandomoreira.home/servicos'), false)).toEqual({
+      redirect: 'http://contrate.nandomoreira.home/',
+    });
+  });
+
+  it('leave assets and other pages alone', () => {
+    for (const url of [
+      'http://localhost:4321/servicos/trabalhos/php-pr.webp',
+      'http://localhost:4321/contato',
+      'http://nandomoreira.home/servicosx',
+    ]) {
+      expect(salesRouting(at(url), false), url).toBeUndefined();
+    }
   });
 });
 

@@ -21,6 +21,10 @@ export const SALES_STAGING_HOST = 'contrate.nandomoreira.home';
 
 const PREVIEW_HOSTS = new Set([SALES_DEV_HOST, SALES_STAGING_HOST]);
 
+/** Main-site hosts of `astro dev` and of the homelab staging. */
+const DEV_MAIN_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
+const STAGING_MAIN_HOST = 'nandomoreira.home';
+
 export const SALES_BASE = '/servicos';
 const MAIN_ORIGIN = 'https://nandomoreira.dev';
 
@@ -40,6 +44,23 @@ export const salesPath = (slug?: string, live: boolean = SALES_HOST_LIVE): strin
 export const salesUrl = (slug?: string, live: boolean = SALES_HOST_LIVE): string =>
   `${live ? `https://${SALES_HOST}` : MAIN_ORIGIN}${salesPath(slug, live)}`;
 
+/**
+ * Sales origin of a dev or staging main host, keeping the request's scheme
+ * and port; undefined in production, where the flag decides.
+ */
+const previewOrigin = (url: URL): string | undefined => {
+  const port = url.port ? `:${url.port}` : '';
+  if (DEV_MAIN_HOSTS.has(url.hostname)) return `${url.protocol}//${SALES_DEV_HOST}${port}`;
+  if (url.hostname === STAGING_MAIN_HOST) return `${url.protocol}//${SALES_STAGING_HOST}${port}`;
+  return undefined;
+};
+
+/** Link to a sales page from the main site, on the environment the request came from. */
+export const salesLink = (url: URL, slug?: string, live: boolean = SALES_HOST_LIVE): string => {
+  const origin = previewOrigin(url);
+  return origin ? `${origin}${salesPath(slug, true)}` : salesUrl(slug, live);
+};
+
 export type SalesRoute = { rewrite: string } | { redirect: string } | undefined;
 
 /** Rewrite for a request that arrived on the sales host itself. */
@@ -57,15 +78,25 @@ const subdomainRoute = (path: string): SalesRoute => {
 export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE): SalesRoute => {
   const path = url.pathname;
   if (PREVIEW_HOSTS.has(url.hostname)) return subdomainRoute(path);
+
+  // Dev and staging always move /servicos to their own sales host.
+  const preview = previewOrigin(url);
+  if (preview) return mainHostRedirect(url, preview);
+
   if (!live) return undefined;
   if (url.hostname === SALES_HOST) return subdomainRoute(path);
 
-  // Only the real main host moves to the subdomain; localhost and the
-  // *.hosted.app backend keep serving /servicos (REQ-004).
+  // Only the real main host moves to the subdomain; the *.hosted.app
+  // backend keeps serving /servicos (REQ-004).
   if (!MAIN_HOSTS.has(url.hostname)) return undefined;
+  return mainHostRedirect(url, `https://${SALES_HOST}`);
+};
+
+/** 301 from /servicos[/slug] on a main host to the same page on `origin`. */
+const mainHostRedirect = (url: URL, origin: string): SalesRoute => {
+  const path = url.pathname;
   if (path !== SALES_BASE && !path.startsWith(`${SALES_BASE}/`)) return undefined;
   const rest = path.slice(SALES_BASE.length);
   if (!/^(\/[a-z0-9-]+)?$/.test(rest)) return undefined;
-
-  return { redirect: `https://${SALES_HOST}${rest || '/'}${url.search}` };
+  return { redirect: `${origin}${rest || '/'}${url.search}` };
 };

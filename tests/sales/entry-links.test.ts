@@ -19,4 +19,18 @@ describe('entry points to the sales landing', () => {
     });
     expect(html).toContain('href="https://nandomoreira.dev/servicos"');
   });
+
+  it.each([
+    ['http://localhost:4321/', 'http://contrate.nandomoreira.local:4321/'],
+    ['http://nandomoreira.home/', 'http://contrate.nandomoreira.home/'],
+  ])('links from %s to the sales host of that environment', async (from, to) => {
+    const container = await AstroContainer.create();
+    const home = await container.renderToString(Services, {
+      props: { services: [], projects: [] },
+      request: new Request(from),
+    });
+    const contato = await container.renderToString(Contato, { request: new Request(`${from}contato`) });
+    expect(home).toContain(`href="${to}"`);
+    expect(contato).toContain(`href="${to}"`);
+  });
 });

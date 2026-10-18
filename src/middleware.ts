@@ -5,7 +5,8 @@ import { salesRouting } from './lib/sales/host';
 import { robotsTagFor } from './lib/seo/backend-host';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Off until SALES_HOST_LIVE (docs/runbooks/sales-subdomain.md).
+  // Dev and staging always; production once SALES_HOST_LIVE
+  // (docs/runbooks/sales-subdomain.md).
   const sales = salesRouting(context.url);
   if (sales && 'redirect' in sales) {
     return new Response(null, { status: 301, headers: { location: sales.redirect } });
