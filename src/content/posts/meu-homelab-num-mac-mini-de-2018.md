@@ -46,9 +46,9 @@ Sigo o canal do Diolinux há muitos anos (desde 2012, mais ou menos), então a i
 
 ## O SSD guarda o estado, o HD guarda o volume
 
-O Mac mini tem um SSD interno de 232 GB em btrfs. Fica nele tudo que precisa ser rápido e estável: o sistema, os containers e o `/DATA/AppData`, onde estão as configurações e os bancos de cada app. O volume (filmes, música, fotos, documentos) vai para um HD de 1 TB de 5400 rpm pendurado na USB.
+O Mac mini tem um SSD interno de 232 GB em btrfs. Fica nele tudo que precisa ser rápido e estável: o sistema, os containers e o `/DATA/AppData`, onde estão as configurações e os bancos de cada app. O volume (filmes, música, fotos, documentos) vai pra um HD de 1 TB de 5400 rpm pendurado na USB.
 
-Os apps nem ficam sabendo. O CasaOS espera tudo em `/DATA`, então `/DATA/Media`, `/DATA/Gallery`, `/DATA/Documents`, `/DATA/Downloads` e `/DATA/Notas` são bind mounts para as pastas do HD, uma linha de `fstab` para cada:
+Os apps nem ficam sabendo. O CasaOS espera tudo em `/DATA`, então `/DATA/Media`, `/DATA/Gallery`, `/DATA/Documents`, `/DATA/Downloads` e `/DATA/Notas` são bind mounts pras pastas do HD, uma linha de `fstab` pra cada:
 
 ```
 /mnt/HD-1TB/DATA/Media  /DATA/Media  none  bind,nofail,x-systemd.requires=/mnt/HD-1TB  0 0
@@ -56,13 +56,13 @@ Os apps nem ficam sabendo. O CasaOS espera tudo em `/DATA`, então `/DATA/Media`
 
 **As duas opções do fim são o que faz isso sobreviver a um reboot.** O `x-systemd.requires` garante que o HD monta antes do bind, e o `nofail` impede que um HD desconectado segure o boot inteiro de uma máquina que não tem monitor.
 
-Fiz essa mudança em junho, quando o SSD bateu 77%: `rsync -aHAX`, conferência de contagem de arquivos e tamanho, a pasta antiga renomeada para `.old` como caminho de volta, o bind no lugar e só então a remoção. Liberou uns 48 GB. Os outros dois discos da capa são um HD de 500 GB de 2012, com setores defeituosos e no fim da vida, e o pendrive de 64 GB com as ROMs do fliperama (já chego nele).
+Fiz essa mudança em junho, quando o SSD bateu 77%: `rsync -aHAX`, conferência de contagem de arquivos e tamanho, a pasta antiga renomeada pra `.old` como caminho de volta, o bind no lugar e só então a remoção. Liberou uns 48 GB. Os outros dois discos da capa são um HD de 500 GB de 2012, com setores defeituosos e no fim da vida, e o pendrive de 64 GB com as ROMs do fliperama (já chego nele).
 
 ## A casa chega por cabo, eu chego pelo Tailscale
 
 A rede é simples: o modem da operadora no centro, o homelab num cabo e os roteadores mesh em modo ponto de acesso, então tudo vive na mesma rede.
 
-Para entrar no servidor eu uso o Tailscale, até dentro de casa. O meu `ssh homelab` aponta para o IP da tailnet, e não para o da rede local, porque as chaves do meu ssh-agent pararam de autenticar no IP local (todas davam `Permission denied (publickey)` até o agente estourar em "Too many authentication failures"). O Tailscale SSH autentica pela identidade da tailnet e o problema simplesmente sumiu:
+Pra entrar no servidor eu uso o Tailscale (uma VPN que liga os meus aparelhos numa rede privada, a tailnet, de onde eu estiver), até dentro de casa. O meu `ssh homelab` aponta pro IP da tailnet, e não pro da rede local, porque as chaves do meu ssh-agent pararam de autenticar no IP local (todas davam `Permission denied (publickey)` até o agente estourar em "Too many authentication failures"). O Tailscale SSH autentica pela identidade da tailnet e o problema simplesmente sumiu:
 
 ```
 Host homelab
@@ -78,11 +78,11 @@ http://media.home {
 }
 ```
 
-O Pi-hole resolve os `.home` para o IP do homelab na tailnet, e o DNS do Tailscale manda as consultas de `home` para ele. O resultado é que `media.home` abre o Jellyfin no celular de qualquer lugar, desde que o aparelho esteja na minha tailnet, e não abre em mais lugar nenhum.
+O Pi-hole resolve os `.home` pro IP do homelab na tailnet, e o DNS do Tailscale manda as consultas de `home` pra ele. O resultado é que `media.home` abre o Jellyfin no celular de qualquer lugar, desde que o aparelho esteja na minha tailnet, e não abre em mais lugar nenhum.
 
 O Pi-hole também é o nameserver global da tailnet, com o DNS local sobrescrito: todo aparelho meu ganha bloqueio de anúncio até fora de casa. O preço é que, se o homelab cair, os aparelhos remotos ficam sem DNS até eu tirar essa configuração no painel do Tailscale. (Cheguei nisso por causa de um bug, que conto mais abaixo.)
 
-A exceção é o atalho do teclado que liga o modo solo do Red Dead Online. O Tailscale SSH às vezes pede uma reautenticação no navegador, e um atalho não tem terminal nem navegador para isso, então ele fala com a API web do [rdo-solo](/rdo-solo-red-dead-online-sozinho-pelo-gateway) pela rede local.
+A exceção é o atalho do teclado que liga o modo solo do Red Dead Online. O Tailscale SSH às vezes pede uma reautenticação no navegador, e um atalho não tem terminal nem navegador pra isso, então ele fala com a API web do [rdo-solo](/rdo-solo-red-dead-online-sozinho-pelo-gateway) pela rede local.
 
 ## O Pi-hole é quem mais trabalha aqui
 
@@ -92,15 +92,15 @@ De tudo que roda no homelab, o Pi-hole é o que mais salva a minha rede. Ele é 
 
 São 355 mil domínios em três listas: a StevenBlack (anúncio e malware), a hagezi Multi PRO (anúncio, rastreamento e telemetria) e a hagezi de nsfw (~~pornografia~~ conteúdo adulto, vamos manter o nível). Por cima delas tem 138 regras minhas, em regex, que fui juntando com o tempo. Vinte e nove são de casas de aposta, Betano, Betfair e Betway, cada uma com o domínio de vários países, porque bloquear só o `.com` não adianta nada. O resto pega sites como o 9gag e o Bilibili. Ele ainda força o SafeSearch do Google, do Bing, do DuckDuckGo e do YouTube por CNAME, por causa das crianças aqui de casa.
 
-A lista Multi PRO bloqueia a telemetria da TV LG, mas poupa de propósito os endpoints que o app ThinQ usa para controlar a TV. Bloquear esses derruba o controle da TV pelo celular.
+A lista Multi PRO bloqueia a telemetria da TV LG, mas poupa de propósito os endpoints que o app ThinQ usa pra controlar a TV. Bloquear esses derruba o controle da TV pelo celular.
 
-O painel fica em `pihole.home`, com o Caddy redirecionando a raiz direto para o `/admin`. É a aba que eu mais abro no homelab, e foi olhando para ela que descobri que, por meses, o Pi-hole filtrou quase ninguém.
+O painel fica em `pihole.home`, com o Caddy redirecionando a raiz direto pro `/admin`. É a aba que eu mais abro no homelab, e foi olhando pra ela que descobri que, por meses, o Pi-hole filtrou quase ninguém.
 
 ### O DNS que achava que servia a casa toda
 
-Em junho os Decos ainda faziam NAT da rede da casa, e o Pi-hole via todo mundo como um cliente só, o IP do Deco, com 167 mil consultas. Quando passei os Decos para ponto de acesso, configurei o DNS do Pi-hole no app do Deco e dei o assunto por encerrado. Só que um Deco em modo AP não tem DHCP nem DNS próprios: quem entrega DNS para a casa é o modem da operadora. A TV, o Fire TV e os celulares continuaram indo direto no DNS da operadora, e o Pi-hole ficou servindo os containers do próprio homelab e um notebook, sem ninguém perceber.
+Em junho os Decos ainda faziam NAT da rede da casa, e o Pi-hole via todo mundo como um cliente só, o IP do Deco, com 167 mil consultas. Quando passei os Decos pra ponto de acesso, configurei o DNS do Pi-hole no app do Deco e dei o assunto por encerrado. Só que um Deco em modo AP não tem DHCP nem DNS próprios: quem entrega DNS pra casa é o modem da operadora. A TV, o Fire TV e os celulares continuaram indo direto no DNS da operadora, e o Pi-hole ficou servindo os containers do próprio homelab e um notebook, sem ninguém perceber.
 
-A correção foi no lugar certo, o DHCP do modem, apontando o DNS para o homelab. O Pi-hole foi de 4 para 15 clientes, conforme cada aparelho renovava o lease.
+A correção foi no lugar certo, o DHCP do modem, apontando o DNS pro homelab. O Pi-hole foi de 4 para 15 clientes, conforme cada aparelho renovava o lease.
 
 Duas coisas que aprendi nessa:
 
@@ -115,11 +115,11 @@ O `scripts/deploy-staging.sh` deste blog sincroniza a pasta de trabalho com o ho
 
 ### O destino dos backups
 
-O notebook manda um snapshot btrfs do sistema todo dia ao meio-dia, por `btrfs send` incremental (o primeiro, completo, tem uns 26 GiB). Outro job manda por `restic` uma pasta de trabalho de 35 GiB, em boa parte fora do git: o primeiro backup ocupou 5,3 GiB no repositório, entre deduplicação e compressão, e a senha do repositório mora no 1Password, porque sem ela o backup não serve para nada. O homelab também faz backup de si mesmo, com `restic` num container às 4h, das configurações, dos bancos e dos documentos. Filmes e fotos ficam de fora: estão no mesmo HD do repositório e dá para baixar de novo. O repositório fica num disco diferente do SSD, mas na mesma máquina.
+O notebook manda um snapshot btrfs do sistema todo dia ao meio-dia, por `btrfs send` incremental (o primeiro, completo, tem uns 26 GiB). Outro job manda por `restic` uma pasta de trabalho de 35 GiB, em boa parte fora do git: o primeiro backup ocupou 5,3 GiB no repositório, entre deduplicação e compressão, e a senha do repositório mora no 1Password, porque sem ela o backup não serve pra nada. O homelab também faz backup de si mesmo, com `restic` num container às 4h, das configurações, dos bancos e dos documentos. Filmes e fotos ficam de fora: estão no mesmo HD do repositório e dá pra baixar de novo. O repositório fica num disco diferente do SSD, mas na mesma máquina.
 
 ### A música
 
-O Jellyfin transcodifica pela Intel UHD 630 do Mac mini (QuickSync) e tinha 3.610 faixas em 276 álbuns quando montei; o Swing Music lê a mesma pasta. Para importar um álbum eu uso uma skill do Claude Code que lê as tags e a capa, passa o `clamscan`, copia por `rsync` pelo Tailscale e só apaga a origem se o MD5 bater dos dois lados. A leitura das tags vem primeiro porque o Swing junta numa faixa só as músicas com título, álbum e artista iguais, e um álbum com títulos repetidos na tag aparece com uma faixa só.
+O Jellyfin transcodifica pela Intel UHD 630 do Mac mini (QuickSync) e tinha 3.610 faixas em 276 álbuns quando montei; o Swing Music lê a mesma pasta. Pra importar um álbum eu uso uma skill do Claude Code que lê as tags e a capa, passa o `clamscan`, copia por `rsync` pelo Tailscale e só apaga a origem se o MD5 bater dos dois lados. A leitura das tags vem primeiro porque o Swing junta numa faixa só as músicas com título, álbum e artista iguais, e um álbum com títulos repetidos na tag aparece com uma faixa só.
 
 ### O fliperama
 
@@ -127,28 +127,28 @@ O fliperama fica na sala, com jogos retrô. Comprei dois controles parecidos com
 
 ### O Xbox
 
-O homelab é o gateway do console para o [modo solo do Red Dead Online](/rdo-solo-red-dead-online-sozinho-pelo-gateway) e manda só o tráfego do Xbox por uma VPN, por roteamento por origem, para o IP de casa não aparecer nas sessões. O que aprendi olhando esse tráfego está no [estudo sobre as sessões do jogo](/sessoes-do-red-dead-online-p2p-relays-e-nat-duplo).
+O homelab é o gateway do console pro [modo solo do Red Dead Online](/rdo-solo-red-dead-online-sozinho-pelo-gateway) e manda só o tráfego do Xbox por uma VPN, por roteamento por origem, pro IP de casa não aparecer nas sessões. O que aprendi olhando esse tráfego está no [estudo sobre as sessões do jogo](/sessoes-do-red-dead-online-p2p-relays-e-nat-duplo).
 
 ## O que quebrou
 
 ### Nove dias de backup que não salvou nada útil
 
-O script que escolhe o snapshot base do envio incremental chamava `ssh` dentro de um `while read`. O `ssh` consumia a entrada do loop, o script só testava o candidato mais recente, e todo envio virava completo: 48 GiB que morriam no `TimeoutStartSec` de duas horas do serviço. Como o envio nunca terminava, a limpeza local também não rodava, e 12 snapshots se acumularam no notebook. A correção foi um `ssh -n` nas checagens, com sete testes em bats para isso não voltar.
+O script que escolhe o snapshot base do envio incremental chamava `ssh` dentro de um `while read`. O `ssh` consumia a entrada do loop, o script só testava o candidato mais recente, e todo envio virava completo: 48 GiB que morriam no `TimeoutStartSec` de duas horas do serviço. Como o envio nunca terminava, a limpeza local também não rodava, e 12 snapshots se acumularam no notebook. A correção foi um `ssh -n` nas checagens, com sete testes em bats pra isso não voltar.
 
 ### O Nextcloud comeu o SSD
 
-Em agosto o SSD estava em 94%. O diretório de dados do Nextcloud tinha 97,9 GB com a pasta de arquivos vazia: 79 GB eram lixeira e 18,9 GB eram versões antigas. Os meus arquivos ficavam no HD, montados como armazenamento externo, e ao apagar um arquivo de lá o Nextcloud copia ele para a lixeira dentro do diretório de dados, que estava no SSD. Sem retenção configurada, essa lixeira praticamente nunca expira. Somando os 75 GB de snapshots do bug anterior, deu o disco cheio.
+Em agosto o SSD estava em 94%. O diretório de dados do Nextcloud tinha 97,9 GB com a pasta de arquivos vazia: 79 GB eram lixeira e 18,9 GB eram versões antigas. Os meus arquivos ficavam no HD, montados como armazenamento externo, e ao apagar um arquivo de lá o Nextcloud copia ele pra lixeira dentro do diretório de dados, que estava no SSD. Sem retenção configurada, essa lixeira praticamente nunca expira. Somando os 75 GB de snapshots do bug anterior, deu o disco cheio.
 
 Desliguei o Nextcloud de vez. Antes, resgatei os 14 GB de arquivos reais que estavam na lixeira, entre eles o "Live At The Rainbow" do Bob Marley em 24 bit/96 kHz, que não tinha cópia em lugar nenhum (quase foi embora por causa de uma lixeira). Com o journald limitado a 500 MB e as imagens Docker paradas removidas, o SSD foi de 94% para 33%: 142 GB de volta.
 
 ### O `docker pull` da tag que existia
 
-Um dia toda instalação nova no CasaOS parava em "0% + Error response from daemon", e o erro do Docker dizia que não conseguia resolver a imagem. Parecia tag errada; era DNS. O `resolv.conf` do homelab aponta para o MagicDNS do Tailscale, que estava sem servidor de saída para nomes públicos e respondia SERVFAIL para tudo fora da tailnet. O Pi-hole local resolvia normalmente. A correção foi pôr o Pi-hole como nameserver global da tailnet, que é a configuração que descrevi lá em cima.
+Um dia toda instalação nova no CasaOS parava em "0% + Error response from daemon", e o erro do Docker dizia que não conseguia resolver a imagem. Parecia tag errada; era DNS. O `resolv.conf` do homelab aponta pro MagicDNS do Tailscale, que estava sem servidor de saída pra nomes públicos e respondia SERVFAIL pra tudo fora da tailnet. O Pi-hole local resolvia normalmente. A correção foi pôr o Pi-hole como nameserver global da tailnet, que é a configuração que descrevi lá em cima.
 
 ## O que ficou decidido
 
 - O CasaOS é a vitrine e a loja de apps. A configuração de verdade está nos `docker-compose.yml`, no `Caddyfile` e no `fstab`, e eu edito pelo terminal: o editor visual do CasaOS mostra volume nomeado como `[object Object]`, e salvar por ali grava esse texto como caminho e quebra o compose.
 - Os nomes `.home` só existem dentro da tailnet.
-- O SSD guarda o estado; o HD guarda o que dá para baixar ou copiar de novo.
+- O SSD guarda o estado; o HD guarda o que dá pra baixar ou copiar de novo.
 
 `Connection to homelab closed.`

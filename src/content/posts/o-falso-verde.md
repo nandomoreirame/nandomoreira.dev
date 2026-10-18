@@ -32,13 +32,13 @@ snapshot:
 
 Em agosto, uma rodada de revisão de um projeto fechou com `result: PASS`. Lint verde, type-check verde, build verde. E sete testes vermelhos, quebrando contra uma rota que a própria rodada tinha removido. Quem pegou foi um `npm test` rodado por fora do fluxo.
 
-O teste vermelho não me preocupa. Ele grita, alguém para e investiga. O que me custa caro é o verde que ninguém questiona, e com agente escrevendo código isso piora, porque o agente lê o `PASS` e segue em frente com toda a confiança do mundo.
+O teste vermelho não me preocupa. Ele grita, alguém para e investiga. O que me custa caro é o verde que ninguém questiona, e se você usa agente pra escrever código isso piora, porque ele lê o `PASS` e segue em frente com toda a confiança do mundo. **Exit code não é evidência: só vale o verde que a própria verificação produz.**
 
 ## O portão que não rodava a suíte
 
 O meu fluxo de implementação tem uma escada de portões, um script (`rpi-gates.sh`) que detecta a stack do projeto e roda as verificações certas. O primeiro degrau, o `tier1`, era o veredito de cada rodada. E até 19 de agosto ele era lint, type-check e build. A suíte de testes só existia no `tier2`, atrás do portão de cobertura.
 
-Ou seja: **por quase dois meses, desde que a escada existia, um relatório de portão verde provava que o código compilava, e só isso.** Os sete testes vermelhos não eram azar. O portão nunca tinha sido desenhado para vê-los.
+Ou seja: **por quase dois meses, desde que a escada existia, um relatório de portão verde provava que o código compilava, e só isso.** Os sete testes vermelhos não eram azar. O portão nunca tinha sido desenhado pra vê-los.
 
 A correção foi pôr `npm test` dentro do `tier1`, e a lição foi pior que o bug: todo relatório de portão anterior àquela data deixou de valer como evidência de teste passando. (Oito dias depois achei o irmão dele: o `tier1` de TypeScript também não checava formatação, era a única stack sem esse portão.)
 
@@ -56,13 +56,13 @@ Os outros verdes falsos vieram do shell, e esses pegam qualquer um.
 
 O status de um pipeline é o status do último comando. Então `npm run build 2>&1 | tail -12` termina com o status do `tail`, que é sempre zero. A notificação do agente diz "exit code 0" com cara de prova, e o `tail` ainda pode cortar justamente a linha `Failed to compile`. Eu quase reportei um build verde a partir de doze linhas de um aviso de CSS que já existia.
 
-O contrário também acontece. Terminei um script de verificação com `grep -c "Type error"` para contar erros. O build passou, o `grep` não achou nada, e `grep` sem resultado sai com 1. A notificação disse que falhou, e foi justamente o melhor resultado possível que produziu o sinal de falha.
+O contrário também acontece. Terminei um script de verificação com `grep -c "Type error"` pra contar erros. O build passou, o `grep` não achou nada, e `grep` sem resultado sai com 1. A notificação disse que falhou, e foi justamente o melhor resultado possível que produziu o sinal de falha.
 
-Tem ainda o caso que parece sabotagem. O `npx prettier --write` imprimiu a linha de sucesso de sempre, saiu com zero e deixou o arquivo idêntico, byte por byte. O `./node_modules/.bin/prettier` no mesmo arquivo mudou o md5 na hora. E o nome nu `tsc`, aqui com o mise, resolve para um shim que morre sem versão configurada, enquanto o wrapper que resume a saída imprimia `TypeScript: No errors found` sem o compilador ter rodado.
+Tem ainda o caso que parece sabotagem. O `npx prettier --write` imprimiu a linha de sucesso de sempre, saiu com zero e deixou o arquivo idêntico, byte por byte. O `./node_modules/.bin/prettier` no mesmo arquivo mudou o md5 na hora. E o nome nu `tsc`, aqui com o mise, resolve pra um shim que morre sem versão configurada, enquanto o wrapper que resume a saída imprimia `TypeScript: No errors found` sem o compilador ter rodado.
 
 ## O teste que lê o fonte
 
-Esse foi neste site. A página antiga de notas fazia `Astro.redirect('/x', 301)`, e o teste procurava a string `301` no fonte. Verde. Mas a página era pré-renderizada, e página pré-renderizada não manda status HTTP: o redirect virava um documento com `<meta http-equiv="refresh">` servido com 200. No navegador "funcionava", então ninguém via. Para crawler e cache não era redirect nenhum.
+Esse foi neste site. A página antiga de notas fazia `Astro.redirect('/x', 301)`, e o teste procurava a string `301` no fonte. Verde. Mas a página era pré-renderizada, e página pré-renderizada não manda status HTTP: o redirect virava um documento com `<meta http-equiv="refresh">` servido com 200. No navegador "funcionava", então ninguém via. Pra crawler e cache não era redirect nenhum.
 
 Aconteceu duas vezes no mesmo repositório. O teste de fonte não tinha como distinguir uma coisa da outra, por construção. O único portão que pega isso é HTTP de verdade, contra o build rodando:
 
@@ -75,7 +75,7 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:4321/notas/algum-post
 Nenhuma dessas falhas foi exótica. Todas tinham a mesma forma: um sinal de sucesso que não estava amarrado ao que eu queria provar. Então mudei o que conta como evidência.
 
 - **A evidência é uma linha de marca, nunca o exit code.** Os scripts de verificação deste site terminam com `ALL LOCAL CHECKS PASSED`, `AEO ROUTES PASSED`, `STAGING DEPLOY PASSED`. Se a linha não está lá, não passou, diga o código de saída o que disser.
-- **Quando preciso do status de um build, ele vai para um arquivo,** e eu capturo o `$?` do build, não do pipe: `npm run build > build.log 2>&1; echo "EXIT=$?"`.
+- **Quando preciso do status de um build, ele vai pra um arquivo,** e eu capturo o `$?` do build, não do pipe: `npm run build > build.log 2>&1; echo "EXIT=$?"`.
 - **Ferramenta pelo binário local** (`./node_modules/.bin/<tool>`), e escrita conferida pelo efeito: `md5sum` antes e depois, ou `git status`.
 - **Portão novo precisa ficar vermelho antes de ser aceito.** Está escrito no `CLAUDE.md` deste repositório: um portão que nunca falhou não é portão.
 
