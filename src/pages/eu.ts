@@ -4,4 +4,4 @@ import { handleSelf } from '../lib/analytics/self';
 
 export const prerender = false;
 
-export const ALL: APIRoute = ({ request }) => handleSelf(request, analyticsConfig.selfToken);
+export const ALL: APIRoute = ({ request, url }) => handleSelf(request, analyticsConfig.selfToken, url.hostname);
