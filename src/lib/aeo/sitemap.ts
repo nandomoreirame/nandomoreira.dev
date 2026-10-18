@@ -1,6 +1,8 @@
 import type { Post } from '../../content/schemas/post';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock } from '../catalog/groups';
+import { detailSlugs } from '../sales/catalog';
+import { SALES_HOST_LIVE, salesPath } from '../sales/host';
 import { absoluteUrl } from './urls';
 
 interface Input {
@@ -9,6 +11,8 @@ interface Input {
   posts?: readonly Post[];
   /** Date the /setup page was last revised (SETUP_UPDATED_AT). */
   setupUpdatedAt?: string;
+  /** When true, /servicos is omitted (main host 301s to the subdomain). */
+  salesLive?: boolean;
 }
 
 const escapeXml = (value: string): string =>
@@ -39,6 +43,7 @@ export const sitemapEntries = ({
   projects,
   posts = [],
   setupUpdatedAt,
+  salesLive = SALES_HOST_LIVE,
 }: Omit<Input, 'site'>): SitemapEntry[] => {
   const entries: SitemapEntry[] = [
     { path: '/' },
@@ -50,6 +55,10 @@ export const sitemapEntries = ({
     { path: '/setup', lastmod: setupUpdatedAt },
     { path: '/now' },
     { path: '/privacidade' },
+    // On the main host only until the subdomain is live (sales-landing, REQ-033).
+    ...(salesLive ? [] : [salesPath(undefined, false), ...detailSlugs().map((slug) => salesPath(slug, false))]).map(
+      (path) => ({ path }),
+    ),
     { path: '/api/resume.json' },
     { path: '/api/resume.txt' },
     ...projects.map((project) => ({

@@ -5,6 +5,7 @@ import { COLLECTION_COPY } from '../catalog/collection-copy';
 import { getAllPosts, getAllProjects, getProfile } from '../content';
 import { toLongDate } from '../format/date';
 import { BLOG_COPY } from '../posts/blog-copy';
+import { detailFor, detailSlugs } from '../sales/catalog';
 
 /** What the share card of one page shows. */
 export interface OgPage {
@@ -51,6 +52,8 @@ export const ogPages = async (): Promise<OgPage[]> => {
     staticPage('/now', 'O que estou fazendo agora', 'Agora', 'timeline'),
     staticPage('/privacidade', 'Política de privacidade', 'Privacidade', 'panels'),
     staticPage('/curriculo', profile.headline, 'Currículo', 'ascent'),
+    staticPage('/servicos', 'Seu site, sua loja ou seu sistema, do primeiro papo até estar no ar', 'Serviços', 'storefront'),
+    ...detailSlugs().map((slug) => staticPage(`/servicos/${slug}`, detailFor(slug)!.detail.hero.title, 'Serviços', 'wireframe')),
     staticPage('/posts', BLOG_COPY.title, 'Blog', 'calendar'),
     staticPage('/posts/arquivo', 'Textos de 2015 a 2019, mantidos como registro', 'Arquivo', 'gantt'),
     ...years.map((year) => staticPage(`/posts/arquivo/${year}`, `Textos de ${year}`, 'Arquivo', 'calendar')),
