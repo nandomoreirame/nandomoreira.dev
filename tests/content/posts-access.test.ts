@@ -89,9 +89,9 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('game-mode-congelando-o-trabalho-com-o-cgroup-freezer');
-    expect(second.slug).toBe('scratchpad-no-niri-janelas-que-somem-com-um-atalho');
-    expect(third.slug).toBe('espanso-substituicao-de-texto-no-linux');
+    expect(first.slug).toBe('meu-homelab-num-mac-mini-de-2018');
+    expect(second.slug).toBe('game-mode-congelando-o-trabalho-com-o-cgroup-freezer');
+    expect(third.slug).toBe('scratchpad-no-niri-janelas-que-somem-com-um-atalho');
   });
 });
 

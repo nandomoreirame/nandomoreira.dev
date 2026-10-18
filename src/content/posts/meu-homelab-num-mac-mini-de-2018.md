@@ -1,9 +1,10 @@
 ---
 slug: meu-homelab-num-mac-mini-de-2018
-title: "Meu homelab num Mac mini de 2018: discos, DNS e Tailscale"
-seoTitle: "Meu homelab num Mac mini de 2018"
+title: "Meu homelab em um Mac mini de 2018: discos, DNS e Tailscale"
+seoTitle: "Meu homelab em um Mac mini de 2018"
 summary: "Um Mac mini com Ubuntu e CasaOS, gastando 5,5 W, guarda os backups do notebook, a minha música, a homologação deste site e o Pi-hole, que barra uma em cada cinco consultas DNS da casa. Instalar os apps foi a parte fácil; o trabalho foi decidir onde os dados moram e como cada aparelho chega nele."
-date: "2026-10-17"
+date: "2026-10-18"
+publishedAt: "2026-10-18T12:45:50-03:00"
 markers:
   - homelab
   - linux
@@ -33,10 +34,9 @@ snapshot:
       value: "Pi-hole"
     - label: "Consumo"
       value: "5,5 W"
-draft: true
 ---
 
-O painel do CasaOS diz que o meu homelab está em 6% de CPU, 21% de RAM e 5,5 W, a 49 °C. É um Mac mini de 2018 rodando Ubuntu 26.04, ligado por cabo no modem da operadora, e é nele que moram o DNS da casa, a minha biblioteca de música, os backups do notebook e a homologação deste site.
+O painel do [CasaOS](https://github.com/IceWhaleTech/CasaOS) (que instala e gerencia apps em contêineres Docker) diz que o meu homelab está em 6% de CPU, 21% de RAM e 5,5 W, a 49 °C. É um Mac mini de 2018 rodando Ubuntu 26.04, ligado por cabo no modem da operadora, e é nele que moram o DNS da casa, a minha biblioteca de música, os backups do notebook e a homologação deste site.
 
 A grade de ícones é a parte que todo mundo mostra (e eu também, olha a capa aí). Só que instalar um app no CasaOS é um clique, e não foi o clique que me custou tempo. O que custou foi decidir em qual disco cada coisa mora, como cada aparelho da casa encontra o servidor e como eu chego nele quando estou fora.
 
@@ -62,7 +62,7 @@ Fiz essa mudança em junho, quando o SSD bateu 77%: `rsync -aHAX`, conferência 
 
 A rede é simples: o modem da operadora no centro, o homelab num cabo e os roteadores mesh em modo ponto de acesso, então tudo vive na mesma rede.
 
-Pra entrar no servidor eu uso o Tailscale (uma VPN que liga os meus aparelhos numa rede privada, a tailnet, de onde eu estiver), até dentro de casa. O meu `ssh homelab` aponta pro IP da tailnet, e não pro da rede local, porque as chaves do meu ssh-agent pararam de autenticar no IP local (todas davam `Permission denied (publickey)` até o agente estourar em "Too many authentication failures"). O Tailscale SSH autentica pela identidade da tailnet e o problema simplesmente sumiu:
+Pra entrar no servidor eu uso o [Tailscale](https://tailscale.com) (uma VPN que liga os meus aparelhos numa rede privada, a tailnet, de onde eu estiver), até dentro de casa. O meu `ssh homelab` aponta pro IP da tailnet, e não pro da rede local, porque as chaves do meu ssh-agent pararam de autenticar no IP local (todas davam `Permission denied (publickey)` até o agente estourar em "Too many authentication failures"). O Tailscale SSH autentica pela identidade da tailnet e o problema simplesmente sumiu:
 
 ```
 Host homelab
@@ -70,7 +70,7 @@ Host homelab
     User nandomoreira
 ```
 
-Os serviços ganham nomes `.home`, com o Caddy na frente fazendo o proxy reverso:
+Os serviços ganham nomes `.home`, com o [Caddy](https://caddyserver.com) na frente fazendo o proxy reverso (ele recebe cada endereço e repassa pro app certo):
 
 ```
 http://media.home {
@@ -78,7 +78,7 @@ http://media.home {
 }
 ```
 
-O Pi-hole resolve os `.home` pro IP do homelab na tailnet, e o DNS do Tailscale manda as consultas de `home` pra ele. O resultado é que `media.home` abre o Jellyfin no celular de qualquer lugar, desde que o aparelho esteja na minha tailnet, e não abre em mais lugar nenhum.
+O [Pi-hole](https://pi-hole.net) resolve os `.home` pro IP do homelab na tailnet, e o DNS do Tailscale manda as consultas de `home` pra ele. O resultado é que `media.home` abre o [Jellyfin](https://jellyfin.org) no celular de qualquer lugar, desde que o aparelho esteja na minha tailnet, e não abre em mais lugar nenhum.
 
 O Pi-hole também é o nameserver global da tailnet, com o DNS local sobrescrito: todo aparelho meu ganha bloqueio de anúncio até fora de casa. O preço é que, se o homelab cair, os aparelhos remotos ficam sem DNS até eu tirar essa configuração no painel do Tailscale. (Cheguei nisso por causa de um bug, que conto mais abaixo.)
 
@@ -119,11 +119,11 @@ O notebook manda um snapshot btrfs do sistema todo dia ao meio-dia, por `btrfs s
 
 ### A música
 
-O Jellyfin transcodifica pela Intel UHD 630 do Mac mini (QuickSync) e tinha 3.610 faixas em 276 álbuns quando montei; o Swing Music lê a mesma pasta. Pra importar um álbum eu uso uma skill do Claude Code que lê as tags e a capa, passa o `clamscan`, copia por `rsync` pelo Tailscale e só apaga a origem se o MD5 bater dos dois lados. A leitura das tags vem primeiro porque o Swing junta numa faixa só as músicas com título, álbum e artista iguais, e um álbum com títulos repetidos na tag aparece com uma faixa só.
+O Jellyfin transcodifica pela Intel UHD 630 do Mac mini (QuickSync) e tinha 3.610 faixas em 276 álbuns quando montei; o [Swing Music](https://github.com/swingmx/swingmusic) lê a mesma pasta. Pra importar um álbum eu uso uma skill do Claude Code que lê as tags e a capa, passa o `clamscan`, copia por `rsync` pelo Tailscale e só apaga a origem se o MD5 bater dos dois lados. A leitura das tags vem primeiro porque o Swing junta numa faixa só as músicas com título, álbum e artista iguais, e um álbum com títulos repetidos na tag aparece com uma faixa só.
 
 ### O fliperama
 
-O fliperama fica na sala, com jogos retrô. Comprei dois controles parecidos com os do Super Nintendo, e é com eles que a gente joga junto aqui em casa (melhor uso de um Mac mini aposentado, sem discussão). Por baixo, um usuário `arcade` sobe o RetroArch direto na TV, num `cage` em `tty1`, com as ROMs no pendrive. O cursor do mouse ficou parado no meio da TV até eu descobrir que essa versão do `cage` ignora o `XCURSOR_THEME` e carrega o tema chamado `default` do sistema. A correção foi deixar o tema `default` transparente, depois de três tentativas mexendo no lugar errado.
+O fliperama fica na sala, com jogos retrô. Comprei dois controles parecidos com os do Super Nintendo, e é com eles que a gente joga junto aqui em casa (melhor uso de um Mac mini aposentado, sem discussão). Por baixo, um usuário `arcade` sobe o [RetroArch](https://www.retroarch.com) direto na TV, num `cage` em `tty1`, com as ROMs no pendrive. O cursor do mouse ficou parado no meio da TV até eu descobrir que essa versão do `cage` ignora o `XCURSOR_THEME` e carrega o tema chamado `default` do sistema. A correção foi deixar o tema `default` transparente, depois de três tentativas mexendo no lugar errado.
 
 ### O Xbox
 
@@ -133,11 +133,11 @@ O homelab é o gateway do console pro [modo solo do Red Dead Online](/rdo-solo-r
 
 ### Nove dias de backup que não salvou nada útil
 
-O script que escolhe o snapshot base do envio incremental chamava `ssh` dentro de um `while read`. O `ssh` consumia a entrada do loop, o script só testava o candidato mais recente, e todo envio virava completo: 48 GiB que morriam no `TimeoutStartSec` de duas horas do serviço. Como o envio nunca terminava, a limpeza local também não rodava, e 12 snapshots se acumularam no notebook. A correção foi um `ssh -n` nas checagens, com sete testes em bats pra isso não voltar.
+O script que escolhe o snapshot base do envio incremental chamava `ssh` dentro de um `while read`. O `ssh` consumia a entrada do loop, o script só testava o candidato mais recente, e todo envio virava completo: 48 GiB que morriam no `TimeoutStartSec` de duas horas do serviço. Como o envio nunca terminava, a limpeza local também não rodava, e 12 snapshots se acumularam no notebook. A correção foi um `ssh -n` nas checagens, com sete testes em [bats](https://github.com/bats-core/bats-core) pra isso não voltar.
 
 ### O Nextcloud comeu o SSD
 
-Em agosto o SSD estava em 94%. O diretório de dados do Nextcloud tinha 97,9 GB com a pasta de arquivos vazia: 79 GB eram lixeira e 18,9 GB eram versões antigas. Os meus arquivos ficavam no HD, montados como armazenamento externo, e ao apagar um arquivo de lá o Nextcloud copia ele pra lixeira dentro do diretório de dados, que estava no SSD. Sem retenção configurada, essa lixeira praticamente nunca expira. Somando os 75 GB de snapshots do bug anterior, deu o disco cheio.
+Em agosto o SSD estava em 94%. O diretório de dados do [Nextcloud](https://nextcloud.com) tinha 97,9 GB com a pasta de arquivos vazia: 79 GB eram lixeira e 18,9 GB eram versões antigas. Os meus arquivos ficavam no HD, montados como armazenamento externo, e ao apagar um arquivo de lá o Nextcloud copia ele pra lixeira dentro do diretório de dados, que estava no SSD. Sem retenção configurada, essa lixeira praticamente nunca expira. Somando os 75 GB de snapshots do bug anterior, deu o disco cheio.
 
 Desliguei o Nextcloud de vez. Antes, resgatei os 14 GB de arquivos reais que estavam na lixeira, entre eles o "Live At The Rainbow" do Bob Marley em 24 bit/96 kHz, que não tinha cópia em lugar nenhum (quase foi embora por causa de uma lixeira). Com o journald limitado a 500 MB e as imagens Docker paradas removidas, o SSD foi de 94% para 33%: 142 GB de volta.
 
