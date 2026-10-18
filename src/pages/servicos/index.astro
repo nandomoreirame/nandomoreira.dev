@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SALES_COPY } from '../../lib/sales/copy';
+
+// On demand, never prerendered: the sales host rewrites `/` here at request
+// time (tests/sales/ssr-routes.test.ts). The full landing replaces this body
+// in Task 20 of docs/plans/2026-10-18-sales-landing.md.
+export const prerender = false;
+
+const { hero } = SALES_COPY;
+---
+
+<BaseLayout title="Serviços | Fernando Moreira" description={hero.lead} noindex>
+  <section class="flex flex-col gap-lg py-2xl">
+    <h1 class="font-serif text-display font-normal text-foreground">{hero.title}</h1>
+    <p class="text-lead text-muted-foreground">{hero.lead}</p>
+  </section>
+</BaseLayout>
