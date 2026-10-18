@@ -1,0 +1,55 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SALES_COPY } from '../../lib/sales/copy';
+import SectionIntro from './SectionIntro.astro';
+
+interface Props {
+  variant?: 'full' | 'compact';
+}
+
+const { variant = 'full' } = Astro.props;
+const { steps, stepsHeader, stepsNote } = SALES_COPY;
+const number = (index: number) => String(index + 1).padStart(2, '0');
+---
+
+<section id={variant === 'full' ? 'como-trabalho' : undefined} aria-labelledby={`etapas-${variant}`} class="scroll-mt-2xl border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    {variant === 'full' ? (
+      <SectionIntro id={`etapas-${variant}`} {...stepsHeader} centered />
+    ) : (
+      <SectionIntro id={`etapas-${variant}`} eyebrow="Metodologia transparente" title="Como vamos fazer, em 7 etapas" />
+    )}
+    {variant === 'full' ? (
+      <ol class="mx-auto flex w-full max-w-3xl flex-col gap-md">
+        {steps.map((step, index) => (
+          <li class:list={['flex gap-md rounded-md border bg-surface p-lg', step.highlight ? 'border-primary' : 'border-border']}>
+            <span class="font-mono text-h3 text-primary">{number(index)}</span>
+            <div class="flex flex-col gap-sm">
+              <h3 class="flex flex-wrap items-center gap-sm text-h3 font-semibold text-foreground">
+                {step.title}
+                {step.highlight && <span class="rounded-sm bg-primary px-sm font-mono text-micro text-primary-foreground">{step.highlight}</span>}
+              </h3>
+              <p class="text-small text-muted-foreground">{step.text}</p>
+              <p class="w-fit rounded-sm bg-surface-elevated px-sm py-xs text-small text-foreground">
+                <span class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">O que você faz: </span>{step.youDo}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <ol class="grid gap-sm sm:grid-cols-2 lg:grid-cols-7">
+        {steps.map((step, index) => (
+          <li class:list={['flex flex-col gap-xs rounded-md border bg-surface p-md', step.highlight ? 'border-primary' : 'border-border']}>
+            <span class="font-mono text-small text-primary">{number(index)}</span>
+            <h3 class="text-body font-semibold text-foreground">{step.title}</h3>
+            {step.highlight && <span class="font-mono text-micro text-primary">{step.highlight}</span>}
+          </li>
+        ))}
+      </ol>
+    )}
+    <p class="mx-auto flex w-full max-w-3xl items-center gap-sm rounded-md border border-border-strong bg-surface px-md py-sm text-small text-muted-foreground">
+      <Icon name="lucide:shield-check" class="size-4 shrink-0 text-primary" aria-hidden="true" />{stepsNote}
+    </p>
+  </div>
+</section>
