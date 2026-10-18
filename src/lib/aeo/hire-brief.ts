@@ -1,5 +1,5 @@
 import type { Profile } from '../../content/schemas/profile';
-import { BUDGETS, INTERESTS } from '../hire/schema';
+import { BUDGETS, INTERESTS, SERVICES } from '../hire/schema';
 import { absoluteUrl } from './urls';
 
 interface Input {
@@ -19,6 +19,7 @@ export const buildHireBrief = ({ site, profile }: Input): string => {
     company: 'optional',
     budget: `optional, BRL: ${BUDGETS.join(' | ')}`,
     interests: [`optional: ${INTERESTS.join(' | ')}`],
+    service: `optional, what a person wants built: ${SERVICES.join(' | ')}`,
   };
 
   return [

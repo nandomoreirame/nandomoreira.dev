@@ -21,7 +21,15 @@ describe('buildHireBrief', () => {
     expect(text).toContain('POST https://nandomoreira.dev/api/hire');
     expect(text).toContain('Content-Type: application/json');
     const body = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
-    expect(Object.keys(JSON.parse(body))).toEqual(['from', 'contact', 'brief', 'company', 'budget', 'interests']);
+    expect(Object.keys(JSON.parse(body))).toEqual([
+      'from',
+      'contact',
+      'brief',
+      'company',
+      'budget',
+      'interests',
+      'service',
+    ]);
   });
 
   it('points at the full AGENTS.md and the MCP server', () => {
