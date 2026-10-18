@@ -15,6 +15,7 @@ import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../lib/hire/form';
+import { salesUrl } from '../lib/sales/host';
 
 const profile = await getProfile();
 const email = profile.contacts.find((contact) => contact.kind === 'email');
@@ -43,6 +44,11 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
       title="Vamos conversar"
       description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
     />
+
+    <p class="text-small text-muted-foreground">
+      Tem um negócio e precisa de um site ou sistema? Veja a página feita para você.
+      <a href={salesUrl()} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver os serviços</a>
+    </p>
 
     {/* Posts natively to the same endpoint agents use, so the form works with
         no JavaScript; the handler answers a form post with a redirect back here

@@ -1,5 +1,6 @@
 ---
 import type { Block } from '../../content/blocks';
+import { salesUrl } from '../../lib/sales/host';
 import SectionHeader from '../ui/SectionHeader.astro';
 import ServiceCards from '../ui/ServiceCards.astro';
 
@@ -20,4 +21,9 @@ const { services, projects } = Astro.props;
   />
 
   <ServiceCards services={services} projects={projects} />
+
+  <p class="mt-lg text-small text-muted-foreground">
+    Para o seu negócio: site, loja virtual ou sistema, explicados sem jargão.
+    <a href={salesUrl()} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver os serviços</a>
+  </p>
 </section>
