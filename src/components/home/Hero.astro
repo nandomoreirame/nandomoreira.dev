@@ -15,15 +15,16 @@ const { name, headline, positioning } = Astro.props;
 
 <section id="inicio" class="relative isolate py-2xl lg:pt-hero-top lg:pb-hero-bottom">
   <div class="flex flex-col gap-lg lg:w-2/3">
-    <h1 class="font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">
+    <h1 class="font-serif text-h1 font-normal tracking-tight text-pretty text-foreground sm:text-display">
       {headline}
     </h1>
 
     <p class="max-w-[68ch] text-lead text-muted-foreground">{positioning}</p>
 
     <div class="flex flex-wrap items-center gap-md">
-      <Button href="/portfolio" variant="primary" arrow>Ver o que eu construí</Button>
+      <Button href="/mcp" variant="primary">Esse site fala MCP</Button>
       <Button href="/contato" variant="secondary">Contato</Button>
+      <Button href="/sobre" variant="ghost" arrow>Leia mais sobre mim</Button>
     </div>
 
     <p data-hero-stack class="flex flex-wrap gap-x-lg gap-y-xs border-t border-border pt-md font-mono text-caption text-muted-foreground">

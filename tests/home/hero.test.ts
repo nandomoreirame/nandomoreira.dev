@@ -15,9 +15,9 @@ const render = async (
 };
 
 describe('Hero', () => {
-  it('leaves availability to the header pill: no MCP link and no status dot in the hero', async () => {
+  it('leaves availability to the header pill: no status dot in the hero', async () => {
+    // The /mcp link came back on 2026-10-17 as the primary CTA, not as availability.
     const html = await render();
-    expect(html).not.toContain('href="/mcp"');
     expect(html).not.toContain('data-status-dot');
   });
 
@@ -53,8 +53,22 @@ describe('Hero', () => {
     expect(html.match(/bg-primary\b/g)).toHaveLength(1);
   });
 
-  it('points the call to action at the portfolio listing', async () => {
-    expect(await render()).toContain('href="/portfolio"');
+  it('points the primary call to action at /mcp, "Esse site fala MCP"', async () => {
+    const html = await render();
+    const link = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('Esse site fala MCP');
+    expect(link).toContain('bg-primary');
+    expect(html).not.toContain('Ver o que eu construí');
+  });
+
+  it('closes the row with "Leia mais sobre mim", a transparent link-like button to /sobre', async () => {
+    const html = await render();
+    const row = html.slice(html.indexOf('href="/mcp"'));
+    const link = html.match(/<a\b[^>]*href="\/sobre"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('Leia mais sobre mim');
+    expect(link).not.toContain('bg-primary');
+    expect(link).not.toContain('border-border-strong');
+    expect(row.indexOf('href="/contato"')).toBeLessThan(row.indexOf('href="/sobre"'));
   });
 
   it('never animates the text in from invisible', async () => {
@@ -80,11 +94,13 @@ describe('Hero', () => {
     expect(paragraph).toContain('text-lead');
   });
 
-  it('puts an arrow icon on the primary portfolio CTA', async () => {
+  it('keeps the arrow only on "Leia mais sobre mim", never on the primary CTA', async () => {
     const html = await render();
-    const link = html.match(/<a\b[^>]*href="\/portfolio"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const mcp = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const about = html.match(/<a\b[^>]*href="\/sobre"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
 
-    expect(link).toMatch(/lucide:arrow-right|data-icon="lucide:arrow-right"|arrow-right/);
+    expect(mcp).not.toContain('arrow-right');
+    expect(about).toContain('arrow-right');
   });
 
   it('borders the contact CTA as secondary', async () => {
