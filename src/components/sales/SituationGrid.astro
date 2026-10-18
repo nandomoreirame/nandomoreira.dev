@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SALES_SERVICES, serviceAnchor } from '../../lib/sales/catalog';
+import { SALES_COPY } from '../../lib/sales/copy';
+import SectionIntro from './SectionIntro.astro';
+
+const { situationsHeader, situations } = SALES_COPY;
+const titleOf = (slug: string) => SALES_SERVICES.find((service) => service.slug === slug)?.title ?? slug;
+---
+
+<section aria-labelledby="situacao-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="situacao-title" {...situationsHeader} />
+    <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
+      {situations.map((situation, index) => (
+        <li>
+          <a
+            href={`#${serviceAnchor(situation.service)}`}
+            class="flex h-full flex-col gap-md rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <span class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">{String(index + 1).padStart(2, '0')} / {situation.label}</span>
+            <span class="text-h3 text-foreground">“{situation.quote}”</span>
+            <span class="mt-auto inline-flex items-center justify-between border-t border-border pt-sm font-mono text-small text-primary">
+              {titleOf(situation.service)}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,42 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SALES_SERVICES, serviceAnchor } from '../../lib/sales/catalog';
+import { SALES_COPY } from '../../lib/sales/copy';
+import { salesPath } from '../../lib/sales/host';
+import SectionIntro from './SectionIntro.astro';
+---
+
+<section id="servicos" aria-labelledby="servicos-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="servicos-title" {...SALES_COPY.servicesHeader} />
+    <ul class="grid gap-md md:grid-cols-2 lg:grid-cols-3">
+      {SALES_SERVICES.map((service, index) => (
+        <li id={serviceAnchor(service.slug)} class="flex scroll-mt-xl flex-col gap-md rounded-md border border-border bg-surface p-lg">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-micro uppercase tracking-eyebrow text-primary">Serviço {String(index + 1).padStart(2, '0')}</span>
+            <Icon name={service.icon} class="size-5 text-muted-foreground" aria-hidden="true" />
+          </div>
+          <h3 class="text-h3 font-semibold text-foreground">{service.title}</h3>
+          <p class="text-small text-muted-foreground">{service.summary}</p>
+          <div class="rounded-sm bg-surface-elevated p-md">
+            <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Para quem é</p>
+            <p class="mt-xs text-small text-foreground">{service.audience}</p>
+          </div>
+          <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">O que você recebe</p>
+          <ul class="flex flex-col gap-xs">
+            {service.receives.map((item) => (
+              <li class="flex items-start gap-xs text-small text-foreground">
+                <Icon name="lucide:check" class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />{item}
+              </li>
+            ))}
+          </ul>
+          {service.detail && (
+            <a href={salesPath(service.slug)} class="mt-auto inline-flex min-h-11 items-center justify-between border-t border-border pt-sm text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              Entender em detalhes<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
