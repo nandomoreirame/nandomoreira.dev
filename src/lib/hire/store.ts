@@ -8,6 +8,8 @@ export interface StoredBriefing {
   company: string | null;
   budget: string | null;
   interests: string[];
+  /** What a sales-page visitor wants built; null from /contato and agents. */
+  service: string | null;
   sourceIp: string;
   /** REQ-014: tells an agent apart from a script, when it declares itself. */
   userAgent: string | null;
@@ -59,6 +61,7 @@ export const toStoredBriefing = ({
   company: payload.company ?? null,
   budget: payload.budget ?? null,
   interests: payload.interests ?? [],
+  service: payload.service ?? null,
   sourceIp,
   userAgent: userAgent ? userAgent.slice(0, MAX_USER_AGENT) : null,
   receivedAt: now.toISOString(),
