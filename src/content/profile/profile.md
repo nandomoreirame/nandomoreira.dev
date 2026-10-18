@@ -4,7 +4,7 @@ displayName: Fernando Moreira
 wordmark: nandomoreira.dev
 headline: Desenvolvedor de software e engenheiro de IA, do dado à produção
 bio: |
-  Construo software de ponta a ponta há 15 anos, da interface ao dado, e hoje
+  Construo software de ponta a ponta há {anos}, da interface ao dado, e hoje
   coloco agentes de IA e produtos com IA em produção. Na Liquid AI, respondi
   pela esteira de dados de financiamento imobiliário de mais de 20
   incorporadoras, onde reduzi de cerca de cinco dias para até 30 minutos o
@@ -49,10 +49,10 @@ trajectory:
     context: |
       Liquid AI. Unitários, integração, regressão e paridade, contra quebra
       silenciosa a cada mudança de transformação de dados.
-  - value: "15 anos"
+  - value: "{anos}"
     label: construindo software, de agência a banco
     context: |
-      Desde 2010, com seis anos em produtos de alta escala: Itaú Unibanco,
+      Desde 2011, com seis anos em produtos de alta escala: Itaú Unibanco,
       Pipefy e Skyone.
   - value: "2012"
     label: o ano em que comecei a publicar open source
