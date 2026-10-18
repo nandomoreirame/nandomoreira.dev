@@ -88,6 +88,9 @@ const NEW_TOKENS = {
   '--container-list': '53rem',
   // Amber halo on the primary button hover, the only glow in the system.
   '--shadow-glow': '0 0 24px rgb(245 166 35 / 0.25)',
+  // Soft drop under the sales hero's inner windows, the one shadow in the
+  // system (Fernando, 2026-10-18): separates the stacked layers.
+  '--shadow-window': '0 12px 32px rgb(0 0 0 / 0.45)',
 };
 
 describe('tokens introduced by the restyle', () => {

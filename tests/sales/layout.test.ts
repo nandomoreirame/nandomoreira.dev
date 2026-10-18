@@ -77,10 +77,21 @@ describe('SalesLayout', () => {
     }
   });
 
-  it('does not reuse the main site frame or its script', async () => {
-    const html = await render({ slug: 'site-institucional' });
-    expect(html).not.toContain('data-pointer-field');
-    expect(html).not.toMatch(/<script(?![^>]*application\/ld\+json)/);
+  it('pins the header and shrinks it once the page scrolls', async () => {
+    const header = (await render()).match(/<header[^>]*>/)?.[0] ?? '';
+    expect(header).toContain('data-site-header');
+    expect(header).toContain('sticky');
+    expect(header).toContain('top-0');
+    expect(header).toContain('data-scrolled:backdrop-blur-lg');
+    expect(await render()).toMatch(/group-data-scrolled:py-xs/);
+    expect(await render()).toMatch(/group-data-scrolled:min-h-9/);
+  });
+
+  it('reuses only the pointer field of the main site, not its header or footer', async () => {
+    const html = await render();
+    expect(html).toMatch(/<body[^>]*data-pointer-field/);
+    // The main site menu links the blog; the sales frame never does.
+    expect(html).not.toContain('href="/posts"');
   });
 
   it('serialises the Service JSON-LD with the serviceName', async () => {

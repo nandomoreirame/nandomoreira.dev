@@ -64,6 +64,10 @@
   /* Semantic — success is the Stitch emerald; warning and destructive keep
      the previous high ramps, which read on near-black. */
   --color-success: #34d399;
+  /* WhatsApp's own green on the floating button. The icon on it is dark:
+     white on #25d366 is 1.98:1 (sales-landing-tweaks). */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-foreground: #0b0b0c;
   --color-warning: #facf9e; /* oklch(0.88 0.08 70) */
   --color-destructive: #ffb7b0; /* oklch(0.85 0.09 25) */
 
@@ -151,6 +155,15 @@
   /* Amber halo on the primary button hover, the only glow in the system:
      depth comes from tone and hairline, never from drop shadows. */
   --shadow-glow: 0 0 24px rgb(245 166 35 / 0.25);
+
+  /* The one drop shadow, under the sales hero's inner windows only
+     (Fernando, 2026-10-18): it separates the stacked layers of the art. */
+  --shadow-window: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+/* Photo column capped at 20rem (320px) beside the copy (sales-landing-tweaks). */
+@utility grid-cols-photo {
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
 }
 
 /* Reading mode on a post (2026-10-16). The switch and the radios in

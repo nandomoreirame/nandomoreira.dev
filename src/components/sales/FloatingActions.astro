@@ -1,0 +1,27 @@
+---
+import { Icon } from 'astro-icon/components';
+import { contactGoPath } from '../../lib/analytics/outbound';
+
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+---
+
+{/* Fixed bottom-right, no script: the hint shows on hover and on keyboard focus. */}
+<div class="fixed right-md bottom-md z-40 flex flex-col items-end gap-sm">
+  <a
+    href={contactGoPath('whatsapp')}
+    target="_blank"
+    rel="noopener"
+    aria-label="Fale comigo no WhatsApp"
+    class={`group relative inline-flex size-11 items-center justify-center rounded-full bg-whatsapp text-whatsapp-foreground transition-transform duration-(--duration-fast) ease-out hover:scale-105 ${focusRing}`}
+  >
+    <Icon name="simple-icons:whatsapp" class="size-5" aria-hidden="true" />
+    <span aria-hidden="true" class="pointer-events-none absolute right-full mr-sm whitespace-nowrap rounded-sm bg-primary px-sm py-xs text-small font-medium text-primary-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 group-focus-visible:opacity-100">Fale comigo no WhatsApp</span>
+  </a>
+  <a
+    href="#topo"
+    aria-label="Voltar ao topo"
+    class={`inline-flex size-11 items-center justify-center rounded-full border border-border-strong bg-surface-elevated text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary ${focusRing}`}
+  >
+    <Icon name="lucide:chevron-up" class="size-5" aria-hidden="true" />
+  </a>
+</div>

@@ -59,6 +59,11 @@ describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
     expect(contrastRatio(token('primary-foreground'), token('primary'))).toBeGreaterThanOrEqual(4.5);
   });
 
+  it('reads the WhatsApp icon against its green, since the floating button inverts them', () => {
+    expect(contrastRatio(token('whatsapp-foreground'), token('whatsapp'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(token('whatsapp'), BACKGROUND)).toBeGreaterThanOrEqual(3);
+  });
+
   it('confirms border still fails AA, so it can never delimit a target alone', () => {
     // The Terminal Noir hairline (#222226) is fainter still: dividers read as
     // rules, not as structure. Nowhere near 3:1, so the rule it protects holds.

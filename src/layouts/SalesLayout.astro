@@ -6,6 +6,8 @@ import { metaDescription } from '../lib/seo/meta';
 import { salesPath, salesUrl } from '../lib/sales/host';
 import { serviceLd } from '../lib/sales/service-ld';
 import { contactGoPath } from '../lib/analytics/outbound';
+import FloatingActions from '../components/sales/FloatingActions.astro';
+import PointerField from '../components/art/PointerField.astro';
 import serifHeadingFont from '../assets/fonts/newsreader-latin-variable.woff2?url';
 import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
 import '../styles/global.css';
@@ -59,7 +61,8 @@ const link =
     <link rel="preload" href={serifHeadingFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sansBodyFont} as="font" type="font/woff2" crossorigin />
   </head>
-  <body>
+  <body data-pointer-field>
+    <div id="topo"></div>
     <a
       href="#main"
       class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-md focus-visible:left-md focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-md focus-visible:py-sm focus-visible:text-primary-foreground"
@@ -67,8 +70,11 @@ const link =
       Pular para o conteúdo
     </a>
 
-    <header class="border-b border-border">
-      <div class="mx-auto flex w-full max-w-page items-center justify-between gap-md px-lg py-md">
+    <header
+      data-site-header
+      class="group sticky top-0 z-40 border-b border-border transition-[background-color] duration-(--duration-base) ease-out data-scrolled:bg-background/80 data-scrolled:backdrop-blur-lg"
+    >
+      <div class="mx-auto flex w-full max-w-page items-center justify-between gap-md px-lg py-md transition-[padding] duration-(--duration-base) ease-out group-data-scrolled:py-xs">
         <a href={home} class="inline-flex min-h-11 items-center gap-xs font-mono text-body font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <span class="size-2 rounded-full bg-primary" aria-hidden="true"></span>
           nandomoreira.dev
@@ -80,7 +86,7 @@ const link =
         </nav>
         <a
           href="#contato"
-          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height,padding] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 group-data-scrolled:px-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Conversar
         </a>
@@ -105,5 +111,7 @@ const link =
         </ul>
       </div>
     </footer>
+    <FloatingActions />
+    <PointerField />
   </body>
 </html>
