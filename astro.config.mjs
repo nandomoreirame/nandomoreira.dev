@@ -5,6 +5,7 @@ import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import { codeToolbar } from './src/lib/code/toolbar.ts';
 import { externalLinks, lightboxImages } from './src/lib/markdown/post-plugins.ts';
+import { SALES_HOST } from './src/lib/sales/host.ts';
 
 export default defineConfig({
   site: 'https://nandomoreira.dev',
@@ -33,6 +34,9 @@ export default defineConfig({
       { hostname: 'nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app', protocol: 'https' },
       { hostname: 'nandomoreira.dev', protocol: 'https' },
       { hostname: 'www.nandomoreira.dev', protocol: 'https' },
+      // The sales pages' subdomain (sales-landing, REQ-005): without it the
+      // form posted from there gets 403 from the origin check.
+      { hostname: SALES_HOST, protocol: 'https' },
     ],
   },
   // Legacy /notas never made the production sitemap; these are courtesy 301s.
