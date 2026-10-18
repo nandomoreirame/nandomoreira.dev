@@ -1,0 +1,117 @@
+---
+/*
+ * The scenery behind the sales hero's browser windows: what the page sells,
+ * drawn as line icons around the frame. A chat bubble (the first talk), a
+ * price tag (the store), a card (payments), a calendar (the delivery window),
+ * an envelope (the notification e-mail) and a globe with a live ring (on the
+ * air), joined by a dashed route that runs round the frame from the talk to
+ * the globe. The frame covers the middle, so everything sits in the band
+ * around it and the parallax reveals a little more as the pointer moves.
+ *
+ * Motion is CSS only, from the shared scenery rules in global.css (the same
+ * hooks as the home portrait's PortraitBackdrop), and only without reduced
+ * motion. Timings come from a fixed hash of each element's index, so every
+ * request renders the same while nothing moves in lockstep.
+ */
+
+/** Deterministic value in [min, max) for element `index` of a group `salt`. */
+const vary = (index: number, salt: number, min: number, max: number): number => {
+  const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return min + (x - Math.floor(x)) * (max - min);
+};
+const timing = (index: number, salt: number, min: number, max: number): string =>
+  `--duration: ${vary(index, salt, min, max).toFixed(1)}s; --delay: -${vary(index, salt + 1, 0, max).toFixed(1)}s`;
+
+/** The route round the frame, from the chat bubble (top left) to the globe (top right). */
+const ROUTE = 'M70 74 C 20 140, 18 300, 30 420 S 120 515, 310 512 S 600 500, 596 360 S 600 150, 572 92';
+const PACKETS = [0, 1, 2];
+const CALENDAR_DAYS = Array.from({ length: 9 }, (_, index) => [20 + (index % 3) * 18, 470 + Math.floor(index / 3) * 14] as const);
+const DOTS = [
+  [140, 20, 3], [470, 18, 4], [606, 300, 3], [8, 360, 4], [420, 528, 3], [200, 532, 4],
+] as const;
+const SPARKS = [
+  [250, 16], [612, 250], [100, 520],
+] as const;
+---
+
+<div class="pointer-events-none absolute -inset-2xl opacity-50">
+<svg
+  data-hero-scenery
+  viewBox="0 0 620 540"
+  aria-hidden="true"
+  focusable="false"
+  class="size-full overflow-visible"
+  fill="none"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <g stroke="var(--color-primary)">
+    {/* The route: a faint dashed line with packets of light running along it. */}
+    <g data-parallax style="--depth: -0.015">
+      <path d={ROUTE} stroke-width="1" stroke-dasharray="2 6" opacity="0.45" />
+      {
+        PACKETS.map((index) => (
+          <path data-packet style={timing(index, 2, 7, 12)} d={ROUTE} pathLength="100" stroke-width="2.5" opacity="0.9" />
+        ))
+      }
+    </g>
+
+    {/* The store and the delivery window, on the left. */}
+    <g data-parallax style="--depth: -0.03" stroke-width="1.5">
+      <g data-float style={timing(0, 4, 6, 10)}>
+        <path d="M14 214 h34 l14 16 l-14 16 h-34 z" opacity="0.8" />
+        <circle cx="24" cy="230" r="3" />
+        <path d="M30 230 h16" opacity="0.5" />
+      </g>
+      <g data-float style={timing(1, 4, 6, 10)}>
+        <rect x="8" y="448" width="66" height="64" rx="6" opacity="0.8" />
+        <path d="M8 462 h66" />
+        <path d="M24 442 v10 M58 442 v10" />
+        {
+          CALENDAR_DAYS.map(([cx, cy], index) =>
+            index === 7 ? (
+              <circle data-pulse style={timing(index, 6, 2.5, 4.5)} cx={cx} cy={cy} r="4" fill="var(--color-primary)" stroke="none" />
+            ) : (
+              <circle cx={cx} cy={cy} r="2" fill="var(--color-border-strong)" stroke="none" />
+            ),
+          )
+        }
+      </g>
+    </g>
+
+    {/* The first talk, payments, the e-mail and the site on the air. */}
+    <g data-parallax style="--depth: -0.045" stroke-width="1.5">
+      <g data-float style={timing(2, 4, 6, 10)}>
+        <path d="M18 14 h98 a10 10 0 0 1 10 10 v32 a10 10 0 0 1 -10 10 h-60 l-16 14 v-14 h-22 a10 10 0 0 1 -10 -10 v-32 a10 10 0 0 1 10 -10 z" fill="var(--color-background)" opacity="0.9" />
+        <rect data-typing style="--delay: 0.4s" x="24" y="30" width="62" height="5" rx="1" fill="var(--color-primary)" stroke="none" />
+        <rect data-typing style="--delay: 1.3s" x="24" y="44" width="40" height="5" rx="1" fill="var(--color-primary)" fill-opacity="0.6" stroke="none" />
+        <rect data-cursor x="70" y="42" width="5" height="9" fill="var(--color-primary)" stroke="none" />
+      </g>
+      <g data-float style={timing(3, 4, 6, 10)}>
+        <rect x="556" y="186" width="58" height="38" rx="5" fill="var(--color-background)" opacity="0.9" />
+        <path d="M556 198 h58" stroke-width="4" opacity="0.6" />
+        <path d="M564 214 h18" opacity="0.6" />
+      </g>
+      <g data-float style={timing(4, 4, 6, 10)}>
+        <rect x="516" y="470" width="72" height="48" rx="5" fill="var(--color-background)" opacity="0.9" />
+        <path d="M516 474 l36 26 l36 -26" />
+      </g>
+      <g>
+        <circle data-pulse style={timing(5, 6, 3, 5)} cx="572" cy="56" r="40" stroke-width="1" opacity="0.35" />
+        <circle cx="572" cy="56" r="30" fill="var(--color-background)" opacity="0.9" />
+        <ellipse cx="572" cy="56" rx="13" ry="30" opacity="0.6" />
+        <path d="M542 56 h60 M547 40 h50 M547 72 h50" opacity="0.45" />
+        <circle data-pulse style={timing(6, 6, 2, 3.5)} cx="596" cy="32" r="5" fill="var(--color-success)" stroke="none" />
+      </g>
+    </g>
+
+    {/* Loose dots and sparks, closest to the viewer. */}
+    <g data-parallax style="--depth: -0.06" fill="var(--color-primary)" stroke="none">
+      {DOTS.map(([cx, cy, r], index) => <circle data-float style={timing(index, 9, 5, 9)} cx={cx} cy={cy} r={r} opacity="0.7" />)}
+    </g>
+    <g data-parallax style="--depth: -0.075" stroke-width="1.5" opacity="0.7">
+      {SPARKS.map(([x, y], index) => <path data-pulse style={timing(index, 11, 3, 6)} d={`M${x - 5} ${y} h10 M${x} ${y - 5} v10`} />)}
+    </g>
+  </g>
+</svg>
+</div>

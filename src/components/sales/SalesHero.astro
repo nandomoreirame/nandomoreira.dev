@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { withCareerYears } from '../../lib/format/career-years';
 import { SALES_COPY } from '../../lib/sales/copy';
 import HeroArt from './HeroArt.astro';
 
@@ -22,7 +23,7 @@ const { hero } = SALES_COPY;
     <ul class="flex flex-wrap gap-x-lg gap-y-sm border-t border-border pt-md">
       {hero.proofs.map((proof) => (
         <li class="inline-flex items-center gap-xs font-mono text-micro text-muted-foreground">
-          <Icon name="lucide:check" class="size-3 text-primary" aria-hidden="true" />{proof}
+          <Icon name="lucide:check" class="size-3 text-primary" aria-hidden="true" />{withCareerYears(proof)}
         </li>
       ))}
     </ul>
