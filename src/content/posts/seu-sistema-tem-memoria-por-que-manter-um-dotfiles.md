@@ -121,9 +121,9 @@ Sem esse comentário, eu olharia para o `fuse-overlayfs` um dia, acharia que é 
 
 ## Trocar de sistema vira experimento barato
 
-Foi aqui que o dotfiles mais me pagou. Eu estava no Omarchy (Arch com Hyprland) e já usei muito gerenciador de janelas, então experimentar é meio que hobby. Testei o Niri com o Noctalia ainda no Omarchy, gostei mais, e decidi formatar com um CachyOS limpo, Niri e Noctalia, abandonando o Omarchy de vez.
+Foi aqui que o dotfiles mais me pagou. Eu estava no Omarchy (Arch com Hyprland) e já usei muito gerenciador de janelas, então experimentar é meio que hobby. Testei o [Niri](https://github.com/YaLTeR/niri) com o [Noctalia](https://github.com/noctalia-dev/noctalia-shell) ainda no Omarchy, gostei mais, e decidi formatar com um CachyOS limpo, Niri e Noctalia, abandonando o Omarchy de vez.
 
-Antes de formatar, versionei a config do Noctalia que eu tinha montado no teste. Na máquina nova, a barra, os widgets e o wallpaper voltaram com o `dotfiles links`. O que mudou na troca foi a camada do desktop. O zsh, o git, o mise, os scripts e o próprio mapa de links atravessaram a formatação inteiros.
+Antes de formatar, versionei a config do Noctalia que eu tinha montado no teste. Na máquina nova, a barra, os widgets e o wallpaper voltaram com o `dotfiles links`. O que mudou na troca foi a camada do desktop. O zsh, o git, o [mise](https://mise.jdx.dev), os scripts e o próprio mapa de links atravessaram a formatação inteiros.
 
 ## Receita e foto
 

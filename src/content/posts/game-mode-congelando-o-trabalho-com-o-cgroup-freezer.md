@@ -30,7 +30,7 @@ snapshot:
       value: "309 linhas"
 ---
 
-Quando eu aperto `Mod+Alt+G`, o Chrome, o Slack, os terminais e o resto do meu dia de trabalho param de usar CPU, mas continuam abertos exatamente onde estavam. Os monitores que eu não estou olhando apagam, o Noctalia liga o não perturbe e segura a tela acordada. A Steam, o RetroArch e a música seguem rodando. Aperto de novo e tudo volta, inclusive as abas.
+Quando eu aperto `Mod+Alt+G`, o Chrome, o Slack, os terminais e o resto do meu dia de trabalho param de usar CPU, mas continuam abertos exatamente onde estavam. Os monitores que eu não estou olhando apagam, o [Noctalia](https://github.com/noctalia-dev/noctalia-shell) liga o não perturbe e segura a tela acordada. A Steam, o [RetroArch](https://www.retroarch.com) e a música seguem rodando. Aperto de novo e tudo volta, inclusive as abas.
 
 Se você joga no mesmo computador em que trabalha, conhece a escolha ruim: fechar tudo e reabrir depois, ou jogar com o trabalho comendo CPU no fundo. Isso é o `game-mode`, um script de 309 linhas no meu `~/.dotfiles`, que escapa das duas com o cgroup, o jeito do kernel agrupar processos e controlar o que cada grupo usa (a [documentação do kernel](https://docs.kernel.org/admin-guide/cgroup-v2.html) conta o resto). Vou mostrar como ele está configurado, por que cada lista tem o que tem, e as duas versões que eu joguei fora antes de chegar no toggle. Foram elas que me convenceram de que um modo jogo não deveria abrir o jogo: ele só congela o resto.
 
@@ -38,7 +38,7 @@ Se você joga no mesmo computador em que trabalha, conhece a escolha ruim: fecha
 
 O freezer do cgroup v2 para todos os processos de um grupo de uma vez: CPU vai a zero, as páginas frias podem ir pro zram e as janelas ficam onde estão. Pro compositor, a janela congelada continua existindo. Pra mim, é o trabalho em pausa sem precisar reabrir nada depois.
 
-O systemd já separa a sessão do jeito certo. No meu CachyOS com Niri, o compositor e o áudio (`niri`, `pipewire`, `wireplumber`) moram em `session.slice`, que eu nunca toco. Os apps gráficos moram em `app.slice`, cada um num scope próprio. Esse é o alvo.
+O systemd já separa a sessão do jeito certo. No meu [CachyOS](https://cachyos.org) com [Niri](https://github.com/YaLTeR/niri), o compositor e o áudio (`niri`, `pipewire`, `wireplumber`) moram em `session.slice`, que eu nunca toco. Os apps gráficos moram em `app.slice`, cada um num scope próprio. Esse é o alvo.
 
 O caminho óbvio não funciona:
 
@@ -85,7 +85,7 @@ readonly KEEP_SCOPES_RE='flatpak-(io\.github\.unknownskl\.greenlight|net\.studio
 
 Greenlight e XBPlay são clientes de streaming do Xbox, o xemu é o emulador do Xbox original. Essa lista entrou oito dias depois da primeira versão, junto com PCSX2, Heroic e Lutris na lista por nome.
 
-A música deu mais trabalho. Uma lista fixa de players (`spotify`, `mpv`, `vlc` e companhia) resolve quem toca música de propósito. Só que música tocando numa aba do navegador ou num PWA não dá pra manter pelo nome sem manter o navegador inteiro. Então o script pergunta ao PipeWire quem está produzindo som agora, com `pw-dump` e `jq`, e mantém o scope dono daquele stream.
+A música deu mais trabalho. Uma lista fixa de players (`spotify`, `mpv`, `vlc` e companhia) resolve quem toca música de propósito. Só que música tocando numa aba do navegador ou num PWA não dá pra manter pelo nome sem manter o navegador inteiro. Então o script pergunta ao [PipeWire](https://pipewire.org) quem está produzindo som agora, com `pw-dump` e `jq`, e mantém o scope dono daquele stream.
 
 A armadilha foi descobrir quem é o dono. O nó de áudio traz `application.process.id` pra clientes que passam pela camada do PulseAudio (navegador, Spotify, RetroArch), mas esse campo vem `null` pra cliente nativo do PipeWire. Meu primeiro filtro olhava só o nó, e um `pw-cat` de teste, com o stream em `running`, saiu como "nada tocando". A correção é cair pro objeto Client do PipeWire e ler `pipewire.sec.pid`, o PID que o kernel confirma na conexão. E esse PID também engana: pra cliente do PulseAudio ele é o PID do daemon `pipewire-pulse`, não o do app. A ordem que funciona ficou assim: nó, depois o `application.process.id` do client, e só no fim o `pipewire.sec.pid`.
 

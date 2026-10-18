@@ -60,7 +60,7 @@ Essa ordem importa. IA em cima de um processo manual só deixa o processo manual
 
 ## A operação ganhou um produto
 
-O segundo movimento foi tirar o controle da ferramenta de terceiros e trazer para dentro de casa. Construí o Play Manager, um produto interno que virou a fonte da verdade da operação: fase, responsável, prazo e saúde de cada base, num lugar só, para o time e para a liderança. (Por baixo, React 19 e uma API própria em Hono sobre Firebase, com controle de acesso por papel e um editor de insights assistido por IA.)
+O segundo movimento foi tirar o controle da ferramenta de terceiros e trazer para dentro de casa. Construí o Play Manager, um produto interno que virou a fonte da verdade da operação: fase, responsável, prazo e saúde de cada base, num lugar só, para o time e para a liderança. (Por baixo, React 19 e uma API própria em [Hono](https://hono.dev) sobre Firebase, com controle de acesso por papel e um editor de insights assistido por IA.)
 
 O passo que fez diferença foi levar a automação para dentro dele. A preparação dos dados passou a ser disparada pela própria tela, e não por alguém rodando um script. Três propriedades sustentam isso:
 

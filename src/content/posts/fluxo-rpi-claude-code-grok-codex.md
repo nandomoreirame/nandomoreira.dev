@@ -133,7 +133,7 @@ O Codex devolve achados por severidade. Crítico ou alto volta para o Grok, no m
 
 Eu acompanho isso de perto. Gosto de ler os pensamentos da IA direto no terminal, tarefa por tarefa. Não espero o arquivo de estado para saber que alguma coisa travou.
 
-O Codex acha coisa quase toda vez. Em geral é correção de código, alucinação do implementador. No servidor MCP deste site ele achou um caso que nem o implementador nem eu tínhamos visto: fechar o servidor num `finally` esvaziava a resposta antes de ela sair, e não fechar vazava um servidor por requisição. A correção foi adiar o fechamento para o fim do stream.
+O Codex acha coisa quase toda vez. Em geral é correção de código, alucinação do implementador. No servidor [MCP](https://modelcontextprotocol.io) deste site ele achou um caso que nem o implementador nem eu tínhamos visto: fechar o servidor num `finally` esvaziava a resposta antes de ela sair, e não fechar vazava um servidor por requisição. A correção foi adiar o fechamento para o fim do stream.
 
 ## Grok e Codex não commitam
 

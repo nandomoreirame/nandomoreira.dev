@@ -32,7 +32,7 @@ snapshot:
       value: Vitest
 ---
 
-Eu uso muito o teclado. O meu `config.kdl` do Niri tem mais de 140 linhas de atalho: abro os apps que mais uso direto pela tecla, e o que não tem atalho próprio vai pelo launcher do Noctalia (`Ctrl+Space`). Obsidian, WhatsApp e YouTube Music ficam em scratchpads, janelas que aparecem e somem com um atalho sem ocupar uma coluna. A barra é a outra metade: fica sempre à vista, então o que eu consultava várias vezes por dia fazia sentido estar ali, a um atalho ou a um clique.
+Eu uso muito o teclado. O meu `config.kdl` do Niri tem mais de 140 linhas de atalho: abro os apps que mais uso direto pela tecla, e o que não tem atalho próprio vai pelo launcher do [Noctalia](https://github.com/noctalia-dev/noctalia-shell) (`Ctrl+Space`). [Obsidian](https://obsidian.md), WhatsApp e YouTube Music ficam em scratchpads, janelas que aparecem e somem com um atalho sem ocupar uma coluna. A barra é a outra metade: fica sempre à vista, então o que eu consultava várias vezes por dia fazia sentido estar ali, a um atalho ou a um clique.
 
 O que ainda me tirava do que eu estava fazendo era o resto. Anotar uma tarefa ou marcar uma reunião era abrir um app diferente para cada coisa, saber quanto do plano do Claude Code já tinha ido era abrir uma página, e achar um trecho de código antigo era ir ao GitHub caçar o gist certo.
 
@@ -137,7 +137,7 @@ ln -s ~/dev/projects/noctalia-gistbar ~/.config/noctalia/plugins/gistbar
 
 Depois é ativar em Configurações > Plugins e pôr o widget na barra.
 
-Nos quatro, a lógica mora em funções JavaScript puras, testadas com Vitest, e o QML fica só como tela. O Daybar tem 440 testes, o Gistbar 151 e o AI Bar 36. É o que deixa a IA mexer no código sem eu precisar conferir cada linha.
+Nos quatro, a lógica mora em funções JavaScript puras, testadas com [Vitest](https://vitest.dev), e o QML fica só como tela. O Daybar tem 440 testes, o Gistbar 151 e o AI Bar 36. É o que deixa a IA mexer no código sem eu precisar conferir cada linha.
 
 Se isso é simples, eu não sei dizer: escrevi tudo com IA e não tenho com o que comparar. O que eu sei é onde o tempo foi.
 

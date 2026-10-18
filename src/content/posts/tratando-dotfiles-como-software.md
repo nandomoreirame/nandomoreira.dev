@@ -16,7 +16,7 @@ Ninguém viu o erro porque não tinha ninguém olhando: era um timer do systemd 
 
 ## Script que ninguém vê falhar
 
-Boa parte de um dotfiles maduro não roda num terminal. No meu, roda num atalho do Niri, num timer, num hook do Git, quando o microfone liga ou quando o notebook sai da tomada. Quando um desses quebra, não aparece mensagem em lugar nenhum. A funcionalidade só para.
+Boa parte de um dotfiles maduro não roda num terminal. No meu, roda num atalho do [Niri](https://github.com/YaLTeR/niri), num timer, num hook do Git, quando o microfone liga ou quando o notebook sai da tomada. Quando um desses quebra, não aparece mensagem em lugar nenhum. A funcionalidade só para.
 
 Hoje são 63 scripts em `bin/` e quase 7.500 linhas de Bash em `lib/`. Nesse tamanho, "eu testo na mão quando mexo" deixa de funcionar.
 
@@ -46,7 +46,7 @@ O motivo de ter chegado nisso é o meu framework do Claude Code, que força TDD 
 
 ## Deixe cada dependência trocável
 
-Script de dotfiles quase sempre mexe em coisa de verdade: SSH, btrfs, o shell da barra, o PipeWire. Não dá para testar isso apontando para o sistema real. O truque é deixar cada dependência trocável por variável de ambiente, com o valor real como padrão.
+Script de dotfiles quase sempre mexe em coisa de verdade: SSH, btrfs, o shell da barra, o [PipeWire](https://pipewire.org). Não dá para testar isso apontando para o sistema real. O truque é deixar cada dependência trocável por variável de ambiente, com o valor real como padrão.
 
 O `nocta-hold` controla o "Não perturbe" quando vários scripts pedem ao mesmo tempo, e fala com a barra por um comando chamado `nocta`. A dependência fica assim:
 
@@ -91,13 +91,13 @@ E o script ganhou `BTRFS_BACKUP_SOURCE` e `BTRFS_BACKUP_LOCAL_DIR`, para o teste
 
 ## Spec antes de script
 
-Mudança grande no meu dotfiles começa num documento dentro do próprio repositório, em `docs/specs/` e `docs/plans/`. A migração do Noctalia para a v5, por exemplo, está quebrada em fatias, uma por plugin, e cada plano carrega a mesma regra: o plugin continua funcionando na v4 enquanto a v5 não chega.
+Mudança grande no meu dotfiles começa num documento dentro do próprio repositório, em `docs/specs/` e `docs/plans/`. A migração do [Noctalia](https://github.com/noctalia-dev/noctalia-shell) para a v5, por exemplo, está quebrada em fatias, uma por plugin, e cada plano carrega a mesma regra: o plugin continua funcionando na v4 enquanto a v5 não chega.
 
 Com a IA escrevendo uns 90% do código, a spec é onde eu reviso a intenção antes de existir código, e os testes são o que me deixa confiar no que foi entregue.
 
 ## Uma TUI que chama os scripts
 
-Os menus do dotfiles eram em whiptail, e o `lib/interactive.sh` tinha virado 42 KB de Bash. Em abril de 2026 eu fiz uma TUI em Rust com ratatui, para aprender Rust num projeto que eu uso de verdade.
+Os menus do dotfiles eram em whiptail, e o `lib/interactive.sh` tinha virado 42 KB de Bash. Em abril de 2026 eu fiz uma TUI em Rust com [ratatui](https://ratatui.rs), para aprender Rust num projeto que eu uso de verdade.
 
 A regra principal foi não reescrever nada. A TUI chama os scripts Bash que já existem via `std::process::Command`, lê o `links.conf` e os profiles nos formatos que já tinham, e pega tema e caminhos de um `config.yaml`. O MVP fechou com 50 testes, num binário de 1,6 MB.
 

@@ -31,7 +31,7 @@ snapshot:
       value: jq
 ---
 
-Eu aperto `Mod+Shift+A` e o WhatsApp aparece flutuando, centralizado no monitor em que eu estou. Aperto de novo e ele some, e o foco volta pro terminal de onde eu saí. São sete atalhos assim no meu Niri: YouTube no `Y`, YouTube Music no `U`, WhatsApp no `A`, Obsidian no `O`, Discord no `D`, Spotify no `S` e LocalSend no `L`, todos com `Mod+Shift`.
+Eu aperto `Mod+Shift+A` e o WhatsApp aparece flutuando, centralizado no monitor em que eu estou. Aperto de novo e ele some, e o foco volta pro terminal de onde eu saí. São sete atalhos assim no meu [Niri](https://github.com/YaLTeR/niri): YouTube no `Y`, YouTube Music no `U`, WhatsApp no `A`, [Obsidian](https://obsidian.md) no `O`, Discord no `D`, Spotify no `S` e LocalSend no `L`, todos com `Mod+Shift`.
 
 Procurar "como minimizar janela no Niri" não leva a lugar nenhum, porque o Niri não tem minimizar nem esconder. Ele organiza tudo em colunas roláveis, e uma janela existe numa coluna de algum workspace ou não existe. Um compositor sem minimizar não precisa ganhar minimizar: basta emular um scratchpad (a área de rascunho do i3 e do Sway), com um workspace que eu nunca visito e um script que leva a janela pra lá e traz de volta.
 
@@ -61,7 +61,7 @@ Tudo começa em descobrir se a janela já existe. O script pergunta ao Niri (`ni
 
 A âncora tem motivo: sem ela, uma janela qualquer com `discord` no meio do app-id seria escondida no lugar de abrir o Discord. Tem teste pra isso, com uma janela falsa chamada `discord-overlay-helper`: o toggle não pode mexer nela e precisa lançar o app.
 
-O WhatsApp me ensinou a parte do Chrome. O script nasceu em 2 de junho, um dia depois de eu instalar o CachyOS, e nesse primeiro dia o WhatsApp era uma PWA instalada, e o app-id de uma PWA instalada é um hash (`chrome-<id-da-extensão>-Default`). Funcionava, mas amarrava o atalho ao `chrome://apps`: se eu removesse a PWA de lá, o atalho morria. Na tarde do dia seguinte troquei por `google-chrome-stable --app=https://web.whatsapp.com`, o mesmo formato do YouTube e do YouTube Music, e o app-id passou a ser derivado do endereço.
+O WhatsApp me ensinou a parte do Chrome. O script nasceu em 2 de junho, um dia depois de eu instalar o [CachyOS](https://cachyos.org), e nesse primeiro dia o WhatsApp era uma PWA instalada, e o app-id de uma PWA instalada é um hash (`chrome-<id-da-extensão>-Default`). Funcionava, mas amarrava o atalho ao `chrome://apps`: se eu removesse a PWA de lá, o atalho morria. Na tarde do dia seguinte troquei por `google-chrome-stable --app=https://web.whatsapp.com`, o mesmo formato do YouTube e do YouTube Music, e o app-id passou a ser derivado do endereço.
 
 ## Mostrar no monitor certo, esconder sem roubar o foco
 
@@ -107,7 +107,7 @@ WhatsApp, YouTube, YouTube Music e Obsidian continuam no scratch.
 
 ## Testar um script que conversa com o compositor
 
-Um script que só faz sentido com o Niri rodando é chato de testar, e eu escrevi os testes antes da mudança de hoje. São 15 testes em BATS, e o truque é não deixar o Niri real chegar perto. Dois stubs vão no `PATH`: um `niri` falso responde às consultas `--json` com o JSON que cada teste define e anota toda chamada de `msg action` num log, e um `setsid` falso anota o comando em vez de abrir o app. O teste então confere o log:
+Um script que só faz sentido com o Niri rodando é chato de testar, e eu escrevi os testes antes da mudança de hoje. São 15 testes em [BATS](https://github.com/bats-core/bats-core), e o truque é não deixar o Niri real chegar perto. Dois stubs vão no `PATH`: um `niri` falso responde às consultas `--json` com o JSON que cada teste define e anota toda chamada de `msg action` num log, e um `setsid` falso anota o comando em vez de abrir o app. O teste então confere o log:
 
 ```bash
 @test "discord toggle closes a visible window back to the tray, never into scratch" {

@@ -32,9 +32,9 @@ snapshot:
       value: espanso-wayland
 ---
 
-No iPhone eu digito `vc` e sai "você", digito `.email` e sai meu e-mail inteiro. Usei o macOS por alguns anos com a mesma "Substituição de texto" configurada, e a lista cresceu junto: endereço, CNPJ, link do WhatsApp, `(╯°□°)╯︵ ┻━┻` para os dias difíceis. No CachyOS, isso não existia, e fazia falta.
+No iPhone eu digito `vc` e sai "você", digito `.email` e sai meu e-mail inteiro. Usei o macOS por alguns anos com a mesma "Substituição de texto" configurada, e a lista cresceu junto: endereço, CNPJ, link do WhatsApp, `(╯°□°)╯︵ ┻━┻` para os dias difíceis. No [CachyOS](https://cachyos.org), isso não existia, e fazia falta.
 
-Minha primeira ideia foi escrever uma ferramenta para isso. Não precisou: o [espanso](https://github.com/espanso/espanso) existe desde 2019, é escrito em Rust, roda em Linux, macOS e Windows, e estava com release nova (2.4.1) quando instalei. O que a documentação não deixa claro é o que muda quando o seu desktop é Wayland, com um compositor que não é GNOME nem KDE. Aqui é CachyOS com Niri, e foram três ajustes até ficar redondo.
+Minha primeira ideia foi escrever uma ferramenta para isso. Não precisou: o [espanso](https://github.com/espanso/espanso) existe desde 2019, é escrito em Rust, roda em Linux, macOS e Windows, e estava com release nova (2.4.1) quando instalei. O que a documentação não deixa claro é o que muda quando o seu desktop é Wayland, com um compositor que não é GNOME nem KDE. Aqui é CachyOS com [Niri](https://github.com/YaLTeR/niri), e foram três ajustes até ficar redondo.
 
 ## O que o espanso faz
 

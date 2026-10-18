@@ -35,7 +35,7 @@ Casa de ferreiro, espeto de pau. Eu trabalho com engenharia de IA e desenvolvime
 
 Comecei a reconstruir em agosto, fiz a base em dois dias e parei. Em outubro voltei, e dessa vez fui até o fim.
 
-Hoje qualquer cliente MCP conecta nele:
+Hoje qualquer cliente [MCP](https://modelcontextprotocol.io) conecta nele:
 
 ```bash
 claude mcp add --transport http nandomoreira https://nandomoreira.dev/api/mcp
@@ -59,7 +59,7 @@ O brief também listou os riscos, e o mais provável não era técnico: os cases
 
 ## Primeiro, provar que a plataforma aguenta
 
-O site é Astro 7 em modo SSR, publicado no Firebase App Hosting. O adapter oficial da plataforma estava na versão 0.0.1 desde janeiro de 2025, versão única. Abandonado, na prática.
+O site é [Astro](https://astro.build) 7 em modo SSR, publicado no Firebase App Hosting. O adapter oficial da plataforma estava na versão 0.0.1 desde janeiro de 2025, versão única. Abandonado, na prática.
 
 Como toda a parte de máquina depende de rota de servidor, a primeira sprint foi um spike de dois dias com critério de parada escrito antes de começar: ou o plano A sobe em produção, ou vou para o plano B, site estático com Cloud Functions. O plano A subiu no primeiro dia, com `@astrojs/node` em modo standalone. A decisão ficou num ADR, com as alternativas descartadas.
 

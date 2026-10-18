@@ -10,7 +10,7 @@ markers:
 draft: true
 ---
 
-Fechar o servidor MCP deste site num `finally` em volta do `handleRequest` é o jeito óbvio, e está errado. O `handleRequest` resolve assim que a `Response` existe, antes de alguém ler o corpo, então o fechamento derruba o stream no meio e o cliente recebe corpo vazio. Não fechar inverte o problema: um servidor vazado por requisição, numa instância que aceita 80 ao mesmo tempo.
+Fechar o servidor [MCP](https://modelcontextprotocol.io) deste site num `finally` em volta do `handleRequest` é o jeito óbvio, e está errado. O `handleRequest` resolve assim que a `Response` existe, antes de alguém ler o corpo, então o fechamento derruba o stream no meio e o cliente recebe corpo vazio. Não fechar inverte o problema: um servidor vazado por requisição, numa instância que aceita 80 ao mesmo tempo.
 
 A saída foi pendurar o fechamento no fim do stream, disparando uma vez só em conclusão, cancelamento ou erro (`src/lib/mcp/lifecycle.ts`). No arquivo de estado da feature, essa decisão tem uma nota no fim: achado do Codex, revisando um código que ele não escreveu.
 

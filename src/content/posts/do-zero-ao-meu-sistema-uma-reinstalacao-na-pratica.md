@@ -10,7 +10,7 @@ markers:
 draft: true
 ---
 
-Em junho de 2026 eu formatei o notebook e instalei um CachyOS limpo, com Niri e Noctalia. Antigamente isso me custava um dia inteiro e uma semana lembrando do que faltou. Desta vez, em poucas horas a máquina era a minha de novo.
+Em junho de 2026 eu formatei o notebook e instalei um [CachyOS](https://cachyos.org) limpo, com [Niri](https://github.com/YaLTeR/niri) e Noctalia. Antigamente isso me custava um dia inteiro e uma semana lembrando do que faltou. Desta vez, em poucas horas a máquina era a minha de novo.
 
 Na [parte 1](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles) eu mostrei a metade das configs: o repositório, os symlinks e o mapa de links. Esta é a outra metade, a que instala as coisas. Vou na ordem em que acontece numa máquina zerada, e em cada passo mostro como fiz no meu.
 
@@ -37,10 +37,10 @@ O que antes era "ir baixando e instalando um por um" vira uma lista por gerencia
 | Gerenciador | Lista padrão |
 |---|---|
 | pacman | 70 pacotes: zsh, git, ghostty, fzf, ripgrep, btop, Podman, codecs de vídeo |
-| AUR | 15: Chrome, Zen, VS Code, Cursor, 1Password e a CLI dele, Google Cloud CLI, espanso |
+| AUR | 15: Chrome, Zen, VS Code, Cursor, 1Password e a CLI dele, Google Cloud CLI, [espanso](https://espanso.org) |
 | Flatpak | 3: Flatseal, Slack e DevToolbox |
 | npm global | 8 pacotes |
-| instaladores próprios | oh-my-zsh, mise, eza, Docker, AWS CLI e Terraform |
+| instaladores próprios | oh-my-zsh, [mise](https://mise.jdx.dev), eza, Docker, AWS CLI e Terraform |
 
 O instalador pula o que já está instalado, então rodar duas vezes não faz mal:
 
@@ -83,7 +83,7 @@ tailscale.sh|manual|VPN mesh Tailscale (instala + ativa; requer login no navegad
 local-ai.sh|manual|IA local (Ollama + modelos de código + OpenCode + Aider)
 ```
 
-`auto` roda na instalação completa. `manual` espera eu pedir com `dotfiles setup:run <nome>`: o Tailscale abre o navegador para login, e a IA local baixa gigas de modelo que eu nem sempre quero.
+`auto` roda na instalação completa. `manual` espera eu pedir com `dotfiles setup:run <nome>`: o [Tailscale](https://tailscale.com) abre o navegador para login, e a IA local baixa gigas de modelo que eu nem sempre quero.
 
 Eles já moraram em `bin/`, e tirei de lá de propósito. Tudo em `bin/` entra no PATH, e um script que roda uma vez por máquina não merece virar comando para sempre.
 

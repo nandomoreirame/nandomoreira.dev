@@ -46,11 +46,11 @@ O site já tinha uma regra escrita sobre isso. JavaScript no navegador só entra
 
 As alternativas também não fechavam a conta. Um Plausible ou Umami self-hosted significa mais infra e mais banco para manter num site que não paga nada disso. O Google Analytics resolve sem custo, mas aí os dados de quem visita o site, inclusive de quem depois vira cliente, vão parar num terceiro, com cookie de terceiro junto. **Se é para guardar dado de visitante, que fique no meu banco, com a regra que eu escrevi.**
 
-O que entrou na medição, então: a página, o canal de chegada (o domínio de onde a pessoa veio, ou o `utm_source` do link), o país, se quem chegou é pessoa, agente de IA ou robô, e as conversões. Conversão aqui é briefing enviado pelo `/api/hire`, currículo baixado, chamada ao MCP do site e clique nos meus contatos ou nos links dos projetos.
+O que entrou na medição, então: a página, o canal de chegada (o domínio de onde a pessoa veio, ou o `utm_source` do link), o país, se quem chegou é pessoa, agente de IA ou robô, e as conversões. Conversão aqui é briefing enviado pelo `/api/hire`, currículo baixado, chamada ao [MCP](https://modelcontextprotocol.io) do site e clique nos meus contatos ou nos links dos projetos.
 
 ## Contar no servidor, e um pixel onde o servidor não vê
 
-A maior parte do site é renderizada a cada requisição, então a contagem mora no middleware do Astro: a resposta sai, e antes dela o servidor grava a visita. Os posts e os cases são outra história. Eles são pré-renderizados no build e o servidor Node os entrega como arquivo estático **antes** do middleware rodar. Para eles a contagem seria zero.
+A maior parte do site é renderizada a cada requisição, então a contagem mora no middleware do [Astro](https://astro.build): a resposta sai, e antes dela o servidor grava a visita. Os posts e os cases são outra história. Eles são pré-renderizados no build e o servidor Node os entrega como arquivo estático **antes** do middleware rodar. Para eles a contagem seria zero.
 
 A saída foi o truque mais velho da web: uma imagem de 1×1 pixel, servida pelo próprio domínio, no fim de toda página pré-renderizada.
 
@@ -74,7 +74,7 @@ Quando alguém manda um briefing ou baixa o currículo, o e-mail que eu recebo t
 
 ## Ler no terminal
 
-Para ler tudo isso eu não quis outro painel web. O `stats` é uma TUI em Rust, com ratatui, que mora no mesmo repositório do site em `tools/stats/`. Assim, quando o formato dos dados muda no site, o leitor muda no mesmo commit.
+Para ler tudo isso eu não quis outro painel web. O `stats` é uma TUI em Rust, com [ratatui](https://ratatui.rs), que mora no mesmo repositório do site em `tools/stats/`. Assim, quando o formato dos dados muda no site, o leitor muda no mesmo commit.
 
 Ele lê o Firestore pela API REST com a credencial do `gcloud` que eu já uso no terminal. Se não houver login, ele mesmo roda o `gcloud auth application-default login`, o navegador abre e a TUI continua. São quatro abas:
 

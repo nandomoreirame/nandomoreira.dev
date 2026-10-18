@@ -32,11 +32,11 @@ snapshot:
 
 O fone de ouvido do meu notebook ficou sem som de 3 de junho a 20 de agosto de 2026. Foram 78 dias com a entrada P2 de um Dell Latitude 3450 sem saída nenhuma, e o comando que travou tudo era o mesmo que eu tinha guardado num script, em março, pra consertar o áudio.
 
-A pergunta que eu fazia em março era como forçar o alto-falante a tocar. A pergunta certa era outra: quem escolhe o perfil da placa de som (o conjunto de saídas e entradas que ela liga ao mesmo tempo), e em que momento. Se o fone do seu notebook Linux também fica mudo sem motivo aparente, é por essa pergunta que vale começar. Pra mim, quem decide é o estado do conector, e não o WirePlumber. A resposta virou o `audio-jack-autoswitch`, um script de 164 linhas que sobe junto com o Niri e troca o perfil quando eu ligo ou tiro o fone.
+A pergunta que eu fazia em março era como forçar o alto-falante a tocar. A pergunta certa era outra: quem escolhe o perfil da placa de som (o conjunto de saídas e entradas que ela liga ao mesmo tempo), e em que momento. Se o fone do seu notebook Linux também fica mudo sem motivo aparente, é por essa pergunta que vale começar. Pra mim, quem decide é o estado do conector, e não o [WirePlumber](https://pipewire.pages.freedesktop.org/wireplumber/). A resposta virou o `audio-jack-autoswitch`, um script de 164 linhas que sobe junto com o [Niri](https://github.com/YaLTeR/niri) e troca o perfil quando eu ligo ou tiro o fone.
 
 ## Fone e alto-falante não cabem no mesmo perfil
 
-O esperado seria fone e alto-falante serem duas portas da mesma saída de som, e ligar o fone só trocar a porta. Neste notebook, não. O UCM do `sof-hda-dsp` (Realtek ALC3204, Raptor Lake), o arquivo que descreve ao ALSA o que a placa sabe fazer, declara Speaker e Headphones como conflitantes, porque os dois dividem o mesmo DAC do codec. O PipeWire então expõe os dois em perfis separados da placa:
+O esperado seria fone e alto-falante serem duas portas da mesma saída de som, e ligar o fone só trocar a porta. Neste notebook, não. O UCM do `sof-hda-dsp` (Realtek ALC3204, Raptor Lake), o arquivo que descreve ao ALSA o que a placa sabe fazer, declara Speaker e Headphones como conflitantes, porque os dois dividem o mesmo DAC do codec. O [PipeWire](https://pipewire.org) então expõe os dois em perfis separados da placa:
 
 ```text
 HiFi (HDMI1, HDMI2, HDMI3, Headphones, Headset, Mic1)

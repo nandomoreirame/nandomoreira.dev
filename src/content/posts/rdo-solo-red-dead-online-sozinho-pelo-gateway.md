@@ -35,7 +35,7 @@ snapshot:
 >
 > Bloquear o tráfego P2P do jogo mexe na sua conexão com os servidores e com outros jogadores. **Isso pode violar os Termos de Serviço da Rockstar/Take-Two e, em tese, levar a punições na conta (inclusive ban).** Use por sua conta e risco, com finalidade pessoal/educacional; leia a seção "Termos de uso" em `homelab/rdo-solo.md`. Esta é uma ferramenta pessoal, extraída de um dotfiles privado e compartilhada como está, **sem garantia**.
 >
-> O painel `web/` protege o acesso por PIN + sessão assinada, mas foi pensado para **rede local / Tailscale**, não para exposição direta na internet.
+> O painel `web/` protege o acesso por PIN + sessão assinada, mas foi pensado para **rede local / [Tailscale](https://tailscale.com)**, não para exposição direta na internet.
 
 O [rdo-solo](https://github.com/nandomoreirame/rdo-solo) está aberto no GitHub, com licença MIT desde 8 de outubro. É o que eu uso para ficar sozinho numa sessão pública de Red Dead Online no Xbox: o console fica cabeado atrás de um gateway Linux, e com o modo solo ligado o gateway derruba as portas UDP do peer-to-peer do jogo (6672 e 61455 a 61458). O tráfego com os servidores da Rockstar continua passando, então a sessão segue viva, só que ninguém consegue abrir conexão direta comigo. Funciona igual no GTA Online, que usa o mesmo netcode.
 
@@ -72,7 +72,7 @@ São três jeitos de mexer no mesmo filtro, e eles dividem o estado em `/var/lib
 | Peça | O que faz |
 |---|---|
 | `homelab/rdo-solo` | O script shell original, que mexe em iptables e rota |
-| `tui/` | Porte 1:1 em Rust com ratatui, compilado estático com musl e enviado por SSH, para não depender da glibc do gateway |
+| `tui/` | Porte 1:1 em Rust com [ratatui](https://ratatui.rs), compilado estático com musl e enviado por SSH, para não depender da glibc do gateway |
 | `web/` | Painel em Next.js para ligar e desligar pelo celular, pela rede local ou pelo Tailscale |
 
 Na TUI, com o solo desligado, a aba de jogadores na sessão lista os peers P2P com quem o console está falando, com cidade (GeoIP), tipo (player, datacenter ou Rockstar), provedor e tempo na sessão. Com o solo ligado, a mesma aba vira uma tabela de quem tentou entrar, ordenada por ameaça. Tem histórico que persiste entre sessões (responde "quem me bateu ontem"), aviso quando o Xbox tem IPv6, que fura um filtro que só enxerga IPv4, e no rodapé um `Tempo sozinho na sessão:` que congela no instante em que o primeiro player entra.

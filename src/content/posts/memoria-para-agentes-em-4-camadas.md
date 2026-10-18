@@ -30,7 +30,7 @@ snapshot:
       value: cinco comandos
 ---
 
-Em 1º de junho eu salvei duas memórias no meu Claude Code. Uma dizia que a barra do meu Niri é o Noctalia, e não a Waybar. A outra, que o gerenciador de versões da máquina é o mise, e que ele nunca deve procurar nvm, pyenv ou asdf. Parecem bobas, e existem porque o agente, sem elas, presumia o contrário: toda sessão nova começava do zero, e do zero o palpite padrão para um desktop Linux é Waybar e nvm.
+Em 1º de junho eu salvei duas memórias no meu Claude Code. Uma dizia que a barra do meu [Niri](https://github.com/YaLTeR/niri) é o [Noctalia](https://github.com/noctalia-dev/noctalia-shell), e não a Waybar. A outra, que o gerenciador de versões da máquina é o mise, e que ele nunca deve procurar nvm, pyenv ou asdf. Parecem bobas, e existem porque o agente, sem elas, presumia o contrário: toda sessão nova começava do zero, e do zero o palpite padrão para um desktop Linux é Waybar e nvm.
 
 Esse é o problema inteiro da memória para agente: cada sessão começa sem saber nada, e a solução óbvia (jogar tudo no contexto) custa caro e piora conforme a memória cresce.
 
