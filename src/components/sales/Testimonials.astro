@@ -1,0 +1,22 @@
+---
+import { Icon } from 'astro-icon/components';
+import { TESTIMONIALS } from '../../lib/sales/proof';
+import SectionIntro from './SectionIntro.astro';
+---
+
+<section aria-labelledby="depoimentos-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="depoimentos-title" eyebrow="Quem já contratou" title="O que dizem" />
+    <div class="grid gap-md md:grid-cols-2">
+      {TESTIMONIALS.map((item) => (
+        <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg">
+          <Icon name="lucide:quote" class="size-5 text-primary" aria-hidden="true" />
+          <blockquote class="text-body text-foreground">“{item.text}”</blockquote>
+          <figcaption class="mt-auto text-small text-muted-foreground">
+            <span class="font-semibold text-foreground">{item.name}</span>, {item.company}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

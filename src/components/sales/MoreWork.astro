@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components';
+import { MORE_WORK } from '../../lib/sales/proof';
+import SectionIntro from './SectionIntro.astro';
+---
+
+<section aria-labelledby="trabalhos-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="trabalhos-title" eyebrow="Mais projetos" title="Outros trabalhos" lead="Sites, lojas e portais feitos para clientes ao longo dos anos. Alguns já saíram do ar; ficam aqui como amostra." />
+    <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
+      {MORE_WORK.map((work) => (
+        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-md">
+          <img src={`/servicos/trabalhos/${work.slug}.webp`} alt={work.alt} width="800" height="500" loading="lazy" decoding="async" class="aspect-video w-full rounded-sm border border-border object-cover object-top" />
+          <div class="flex items-center justify-between gap-sm">
+            <div>
+              <h3 class="text-body font-semibold text-foreground">{work.name}</h3>
+              <p class="font-mono text-micro text-muted-foreground">{work.kind}</p>
+            </div>
+            {work.url && (
+              <a href={work.url} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center gap-xs text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                Visitar<span class="sr-only"> {work.name}</span><Icon name="lucide:external-link" class="size-4" aria-hidden="true" />
+              </a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
