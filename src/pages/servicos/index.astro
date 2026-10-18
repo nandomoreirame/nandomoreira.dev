@@ -1,18 +1,37 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutCard from '../../components/sales/AboutCard.astro';
+import FaqList from '../../components/sales/FaqList.astro';
+import MoreWork from '../../components/sales/MoreWork.astro';
+import ProjectShowcase from '../../components/sales/ProjectShowcase.astro';
+import SalesContact from '../../components/sales/SalesContact.astro';
+import SalesHero from '../../components/sales/SalesHero.astro';
+import ServiceBlocks from '../../components/sales/ServiceBlocks.astro';
+import SituationGrid from '../../components/sales/SituationGrid.astro';
+import StepsTimeline from '../../components/sales/StepsTimeline.astro';
+import Testimonials from '../../components/sales/Testimonials.astro';
+import ToolsGrid from '../../components/sales/ToolsGrid.astro';
+import SalesLayout from '../../layouts/SalesLayout.astro';
 import { SALES_COPY } from '../../lib/sales/copy';
 
-// On demand, never prerendered: the sales host rewrites `/` here at request
-// time (tests/sales/ssr-routes.test.ts). The full landing replaces this body
-// in Task 20 of docs/plans/2026-10-18-sales-landing.md.
 export const prerender = false;
 
-const { hero } = SALES_COPY;
+const outcome = Astro.url.searchParams.get('envio');
 ---
 
-<BaseLayout title="Serviços | Fernando Moreira" description={hero.lead} noindex>
-  <section class="flex flex-col gap-lg py-2xl">
-    <h1 class="font-serif text-display font-normal text-foreground">{hero.title}</h1>
-    <p class="text-lead text-muted-foreground">{hero.lead}</p>
-  </section>
-</BaseLayout>
+<SalesLayout
+  title="Sites, lojas e sistemas para o seu negócio | Fernando Moreira"
+  description="Site institucional, landing page, blog, loja virtual, produto web e automação com IA, explicados sem jargão. Do primeiro papo até estar no ar."
+  serviceName="Desenvolvimento de sites e produtos web"
+>
+  <SalesHero />
+  <SituationGrid />
+  <ServiceBlocks />
+  <StepsTimeline />
+  <ToolsGrid />
+  <ProjectShowcase />
+  <Testimonials />
+  <MoreWork />
+  <AboutCard />
+  <FaqList id="duvidas" items={SALES_COPY.faq} {...SALES_COPY.faqHeader} />
+  <SalesContact origin="landing" outcome={outcome} />
+</SalesLayout>
