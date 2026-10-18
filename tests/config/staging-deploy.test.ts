@@ -39,4 +39,17 @@ describe('staging deploy', () => {
     expect(script).toContain('STAGING DEPLOY PASSED');
     expect(script).toContain('-o ServerAliveInterval=15 -o ServerAliveCountMax=8');
   });
+
+  it('serves the sales landing at contrate.nandomoreira.home through the same container', () => {
+    const script = read('scripts/deploy-staging.sh');
+    expect(script).toContain('SALES_DOMAIN="contrate.nandomoreira.home"');
+    // Same Caddy block (noindex included) and Pi-hole entry for both names.
+    expect(script).toMatch(/for D in "\$DOMAIN" "\$SALES_DOMAIN"/);
+  });
+
+  it('proves the sales landing over HTTP, not just a 200', () => {
+    const script = read('scripts/deploy-staging.sh');
+    expect(script).toContain('http://$SALES_DOMAIN/');
+    expect(script).toContain('id="hero-title"');
+  });
 });

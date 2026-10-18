@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SALES_DEV_HOST, SALES_HOST, SALES_HOST_LIVE, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
+import { SALES_DEV_HOST, SALES_HOST, SALES_STAGING_HOST, SALES_HOST_LIVE, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
 
 const at = (url: string) => new URL(url);
 
@@ -104,5 +104,24 @@ describe('local sales host', () => {
 
   it('never redirects the local host to production', () => {
     expect(salesRouting(at('http://contrate.nandomoreira.local:4321/servicos'), true)).toBeUndefined();
+  });
+});
+
+describe('homelab staging sales host', () => {
+  it('is the .home name Pi-hole resolves on the LAN', () => {
+    expect(SALES_STAGING_HOST).toBe('contrate.nandomoreira.home');
+  });
+
+  it('rewrites like the real subdomain whatever the flag says', () => {
+    expect(salesRouting(at('http://contrate.nandomoreira.home/'), false)).toEqual({ rewrite: '/servicos' });
+    expect(salesRouting(at('http://contrate.nandomoreira.home/site-institucional'), true)).toEqual({
+      rewrite: '/servicos/site-institucional',
+    });
+  });
+
+  it('lets the API and assets through on the staging host', () => {
+    for (const path of ['/api/hire', '/servicos/trabalhos/php-pr.webp', '/servicos']) {
+      expect(salesRouting(at(`http://contrate.nandomoreira.home${path}`), true), path).toBeUndefined();
+    }
   });
 });

@@ -16,6 +16,11 @@ export const SALES_HOST_LIVE = false;
  */
 export const SALES_DEV_HOST = 'contrate.nandomoreira.local';
 
+/** Homelab staging stand-in (scripts/deploy-staging.sh); also flag-independent. */
+export const SALES_STAGING_HOST = 'contrate.nandomoreira.home';
+
+const PREVIEW_HOSTS = new Set([SALES_DEV_HOST, SALES_STAGING_HOST]);
+
 export const SALES_BASE = '/servicos';
 const MAIN_ORIGIN = 'https://nandomoreira.dev';
 
@@ -51,7 +56,7 @@ const subdomainRoute = (path: string): SalesRoute => {
  */
 export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE): SalesRoute => {
   const path = url.pathname;
-  if (url.hostname === SALES_DEV_HOST) return subdomainRoute(path);
+  if (PREVIEW_HOSTS.has(url.hostname)) return subdomainRoute(path);
   if (!live) return undefined;
   if (url.hostname === SALES_HOST) return subdomainRoute(path);
 
