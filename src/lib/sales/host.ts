@@ -2,12 +2,12 @@
 export const SALES_HOST = 'contrate.nandomoreira.dev';
 
 /**
- * False until the custom domain answers on App Hosting. While false the pages
- * live at /servicos on the main host; flipping it turns on the rewrite, the
- * 301 from the main host and the canonical on the subdomain. Runbook:
- * docs/runbooks/sales-subdomain.md.
+ * True since the custom domain answered on Firebase Hosting (2026-10-18): the
+ * subdomain rewrites onto the pages, the main host 301s /servicos to it and
+ * the canonical points there. Flipping it back to false is the rollback.
+ * Runbook: docs/runbooks/sales-subdomain.md.
  */
-export const SALES_HOST_LIVE = false;
+export const SALES_HOST_LIVE = true;
 
 /**
  * Local stand-in for SALES_HOST, so the landing can be reviewed at its own

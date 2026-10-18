@@ -58,9 +58,9 @@ beforeEach(() => {
 
 describe('salesOriginOf', () => {
   it('maps the landing and each detail slug to its page', () => {
-    expect(salesOriginOf(new URL('https://x/api/hire?origem=landing'))).toBe('/servicos');
+    expect(salesOriginOf(new URL('https://x/api/hire?origem=landing'))).toBe('/');
     expect(salesOriginOf(new URL('https://x/api/hire?origem=site-institucional'))).toBe(
-      '/servicos/site-institucional',
+      '/site-institucional',
     );
   });
 
@@ -110,14 +110,14 @@ describe('handleHire from a sales page', () => {
     const response = await post('?origem=landing', lead);
 
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('/servicos?envio=ok#envio');
+    expect(response.headers.get('location')).toBe('/?envio=ok#envio');
     expect(saved[0]?.service).toBe('website');
   });
 
   it('returns to the detail page it came from', async () => {
     const response = await post('?origem=site-institucional', lead);
     expect(response.headers.get('location')).toBe(
-      '/servicos/site-institucional?envio=ok#envio',
+      '/site-institucional?envio=ok#envio',
     );
   });
 
@@ -125,7 +125,7 @@ describe('handleHire from a sales page', () => {
     const response = await post('?origem=landing', lead, {
       limiter: { check: () => false, size: () => 0 },
     });
-    expect(response.headers.get('location')).toBe('/servicos?envio=limite#envio');
+    expect(response.headers.get('location')).toBe('/?envio=limite#envio');
   });
 
   it('redirects with limite on the detail page when rate limited', async () => {
@@ -133,7 +133,7 @@ describe('handleHire from a sales page', () => {
       limiter: { check: () => false, size: () => 0 },
     });
     expect(response.headers.get('location')).toBe(
-      '/servicos/site-institucional?envio=limite#envio',
+      '/site-institucional?envio=limite#envio',
     );
   });
 
@@ -144,7 +144,7 @@ describe('handleHire from a sales page', () => {
     ]);
     const response = await post('?origem=landing', fields);
 
-    expect(response.headers.get('location')).toBe('/servicos?envio=invalido#envio');
+    expect(response.headers.get('location')).toBe('/?envio=invalido#envio');
     expect(saved).toHaveLength(0);
   });
 
@@ -156,7 +156,7 @@ describe('handleHire from a sales page', () => {
     const response = await post('?origem=site-institucional', fields);
 
     expect(response.headers.get('location')).toBe(
-      '/servicos/site-institucional?envio=invalido#envio',
+      '/site-institucional?envio=invalido#envio',
     );
     expect(saved).toHaveLength(0);
   });

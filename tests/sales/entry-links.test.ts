@@ -8,7 +8,7 @@ describe('entry points to the sales landing', () => {
     const html = await (await AstroContainer.create()).renderToString(Services, {
       props: { services: [], projects: [] },
     });
-    expect(html).toContain('href="https://nandomoreira.dev/servicos"');
+    expect(html).toContain('href="https://contrate.nandomoreira.dev/"');
     expect(html).toContain('Para o seu negócio');
     expect(html).not.toContain('bg-primary');
   });
@@ -17,7 +17,7 @@ describe('entry points to the sales landing', () => {
     const html = await (await AstroContainer.create()).renderToString(Contato, {
       request: new Request('https://nandomoreira.dev/contato'),
     });
-    expect(html).toContain('href="https://nandomoreira.dev/servicos"');
+    expect(html).toContain('href="https://contrate.nandomoreira.dev/"');
   });
 
   it.each([

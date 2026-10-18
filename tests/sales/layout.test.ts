@@ -45,15 +45,15 @@ describe('serviceLd', () => {
 });
 
 describe('SalesLayout', () => {
-  it('points the canonical at the main host while the subdomain is off', async () => {
+  it('points the canonical at the live subdomain', async () => {
     expect(await render({ slug: 'site-institucional' })).toContain(
-      '<link rel="canonical" href="https://nandomoreira.dev/servicos/site-institucional"',
+      '<link rel="canonical" href="https://contrate.nandomoreira.dev/site-institucional"',
     );
   });
 
   it('points the landing canonical and og:image without a slug', async () => {
     const html = await render();
-    expect(html).toContain('<link rel="canonical" href="https://nandomoreira.dev/servicos"');
+    expect(html).toContain('<link rel="canonical" href="https://contrate.nandomoreira.dev/"');
     expect(html).toContain('property="og:image" content="https://nandomoreira.dev/og/servicos.png"');
   });
 
@@ -103,7 +103,7 @@ describe('SalesLayout', () => {
     });
     const service = serviceFromHtml(html);
     expect(service.name).toBe('Site institucional');
-    expect(service.url).toBe('https://nandomoreira.dev/servicos/site-institucional');
+    expect(service.url).toBe('https://contrate.nandomoreira.dev/site-institucional');
     expect(service.description).toBe(description);
   });
 

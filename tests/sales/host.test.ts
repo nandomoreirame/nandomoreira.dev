@@ -8,8 +8,8 @@ describe('sales host constants', () => {
     expect(SALES_HOST).toBe('contrate.nandomoreira.dev');
   });
 
-  it('ships switched off until the domain answers', () => {
-    expect(SALES_HOST_LIVE).toBe(false);
+  it('is live since the domain answered on Firebase Hosting (2026-10-18)', () => {
+    expect(SALES_HOST_LIVE).toBe(true);
   });
 });
 
