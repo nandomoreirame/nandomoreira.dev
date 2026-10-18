@@ -2,12 +2,15 @@
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
+import TocColumns from '../components/ui/TocColumns.astro';
+import PostTocToggle from '../components/posts/PostTocToggle.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import { SETUP_LEAD, SETUP_SECTIONS, SETUP_UPDATED_AT } from '../lib/setup/setup';
 
 const profile = await getProfile();
+const toc = SETUP_SECTIONS.map((section) => ({ depth: 2 as const, slug: section.id, text: section.title }));
 ---
 
 <BaseLayout
@@ -17,56 +20,60 @@ const profile = await getProfile();
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title="O que eu uso" description={SETUP_LEAD} updatedAt={SETUP_UPDATED_AT} />
 
-    {
-      SETUP_SECTIONS.map((section, index) => (
-        <section aria-labelledby={section.id}>
-          <SectionHeader id={section.id} title={section.title} step={index + 1} />
-          <Prose>
-            {section.intro && <p>{section.intro}</p>}
-            <ul>
-              {section.items.map((item) => (
-                <li>
-                  {item.url ? (
-                    <a href={item.url} target="_blank" rel="nofollow noopener noreferrer">
+    <TocColumns items={toc}>
+      {
+        SETUP_SECTIONS.map((section, index) => (
+          <section aria-labelledby={section.id}>
+            <SectionHeader id={section.id} title={section.title} step={index + 1} />
+            <Prose>
+              {section.intro && <p>{section.intro}</p>}
+              <ul>
+                {section.items.map((item) => (
+                  <li>
+                    {item.url ? (
+                      <a href={item.url} target="_blank" rel="nofollow noopener noreferrer">
+                        <strong>{item.name}</strong>
+                      </a>
+                    ) : (
                       <strong>{item.name}</strong>
-                    </a>
-                  ) : (
-                    <strong>{item.name}</strong>
-                  )}
-                  : {item.why}
-                  {item.shortcuts && item.shortcuts.length > 0 && (
-                    <span class="mt-xs flex flex-wrap gap-x-md gap-y-xs font-mono text-small text-muted-foreground">
-                      {item.shortcuts.map((shortcut) => (
-                        <span>
-                          {shortcut.keys.split('+').map((key, index) => (
-                            <Fragment>
-                              {index > 0 && ' + '}
-                              <kbd class="rounded-md border border-border-strong bg-surface px-xs text-foreground">{key}</kbd>
-                            </Fragment>
-                          ))}
-                          {shortcut.label && ` ${shortcut.label}`}
-                        </span>
-                      ))}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-            {section.related && section.related.length > 0 && (
-              <p>
-                Veja também:{' '}
-                {section.related.map((link, index) => (
-                  <Fragment>
-                    {index > 0 && ', '}
-                    <a href={link.href}>{link.title}</a>
-                  </Fragment>
+                    )}
+                    : {item.why}
+                    {item.shortcuts && item.shortcuts.length > 0 && (
+                      <span class="mt-xs flex flex-wrap gap-x-md gap-y-xs font-mono text-small text-muted-foreground">
+                        {item.shortcuts.map((shortcut) => (
+                          <span>
+                            {shortcut.keys.split('+').map((key, index) => (
+                              <Fragment>
+                                {index > 0 && ' + '}
+                                <kbd class="rounded-md border border-border-strong bg-surface px-xs text-foreground">{key}</kbd>
+                              </Fragment>
+                            ))}
+                            {shortcut.label && ` ${shortcut.label}`}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </li>
                 ))}
-                .
-              </p>
-            )}
-          </Prose>
-        </section>
-      ))
-    }
+              </ul>
+              {section.related && section.related.length > 0 && (
+                <p>
+                  Veja também:{' '}
+                  {section.related.map((link, index) => (
+                    <Fragment>
+                      {index > 0 && ', '}
+                      <a href={link.href}>{link.title}</a>
+                    </Fragment>
+                  ))}
+                  .
+                </p>
+              )}
+            </Prose>
+          </section>
+        ))
+      }
+    </TocColumns>
+
+    <PostTocToggle />
   </article>
 </BaseLayout>

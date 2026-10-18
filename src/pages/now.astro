@@ -7,6 +7,8 @@ import NowSection from '../components/now/NowSection.astro';
 import AvailabilityCard from '../components/ui/AvailabilityCard.astro';
 import Card from '../components/ui/Card.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
+import TocColumns from '../components/ui/TocColumns.astro';
+import PostTocToggle from '../components/posts/PostTocToggle.astro';
 import TechBadge from '../components/ui/TechBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAllProjects, getProfile } from '../lib/content';
@@ -21,6 +23,15 @@ import { formatPolicyDate } from '../lib/privacy/policy';
 const profile = await getProfile();
 const cases = await getAllProjects();
 const data = await loadNow();
+// Mirrors the NowSection ids and titles below, in order.
+const toc = [
+  { depth: 2 as const, slug: 'foco', text: 'Foco' },
+  { depth: 2 as const, slug: 'projetos', text: 'Projetos em andamento' },
+  { depth: 2 as const, slug: 'escrevendo', text: 'Escrevendo' },
+  { depth: 2 as const, slug: 'estudando', text: 'Estudando' },
+  { depth: 2 as const, slug: 'ouvindo', text: 'Ouvindo' },
+  { depth: 2 as const, slug: 'jogando', text: 'Jogando' },
+];
 const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 ---
 
@@ -28,77 +39,81 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} updatedAt={NOW_UPDATED_AT} />
 
-    <NowSection id="foco" title="Foco" step={1}>
-      <ul>
-        {data.focus.items.map((item) => <li>{item}</li>)}
-      </ul>
-      <h3>Recusando agora</h3>
-      <ul>
-        {data.focus.declining.map((item) => <li>{item}</li>)}
-      </ul>
-      <AvailabilityCard status={profile.availability.status} detail={data.focus.availability} />
-    </NowSection>
-
-    <NowSection id="projetos" title="Projetos em andamento" step={2}>
-        {
-          data.projects.state === 'empty' ? (
-            <p class="text-muted-foreground">Sem dados no momento.</p>
-          ) : (
-            <ul>
-              {data.projects.items.map((repo) => {
-                const href = linkForRepo(repo, cases);
-                const day = saoPauloDay(new Date(repo.pushedAt));
-                const lead = repo.description ? `: ${endSentence(repo.description)} ` : '. ';
-                return (
-                  <li>
-                    <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>{repo.name}</a>{lead}{repo.language && <TechBadge name={repo.language} />}{repo.language ? '. ' : ''}Último push em <time datetime={day}>{formatPolicyDate(day)}</time>.
-                  </li>
-                );
-              })}
-            </ul>
-          )
-        }
-    </NowSection>
-
-    <NowSection id="escrevendo" title="Escrevendo" step={3}>
+    <TocColumns items={toc}>
+      <NowSection id="foco" title="Foco" step={1}>
         <ul>
+          {data.focus.items.map((item) => <li>{item}</li>)}
+        </ul>
+        <h3>Recusando agora</h3>
+        <ul>
+          {data.focus.declining.map((item) => <li>{item}</li>)}
+        </ul>
+        <AvailabilityCard status={profile.availability.status} detail={data.focus.availability} />
+      </NowSection>
+
+      <NowSection id="projetos" title="Projetos em andamento" step={2}>
           {
-            data.writing.latest && (
-              <li>
-                <a href={`/${data.writing.latest.slug}`}>{data.writing.latest.title}</a>
-              </li>
+            data.projects.state === 'empty' ? (
+              <p class="text-muted-foreground">Sem dados no momento.</p>
+            ) : (
+              <ul>
+                {data.projects.items.map((repo) => {
+                  const href = linkForRepo(repo, cases);
+                  const day = saoPauloDay(new Date(repo.pushedAt));
+                  const lead = repo.description ? `: ${endSentence(repo.description)} ` : '. ';
+                  return (
+                    <li>
+                      <a href={href} {...(href.startsWith('http') ? externalAttrs : {})}>{repo.name}</a>{lead}{repo.language && <TechBadge name={repo.language} />}{repo.language ? '. ' : ''}Último push em <time datetime={day}>{formatPolicyDate(day)}</time>.
+                    </li>
+                  );
+                })}
+              </ul>
             )
           }
-          {data.writing.drafts.map((title) => <li>{title}</li>)}
-        </ul>
-    </NowSection>
+      </NowSection>
 
-    <NowSection id="estudando" title="Estudando" step={4}>
-        <ul>
-          {
-            data.studying.map((study) => (
-              <li>
-                <a href={study.url} {...externalAttrs}>{study.topic}</a>: {study.note}
-              </li>
-            ))
-          }
-        </ul>
-    </NowSection>
+      <NowSection id="escrevendo" title="Escrevendo" step={3}>
+          <ul>
+            {
+              data.writing.latest && (
+                <li>
+                  <a href={`/${data.writing.latest.slug}`}>{data.writing.latest.title}</a>
+                </li>
+              )
+            }
+            {data.writing.drafts.map((title) => <li>{title}</li>)}
+          </ul>
+      </NowSection>
 
-    <NowSection id="ouvindo" title="Ouvindo" step={5} prose={false}>
-      <NowMusic music={data.music} />
-    </NowSection>
+      <NowSection id="estudando" title="Estudando" step={4}>
+          <ul>
+            {
+              data.studying.map((study) => (
+                <li>
+                  <a href={study.url} {...externalAttrs}>{study.topic}</a>: {study.note}
+                </li>
+              ))
+            }
+          </ul>
+      </NowSection>
 
-    <NowSection id="jogando" title="Jogando" step={6} prose={false}>
-      <NowGames games={data.games} />
-    </NowSection>
+      <NowSection id="ouvindo" title="Ouvindo" step={5} prose={false}>
+        <NowMusic music={data.music} />
+      </NowSection>
 
-    <Card as="aside" class="flex flex-col gap-sm">
-      <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">O que é uma página Agora?</h2>
-      <p class="text-body text-muted-foreground">
-        Uma página Agora diz no que a pessoa está focada neste momento, e não tudo o que já fez. A ideia é do Derek
-        Sivers, e o <a href="https://nownownow.com" target="_blank" rel="nofollow noopener noreferrer" class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">nownownow.com</a> reúne as que existem.
-      </p>
-    </Card>
+      <NowSection id="jogando" title="Jogando" step={6} prose={false}>
+        <NowGames games={data.games} />
+      </NowSection>
+
+      <Card as="aside" class="flex flex-col gap-sm">
+        <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">O que é uma página Agora?</h2>
+        <p class="text-body text-muted-foreground">
+          Uma página Agora diz no que a pessoa está focada neste momento, e não tudo o que já fez. A ideia é do Derek
+          Sivers, e o <a href="https://nownownow.com" target="_blank" rel="nofollow noopener noreferrer" class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">nownownow.com</a> reúne as que existem.
+        </p>
+      </Card>
+    </TocColumns>
+
+    <PostTocToggle />
   </article>
 </BaseLayout>

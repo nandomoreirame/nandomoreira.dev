@@ -141,7 +141,7 @@ describe('/now page', () => {
     ]);
     expect(html).toContain('Atualizada em');
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
-    const playing = html.split('>Jogando<')[1]?.split('</section>')[0] ?? '';
+    const playing = html.split('id="jogando"')[1]?.split('</section>')[0] ?? '';
     expect(playing).toContain('Sem dados no momento.');
   });
 
@@ -190,7 +190,7 @@ describe('/now page', () => {
   it('lists draft titles without a link', async () => {
     const drafts = (await getUpcomingPosts()).slice(0, 5);
     const html = await render(NowPage);
-    const writing = html.split('>Escrevendo<')[1]?.split('>Estudando<')[0] ?? '';
+    const writing = html.split('id="escrevendo"')[1]?.split('id="estudando"')[0] ?? '';
 
     expect(drafts.length).toBeGreaterThan(0);
     for (const draft of drafts) {
@@ -232,5 +232,40 @@ describe('/now section headings', () => {
     expect(h2s).toHaveLength(7);
     for (const tag of h2s.slice(0, 6)) expect(tag).toContain('text-h3');
     expect(h2s[6]).toContain('tracking-eyebrow');
+  });
+});
+
+describe('section index on /now and /setup', () => {
+  beforeEach(() => {
+    fetchImpl.mockReset();
+    fetchImpl.mockRejectedValue(new Error('offline'));
+    vi.stubGlobal('fetch', fetchImpl);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it.each([
+    ['/now', NowPage],
+    ['/setup', SetupPage],
+  ])('%s has the post index card, linking every section, in a sticky side column', async (_route, page) => {
+    const html = await render(page);
+    const nav = html.match(/<nav[^>]*data-toc[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? '';
+    const sections = [...html.matchAll(/<section aria-labelledby="([^"]+)"/g)].map((match) => match[1]);
+
+    expect(nav).toContain('Índice');
+    expect(sections.length).toBeGreaterThanOrEqual(2);
+    for (const id of sections) expect(nav).toContain(`href="#${id}"`);
+    const aside = html.match(/<aside[^>]*data-toc-aside[^>]*>/)?.[0] ?? '';
+    for (const name of ['md:sticky', 'md:top-3xl', 'md:self-start']) expect(aside).toContain(name);
+    expect(html).toMatch(/<button[^>]*popovertarget="post-toc"/);
+  });
+
+  it('keeps the popover out of a display:none wrapper below md', async () => {
+    const html = await render(SetupPage);
+    const aside = html.match(/<aside[^>]*data-toc-aside[^>]*>/)?.[0] ?? '';
+    expect(aside).toContain('contents');
+    expect(aside).not.toMatch(/class="[^"]*(?<![:\w-])hidden\b/);
   });
 });
