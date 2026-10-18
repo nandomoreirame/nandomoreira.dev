@@ -1,0 +1,4 @@
+{"round": 1, "implementer": "grok", "reviewer": "claude", "identities": ["src/components/sales/AboutCard.astro:12", "docs/plans/2026-10-18-sales-landing-tweaks.md", "src/components/sales/FaqList.astro:21", "src/components/sales/FloatingActions.astro:23"], "open_count": 4}
+{"round": 2, "implementer": "grok", "reviewer": "claude", "identities": ["src/components/sales/AboutCard.astro:11", "src/components/sales/AboutCard.astro:26"], "open_count": 2}
+{"round": 3, "implementer": "grok", "reviewer": "claude", "identities": ["src/components/sales/StepsTimeline.astro:25", "src/components/sales/StepsTimeline.astro:51"], "open_count": 2}
+{"round": 4, "implementer": "grok", "reviewer": "claude", "identities": [], "open_count": 0}
