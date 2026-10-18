@@ -35,6 +35,7 @@ const profile = {
   contacts: [
     { kind: 'email', value: 'oi@nandomoreira.dev' },
     { kind: 'github', value: 'https://github.com/nandomoreirame' },
+    { kind: 'whatsapp', value: 'https://wa.me/5511917493331?text=Oi' },
   ],
 } as never;
 

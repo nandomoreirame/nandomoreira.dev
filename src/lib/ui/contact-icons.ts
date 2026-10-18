@@ -4,6 +4,7 @@ const CONTACT_ICONS: Record<string, string> = {
   github: 'simple-icons:github',
   linkedin: 'simple-icons:linkedin',
   site: 'lucide:globe',
+  whatsapp: 'simple-icons:whatsapp',
 };
 
 export const contactIconFor = (kind: string): string | undefined => CONTACT_ICONS[kind];

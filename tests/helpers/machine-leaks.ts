@@ -5,4 +5,5 @@ export const MACHINE_LEAKS: Array<[string, RegExp]> = [
   ['api key or token', /(api[_-]?key|secret|token|bearer)\s*[:=]/i],
   ['firebase project id', /nandomoreira-dev/],
   ['private ip', /\b(10|127|192\.168)\.\d+\.\d+\.\d+\b/],
+  ['phone number', /wa\.me\/|\b55\d{10,11}\b/],
 ];
