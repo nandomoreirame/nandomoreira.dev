@@ -22,7 +22,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
     {variant === 'full' ? (
       <ol class="mx-auto flex w-full max-w-narrow flex-col gap-md">
         {steps.map((step, index) => (
-          <li class:list={['flex gap-md rounded-md border bg-surface p-lg', step.highlight ? 'border-primary' : 'border-border']}>
+          <li class:list={['flex gap-md rounded-md border bg-surface p-lg', step.highlight ? 'border-primary' : 'border-border transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong']}>
             <span class="font-mono text-h3 text-primary">{number(index)}</span>
             <div class="flex flex-col gap-sm">
               <h3 class="flex flex-wrap items-center gap-sm text-h3 font-semibold text-foreground">
@@ -40,7 +40,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
     ) : (
       <ol class="grid gap-sm sm:grid-cols-2 lg:grid-cols-7">
         {steps.map((step, index) => (
-          <li class:list={['flex flex-col gap-xs rounded-md border bg-surface p-md', step.highlight ? 'border-primary' : 'border-border']}>
+          <li class:list={['flex flex-col gap-xs rounded-md border bg-surface p-md', step.highlight ? 'border-primary' : 'border-border transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong']}>
             <span class="font-mono text-small text-primary">{number(index)}</span>
             <h3 class="text-body font-semibold text-foreground">{step.title}</h3>
             {step.highlight && <span class="font-mono text-micro text-primary">{step.highlight}</span>}

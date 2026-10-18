@@ -31,7 +31,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
     <SectionIntro id="anatomia-title" eyebrow="Anatomia do projeto" title="O que é, na prática" lead="Um site institucional organiza a sua presença em quatro partes, cada uma com um trabalho a fazer pelo seu negócio." />
     <ol class="grid gap-md sm:grid-cols-2 lg:grid-cols-4">
       {detail.anatomy.map((part, index) => (
-        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
+        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <span class="font-mono text-micro uppercase tracking-eyebrow text-primary">Parte {String(index + 1).padStart(2, '0')}</span>
           <h3 class="text-h3 font-semibold text-foreground">{part.title}</h3>
           <p class="text-small text-muted-foreground">{part.text}</p>
@@ -47,7 +47,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
     <SectionIntro id="para-voce-title" eyebrow="Diagnóstico" title="É para você se..." />
     <ul class="grid gap-md md:grid-cols-2">
       {detail.fit.map((item) => (
-        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg">
+        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <h3 class="text-body font-semibold text-foreground">{item.title}</h3>
           <p class="text-small text-muted-foreground">{item.text}</p>
         </li>
@@ -61,7 +61,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
     <SectionIntro id="incluso-title" eyebrow="Escopo do serviço" title="O que está incluso" />
     <ul class="grid gap-md md:grid-cols-2">
       {detail.included.map((item) => (
-        <li class="flex items-start gap-sm rounded-md border border-border bg-surface p-lg">
+        <li class="flex items-start gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <Icon name="lucide:circle-check" class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
           <div><h3 class="text-body font-semibold text-foreground">{item.title}</h3><p class="text-small text-muted-foreground">{item.text}</p></div>
         </li>
@@ -75,7 +75,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
     <SectionIntro id="extras-title" eyebrow="Módulos extras" title="O que pode ser adicionado" lead="Opcionais combinados conforme o momento do seu negócio, sempre sob consulta." />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {detail.addons.map((item) => (
-        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg">
+        <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <h3 class="text-body font-semibold text-foreground">{item.title}</h3>
           <p class="text-small text-muted-foreground">{item.text}</p>
           <p class="mt-auto pt-sm font-mono text-micro text-muted-foreground">Sob consulta</p>

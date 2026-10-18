@@ -13,6 +13,9 @@ describe('FaqList', () => {
     const html = await render(FaqList, { items: SALES_COPY.faq, id: 'duvidas' });
     expect(html.match(/<details/g)).toHaveLength(6);
     expect(html.match(/<summary/g)).toHaveLength(6);
+    const details = html.match(/<details[^>]*>/)?.[0] ?? '';
+    expect(details).toContain('hover:border-primary');
+    expect(details).not.toContain('hover:border-border-strong');
   });
 });
 

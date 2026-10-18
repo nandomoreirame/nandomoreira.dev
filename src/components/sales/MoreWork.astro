@@ -11,7 +11,7 @@ const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-
     <SectionIntro id="trabalhos-title" eyebrow="Mais projetos" title="Outros trabalhos" lead="Sites, lojas e portais feitos para clientes ao longo dos anos. Alguns já saíram do ar; ficam aqui como amostra." />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {MORE_WORK.map((work) => (
-        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-md">
+        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-md transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           {/* Same script-free lightbox as the post images (Popover API, .lightbox
               in global.css): Esc and a click outside close it. The full-size
               image is lazy inside a closed popover, so it only loads on open. */}

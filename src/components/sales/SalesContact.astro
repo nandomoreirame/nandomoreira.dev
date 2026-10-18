@@ -38,7 +38,7 @@ const label = 'mb-xs block font-mono text-small text-muted-foreground';
       </a>
     </div>
 
-    <div id="envio" class="rounded-lg border border-border bg-surface p-lg">
+    <div id="envio" class="rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
       {message && (
         <p role={message.role} class:list={['mb-md rounded-md border px-md py-sm text-small', sent ? 'border-success text-foreground' : 'border-destructive text-foreground']}>
           {message.text}

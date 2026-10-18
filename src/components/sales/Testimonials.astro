@@ -9,7 +9,7 @@ import SectionIntro from './SectionIntro.astro';
     <SectionIntro id="depoimentos-title" eyebrow="Quem já contratou" title="O que dizem" />
     <div class="grid gap-md md:grid-cols-2">
       {TESTIMONIALS.map((item) => (
-        <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg">
+        <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <Icon name="lucide:quote" class="size-5 text-primary" aria-hidden="true" />
           <blockquote class="text-body text-foreground">“{item.text}”</blockquote>
           <figcaption class="mt-auto text-small text-muted-foreground">
