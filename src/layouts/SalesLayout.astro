@@ -1,0 +1,109 @@
+---
+import { serialiseJsonLd } from '../lib/aeo/json-ld';
+import { absoluteUrl } from '../lib/aeo/urls';
+import { ogImagePath } from '../lib/og/pages';
+import { metaDescription } from '../lib/seo/meta';
+import { salesPath, salesUrl } from '../lib/sales/host';
+import { serviceLd } from '../lib/sales/service-ld';
+import { contactGoPath } from '../lib/analytics/outbound';
+import serifHeadingFont from '../assets/fonts/newsreader-latin-variable.woff2?url';
+import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Detail page slug; absent on the landing. */
+  slug?: string;
+  /** Service name for the JSON-LD; defaults to the page title. */
+  serviceName?: string;
+}
+
+const { title, description, slug, serviceName } = Astro.props;
+const canonical = salesUrl(slug);
+// The share cards live on the main host under the internal path.
+const ogImage = absoluteUrl(new URL('https://nandomoreira.dev'), ogImagePath(salesPath(slug, false)));
+const jsonLd = serialiseJsonLd(serviceLd({ name: serviceName ?? title, description, url: canonical }));
+const home = salesPath();
+const year = new Date().getUTCFullYear();
+
+const NAV = [
+  { href: `${home}#servicos`, label: 'Serviços' },
+  { href: `${home}#como-trabalho`, label: 'Como trabalho' },
+  { href: `${home}#projetos`, label: 'Projetos' },
+  { href: `${home}#duvidas`, label: 'Dúvidas' },
+];
+const link =
+  'inline-flex min-h-11 items-center text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <meta name="description" content={metaDescription(description)} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" is:inline set:html={jsonLd} />
+    <link rel="preload" href={serifHeadingFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansBodyFont} as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-md focus-visible:left-md focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-md focus-visible:py-sm focus-visible:text-primary-foreground"
+    >
+      Pular para o conteúdo
+    </a>
+
+    <header class="border-b border-border">
+      <div class="mx-auto flex w-full max-w-page items-center justify-between gap-md px-lg py-md">
+        <a href={home} class="inline-flex min-h-11 items-center gap-xs font-mono text-body font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <span class="size-2 rounded-full bg-primary" aria-hidden="true"></span>
+          nandomoreira.dev
+        </a>
+        <nav aria-label="Seções" class="hidden md:block">
+          <ul class="flex items-center gap-lg">
+            {NAV.map((item) => <li><a href={item.href} class={link}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+        <a
+          href="#contato"
+          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Conversar
+        </a>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1" class="focus:outline-none">
+      <slot />
+    </main>
+
+    <footer class="border-t border-border">
+      <div class="mx-auto flex w-full max-w-page flex-col gap-md px-lg py-xl md:flex-row md:items-center md:justify-between">
+        <p class="text-small text-muted-foreground">
+          <span class="font-mono font-semibold text-foreground">nandomoreira.dev</span>
+          · © {year} Fernando Moreira, desenvolvedor de software em São Paulo.
+        </p>
+        <ul class="flex flex-wrap gap-md">
+          <li><a class={link} href="https://nandomoreira.dev">Site pessoal</a></li>
+          <li><a class={link} href={contactGoPath('whatsapp')}>WhatsApp</a></li>
+          <li><a class={link} href={contactGoPath('linkedin')}>LinkedIn</a></li>
+          <li><a class={link} href="https://nandomoreira.dev/privacidade">Privacidade</a></li>
+        </ul>
+      </div>
+    </footer>
+  </body>
+</html>
