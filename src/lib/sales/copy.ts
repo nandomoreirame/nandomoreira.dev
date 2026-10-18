@@ -24,7 +24,7 @@ export const SALES_COPY = {
     lead: 'Você me conta o que o seu negócio precisa, mesmo que ainda não saiba o nome disso. Eu traduzo em um projeto, desenho, construo e entrego funcionando.',
     primary: 'Quero conversar sobre meu projeto',
     secondary: 'Ver como funciona',
-    proofs: ['15 anos de código em produção', 'Design aprovado antes da programação', 'Sem jargão técnico'],
+    proofs: ['{anos} de código em produção', 'Design aprovado antes da programação', 'Entrega em 5 a 30 dias úteis', 'Sem jargão técnico'],
   },
   situationsHeader: {
     eyebrow: 'Ponto de partida',
@@ -54,7 +54,7 @@ export const SALES_COPY = {
   toolsHeader: {
     eyebrow: 'Infraestrutura explicada',
     title: 'As ferramentas por trás, explicadas sem complicação',
-    lead: 'Pense na tecnologia como uma loja física. Eu uso o Firebase, a plataforma do Google, e cada peça dela faz um papel conhecido.',
+    lead: 'Pense na tecnologia como uma loja física. Eu uso o Firebase, a plataforma do Google, e alguns serviços parceiros, e cada peça faz um papel conhecido.',
   },
   tools: [
     { name: 'Firebase Hosting', analogy: 'O endereço e a vitrine', text: 'Hospeda sites que não mudam a cada visita, como o institucional, a landing page e o blog. Rápido no mundo todo, com cadeado de segurança incluso e custo que costuma ficar perto de zero.' },
@@ -64,6 +64,8 @@ export const SALES_COPY = {
     { name: 'Cloud Functions', analogy: 'O funcionário dos bastidores', text: 'Tarefas automáticas no servidor, como enviar o e-mail de confirmação, processar um pagamento ou gerar um relatório.' },
     { name: 'Cloud Storage', analogy: 'O depósito', text: 'Fotos, PDFs e arquivos enviados por você ou pelos seus clientes.' },
     { name: 'Gemini', analogy: 'O assistente', text: 'A inteligência artificial do Google, para resumos, textos e automações dentro do seu produto.' },
+    { name: 'Mercado Pago ou Stripe', analogy: 'O caixa', text: 'Recebe Pix, cartão e boleto com segurança e avisa o seu sistema assim que o pagamento cai.' },
+    { name: 'Resend', analogy: 'O carteiro', text: 'Entrega os e-mails do seu site: confirmação de pedido, aviso de cadastro e as mensagens do formulário.' },
   ],
   toolsNote: 'Infraestrutura do Google, a mesma usada por grandes empresas, com custo que cresce junto com o seu negócio.',
   projectsHeader: {
@@ -82,7 +84,7 @@ export const SALES_COPY = {
     role: 'Desenvolvedor de software sênior em São Paulo, atendendo todo o Brasil de forma remota.',
     photoAlt: 'Foto de Fernando Moreira, de óculos e barba, sorrindo',
     points: [
-      { title: '15 anos construindo software', text: 'com passagem por grandes empresas de tecnologia, como Itaú Unibanco, Pipefy e Skyone.' },
+      { title: '{anos} construindo software', text: 'com passagem por grandes empresas de tecnologia, como Itaú Unibanco, Pipefy e Skyone.' },
       { title: 'Você fala direto com quem constrói', text: 'sem intermediário e sem telefone sem fio. A sua necessidade é entendida na raiz.' },
       { title: 'O acompanhamento continua depois da entrega', text: 'fico por perto com suporte, ajustes e evolução conforme o seu negócio cresce.' },
     ],
@@ -95,7 +97,7 @@ export const SALES_COPY = {
   faq: [
     { question: 'Preciso entender de tecnologia?', answer: 'Não. Você conta como funciona o seu negócio e o que espera do site; a parte técnica é comigo, e explico cada escolha em português claro.' },
     { question: 'Quanto custa?', answer: 'Depende do que o seu projeto precisa e do que você quer incluir. Depois da primeira conversa, montamos o escopo juntos e eu envio uma proposta; o valor varia conforme o que entra agora e o que fica para depois.' },
-    { question: 'Quanto tempo leva?', answer: 'Também depende do projeto. O prazo vem na proposta, com a data de cada etapa, e você acompanha o andamento pelo link de teste.' },
+    { question: 'Quanto tempo leva?', answer: 'Em geral, de 5 a 30 dias úteis de trabalho, conforme o tamanho do projeto. O prazo exato vem na proposta, com a data de cada etapa, e você acompanha o andamento pelo link de teste.' },
     { question: 'Vou conseguir atualizar sozinho?', answer: 'Pequenas trocas de texto e foto ficam por minha conta no acompanhamento. Se preferir editar sozinho, o site pode ganhar um painel de edição simples, como opcional.' },
     { question: 'O site fica no meu nome?', answer: 'Sim. O domínio, as contas e o projeto ficam no seu nome, e você nunca fica preso a mim.' },
     { question: 'E depois da entrega, você continua ajudando?', answer: 'Sim. Continuo acompanhando o projeto, com suporte, ajustes e evolução conforme o seu negócio cresce.' },

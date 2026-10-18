@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { SALES_SERVICES, serviceAnchor } from '../../lib/sales/catalog';
+import { SALES_SERVICES, SHOW_DETAIL_LINKS, serviceAnchor } from '../../lib/sales/catalog';
 import { SALES_COPY } from '../../lib/sales/copy';
 import { salesPath } from '../../lib/sales/host';
 import SectionIntro from './SectionIntro.astro';
@@ -11,7 +11,7 @@ import SectionIntro from './SectionIntro.astro';
     <SectionIntro id="servicos-title" {...SALES_COPY.servicesHeader} />
     <ul class="grid gap-md md:grid-cols-2 lg:grid-cols-3">
       {SALES_SERVICES.map((service, index) => (
-        <li id={serviceAnchor(service.slug)} class="flex scroll-mt-xl flex-col gap-md rounded-md border border-border bg-surface p-lg">
+        <li id={serviceAnchor(service.slug)} class="flex scroll-mt-xl flex-col gap-md rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <div class="flex items-center justify-between">
             <span class="font-mono text-micro uppercase tracking-eyebrow text-primary">Serviço {String(index + 1).padStart(2, '0')}</span>
             <Icon name={service.icon} class="size-5 text-muted-foreground" aria-hidden="true" />
@@ -30,7 +30,7 @@ import SectionIntro from './SectionIntro.astro';
               </li>
             ))}
           </ul>
-          {service.detail && (
+          {SHOW_DETAIL_LINKS && service.detail && (
             <a href={salesPath(service.slug)} class="mt-auto inline-flex min-h-11 items-center justify-between border-t border-border pt-sm text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Entender em detalhes<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
             </a>

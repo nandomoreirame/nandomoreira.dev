@@ -33,16 +33,24 @@ describe('SALES_COPY', () => {
     expect(SALES_COPY.steps.filter((step) => step.highlight).map((step) => step.title)).toEqual(['Design', 'Aprovação']);
   });
 
-  it('explains the seven Firebase tools by analogy', () => {
+  it('explains the nine tools by analogy, Firebase first', () => {
     expect(SALES_COPY.tools.map((tool) => tool.name)).toEqual([
-      'Firebase Hosting', 'Firebase App Hosting', 'Firestore', 'Authentication', 'Cloud Functions', 'Cloud Storage', 'Gemini',
+      'Firebase Hosting', 'Firebase App Hosting', 'Firestore', 'Authentication', 'Cloud Functions', 'Cloud Storage', 'Gemini', 'Mercado Pago ou Stripe', 'Resend',
     ]);
+    expect(SALES_COPY.toolsHeader.lead).not.toMatch(/cada peça dela/);
   });
 
   it('shows only the four approved projects', () => {
     expect(SALES_COPY.projects.map((project) => project.slug)).toEqual([
       'encantos-brincantes', 'portfoliosnap', 'bragstack', 'mousai',
     ]);
+  });
+
+  it('states the delivery range in the hero and in the FAQ', () => {
+    expect(SALES_COPY.hero.proofs).toContain('Entrega em 5 a 30 dias úteis');
+    const answer = SALES_COPY.faq.find((item) => item.question === 'Quanto tempo leva?')!.answer;
+    expect(answer).toContain('de 5 a 30 dias úteis de trabalho');
+    expect(answer).toContain('proposta');
   });
 
   it('answers the six landing questions without promising a fixed price', () => {

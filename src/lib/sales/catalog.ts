@@ -87,7 +87,7 @@ const SITE_INSTITUCIONAL: ServiceDetail = {
     { question: 'Quantas páginas ou seções meu site institucional pode ter?', answer: 'Normalmente cabe em uma página com as quatro partes (início, sobre, serviços e contato) ou em até quatro páginas. Se precisar de mais, isso entra na proposta.' },
     { question: 'Eu mesmo vou conseguir trocar textos e fotos depois?', answer: 'Pequenas trocas de texto e foto ficam por minha conta no acompanhamento. Se preferir editar sozinho, o site pode ganhar um painel de edição simples, como opcional.' },
     { question: 'O domínio e o site ficam registrados em meu nome?', answer: 'Sim. Se você ainda não tem domínio, eu registro no seu nome, e as contas do site também ficam com você.' },
-    { question: 'Quanto tempo leva para ficar pronto?', answer: 'O prazo vem na proposta, com a data de cada etapa.' },
+    { question: 'Quanto tempo leva para ficar pronto?', answer: 'Em geral, de 5 a 30 dias úteis de trabalho, conforme o que o site precisa ter. O prazo exato vem na proposta, com a data de cada etapa.' },
   ],
 };
 
@@ -149,6 +149,13 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     receives: ['Integração entre as ferramentas que você já usa', 'Assistente com inteligência artificial', 'Relatórios automáticos', 'Menos erros manuais'],
   },
 ]);
+
+/**
+ * The detail pages stay reachable by URL, but the cards do not link to them
+ * until they are reviewed in production (sales-landing-tweaks, REQ-010).
+ * Flip to true to show "Entender em detalhes" again.
+ */
+export const SHOW_DETAIL_LINKS = false;
 
 export const serviceAnchor = (slug: string): string => `servico-${slug}`;
 

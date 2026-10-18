@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SERVICES } from '../../src/lib/hire/schema';
-import { SALES_SERVICES, detailFor, detailSlugs, serviceAnchor } from '../../src/lib/sales/catalog';
+import { SALES_SERVICES, SHOW_DETAIL_LINKS, detailFor, detailSlugs, serviceAnchor } from '../../src/lib/sales/catalog';
 
 describe('sales catalog', () => {
   it('offers the six services in the landing order', () => {
@@ -36,6 +36,15 @@ describe('sales catalog', () => {
 
   it('explains Firebase Hosting by the shop-window analogy', () => {
     expect(detailFor('site-institucional')!.detail.underTheHood.join(' ')).toContain('Firebase Hosting');
+  });
+
+  it('states the delivery range in the detail FAQ', () => {
+    const answer = detailFor('site-institucional')!.detail.faq.find((item) => item.question.startsWith('Quanto tempo'))!.answer;
+    expect(answer).toContain('de 5 a 30 dias úteis de trabalho');
+  });
+
+  it('keeps the detail links off for the first deploy', () => {
+    expect(SHOW_DETAIL_LINKS).toBe(false);
   });
 
   it('derives the anchor from the slug', () => {

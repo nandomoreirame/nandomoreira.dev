@@ -32,6 +32,7 @@ describe('ToolsGrid', () => {
     const html = await render(ToolsGrid);
     expect(html).toContain('O porteiro');
     expect(html).toContain('Cloud Functions');
-    expect(html.match(/<li/g)).toHaveLength(7);
+    expect(html).toContain('O carteiro');
+    expect(html.match(/<li/g)).toHaveLength(9);
   });
 });
