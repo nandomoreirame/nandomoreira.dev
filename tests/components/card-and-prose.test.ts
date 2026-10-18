@@ -60,7 +60,7 @@ describe('Prose rhythm and headings', () => {
 
   it('opens each section with a large semibold h2, far from what came before', async () => {
     const list = await classes();
-    for (const name of ['[&_h2]:mt-2xl', '[&_h2]:text-h2', '[&_h2]:font-semibold', '[&_h2]:leading-tight', '[&_h2]:text-balance', '[&_:is(h2,h3)]:font-serif']) {
+    for (const name of ['[&_h2]:mt-2xl', '[&_h2]:text-h2', '[&_h2]:font-semibold', '[&_h2]:leading-tight', '[&_h2]:text-pretty', '[&_:is(h2,h3)]:font-serif']) {
       expect(list).toContain(name);
     }
     expect(list).not.toContain('sm:[&_h2]:text-h1');

@@ -22,7 +22,7 @@ const shown = terminalPath(path ?? Astro.url.pathname);
     page shows the date under the claim, before the lead (Stitch /now). */}
 <header class="mt-2xl mb-xl">
   <p data-page-path class="font-mono text-small text-muted-foreground">{shown}</p>
-  <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">{title}</h1>
+  <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-pretty text-foreground sm:text-display">{title}</h1>
   {
     updatedAt && (
       <div data-page-updated class="mt-lg">
