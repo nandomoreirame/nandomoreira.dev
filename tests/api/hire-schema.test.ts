@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HONEYPOT_FIELD, hireSchema } from '../../src/lib/hire/schema';
+import { HONEYPOT_FIELD, SERVICES, hireSchema } from '../../src/lib/hire/schema';
 
 const valid = {
   from: 'Agente da Acme',
@@ -50,6 +50,32 @@ describe('hireSchema', () => {
     const parsed = hireSchema.parse({ ...valid, from: '  Agente  ' });
 
     expect(parsed.from).toBe('Agente');
+  });
+
+  it('accepts every declared service', () => {
+    for (const service of SERVICES) {
+      expect(hireSchema.safeParse({ ...valid, service }).success, service).toBe(true);
+    }
+  });
+
+  it('lists the services the sales form offers, in order', () => {
+    expect(SERVICES).toEqual([
+      'website',
+      'landing-page',
+      'blog',
+      'online-store',
+      'web-product',
+      'automation',
+      'undecided',
+    ]);
+  });
+
+  it('rejects a service outside the list', () => {
+    expect(hireSchema.safeParse({ ...valid, service: 'mobile-app' }).success).toBe(false);
+  });
+
+  it('keeps service optional, so agents and /contato do not change', () => {
+    expect(hireSchema.safeParse(valid).success).toBe(true);
   });
 });
 

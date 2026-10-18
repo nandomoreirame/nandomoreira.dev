@@ -15,6 +15,20 @@ export const BUDGETS = ['undecided', 'up-to-10k', '10k-30k', '30k-60k', '60k-plu
 
 export const INTERESTS = ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting'] as const;
 
+/**
+ * What a visitor of the sales pages wants built. `undecided` is the "not sure
+ * yet" answer, which is a valid lead, not a missing field.
+ */
+export const SERVICES = [
+  'website',
+  'landing-page',
+  'blog',
+  'online-store',
+  'web-product',
+  'automation',
+  'undecided',
+] as const;
+
 const required = (max: number) => z.string().trim().min(1).max(max);
 
 /**
@@ -34,6 +48,7 @@ export const hireSchema = z
       .max(INTERESTS.length)
       .refine((list) => new Set(list).size === list.length, 'Interests must not repeat.')
       .optional(),
+    service: z.enum(SERVICES).optional(),
     [HONEYPOT_FIELD]: z.string().max(LIMITS.from).optional(),
   })
   .strict();
