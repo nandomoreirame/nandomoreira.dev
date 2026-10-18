@@ -1,10 +1,17 @@
 import { defineMiddleware } from 'astro:middleware';
 import { measureRequest } from './lib/analytics/measure';
 import { recorder } from './lib/analytics/runtime';
+import { salesRouting } from './lib/sales/host';
 import { robotsTagFor } from './lib/seo/backend-host';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const response = await next();
+  // Off until SALES_HOST_LIVE (docs/runbooks/sales-subdomain.md).
+  const sales = salesRouting(context.url);
+  if (sales && 'redirect' in sales) {
+    return new Response(null, { status: 301, headers: { location: sales.redirect } });
+  }
+
+  const response = await (sales ? next(sales.rewrite) : next());
 
   await measureRequest(recorder, {
     request: context.request,
