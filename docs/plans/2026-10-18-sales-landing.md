@@ -5,7 +5,7 @@
 **Objetivo:** landing de vendas em `/servicos` e página de detalhe `/servicos/site-institucional`, com moldura própria, formulário no `/api/hire`, botão de WhatsApp e roteamento por host pronto para `contrate.nandomoreira.dev`.
 **Arquitetura:** lógica pura em `src/lib/sales/` (host, catálogo, textos, origem do formulário, validação de contato), componentes em `src/components/sales/`, `SalesLayout` próprio sem script. O `/api/hire` ganha o campo opcional `service` e o redirect por origem; o middleware ganha a reescrita por host, desligada pela flag `SALES_HOST_LIVE` até o domínio existir.
 **Stack:** Astro 7 SSR, Tailwind 4 (tokens de `global.css`), Zod, Vitest com `experimental_AstroContainer`.
-**Total de tarefas:** 24, em 4 lotes.
+**Total de tarefas:** 26, em 4 lotes (25 e 26 acrescentadas em 2026-10-18, depois da análise do site antigo; rodam antes da Tarefa 20).
 **Complexidade estimada:** large.
 **Depende de:** nada em andamento. Colide de leve com `hire-endpoint` (`implement-blocked`) em `src/lib/hire/*`: as mudanças aqui são aditivas e opcionais.
 
@@ -2605,8 +2605,8 @@ Confira em `src/pages/contato.astro` como o honeypot é escondido hoje e copie e
 
 ### Tarefa 20: página `/servicos`
 
-**Requisito:** REQ-001, REQ-008, REQ-016, REQ-030, REQ-032
-**Depende de:** tarefas 15 a 19
+**Requisito:** REQ-001, REQ-008, REQ-016, REQ-030, REQ-032, REQ-036, REQ-037
+**Depende de:** tarefas 15 a 19, 25 e 26
 **Arquivos:**
 - Criar: `src/pages/servicos/index.astro`
 - Teste: `tests/sales/landing-page.test.ts`
@@ -2632,7 +2632,7 @@ const render = async (query = '') =>
 describe('/servicos', () => {
   it('renders the sections in the approved order', async () => {
     const html = await render();
-    const order = ['hero-title', 'situacao-title', 'servicos-title', 'etapas-full', 'ferramentas-title', 'projetos-title', 'sobre-title', 'duvidas-title', 'contato-title'];
+    const order = ['hero-title', 'situacao-title', 'servicos-title', 'etapas-full', 'ferramentas-title', 'projetos-title', 'depoimentos-title', 'trabalhos-title', 'sobre-title', 'duvidas-title', 'contato-title'];
     const positions = order.map((id) => html.indexOf(`id="${id}"`));
     expect(positions.every((position) => position >= 0)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
@@ -2664,12 +2664,14 @@ describe('/servicos', () => {
 ---
 import AboutCard from '../../components/sales/AboutCard.astro';
 import FaqList from '../../components/sales/FaqList.astro';
+import MoreWork from '../../components/sales/MoreWork.astro';
 import ProjectShowcase from '../../components/sales/ProjectShowcase.astro';
 import SalesContact from '../../components/sales/SalesContact.astro';
 import SalesHero from '../../components/sales/SalesHero.astro';
 import ServiceBlocks from '../../components/sales/ServiceBlocks.astro';
 import SituationGrid from '../../components/sales/SituationGrid.astro';
 import StepsTimeline from '../../components/sales/StepsTimeline.astro';
+import Testimonials from '../../components/sales/Testimonials.astro';
 import ToolsGrid from '../../components/sales/ToolsGrid.astro';
 import SalesLayout from '../../layouts/SalesLayout.astro';
 import { SALES_COPY } from '../../lib/sales/copy';
@@ -2690,6 +2692,8 @@ const outcome = Astro.url.searchParams.get('envio');
   <StepsTimeline />
   <ToolsGrid />
   <ProjectShowcase />
+  <Testimonials />
+  <MoreWork />
   <AboutCard />
   <FaqList id="duvidas" items={SALES_COPY.faq} {...SALES_COPY.faqHeader} />
   <SalesContact origin="landing" outcome={outcome} />
@@ -3153,5 +3157,246 @@ kill %1
 Abra as duas imagens e compare com as telas mobile do Stitch (`1cda02f890eb48b090398883134c42f6` e `5983629069cc4cf4b6f1c5e797b27fbb`): nenhuma rolagem lateral e a tabela empilhada por critério.
 
 **Passo 4:** `npm run verify`. Esperado: termina verde (check, test, build e test:build). A evidência é a saída de cada etapa, não o código de saída de um pipe.
+
+**Passo 5:** `/git commit`.
+
+---
+
+## Lote 3b: prova social do site antigo (rodar antes da Tarefa 20)
+
+### Tarefa 25: depoimentos e galeria "Outros trabalhos" (dados)
+
+**Requisito:** REQ-036, REQ-037
+**Arquivos:**
+- Criar: `src/lib/sales/proof.ts`
+- Teste: `tests/sales/proof.test.ts`
+- Já criados pelo orquestrador: `public/servicos/trabalhos/*.webp` (10 imagens)
+
+**Time:**
+- Track: frontend
+- Implementer: frontend-engineer (skills: frontend-design)
+- Reviewers: business-logic-reviewer, test-reviewer
+
+**Passo 1: teste que falha.**
+
+```ts
+import { existsSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { MORE_WORK, TESTIMONIALS } from '../../src/lib/sales/proof';
+import { inventedNumbersIn } from '../helpers/invented-numbers';
+
+describe('TESTIMONIALS', () => {
+  it('keeps the two real testimonials word for word', () => {
+    expect(TESTIMONIALS.map((item) => `${item.name} (${item.company})`)).toEqual([
+      'Yara Santiago (Ateliê éh Pique)',
+      'Edson Luiz (Contador)',
+    ]);
+    expect(TESTIMONIALS[1]!.text).toBe(
+      'Trabalho com o Fernando há pelo menos 15 anos. Nesse tempo, ele já desenvolveu vários projetos pra mim e para minhas empresas, e sempre entregou tudo com uma qualidade acima da expectativa.',
+    );
+  });
+});
+
+describe('MORE_WORK', () => {
+  it('lists only client work, each with a real image', () => {
+    expect(MORE_WORK.length).toBe(10);
+    for (const work of MORE_WORK) {
+      expect(existsSync(`public/servicos/trabalhos/${work.slug}.webp`), work.slug).toBe(true);
+      expect(work.alt.length, work.slug).toBeGreaterThan(10);
+    }
+  });
+
+  it('links only what is still online', () => {
+    expect(MORE_WORK.filter((work) => work.url).map((work) => work.slug)).toEqual(['coletivo-inclusao']);
+  });
+
+  it('never shows a template, a theme or a personal project as client work', () => {
+    const slugs = MORE_WORK.map((work) => work.slug).join(' ');
+    expect(slugs).not.toMatch(/nutritionist|grgit|theme|tema|sob-medida|beholddy|blog-nandomoreira/);
+  });
+
+  it('carries no year and no invented figure', () => {
+    expect(JSON.stringify(MORE_WORK)).not.toMatch(/\b20\d\d\b/);
+    expect(inventedNumbersIn(JSON.stringify({ MORE_WORK, TESTIMONIALS }))).toEqual([]);
+  });
+});
+```
+
+**Passo 2:** `npx vitest run tests/sales/proof.test.ts`. Esperado: FAIL, módulo inexistente.
+
+**Passo 3: implementação.** `src/lib/sales/proof.ts`:
+
+```ts
+/**
+ * Social proof carried over from the previous sales page
+ * (svelte-nandomoreira.dev, /sites-profissionais-lojas-virtuais-blogs-aplicativos-web).
+ * The testimonials are verbatim; the gallery is client work only, without years,
+ * because the old dates were not reliable (sales-landing, REQ-036 and REQ-037).
+ */
+export interface Testimonial {
+  name: string;
+  company: string;
+  text: string;
+}
+
+export interface PastWork {
+  slug: string;
+  name: string;
+  kind: string;
+  alt: string;
+  /** Only for sites still online. */
+  url?: string;
+}
+
+export const TESTIMONIALS: readonly Testimonial[] = [
+  {
+    name: 'Yara Santiago',
+    company: 'Ateliê éh Pique',
+    text: 'Meu site para vendas de arquivos digitais ficou lindo! Fernando arrasou no designer! Moderno e funcional, facilitou a navegação dos clientes e maior conversão de vendas! A entrega foi muito rápida, um projeto bem estruturado e funcional!',
+  },
+  {
+    name: 'Edson Luiz',
+    company: 'Contador',
+    text: 'Trabalho com o Fernando há pelo menos 15 anos. Nesse tempo, ele já desenvolveu vários projetos pra mim e para minhas empresas, e sempre entregou tudo com uma qualidade acima da expectativa.',
+  },
+];
+
+export const MORE_WORK: readonly PastWork[] = [
+  { slug: 'atelie-eh-pique', name: 'Ateliê éh Pique', kind: 'Loja virtual', alt: 'Página inicial da loja Ateliê éh Pique, de artes digitais para máquinas de corte' },
+  { slug: 'coletivo-inclusao', name: 'Coletivo Inclusão', kind: 'Site institucional', alt: 'Página inicial do Coletivo Inclusão, organização social', url: 'https://www.coletivoinclusao.org.br' },
+  { slug: 'canto-das-emocoes', name: 'Canto das Emoções', kind: 'Site de produto educativo', alt: 'Página do Canto das Emoções, recurso lúdico para educação infantil' },
+  { slug: 'puruna-investimentos', name: 'Puruna Investimentos', kind: 'Site institucional', alt: 'Página inicial da Puruna Investimentos' },
+  { slug: 'gatman-corp', name: 'Gatman Corp', kind: 'Site corporativo', alt: 'Página inicial do site corporativo da Gatman Corp' },
+  { slug: 'agenda-rio-2030', name: 'Agenda Rio 2030', kind: 'Portal', alt: 'Portal da Agenda Rio 2030, da Casa Fluminense' },
+  { slug: 'php-pr', name: 'PHP PR', kind: 'Portal de comunidade', alt: 'Portal da comunidade PHP do Paraná, com artigos e avisos' },
+  { slug: 'ogg-digital', name: 'OGG Digital', kind: 'Site de agência', alt: 'Página inicial da agência OGG Digital' },
+  { slug: 'onedev-studio', name: 'OneDev Studio', kind: 'Site de estúdio', alt: 'Página inicial do estúdio OneDev, com planos de hospedagem e serviços' },
+  { slug: 'ferramentas-digital', name: 'Ferramentas Digital', kind: 'Catálogo online', alt: 'Catálogo de ferramentas de marketing digital, organizado por categoria' },
+];
+```
+
+**Passo 4:** `npx vitest run tests/sales/proof.test.ts`. Esperado: PASS.
+
+**Passo 5:** `/git commit`.
+
+---
+
+### Tarefa 26: componentes `Testimonials` e `MoreWork`
+
+**Requisito:** REQ-036, REQ-037, REQ-032
+**Depende de:** tarefa 25
+**Arquivos:**
+- Criar: `src/components/sales/Testimonials.astro`, `src/components/sales/MoreWork.astro`
+- Teste: `tests/sales/sections-social.test.ts`
+
+**Time:**
+- Track: frontend
+- Implementer: frontend-engineer (skills: frontend-design, nextjs-fsd-conventions)
+- Reviewers: test-reviewer, accessibility-guardrails
+
+**Passo 1: teste que falha.**
+
+```ts
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { describe, expect, it } from 'vitest';
+import MoreWork from '../../src/components/sales/MoreWork.astro';
+import Testimonials from '../../src/components/sales/Testimonials.astro';
+
+const render = async (component: Parameters<AstroContainer['renderToString']>[0]) =>
+  (await AstroContainer.create()).renderToString(component);
+
+describe('Testimonials', () => {
+  it('marks each quote as a figure with its source', async () => {
+    const html = await render(Testimonials);
+    expect(html).toContain('id="depoimentos-title"');
+    expect(html.match(/<figure/g)).toHaveLength(2);
+    expect(html.match(/<blockquote/g)).toHaveLength(2);
+    expect(html).toContain('Yara Santiago');
+  });
+});
+
+describe('MoreWork', () => {
+  it('shows ten works, each image with alt text and lazy loading', async () => {
+    const html = await render(MoreWork);
+    expect(html).toContain('id="trabalhos-title"');
+    expect(html.match(/<img/g)).toHaveLength(10);
+    expect(html).not.toMatch(/<img(?![^>]*alt="[^"]+")/);
+    expect(html).not.toMatch(/<img(?![^>]*loading="lazy")/);
+  });
+
+  it('links only the work still online, in a new tab', async () => {
+    const html = await render(MoreWork);
+    expect(html.match(/<a /g)).toHaveLength(1);
+    expect(html).toMatch(/href="https:\/\/www\.coletivoinclusao\.org\.br"[^>]*rel="noopener noreferrer"/);
+  });
+});
+```
+
+**Passo 2:** `npx vitest run tests/sales/sections-social.test.ts`. Esperado: FAIL.
+
+**Passo 3: implementação.**
+
+`src/components/sales/Testimonials.astro`:
+
+```astro
+---
+import { Icon } from 'astro-icon/components';
+import { TESTIMONIALS } from '../../lib/sales/proof';
+import SectionIntro from './SectionIntro.astro';
+---
+
+<section aria-labelledby="depoimentos-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="depoimentos-title" eyebrow="Quem já contratou" title="O que dizem" />
+    <div class="grid gap-md md:grid-cols-2">
+      {TESTIMONIALS.map((item) => (
+        <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg">
+          <Icon name="lucide:quote" class="size-5 text-primary" aria-hidden="true" />
+          <blockquote class="text-body text-foreground">“{item.text}”</blockquote>
+          <figcaption class="mt-auto text-small text-muted-foreground">
+            <span class="font-semibold text-foreground">{item.name}</span>, {item.company}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+```
+
+`src/components/sales/MoreWork.astro`:
+
+```astro
+---
+import { Icon } from 'astro-icon/components';
+import { MORE_WORK } from '../../lib/sales/proof';
+import SectionIntro from './SectionIntro.astro';
+---
+
+<section aria-labelledby="trabalhos-title" class="border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="trabalhos-title" eyebrow="Mais projetos" title="Outros trabalhos" lead="Sites, lojas e portais feitos para clientes ao longo dos anos. Alguns já saíram do ar; ficam aqui como amostra." />
+    <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
+      {MORE_WORK.map((work) => (
+        <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-md">
+          <img src={`/servicos/trabalhos/${work.slug}.webp`} alt={work.alt} width="800" height="500" loading="lazy" decoding="async" class="aspect-video w-full rounded-sm border border-border object-cover object-top" />
+          <div class="flex items-center justify-between gap-sm">
+            <div>
+              <h3 class="text-body font-semibold text-foreground">{work.name}</h3>
+              <p class="font-mono text-micro text-muted-foreground">{work.kind}</p>
+            </div>
+            {work.url && (
+              <a href={work.url} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center gap-xs text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                Visitar<span class="sr-only"> {work.name}</span><Icon name="lucide:external-link" class="size-4" aria-hidden="true" />
+              </a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+```
+
+**Passo 4:** `npx vitest run tests/sales/ tests/design-system/`. Esperado: PASS.
 
 **Passo 5:** `/git commit`.

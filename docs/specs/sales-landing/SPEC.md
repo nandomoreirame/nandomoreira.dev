@@ -61,6 +61,9 @@ A landing é uma superfície separada do site: moldura própria, servida em
 - **REQ-015** QUANDO a seção Sobre renderizar ENTÃO ela DEVE mostrar a foto real e o texto aprovado: desenvolvedor de software sênior em São Paulo, 15 anos, Itaú Unibanco, Pipefy e Skyone, contato direto sem intermediário, acompanhamento depois da entrega.
 - **REQ-016** QUANDO as dúvidas frequentes renderizarem ENTÃO cada pergunta DEVE ser um `<details>`/`<summary>` nativo, com as respostas do Anexo B.
 
+- **REQ-036** QUANDO a landing renderizar ENTÃO, depois dos projetos reais, DEVE haver a seção "O que dizem" com os dois depoimentos reais publicados no site antigo (`svelte-nandomoreira.dev`, `src/lib/data/testimonials.ts`), com texto, nome e empresa exatos, marcados com `<figure>`, `<blockquote>` e `<figcaption>`: Yara Santiago (Ateliê éh Pique) e Edson Luiz (Contador).
+- **REQ-037** QUANDO a landing renderizar ENTÃO, depois dos depoimentos, DEVE haver a galeria "Outros trabalhos" com projetos de cliente do site antigo: imagem real em `public/servicos/trabalhos/<slug>.webp`, nome e tipo, sem ano (as datas do site antigo não são confiáveis) e com link só para o que está no ar (Coletivo Inclusão). Ficam fora templates, temas, projetos pessoais e páginas "em construção" (Nutritionist, GRGit, temas Nuxt e WordPress, blog pessoal, Sob Medida, Beholddy), porque apresentá-los como trabalho de cliente seria enganoso (RISK-004).
+
 ### Página de detalhe (`/servicos/site-institucional`)
 
 - **REQ-017** QUANDO a página de detalhe renderizar ENTÃO ela DEVE ter: migalha, hero, "O que é, na prática" (4 partes), "É para você se...", "O que está incluso", "O que pode ser adicionado", "Como funciona por baixo", as 7 etapas compactas, a tabela comparativa, dúvidas e chamada final com formulário, tudo a partir do catálogo.
@@ -123,6 +126,8 @@ A landing é uma superfície separada do site: moldura própria, servida em
 
 ## Anexo A: textos
 
+Os depoimentos e a galeria vêm do site antigo `svelte-nandomoreira.dev` (página `/sites-profissionais-lojas-virtuais-blogs-aplicativos-web`, analisada em 2026-10-18).
+
 Os textos da landing e da página do Site institucional são os do prompt de 2026-10-18 e da
 tela do Stitch, sem os números listados nas decisões. Ficam em `src/lib/sales/catalog.ts`
 (serviços) e `src/lib/sales/copy.ts` (seções fixas). Abaixo do formulário, no lugar de
@@ -167,5 +172,8 @@ Decisões levantadas e resolvidas no grilling (2026-10-18).
 | 12 | Foto do Sobre | Foto real do ascode | Cliente leigo confia mais em rosto real |
 | 13 | Imagens dos projetos | Screenshots reais capturados dos sites no ar | O ascode não tem as imagens; as do Stitch são falsas |
 | 14 | Preço | Sem valor fechado, faixa ou prazo em lugar nenhum | O valor varia com a negociação e o escopo |
+| 17 | Depoimentos | Os dois reais do site antigo, texto exato (REQ-036) | Prova social para cliente leigo; não são inventados |
+| 18 | Mais projetos | Galeria "Outros trabalhos" com os projetos de cliente do site antigo, link só no que está no ar (REQ-037) | Mostra volume de trabalho sem promover o que saiu do ar |
+| 19 | Imagens | ascode.com.br para BragStack, PortfolioSnap, Encantos Brincantes e Ateliê éh Pique; screenshot do Fernando para o Mousai; site antigo para a galeria | Reaproveita capturas reais em vez de gerar novas |
 | 16 | Testar no endereço próprio em localhost | `contrate.nandomoreira.local:4321`, ativo sempre, com `::1` no `/etc/hosts` | Revisar o conteúdo como o cliente vai ver, sem ligar a flag |
 | 15 | Nota do formulário | "Respondo pessoalmente, pelo canal que você escolher." | Sem prometer prazo de retorno |
