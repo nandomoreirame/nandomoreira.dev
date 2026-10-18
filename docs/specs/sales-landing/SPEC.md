@@ -46,6 +46,7 @@ A landing é uma superfície separada do site: moldura própria, servida em
 - **REQ-004** QUANDO `SALES_HOST_LIVE` for `true` e alguém acessar `/servicos` ou `/servicos/<slug>` no host principal ENTÃO o sistema DEVE responder 301 para o endereço equivalente no subdomínio.
 - **REQ-005** QUANDO o build rodar ENTÃO `security.allowedDomains` do `astro.config.mjs` DEVE incluir `contrate.nandomoreira.dev` com `https`, senão o formulário recebe 403 do checkOrigin.
 - **REQ-006** QUANDO `SALES_HOST_LIVE` for `false` ENTÃO nada no site principal DEVE mudar de comportamento por causa do host, e o canonical das páginas de vendas DEVE apontar para `https://nandomoreira.dev/servicos...`; com a flag `true`, para `https://contrate.nandomoreira.dev/...`.
+- **REQ-035** QUANDO a requisição chegar com o host `contrate.nandomoreira.local` (só desenvolvimento local) ENTÃO o middleware DEVE reescrever como no subdomínio real, mesmo com `SALES_HOST_LIVE` desligada, nunca redirecionar para produção, e o `astro dev` DEVE aceitar esse host (`server.allowedHosts`). Pedido do Fernando em 2026-10-18 para revisar o conteúdo no endereço próprio.
 - **REQ-007** QUANDO a home e o `/contato` renderizarem ENTÃO cada um DEVE ter um link discreto "Para o seu negócio" para a landing (endereço conforme REQ-006), sem novo item no menu principal e sem segundo CTA primário na home.
 
 ### Landing (`/servicos`)
@@ -166,4 +167,5 @@ Decisões levantadas e resolvidas no grilling (2026-10-18).
 | 12 | Foto do Sobre | Foto real do ascode | Cliente leigo confia mais em rosto real |
 | 13 | Imagens dos projetos | Screenshots reais capturados dos sites no ar | O ascode não tem as imagens; as do Stitch são falsas |
 | 14 | Preço | Sem valor fechado, faixa ou prazo em lugar nenhum | O valor varia com a negociação e o escopo |
+| 16 | Testar no endereço próprio em localhost | `contrate.nandomoreira.local:4321`, ativo sempre, com `::1` no `/etc/hosts` | Revisar o conteúdo como o cliente vai ver, sem ligar a flag |
 | 15 | Nota do formulário | "Respondo pessoalmente, pelo canal que você escolher." | Sem prometer prazo de retorno |

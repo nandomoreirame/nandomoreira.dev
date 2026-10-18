@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SALES_HOST, SALES_HOST_LIVE, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
+import { SALES_DEV_HOST, SALES_HOST, SALES_HOST_LIVE, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
 
 const at = (url: string) => new URL(url);
 
@@ -81,5 +81,28 @@ describe('salesRouting', () => {
     expect(
       salesRouting(at('https://nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app/servicos'), true),
     ).toBeUndefined();
+  });
+});
+
+describe('local sales host', () => {
+  it('is a .local name that never resolves outside this machine', () => {
+    expect(SALES_DEV_HOST).toBe('contrate.nandomoreira.local');
+  });
+
+  it('rewrites like the real subdomain even with the flag off', () => {
+    expect(salesRouting(at('http://contrate.nandomoreira.local:4321/'), false)).toEqual({ rewrite: '/servicos' });
+    expect(salesRouting(at('http://contrate.nandomoreira.local:4321/site-institucional'), false)).toEqual({
+      rewrite: '/servicos/site-institucional',
+    });
+  });
+
+  it('lets the API, /go, assets and /servicos through on the local host', () => {
+    for (const path of ['/api/hire', '/go/contato/whatsapp', '/v.gif', '/servicos', '/servicos/site-institucional', '/_astro/x.css']) {
+      expect(salesRouting(at(`http://contrate.nandomoreira.local:4321${path}`), false), path).toBeUndefined();
+    }
+  });
+
+  it('never redirects the local host to production', () => {
+    expect(salesRouting(at('http://contrate.nandomoreira.local:4321/servicos'), true)).toBeUndefined();
   });
 });

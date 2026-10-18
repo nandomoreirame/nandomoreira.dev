@@ -9,6 +9,13 @@ export const SALES_HOST = 'contrate.nandomoreira.dev';
  */
 export const SALES_HOST_LIVE = false;
 
+/**
+ * Local stand-in for SALES_HOST, so the landing can be reviewed at its own
+ * address in `astro dev` (map it to ::1 in /etc/hosts). It answers whatever
+ * the flag says: a .local name never resolves outside this machine.
+ */
+export const SALES_DEV_HOST = 'contrate.nandomoreira.local';
+
 export const SALES_BASE = '/servicos';
 const MAIN_ORIGIN = 'https://nandomoreira.dev';
 
@@ -30,21 +37,26 @@ export const salesUrl = (slug?: string, live: boolean = SALES_HOST_LIVE): string
 
 export type SalesRoute = { rewrite: string } | { redirect: string } | undefined;
 
+/** Rewrite for a request that arrived on the sales host itself. */
+const subdomainRoute = (path: string): SalesRoute => {
+  if (path === '/') return { rewrite: SALES_BASE };
+  const slug = /^\/([a-z0-9-]+)$/.exec(path)?.[1];
+  if (slug && !RESERVED.has(slug)) return { rewrite: `${SALES_BASE}/${slug}` };
+  return undefined;
+};
+
 /**
  * What the middleware does with a request. Only a bare slug is rewritten, so
  * anything with a dot (assets, the pixel) or a second segment passes through.
  */
 export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE): SalesRoute => {
-  if (!live) return undefined;
   const path = url.pathname;
+  if (url.hostname === SALES_DEV_HOST) return subdomainRoute(path);
+  if (!live) return undefined;
+  if (url.hostname === SALES_HOST) return subdomainRoute(path);
 
-  if (url.hostname === SALES_HOST) {
-    if (path === '/') return { rewrite: SALES_BASE };
-    const slug = /^\/([a-z0-9-]+)$/.exec(path)?.[1];
-    if (slug && !RESERVED.has(slug)) return { rewrite: `${SALES_BASE}/${slug}` };
-    return undefined;
-  }
-
+  // Only the real main host moves to the subdomain; localhost and the
+  // *.hosted.app backend keep serving /servicos (REQ-004).
   if (!MAIN_HOSTS.has(url.hostname)) return undefined;
   if (path !== SALES_BASE && !path.startsWith(`${SALES_BASE}/`)) return undefined;
   const rest = path.slice(SALES_BASE.length);

@@ -23,3 +23,10 @@ describe('security.allowedDomains', () => {
     expect(config.security?.checkOrigin).not.toBe(false);
   });
 });
+
+describe('server.allowedHosts', () => {
+  it('lets the dev server answer the local sales host', () => {
+    const server = typeof config.server === 'function' ? undefined : config.server;
+    expect(server?.allowedHosts).toContain('contrate.nandomoreira.local');
+  });
+});
