@@ -58,7 +58,7 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-14');
+    expect(POLICY_UPDATED_AT).toBe('2026-10-18');
   });
 
   it('describes the visit measurement honestly', () => {
@@ -108,7 +108,7 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('14 de outubro de 2026');
+    expect(await render()).toContain('18 de outubro de 2026');
   });
 });
 

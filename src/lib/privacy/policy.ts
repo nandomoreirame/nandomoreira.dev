@@ -6,7 +6,7 @@ import { absoluteUrl } from '../aeo/urls';
  * or by the platform default, so changing a number here without changing that
  * is how the policy starts to lie.
  */
-export const POLICY_UPDATED_AT = '2026-10-14';
+export const POLICY_UPDATED_AT = '2026-10-18';
 
 export interface PolicySection {
   id: string;
@@ -54,7 +54,7 @@ export const privacySections: PolicySection[] = [
     id: 'formulario',
     title: 'O que você envia de propósito',
     paragraphs: [
-      'Pelo formulário de contato ou pela API para agents (/api/hire) chegam os campos que você preenche: nome, contato, empresa, orçamento, interesses e mensagem. A finalidade é responder você e tratar uma possível proposta de trabalho (art. 7º, V da LGPD).',
+      'Pelos formulários de contato e de serviços, ou pela API para agents (/api/hire), chegam os campos que você preenche: nome, contato (e-mail ou WhatsApp), empresa, orçamento, interesses, serviço desejado e mensagem. A finalidade é responder você e tratar uma possível proposta de trabalho (art. 7º, V da LGPD).',
       'Junto com a mensagem ficam o endereço IP e o user agent, usados só para limitar abuso e distinguir um agent de um script (legítimo interesse, art. 7º, IX).',
       'A mensagem fica no Firestore, banco do Google Cloud na região us-east4, nos Estados Unidos, e uma cópia chega ao meu e-mail pelo Resend, serviço de envio de e-mail também nos Estados Unidos.',
       'A mensagem é apagada automaticamente 12 meses depois do envio, e a cópia no meu e-mail segue o mesmo prazo. O IP e o user agent ficam em um registro separado, apagado depois de 30 dias, e não vão no e-mail.',
