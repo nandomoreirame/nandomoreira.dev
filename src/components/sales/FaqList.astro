@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components';
+import SectionIntro from './SectionIntro.astro';
+
+interface Props {
+  id: string;
+  items: ReadonlyArray<{ question: string; answer: string }>;
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+}
+
+const { id, items, eyebrow = 'Respostas sem rodeios', title = 'Dúvidas frequentes', lead } = Astro.props;
+---
+
+<section id={id} aria-labelledby={`${id}-title`} class="scroll-mt-2xl border-t border-border">
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id={`${id}-title`} eyebrow={eyebrow} title={title} lead={lead} centered />
+    <div class="flex flex-col gap-sm">
+      {items.map((item) => (
+        <details class="group rounded-md border border-border-strong bg-surface">
+          <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-md px-lg py-md text-body text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            {item.question}
+            <Icon name="lucide:chevron-down" class="size-4 shrink-0 text-primary transition-transform duration-(--duration-fast) group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <p class="px-lg pb-md text-small text-muted-foreground">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
