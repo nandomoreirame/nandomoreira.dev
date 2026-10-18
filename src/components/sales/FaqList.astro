@@ -14,7 +14,7 @@ const { id, items, eyebrow = 'Respostas sem rodeios', title = 'Dúvidas frequent
 ---
 
 <section id={id} aria-labelledby={`${id}-title`} class="scroll-mt-2xl border-t border-border">
-  <div class="mx-auto flex w-full max-w-3xl flex-col gap-xl px-lg py-2xl lg:py-3xl">
+  <div class="mx-auto flex w-full max-w-narrow flex-col gap-xl px-lg py-2xl lg:py-3xl">
     <SectionIntro id={`${id}-title`} eyebrow={eyebrow} title={title} lead={lead} centered />
     <div class="flex flex-col gap-sm">
       {items.map((item) => (

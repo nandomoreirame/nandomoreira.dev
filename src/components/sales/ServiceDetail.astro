@@ -18,8 +18,8 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
     <a href={`${salesPath()}#servicos`} class="hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary">Serviços</a>
     <span aria-hidden="true"> / </span><span aria-current="page" class="text-foreground">{service.title}</span>
   </nav>
-  <h1 id="detalhe-title" class="max-w-3xl font-serif text-display font-normal text-foreground">{detail.hero.title}</h1>
-  <p class="max-w-2xl text-lead text-muted-foreground">{detail.hero.lead}</p>
+  <h1 id="detalhe-title" class="max-w-narrow font-serif text-display font-normal text-foreground">{detail.hero.title}</h1>
+  <p class="max-w-measure text-lead text-muted-foreground">{detail.hero.lead}</p>
   <div class="flex flex-wrap gap-md">
     <a href="#contato" class="inline-flex min-h-11 items-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{detail.hero.cta}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
     <a href="#incluso" class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver o que está incluso</a>
@@ -88,7 +88,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 <section aria-labelledby="por-baixo-title" class="border-t border-border">
   <div class={wrap}>
     <SectionIntro id="por-baixo-title" eyebrow="Infraestrutura descomplicada" title="Como funciona por baixo: sem sustos no fim do mês" />
-    <div class="flex max-w-2xl flex-col gap-md">
+    <div class="flex max-w-measure flex-col gap-md">
       {detail.underTheHood.map((paragraph) => <p class="text-body text-muted-foreground">{paragraph}</p>)}
     </div>
   </div>

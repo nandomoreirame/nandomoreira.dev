@@ -142,6 +142,11 @@
   /* Centred column for list sections: blog, portfolio and lab on the home,
      and the blog index, as in the Stitch file. */
   --container-list: 53rem;
+  /* Reading measures for the sales pages. Named on purpose: Tailwind 4
+     resolves the default 2xl/3xl widths against --spacing-2xl/3xl (4rem, 6rem)
+     (tests/design-system/no-spacing-max-width.test.ts). */
+  --container-measure: 42rem;
+  --container-narrow: 48rem;
 
   /* Amber halo on the primary button hover, the only glow in the system:
      depth comes from tone and hairline, never from drop shadows. */

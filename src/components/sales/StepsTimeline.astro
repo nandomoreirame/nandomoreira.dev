@@ -20,7 +20,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
       <SectionIntro id={`etapas-${variant}`} eyebrow="Metodologia transparente" title="Como vamos fazer, em 7 etapas" />
     )}
     {variant === 'full' ? (
-      <ol class="mx-auto flex w-full max-w-3xl flex-col gap-md">
+      <ol class="mx-auto flex w-full max-w-narrow flex-col gap-md">
         {steps.map((step, index) => (
           <li class:list={['flex gap-md rounded-md border bg-surface p-lg', step.highlight ? 'border-primary' : 'border-border']}>
             <span class="font-mono text-h3 text-primary">{number(index)}</span>
@@ -48,7 +48,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
         ))}
       </ol>
     )}
-    <p class="mx-auto flex w-full max-w-3xl items-center gap-sm rounded-md border border-border-strong bg-surface px-md py-sm text-small text-muted-foreground">
+    <p class="mx-auto flex w-full max-w-narrow items-center gap-sm rounded-md border border-border-strong bg-surface px-md py-sm text-small text-muted-foreground">
       <Icon name="lucide:shield-check" class="size-4 shrink-0 text-primary" aria-hidden="true" />{stepsNote}
     </p>
   </div>
