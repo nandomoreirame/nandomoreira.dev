@@ -1,0 +1,30 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SALES_COPY } from '../../lib/sales/copy';
+import { salesProjects } from '../../lib/sales/projects';
+import SectionIntro from './SectionIntro.astro';
+
+const projects = await salesProjects();
+---
+
+<section id="projetos" aria-labelledby="projetos-title" class="scroll-mt-2xl border-t border-border">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
+    <SectionIntro id="projetos-title" {...SALES_COPY.projectsHeader} />
+    <ul class="grid gap-md md:grid-cols-2">
+      {projects.map((project) => (
+        <li class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg">
+          <div class="flex items-center justify-between gap-sm font-mono text-micro uppercase tracking-eyebrow">
+            <span class="text-primary">{project.kind}</span>
+            <span class="text-muted-foreground normal-case">{project.domain}</span>
+          </div>
+          <h3 class="text-h3 font-semibold text-foreground">{project.title}</h3>
+          <p class="text-small text-muted-foreground">{project.text}</p>
+          <img src={project.image} alt={project.alt} width="1200" height="750" loading="lazy" decoding="async" class="aspect-video w-full rounded-sm border border-border object-cover object-top" />
+          <a href={project.href} target="_blank" rel="noopener" class="ml-auto inline-flex min-h-11 items-center gap-xs text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            Visitar {project.title}<Icon name="lucide:external-link" class="size-4" aria-hidden="true" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

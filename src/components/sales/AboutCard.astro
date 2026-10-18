@@ -1,0 +1,28 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SALES_COPY } from '../../lib/sales/copy';
+
+const { about } = SALES_COPY;
+const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy'];
+---
+
+<section aria-labelledby="sobre-title" class="border-t border-border">
+  <div class="mx-auto w-full max-w-3xl px-lg py-2xl lg:py-3xl">
+    <div class="flex flex-col gap-lg rounded-lg border border-border bg-surface p-lg sm:flex-row">
+      <img src="/servicos/fernando.webp" alt={about.photoAlt} width="160" height="160" loading="lazy" class="size-32 shrink-0 rounded-md border border-primary object-cover" />
+      <div class="flex flex-col gap-md">
+        <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">Quem vai construir</p>
+        <h2 id="sobre-title" class="font-serif text-h1 font-normal text-foreground">{about.name}</h2>
+        <p class="text-small text-muted-foreground">{about.role}</p>
+        <ul class="flex flex-col gap-sm">
+          {about.points.map((point, index) => (
+            <li class="flex items-start gap-sm text-small text-muted-foreground">
+              <Icon name={ICONS[index]!} class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
+              <span><strong class="font-semibold text-foreground">{point.title}</strong> {point.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
