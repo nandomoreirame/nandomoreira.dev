@@ -25,6 +25,7 @@ export const ART_MOTIFS = [
   'usage',
   'gists',
   'chat',
+  'tiling',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];

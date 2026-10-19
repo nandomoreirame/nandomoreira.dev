@@ -60,6 +60,20 @@ describe('generateArt', () => {
     expect(draw('wireframe', 'card', 'abracce')).not.toBe(draw('wireframe', 'card', 'sudadhara'));
   });
 
+  it('draws tiling as two page windows side by side, filling the frame', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.tiling(createRandom(hashString('tiling')), frame);
+    const edges = shapes
+      .filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line')
+      .filter((line) => line.x1 === line.x2 && Math.abs(line.y2 - line.y1) > frame.height * 0.8)
+      .map((line) => line.x1)
+      .sort((a, b) => a - b);
+    expect(edges).toHaveLength(4);
+    const [leftStart, leftEnd, rightStart, rightEnd] = edges as [number, number, number, number];
+    expect(leftEnd).toBeLessThan(rightStart);
+    expect(leftEnd - leftStart).toBeCloseTo(rightEnd - rightStart, 5);
+  });
+
   it('draws every motif differently from the others', () => {
     const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);

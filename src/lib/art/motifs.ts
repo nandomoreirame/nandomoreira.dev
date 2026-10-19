@@ -344,6 +344,68 @@ export const wireframe: Motif = (random, { width, height }) => {
   return shapes;
 };
 
+/** One page window for `tiling`: the wireframe page, drawn inside a given column. */
+const pageWindow = (random: Random, x0: number, w: number, height: number, lit: boolean): Shape[] => {
+  const shapes: Shape[] = [...outline(x0, height * 0.05, w, height * 0.9, 0, 0)];
+  shapes.push({ kind: 'bar', x: x0 + 3, y: height * 0.09, w: w * 0.22, h: 3, layer: 1, weight: 0.3 });
+  const navItems = 3;
+  const active = intBetween(random, 0, navItems - 1);
+  for (let i = 0; i < navItems; i += 1) {
+    shapes.push({
+      kind: 'bar',
+      x: x0 + w - 4 - (navItems - i) * 8,
+      y: height * 0.1,
+      w: 6,
+      h: 2,
+      layer: 1,
+      weight: lit && i === active ? 0.8 : 0.05,
+    });
+  }
+  const heroH = height * between(random, 0.24, 0.3);
+  shapes.push({ kind: 'bar', x: x0 + 3, y: height * 0.2, w: w - 6, h: heroH, layer: 0, weight: 0 });
+  shapes.push({
+    kind: 'bar',
+    x: x0 + 7,
+    y: height * 0.2 + heroH * 0.25,
+    w: w * between(random, 0.4, 0.6),
+    h: 3,
+    layer: 1,
+    weight: lit ? 0.7 : 0.15,
+  });
+  shapes.push({ kind: 'bar', x: x0 + 7, y: height * 0.2 + heroH * 0.5, w: w * 0.32, h: 2, layer: 1, weight: 0.1 });
+  shapes.push({ kind: 'bar', x: x0 + 7, y: height * 0.2 + heroH * 0.7, w: 12, h: 4, layer: 2, weight: lit ? 1 : 0.6 });
+  const columns = 2;
+  const gap = 3;
+  const colW = (w - 6 - gap * (columns - 1)) / columns;
+  const top = height * 0.24 + heroH;
+  for (let c = 0; c < columns; c += 1) {
+    const x = x0 + 3 + c * (colW + gap);
+    shapes.push(...outline(x, top, colW, height * 0.2, 0, 0));
+    for (let l = 0; l < 3; l += 1) {
+      shapes.push({
+        kind: 'bar',
+        x: x + 2.5,
+        y: top + 4 + l * 4.5,
+        w: colW * between(random, 0.4, 0.8),
+        h: 1.6,
+        layer: 1,
+        weight: l === 0 ? 0.4 : 0.03,
+      });
+    }
+  }
+  shapes.push({ kind: 'bar', x: x0 + 3, y: height * 0.86, w: w - 6, h: 2.5, layer: 0, weight: 0 });
+  return shapes;
+};
+
+/** Tiling window managers: two page windows side by side, the focused one lit. */
+export const tiling: Motif = (random, { width, height }) => {
+  const gap = 4;
+  const x0 = width * 0.04;
+  const w = (width * 0.92 - gap) / 2;
+  const focused = intBetween(random, 0, 1);
+  return [0, 1].flatMap((i) => pageWindow(random, x0 + i * (w + gap), w, height, i === focused));
+};
+
 /** Children's learning: loose shapes at play. */
 export const play: Motif = (random, { width, height }) => {
   const shapes: Shape[] = [];
