@@ -1,17 +1,19 @@
 ---
 import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import PageHeader from '../components/ui/PageHeader.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
 import VersionTag from '../components/history/VersionTag.astro';
+import TocColumns from '../components/ui/TocColumns.astro';
+import PostTocToggle from '../components/posts/PostTocToggle.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { loadSiteCommits } from '../lib/history/commits';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import { HISTORY_PATH, siteVersionTag } from '../lib/history/history';
-import { RELEASES, RELEASES_LEAD, releaseDateOf } from '../lib/releases/releases';
+import { RELEASES, RELEASES_LEAD, releaseAnchor, releaseDateOf, releaseTocLabelOf } from '../lib/releases/releases';
 
 const profile = await getProfile();
 const tag = siteVersionTag(await loadSiteCommits());
+const toc = RELEASES.map((release) => ({ depth: 2 as const, slug: releaseAnchor(release), text: releaseTocLabelOf(release) }));
 ---
 
 <BaseLayout
@@ -23,33 +25,35 @@ const tag = siteVersionTag(await loadSiteCommits());
       <VersionTag slot="meta" tag={tag} link={{ href: HISTORY_PATH, label: 'Veja as versões anteriores →' }} />
     </PageHeader>
 
-    {
-      RELEASES.map((release) => (
-        <section aria-labelledby={release.version} class="flex flex-col gap-lg">
-          <header class="flex flex-col gap-sm border-b border-border pb-md">
-            <div class="flex flex-wrap items-baseline gap-sm">
-              <h2 id={release.version} class="font-mono text-h2 text-primary">{release.version}</h2>
-              <span class="text-h3 text-foreground">{release.title}</span>
-            </div>
-            <time datetime={release.date} class="font-mono text-small text-muted-foreground">
-              {releaseDateOf(release.date)}
-            </time>
-            <p class="max-w-[68ch] text-body text-foreground">{release.summary}</p>
-          </header>
-
-          <div class="grid gap-xl md:grid-cols-2">
-            {release.groups.map((group) => (
-              <section aria-labelledby={group.id}>
-                <SectionHeader id={group.id} title={group.title} level={3} count={group.items.length} />
-                <ul class="flex max-w-[68ch] list-disc flex-col gap-xs pl-lg text-body text-muted-foreground">
-                  {group.items.map((item) => <li>{item}</li>)}
-                </ul>
-              </section>
-            ))}
-          </div>
-        </section>
-      ))
-    }
+    <TocColumns items={toc}>
+      <ol data-release-timeline class="ml-xs flex flex-col gap-2xl border-l border-border pl-lg">
+        {
+          RELEASES.map((release, index) => (
+            <li id={releaseAnchor(release)} class="relative flex scroll-mt-3xl flex-col gap-sm">
+              {/* Marker on the rule; the latest day in the accent. */}
+              <span
+                aria-hidden="true"
+                class={`absolute top-sm -left-lg size-2 -translate-x-1/2 rounded-full ${index === 0 ? 'bg-primary' : 'bg-border-strong'}`}
+              />
+              <div class="flex flex-wrap items-center gap-sm">
+                <time
+                  datetime={release.date}
+                  class="inline-flex items-center rounded-sm border border-border bg-surface px-sm py-xs font-mono text-small leading-none text-muted-foreground"
+                >
+                  {releaseDateOf(release.date)}
+                </time>
+                <span class="font-mono text-small text-primary">{release.version}</span>
+              </div>
+              <h2 class="text-h3 font-semibold text-foreground">{release.title}</h2>
+              <p class="max-w-[68ch] text-body text-foreground">{release.summary}</p>
+              <ul class="flex max-w-[68ch] list-disc flex-col gap-xs pl-lg text-body text-muted-foreground">
+                {release.highlights.map((item) => <li>{item}</li>)}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </TocColumns>
 
     <p class="font-mono text-small text-muted-foreground">
       As versões anteriores do site estão em
@@ -58,5 +62,7 @@ const tag = siteVersionTag(await loadSiteCommits());
         class="inline-flex min-h-6 items-center underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >{HISTORY_PATH}</a>.
     </p>
+
+    <PostTocToggle />
   </article>
 </BaseLayout>
