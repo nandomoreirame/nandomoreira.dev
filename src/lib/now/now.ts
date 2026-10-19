@@ -18,12 +18,6 @@ export const NOW_FOCUS = [
   'Padrão de engenharia assistida por IA: TDD obrigatório, portões de qualidade e guard-rails de segurança.',
 ];
 
-/** What is off the table right now, still only facts from the profile. */
-export const NOW_DECLINING = [
-  'Trabalho de IA que fica em demonstração e não chega em produção.',
-  'Projeto sem escopo fechado. O que eu aceito é escopo fechado, ou uma posição sênior, CLT ou PJ.',
-];
-
 /**
  * What is being studied, in order (2026-10-16). Each links to a public reading:
  * the study pages themselves live on the homelab and open for no one else.
@@ -66,6 +60,8 @@ export const NOW_GAME_EXCLUDE = ['Microsoft Jewel'];
 
 export const NOW_TTL = {
   github: 30 * 60_000,
+  /** The calendar moves once a day at most. */
+  contributions: 3 * 60 * 60_000,
   spotify: 5 * 60_000,
   spotifyTop: 60 * 60_000,
   xbox: 5 * 60_000,

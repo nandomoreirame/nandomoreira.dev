@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { SourceError } from '../../src/lib/now/http';
-import { fetchActiveRepos, linkForRepo, parseActiveRepos } from '../../src/lib/now/github';
+import { fetchActiveRepos, fetchLastCommit, linkForRepo, parseActiveRepos } from '../../src/lib/now/github';
 
 const NOW = new Date('2026-10-11T12:00:00Z');
 const EXCLUDE = ['DOTFILES'];
@@ -129,3 +129,41 @@ describe('fetchActiveRepos', () => {
     });
   });
 });
+
+describe('fetchLastCommit', () => {
+  const commit = [
+    {
+      sha: '91c9da421ef64a24cc7310a7184f1fc1764b2b69',
+      html_url: 'https://github.com/nandomoreirame/nandomoreira.dev/commit/91c9da4',
+      commit: { message: '✨ feat(about): merge related jobs\n\nbody that stays out', committer: { date: '2026-10-19T15:30:06Z' } },
+    },
+  ];
+
+  it('reads the latest commit of a repo: first line of the message, date and link', async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify(commit)));
+    const last = await fetchLastCommit({
+      fetch: fetchImpl as unknown as typeof fetch,
+      repo: { name: 'nandomoreira.dev', url: 'https://github.com/nandomoreirame/nandomoreira.dev' },
+    });
+    expect(last).toEqual({
+      repo: 'nandomoreira.dev',
+      message: '✨ feat(about): merge related jobs',
+      url: 'https://github.com/nandomoreirame/nandomoreira.dev/commit/91c9da4',
+      committedAt: '2026-10-19T15:30:06Z',
+    });
+    expect(String((fetchImpl.mock.calls[0] as unknown as [string])[0])).toBe(
+      'https://api.github.com/repos/nandomoreirame/nandomoreira.dev/commits?per_page=1',
+    );
+  });
+
+  it('refuses a link outside github.com and an empty history', async () => {
+    const outside = [{ ...commit[0], html_url: 'https://evil.example/commit/1' }];
+    await expect(
+      fetchLastCommit({ fetch: vi.fn(async () => new Response(JSON.stringify(outside))) as unknown as typeof fetch, repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' } }),
+    ).rejects.toThrow();
+    await expect(
+      fetchLastCommit({ fetch: vi.fn(async () => new Response('[]')) as unknown as typeof fetch, repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' } }),
+    ).rejects.toThrow();
+  });
+});
+

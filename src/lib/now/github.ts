@@ -99,3 +99,50 @@ export const fetchActiveRepos = async ({
   const json = await fetchJson(fetchImpl, REPOS_URL, { headers });
   return parseActiveRepos(json, { now, exclude });
 };
+
+const commitsSchema = z
+  .array(
+    z.object({
+      html_url: z.string().refine(url => isAllowedUrl(url, 'github.com') && url.startsWith('https://github.com/')),
+      commit: z.object({ message: z.string(), committer: z.object({ date: z.string() }) }),
+    }),
+  )
+  .min(1);
+
+export interface LastCommit {
+  repo: string;
+  /** First line only: the body stays on GitHub. */
+  message: string;
+  url: string;
+  committedAt: string;
+}
+
+/** Latest commit on the default branch of a public repo (/now, 2026-10-19). */
+export const fetchLastCommit = async ({
+  fetch: fetchImpl,
+  token,
+  repo,
+}: {
+  fetch: typeof fetch;
+  token?: string;
+  repo: Pick<ActiveRepo, 'name' | 'url'>;
+}): Promise<LastCommit> => {
+  const path = new URL(repo.url).pathname.replace(/^\/+|\/+$/g, '');
+  const headers: Record<string, string> = {
+    accept: 'application/vnd.github+json',
+    'user-agent': 'nandomoreira.dev',
+  };
+  if (token) headers.authorization = `Bearer ${token}`;
+
+  const json = await fetchJson(fetchImpl, `https://api.github.com/repos/${path}/commits?per_page=1`, { headers });
+  const parsed = commitsSchema.safeParse(json);
+  if (!parsed.success) throw new SourceError('shape');
+  const [latest] = parsed.data;
+  return {
+    repo: repo.name,
+    message: latest!.commit.message.split('\n')[0]!.trim(),
+    url: latest!.html_url,
+    committedAt: latest!.commit.committer.date,
+  };
+};
+

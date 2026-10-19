@@ -114,8 +114,10 @@ const outputs = () => [
       },
       games: { state: 'empty' },
       writing: { latest: undefined, drafts: [] },
-      focus: { items: ['Foco'], declining: ['Fora'], availability: 'Aberto.' },
+      focus: { items: ['Foco'], availability: 'Aberto.' },
       studying: [{ topic: 'Tema', note: 'dúvidas para x@y.com', url: 'https://example.com/leitura' }],
+      updatedAt: '2026-10-19',
+      contributions: { state: 'empty' },
     },
   }),
 ];

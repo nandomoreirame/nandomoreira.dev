@@ -42,26 +42,47 @@ const snapshot = (availability: string): NowSnapshot => ({
     latest: { title: 'Post publicado', slug: 'post-publicado' } as Post,
     drafts: ['Rascunho sem link'],
   },
-  focus: { items: ['Foco um'], declining: ['Declínio um'], availability },
+  focus: { items: ['Foco um'], availability },
   studying: [{ topic: 'Tema um', note: 'o porquê do tema', url: 'https://example.com/leitura' }],
+  updatedAt: '2026-10-19',
+  contributions: {
+    state: 'ok',
+    items: { total: 9497, weeks: [[{ date: '2026-03-12', count: 80, level: 4 }]], busiest: { date: '2026-03-12', count: 80 } },
+  },
+  lastCommit: {
+    repo: 'nandomoreira.dev',
+    message: 'feat: one thing',
+    url: 'https://github.com/nandomoreirame/nandomoreira.dev/commit/1',
+    committedAt: '2026-10-19T12:00:00Z',
+  },
 });
 
 describe('nowMarkdown', () => {
+  it('opens Trabalhando with the year on GitHub and the last commit', () => {
+    const markdown = nowMarkdown({ site: new URL('https://nandomoreira.dev'), data: snapshot('x') });
+    const section = markdown.split('## Trabalhando')[1]?.split('## ')[0] ?? '';
+    expect(section).toContain('9.497 contribuições no GitHub no último ano');
+    expect(section).toContain('Último commit: [feat: one thing](https://github.com/nandomoreirame/nandomoreira.dev/commit/1) em nandomoreira.dev, 19 de outubro de 2026.');
+  });
+
+  it('dates the view with the day the sources last moved', () => {
+    expect(nowMarkdown({ site: new URL('https://nandomoreira.dev'), data: snapshot('x') })).toContain('updated: 2026-10-19');
+  });
+
   it('lists the six sections in page order, with links only where a human can open them', () => {
     const markdown = nowMarkdown({ site, data: snapshot('Aberto a projetos.') });
     const headings = [...markdown.matchAll(/^## .+$/gm)].map(match => match[0]);
 
     expect(headings).toEqual([
       '## Foco',
-      '## Projetos em andamento',
+      '## Trabalhando',
       '## Escrevendo',
       '## Estudando',
       '## Ouvindo',
       '## Jogando',
     ]);
-    const foco = markdown.split('## Foco')[1]?.split('## Projetos em andamento')[0] ?? '';
-    expect(foco.indexOf('### Recusando agora')).toBeGreaterThan(-1);
-    expect(foco.indexOf('### Recusando agora')).toBeLessThan(foco.indexOf('Declínio um'));
+    const foco = markdown.split('## Foco')[1]?.split('## Trabalhando')[0] ?? '';
+    expect(foco).not.toContain('Recusando agora');
     expect(foco).toContain('Disponibilidade:');
     expect(markdown).toContain('title: Agora');
     expect(markdown).toContain('url: https://nandomoreira.dev/now');

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  NOW_DECLINING,
   NOW_FOCUS,
   NOW_GAME_EXCLUDE,
   NOW_GAMES,
@@ -15,7 +14,6 @@ import {
 const curated = [
   NOW_LEAD,
   ...NOW_FOCUS,
-  ...NOW_DECLINING,
   ...NOW_GAMES.flatMap(game => [game.name, game.note ?? '']),
   ...NOW_STUDYING.flatMap(study => [study.topic, study.note]),
 ];
@@ -59,6 +57,7 @@ describe('now curated data', () => {
   it('matches the source TTLs and the exclusion lists from the spec', () => {
     expect(NOW_TTL).toEqual({
       github: 30 * 60_000,
+      contributions: 3 * 60 * 60_000,
       spotify: 5 * 60_000,
       spotifyTop: 60 * 60_000,
       xbox: 5 * 60_000,

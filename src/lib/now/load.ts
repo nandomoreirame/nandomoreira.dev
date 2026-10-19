@@ -5,19 +5,24 @@ import type { Post } from '../../content/schemas/post';
 import { createCachedSource } from './cache';
 import { readNowConfig, type NowConfig } from './config';
 import { dayLabel } from './day';
-import { fetchActiveRepos, type ActiveRepo } from './github';
+import { fetchContributions, type ContributionCalendar } from './contributions';
+import { fetchActiveRepos, fetchLastCommit, type ActiveRepo, type LastCommit } from './github';
 import { logSourceError } from './http';
 import {
-  NOW_DECLINING,
   NOW_FAILURE_TTL_MS,
   NOW_FOCUS,
   NOW_GAMES,
   NOW_REPO_EXCLUDE,
   NOW_STUDYING,
   NOW_TTL,
+  NOW_UPDATED_AT,
 } from './now';
 import { fetchRecentTracks, fetchTopArtists, type RecentTrack, type TopArtist } from './spotify';
+import { nowUpdatedAt } from './updated';
 import { fetchXbox, type PlayingNow, type RecentGame } from './xbox';
+
+/** The GitHub account behind the contribution calendar. */
+const GITHUB_LOGIN = 'nandomoreirame';
 
 export type Section<T> = { state: 'ok'; items: T } | { state: 'fallback'; items: T } | { state: 'empty' };
 
@@ -43,8 +48,14 @@ export interface NowSnapshot {
   music: NowMusic;
   games: GamesSection;
   writing: { latest: Post | undefined; drafts: string[] };
-  focus: { items: readonly string[]; declining: readonly string[]; availability: string };
+  focus: { items: readonly string[]; availability: string };
   studying: typeof NOW_STUDYING;
+  /** The year on GitHub; empty without a token (GraphQL needs one) or on failure. */
+  contributions: Section<ContributionCalendar>;
+  /** Latest commit of the most recently pushed repo, when GitHub answered. */
+  lastCommit?: LastCommit;
+  /** Latest of the text's date and the last Spotify or Xbox activity, YYYY-MM-DD. */
+  updatedAt: string;
 }
 
 const arraySection = <T>(items: readonly T[]): Section<T[]> =>
@@ -90,14 +101,34 @@ export const createNowLoader = ({
     ttlMs: NOW_TTL.github,
     failureTtlMs: NOW_FAILURE_TTL_MS,
     now,
-    load: () =>
-      fetchActiveRepos({
+    // The repos and the last commit of the newest one travel together: a
+    // failed commit lookup leaves the list untouched.
+    load: async (): Promise<{ repos: ActiveRepo[]; lastCommit?: LastCommit }> => {
+      const repos = await fetchActiveRepos({
         fetch: fetchImpl,
         token: config.github.token,
         now: clock(),
         exclude: NOW_REPO_EXCLUDE,
-      }),
+      });
+      const [newest] = repos;
+      if (!newest) return { repos };
+      try {
+        return { repos, lastCommit: await fetchLastCommit({ fetch: fetchImpl, token: config.github.token, repo: newest }) };
+      } catch (error) {
+        logSourceError('github-commit', error, logger);
+        return { repos };
+      }
+    },
   });
+  const githubToken = config.github.token;
+  const contributions = githubToken
+    ? createCachedSource({
+        ttlMs: NOW_TTL.contributions,
+        failureTtlMs: NOW_FAILURE_TTL_MS,
+        now,
+        load: () => fetchContributions({ fetch: fetchImpl, token: githubToken, login: GITHUB_LOGIN }),
+      })
+    : undefined;
   const spotify = spotifyConfig
     ? createCachedSource({
         ttlMs: NOW_TTL.spotify,
@@ -124,12 +155,13 @@ export const createNowLoader = ({
     : undefined;
 
   return async (): Promise<NowSnapshot> => {
-    const [[projectsResult, musicResult, gamesResult, topResult], posts, drafts, availability] = await Promise.all([
+    const [[projectsResult, musicResult, gamesResult, topResult, calendarResult], posts, drafts, availability] = await Promise.all([
       Promise.allSettled([
         github(),
         spotify ? spotify() : Promise.resolve('unconfigured' as const),
         xbox ? xbox() : Promise.resolve('unconfigured' as const),
         spotifyTop ? spotifyTop() : Promise.resolve('unconfigured' as const),
+        contributions ? contributions() : Promise.resolve('unconfigured' as const),
       ]),
       currentPosts(),
       getUpcomingPosts(),
@@ -139,7 +171,15 @@ export const createNowLoader = ({
     const projects =
       projectsResult.status === 'rejected'
         ? (logSourceError('github', projectsResult.reason, logger), { state: 'empty' as const })
-        : arraySection(projectsResult.value);
+        : arraySection(projectsResult.value.repos);
+    const lastCommit = projectsResult.status === 'fulfilled' ? projectsResult.value.lastCommit : undefined;
+
+    const calendar: Section<ContributionCalendar> =
+      calendarResult.status === 'rejected'
+        ? (logSourceError('github-contributions', calendarResult.reason, logger), { state: 'empty' })
+        : calendarResult.value === 'unconfigured'
+          ? { state: 'empty' }
+          : { state: 'ok', items: calendarResult.value };
 
     const recent =
       musicResult.status === 'rejected'
@@ -156,6 +196,14 @@ export const createNowLoader = ({
           : arraySection(topResult.value);
 
     const games = gamesSection(gamesResult, fallbackGames, logger);
+    const updatedAt = nowUpdatedAt({
+      base: NOW_UPDATED_AT,
+      trackPlayedAt: recent.state === 'empty' ? [] : recent.items.map(track => track.playedAt),
+      gameDays: games.state === 'ok' ? games.items.recent.map(game => game.lastPlayed) : [],
+      playingNow: games.state === 'ok' && games.items.playingNow !== undefined,
+      commitAt: lastCommit?.committedAt,
+      today: clock(),
+    });
 
     return {
       projects,
@@ -167,10 +215,12 @@ export const createNowLoader = ({
       },
       focus: {
         items: NOW_FOCUS,
-        declining: NOW_DECLINING,
         availability: availability.detail,
       },
       studying: NOW_STUDYING,
+      updatedAt,
+      contributions: calendar,
+      ...(lastCommit ? { lastCommit } : {}),
     };
   };
 };

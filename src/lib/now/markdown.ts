@@ -1,8 +1,9 @@
 import { absoluteUrl } from '../aeo/urls';
 import { formatPolicyDate } from '../privacy/policy';
+import { saoPauloDay } from './day';
 import type { NowSnapshot } from './load';
 import { endSentence } from './sentence';
-import { NOW_LEAD, NOW_PATH, NOW_UPDATED_AT } from './now';
+import { NOW_LEAD, NOW_PATH } from './now';
 import { isAllowedUrl, leaksToMachine, machineText } from './safe';
 
 const pushSection = (lines: string[], title: string, body: string[]): void => {
@@ -43,7 +44,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
     '---',
     'title: Agora',
     `url: ${absoluteUrl(site, NOW_PATH)}`,
-    `updated: ${NOW_UPDATED_AT}`,
+    `updated: ${data.updatedAt}`,
     '---',
     '',
     '# O que estou fazendo agora',
@@ -55,10 +56,6 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const availability = leaksToMachine(data.focus.availability) ? '' : machineText(data.focus.availability);
   const focus = [
     ...data.focus.items.map(item => `- ${item}`),
-    '',
-    '### Recusando agora',
-    '',
-    ...data.focus.declining.map(item => `- ${item}`),
     ...(availability ? ['', `Disponibilidade: ${availability}`] : []),
   ];
   pushSection(lines, 'Foco', focus);
@@ -76,7 +73,17 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
           const pushed = formatPolicyDate(repo.pushedAt.slice(0, 10));
           return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}Último push em ${pushed}.`];
         });
-  pushSection(lines, 'Projetos em andamento', projects);
+  const work: string[] = [];
+  if (data.contributions.state === 'ok') {
+    work.push(`${data.contributions.items.total.toLocaleString('pt-BR')} contribuições no GitHub no último ano.`);
+  }
+  const commit = data.lastCommit;
+  if (commit && !leaksToMachine(commit.message) && !leaksToMachine(commit.repo)) {
+    const day = formatPolicyDate(saoPauloDay(new Date(commit.committedAt)));
+    work.push(`Último commit: [${machineText(commit.message)}](${commit.url}) em ${machineText(commit.repo)}, ${day}.`);
+  }
+  if (work.length > 0 && projects.length > 0) work.push('');
+  pushSection(lines, 'Trabalhando', [...work, ...projects]);
 
   const writing: string[] = [];
   if (data.writing.latest) {
