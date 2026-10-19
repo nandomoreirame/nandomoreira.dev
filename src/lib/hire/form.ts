@@ -18,8 +18,6 @@ const FIELD_MAP: Record<string, string> = {
   [FORM_HONEYPOT]: HONEYPOT_FIELD,
   nome: 'from',
   email: 'contact',
-  // The sales form asks for "e-mail ou WhatsApp" in one field.
-  contato: 'contact',
   mensagem: 'brief',
   empresa: 'company',
   orcamento: 'budget',
@@ -51,13 +49,8 @@ export const formToPayload = (params: URLSearchParams): Record<string, unknown> 
 /** Where the form lands after a submission; the page reads `envio`. */
 export type FormOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
 
-/**
- * Where the form lands after a submission; the page reads `envio`. `base` is
- * a sales page chosen from a closed list (src/lib/sales/form.ts), never a
- * value taken from the request.
- */
-export const formRedirect = (outcome: FormOutcome, base = '/contato'): Response =>
+export const formRedirect = (outcome: FormOutcome): Response =>
   new Response(null, {
     status: 303,
-    headers: { location: `${base}?envio=${outcome}#envio`, 'cache-control': 'no-store' },
+    headers: { location: `/contato?envio=${outcome}#envio`, 'cache-control': 'no-store' },
   });

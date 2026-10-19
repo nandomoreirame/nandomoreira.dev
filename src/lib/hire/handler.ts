@@ -2,8 +2,7 @@ import type { JourneyData } from '../analytics/journey';
 import type { Recorder } from '../analytics/recorder';
 import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
-import { isEmailContact, isReachableContact } from '../sales/contact';
-import { salesFormToPayload, salesOriginOf } from '../sales/form';
+import { isEmailContact } from '../sales/contact';
 import { type FormOutcome, formRedirect, formToPayload } from './form';
 import type { Notifier } from './notify';
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from './read-body';
@@ -78,11 +77,8 @@ export const handleHire = async (
 ): Promise<Response> => {
   const fromForm = isForm(request);
 
-  // A sales page posts with ?origem=; it gets its own redirect and contact rule.
-  const salesBase = fromForm ? salesOriginOf(new URL(request.url)) : undefined;
-
   const fail = (kind: keyof typeof RESPONSES): Response => {
-    if (fromForm) return formRedirect(FORM_OUTCOMES[kind], salesBase);
+    if (fromForm) return formRedirect(FORM_OUTCOMES[kind]);
     const [status, message] = RESPONSES[kind];
 
     return json(status, { error: message });
@@ -91,7 +87,7 @@ export const handleHire = async (
   // 202: received and stored. Delivery of the notification is not the caller's problem.
   const accepted = (id: string): Response =>
     fromForm
-      ? formRedirect('ok', salesBase)
+      ? formRedirect('ok')
       : json(202, { status: 'accepted', id, message: 'Briefing received.' });
 
   if (request.method !== 'POST') return fail('methodNotAllowed');
@@ -113,11 +109,7 @@ export const handleHire = async (
   let parsed: unknown;
   try {
     const params = fromForm ? new URLSearchParams(raw) : undefined;
-    parsed = params
-      ? salesBase
-        ? salesFormToPayload(params)
-        : formToPayload(params)
-      : JSON.parse(raw);
+    parsed = params ? formToPayload(params) : JSON.parse(raw);
   } catch {
     return fail('malformed');
   }
@@ -127,9 +119,6 @@ export const handleHire = async (
   // The Zod issue list is deliberately not echoed: it repeats the field names
   // and limits, which is a map of the validation for whoever is probing.
   if (!result.success) return fail('invalid');
-
-  // REQ-023 of sales-landing: only the sales form; /contato and agents keep the free-text contact.
-  if (salesBase && !isReachableContact(result.data.contact)) return fail('invalid');
 
   /**
    * A filled honeypot is answered as if accepted. Rejecting it would tell the

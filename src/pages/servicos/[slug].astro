@@ -1,6 +1,5 @@
 ---
 import FaqList from '../../components/sales/FaqList.astro';
-import SalesContact from '../../components/sales/SalesContact.astro';
 import ServiceComparison from '../../components/sales/ServiceComparison.astro';
 import ServiceDetail from '../../components/sales/ServiceDetail.astro';
 import StepsTimeline from '../../components/sales/StepsTimeline.astro';
@@ -12,8 +11,6 @@ export const prerender = false;
 const service = detailFor(Astro.params.slug ?? '');
 // Only services with a written detail page exist; the rest stay as landing anchors.
 if (!service) return new Response(null, { status: 404 });
-
-const outcome = Astro.url.searchParams.get('envio');
 ---
 
 <SalesLayout
@@ -26,5 +23,4 @@ const outcome = Astro.url.searchParams.get('envio');
   <StepsTimeline variant="compact" />
   <ServiceComparison comparison={service.detail.comparison} />
   <FaqList id="duvidas" items={service.detail.faq} lead="Respostas práticas para as perguntas mais comuns de quem contrata pela primeira vez." />
-  <SalesContact origin={service.slug} outcome={outcome} preselect={service.service} title={`Vamos tirar seu ${service.title.toLowerCase()} do papel?`} />
 </SalesLayout>

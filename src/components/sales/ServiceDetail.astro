@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import type { SalesService, ServiceDetail } from '../../lib/sales/catalog';
-import { salesPath } from '../../lib/sales/host';
+import { salesContactLink, salesPath } from '../../lib/sales/host';
 import SectionIntro from './SectionIntro.astro';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 
 const { service } = Astro.props;
 const { detail } = service;
+const contact = salesContactLink(Astro.url, service.slug, service.service);
 const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl';
 ---
 
@@ -21,7 +22,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
   <h1 id="detalhe-title" class="max-w-narrow font-serif text-display font-normal text-foreground">{detail.hero.title}</h1>
   <p class="max-w-measure text-lead text-muted-foreground">{detail.hero.lead}</p>
   <div class="flex flex-wrap gap-md">
-    <a href="#contato" class="inline-flex min-h-11 items-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{detail.hero.cta}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
+    <a href={contact} class="inline-flex min-h-11 items-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{detail.hero.cta}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
     <a href="#incluso" class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver o que está incluso</a>
   </div>
 </section>

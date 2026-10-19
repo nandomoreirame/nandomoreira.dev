@@ -35,10 +35,11 @@ describe('/servicos/site-institucional', () => {
     expect(inventedNumbersIn(visibleText(await (await render('site-institucional')).text()))).toEqual([]);
   });
 
-  it('preselects its own service in the form and posts as itself', async () => {
+  it('sends its calls to /contato with its own origin and service, with no form of its own', async () => {
     const html = await (await render('site-institucional')).text();
-    expect(html).toContain('action="/api/hire?origem=site-institucional"');
-    expect(html).toMatch(/<option[^>]*value="website"[^>]*selected/);
+    expect(html).not.toContain('action="/api/hire');
+    expect(html).not.toContain('href="#contato"');
+    expect(html).toContain('href="https://nandomoreira.dev/contato?origem=site-institucional&amp;servico=website"');
   });
 });
 
