@@ -48,27 +48,14 @@ describe('Hero', () => {
     expect(html).toContain('produtos com IA em produção');
   });
 
-  it('offers exactly one primary call to action', async () => {
+  it('offers no call-to-action buttons: the palette hint, or on touch screens a link to /sobre', async () => {
     const html = await render();
-    expect(html.match(/bg-primary\b/g)).toHaveLength(1);
-  });
-
-  it('points the primary call to action at /mcp, "Esse site fala MCP"', async () => {
-    const html = await render();
-    const link = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-    expect(link).toContain('Esse site fala MCP');
-    expect(link).toContain('bg-primary');
-    expect(html).not.toContain('Ver o que eu construí');
-  });
-
-  it('closes the row with "Leia mais sobre mim", a transparent link-like button to /sobre', async () => {
-    const html = await render();
-    const row = html.slice(html.indexOf('href="/mcp"'));
-    const link = html.match(/<a\b[^>]*href="\/sobre"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-    expect(link).toContain('Leia mais sobre mim');
-    expect(link).not.toContain('bg-primary');
-    expect(link).not.toContain('border-border-strong');
-    expect(row.indexOf('href="/contato"')).toBeLessThan(row.indexOf('href="/sobre"'));
+    expect(html).not.toContain('href="/mcp"');
+    expect(html).not.toContain('href="/contato"');
+    // The one link: the touch-screen call to /sobre, inside its wrapper.
+    expect(html.match(/<a\b/g)).toHaveLength(1);
+    expect(html).toMatch(/<div[^>]*data-hero-about[^>]*>\s*<a\b[^>]*href="\/sobre"/);
+    expect(html).toContain('data-palette-hint');
   });
 
   it('never animates the text in from invisible', async () => {
@@ -94,26 +81,10 @@ describe('Hero', () => {
     expect(paragraph).toContain('text-lead');
   });
 
-  it('keeps the arrow only on "Leia mais sobre mim", never on the primary CTA', async () => {
+  it('shows no STACK or LOCATION facts line', async () => {
     const html = await render();
-    const mcp = html.match(/<a\b[^>]*href="\/mcp"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-    const about = html.match(/<a\b[^>]*href="\/sobre"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-
-    expect(mcp).not.toContain('arrow-right');
-    expect(about).toContain('arrow-right');
-  });
-
-  it('borders the contact CTA as secondary', async () => {
-    const html = await render();
-    const link = html.match(/<a\b[^>]*href="\/contato"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
-
-    expect(link).toContain('border-border-strong');
-  });
-
-  it('shows the Stitch facts line: STACK in the accent, LOCATION in success', async () => {
-    const line = (await render()).match(/<p[^>]*data-hero-stack[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
-    expect(line).toMatch(/<span class="text-primary">STACK:<\/span>\s*TS, Py, Rust, LLM ops/);
-    expect(line).toMatch(/<span class="text-success">LOCATION:<\/span>\s*São Paulo \/ Remote/);
-    expect(line).toContain('font-mono');
+    expect(html).not.toContain('data-hero-stack');
+    expect(html).not.toContain('STACK:');
+    expect(html).not.toContain('LOCATION:');
   });
 });

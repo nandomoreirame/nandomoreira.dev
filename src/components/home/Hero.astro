@@ -1,5 +1,5 @@
 ---
-import { HERO_FACTS } from '../../lib/home/hero';
+import { PALETTE_COPY } from '../../lib/search/copy';
 import Button from '../ui/Button.astro';
 import Portrait from '../ui/Portrait.astro';
 
@@ -21,16 +21,30 @@ const { name, headline, positioning } = Astro.props;
 
     <p class="max-w-[68ch] text-lead text-muted-foreground">{positioning}</p>
 
-    <div class="flex flex-wrap items-center gap-md">
-      <Button href="/mcp" variant="primary">Esse site fala MCP</Button>
-      <Button href="/contato" variant="secondary">Contato</Button>
-      <Button href="/sobre" variant="ghost" arrow>Leia mais sobre mim</Button>
-    </div>
+    {/* Display comes from global.css ([data-palette-hint]), not a utility:
+        a utility would beat the touch-screen rule that hides the hint. */}
+    <button
+      type="button"
+      hidden
+      data-palette-trigger
+      data-palette-hint
+      aria-haspopup="dialog"
+      aria-keyshortcuts="Control+K Meta+K"
+      aria-label={`${PALETTE_COPY.trigger} (${PALETTE_COPY.hint.before} Ctrl K ${PALETTE_COPY.hint.after})`}
+      class="min-h-11 w-fit items-center gap-xs text-body text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      {PALETTE_COPY.hint.before}
+      <kbd data-palette-mod class="rounded-md border border-border-strong bg-surface px-xs font-mono text-small">Ctrl</kbd>
+      <kbd class="rounded-md border border-border-strong bg-surface px-xs font-mono text-small">K</kbd>
+      {PALETTE_COPY.hint.after} <span aria-hidden="true">→</span>
+    </button>
 
-    <p data-hero-stack class="flex flex-wrap gap-x-lg gap-y-xs border-t border-border pt-md font-mono text-caption text-muted-foreground">
-      <span><span class="text-primary">STACK:</span> {HERO_FACTS.stack}</span>
-      <span><span class="text-success">LOCATION:</span> {HERO_FACTS.location}</span>
-    </p>
+    {/* Touch screens get no keyboard hint, so this takes its place. The
+        wrapper carries the display rule (global.css, next to the hint's): the
+        Button's own inline-flex utility would beat it. */}
+    <div data-hero-about>
+      <Button href="/sobre" variant="ghost" arrow>Saiba mais sobre mim</Button>
+    </div>
   </div>
 
   <Portrait name={name} class="lg:scale-130" />
