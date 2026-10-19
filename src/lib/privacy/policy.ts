@@ -78,6 +78,7 @@ export const privacySections: PolicySection[] = [
     paragraphs: [
       'No fim da página /posts dá para deixar um e-mail para receber os próximos artigos. Ele só é gravado se você enviar o formulário, e a base é o seu consentimento (art. 7º, I da LGPD).',
       'Fica no Firestore só o e-mail, a data e de onde veio a assinatura, e não guardo o IP nem o user agent desse envio; o IP serve apenas para limitar tentativas seguidas e não é gravado.',
+      'Quando o e-mail é novo na lista, ele recebe uma confirmação automática pelo Resend, e um aviso com o endereço e a página de origem chega ao meu e-mail. Assinar de novo com o mesmo e-mail não gera nenhum dos dois.',
       'O envio dos artigos ainda não está ligado: por enquanto a lista só é guardada. O e-mail fica até você pedir para sair, pelo mesmo canal de contato do fim desta página, e cada envio, quando começar, vai trazer um link de saída.',
     ],
   },

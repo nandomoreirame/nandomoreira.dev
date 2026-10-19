@@ -48,6 +48,13 @@ describe('privacy policy content', () => {
     }
   });
 
+  it('says the newsletter signup sends a confirmation and tells me', () => {
+    const section = privacySections.find((candidate) => candidate.id === 'novidades');
+    const text = (section?.paragraphs ?? []).join('\n');
+    expect(text).toMatch(/confirmação automática/);
+    expect(text).toMatch(/aviso/);
+  });
+
   it('states the retention the code enforces', () => {
     const text = all();
     expect(text).toContain('12 meses');
