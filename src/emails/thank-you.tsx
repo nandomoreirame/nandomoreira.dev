@@ -5,12 +5,12 @@ import { InlineLink, Paragraph } from './_shared/blocks';
 import { EmailLayout } from './_shared/layout';
 import { EMAIL_COLORS as c, EMAIL_FONTS as f, EMAIL_SPACE as s } from './_shared/tokens';
 
-type Kind = 'briefing' | 'cv';
+type Kind = 'briefing' | 'cv' | 'newsletter';
 
 interface Props {
   /** What the visitor typed as name; only a safe first name is used. */
   name: string | null;
-  /** A message sent through a form, or a CV download with details left. */
+  /** A message sent through a form, a CV download with details left, or a newsletter signup. */
   kind: Kind;
 }
 
@@ -27,16 +27,27 @@ export const greetingName = (name: string | null): string | null => {
 
 const SITE = 'https://nandomoreira.dev';
 
-const COPY: Record<Kind, { eyebrow: string; title: string; preview: string }> = {
+const AUTOMATIC = 'Esta é uma mensagem automática, não precisa responder.';
+
+const COPY: Record<Kind, { eyebrow: string; title: string; preview: string; footer: string }> = {
   briefing: {
     eyebrow: 'mensagem recebida',
     title: 'Obrigado pelo contato',
     preview: 'Sua mensagem chegou, e eu retorno em breve.',
+    footer: `${AUTOMATIC} Você recebeu este e-mail porque deixou seu contato em nandomoreira.dev. Ele não entra em nenhuma lista, e não vou mandar newsletter sem você pedir.`,
   },
   cv: {
     eyebrow: 'currículo baixado',
     title: 'Obrigado por baixar meu currículo',
     preview: 'Recebi seus dados, e eu retorno em breve se fizer sentido.',
+    footer: `${AUTOMATIC} Você recebeu este e-mail porque deixou seu contato em nandomoreira.dev. Ele não entra em nenhuma lista, e não vou mandar newsletter sem você pedir.`,
+  },
+  newsletter: {
+    eyebrow: 'assinatura confirmada',
+    title: 'Obrigado por assinar',
+    preview: 'Os próximos artigos chegam neste e-mail.',
+    // The signup does put the address on a list: the newsletter, and only it.
+    footer: `${AUTOMATIC} Você recebeu este e-mail porque assinou as novidades em nandomoreira.dev. Seu e-mail fica só na lista de artigos e não é usado para mais nada.`,
   },
 };
 
@@ -54,11 +65,19 @@ const ThankYou = ({ name, kind }: Props) => {
       preview={copy.preview}
       eyebrow={copy.eyebrow}
       title={first ? `${copy.title}, ${first}` : copy.title}
-      footer="Esta é uma mensagem automática, não precisa responder. Você recebeu este e-mail porque deixou seu contato em nandomoreira.dev. Ele não entra em nenhuma lista, e não vou mandar newsletter sem você pedir."
+      footer={copy.footer}
     >
-      {kind === 'briefing' ? (
+      {kind === 'newsletter' ? (
         <>
-          <Paragraph>Sua mensagem chegou e já está comigo. Vou ler com calma e retorno em breve, pelo contato que você deixou.</Paragraph>
+          <Paragraph>Sua assinatura está confirmada. Os próximos artigos chegam neste e-mail quando saírem no ar, sem marketing e sem nada além dos textos.</Paragraph>
+          <Paragraph>
+            Enquanto isso, o que já publiquei está no <InlineLink href={`${SITE}/posts`}>blog</InlineLink>. Se mudar de ideia, é só pedir para sair pela página de{' '}
+            <InlineLink href={`${SITE}/contato`}>contato</InlineLink>.
+          </Paragraph>
+        </>
+      ) : kind === 'briefing' ? (
+        <>
+          <Paragraph>Sua mensagem chegou e já está comigo. Vou ler com calma e retorno em breve.</Paragraph>
           <Paragraph>
             Enquanto isso, se quiser conhecer mais do meu trabalho, os cases estão no{' '}
             <InlineLink href={`${SITE}/portfolio`}>portfólio</InlineLink>, e o que ando escrevendo, no{' '}

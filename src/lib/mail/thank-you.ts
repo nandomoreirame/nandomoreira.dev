@@ -5,11 +5,12 @@ import ThankYou from '../../emails/thank-you';
 import type { HireConfig } from '../hire/config';
 import type { OutgoingMail } from './outgoing';
 
-export type ThankYouKind = 'briefing' | 'cv';
+export type ThankYouKind = 'briefing' | 'cv' | 'newsletter';
 
 const SUBJECT: Record<ThankYouKind, string> = {
   briefing: 'Recebi sua mensagem',
   cv: 'Obrigado por baixar meu currículo',
+  newsletter: 'Assinatura confirmada',
 };
 
 /** Confirmation sent to the visitor after a form briefing or a CV download. */

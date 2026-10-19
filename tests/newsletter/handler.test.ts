@@ -90,3 +90,55 @@ describe('handleSubscribe', () => {
   });
 });
 
+
+describe('handleSubscribe e-mails', () => {
+  const mailDeps = (saved: boolean | Error = true) => {
+    const notify = vi.fn().mockResolvedValue(undefined);
+    const thankYou = vi.fn().mockResolvedValue(undefined);
+    const save = saved instanceof Error ? vi.fn().mockRejectedValue(saved) : vi.fn().mockResolvedValue(saved);
+    return { notify, thankYou, d: deps({ store: { save }, notify, thankYou }) };
+  };
+
+  it('tells me and thanks the subscriber when the address is new', async () => {
+    const { notify, thankYou, d } = mailDeps(true);
+    const response = await handleSubscribe(form({ email: ' Fulano@Exemplo.com ' }), d);
+    expect(location(response)).toBe('/posts?assinatura=ok#novidades');
+    expect(notify).toHaveBeenCalledTimes(1);
+    expect(notify.mock.calls[0]![0]).toMatchObject({ subject: expect.stringContaining('fulano@exemplo.com') });
+    expect(thankYou).toHaveBeenCalledWith('fulano@exemplo.com', expect.objectContaining({ subject: 'Assinatura confirmada' }));
+  });
+
+  it('sends nothing for an address already on the list, so a repeat cannot flood an inbox', async () => {
+    const { notify, thankYou, d } = mailDeps(false);
+    const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), d);
+    expect(location(response)).toBe('/posts?assinatura=ok#novidades');
+    expect(notify).not.toHaveBeenCalled();
+    expect(thankYou).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing for the honeypot, an invalid address, the rate limit or a storage failure', async () => {
+    const cases = [
+      { ...mailDeps(true), request: form({ email: 'bot@exemplo.com', [FORM_HONEYPOT]: 'x' }) },
+      { ...mailDeps(true), request: form({ email: 'nao-e-email' }) },
+      { ...mailDeps(new Error('down')), request: form({ email: 'fulano@exemplo.com' }) },
+    ];
+    for (const { notify, thankYou, d, request } of cases) {
+      await handleSubscribe(request, d);
+      expect(notify).not.toHaveBeenCalled();
+      expect(thankYou).not.toHaveBeenCalled();
+    }
+    const limited = mailDeps(true);
+    await handleSubscribe(form({ email: 'fulano@exemplo.com' }), { ...limited.d, limiter: { check: vi.fn().mockReturnValue(false) } });
+    expect(limited.notify).not.toHaveBeenCalled();
+    expect(limited.thankYou).not.toHaveBeenCalled();
+  });
+
+  it('keeps answering ok when either e-mail fails', async () => {
+    const notify = vi.fn().mockRejectedValue(new Error('resend down'));
+    const thankYou = vi.fn().mockRejectedValue(new Error('resend down'));
+    const d = deps({ store: { save: vi.fn().mockResolvedValue(true) }, notify, thankYou });
+    const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), d);
+    expect(location(response)).toBe('/posts?assinatura=ok#novidades');
+    expect(thankYou).toHaveBeenCalled();
+  });
+});

@@ -63,6 +63,15 @@ describe('ThankYou', () => {
     }
   });
 
+  it('thanks a newsletter subscriber, without a name and without claiming no list', async () => {
+    const text = toPlainText(await html({ name: null, kind: 'newsletter' }));
+    expect(text).toContain('Obrigado por assinar');
+    expect(text).toMatch(/próximos artigos/);
+    expect(text).toMatch(/assinou/);
+    expect(text).not.toMatch(/não entra em nenhuma lista/);
+    expect(text).toMatch(/mensagem automática/i);
+  });
+
   it('has preview props for email dev', () => {
     expect(ThankYou.PreviewProps.kind).toBe('briefing');
   });

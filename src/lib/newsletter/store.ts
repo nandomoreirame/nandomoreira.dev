@@ -17,7 +17,8 @@ export const toSubscriber = (email: string, now: Date) => ({
 });
 
 export interface SubscriberStore {
-  save: (email: string, now: Date) => Promise<void>;
+  /** True when the address is new; false when it was on the list already. */
+  save: (email: string, now: Date) => Promise<boolean>;
 }
 
 /** gRPC ALREADY_EXISTS: the address is on the list already, which is a success. */
@@ -30,8 +31,9 @@ export const firestoreSubscriberStore = (): SubscriberStore => ({
         .collection(NEWSLETTER_COLLECTION)
         .doc(subscriberId(email))
         .create(toSubscriber(email, now));
+      return true;
     } catch (error) {
-      if ((error as { code?: number }).code === ALREADY_EXISTS) return;
+      if ((error as { code?: number }).code === ALREADY_EXISTS) return false;
       throw error;
     }
   },

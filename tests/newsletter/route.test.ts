@@ -10,6 +10,11 @@ describe('/api/subscribe route', () => {
     expect(source).toContain('firestoreSubscriberStore()');
   });
 
+  it('wires the e-mail to me and the thank-you to the subscriber', () => {
+    expect(source).toContain('resendSubscriberNotifier(');
+    expect(source).toContain('resendThankYou(');
+  });
+
   it('limits to five per IP every ten minutes', () => {
     expect(source).toMatch(/createLimiter\(\{\s*max:\s*5,\s*windowMs:\s*10 \* 60 \* 1000\s*\}\)/);
   });

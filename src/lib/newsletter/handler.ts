@@ -2,6 +2,10 @@ import { FORM_HONEYPOT } from '../hire/form';
 import { readLimitedText } from '../hire/read-body';
 import { type Limiter, clientIpOf } from '../hire/rate-limit';
 import { subscribeSchema } from './schema';
+import type { ThankYouSender } from '../mail/thank-you';
+import { thankYouMail } from '../mail/thank-you';
+import type { SubscriberNotifier } from './mail';
+import { subscriberMail } from './mail';
 import type { SubscriberStore } from './store';
 
 export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
@@ -10,6 +14,10 @@ export interface SubscribeDependencies {
   store: SubscriberStore;
   limiter: Pick<Limiter, 'check'>;
   now: () => Date;
+  /** Optional: tells me about a new subscriber. */
+  notify?: SubscriberNotifier;
+  /** Optional: confirmation to the new subscriber. */
+  thankYou?: ThankYouSender;
 }
 
 /**
@@ -38,9 +46,10 @@ const isForm = (request: Request): boolean =>
 
 export const handleSubscribe = async (
   request: Request,
-  { store, limiter, now }: SubscribeDependencies,
+  { store, limiter, now, notify, thankYou }: SubscribeDependencies,
 ): Promise<Response> => {
-  const back = backTo(originOf(request));
+  const origin = originOf(request);
+  const back = backTo(origin);
   if (request.method !== 'POST' || !isForm(request)) return back('erro');
   if (!limiter.check(clientIpOf(request.headers))) return back('limite');
 
@@ -57,10 +66,34 @@ export const handleSubscribe = async (
   const result = subscribeSchema.safeParse({ email: params.get('email') ?? '' });
   if (!result.success) return back('invalido');
 
+  const at = now();
+  let isNew: boolean;
   try {
-    await store.save(result.data.email, now());
+    isNew = await store.save(result.data.email, at);
   } catch {
     return back('erro');
   }
+
+  // Only a new address gets mail: a repeated signup of someone else's address
+  // must not become a way to flood their inbox. A failed send never changes
+  // the answer, since the address is already stored.
+  if (isNew) {
+    const { email } = result.data;
+    if (notify) {
+      try {
+        await notify(await subscriberMail({ email, origin, at: at.toISOString() }));
+      } catch {
+        console.warn('newsletter: notification could not be sent');
+      }
+    }
+    if (thankYou) {
+      try {
+        await thankYou(email, await thankYouMail({ name: null, kind: 'newsletter' }));
+      } catch {
+        console.warn('newsletter: thank-you could not be sent');
+      }
+    }
+  }
+
   return back('ok');
 };
