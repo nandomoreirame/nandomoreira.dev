@@ -37,6 +37,10 @@ describe('channelOf', () => {
     expect(channel('https://nandomoreira.dev/lab')).toBe('internal');
   });
 
+  it('treats the sales landing host as the same site', () => {
+    expect(OWN_HOSTS).toContain('contrate.nandomoreira.dev');
+  });
+
   it.each([...OWN_HOSTS])('marks own host %s as internal', (host) => {
     expect(channel(`https://${host}/path`)).toBe('internal');
   });

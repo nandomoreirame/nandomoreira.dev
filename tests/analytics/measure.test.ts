@@ -44,4 +44,18 @@ describe('measureRequest', () => {
   it('ignores a 404', async () => {
     expect(await run('/nada', { status: 404 })).toEqual([]);
   });
+
+  it('records a page the sales host rewrote under the path it was served from', async () => {
+    const { hits, recorder } = spy();
+    const url = new URL('https://contrate.nandomoreira.dev/?utm_source=linkedin');
+    await measureRequest(recorder, {
+      request: new Request(url),
+      url,
+      isPrerendered: false,
+      response: new Response('', { headers: { 'content-type': 'text/html' } }),
+      rewrite: '/servicos',
+    });
+    expect(hits[0]).toMatchObject({ kind: 'pageview', path: '/servicos' });
+    expect(hits[0]?.search?.get('utm_source')).toBe('linkedin');
+  });
 });

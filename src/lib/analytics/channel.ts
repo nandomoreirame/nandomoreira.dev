@@ -8,6 +8,7 @@ export interface Utm {
 export const OWN_HOSTS = [
   'nandomoreira.dev',
   'www.nandomoreira.dev',
+  'contrate.nandomoreira.dev',
   'nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app',
   'localhost',
   '127.0.0.1',

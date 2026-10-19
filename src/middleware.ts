@@ -19,6 +19,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     url: context.url,
     isPrerendered: context.isPrerendered,
     response,
+    rewrite: sales && 'rewrite' in sales ? sales.rewrite : undefined,
   });
 
   const tag = robotsTagFor(context.url.hostname);
