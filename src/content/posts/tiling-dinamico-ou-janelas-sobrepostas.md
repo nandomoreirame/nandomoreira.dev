@@ -3,6 +3,7 @@ slug: tiling-dinamico-ou-janelas-sobrepostas
 title: "Tiling dinâmico ou janelas sobrepostas: o que eu aprendi largando o Alt+Tab"
 summary: "Niri, Hyprland e o novo COSMIC do Pop!_OS organizam as janelas por você, e os três deixam soltar uma janela quando precisa. Depois de meses pra largar o Alt+Tab, não volto mais, mas isso não faz do tiling o jeito certo pra todo mundo."
 date: "2026-10-19"
+publishedAt: "2026-10-19T12:12:20-03:00"
 markers:
   - linux
   - niri
@@ -30,7 +31,6 @@ snapshot:
       value: "Hyprland no Omarchy"
     - label: "Janela flutuante"
       value: "Mod+V"
-draft: true
 ---
 
 Levei uns meses pra parar de apertar `Alt+Tab`. Era vício de anos de Windows e de macOS: a mão ia sozinha pro atalho, eu ficava ciclando janela atrás de janela procurando o terminal, e só depois lembrava que no [Niri](https://github.com/YaLTeR/niri) o terminal estava duas colunas à esquerda, a um atalho de distância.
