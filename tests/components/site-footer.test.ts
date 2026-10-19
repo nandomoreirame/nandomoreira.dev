@@ -80,11 +80,11 @@ describe('SiteFooter', () => {
     expect(html).toContain('font-mono');
   });
 
-  it('shows the site version, linked to the story of every version', async () => {
+  it('shows the site version, linked to the releases of this version', async () => {
     const html = await render();
 
-    expect(html).toMatch(/<a[^>]*href="\/version"[^>]*>\s*v17\.812\s*<\/a>/);
-    expect(html).toMatch(/<a[^>]*href="\/version"[^>]*aria-label="Versão 17\.812: a história do site"/);
+    expect(html).toMatch(/<a[^>]*href="\/releases\/17"[^>]*>\s*v17\.812\s*<\/a>/);
+    expect(html).toMatch(/<a[^>]*href="\/releases\/17"[^>]*aria-label="Versão 17\.812: os lançamentos desta versão"/);
   });
 
   it('caps its inner row at the frame token, like the header', async () => {

@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
-import VersionPage from '../../src/pages/version.astro';
+import VersionPage from '../../src/pages/releases/index.astro';
 import { buildAiIndex } from '../../src/lib/aeo/ai-index';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
 import { markdownForPath } from '../../src/lib/ai-view/registry';
@@ -25,8 +25,8 @@ const render = async () => {
 };
 
 describe('site versions', () => {
-  it('lives at /version', () => {
-    expect(HISTORY_PATH).toBe('/version');
+  it('lives at /releases', () => {
+    expect(HISTORY_PATH).toBe('/releases');
   });
 
   it('numbers the versions 1..n in order, the current one last', () => {
@@ -103,7 +103,7 @@ describe('history markdown', () => {
     const markdown = historyMarkdown({ site, commits: 800, now: new Date('2026-10-19T12:00:00Z') });
 
     expect(markdown).toContain('# Esse site faz 10 anos desde o primeiro commit 🎈');
-    expect(markdown).toContain('url: https://nandomoreira.dev/version');
+    expect(markdown).toContain('url: https://nandomoreira.dev/releases');
     for (const version of SITE_VERSIONS) {
       expect(markdown).toContain(`github.com/nandomoreirame/${version.repo}`);
       for (const tech of version.stack) expect(markdown).toContain(tech);
@@ -111,18 +111,18 @@ describe('history markdown', () => {
   });
 
   it('is served by the AI view registry', async () => {
-    const page = await markdownForPath(site, 'version');
+    const page = await markdownForPath(site, 'releases');
 
-    expect(page?.humanPath).toBe('/version');
-    expect(page?.mdPath).toBe('/version.md');
+    expect(page?.humanPath).toBe('/releases');
+    expect(page?.mdPath).toBe('/releases.md');
   });
 
   it('is listed in the sitemap and the AI index', async () => {
     const profile = await getProfile();
 
-    expect(buildSitemap({ site, projects: [] })).toContain('https://nandomoreira.dev/version');
+    expect(buildSitemap({ site, projects: [] })).toContain('<loc>https://nandomoreira.dev/releases</loc>');
     expect(buildAiIndex({ site, profile, projects: [] }).entries.map(entry => entry.url)).toContain(
-      'https://nandomoreira.dev/version',
+      'https://nandomoreira.dev/releases',
     );
   });
 });
@@ -193,7 +193,7 @@ describe('history page', () => {
     const line = html.match(/<p[^>]*data-version-tag[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '';
 
     expect(line).toMatch(/v\d+\.\d+\b/);
-    expect(line).toContain('href="/releases"');
+    expect(line).toContain('href="/releases/17"');
     expect(line).not.toContain('somando todos');
   });
 

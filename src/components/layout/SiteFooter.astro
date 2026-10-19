@@ -1,6 +1,6 @@
 ---
 import { contactGoPath } from '../../lib/analytics/outbound';
-import { HISTORY_PATH } from '../../lib/history/history';
+import { RELEASES_PATH } from '../../lib/releases/releases';
 
 interface Props {
   name: string;
@@ -35,8 +35,8 @@ const link =
       <span aria-hidden="true">·</span>
       <a href="/privacidade" class={link}>Privacidade</a>
       <span aria-hidden="true">·</span>
-      {/* The easter egg: the tag counts every version this site had (/version). */}
-      <a href={HISTORY_PATH} class={link} aria-label={`Versão ${version.slice(1)}: a história do site`}>
+      {/* The easter egg: the tag counts every version this site had (/releases/17). */}
+      <a href={RELEASES_PATH} class={link} aria-label={`Versão ${version.slice(1)}: os lançamentos desta versão`}>
         {version}
       </a>
     </p>

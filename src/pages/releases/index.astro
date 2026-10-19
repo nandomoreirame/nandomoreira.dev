@@ -1,16 +1,16 @@
 ---
-import { TITLE_SEPARATOR } from '../lib/seo/meta';
-import PageHeader from '../components/ui/PageHeader.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
-import TechBadge from '../components/ui/TechBadge.astro';
-import TocColumns from '../components/ui/TocColumns.astro';
-import PostTocToggle from '../components/posts/PostTocToggle.astro';
-import VersionTag from '../components/history/VersionTag.astro';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { loadSiteCommits } from '../lib/history/commits';
-import { RELEASES_PATH } from '../lib/releases/releases';
-import { displayNameOf } from '../lib/content/display-name';
-import { getProfile } from '../lib/content';
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import PageHeader from '../../components/ui/PageHeader.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import TechBadge from '../../components/ui/TechBadge.astro';
+import TocColumns from '../../components/ui/TocColumns.astro';
+import PostTocToggle from '../../components/posts/PostTocToggle.astro';
+import VersionTag from '../../components/history/VersionTag.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadSiteCommits } from '../../lib/history/commits';
+import { RELEASES_PATH } from '../../lib/releases/releases';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
 import {
   HISTORY_LEAD,
   historyTitle,
@@ -20,7 +20,7 @@ import {
   repoUrl,
   stackTimeline,
   tocLabelOf,
-} from '../lib/history/history';
+} from '../../lib/history/history';
 
 const profile = await getProfile();
 const commits = await loadSiteCommits();

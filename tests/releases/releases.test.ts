@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
-import ReleasesPage from '../../src/pages/releases.astro';
+import ReleasesPage from '../../src/pages/releases/17.astro';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
 import { markdownForPath } from '../../src/lib/ai-view/registry';
 import { SITE_VERSIONS } from '../../src/lib/history/history';
@@ -23,8 +23,8 @@ const render = async () => {
 };
 
 describe('releases data', () => {
-  it('lives at /releases', () => {
-    expect(RELEASES_PATH).toBe('/releases');
+  it('lives at /releases/17, under the list of versions', () => {
+    expect(RELEASES_PATH).toBe('/releases/17');
   });
 
   it('keeps one release per day of work, newest first, since the first commit', () => {
@@ -106,14 +106,15 @@ describe('releases surfaces', () => {
   });
 
   it('links back to the story of every version', async () => {
-    expect(await render()).toContain('href="/version"');
+    expect(await render()).toContain('href="/releases"');
   });
 
   it('has an AI view and a sitemap entry', async () => {
-    const page = await markdownForPath(site, 'releases');
+    const page = await markdownForPath(site, 'releases/17');
 
-    expect(page?.mdPath).toBe('/releases.md');
+    expect(page?.humanPath).toBe('/releases/17');
+    expect(page?.mdPath).toBe('/releases/17.md');
     expect(page?.markdown).toBe(releasesMarkdown({ site }));
-    expect(buildSitemap({ site, projects: [] })).toContain('https://nandomoreira.dev/releases');
+    expect(buildSitemap({ site, projects: [] })).toContain('<loc>https://nandomoreira.dev/releases/17</loc>');
   });
 });

@@ -1,15 +1,15 @@
 ---
-import { TITLE_SEPARATOR } from '../lib/seo/meta';
-import PageHeader from '../components/ui/PageHeader.astro';
-import VersionTag from '../components/history/VersionTag.astro';
-import TocColumns from '../components/ui/TocColumns.astro';
-import PostTocToggle from '../components/posts/PostTocToggle.astro';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { loadSiteCommits } from '../lib/history/commits';
-import { displayNameOf } from '../lib/content/display-name';
-import { getProfile } from '../lib/content';
-import { HISTORY_PATH, siteVersionTag } from '../lib/history/history';
-import { RELEASES, RELEASES_LEAD, releaseAnchor, releaseDateOf, releaseTocLabelOf } from '../lib/releases/releases';
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import PageHeader from '../../components/ui/PageHeader.astro';
+import VersionTag from '../../components/history/VersionTag.astro';
+import TocColumns from '../../components/ui/TocColumns.astro';
+import PostTocToggle from '../../components/posts/PostTocToggle.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadSiteCommits } from '../../lib/history/commits';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
+import { HISTORY_PATH, siteVersionTag } from '../../lib/history/history';
+import { RELEASES, RELEASES_LEAD, releaseAnchor, releaseDateOf, releaseTocLabelOf } from '../../lib/releases/releases';
 
 const profile = await getProfile();
 const tag = siteVersionTag(await loadSiteCommits());
@@ -56,7 +56,7 @@ const toc = RELEASES.map((release) => ({ depth: 2 as const, slug: releaseAnchor(
     </TocColumns>
 
     <p class="font-mono text-small text-muted-foreground">
-      As versões anteriores do site estão em
+      As versões anteriores do site estão em{' '}
       <a
         href={HISTORY_PATH}
         class="inline-flex min-h-6 items-center underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

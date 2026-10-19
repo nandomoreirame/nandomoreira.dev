@@ -1,7 +1,7 @@
 import { absoluteUrl } from '../aeo/urls';
 
 /**
- * The /version page: the versions of this site that survived as GitHub
+ * The /releases page: the versions of this site that survived as GitHub
  * repositories, and the technologies that passed through them. Others were
  * lost, so the count (and the tag) is approximate. It is also where the
  * version tag in the footer comes from (siteVersionTag).
@@ -10,7 +10,7 @@ import { absoluteUrl } from '../aeo/urls';
  * frozen: those repositories are archived. The current one is counted live
  * from the GitHub API (commits.ts).
  */
-export const HISTORY_PATH = '/version';
+export const HISTORY_PATH = '/releases';
 
 /** First commit of the first surviving repository (nandomoreira-jekyll-theme). */
 export const FIRST_COMMIT_AT = '2015-11-12T18:44:48Z';
