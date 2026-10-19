@@ -1,5 +1,6 @@
 import type { Profile } from '../../content/schemas/profile';
 import { displayNameOf } from '../content/display-name';
+import { TITLE_SEPARATOR } from '../seo/meta';
 
 /** AEO and search snippets read these bounds off the home page. */
 const MAX_TITLE = 70;
@@ -14,8 +15,8 @@ export const homeMeta = (
   profile: Pick<Profile, 'name' | 'displayName' | 'headline' | 'positioning'>,
 ) => {
   const name = displayNameOf(profile);
-  const full = `${name} | ${profile.headline}`;
-  const short = `${name} | ${profile.headline.split(',')[0].trim()}`;
+  const full = `${name}${TITLE_SEPARATOR}${profile.headline}`;
+  const short = `${name}${TITLE_SEPARATOR}${profile.headline.split(',')[0].trim()}`;
   const title = full.length <= MAX_TITLE ? full : short.length <= MAX_TITLE ? short : name;
 
   const text = profile.positioning.replace(/\s+/g, ' ').trim();

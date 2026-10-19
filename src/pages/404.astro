@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import Button from '../components/ui/Button.astro';
 import CopyButton from '../components/ui/CopyButton.astro';
 import TerminalWindow from '../components/ui/TerminalWindow.astro';
@@ -15,7 +16,7 @@ const curl = `$ curl -I https://nandomoreira.dev${requested}\nHTTP/2 404 Not Fou
 ---
 
 <BaseLayout
-  title={`Página não encontrada | ${authorName}`}
+  title={`Página não encontrada${TITLE_SEPARATOR}${authorName}`}
   description="A página solicitada não existe."
   noindex
 >

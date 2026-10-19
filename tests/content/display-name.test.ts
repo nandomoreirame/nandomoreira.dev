@@ -45,7 +45,7 @@ describe('human surfaces show the short name', () => {
   });
 
   it('uses the short name in the home title', async () => {
-    expect(homeMeta(await getProfile()).title).toMatch(/^Fernando Moreira \| /);
+    expect(homeMeta(await getProfile()).title).toMatch(/^Fernando Moreira \/\/ /);
   });
 });
 

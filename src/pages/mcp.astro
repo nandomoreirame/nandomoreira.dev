@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import ClosingCta from '../components/catalog/ClosingCta.astro';
 import AgentBrief from '../components/contact/AgentBrief.astro';
 import CopyButton from '../components/ui/CopyButton.astro';
@@ -47,7 +48,7 @@ const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title={`Conectar via MCP | ${authorName}`}
+  title={`Conectar via MCP${TITLE_SEPARATOR}${authorName}`}
   description="Como conectar este portfólio a um agente de IA pelo Model Context Protocol."
 >
   <script type="application/ld+json" is:inline set:html={howToJsonLd} />

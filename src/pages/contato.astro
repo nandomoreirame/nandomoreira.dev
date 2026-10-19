@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import { Icon } from 'astro-icon/components';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
@@ -44,7 +45,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
 ---
 
 <BaseLayout
-  title={`Contato | ${displayNameOf(profile)}`}
+  title={`Contato${TITLE_SEPARATOR}${displayNameOf(profile)}`}
   description="Fale comigo sobre um projeto, uma vaga ou uma proposta. Conte o que você precisa e eu respondo com o que dá para fazer e o que não dá."
 >
   <article class="mb-3xl flex flex-col gap-xl">

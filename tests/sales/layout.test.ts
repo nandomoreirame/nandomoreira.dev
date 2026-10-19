@@ -12,7 +12,7 @@ type RenderProps = {
 
 const render = async (props: RenderProps = {}) => {
   const {
-    title = 'Serviços | Fernando Moreira',
+    title = 'Serviços // Fernando Moreira',
     description = 'Sites e sistemas.',
     slug,
     serviceName,
@@ -124,7 +124,7 @@ describe('SalesLayout', () => {
   });
 
   it('uses the title as Service name without serviceName', async () => {
-    const title = 'Serviços | Fernando Moreira';
+    const title = 'Serviços // Fernando Moreira';
     const html = await render({ slug: 'site-institucional', title });
     const service = serviceFromHtml(html);
     expect(service.name).toBe(title);

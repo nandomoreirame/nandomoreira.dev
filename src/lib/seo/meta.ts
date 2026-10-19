@@ -6,8 +6,11 @@ export const DESCRIPTION_MAX = 160;
  * The browser-tab title: `<title> | <name>` when it fits, the bare title when
  * the suffix would push it past the SERP width (SEO audit 2026-10-13, item 12).
  */
+/** Between a page's name and the site author's in <title> (Fernando, 2026-10-19). */
+export const TITLE_SEPARATOR = ' // ';
+
 export const pageTitle = (title: string, name: string): string => {
-  const full = `${title} | ${name}`;
+  const full = `${title}${TITLE_SEPARATOR}${name}`;
 
   return full.length <= TITLE_MAX ? full : title;
 };

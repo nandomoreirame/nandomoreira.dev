@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../../../lib/seo/meta';
 import PostRow from '../../../components/posts/PostRow.astro';
 import PageHeader from '../../../components/ui/PageHeader.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
@@ -29,7 +30,7 @@ const authorName = displayNameOf(await getProfile());
 ---
 
 <BaseLayout
-  title={`Arquivo ${year} | ${authorName}`}
+  title={`Arquivo ${year}${TITLE_SEPARATOR}${authorName}`}
   description={archiveYearDescription(year, posts)}
   pageType="CollectionPage"
   pageItems={posts.filter((post) => !post.draft).map((post) => `/${post.slug}`)}

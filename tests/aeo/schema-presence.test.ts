@@ -28,7 +28,7 @@ describe('home meta (AEO meta quality)', () => {
     const { title } = homeMeta(await getProfile());
     expect(title.length).toBeGreaterThanOrEqual(10);
     expect(title.length).toBeLessThanOrEqual(70);
-    expect(title).toMatch(/^Fernando Moreira \| Desenvolvedor de software/);
+    expect(title).toMatch(/^Fernando Moreira \/\/ Desenvolvedor de software/);
   });
 
   it('keeps the real home description between 50 and 200 characters, on one line', async () => {
@@ -44,7 +44,7 @@ describe('home meta (AEO meta quality)', () => {
       headline: 'Desenvolvedor de software e engenheiro de IA, do dado à produção',
       positioning: 'x'.repeat(80),
     } as never);
-    expect(title).toBe('Fernando Moreira Costa | Desenvolvedor de software e engenheiro de IA');
+    expect(title).toBe('Fernando Moreira Costa // Desenvolvedor de software e engenheiro de IA');
   });
 
   it('cuts an over-long description on a word, never mid-word', () => {

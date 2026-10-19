@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { metaDescription, pageTitle } from '../../src/lib/seo/meta';
+import { metaDescription, pageTitle, TITLE_SEPARATOR } from '../../src/lib/seo/meta';
 
 describe('pageTitle', () => {
   it('appends the author name when the whole title fits in 60 characters', () => {
-    expect(pageTitle('Blog', 'Fernando Moreira')).toBe('Blog | Fernando Moreira');
+    expect(pageTitle('Blog', 'Fernando Moreira')).toBe('Blog // Fernando Moreira');
+    expect(TITLE_SEPARATOR).toBe(' // ');
   });
 
   it('drops the suffix when it would push the title past 60 characters', () => {
     const long = 'O falso verde: quando o portão diz PASS e nada rodou';
-    expect(`${long} | Fernando Moreira`.length).toBeGreaterThan(60);
+    expect(`${long} // Fernando Moreira`.length).toBeGreaterThan(60);
     expect(pageTitle(long, 'Fernando Moreira')).toBe(long);
   });
 });

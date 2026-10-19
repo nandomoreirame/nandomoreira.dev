@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import Button from '../components/ui/Button.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
@@ -16,7 +17,7 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
 ---
 
 <BaseLayout
-  title={`Política de privacidade | ${displayNameOf(profile)}`}
+  title={`Política de privacidade${TITLE_SEPARATOR}${displayNameOf(profile)}`}
   description="O que este site coleta, por quanto tempo guarda e como pedir a exclusão dos seus dados."
 >
   <article class="mb-3xl flex flex-col gap-xl">

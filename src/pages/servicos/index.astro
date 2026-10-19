@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
 import AboutCard from '../../components/sales/AboutCard.astro';
 import FaqList from '../../components/sales/FaqList.astro';
 import MoreWork from '../../components/sales/MoreWork.astro';
@@ -17,7 +18,7 @@ export const prerender = false;
 ---
 
 <SalesLayout
-  title="Sites, lojas e sistemas para o seu negócio | Fernando Moreira"
+  title={`Sites, lojas e sistemas para o seu negócio${TITLE_SEPARATOR}Fernando Moreira`}
   description="Site institucional, landing page, blog, loja virtual, produto web e automação com IA, explicados sem jargão. Do primeiro papo até estar no ar."
   serviceName="Desenvolvimento de sites e produtos web"
 >

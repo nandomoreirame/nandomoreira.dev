@@ -76,7 +76,7 @@ describe('/posts listing', () => {
   });
 
   it('names the page Blog in the browser tab', async () => {
-    expect(await render()).toContain('<title>Blog | Fernando Moreira</title>');
+    expect(await render()).toContain('<title>Blog // Fernando Moreira</title>');
   });
 
   it('shows six current posts a page, newest first, with the pagination under them', async () => {

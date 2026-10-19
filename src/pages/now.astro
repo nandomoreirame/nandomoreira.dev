@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 
 import ClosingCta from '../components/catalog/ClosingCta.astro';
@@ -36,7 +37,7 @@ const toc = [
 const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 ---
 
-<BaseLayout title={`Agora | ${displayNameOf(profile)}`} description={NOW_LEAD}>
+<BaseLayout title={`Agora${TITLE_SEPARATOR}${displayNameOf(profile)}`} description={NOW_LEAD}>
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} updatedAt={NOW_UPDATED_AT} />
 

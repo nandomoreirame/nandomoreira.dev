@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
 import FaqList from '../../components/sales/FaqList.astro';
 import ServiceComparison from '../../components/sales/ServiceComparison.astro';
 import ServiceDetail from '../../components/sales/ServiceDetail.astro';
@@ -14,7 +15,7 @@ if (!service) return new Response(null, { status: 404 });
 ---
 
 <SalesLayout
-  title={`${service.title} | Fernando Moreira`}
+  title={`${service.title}${TITLE_SEPARATOR}Fernando Moreira`}
   description={service.detail.hero.lead}
   slug={service.slug}
   serviceName={service.title}

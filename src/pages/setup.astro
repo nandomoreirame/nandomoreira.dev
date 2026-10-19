@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
@@ -17,7 +18,7 @@ const toc = SETUP_SECTIONS.map((section) => ({ depth: 2 as const, slug: section.
 ---
 
 <BaseLayout
-  title={`Setup | ${displayNameOf(profile)}`}
+  title={`Setup${TITLE_SEPARATOR}${displayNameOf(profile)}`}
   description="O hardware, o sistema, o terminal, os agentes de IA, os apps e o homelab que eu uso todo dia, e o que testei e deixei de lado."
 >
   <article class="mb-3xl flex flex-col gap-xl">

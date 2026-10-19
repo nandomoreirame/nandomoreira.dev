@@ -1,4 +1,5 @@
 ---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../lib/analytics/outbound';
 import { contactIconFor } from '../lib/ui/contact-icons';
@@ -31,7 +32,7 @@ const serviceProjects = projects.map((project) => ({
 ---
 
 <BaseLayout
-  title={`Sobre | ${displayNameOf(profile)}`}
+  title={`Sobre${TITLE_SEPARATOR}${displayNameOf(profile)}`}
   description={profile.headline}
   pageType="ProfilePage"
 >
