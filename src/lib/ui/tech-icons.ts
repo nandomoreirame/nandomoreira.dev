@@ -27,6 +27,8 @@ const TECH_ICONS: Record<string, string> = {
   'google cloud': 'googlecloud',
   'google gemini': 'googlegemini',
   graphql: 'graphql',
+  // Simple Icons has no Grok or xAI mark; X is the closest one it ships.
+  grok: 'x',
   hono: 'hono',
   hyprland: 'hyprland',
   javascript: 'javascript',
