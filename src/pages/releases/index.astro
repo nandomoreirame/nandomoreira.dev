@@ -5,6 +5,7 @@ import SectionHeader from '../../components/ui/SectionHeader.astro';
 import TechBadge from '../../components/ui/TechBadge.astro';
 import TocColumns from '../../components/ui/TocColumns.astro';
 import PostTocToggle from '../../components/posts/PostTocToggle.astro';
+import Confetti from '../../components/art/Confetti.astro';
 import VersionTag from '../../components/history/VersionTag.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { loadSiteCommits } from '../../lib/history/commits';
@@ -37,6 +38,9 @@ const toc = [
   title={`Versões do site${TITLE_SEPARATOR}${displayNameOf(profile)}`}
   description="As versões deste site que sobreviveram no GitHub desde 2015, e todas as tecnologias que passaram por elas."
 >
+  {/* The easter egg behind the footer tag: a little party for every version. */}
+  <Confetti seed="releases" />
+
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title={historyTitle(new Date())} description={HISTORY_LEAD}>
       <VersionTag slot="meta" tag={siteVersionTag(commits)} link={{ href: RELEASES_PATH, label: 'Veja o que entrou nesta versão →' }} />

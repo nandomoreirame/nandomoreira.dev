@@ -1495,3 +1495,43 @@
     animation: status-pulse 2s var(--ease-out) infinite;
   }
 }
+
+/* Confetti (/releases): pieces drawn on the server (src/lib/art/confetti.ts)
+   rain for about four seconds when the page opens and end off screen. CSS
+   only, no script. Hidden for anyone who asked for less motion. */
+[data-confetti] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-confetti] {
+    display: block;
+  }
+
+  [data-confetti-piece] {
+    position: absolute;
+    top: 0;
+    left: var(--x);
+    width: var(--size);
+    height: calc(var(--size) / 2);
+    border-radius: 1px;
+    background-color: var(--color);
+    opacity: 0;
+    transform: translate3d(0, -2rem, 0);
+    animation: confetti-fall var(--duration) cubic-bezier(0.25, 0.6, 0.45, 1) var(--delay) 1 forwards;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, -2rem, 0) rotate(0turn);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin));
+  }
+}

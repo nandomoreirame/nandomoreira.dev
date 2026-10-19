@@ -1,0 +1,26 @@
+---
+import { confettiPieces } from '../../lib/art/confetti';
+
+interface Props {
+  /** Same seed, same rain on every request. */
+  seed: string;
+  count?: number;
+}
+
+// Pieces spread over four seconds of rain, so there are more of them.
+const { seed, count = 160 } = Astro.props;
+const pieces = confettiPieces(seed, count);
+---
+
+{/* Plays once when the page opens, with CSS only (global.css, "Confetti"):
+    no script, hidden from assistive technology and never in the pointer's way. */}
+<div data-confetti aria-hidden="true" class="pointer-events-none fixed inset-0 z-20 overflow-hidden">
+  {
+    pieces.map((piece) => (
+      <span
+        data-confetti-piece
+        style={`--x: ${piece.x}%; --delay: ${piece.delay}s; --duration: ${piece.duration}s; --drift: ${piece.drift}vw; --spin: ${piece.spin}turn; --size: ${piece.size}px; --color: ${piece.color}`}
+      />
+    ))
+  }
+</div>
