@@ -1,9 +1,11 @@
+import { salesUrl } from '../sales/host';
+
 /** Visible strings of the command palette (docs/specs/command-palette, D9), in pt-BR. */
 export const PALETTE_COPY = {
   placeholder: 'Digite um comando ou busque…',
   label: 'Buscar no site',
   trigger: 'Abrir a busca',
-  hint: { before: 'Pressione', after: 'para começar' },
+  hint: { before: 'Pressione', after: 'para navegar' },
   empty: 'Nada encontrado.',
   unavailable: 'A busca está indisponível agora; os atalhos continuam funcionando.',
   copied: 'Link copiado',
@@ -21,6 +23,9 @@ export const PALETTE_COPY = {
     copyLink: 'Copiar link',
     email: 'Enviar e-mail',
     contact: 'Ir para o contato',
+    markdown: 'Versão .md',
+    ai: 'Versão para IA',
+    human: 'Versão para humanos',
   },
 } as const;
 
@@ -41,10 +46,13 @@ export const GO_TARGETS: readonly GoTarget[] = [
   { key: 'n', path: '/now', label: 'Agora' },
   { key: 'c', path: '/contato', label: 'Contato' },
   { key: 'm', path: '/mcp', label: 'MCP' },
+  // S is taken by Sobre: V, from serViços. The landing lives on the sales host.
+  { key: 'v', path: salesUrl(), label: 'Serviços' },
 ];
 
 /** Site pages that enter the search index (REQ-005). */
 export const PALETTE_PAGES: ReadonlyArray<{ path: string; title: string }> = [
-  ...GO_TARGETS.map(({ path, label }) => ({ path, title: label })),
+  // Only this site's pages: the sales landing enters as a service (build-index).
+  ...GO_TARGETS.filter(({ path }) => path.startsWith('/')).map(({ path, label }) => ({ path, title: label })),
   { path: '/curriculo', title: 'Currículo' },
 ];

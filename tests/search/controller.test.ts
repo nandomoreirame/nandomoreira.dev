@@ -18,6 +18,37 @@ describe('palette view', () => {
     expect(groups.map((group) => group.label)).toEqual(['Posts', 'Arquivo']);
   });
 
+  it('sends "Enviar e-mail" to the contact page', () => {
+    const general = viewFor(index, '')[0]?.options ?? [];
+    expect(general.find((option) => option.label === 'Enviar e-mail')?.href).toBe('/contato');
+  });
+
+  it('offers the page markdown and AI view in General when the page has them', () => {
+    const general = viewFor(index, '', { mdPath: '/sobre.md', aiPath: '/sobre/ia' })[0]?.options ?? [];
+    expect(general.map((option) => [option.label, option.href])).toEqual([
+      ['Copiar link', undefined],
+      ['Enviar e-mail', '/contato'],
+      ['Versão .md', '/sobre.md'],
+      ['Versão para IA', '/sobre/ia'],
+    ]);
+    expect(viewFor(index, 'md', { mdPath: '/sobre.md' })[0]?.options[0]?.href).toBe('/sobre.md');
+  });
+
+  it('offers the human version instead while on the AI view', () => {
+    const general = viewFor(index, '', { mdPath: '/sobre.md', humanPath: '/sobre' })[0]?.options ?? [];
+    expect(general.map((option) => [option.label, option.href]).slice(2)).toEqual([
+      ['Versão .md', '/sobre.md'],
+      ['Versão para humanos', '/sobre'],
+    ]);
+  });
+
+  it('leaves them out on a page without those views', () => {
+    const labels = (viewFor(index, '')[0]?.options ?? []).map((option) => option.label);
+    expect(labels).not.toContain('Versão .md');
+    expect(labels).not.toContain('Versão para IA');
+    expect(labels).not.toContain('Versão para humanos');
+  });
+
   it('filters actions and destinations too', () => {
     const groups = viewFor(index, 'copiar');
     expect(groups[0]?.options[0]?.label).toBe('Copiar link');

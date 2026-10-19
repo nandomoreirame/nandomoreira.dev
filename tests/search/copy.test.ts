@@ -13,7 +13,9 @@ describe('palette copy', () => {
       ['n', '/now'],
       ['c', '/contato'],
       ['m', '/mcp'],
+      ['v', 'https://contrate.nandomoreira.dev/'],
     ]);
+    expect(GO_TARGETS.at(-1)?.label).toBe('Serviços');
     expect(new Set(GO_TARGETS.map((target) => target.key)).size).toBe(GO_TARGETS.length);
   });
 
@@ -26,5 +28,7 @@ describe('palette copy', () => {
 
   it('lists the site pages for the index, including the CV', () => {
     expect(PALETTE_PAGES.map((page) => page.path)).toContain('/curriculo');
+    // Services enter the index as services (build-index), never twice.
+    expect(PALETTE_PAGES.every((page) => page.path.startsWith('/'))).toBe(true);
   });
 });

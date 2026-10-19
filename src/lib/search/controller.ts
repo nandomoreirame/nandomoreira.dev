@@ -18,9 +18,20 @@ export interface PaletteGroup {
   empty?: boolean;
 }
 
-const GENERAL: PaletteOption[] = [
+/** The current page's other views, when it has them (docs/specs/ai-view). */
+export interface PageViews {
+  mdPath?: string;
+  aiPath?: string;
+  /** Set on the AI view instead of aiPath: the way back to the page. */
+  humanPath?: string;
+}
+
+const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
   { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link' },
-  { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/go/contato/email' },
+  { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato' },
+  ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath }] : []),
+  ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath }] : []),
+  ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath }] : []),
 ];
 
 const GO: PaletteOption[] = GO_TARGETS.map((target) => ({
@@ -35,7 +46,8 @@ const ORDER: SearchKind[] = ['post', 'case', 'page', 'service', 'archive'];
 const filter = (options: PaletteOption[], query: string) => options.filter((option) => scoreOf({ title: option.label }, query) > 0);
 
 /** What the listbox shows for a query (REQ-007, REQ-008, REQ-009). */
-export const viewFor = (index: readonly SearchItem[] | undefined, query: string): PaletteGroup[] => {
+export const viewFor = (index: readonly SearchItem[] | undefined, query: string, views: PageViews = {}): PaletteGroup[] => {
+  const GENERAL = general(views);
   if (query.trim() === '') {
     return [
       { label: PALETTE_COPY.groups.general, options: GENERAL },
