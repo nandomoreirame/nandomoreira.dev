@@ -67,8 +67,8 @@ describe('buildAiIndex', () => {
       'https://nandomoreira.dev/mcp',
       'https://nandomoreira.dev/setup',
       'https://nandomoreira.dev/now',
-      'https://nandomoreira.dev/version',
       'https://nandomoreira.dev/releases',
+      'https://nandomoreira.dev/releases/17',
     ]);
   });
 

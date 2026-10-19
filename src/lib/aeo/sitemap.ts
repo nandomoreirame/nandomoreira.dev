@@ -54,8 +54,8 @@ export const sitemapEntries = ({
     { path: '/mcp' },
     { path: '/setup', lastmod: setupUpdatedAt },
     { path: '/now' },
-    { path: '/version' },
     { path: '/releases' },
+    { path: '/releases/17' },
     { path: '/privacidade' },
     // On the main host only until the subdomain is live (sales-landing, REQ-033).
     ...(salesLive ? [] : [salesPath(undefined, false), ...detailSlugs().map(slug => salesPath(slug, false))]).map(

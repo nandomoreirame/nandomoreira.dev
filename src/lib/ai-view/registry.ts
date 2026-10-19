@@ -135,7 +135,7 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
     return page('Setup', SETUP_PATH, `${SETUP_PATH}.md`, setupMarkdown({ site }));
   }
 
-  if (key === 'version') {
+  if (key === 'releases') {
     return page(
       'Versões do site',
       HISTORY_PATH,
@@ -144,7 +144,7 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
     );
   }
 
-  if (key === 'releases') {
+  if (key === 'releases/17') {
     return page('Lançamentos', RELEASES_PATH, `${RELEASES_PATH}.md`, releasesMarkdown({ site }));
   }
 
