@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { Column, Link, Row, Section, Text } from 'react-email';
 import type { JourneyData } from '../../lib/analytics/journey';
+import { isEmailContact } from '../../lib/sales/contact';
 import { EMAIL_COLORS as c, EMAIL_FONTS as f, EMAIL_RADIUS as r, EMAIL_SPACE as s } from './tokens';
 
 export type { JourneyData, JourneyView } from '../../lib/analytics/journey';
@@ -22,7 +23,14 @@ export const Fields = ({ rows }: { rows: ReadonlyArray<readonly [string, string 
         </Column>
         <Column style={{ padding: `${s.sm}px 0`, verticalAlign: 'top' }}>
           <Text style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: value ? c.foreground : c.mutedForeground }}>
-            {value || NOT_GIVEN}
+            {value && isEmailContact(value) ? (
+              // Gmail links a bare address in its own blue; a link of ours keeps the text color.
+              <Link href={`mailto:${value.trim()}`} style={{ color: c.foreground, textDecoration: 'none' }}>
+                {value}
+              </Link>
+            ) : (
+              value || NOT_GIVEN
+            )}
           </Text>
         </Column>
       </Row>
