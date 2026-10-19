@@ -18,15 +18,48 @@ positioning: |
   IA entregar resultado medido em produção, e não só em demonstração.
 stack:
   - TypeScript
+  - JavaScript
   - Python
-  - React
-  - Next.js
-  - Astro
-  - Node.js
-  - AWS
-  - Google Cloud
   - Rust
   - Go
+  - PHP
+  - Ruby
+  - React
+  - Next.js
+  - Vue.js
+  - Nuxt
+  - Angular
+  - Astro
+  - Tailwind CSS
+  - Node.js
+  - Bun
+  - Express
+  - Hono
+  - FastAPI
+  - Laravel
+  - Symfony
+  - Ruby on Rails
+  - GraphQL
+  - PostgreSQL
+  - MySQL
+  - DynamoDB
+  - Firebase
+  - Polars
+  - AWS
+  - Google Cloud
+  - BigQuery
+  - Docker
+  - Playwright
+  - Vitest
+  - Electron
+  - WordPress
+  - Claude Code
+  - Codex
+  - Gemini CLI
+  - Grok
+  - Antigravity
+  - Cursor
+  - MCP
 trajectory:
   - value: "5 dias → 30 min"
     label: para preparar uma base de cliente e entregá-la na pipeline
@@ -148,30 +181,22 @@ work:
       Dashboards de inteligência de dados aplicada à jornada de crédito
       imobiliário, integrando APIs, microserviços e bots de WhatsApp que
       encurtaram o ciclo de avaliação e financiamento de imóveis.
-  - name: MedPrev
-    position: Senior Frontend Developer
-    startDate: "2019-09-01"
-    endDate: "2020-02-29"
-    summary: Interfaces reativas em Vue.js e Nuxt.js consumindo REST e GraphQL.
-  - name: Trackmob
+  - name: MedPrev e Trackmob
     position: Senior Frontend Developer
     startDate: "2019-03-01"
-    endDate: "2019-08-31"
+    endDate: "2020-02-29"
     summary: |
-      Dashboards em Vue.js sobre Ruby on Rails para ONGs acompanharem o impacto
-      das campanhas em tempo real.
-  - name: Nossa Causa
-    position: Senior Web Developer
-    startDate: "2018-08-01"
-    endDate: "2019-03-31"
-    summary: |
-      Sites responsivos e acessíveis para ONGs, atuando também como UX e
-      analista no planejamento das soluções.
-  - name: Workshop Agência & Escola
+      Interfaces reativas em Vue.js e Nuxt.js consumindo REST e GraphQL na
+      MedPrev. Na Trackmob, dashboards em Vue.js sobre Ruby on Rails para ONGs
+      acompanharem o impacto das campanhas em tempo real.
+  - name: Nossa Causa e Workshop Agência & Escola
     position: Senior Web Developer
     startDate: "2017-10-01"
-    endDate: "2018-07-31"
-    summary: Sites responsivos e acessíveis em WordPress para clientes institucionais.
+    endDate: "2019-03-31"
+    summary: |
+      Sites responsivos e acessíveis em WordPress para clientes institucionais
+      e para ONGs, atuando também como UX e analista no planejamento das
+      soluções.
   - name: LojasKD Móveis
     position: Senior Frontend Developer e UX Designer
     startDate: "2016-09-01"
@@ -180,18 +205,14 @@ work:
       E-commerce em Symfony consumindo microserviços em Node.js, Python e PHP,
       com pesquisa com usuários e testes A/B depois da promoção para UX
       Designer.
-  - name: Pipefy
-    position: Front-end Developer Pleno
-    startDate: "2016-01-01"
-    endDate: "2016-08-31"
-    summary: Iniciei a nova interface da plataforma de gestão de processos.
-  - name: MalaPronta.com
+  - name: Pipefy e MalaPronta.com
     position: Front-end Developer Pleno
     startDate: "2015-01-01"
-    endDate: "2015-09-30"
+    endDate: "2016-08-31"
     summary: |
-      Modernizei para responsivo um layout de cinco anos e reduzi a carga do
-      servidor limpando e minificando CSS e JavaScript.
+      Iniciei a nova interface da plataforma de gestão de processos da Pipefy.
+      Na MalaPronta.com, modernizei para responsivo um layout de cinco anos e
+      reduzi a carga do servidor limpando e minificando CSS e JavaScript.
   - name: Agência WX, IBPT, Salsa:Mobion, Totalize e Agência CGDW
     position: Desenvolvedor web
     startDate: "2010-11-01"
