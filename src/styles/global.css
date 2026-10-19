@@ -54,6 +54,7 @@
   --color-surface-elevated: #18181b;
   --color-border: #222226; /* hairline, 1.24:1 */
   --color-border-strong: #6b6b74; /* 3.73:1, delimits interactive targets */
+  --color-selection: #52525b; /* text selection: a step under the art cards' grey, white text at 7.03:1 */
   --color-foreground: #f4f4f5;
   --color-muted-foreground: #a1a1aa;
 
@@ -252,6 +253,7 @@
   --color-border: #262422;
   --color-border-strong: #5f5b56;
   --color-foreground: #e6e2d9;
+  --color-selection: #45413c;
   --color-muted-foreground: #9c988f;
   --color-primary: #f5a623;
 }
@@ -264,6 +266,7 @@
   --color-border: #d8cbab;
   --color-border-strong: #8c7b5c;
   --color-foreground: #3b2f22;
+  --color-selection: #d8cbab;
   --color-muted-foreground: #6b5a45;
   --color-primary: #8a5300;
 }
@@ -276,6 +279,7 @@
   --color-border: #dcd8cf;
   --color-border-strong: #8a857c;
   --color-foreground: #1c1a17;
+  --color-selection: #d6d2c8;
   --color-muted-foreground: #5e5a53;
   --color-primary: #865700;
 }
@@ -1014,7 +1018,7 @@
   /* Selected text takes the honey accent. The ink inverts to primary-foreground,
      the same pair the CTA already clears, so the highlight stays readable. */
   ::selection {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-selection text-foreground;
   }
 
   .motion-safe-default {

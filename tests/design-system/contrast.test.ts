@@ -61,6 +61,13 @@ describe('palette contrast, as declared in DESIGN-GUIDELINES.md', () => {
     expect(contrastRatio(token('whatsapp'), BACKGROUND)).toBeGreaterThanOrEqual(3);
   });
 
+  it('selects text in white over a grey a step darker than the art cards', () => {
+    const luminance = (hex: string) => contrastRatio(hex, '#000000');
+    expect(luminance(token('selection'))).toBeLessThan(luminance(token('border-strong')));
+    expect(contrastRatio(token('foreground'), token('selection'))).toBeGreaterThanOrEqual(4.5);
+    expect(CSS).toMatch(/::selection\s*\{\s*@apply bg-selection text-foreground;/);
+  });
+
   it('confirms border still fails AA, so it can never delimit a target alone', () => {
     // The Terminal Noir hairline (#222226) is fainter still: dividers read as
     // rules, not as structure. Nowhere near 3:1, so the rule it protects holds.

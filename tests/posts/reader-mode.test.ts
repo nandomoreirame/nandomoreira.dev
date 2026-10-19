@@ -195,6 +195,11 @@ describe('reading mode palettes', () => {
     }
   });
 
+  it.each(themes.map(choice => choice.value))('%s gives selected text its own readable ground', value => {
+    const color = palette(value);
+    expect(contrastRatio(color('foreground'), color('selection'))).toBeGreaterThanOrEqual(4.5);
+  });
+
   it.each(themes.map(choice => choice.value))('%s keeps the control outline perceivable', value => {
     const color = palette(value);
     expect(contrastRatio(color('border-strong'), color('background'))).toBeGreaterThanOrEqual(3);
