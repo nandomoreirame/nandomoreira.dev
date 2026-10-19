@@ -3,7 +3,7 @@ import { saoPauloDay } from '../now/day';
 import { utmOf } from './channel';
 import type { AnalyticsConfig } from './config';
 import { type Conversion, type EventKind, type EventSource, buildEvent } from './event';
-import { renderJourney } from './journey';
+import { type JourneyData, journeyOf } from './journey';
 import type { AnalyticsStore } from './store';
 import { visitorHash } from './visitor';
 
@@ -50,8 +50,8 @@ export interface Recorder {
   record: (request: Request, hit: Hit) => Promise<void>;
   /** Several hits of one request in a single write. */
   recordAll: (request: Request, hits: readonly Hit[]) => Promise<void>;
-  /** Today's pages of the visitor behind this request, as notification text. */
-  journey: (request: Request) => Promise<string>;
+  /** Today's pages of the visitor behind this request, for the lead mail. */
+  journey: (request: Request) => Promise<JourneyData | undefined>;
 }
 
 export const createRecorder = ({
@@ -108,14 +108,17 @@ export const createRecorder = ({
 
     journey: async (request) => {
       const secret = config.hashSecret;
-      if (!secret) return renderJourney([]);
+      if (!secret) return undefined;
 
       const day = saoPauloDay(now());
       const events = await withTimeout(store.eventsOf(day, visitorOf(secret, request, day)), timeoutMs);
+      if (events === undefined) return undefined;
+
       try {
-        return renderJourney(events ?? []);
+        const data = journeyOf(events);
+        return data.views.length > 0 ? data : undefined;
       } catch {
-        return renderJourney([]);
+        return undefined;
       }
     },
   };

@@ -5,6 +5,7 @@ import { handleHire } from '../../lib/hire/handler';
 import { resendNotifier } from '../../lib/hire/notify';
 import { createLimiter } from '../../lib/hire/rate-limit';
 import { firestoreStore } from '../../lib/hire/store';
+import { resendThankYou } from '../../lib/mail/thank-you';
 
 export const prerender = false;
 
@@ -20,6 +21,7 @@ const config = readHireConfig(process.env);
 const dependencies = {
   store: firestoreStore(),
   notifier: resendNotifier(config),
+  thankYou: resendThankYou(config),
   limiter,
   now: () => new Date(),
   analytics: recorder,

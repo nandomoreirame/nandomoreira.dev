@@ -1,5 +1,8 @@
+import type { JourneyData } from '../analytics/journey';
 import type { Recorder } from '../analytics/recorder';
-import { isReachableContact } from '../sales/contact';
+import type { ThankYouSender } from '../mail/thank-you';
+import { thankYouMail } from '../mail/thank-you';
+import { isEmailContact, isReachableContact } from '../sales/contact';
 import { salesFormToPayload, salesOriginOf } from '../sales/form';
 import { type FormOutcome, formRedirect, formToPayload } from './form';
 import type { Notifier } from './notify';
@@ -17,6 +20,8 @@ export interface Dependencies {
   readTimeoutMs?: number;
   /** Optional so tests and a site without the analytics secret behave as before. */
   analytics?: Pick<Recorder, 'record' | 'journey'>;
+  /** Optional: confirmation to the visitor after a form briefing with an e-mail. */
+  thankYou?: ThankYouSender;
 }
 
 /**
@@ -69,7 +74,7 @@ const syntheticId = (): string =>
 
 export const handleHire = async (
   request: Request,
-  { store, notifier, limiter, now, readTimeoutMs, analytics }: Dependencies,
+  { store, notifier, limiter, now, readTimeoutMs, analytics, thankYou }: Dependencies,
 ): Promise<Response> => {
   const fromForm = isForm(request);
 
@@ -154,7 +159,7 @@ export const handleHire = async (
     return fail('unavailable');
   }
 
-  let journey: string | undefined;
+  let journey: JourneyData | undefined;
   if (analytics) {
     // Measuring never costs the lead (REQ-006, REQ-012): the record is already
     // stored, so an analytics failure here must not turn into an error the
@@ -182,6 +187,16 @@ export const handleHire = async (
      * Punishing the caller for the mail provider's outage would make them
      * retry and duplicate a record that was already stored (REQ-006).
      */
+  }
+
+  // Form only, and only when the contact is an e-mail: agents and WhatsApp
+  // contacts never get an automatic confirmation.
+  if (fromForm && thankYou && isEmailContact(briefing.contact)) {
+    try {
+      await thankYou(briefing.contact.trim(), await thankYouMail({ name: briefing.from, kind: 'briefing' }));
+    } catch {
+      console.warn('hire: thank-you could not be sent');
+    }
   }
 
   return accepted(id);

@@ -80,9 +80,7 @@ describe('createRecorder', () => {
     expect(Date.now() - started).toBeLessThan(500);
 
     await expect(createRecorder({ store: failing, config, now }).record(request(), hit)).resolves.toBeUndefined();
-    await expect(createRecorder({ store: failing, config, now }).journey(request())).resolves.toContain(
-      'No journey recorded today.',
-    );
+    await expect(createRecorder({ store: failing, config, now }).journey(request())).resolves.toBeUndefined();
   });
 
   it('finds the journey of the same visitor on the same day', async () => {
@@ -93,8 +91,7 @@ describe('createRecorder', () => {
     await recorder.record(request({ 'user-agent': `${CHROME} Other` }), { ...hit, path: '/lab' });
 
     const journey = await recorder.journey(request());
-    expect(journey).toContain('/sobre');
-    expect(journey).not.toContain('/lab');
+    expect(journey?.views.map((view) => view.path)).toEqual(['/sobre']);
   });
 
   it('writes several hits of one request in a single store call', async () => {

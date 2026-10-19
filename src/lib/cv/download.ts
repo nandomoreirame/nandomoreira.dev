@@ -1,11 +1,18 @@
+import { createElement as h } from 'react';
+import { render, toPlainText } from 'react-email';
 import { Resend } from 'resend';
-import type { Recorder } from '../analytics/recorder';
 import { z } from 'zod';
+import CvNotification from '../../emails/cv-notification';
+import type { JourneyData } from '../analytics/journey';
+import type { Recorder } from '../analytics/recorder';
 import type { HireConfig } from '../hire/config';
 import { getFirestoreClient } from '../hire/firestore';
 import { FORM_HONEYPOT } from '../hire/form';
 import { type Limiter, clientIpOf } from '../hire/rate-limit';
 import { readLimitedText } from '../hire/read-body';
+import type { OutgoingMail } from '../mail/outgoing';
+import type { ThankYouSender } from '../mail/thank-you';
+import { thankYouMail } from '../mail/thank-you';
 
 import { CV_PAGE } from './paths';
 
@@ -59,7 +66,7 @@ export interface CvStore {
 }
 
 export interface CvNotifier {
-  send: (download: CvDownload, id: string, journey?: string) => Promise<void>;
+  send: (download: CvDownload, id: string, journey?: JourneyData) => Promise<void>;
 }
 
 export interface CvDependencies {
@@ -69,6 +76,8 @@ export interface CvDependencies {
   now: () => Date;
   /** Optional so tests and a site without the analytics secret behave as before. */
   analytics?: Pick<Recorder, 'record' | 'journey'>;
+  /** Optional: confirmation to the visitor when they left an e-mail. */
+  thankYou?: ThankYouSender;
 }
 
 const RETENTION_MONTHS = 12;
@@ -105,7 +114,7 @@ export const toCvDownload = (
  */
 export const handleCvDownload = async (
   request: Request,
-  { store, notifier, limiter, now, analytics }: CvDependencies,
+  { store, notifier, limiter, now, analytics, thankYou }: CvDependencies,
 ): Promise<Response> => {
   if (request.method !== 'POST') return redirect(CV_PAGE);
 
@@ -143,7 +152,7 @@ export const handleCvDownload = async (
     return outcome('ok');
   }
 
-  let journey: string | undefined;
+  let journey: JourneyData | undefined;
   if (analytics) {
     // Measuring never costs the lead (REQ-006, REQ-012): the record is already
     // stored, so an analytics failure here must not turn into an error the
@@ -169,6 +178,14 @@ export const handleCvDownload = async (
     // The record survives with notified: false, so it can still be found.
   }
 
+  if (thankYou && download.email) {
+    try {
+      await thankYou(download.email, await thankYouMail({ name: download.name, kind: 'cv' }));
+    } catch {
+      console.warn('cv: thank-you could not be sent');
+    }
+  }
+
   return outcome('ok');
 };
 
@@ -182,18 +199,24 @@ export const firestoreCvStore = (): CvStore => ({
   },
 });
 
-export const renderCvNotification = (download: CvDownload, id: string, journey?: string): string =>
-  [
-    'Someone downloaded your CV from /curriculo and left their details.',
-    '',
-    `Name:     ${download.name ?? 'not given'}`,
-    `Company:  ${download.company ?? 'not given'}`,
-    `E-mail:   ${download.email ?? 'not given'}`,
-    `Received: ${download.receivedAt}`,
-    `Record:   ${id}`,
-    '',
-    ...(journey ? [journey, ''] : []),
-  ].join('\n');
+/**
+ * Renders the CV download notification from the React Email template (pt-BR).
+ */
+export const cvMail = async (
+  download: CvDownload,
+  id: string,
+  journey?: JourneyData,
+): Promise<OutgoingMail> => {
+  const who = download.name ?? download.company ?? download.email ?? 'Alguém';
+  const html = await render(h(CvNotification, { download, id, journey }));
+  const mail: OutgoingMail = {
+    subject: `${who} baixou seu currículo`,
+    html,
+    text: toPlainText(html),
+  };
+  if (download.email) mail.replyTo = download.email;
+  return mail;
+};
 
 /** Same Resend account and addresses as the contact form (HireConfig). */
 export const resendCvNotifier = (config: HireConfig): CvNotifier => {
@@ -201,11 +224,14 @@ export const resendCvNotifier = (config: HireConfig): CvNotifier => {
 
   return {
     send: async (download, id, journey) => {
+      const mail = await cvMail(download, id, journey);
       const { error } = await client.emails.send({
         from: config.notifyFrom,
         to: config.notifyTo,
-        subject: `CV downloaded by ${download.name ?? download.company ?? download.email}`,
-        text: renderCvNotification(download, id, journey),
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text,
+        ...(mail.replyTo ? { replyTo: mail.replyTo } : {}),
       });
 
       // The SDK reports failure in the payload rather than by throwing.

@@ -1,14 +1,22 @@
 import { describe, expect, it } from 'vitest';
+import type { JourneyData } from '../../src/lib/analytics/journey';
 import type { Hit, Recorder } from '../../src/lib/analytics/recorder';
-import { handleCvDownload, renderCvNotification, toCvDownload } from '../../src/lib/cv/download';
+import { cvMail, handleCvDownload, toCvDownload } from '../../src/lib/cv/download';
 import { handleHire } from '../../src/lib/hire/handler';
-import { renderNotification } from '../../src/lib/hire/notify';
+import { briefingMail } from '../../src/lib/hire/notify';
 import { createLimiter } from '../../src/lib/hire/rate-limit';
 import { toStoredBriefing } from '../../src/lib/hire/store';
 
 const now = () => new Date('2026-10-14T17:10:00.000Z');
 
-const analytics = (journey: () => Promise<string>) => {
+const sampleJourney: JourneyData = {
+  entry: 'direto',
+  utm: 'nenhuma',
+  country: 'BR',
+  views: [{ time: '14:02', path: '/lab/forja' }],
+};
+
+const analytics = (journey: () => Promise<JourneyData | undefined>) => {
   const hits: Hit[] = [];
   const recorder: Pick<Recorder, 'record' | 'journey'> = {
     record: async (_request, hit) => void hits.push(hit),
@@ -17,13 +25,15 @@ const analytics = (journey: () => Promise<string>) => {
   return { hits, recorder };
 };
 
-const sent: Array<{ id: string; journey?: string }> = [];
-const notifier = { send: async (_item: unknown, id: string, journey?: string) => void sent.push({ id, journey }) };
+const sent: Array<{ id: string; journey?: JourneyData }> = [];
+const notifier = {
+  send: async (_item: unknown, id: string, journey?: JourneyData) => void sent.push({ id, journey }),
+};
 
 describe('hire conversion', () => {
   it('records the conversion and passes the journey to the notification', async () => {
     sent.length = 0;
-    const { hits, recorder } = analytics(async () => 'Journey today\n  14:02  /lab/forja');
+    const { hits, recorder } = analytics(async () => sampleJourney);
     const response = await handleHire(
       new Request('https://nandomoreira.dev/api/hire', {
         method: 'POST',
@@ -41,7 +51,7 @@ describe('hire conversion', () => {
 
     expect(response.status).toBe(202);
     expect(hits[0]).toMatchObject({ kind: 'conversion', path: '/api/hire', conversion: { type: 'hire', refId: 'doc-1' } });
-    expect(sent[0]?.journey).toContain('/lab/forja');
+    expect(sent[0]?.journey?.views.some((view) => view.path === '/lab/forja')).toBe(true);
   });
 
   it('still notifies when there is no analytics', async () => {
@@ -113,7 +123,13 @@ describe('a failure while measuring never costs the lead', () => {
 describe('cv conversion', () => {
   it('records the download and passes the journey', async () => {
     sent.length = 0;
-    const { hits, recorder } = analytics(async () => 'Journey today\n  14:05  /curriculo');
+    const cvJourney: JourneyData = {
+      entry: 'direto',
+      utm: 'nenhuma',
+      country: 'BR',
+      views: [{ time: '14:05', path: '/curriculo' }],
+    };
+    const { hits, recorder } = analytics(async () => cvJourney);
     await handleCvDownload(
       new Request('https://nandomoreira.dev/api/cv', {
         method: 'POST',
@@ -129,30 +145,31 @@ describe('cv conversion', () => {
       },
     );
     expect(hits[0]?.conversion).toEqual({ type: 'cv', refId: 'cv-1' });
-    expect(sent[0]?.journey).toContain('/curriculo');
+    expect(sent[0]?.journey?.views.some((view) => view.path === '/curriculo')).toBe(true);
   });
 });
 
 describe('notification text', () => {
-  it('appends the journey to the briefing mail, before the briefing body', () => {
+  it('includes the journey in the briefing mail', async () => {
     const briefing = toStoredBriefing({
       payload: { from: 'Ada', contact: 'ada@example.com', brief: 'Oi' },
       sourceIp: '9.9.9.9',
       userAgent: null,
       now: now(),
     });
-    const mail = renderNotification(briefing, 'doc-1', 'Journey today\n  14:02  /lab/forja');
-    expect(mail.indexOf('/lab/forja')).toBeLessThan(mail.indexOf('Briefing\n--------'));
-    expect(renderNotification(briefing, 'doc-1')).not.toContain('Journey');
+    const withJourney = await briefingMail(briefing, 'doc-1', sampleJourney);
+    expect(withJourney.html).toContain('/lab/forja');
+    expect(withJourney.html).toContain('Mensagem');
+    expect((await briefingMail(briefing, 'doc-1')).html).not.toContain('Jornada de hoje');
   });
 
-  it('appends the journey to the CV mail', () => {
+  it('includes the journey in the CV mail', async () => {
     const download = toCvDownload({ name: 'Ada', company: null, email: null }, now());
-    expect(renderCvNotification(download, 'cv-1', 'Journey today')).toContain('Journey today');
+    expect((await cvMail(download, 'cv-1', sampleJourney)).html).toContain('/lab/forja');
   });
 
-  it('names the company in the CV mail', () => {
+  it('names the company in the CV mail', async () => {
     const download = toCvDownload({ name: null, company: 'Acme', email: null }, now());
-    expect(renderCvNotification(download, 'cv-1')).toMatch(/Company:\s+Acme/);
+    expect((await cvMail(download, 'cv-1')).html).toContain('Acme');
   });
 });

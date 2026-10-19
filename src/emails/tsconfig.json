@@ -1,0 +1,9 @@
+{
+  "//": "React Email templates: React JSX, not Astro's preserved JSX. The Astro build reads the nearest tsconfig, so without this it leaves the JSX in and fails (tests/emails/server-bundle.build-test.ts).",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "include": ["./**/*"]
+}

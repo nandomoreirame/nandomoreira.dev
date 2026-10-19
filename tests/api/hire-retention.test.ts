@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderNotification } from '../../src/lib/hire/notify';
+import { briefingMail } from '../../src/lib/hire/notify';
 import { splitForStorage, toStoredBriefing } from '../../src/lib/hire/store';
 
 const now = new Date('2026-10-08T12:00:00.000Z');
@@ -32,14 +32,15 @@ describe('retention (privacy policy: 12 months, network data 30 days)', () => {
     });
   });
 
-  it('leaves the IP out of the notification e-mail, which the TTL cannot reach', () => {
-    const mail = renderNotification(briefing, 'doc-1');
-    expect(mail).not.toContain('9.9.9.9');
-    expect(mail).toContain('probe/1.0');
+  it('leaves the IP out of the notification e-mail, which the TTL cannot reach', async () => {
+    const mail = await briefingMail(briefing, 'doc-1');
+    expect(mail.html).not.toContain('9.9.9.9');
+    expect(mail.text).not.toContain('9.9.9.9');
+    expect(mail.html).toContain('probe/1.0');
   });
 
-  it('carries the new context fields into the notification', () => {
-    const mail = renderNotification(
+  it('carries the new context fields into the notification with form labels', async () => {
+    const mail = await briefingMail(
       toStoredBriefing({
         payload: { from: 'Ada', contact: 'a@b.co', brief: 'Oi', company: 'Acme', interests: ['job', 'consulting'] },
         sourceIp: '1.1.1.1',
@@ -48,7 +49,7 @@ describe('retention (privacy policy: 12 months, network data 30 days)', () => {
       }),
       'doc-2',
     );
-    expect(mail).toContain('Acme');
-    expect(mail).toContain('job, consulting');
+    expect(mail.html).toContain('Acme');
+    expect(mail.html).toContain('Vaga (CLT/PJ), Consultoria');
   });
 });

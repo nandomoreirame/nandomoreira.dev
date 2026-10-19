@@ -24,6 +24,14 @@ export const BUDGET_OPTIONS = BUDGETS.map((value) => ({ value, label: BUDGET_LAB
 
 export const INTEREST_OPTIONS = INTERESTS.map((value) => ({ value, label: INTEREST_LABELS[value] }));
 
+/** Form label for a budget slug; unknown values pass through unchanged. */
+export const budgetLabelOf = (value: string): string =>
+  Object.hasOwn(BUDGET_LABELS, value) ? BUDGET_LABELS[value as Budget] : value;
+
+/** Form label for an interest slug; unknown values pass through unchanged. */
+export const interestLabelOf = (value: string): string =>
+  Object.hasOwn(INTEREST_LABELS, value) ? INTEREST_LABELS[value as Interest] : value;
+
 interface OutcomeMessage {
   role: 'status' | 'alert';
   text: string;

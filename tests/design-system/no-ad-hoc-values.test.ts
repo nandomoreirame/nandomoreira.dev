@@ -4,6 +4,12 @@ import { glob } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
 const TOKEN_FILE = 'src/styles/global.css';
+/**
+ * Mail clients read no CSS variables, so the e-mail templates need literal
+ * colors. They live in one file, held to global.css by tests/emails/tokens.test.ts.
+ */
+const EMAIL_TOKEN_FILE = 'src/emails/_shared/tokens.ts';
+const TOKEN_FILES = new Set([TOKEN_FILE, EMAIL_TOKEN_FILE]);
 
 /**
  * Allowed Tailwind arbitrary values:
@@ -21,8 +27,9 @@ const ALLOWED_ARBITRARY =
 
 const collectSources = async (): Promise<string[]> => {
   const files: string[] = [];
-  for await (const entry of glob('src/**/*.{astro,css,ts}')) {
-    if (relative('.', entry) !== TOKEN_FILE) files.push(entry);
+  // .tsx: the React Email templates (src/emails) are held to the same scale.
+  for await (const entry of glob('src/**/*.{astro,css,ts,tsx}')) {
+    if (!TOKEN_FILES.has(relative('.', entry))) files.push(entry);
   }
   return files;
 };
@@ -38,6 +45,12 @@ describe('no ad-hoc values outside the scale', () => {
     }
 
     expect(offenders).toEqual([]);
+  });
+
+  it('scans the e-mail templates and exempts only their token file', async () => {
+    const sources = await collectSources();
+    expect(sources.some((file) => file.endsWith('.tsx'))).toBe(true);
+    expect(sources).not.toContain(EMAIL_TOKEN_FILE);
   });
 
   it('never uses a Tailwind arbitrary value, which bypasses the scale', async () => {

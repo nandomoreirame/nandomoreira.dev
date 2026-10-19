@@ -3,6 +3,7 @@ import { recorder } from '../../lib/analytics/runtime';
 import { firestoreCvStore, handleCvDownload, resendCvNotifier } from '../../lib/cv/download';
 import { readHireConfig } from '../../lib/hire/config';
 import { createLimiter } from '../../lib/hire/rate-limit';
+import { resendThankYou } from '../../lib/mail/thank-you';
 
 export const prerender = false;
 
@@ -15,6 +16,7 @@ const config = readHireConfig(process.env);
 const dependencies = {
   store: firestoreCvStore(),
   notifier: resendCvNotifier(config),
+  thankYou: resendThankYou(config),
   limiter,
   now: () => new Date(),
   analytics: recorder,
