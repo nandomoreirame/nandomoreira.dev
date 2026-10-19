@@ -43,7 +43,9 @@ describe('highlighted code meets AA', () => {
   });
 
   it('renders code with an inline theme, which is the blind spot being covered', async () => {
-    const [first] = await withCode();
+    // A fence with a language gets token colours; a bare ``` is plaintext, one
+    // colour only (the homelab post, published 2026-10-19, has only those).
+    const [first] = (await withCode()).filter((entry) => /```[a-z]/.test(entry.body ?? ''));
     const html = await render(first);
 
     expect(blockBackground(html), 'no <pre> background: the selector drifted').toBeDefined();
