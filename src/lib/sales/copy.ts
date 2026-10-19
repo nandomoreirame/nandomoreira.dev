@@ -102,12 +102,24 @@ export const SALES_COPY = {
     { question: 'O site fica no meu nome?', answer: 'Sim. O domínio, as contas e o projeto ficam no seu nome, e você nunca fica preso a mim.' },
     { question: 'E depois da entrega, você continua ajudando?', answer: 'Sim. Continuo acompanhando o projeto, com suporte, ajustes e evolução conforme o seu negócio cresce.' },
   ],
-  contact: {
-    eyebrow: 'Primeiro passo',
-    title: 'Vamos tirar sua ideia do papel?',
-    lead: 'A primeira conversa é sem compromisso. Você conta, eu escuto e te digo o caminho mais simples.',
-    note: 'Respondo pessoalmente, pelo canal que você escolher.',
-    submit: 'Quero conversar sobre meu projeto',
-    whatsapp: 'Prefiro conversar pelo WhatsApp',
-  },
+  /** Quote calls between the landing sections, in page order; the last one closes the page. */
+  ctas: [
+    {
+      title: 'Já sabe o que precisa?',
+      text: 'Me conta como é o seu negócio e eu digo qual desses caminhos faz mais sentido para você.',
+    },
+    {
+      title: 'Não precisa entender de tecnologia',
+      text: 'Essa parte fica comigo. Você me conta o que quer e eu cuido do resto, explicando cada passo.',
+    },
+    {
+      title: 'Quer ser o próximo projeto no ar?',
+      text: 'Conte o que você tem hoje e onde quer chegar. Eu digo o que dá para fazer e o que não dá.',
+    },
+    {
+      title: 'Vamos conversar sobre o seu projeto?',
+      text: 'Quem atende é quem constrói. Sem intermediário, sem jargão.',
+    },
+  ],
+  ctaButton: 'Pedir orçamento',
 } as const;

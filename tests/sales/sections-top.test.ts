@@ -13,7 +13,7 @@ describe('SalesHero', () => {
   it('has the page h1 and the two calls', async () => {
     const out = await html(SalesHero);
     expect(out.match(/<h1/g)).toHaveLength(1);
-    expect(out).toContain('href="#contato"');
+    expect(out).toContain('href="https://nandomoreira.dev/contato?origem=landing"');
     expect(out).toContain('href="#como-trabalho"');
   });
 

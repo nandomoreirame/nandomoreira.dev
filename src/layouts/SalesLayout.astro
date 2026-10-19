@@ -3,7 +3,8 @@ import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { absoluteUrl } from '../lib/aeo/urls';
 import { ogImagePath } from '../lib/og/pages';
 import { metaDescription } from '../lib/seo/meta';
-import { salesPath, salesUrl } from '../lib/sales/host';
+import { detailFor } from '../lib/sales/catalog';
+import { salesContactLink, salesPath, salesUrl } from '../lib/sales/host';
 import { serviceLd } from '../lib/sales/service-ld';
 import { contactGoPath } from '../lib/analytics/outbound';
 import FloatingActions from '../components/sales/FloatingActions.astro';
@@ -27,6 +28,8 @@ const canonical = salesUrl(slug);
 const ogImage = absoluteUrl(new URL('https://nandomoreira.dev'), ogImagePath(salesPath(slug, false)));
 const jsonLd = serialiseJsonLd(serviceLd({ name: serviceName ?? title, description, url: canonical }));
 const home = salesPath();
+// The one contact form lives on the main site; a detail page passes its service along.
+const contact = salesContactLink(Astro.url, slug ?? 'landing', slug ? detailFor(slug)?.service : undefined);
 const year = new Date().getUTCFullYear();
 
 const NAV = [
@@ -85,10 +88,10 @@ const link =
           </ul>
         </nav>
         <a
-          href="#contato"
-          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height,padding] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 group-data-scrolled:px-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          href={contact}
+          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          Conversar
+          Orçamento
         </a>
       </div>
     </header>

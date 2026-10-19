@@ -35,6 +35,22 @@ const serviceFromHtml = (html: string) => {
   return service!;
 };
 
+describe('SalesLayout header call', () => {
+  it('sends "Orçamento" to the one contact form on the main site', async () => {
+    const html = await render();
+    expect(html).toMatch(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>\s*Orçamento\s*</);
+    expect(html).not.toContain('href="#contato"');
+  });
+
+  it('shrinks only the height of the header call on scroll, never its width', async () => {
+    const html = await render();
+    const call = html.match(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>/)?.[0] ?? '';
+    expect(call).toMatch(/group-data-scrolled:min-h-9/);
+    expect(call).not.toMatch(/group-data-scrolled:px-/);
+    expect(call).not.toMatch(/transition-\[[^\]]*padding/);
+  });
+});
+
 describe('serviceLd', () => {
   it('describes a Service provided by the person', () => {
     const ld = serviceLd({ name: 'Site institucional', description: 'd', url: 'https://x/servicos' });

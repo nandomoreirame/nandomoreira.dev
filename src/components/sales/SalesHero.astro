@@ -2,9 +2,11 @@
 import { Icon } from 'astro-icon/components';
 import { withCareerYears } from '../../lib/format/career-years';
 import { SALES_COPY } from '../../lib/sales/copy';
+import { salesContactLink } from '../../lib/sales/host';
 import HeroArt from './HeroArt.astro';
 
 const { hero } = SALES_COPY;
+const contact = salesContactLink(Astro.url, 'landing');
 ---
 
 <section aria-labelledby="hero-title" class="mx-auto grid w-full max-w-page gap-xl px-lg py-2xl lg:grid-cols-2 lg:items-center lg:py-3xl">
@@ -15,7 +17,7 @@ const { hero } = SALES_COPY;
     <h1 id="hero-title" class="font-serif text-display font-normal text-foreground">{hero.title}</h1>
     <p class="text-lead text-muted-foreground">{hero.lead}</p>
     <div class="flex flex-wrap gap-md">
-      <a href="#contato" class="inline-flex min-h-11 items-center rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{hero.primary}</a>
+      <a href={contact} class="inline-flex min-h-11 items-center rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{hero.primary}</a>
       <a href="#como-trabalho" class="inline-flex min-h-11 items-center gap-xs rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {hero.secondary}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
       </a>

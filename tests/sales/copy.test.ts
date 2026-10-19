@@ -20,6 +20,12 @@ describe('invented-number gate', () => {
 });
 
 describe('SALES_COPY', () => {
+  it('has four quote calls, each with its own title and no dashes', () => {
+    expect(SALES_COPY.ctas).toHaveLength(4);
+    expect(new Set(SALES_COPY.ctas.map((cta) => cta.title)).size).toBe(4);
+    for (const cta of SALES_COPY.ctas) expect(`${cta.title} ${cta.text}`).not.toMatch(/[\u2013\u2014]/);
+  });
+
   it('maps each of the 6 situations to an existing service', () => {
     const slugs = SALES_SERVICES.map((service) => service.slug);
     expect(SALES_COPY.situations).toHaveLength(6);
