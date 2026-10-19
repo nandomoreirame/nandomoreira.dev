@@ -1,0 +1,37 @@
+---
+import { PALETTE_COPY } from '../../lib/search/copy';
+
+interface Props {
+  /** The page's markdown and AI view, offered under General (docs/specs/ai-view). */
+  mdPath?: string;
+  aiPath?: string;
+  /** On the AI view, the page it describes (replaces aiPath). */
+  humanPath?: string;
+}
+
+const { mdPath, aiPath, humanPath } = Astro.props;
+---
+
+{/* Filled and opened by src/scripts/palette.ts, loaded on demand
+    (docs/specs/command-palette, D1). Without JS it is never shown. */}
+<dialog data-command-palette data-palette-md={mdPath} data-palette-ai={aiPath} data-palette-human={humanPath} aria-label={PALETTE_COPY.label} class="palette">
+  <div class="flex flex-col">
+    <input
+      type="text"
+      role="combobox"
+      aria-label={PALETTE_COPY.label}
+      aria-controls="palette-list"
+      aria-expanded="true"
+      aria-autocomplete="list"
+      autocomplete="off"
+      maxlength="100"
+      spellcheck="false"
+      placeholder={PALETTE_COPY.placeholder}
+      class="w-full border-b border-border bg-transparent px-lg py-md text-body text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+    />
+    <ul id="palette-list" role="listbox" aria-label={PALETTE_COPY.label} class="palette-list flex flex-col overflow-y-auto py-sm"></ul>
+    <p aria-live="polite" class="sr-only" data-palette-status></p>
+  </div>
+</dialog>
+{/* Outside the dialog: "Link copiado" is set after it closes and must stay announced. */}
+<p aria-live="polite" class="sr-only" data-palette-announce></p>

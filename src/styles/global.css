@@ -835,6 +835,110 @@
     right: var(--spacing-md);
   }
 
+  /* Command palette (docs/specs/command-palette, REQ-018). A modal <dialog>:
+     overlay and display are discrete, so allow-discrete keeps it in the top
+     layer until the fade out ends, like the lightbox. */
+  .palette {
+    margin: auto;
+    padding: 0;
+    width: min(28.8rem, 100% - 2 * var(--spacing-md));
+    max-height: 44.8dvh;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-foreground);
+    box-shadow: var(--shadow-window);
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .palette[open] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .palette[open] {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  .palette::backdrop {
+    background: color-mix(in oklab, var(--color-background) 72%, transparent);
+    backdrop-filter: blur(var(--blur-sm));
+    opacity: 0;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .palette[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .palette[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .palette-list {
+    max-height: calc(44.8dvh - 4rem);
+    scrollbar-width: none;
+  }
+
+  .palette-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The surface alone is 1.06:1: the primary bar is the non-color cue (WCAG 1.4.11). */
+  .palette-list [role='option'][aria-selected='true'] {
+    background: var(--color-surface-elevated);
+    color: var(--color-foreground);
+    box-shadow: inset 2px 0 0 var(--color-primary);
+  }
+
+  /* The hint is for keyboards: a touch screen opens the palette by the header button.
+     Its display lives here, not in a utility: utilities sit in a later layer
+     and would override the display: none below. */
+  [data-palette-hint] {
+    display: inline-flex;
+  }
+
+  /* Its touch-screen stand-in: the hero's link to /sobre. */
+  [data-hero-about] {
+    display: none;
+  }
+
+  @media (hover: none) {
+    [data-palette-hint] {
+      display: none;
+    }
+
+    [data-hero-about] {
+      display: block;
+    }
+  }
+
+  /* Last in the block, after any display rule: tests/design-system/motion.test.ts
+     reads from the first reduced-motion query on. */
+  @media (prefers-reduced-motion: reduce) {
+    .palette,
+    .palette::backdrop {
+      transition: none;
+    }
+  }
+
+  /* End command palette */
+
   /* Trims a label's box to its capitals, so a flex row centres the letters on
      the icon instead of the font's ascent/descent, which varies by engine. */
   .text-trim-cap {
