@@ -39,3 +39,22 @@ export const parseReleases = (modules: Record<string, { frontmatter: unknown }>)
       return parsed.data;
     })
     .sort((a, b) => b.date.localeCompare(a.date));
+
+const commitsOf = (tag: string): number => Number(tag.split('.')[1]);
+
+/**
+ * Today's release carries the live tag, the one the footer shows, so the day
+ * keeps counting until /release-day writes it down. A past day keeps the tag
+ * it was written with, and a live count below it (GitHub down, older
+ * fallback) never lowers it.
+ */
+export const withLiveTag = (releases: Release[], { tag, today }: { tag: string; today: string }): Release[] =>
+  releases.map((release, index) =>
+    index === 0 && release.date === today && commitsOf(tag) > commitsOf(release.version)
+      ? { ...release, version: tag }
+      : release,
+  );
+
+/** YYYY-MM-DD in São Paulo, the clock the releases are dated by. */
+export const saoPauloToday = (now: Date): string =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(now);

@@ -1,5 +1,5 @@
 import { absoluteUrl } from '../aeo/urls';
-import { parseReleases, type Release } from './data';
+import { parseReleases, saoPauloToday, withLiveTag, type Release } from './data';
 
 /**
  * The /releases/17 page: one release per day of work on the current version,
@@ -23,6 +23,10 @@ export const RELEASES: Release[] = parseReleases(
   import.meta.glob<{ frontmatter: unknown }>('../../data/releases/*.md', { eager: true }),
 );
 
+/** The releases as the page shows them: today's one with the live tag. */
+export const liveReleases = (tag: string, now: Date = new Date()): Release[] =>
+  withLiveTag(RELEASES, { tag, today: saoPauloToday(now) });
+
 /** Anchor of a day on the page: "dia-2026-10-19". */
 export const releaseAnchor = (release: Pick<Release, 'date'>): string => `dia-${release.date}`;
 
@@ -39,7 +43,7 @@ const DATE = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', y
 /** "19 de outubro de 2026". */
 export const releaseDateOf = (date: string): string => DATE.format(new Date(`${date}T00:00:00Z`));
 
-export const releasesMarkdown = ({ site }: { site: URL }): string => {
+export const releasesMarkdown = ({ site, releases = RELEASES }: { site: URL; releases?: Release[] }): string => {
   const lines: string[] = [
     '---',
     'title: Lançamentos',
@@ -52,7 +56,7 @@ export const releasesMarkdown = ({ site }: { site: URL }): string => {
     '',
   ];
 
-  for (const release of RELEASES) {
+  for (const release of releases) {
     lines.push(
       `## ${releaseDateOf(release.date)}: ${release.title} (${release.version})`,
       '',

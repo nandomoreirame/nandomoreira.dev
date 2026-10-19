@@ -9,10 +9,11 @@ import { loadSiteCommits } from '../../lib/history/commits';
 import { displayNameOf } from '../../lib/content/display-name';
 import { getProfile } from '../../lib/content';
 import { HISTORY_PATH, siteVersionTag } from '../../lib/history/history';
-import { RELEASES, RELEASES_LEAD, releaseAnchor, releaseDateOf, releaseTocLabelOf } from '../../lib/releases/releases';
+import { RELEASES_LEAD, releaseAnchor, releaseDateOf, releaseTocLabelOf, liveReleases } from '../../lib/releases/releases';
 
 const profile = await getProfile();
 const tag = siteVersionTag(await loadSiteCommits());
+const RELEASES = liveReleases(tag);
 const toc = RELEASES.map((release) => ({ depth: 2 as const, slug: releaseAnchor(release), text: releaseTocLabelOf(release) }));
 ---
 

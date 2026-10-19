@@ -1,7 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { RELEASES } from '../../src/lib/releases/releases';
-import { parseReleases, releaseSchema } from '../../src/lib/releases/data';
+import { parseReleases, releaseSchema, saoPauloToday, withLiveTag } from '../../src/lib/releases/data';
 
 const valid = {
   version: 'v17.800',
@@ -58,5 +58,37 @@ describe('release files', () => {
 
     expect(RELEASES).toHaveLength(files.length);
     expect(RELEASES.map(release => `${release.date}.md`).sort()).toEqual(files.sort());
+  });
+});
+
+describe('withLiveTag', () => {
+  const day = (date: string, version: string) => ({ ...valid, date, version });
+  const releases = [day('2026-10-19', 'v17.761'), day('2026-10-18', 'v17.686')];
+
+  it("gives today's release the live tag, the same one the footer shows", () => {
+    const live = withLiveTag(releases, { tag: 'v17.763', today: '2026-10-19' });
+
+    expect(live.map(release => release.version)).toEqual(['v17.763', 'v17.686']);
+  });
+
+  it('leaves a past day alone, so the next day commits never land on it', () => {
+    expect(withLiveTag(releases, { tag: 'v17.790', today: '2026-10-20' })).toEqual(releases);
+  });
+
+  it('never lowers a tag below what was written, as when GitHub is down and the fallback is older', () => {
+    expect(withLiveTag(releases, { tag: 'v17.746', today: '2026-10-19' })).toEqual(releases);
+  });
+
+  it('does not change the list it receives', () => {
+    withLiveTag(releases, { tag: 'v17.763', today: '2026-10-19' });
+
+    expect(releases[0]?.version).toBe('v17.761');
+  });
+});
+
+describe('saoPauloToday', () => {
+  it('reads the date in São Paulo, not in UTC', () => {
+    expect(saoPauloToday(new Date('2026-10-20T02:30:00Z'))).toBe('2026-10-19');
+    expect(saoPauloToday(new Date('2026-10-20T03:30:00Z'))).toBe('2026-10-20');
   });
 });
