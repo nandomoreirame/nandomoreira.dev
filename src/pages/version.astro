@@ -1,0 +1,113 @@
+---
+import { TITLE_SEPARATOR } from '../lib/seo/meta';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import TechBadge from '../components/ui/TechBadge.astro';
+import TocColumns from '../components/ui/TocColumns.astro';
+import PostTocToggle from '../components/posts/PostTocToggle.astro';
+import VersionTag from '../components/history/VersionTag.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadSiteCommits } from '../lib/history/commits';
+import { RELEASES_PATH } from '../lib/releases/releases';
+import { displayNameOf } from '../lib/content/display-name';
+import { getProfile } from '../lib/content';
+import {
+  HISTORY_LEAD,
+  historyTitle,
+  SITE_VERSIONS,
+  siteVersionTag,
+  periodOf,
+  repoUrl,
+  stackTimeline,
+  tocLabelOf,
+} from '../lib/history/history';
+
+const profile = await getProfile();
+const commits = await loadSiteCommits();
+const versions = [...SITE_VERSIONS].reverse();
+const stack = stackTimeline();
+const toc = [
+  { depth: 2 as const, slug: 'versoes', text: 'Versões' },
+  ...versions.map((version) => ({ depth: 3 as const, slug: `versao-${version.number}`, text: tocLabelOf(version) })),
+  { depth: 2 as const, slug: 'tecnologias', text: 'Tecnologias' },
+];
+---
+
+<BaseLayout
+  title={`Versões do site${TITLE_SEPARATOR}${displayNameOf(profile)}`}
+  description="As versões deste site que sobreviveram no GitHub desde 2015, e todas as tecnologias que passaram por elas."
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader title={historyTitle(new Date())} description={HISTORY_LEAD}>
+      <VersionTag slot="meta" tag={siteVersionTag(commits)} link={{ href: RELEASES_PATH, label: 'Veja o que entrou nesta versão →' }} />
+    </PageHeader>
+
+    <TocColumns items={toc}>
+      <section aria-labelledby="versoes">
+        <SectionHeader id="versoes" title="Versões" step={1} />
+        <ol class="ml-xs flex flex-col gap-xl border-l border-border pl-lg">
+          {
+            versions.map((version) => (
+              <li id={`versao-${version.number}`} class="relative flex scroll-mt-3xl flex-col gap-sm">
+                {/* Marker on the rule; the version you are reading in the accent. */}
+                <span
+                  aria-hidden="true"
+                  class={`absolute top-sm -left-lg size-2 -translate-x-1/2 rounded-full ${version.end ? 'bg-border-strong' : 'bg-primary'}`}
+                />
+                <div class="flex flex-wrap items-center gap-sm">
+                  <span class="inline-flex items-center rounded-sm border border-border bg-surface px-sm py-xs font-mono text-small leading-none text-muted-foreground">
+                    {periodOf(version)}
+                  </span>
+                  <h3 class="text-h3 font-semibold text-foreground">
+                    {version.name}
+                  </h3>
+                </div>
+                <p class="max-w-[68ch] text-body text-foreground">{version.summary}</p>
+                <ul class="flex flex-wrap gap-xs" aria-label={`Stack da v${version.number}`}>
+                  {version.stack.map((name) => (
+                    <li>
+                      <TechBadge name={name} />
+                    </li>
+                  ))}
+                </ul>
+                <p class="flex flex-wrap items-center gap-x-sm font-mono text-small text-muted-foreground">
+                  <a
+                    href={repoUrl(version.repo)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex min-h-6 items-center underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    {version.repo}
+                  </a>
+                  <span aria-hidden="true">·</span>
+                  <span>{version.end ? version.commits : commits} {(version.end ? version.commits : commits) === 1 ? 'commit' : 'commits'}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section aria-labelledby="tecnologias">
+        <SectionHeader id="tecnologias" title="Tecnologias" step={2} count={stack.length} />
+        <p class="mb-lg max-w-[68ch] text-body text-muted-foreground">
+          Tudo o que passou por aqui, na ordem em que apareceu. O número é em quantas versões cada uma ficou.
+        </p>
+        <ul class="flex flex-wrap gap-sm">
+          {
+            stack.map((entry) => (
+              <li class="inline-flex items-center gap-xs">
+                <TechBadge name={entry.name} />
+                <span class="font-mono text-caption text-muted-foreground" title={`Desde a v${entry.firstVersion}`}>
+                  ×{entry.versions}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </TocColumns>
+
+    <PostTocToggle />
+  </article>
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** v<versions>.<commits>. */
+  tag: string;
+  link?: { href: string; label: string };
+}
+
+const { tag, link } = Astro.props;
+---
+
+{/* Same strip as UpdatedAt: the slot="meta" of a PageHeader (/version, /releases). */}
+<p
+  data-version-tag
+  class="flex flex-wrap items-center gap-sm border-l-2 border-primary pl-md font-mono text-small text-muted-foreground"
+>
+  <Icon name="lucide:git-commit-horizontal" aria-hidden="true" class="size-4 shrink-0" />
+  <span>Você está na <span class="text-primary">{tag}</span>{link ? ':' : '.'}</span>
+  {
+    link && (
+      <a
+        href={link.href}
+        class="inline-flex min-h-6 items-center underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        {link.label}
+      </a>
+    )
+  }
+</p>
