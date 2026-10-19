@@ -17,11 +17,13 @@ describe('CommandPalette markup', () => {
     expect(html).toMatch(/<input[^>]*role="combobox"[^>]*maxlength="\d+"/);
   });
 
-  it('names the combobox and shows a visible focus indicator on it', async () => {
+  it('names the combobox and keeps one gray rule under it, with no primary on focus', async () => {
     const html = await (await AstroContainer.create()).renderToString(CommandPalette);
     const input = html.match(/<input[^>]*role="combobox"[^>]*>/)?.[0] ?? '';
     expect(input).toContain('aria-label="Buscar no site"');
-    expect(input).toContain('focus-visible:border-primary');
+    expect(input).toContain('border-b');
+    // The colour comes from .palette input in global.css (Fernando, 2026-10-19).
+    expect(input).not.toMatch(/border-primary|border-border\b/);
   });
 
   it('keeps a live region outside the dialog, so the copy notice survives the close', async () => {

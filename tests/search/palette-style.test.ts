@@ -41,6 +41,14 @@ describe('palette style', () => {
     expect(block).toMatch(/\.palette-list\s*\{[^}]*max-height:\s*calc\(44\.8dvh - 4rem\)/);
   });
 
+  it('has no outer border, only the shadow over the backdrop', () => {
+    expect(block).toMatch(/\.palette\s*\{[^}]*border:\s*0;/);
+  });
+
+  it('rules the input with a gray a little darker than border-strong', () => {
+    expect(block).toMatch(/\.palette input\s*\{\s*border-bottom-color:\s*color-mix\(in oklab, var\(--color-border-strong\) 60%, var\(--color-surface\)\);/);
+  });
+
   it('sits in the middle of the viewport', () => {
     expect(block).toMatch(/\.palette\s*\{[^}]*margin:\s*auto;/);
   });

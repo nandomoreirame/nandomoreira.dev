@@ -843,7 +843,7 @@
     padding: 0;
     width: min(28.8rem, 100% - 2 * var(--spacing-md));
     max-height: 44.8dvh;
-    border: 1px solid var(--color-border-strong);
+    border: 0;
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-foreground);
@@ -888,6 +888,12 @@
     .palette[open]::backdrop {
       opacity: 0;
     }
+  }
+
+  /* One gray rule under the field, the same at rest and focused: no primary
+     (Fernando, 2026-10-19). A little darker than border-strong. */
+  .palette input {
+    border-bottom-color: color-mix(in oklab, var(--color-border-strong) 60%, var(--color-surface));
   }
 
   .palette-list {

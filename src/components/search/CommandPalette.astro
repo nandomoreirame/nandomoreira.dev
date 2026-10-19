@@ -27,7 +27,7 @@ const { mdPath, aiPath, humanPath } = Astro.props;
       maxlength="100"
       spellcheck="false"
       placeholder={PALETTE_COPY.placeholder}
-      class="w-full border-b border-border bg-transparent px-lg py-md text-body text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+      class="w-full border-b bg-transparent px-lg py-md text-body text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
     />
     <ul id="palette-list" role="listbox" aria-label={PALETTE_COPY.label} class="palette-list flex flex-col overflow-y-auto py-sm"></ul>
     <p aria-live="polite" class="sr-only" data-palette-status></p>
