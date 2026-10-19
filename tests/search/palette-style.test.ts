@@ -33,6 +33,7 @@ describe('palette style', () => {
 
   it('drops the motion for reduced motion', () => {
     expect(block).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.palette/);
+    expect(block).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.palette-toast/);
   });
 
   it('opens 20% narrower than the original 36rem, and 20% shorter again than 56dvh', () => {
@@ -47,6 +48,12 @@ describe('palette style', () => {
 
   it('rules the input with a gray a little darker than border-strong', () => {
     expect(block).toMatch(/\.palette input\s*\{\s*border-bottom-color:\s*color-mix\(in oklab, var\(--color-border-strong\) 60%, var\(--color-surface\)\);/);
+  });
+
+  it('keeps the toast out of sight until it opens, above the corner buttons', () => {
+    expect(block).toMatch(/\.palette-toast\s*\{[^}]*visibility:\s*hidden/);
+    expect(block).toMatch(/\.palette-toast\s*\{[^}]*position:\s*fixed/);
+    expect(block).toMatch(/\.palette-toast\[data-open\]\s*\{[^}]*visibility:\s*visible/);
   });
 
   it('sits in the middle of the viewport', () => {

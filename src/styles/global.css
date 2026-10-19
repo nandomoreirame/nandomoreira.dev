@@ -934,11 +934,35 @@
     }
   }
 
+  /* Copy notice, above the bottom-right stack (two 2.75rem buttons with
+     their borders, one gap). Visibility, not display, so it can fade. */
+  .palette-toast {
+    position: fixed;
+    right: var(--spacing-lg);
+    bottom: calc(var(--spacing-lg) + 2 * (2.75rem + 2px) + 2 * var(--spacing-sm));
+    z-index: 20;
+    width: min(20rem, 100% - 2 * var(--spacing-lg));
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(var(--spacing-sm));
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out),
+      visibility var(--duration-base) allow-discrete;
+  }
+
+  .palette-toast[data-open] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
   /* Last in the block, after any display rule: tests/design-system/motion.test.ts
      reads from the first reduced-motion query on. */
   @media (prefers-reduced-motion: reduce) {
     .palette,
-    .palette::backdrop {
+    .palette::backdrop,
+    .palette-toast {
       transition: none;
     }
   }

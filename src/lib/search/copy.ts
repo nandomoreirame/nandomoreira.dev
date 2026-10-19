@@ -9,6 +9,8 @@ export const PALETTE_COPY = {
   empty: 'Nada encontrado.',
   unavailable: 'A busca está indisponível agora; os atalhos continuam funcionando.',
   copied: 'Link copiado',
+  copiedDetail: 'Agora é só compartilhar.',
+  closeToast: 'Fechar aviso',
   results: (count: number) => (count === 1 ? '1 resultado' : `${count} resultados`),
   groups: {
     general: 'Geral',

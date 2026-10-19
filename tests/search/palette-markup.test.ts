@@ -32,6 +32,20 @@ describe('CommandPalette markup', () => {
     expect(outside).toMatch(/<p[^>]*aria-live="polite"[^>]*data-palette-announce/);
   });
 
+  it('shows the copy notice as a toast: check, title, detail and a 44 px close button', async () => {
+    const html = await (await AstroContainer.create()).renderToString(CommandPalette);
+    const toast = html.match(/<div[^>]*data-palette-toast[^>]*>[\s\S]*?<\/button>/)?.[0] ?? '';
+    expect(toast).toContain('class="palette-toast');
+    expect(toast).toContain('data-icon="lucide:circle-check"');
+    expect(toast).toContain('text-success');
+    expect(toast).toContain('data-palette-announce');
+    expect(toast).toContain('Agora é só compartilhar.');
+    const close = toast.match(/<button[^>]*data-palette-toast-close[^>]*>/)?.[0] ?? '';
+    expect(close).toContain('aria-label="Fechar aviso"');
+    expect(close).toMatch(/min-h-11/);
+    expect(close).toMatch(/min-w-11/);
+  });
+
   it('ships on the main site, never on the sales layout', async () => {
     const container = await AstroContainer.create();
     const site = await container.renderToString(Sobre, { request: new Request('https://nandomoreira.dev/sobre') });

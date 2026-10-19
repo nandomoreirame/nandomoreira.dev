@@ -10,7 +10,10 @@ const markup = `
   <ul id="palette-list" role="listbox"></ul>
   <p aria-live="polite" data-palette-status></p>
 </dialog>
-<p aria-live="polite" data-palette-announce></p>`;
+<div data-palette-toast>
+  <p aria-live="polite" data-palette-announce></p>
+  <button type="button" data-palette-toast-close>x</button>
+</div>`;
 
 const index = [{ kind: 'post', title: 'Meu homelab', path: '/homelab' }];
 
@@ -24,6 +27,7 @@ const input = () => dialog().querySelector('input')!;
 const listbox = () => document.querySelector('[role="listbox"]')!;
 const status = () => document.querySelector('[data-palette-status]')!.textContent;
 const announce = () => document.querySelector('[data-palette-announce]')!.textContent;
+const toast = () => document.querySelector<HTMLElement>('[data-palette-toast]')!;
 
 const type = (value: string) => {
   input().value = value;
@@ -261,9 +265,36 @@ describe('palette module', () => {
       expect(writeText).toHaveBeenCalledWith(window.location.href);
       expect(dialog().hasAttribute('open')).toBe(false);
       expect(announce()).toBe('');
+      expect(toast().hasAttribute('data-open')).toBe(false);
       resolve();
       await flush();
       expect(announce()).toBe('Link copiado');
+      expect(toast().hasAttribute('data-open')).toBe(true);
+    });
+
+    it('closes the toast on its button and on its own after a while', async () => {
+      mockClipboard(async () => undefined);
+      const palette = await load();
+      await palette.open(null);
+      press('Enter');
+      await flush();
+      document.querySelector<HTMLButtonElement>('[data-palette-toast-close]')!.click();
+      expect(toast().hasAttribute('data-open')).toBe(false);
+
+      vi.useFakeTimers();
+      try {
+        await palette.open(null);
+        press('Enter');
+        // flush() rides on setTimeout, which the fake clock would hold forever.
+        await vi.advanceTimersByTimeAsync(0);
+        expect(toast().hasAttribute('data-open')).toBe(true);
+        vi.advanceTimersByTime(palette.TOAST_MS - 1);
+        expect(toast().hasAttribute('data-open')).toBe(true);
+        vi.advanceTimersByTime(1);
+        expect(toast().hasAttribute('data-open')).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('claims nothing when the clipboard rejects', async () => {
@@ -275,6 +306,7 @@ describe('palette module', () => {
       press('Enter');
       await flush();
       expect(announce()).toBe('');
+      expect(toast().hasAttribute('data-open')).toBe(false);
       expect(status()).not.toBe('Link copiado');
     });
 

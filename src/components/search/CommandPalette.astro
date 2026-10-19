@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { PALETTE_COPY } from '../../lib/search/copy';
 
 interface Props {
@@ -33,5 +34,22 @@ const { mdPath, aiPath, humanPath } = Astro.props;
     <p aria-live="polite" class="sr-only" data-palette-status></p>
   </div>
 </dialog>
-{/* Outside the dialog: "Link copiado" is set after it closes and must stay announced. */}
-<p aria-live="polite" class="sr-only" data-palette-announce></p>
+{/* Copy notice (toast). Outside the dialog: "Link copiado" is set after it
+    closes and must stay announced. Shown by data-open, hidden by global.css. */}
+<div data-palette-toast class="palette-toast">
+  <div class="flex items-start gap-sm rounded-md border border-border-strong bg-surface py-sm pl-md shadow-window">
+    <Icon name="lucide:circle-check" class="mt-md size-4 shrink-0 text-success" aria-hidden="true" />
+    <div class="flex flex-col gap-xs py-sm">
+      <p aria-live="polite" class="text-body text-foreground" data-palette-announce></p>
+      <p class="text-small text-muted-foreground">{PALETTE_COPY.copiedDetail}</p>
+    </div>
+    <button
+      type="button"
+      data-palette-toast-close
+      aria-label={PALETTE_COPY.closeToast}
+      class="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      <Icon name="lucide:x" class="size-4" aria-hidden="true" />
+    </button>
+  </div>
+</div>

@@ -14,6 +14,13 @@ const list = dialog.querySelector<HTMLUListElement>('[role="listbox"]')!;
 const status = dialog.querySelector<HTMLElement>('[data-palette-status]')!;
 // Outside the dialog, so "Link copiado" is still announced after it closes.
 const announce = document.querySelector<HTMLElement>('[data-palette-announce]');
+const toast = document.querySelector<HTMLElement>('[data-palette-toast]');
+
+/** How long the copy toast stays up. */
+export const TOAST_MS = 4000;
+let toastTimer: ReturnType<typeof setTimeout> | undefined;
+const hideToast = () => toast?.removeAttribute('data-open');
+toast?.querySelector('[data-palette-toast-close]')?.addEventListener('click', hideToast);
 
 /** Indirection so the test can watch navigation. */
 export const nav = { go: (href: string) => window.location.assign(href) };
@@ -113,7 +120,11 @@ const choose = (option: PaletteOption) => {
       ?.writeText(window.location.href)
       .then(
         () => {
+          // Visible first: a live region inside a hidden toast is not announced.
+          toast?.setAttribute('data-open', '');
           if (announce) announce.textContent = PALETTE_COPY.copied;
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(hideToast, TOAST_MS);
         },
         () => undefined,
       );
