@@ -5,6 +5,8 @@ import CommandPalette from '../components/search/CommandPalette.astro';
 import { aiPathFor, mdPathFor } from '../lib/ai-view/paths';
 import PaletteTrigger from '../components/search/PaletteTrigger.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
+import { loadSiteCommits } from '../lib/history/commits';
+import { siteVersionTag } from '../lib/history/history';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { absoluteUrl, canonicalUrl, pagePath, requireSite } from '../lib/aeo/urls';
@@ -62,6 +64,7 @@ const webPageJsonLd = serialiseJsonLd(
 const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
 const year = new Date().getUTCFullYear();
+const version = siteVersionTag(await loadSiteCommits());
 const hasPosts = posts.length > 0;
 // 404 is noindex without a view; every other page shows the switcher.
 const showSwitcher = !(noindex && view === undefined);
@@ -167,7 +170,7 @@ const switcherView = view ?? 'human';
       </main>
     </div>
 
-    <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} />
+    <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} />
     {/* Bottom-right corner stack: the palette trigger above the AI switcher. */}
     <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm">
       <PaletteTrigger />

@@ -11,7 +11,7 @@ const contacts = [
 const render = async (props: Record<string, unknown> = {}) => {
   const container = await AstroContainer.create();
   return container.renderToString(SiteFooter, {
-    props: { name: 'Fernando Moreira Costa', year: 2026, contacts, ...props },
+    props: { name: 'Fernando Moreira Costa', year: 2026, contacts, version: 'v17.812', ...props },
   });
 };
 
@@ -78,6 +78,13 @@ describe('SiteFooter', () => {
 
     expect(html).not.toContain('<svg');
     expect(html).toContain('font-mono');
+  });
+
+  it('shows the site version, linked to the story of every version', async () => {
+    const html = await render();
+
+    expect(html).toMatch(/<a[^>]*href="\/version"[^>]*>\s*v17\.812\s*<\/a>/);
+    expect(html).toMatch(/<a[^>]*href="\/version"[^>]*aria-label="Versão 17\.812: a história do site"/);
   });
 
   it('caps its inner row at the frame token, like the header', async () => {

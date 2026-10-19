@@ -53,7 +53,7 @@ describe('contextual icons', () => {
   // Terminal Noir (2026-10-16): the footer is one line of mono text, as in
   // the Stitch file; the logos stay on the home contact channels.
   it('keeps the footer channels as text, without logos', async () => {
-    const html = await render(SiteFooter, { name: 'N', year: 2026, contacts });
+    const html = await render(SiteFooter, { name: 'N', year: 2026, contacts, version: 'v17.1' });
     expect(anchor(html, '/go/contato/github')).not.toContain('data-icon');
     expect(anchor(html, '/go/contato/linkedin')).not.toContain('data-icon');
   });
@@ -75,7 +75,7 @@ describe('contextual icons', () => {
     const html = [
       await render(AiSwitcher, { humanPath: '/', view: 'human' }),
       await render(LinkList, { repoUrl: 'https://github.com/x/y', liveUrl: 'https://y.app' }),
-      await render(SiteFooter, { name: 'N', year: 2026, contacts }),
+      await render(SiteFooter, { name: 'N', year: 2026, contacts, version: 'v17.1' }),
     ].join('');
     const svgs = html.match(/<svg[^>]*>/g) ?? [];
     expect(svgs.length).toBeGreaterThan(0);

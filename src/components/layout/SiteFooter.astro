@@ -1,13 +1,16 @@
 ---
 import { contactGoPath } from '../../lib/analytics/outbound';
+import { HISTORY_PATH } from '../../lib/history/history';
 
 interface Props {
   name: string;
   year: number;
   contacts: Array<{ kind: string; value: string }>;
+  /** Version tag, v<versions>.<commits> (BaseLayout reads the commits). */
+  version: string;
 }
 
-const { name, year, contacts } = Astro.props;
+const { name, year, contacts, version } = Astro.props;
 
 const LABELS: Record<string, string> = {
   github: 'GitHub',
@@ -31,6 +34,11 @@ const link =
       <span>© {year} {name}.</span>
       <span aria-hidden="true">·</span>
       <a href="/privacidade" class={link}>Privacidade</a>
+      <span aria-hidden="true">·</span>
+      {/* The easter egg: the tag counts every version this site had (/version). */}
+      <a href={HISTORY_PATH} class={link} aria-label={`Versão ${version.slice(1)}: a história do site`}>
+        {version}
+      </a>
     </p>
 
     <nav class="flex flex-wrap items-center gap-x-lg" aria-label="Canais">

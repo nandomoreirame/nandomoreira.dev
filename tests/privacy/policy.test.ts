@@ -150,7 +150,7 @@ describe('privacy in the site surfaces', () => {
   it('is linked from the footer', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SiteFooter, {
-      props: { name: 'N', year: 2026, contacts: [] },
+      props: { name: 'N', year: 2026, contacts: [], version: 'v17.1' },
     });
     expect(html).toMatch(/<a[^>]*href="\/privacidade"[^>]*>[\s\S]*?Privacidade/);
   });
