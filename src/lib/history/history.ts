@@ -43,6 +43,11 @@ export interface SiteVersion {
   commits: number;
   stack: string[];
   summary: string;
+  /**
+   * A live copy of the version: GitHub Pages or Netlify where it survived,
+   * otherwise a Firebase Hosting site (nandomoreira-v<n>) built from the repo.
+   */
+  preview?: string;
 }
 
 /**
@@ -60,6 +65,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2018-01',
     commits: 20,
     stack: ['Jekyll', 'Ruby', 'Sass', 'Compass', 'Gulp', 'Bower', 'GitHub Pages'],
+    preview: 'https://nandomoreirame.github.io/nandomoreira-jekyll-theme/',
     summary:
       'O primeiro nandomoreira.me: um tema Jekyll com Sass e Compass, compilado pelo Gulp, com as dependências de front-end pelo Bower. Acabou publicado como tema aberto no GitHub Pages.',
   },
@@ -71,6 +77,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2016-06',
     commits: 21,
     stack: ['Jekyll', 'Ruby', 'Sass', 'Travis CI'],
+    preview: 'https://nandomoreira-v2.web.app/',
     summary:
       'Um portfólio separado do blog, ainda em Jekyll, com deploy pelo Travis CI e o html-proofer conferindo os links antes de publicar.',
   },
@@ -82,6 +89,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2019-03',
     commits: 454,
     stack: ['Vue.js', 'Nuxt', 'Stylus', 'PWA', 'Disqus', 'Markdown'],
+    preview: 'https://nandomoreira-v3.web.app/',
     summary:
       'Site e blog como SPA em Vue.js e Nuxt, com os posts em Markdown, PWA, Stylus e comentários pelo Disqus. Foram 454 commits, a versão mais trabalhada antes desta.',
   },
@@ -93,6 +101,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2016-08',
     commits: 2,
     stack: ['HTML', 'Nunjucks', 'Sass', 'Gulp'],
+    preview: 'https://nandomoreira-v4.web.app/',
     summary:
       'Um recomeço em HTML puro, com templates Nunjucks, Sass com Bourbon e Neat e o Gulp de sempre. Durou um dia e dois commits.',
   },
@@ -104,6 +113,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2018-01',
     commits: 10,
     stack: ['Middleman', 'Ruby', 'Slim', 'Sass', 'Gulp'],
+    preview: 'https://nandomoreirame.github.io/middleman-blog/',
     summary:
       'O blog em Middleman, com templates Slim, Sass, Gulp e um service worker gerado pelo sw-precache, numa época em que offline-first era a novidade.',
   },
@@ -115,6 +125,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2024-05',
     commits: 133,
     stack: ['Vue.js', 'Nuxt', 'Vuex', 'Stylus', 'PWA', 'Netlify'],
+    preview: 'https://old-nandomoreirame.netlify.app/',
     summary:
       'De volta ao Nuxt, agora com Vuex, tradução por vue-i18n e a lista dos meus repositórios do GitHub direto na página, publicado na Netlify.',
   },
@@ -126,6 +137,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2019-06',
     commits: 70,
     stack: ['Jekyll', 'Ruby', 'Vue.js', 'Bootstrap', 'Sass'],
+    preview: 'https://nandomoreira-v7.web.app/',
     summary:
       'O blog voltou ao Jekyll, com Vue.js e Bootstrap por cima, os assets montados pelo Laravel Mix e cache offline pelo Workbox.',
   },
@@ -137,6 +149,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2020-06',
     commits: 135,
     stack: ['Gatsby', 'React', 'GraphQL', 'Stylus', 'Mailchimp', 'Netlify'],
+    preview: 'https://nandomoreira-v8.web.app/',
     summary:
       'A mudança para o domínio nandomoreira.dev: Gatsby e React, posts em Markdown consultados por GraphQL, newsletter no Mailchimp e deploy na Netlify.',
   },
@@ -148,6 +161,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2020-03',
     commits: 35,
     stack: ['Gatsby', 'React', 'TypeScript', 'Emotion', 'Netlify'],
+    preview: 'https://nandomoreira-v9.web.app/',
     summary:
       'O blog separado em blog.nandomoreira.dev, ainda em Gatsby, agora com TypeScript e CSS em Emotion. Foi a primeira versão com TypeScript.',
   },
@@ -213,6 +227,7 @@ export const SITE_VERSIONS: SiteVersion[] = [
     end: '2025-12',
     commits: 99,
     stack: ['Svelte', 'SvelteKit', 'TypeScript', 'Bun', 'Tailwind CSS', 'Vitest', 'Playwright', 'Firebase'],
+    preview: 'https://nandomoreira-v15.web.app/',
     summary:
       'SvelteKit com Bun e Tailwind CSS, testes em Vitest e Playwright e hospedagem no Firebase. Foi a primeira versão com um CLAUDE.md no repositório.',
   },
@@ -307,6 +322,7 @@ export const historyMarkdown = ({ site, commits, now }: { site: URL; commits: nu
       version.summary,
       '',
       `- Repositório: ${repoUrl(version.repo)}`,
+      ...(version.preview ? [`- Preview: ${version.preview}`] : []),
       `- Commits: ${count}`,
       `- Stack: ${version.stack.join(', ')}`,
       '',

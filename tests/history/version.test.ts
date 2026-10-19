@@ -204,6 +204,37 @@ describe('history page', () => {
     for (const entry of stackTimeline()) expect(html).toContain(entry.name);
   });
 
+  it('points the previews at a live https copy, the old ones that are already up included', () => {
+    const previews = Object.fromEntries(
+      SITE_VERSIONS.filter(version => version.preview).map(version => [version.number, version.preview]),
+    );
+
+    expect(previews[1]).toBe('https://nandomoreirame.github.io/nandomoreira-jekyll-theme/');
+    expect(previews[5]).toBe('https://nandomoreirame.github.io/middleman-blog/');
+    expect(previews[6]).toBe('https://old-nandomoreirame.netlify.app/');
+    for (const url of Object.values(previews)) expect(url).toMatch(/^https:\/\//);
+    expect(SITE_VERSIONS.at(-1)?.preview).toBeUndefined();
+  });
+
+  it('puts a Preview button beside the repository of every version that has one, opening a new tab', async () => {
+    const html = await render();
+    const buttons = html.match(/<a[^>]*data-version-preview[^>]*>[\s\S]*?<\/a>/g) ?? [];
+
+    expect(buttons).toHaveLength(SITE_VERSIONS.filter(version => version.preview).length);
+    for (const button of buttons) {
+      expect(button).toContain('target="_blank"');
+      expect(button).toContain('rel="noopener noreferrer"');
+      expect(button).toMatch(/>\s*Preview\s*</);
+      expect(button).toMatch(/aria-label="Preview da v\d+ \(abre em nova guia\)"/);
+    }
+  });
+
+  it('lists the preview in the markdown of the versions', () => {
+    const markdown = historyMarkdown({ site, commits: 800, now: new Date('2026-10-19T12:00:00Z') });
+
+    expect(markdown).toContain('- Preview: https://nandomoreirame.github.io/nandomoreira-jekyll-theme/');
+  });
+
   it('opens the repositories outside the site without vouching for them', async () => {
     const links = (await render()).match(/<a[^>]*href="https:\/\/github\.com\/nandomoreirame\/[^"]*"[^>]*>/g) ?? [];
 

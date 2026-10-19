@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { TITLE_SEPARATOR } from '../../lib/seo/meta';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import SectionHeader from '../../components/ui/SectionHeader.astro';
@@ -83,6 +84,19 @@ const toc = [
                   >
                     {version.repo}
                   </a>
+                  {version.preview && (
+                    <a
+                      data-version-preview
+                      href={version.preview}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Preview da v${version.number} (abre em nova guia)`}
+                      class="inline-flex min-h-6 items-center gap-xs rounded-sm border border-border-strong px-sm text-caption uppercase tracking-wide text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      Preview
+                      <Icon name="lucide:arrow-up-right" aria-hidden="true" class="size-3.5 shrink-0" />
+                    </a>
+                  )}
                   <span aria-hidden="true">·</span>
                   <span>{version.end ? version.commits : commits} {(version.end ? version.commits : commits) === 1 ? 'commit' : 'commits'}</span>
                 </p>
