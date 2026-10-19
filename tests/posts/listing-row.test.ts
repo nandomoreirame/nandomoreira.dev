@@ -21,7 +21,7 @@ describe('/posts listing', () => {
     const html = await render();
     expect(html).toMatch(/<a[^>]*href="\/rss\.xml"[^>]*>[\s\S]*?RSS FEED[\s\S]*?<\/a>/);
 
-    const total = (await getAllPosts()).filter((post) => !post.draft).length;
+    const total = (await getAllPosts()).filter(post => !post.draft).length;
     expect(html).toMatch(new RegExp(`data-post-count[^>]*>\\s*${total} artigos?\\s*<`));
   });
 

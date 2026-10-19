@@ -66,10 +66,7 @@ const isForm = (request: Request): boolean =>
 const ID_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 const syntheticId = (): string =>
-  Array.from(
-    { length: 20 },
-    () => ID_ALPHABET[Math.floor(Math.random() * ID_ALPHABET.length)],
-  ).join('');
+  Array.from({ length: 20 }, () => ID_ALPHABET[Math.floor(Math.random() * ID_ALPHABET.length)]).join('');
 
 export const handleHire = async (
   request: Request,
@@ -86,9 +83,7 @@ export const handleHire = async (
 
   // 202: received and stored. Delivery of the notification is not the caller's problem.
   const accepted = (id: string): Response =>
-    fromForm
-      ? formRedirect('ok')
-      : json(202, { status: 'accepted', id, message: 'Briefing received.' });
+    fromForm ? formRedirect('ok') : json(202, { status: 'accepted', id, message: 'Briefing received.' });
 
   if (request.method !== 'POST') return fail('methodNotAllowed');
 

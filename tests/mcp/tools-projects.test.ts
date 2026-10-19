@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getAllProjects } from '../../src/lib/content';
-import type {
-  ProjectDetailAnswer,
-  ProjectSummaryAnswer,
-} from '../../src/lib/mcp/tools/projects';
+import type { ProjectDetailAnswer, ProjectSummaryAnswer } from '../../src/lib/mcp/tools/projects';
 import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
 import { callTool, callToolRaw } from './client';
 
@@ -41,7 +38,7 @@ describe('list_projects', () => {
     expect(Array.isArray(result.projects)).toBe(true);
   });
 
-  it.each(confidentialClientNames())('never names %s, the client of a confidential case', async (client) => {
+  it.each(confidentialClientNames())('never names %s, the client of a confidential case', async client => {
     const all = JSON.stringify(await callTool('list_projects'));
 
     // The archive redacts the client on read; the tool must not undo it.

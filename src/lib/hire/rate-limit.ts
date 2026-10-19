@@ -23,11 +23,7 @@ const DEFAULT_MAX_KEYS = 10_000;
  *
  * Stated here rather than discovered later by someone who trusted it.
  */
-export const createLimiter = ({
-  max,
-  windowMs,
-  maxKeys = DEFAULT_MAX_KEYS,
-}: Options): Limiter => {
+export const createLimiter = ({ max, windowMs, maxKeys = DEFAULT_MAX_KEYS }: Options): Limiter => {
   /** Map keeps insertion order, which is what makes the eviction below oldest-first. */
   const hits = new Map<string, number[]>();
 
@@ -40,7 +36,7 @@ export const createLimiter = ({
   const evict = (now: number) => {
     for (const [candidate, timestamps] of hits) {
       if (hits.size <= maxKeys) return;
-      if (timestamps.every((at) => now - at >= windowMs)) hits.delete(candidate);
+      if (timestamps.every(at => now - at >= windowMs)) hits.delete(candidate);
     }
 
     for (const candidate of hits.keys()) {
@@ -53,7 +49,7 @@ export const createLimiter = ({
     size: () => hits.size,
     check: (key: string): boolean => {
       const now = Date.now();
-      const recent = (hits.get(key) ?? []).filter((at) => now - at < windowMs);
+      const recent = (hits.get(key) ?? []).filter(at => now - at < windowMs);
 
       if (recent.length >= max) {
         // Keep the window, so hammering does not extend the ban indefinitely
@@ -88,7 +84,7 @@ export const createLimiter = ({
 export const clientIpOf = (headers: Headers): string => {
   const chain = (headers.get('x-forwarded-for') ?? '')
     .split(',')
-    .map((entry) => entry.trim())
+    .map(entry => entry.trim())
     .filter(Boolean);
 
   if (chain.length >= 2) return chain[chain.length - 2];

@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { cookieDomainFor, handleSelf } from '../../src/lib/analytics/self';
 
 const TOKEN = 't'.repeat(40);
-const visit = (query: string, method = 'GET') => handleSelf(new Request(`https://nandomoreira.dev/eu${query}`, { method }), TOKEN);
+const visit = (query: string, method = 'GET') =>
+  handleSelf(new Request(`https://nandomoreira.dev/eu${query}`, { method }), TOKEN);
 
 describe('handleSelf', () => {
   it('sets the self cookie with the right token', () => {
@@ -16,7 +17,12 @@ describe('handleSelf', () => {
   });
 
   it('answers 404 without a cookie for a wrong, missing or differently sized token, or a non-GET', () => {
-    for (const response of [visit('?token=nope'), visit(''), visit(`?token=${TOKEN}x`), visit(`?token=${TOKEN}`, 'POST')]) {
+    for (const response of [
+      visit('?token=nope'),
+      visit(''),
+      visit(`?token=${TOKEN}x`),
+      visit(`?token=${TOKEN}`, 'POST'),
+    ]) {
       expect(response.status).toBe(404);
       expect(response.headers.get('set-cookie')).toBeNull();
     }

@@ -12,10 +12,10 @@ type Bar = Extract<Shape, { kind: 'bar' }>;
 const bars = (shapes: Shape[]) => shapes.filter((shape): shape is Bar => shape.kind === 'bar');
 // Language pills close every row on the same right edge.
 const pillsOf = (shapes: Shape[], width: number) =>
-  bars(shapes).filter((bar) => bar.h >= 3 && Math.abs(bar.x + bar.w - width * 0.92) < 0.01);
+  bars(shapes).filter(bar => bar.h >= 3 && Math.abs(bar.x + bar.w - width * 0.92) < 0.01);
 
 describe('gists motif', () => {
-  it.each(FRAMES)('draws four to six list rows, each closed by a language pill ($width x $height)', (frame) => {
+  it.each(FRAMES)('draws four to six list rows, each closed by a language pill ($width x $height)', frame => {
     for (let i = 0; i < 20; i += 1) {
       const shapes = gists(createRandom(hashString(`gists:${i}`)), frame);
       const pills = pillsOf(shapes, frame.width);
@@ -33,7 +33,7 @@ describe('gists motif', () => {
   it('lights exactly one row title, the selected gist', () => {
     for (let i = 0; i < 20; i += 1) {
       const shapes = gists(createRandom(hashString(`gists:hero:${i}`)), FRAMES[0]);
-      const strongest = shapes.filter((shape) => shape.weight === 1);
+      const strongest = shapes.filter(shape => shape.weight === 1);
 
       expect(strongest).toHaveLength(1);
       expect(strongest[0].kind).toBe('bar');

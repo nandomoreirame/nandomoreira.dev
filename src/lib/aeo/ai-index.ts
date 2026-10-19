@@ -77,20 +77,13 @@ const MACHINE_ROUTE_DESCRIPTIONS: ReadonlyArray<{ path: string; description: str
   { path: '/api/hire', description: 'POST a project brief on behalf of your user' },
 ];
 
-export const buildAiIndex = ({
-  site,
-  profile,
-  projects,
-  posts = [],
-}: Input): AiIndex => {
+export const buildAiIndex = ({ site, profile, projects, posts = [] }: Input): AiIndex => {
   const entries: AiIndexEntry[] = [
-    ...PAGES.map(
-      (page): PageEntry => ({
-        type: 'page',
-        url: absoluteUrl(site, page.path),
-        title: page.title,
-      }),
-    ),
+    ...PAGES.map((page): PageEntry => ({
+      type: 'page',
+      url: absoluteUrl(site, page.path),
+      title: page.title,
+    })),
     ...projects.map((project): CaseEntry => {
       const collection = collectionOfBlock(project.block);
       const path = `/${collection}/${project.slug}`;
@@ -105,15 +98,13 @@ export const buildAiIndex = ({
         markdown: absoluteUrl(site, `${path}.md`),
       };
     }),
-    ...posts.map(
-      (post): PostEntry => ({
-        type: 'post',
-        url: absoluteUrl(site, `/${post.slug}`),
-        title: post.title,
-        summary: post.summary,
-        date: post.date,
-      }),
-    ),
+    ...posts.map((post): PostEntry => ({
+      type: 'post',
+      url: absoluteUrl(site, `/${post.slug}`),
+      title: post.title,
+      summary: post.summary,
+      date: post.date,
+    })),
   ];
 
   return {
@@ -127,7 +118,7 @@ export const buildAiIndex = ({
       updatedAt: profile.availability.updatedAt,
     },
     entries,
-    machineRoutes: MACHINE_ROUTE_DESCRIPTIONS.map((route) => ({
+    machineRoutes: MACHINE_ROUTE_DESCRIPTIONS.map(route => ({
       path: route.path,
       url: absoluteUrl(site, route.path),
       description: route.description,

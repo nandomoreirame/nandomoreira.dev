@@ -8,7 +8,7 @@ const PIXEL = '<img src="/v.gif"';
 const pagesUnder = (dir: string): string[] =>
   existsSync(join(CLIENT, dir))
     ? readdirSync(join(CLIENT, dir))
-        .map((name) => join(CLIENT, dir, name, 'index.html'))
+        .map(name => join(CLIENT, dir, name, 'index.html'))
         .filter(existsSync)
     : [];
 

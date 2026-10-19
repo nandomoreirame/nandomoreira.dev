@@ -36,6 +36,6 @@ export const toProfileAnswer = (profile: Profile): ProfileAnswer => ({
   bio: profile.bio,
   positioning: profile.positioning,
   stack: [...profile.stack],
-  services: profile.services.map((service) => ({ ...service })),
+  services: profile.services.map(service => ({ ...service })),
   availability: toAvailabilityAnswer(profile),
 });

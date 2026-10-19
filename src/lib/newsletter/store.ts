@@ -6,8 +6,7 @@ export const NEWSLETTER_COLLECTION = 'newsletter_subscribers';
 const normalise = (email: string): string => email.trim().toLowerCase();
 
 /** Same email, same document: subscribing twice never duplicates (REQ-010). */
-export const subscriberId = (email: string): string =>
-  createHash('sha256').update(normalise(email)).digest('hex');
+export const subscriberId = (email: string): string => createHash('sha256').update(normalise(email)).digest('hex');
 
 /** No IP and no user agent: the limiter uses the IP in memory and forgets it. */
 export const toSubscriber = (email: string, now: Date) => ({

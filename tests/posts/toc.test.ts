@@ -14,14 +14,11 @@ const heading = (depth: number, slug: string, text = slug) => ({ depth, slug, te
 describe('tocFrom', () => {
   it('keeps the section headings and their subsections, in order', () => {
     const items = tocFrom([heading(2, 'a'), heading(3, 'a-1'), heading(4, 'deep'), heading(2, 'b')]);
-    expect(items.map((item) => item.slug)).toEqual(['a', 'a-1', 'b']);
+    expect(items.map(item => item.slug)).toEqual(['a', 'a-1', 'b']);
   });
 
   it('drops the post title, which is the page h1', () => {
-    expect(tocFrom([heading(1, 'title'), heading(2, 'a'), heading(2, 'b')]).map((item) => item.slug)).toEqual([
-      'a',
-      'b',
-    ]);
+    expect(tocFrom([heading(1, 'title'), heading(2, 'a'), heading(2, 'b')]).map(item => item.slug)).toEqual(['a', 'b']);
   });
 
   it('returns nothing below two sections, where an index has nothing to index', () => {
@@ -31,7 +28,11 @@ describe('tocFrom', () => {
 });
 
 describe('PostToc', () => {
-  const items = tocFrom([heading(2, 'o-problema', 'O problema'), heading(3, 'a-causa', 'A causa'), heading(2, 'o-que-fica', 'O que fica')]);
+  const items = tocFrom([
+    heading(2, 'o-problema', 'O problema'),
+    heading(3, 'a-causa', 'A causa'),
+    heading(2, 'o-que-fica', 'O que fica'),
+  ]);
   const render = async () => (await AstroContainer.create()).renderToString(PostToc, { props: { items } });
 
   it('is a named navigation landmark, a native popover on phones', async () => {
@@ -90,7 +91,9 @@ describe('post page', () => {
 
   it('puts a sticky side column left of the text from md when there is an index or a snapshot', () => {
     expect(page).toContain('const hasAside = toc.length > 0 || Boolean(post.snapshot);');
-    expect(page).toContain("'flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl'");
+    expect(page).toContain(
+      "'flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl'",
+    );
     expect(page).toMatch(/<aside[^>]*data-post-aside[^>]*md:sticky md:top-3xl md:self-start/);
     expect(page).toMatch(/<Prose ruled>/);
   });

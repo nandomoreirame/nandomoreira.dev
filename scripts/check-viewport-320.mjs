@@ -22,13 +22,13 @@ if (!baseUrl || paths.length === 0) {
 const WIDTH = 320;
 const CDP_URL = process.env.CDP_URL ?? 'http://127.0.0.1:9222';
 
-const connect = (wsUrl) =>
+const connect = wsUrl =>
   new Promise((resolve, reject) => {
     const socket = new WebSocket(wsUrl);
     const pending = new Map();
     let nextId = 1;
 
-    socket.addEventListener('message', (event) => {
+    socket.addEventListener('message', event => {
       const message = JSON.parse(event.data);
       const waiter = pending.get(message.id);
 
@@ -55,7 +55,7 @@ const connect = (wsUrl) =>
   });
 
 const targets = await (await fetch(`${CDP_URL}/json/list`)).json();
-const target = targets.find((candidate) => candidate.type === 'page');
+const target = targets.find(candidate => candidate.type === 'page');
 
 if (!target) {
   console.error(`FAIL: no page target on ${CDP_URL}. Start Chrome with --remote-debugging-port.`);
@@ -124,7 +124,7 @@ for (const path of paths) {
 
   // These routes ship zero client JavaScript, so layout is settled once the HTML
   // is parsed; a fixed settle beats wiring up load events over a raw socket.
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 1500));
 
   const { result } = await page.send('Runtime.evaluate', {
     expression: MEASURE,

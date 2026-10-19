@@ -18,13 +18,13 @@ if (!baseUrl || paths.length === 0) {
 const CDP_URL = process.env.CDP_URL ?? 'http://127.0.0.1:9222';
 const MAX_TABS = 40;
 
-const connect = (wsUrl) =>
+const connect = wsUrl =>
   new Promise((resolve, reject) => {
     const socket = new WebSocket(wsUrl);
     const pending = new Map();
     let nextId = 1;
 
-    socket.addEventListener('message', (event) => {
+    socket.addEventListener('message', event => {
       const message = JSON.parse(event.data);
       const waiter = pending.get(message.id);
 
@@ -51,7 +51,7 @@ const connect = (wsUrl) =>
   });
 
 const targets = await (await fetch(`${CDP_URL}/json/list`)).json();
-const target = targets.find((candidate) => candidate.type === 'page');
+const target = targets.find(candidate => candidate.type === 'page');
 
 if (!target) {
   console.error(`FAIL: no page target on ${CDP_URL}`);
@@ -60,7 +60,7 @@ if (!target) {
 
 const page = await connect(target.webSocketDebuggerUrl);
 
-const evaluate = async (expression) => {
+const evaluate = async expression => {
   const { result } = await page.send('Runtime.evaluate', { expression, returnByValue: true });
 
   return JSON.parse(result.value);
@@ -138,7 +138,7 @@ let failed = 0;
 
 for (const path of paths) {
   await page.send('Page.navigate', { url: `${baseUrl}${path}` });
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await new Promise(resolve => setTimeout(resolve, 1200));
   await evaluate('JSON.stringify((document.body.focus(), true))');
   await evaluate(BASELINE);
 
@@ -152,9 +152,7 @@ for (const path of paths) {
   // Both conditions, not either: skip-like text pointing nowhere is exactly the
   // broken skip link this is supposed to catch.
   if (first.href !== '#main') {
-    problems.push(
-      `first Tab lands on ${first.tag}${first.href ? `[href=${first.href}]` : ''}, not a link to #main`,
-    );
+    problems.push(`first Tab lands on ${first.tag}${first.href ? `[href=${first.href}]` : ''}, not a link to #main`);
   }
   if (!/pular|skip/i.test(first.text ?? '')) {
     problems.push(`the first stop reads "${first.text}", which does not announce itself as a skip link`);

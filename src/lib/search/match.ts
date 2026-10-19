@@ -6,7 +6,12 @@ export interface Searchable {
 
 /** Lower case, no accents, single spaces: what the visitor types is compared like this. */
 export const normalize = (text: string): string =>
-  text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const terms = (query: string): string[] => normalize(query).split(' ').filter(Boolean);
 

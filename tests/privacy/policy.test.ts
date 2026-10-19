@@ -7,11 +7,11 @@ import { POLICY_UPDATED_AT, privacyMarkdown, privacySections } from '../../src/l
 import Privacidade from '../../src/pages/privacidade.astro';
 
 const site = new URL('https://nandomoreira.dev');
-const all = () => privacySections.flatMap((section) => [section.title, ...section.paragraphs]).join('\n');
+const all = () => privacySections.flatMap(section => [section.title, ...section.paragraphs]).join('\n');
 
 describe('privacy policy content', () => {
   it('covers each topic a reader looks for', () => {
-    const titles = privacySections.map((section) => section.id);
+    const titles = privacySections.map(section => section.id);
     expect(titles).toEqual([
       'responsavel',
       'nao-coletado',
@@ -28,7 +28,7 @@ describe('privacy policy content', () => {
   });
 
   it('explains the optional details before the CV download, and what skipping still records', () => {
-    const section = privacySections.find((candidate) => candidate.id === 'curriculo');
+    const section = privacySections.find(candidate => candidate.id === 'curriculo');
     const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
     expect(text).toMatch(/opcion(al|ais)/);
     expect(text).toContain('12 meses');
@@ -40,14 +40,14 @@ describe('privacy policy content', () => {
   });
 
   it('describes a single contact form, the one the services pages lead to', () => {
-    const text = (privacySections.find((candidate) => candidate.id === 'formulario')?.paragraphs ?? []).join('\n');
+    const text = (privacySections.find(candidate => candidate.id === 'formulario')?.paragraphs ?? []).join('\n');
     expect(text).not.toMatch(/formulários de contato e de serviços/);
     expect(text).toMatch(/página de serviços leva/);
   });
 
   it('mentions the automatic confirmation sent to the e-mail the visitor gave', () => {
     for (const id of ['formulario', 'curriculo']) {
-      const section = privacySections.find((candidate) => candidate.id === id);
+      const section = privacySections.find(candidate => candidate.id === id);
       const text = (section?.paragraphs ?? []).join('\n');
       expect(text, id).toMatch(/confirmação automática/);
       expect(text, id).toMatch(/primeiro nome/);
@@ -55,7 +55,7 @@ describe('privacy policy content', () => {
   });
 
   it('says the newsletter signup sends a confirmation and tells me', () => {
-    const section = privacySections.find((candidate) => candidate.id === 'novidades');
+    const section = privacySections.find(candidate => candidate.id === 'novidades');
     const text = (section?.paragraphs ?? []).join('\n');
     expect(text).toMatch(/confirmação automática/);
     expect(text).toMatch(/aviso/);
@@ -86,15 +86,25 @@ describe('privacy policy content', () => {
   });
 
   it('describes the visit measurement honestly', () => {
-    const section = privacySections.find((candidate) => candidate.id === 'medicao');
+    const section = privacySections.find(candidate => candidate.id === 'medicao');
     const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
-    for (const fact of ['sem nenhum script', 'sem cookie', 'IP não é gravado', 'muda todo dia', '30 dias', '24 meses', 'art. 7º, IX', '/go/', 'utm_source']) {
+    for (const fact of [
+      'sem nenhum script',
+      'sem cookie',
+      'IP não é gravado',
+      'muda todo dia',
+      '30 dias',
+      '24 meses',
+      'art. 7º, IX',
+      '/go/',
+      'utm_source',
+    ]) {
       expect(text).toContain(fact);
     }
   });
 
-  it('never says the counting cannot identify anyone, since the journey joins a lead\'s name', () => {
-    const section = privacySections.find((candidate) => candidate.id === 'nao-coletado');
+  it("never says the counting cannot identify anyone, since the journey joins a lead's name", () => {
+    const section = privacySections.find(candidate => candidate.id === 'nao-coletado');
     const text = (section?.paragraphs ?? []).join('\n');
 
     expect(text).not.toMatch(/nada nela identifica/);
@@ -102,7 +112,7 @@ describe('privacy policy content', () => {
   });
 
   it('says the city and state are approximate and kept only for 30 days', () => {
-    const section = privacySections.find((candidate) => candidate.id === 'medicao');
+    const section = privacySections.find(candidate => candidate.id === 'medicao');
     const text = (section?.paragraphs ?? []).join('\n');
     expect(text).toMatch(/cidade e o estado aproximados/);
     expect(text).toMatch(/só no registro de cada visita/);

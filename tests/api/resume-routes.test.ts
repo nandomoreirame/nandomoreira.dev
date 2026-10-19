@@ -4,8 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { GET as getResumeJson } from '../../src/pages/api/resume.json';
 import { GET as getResumeTxt } from '../../src/pages/api/resume.txt';
 
-const context = () =>
-  ({ site: new URL('https://nandomoreira.dev') }) as unknown as APIContext;
+const context = () => ({ site: new URL('https://nandomoreira.dev') }) as unknown as APIContext;
 
 describe('GET /api/resume.json', () => {
   it('responds 200 as application/json', async () => {
@@ -54,7 +53,7 @@ describe('GET /api/resume.txt', () => {
 describe('both resume routes', () => {
   it.each(['src/pages/api/resume.json.ts', 'src/pages/api/resume.txt.ts'])(
     '%s opts out of prerendering, since it is served by the node adapter',
-    (file) => {
+    file => {
       expect(readFileSync(file, 'utf8')).toContain('prerender = false');
     },
   );

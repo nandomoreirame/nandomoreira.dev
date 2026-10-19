@@ -53,6 +53,10 @@ describe('status pulse CSS', () => {
   it('runs the pulse only for people who did not ask for reduced motion', () => {
     const blocks = css.split('@media (prefers-reduced-motion: no-preference)').slice(1);
 
-    expect(blocks.some((block) => /\[data-status-dot\]\[data-pulse\]::after[\s\S]*?animation:\s*status-pulse/.test(block.slice(0, 600)))).toBe(true);
+    expect(
+      blocks.some(block =>
+        /\[data-status-dot\]\[data-pulse\]::after[\s\S]*?animation:\s*status-pulse/.test(block.slice(0, 600)),
+      ),
+    ).toBe(true);
   });
 });

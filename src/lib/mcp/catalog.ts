@@ -40,7 +40,7 @@ export const MCP_TOOLS = [
 
 export type McpToolName = (typeof MCP_TOOLS)[number]['name'];
 
-const byName = new Map(MCP_TOOLS.map((tool) => [tool.name, tool]));
+const byName = new Map(MCP_TOOLS.map(tool => [tool.name, tool]));
 
 export const toolMeta = (name: McpToolName): { title: string; description: string } => {
   const tool = byName.get(name);

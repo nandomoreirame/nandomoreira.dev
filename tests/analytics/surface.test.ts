@@ -3,15 +3,30 @@ import { isMachineSurface, measurementFor } from '../../src/lib/analytics/surfac
 
 const html = 'text/html; charset=utf-8';
 const measure = (overrides: Partial<Parameters<typeof measurementFor>[0]> = {}) =>
-  measurementFor({ method: 'GET', path: '/sobre', status: 200, contentType: html, headers: new Headers(), ...overrides });
+  measurementFor({
+    method: 'GET',
+    path: '/sobre',
+    status: 200,
+    contentType: html,
+    headers: new Headers(),
+    ...overrides,
+  });
 
 describe('isMachineSurface', () => {
-  it.each(['/llms.txt', '/llms-full.txt', '/AGENTS.md', '/ai-index.json', '/api/resume.json', '/api/resume.txt', '/index.md', '/lab/forja.md', '/ia', '/sobre/ia'])(
-    '%s is a machine surface',
-    (path) => expect(isMachineSurface(path)).toBe(true),
-  );
+  it.each([
+    '/llms.txt',
+    '/llms-full.txt',
+    '/AGENTS.md',
+    '/ai-index.json',
+    '/api/resume.json',
+    '/api/resume.txt',
+    '/index.md',
+    '/lab/forja.md',
+    '/ia',
+    '/sobre/ia',
+  ])('%s is a machine surface', path => expect(isMachineSurface(path)).toBe(true));
 
-  it.each(['/', '/sobre', '/lab/forja', '/media', '/api/hire'])('%s is not', (path) => {
+  it.each(['/', '/sobre', '/lab/forja', '/media', '/api/hire'])('%s is not', path => {
     expect(isMachineSurface(path)).toBe(false);
   });
 });

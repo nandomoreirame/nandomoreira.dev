@@ -15,11 +15,13 @@ const cover = (id: string) => `/api/now/cover/spotify/${id}`;
 const music = (): NowSnapshot['music'] => ({
   topArtists: {
     state: 'ok',
-    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico'].map((name, index) => ({
-      name,
-      url: `https://open.spotify.com/artist/${name.toLowerCase()}`,
-      cover: cover(String(index + 1).repeat(40)),
-    })),
+    items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico'].map(
+      (name, index) => ({
+        name,
+        url: `https://open.spotify.com/artist/${name.toLowerCase()}`,
+        cover: cover(String(index + 1).repeat(40)),
+      }),
+    ),
   },
   recent: {
     state: 'ok',
@@ -49,9 +51,9 @@ const game = (name: string, progress?: RecentGame['progress']): RecentGame => ({
 describe('NowMusic', () => {
   it('renders the twelve local artist photos, with no third-party image', async () => {
     const html = await render(NowMusic, { music: music() });
-    const sources = [...html.matchAll(/<img\b[^>]*\bsrc="([^"]*)"/g)].map((match) => match[1]);
+    const sources = [...html.matchAll(/<img\b[^>]*\bsrc="([^"]*)"/g)].map(match => match[1]);
 
-    expect(sources.filter((src) => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(12);
+    expect(sources.filter(src => src?.startsWith('/api/now/cover/spotify/'))).toHaveLength(12);
     expect(html).toContain('alt=""');
     expect(html).not.toMatch(/src="[^"]*(?:scdn\.co|s-microsoft\.com)/);
     expect(html).toContain('Artistas do mês');
@@ -70,7 +72,7 @@ describe('NowMusic', () => {
     const html = await render(NowMusic, { music: music() });
     const list = html.split('Artistas do mês')[1]?.split('</ul>')[0] ?? '';
     const grid = list.match(/<ul\b[^>]*>/)?.[0] ?? '';
-    const items = [...list.matchAll(/<li\b[^>]*>/g)].map((match) => match[0]);
+    const items = [...list.matchAll(/<li\b[^>]*>/g)].map(match => match[0]);
 
     expect(grid).toContain('grid-cols-3');
     expect(grid).toContain('sm:grid-cols-6');
@@ -109,7 +111,13 @@ describe('NowGames', () => {
             progress: score,
             url: 'https://www.xbox.com/pt-BR/games/store/-/BPSWGQBW7R3G',
           },
-          recent: [game('Red Dead Redemption 2', score), game('Forza Horizon 5'), game('Starfield'), game('Hades'), game('Celeste')],
+          recent: [
+            game('Red Dead Redemption 2', score),
+            game('Forza Horizon 5'),
+            game('Starfield'),
+            game('Hades'),
+            game('Celeste'),
+          ],
         },
       },
     });
@@ -246,7 +254,9 @@ describe('NowMusic artist previews', () => {
     expect(button).toContain('rounded-full');
     // No button inside a link: the name links to Spotify on its own.
     expect(artists).not.toMatch(/<a\b[^>]*>(?:(?!<\/a>)[\s\S])*<button/);
-    expect(artists).toMatch(/<a\b[^>]*href="https:\/\/open\.spotify\.com\/artist\/raul"[^>]*>[\s\S]*?Raul[\s\S]*?<\/a>/);
+    expect(artists).toMatch(
+      /<a\b[^>]*href="https:\/\/open\.spotify\.com\/artist\/raul"[^>]*>[\s\S]*?Raul[\s\S]*?<\/a>/,
+    );
   });
 
   it('draws both icons so CSS can swap play for pause while it plays', async () => {

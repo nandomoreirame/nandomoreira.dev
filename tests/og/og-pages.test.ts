@@ -16,10 +16,12 @@ describe('ogKey', () => {
 describe('ogPages', () => {
   it('covers every HTML page of the sitemap, plus the résumé page', async () => {
     const [projects, posts] = await Promise.all([getAllProjects(), getAllPosts()]);
-    const sitemapPaths = [...buildSitemap({ site, projects, posts }).matchAll(/<loc>https:\/\/nandomoreira\.dev([^<]*)<\/loc>/g)]
-      .map((match) => match[1] || '/')
-      .filter((path) => !path.startsWith('/api/'));
-    const keys = new Set((await ogPages()).map((page) => page.key));
+    const sitemapPaths = [
+      ...buildSitemap({ site, projects, posts }).matchAll(/<loc>https:\/\/nandomoreira\.dev([^<]*)<\/loc>/g),
+    ]
+      .map(match => match[1] || '/')
+      .filter(path => !path.startsWith('/api/'));
+    const keys = new Set((await ogPages()).map(page => page.key));
 
     for (const path of [...sitemapPaths, '/curriculo']) expect(keys, path).toContain(ogKey(path));
   });

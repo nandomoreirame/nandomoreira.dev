@@ -77,7 +77,7 @@ describe('closeWhenDrained', () => {
     const { state, closable: target } = closable();
 
     closeWhenDrained(new Response(null, { status: 204 }), target);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(state.closed).toBe(1);
   });

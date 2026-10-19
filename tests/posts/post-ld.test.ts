@@ -23,9 +23,7 @@ describe('jsonLdForPost', () => {
   });
 
   it('points at the canonical root URL', () => {
-    expect(jsonLdForPost(post, site).url).toBe(
-      'https://nandomoreira.dev/por-que-parenteses-no-tailwind',
-    );
+    expect(jsonLdForPost(post, site).url).toBe('https://nandomoreira.dev/por-que-parenteses-no-tailwind');
   });
 
   it('declares datePublished so machines see the same date as humans', () => {
@@ -35,10 +33,7 @@ describe('jsonLdForPost', () => {
   });
 
   it('serialises through serialiseJsonLd, escaping angle brackets', () => {
-    const ld = jsonLdForPost(
-      { ...post, summary: 'Uses <script> tags carefully' },
-      site,
-    );
+    const ld = jsonLdForPost({ ...post, summary: 'Uses <script> tags carefully' }, site);
     const output = serialiseJsonLd(ld);
 
     expect(output).toContain('\\u003c');
@@ -51,7 +46,12 @@ describe('jsonLdForPost authorship', () => {
 
   it('names the author and the publisher as the Person of the home page', () => {
     const ld = jsonLdForPost(post, site, author);
-    expect(ld.author).toEqual({ '@type': 'Person', '@id': 'https://nandomoreira.dev/#person', name: author.name, url: 'https://nandomoreira.dev/' });
+    expect(ld.author).toEqual({
+      '@type': 'Person',
+      '@id': 'https://nandomoreira.dev/#person',
+      name: author.name,
+      url: 'https://nandomoreira.dev/',
+    });
     expect(ld.publisher).toEqual(ld.author);
   });
 

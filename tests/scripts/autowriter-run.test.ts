@@ -19,7 +19,12 @@ interface Options {
 
 // Fake binaries come first in PATH, and `env -i` keeps ~/.bashrc (BASH_ENV) from
 // putting the real claude back in front of them.
-const run = ({ writes = { slug: 'post-novo', draft: true }, agentExit = 0, deployOutput = 'STAGING DEPLOY PASSED', httpCode = '200' }: Options = {}) => {
+const run = ({
+  writes = { slug: 'post-novo', draft: true },
+  agentExit = 0,
+  deployOutput = 'STAGING DEPLOY PASSED',
+  httpCode = '200',
+}: Options = {}) => {
   const dir = mkdtempSync(join(tmpdir(), 'autowriter-'));
   const root = join(dir, 'repo');
   const bin = join(dir, 'bin');
@@ -27,7 +32,9 @@ const run = ({ writes = { slug: 'post-novo', draft: true }, agentExit = 0, deplo
   mkdirSync(bin);
   writeFileSync(join(root, 'src/content/posts/existente.md'), POST('existente', false));
 
-  const write = writes ? `cat > "$AUTOWRITER_ROOT/src/content/posts/${writes.slug}.md" <<'EOF'\n${POST(writes.slug, writes.draft)}EOF\n` : '';
+  const write = writes
+    ? `cat > "$AUTOWRITER_ROOT/src/content/posts/${writes.slug}.md" <<'EOF'\n${POST(writes.slug, writes.draft)}EOF\n`
+    : '';
   const fakes: Record<string, string> = {
     claude: `#!/bin/bash\nprintf '%s\\n' "$@" > "${dir}/claude-args"\n${write}echo "relatório do agente"\nexit ${agentExit}\n`,
     curl: `#!/bin/bash\nprintf '%s' "${httpCode}"\n`,

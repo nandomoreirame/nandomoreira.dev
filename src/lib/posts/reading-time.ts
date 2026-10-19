@@ -14,6 +14,6 @@ export const readingMinutes = (markdown: string): number => {
     .replace(/<[^>]+>/g, ' ')
     .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+/gm, ' ')
     .replace(/[*_`~|]/g, ' ');
-  const count = text.split(/\s+/).filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
+  const count = text.split(/\s+/).filter(word => /[\p{L}\p{N}]/u.test(word)).length;
   return Math.max(1, Math.ceil(count / WORDS_PER_MINUTE));
 };

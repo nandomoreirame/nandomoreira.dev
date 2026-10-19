@@ -20,9 +20,9 @@ const INTEREST_LABELS: Record<Interest, string> = {
   consulting: 'Consultoria',
 };
 
-export const BUDGET_OPTIONS = BUDGETS.map((value) => ({ value, label: BUDGET_LABELS[value] }));
+export const BUDGET_OPTIONS = BUDGETS.map(value => ({ value, label: BUDGET_LABELS[value] }));
 
-export const INTEREST_OPTIONS = INTERESTS.map((value) => ({ value, label: INTEREST_LABELS[value] }));
+export const INTEREST_OPTIONS = INTERESTS.map(value => ({ value, label: INTEREST_LABELS[value] }));
 
 /** Form label for a budget slug; unknown values pass through unchanged. */
 export const budgetLabelOf = (value: string): string =>

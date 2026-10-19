@@ -7,7 +7,15 @@ import { readNowConfig, type NowConfig } from './config';
 import { dayLabel } from './day';
 import { fetchActiveRepos, type ActiveRepo } from './github';
 import { logSourceError } from './http';
-import { NOW_DECLINING, NOW_FAILURE_TTL_MS, NOW_FOCUS, NOW_GAMES, NOW_REPO_EXCLUDE, NOW_STUDYING, NOW_TTL } from './now';
+import {
+  NOW_DECLINING,
+  NOW_FAILURE_TTL_MS,
+  NOW_FOCUS,
+  NOW_GAMES,
+  NOW_REPO_EXCLUDE,
+  NOW_STUDYING,
+  NOW_TTL,
+} from './now';
 import { fetchRecentTracks, fetchTopArtists, type RecentTrack, type TopArtist } from './spotify';
 import { fetchXbox, type PlayingNow, type RecentGame } from './xbox';
 
@@ -138,7 +146,7 @@ export const createNowLoader = ({
         ? (logSourceError('spotify', musicResult.reason, logger), { state: 'empty' as const })
         : musicResult.value === 'unconfigured'
           ? { state: 'empty' as const }
-          : arraySection(musicResult.value.map((track) => ({ ...track, day: dayLabel(track.playedAt, clock()) })));
+          : arraySection(musicResult.value.map(track => ({ ...track, day: dayLabel(track.playedAt, clock()) })));
 
     const topArtists =
       topResult.status === 'rejected'
@@ -154,8 +162,8 @@ export const createNowLoader = ({
       music: { recent, topArtists },
       games,
       writing: {
-        latest: posts.find((post) => post.draft !== true),
-        drafts: drafts.slice(0, UPCOMING_LIMIT).map((post) => post.title),
+        latest: posts.find(post => post.draft !== true),
+        drafts: drafts.slice(0, UPCOMING_LIMIT).map(post => post.title),
       },
       focus: {
         items: NOW_FOCUS,

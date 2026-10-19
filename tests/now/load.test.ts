@@ -5,8 +5,7 @@ import { readNowConfig } from '../../src/lib/now/config';
 import { createNowLoader } from '../../src/lib/now/load';
 import { NOW_FOCUS, NOW_STUDYING } from '../../src/lib/now/now';
 
-const readJson = (name: string) =>
-  JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
+const readJson = (name: string) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
 
 const NOW = () => Date.parse('2026-10-11T12:00:00Z');
 
@@ -34,9 +33,7 @@ const okFetch = () =>
       return jsonResponse({
         content: {
           state: 'Online',
-          devices: [
-            { type: 'Scarlett', titles: [{ name: 'Halo Infinite', placement: 'Full', state: 'Active' }] },
-          ],
+          devices: [{ type: 'Scarlett', titles: [{ name: 'Halo Infinite', placement: 'Full', state: 'Active' }] }],
         },
       });
     }
@@ -72,9 +69,9 @@ describe('loadNow', () => {
     expect(data.games.state).toBe('empty');
     expect(data.projects.state).toBe('empty');
     expect(logger.warn).toHaveBeenCalledTimes(1);
-    const urls = fetchImpl.mock.calls.map((call) => String(call[0]));
-    expect(urls.some((url) => url.includes('spotify.com'))).toBe(false);
-    expect(urls.some((url) => url.includes('xbl.io'))).toBe(false);
+    const urls = fetchImpl.mock.calls.map(call => String(call[0]));
+    expect(urls.some(url => url.includes('spotify.com'))).toBe(false);
+    expect(urls.some(url => url.includes('xbl.io'))).toBe(false);
     expect(data.focus.items).toEqual(NOW_FOCUS);
     expect(data.studying).toEqual(NOW_STUDYING);
     expect(data.focus.availability.length).toBeGreaterThan(0);
@@ -157,7 +154,8 @@ describe('loadNow', () => {
     const fetchImpl = vi.fn(async (url: string) => {
       const target = String(url);
       if (target.includes('accounts.spotify.com')) return jsonResponse({ access_token: 'access-1' });
-      if (target.includes('/top/artists')) return { ok: false, status: 403, json: async () => ({ error: 'Forbidden' }) };
+      if (target.includes('/top/artists'))
+        return { ok: false, status: 403, json: async () => ({ error: 'Forbidden' }) };
       if (target.includes('api.spotify.com')) return jsonResponse(readJson('spotify-recently-played.json'));
       throw new Error(`unexpected ${target}`);
     });
@@ -208,7 +206,7 @@ describe('loadNow', () => {
 
     const first = await loadNow();
     await loadNow();
-    const tokenCalls = fetchImpl.mock.calls.filter((call) => String(call[0]).includes('accounts.spotify.com'));
+    const tokenCalls = fetchImpl.mock.calls.filter(call => String(call[0]).includes('accounts.spotify.com'));
     expect(tokenCalls).toHaveLength(2);
     expect(first.music.topArtists.state).toBe('ok');
     if (first.music.topArtists.state === 'ok') {

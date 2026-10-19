@@ -7,10 +7,7 @@ import { nowMarkdown } from '../now/markdown';
 import { NOW_PATH } from '../now/now';
 import { SETUP_PATH, setupMarkdown } from '../setup/setup';
 import { absoluteUrl } from '../aeo/urls';
-import {
-  collectionOfBlock,
-  type CatalogCollection,
-} from '../catalog/groups';
+import { collectionOfBlock, type CatalogCollection } from '../catalog/groups';
 import {
   getAllProjects,
   getArchivedPostsByYear,
@@ -37,7 +34,6 @@ export type AiPage = {
   markdown: string;
 };
 
-
 /** Strip a trailing slash; treat '' and 'index' as the home key. */
 const normalise = (path: string): string => {
   const trimmed = path.replace(/^\/+|\/+$/g, '');
@@ -45,30 +41,25 @@ const normalise = (path: string): string => {
   return trimmed;
 };
 
-const page = (
-  title: string,
-  humanPath: string,
-  mdPath: string,
-  markdown: string,
-): AiPage => ({ title, humanPath, mdPath, markdown });
+const page = (title: string, humanPath: string, mdPath: string, markdown: string): AiPage => ({
+  title,
+  humanPath,
+  mdPath,
+  markdown,
+});
 
 const titleFromFrontmatter = (markdown: string, fallback: string): string => {
   const match = markdown.match(/^---\n[\s\S]*?\ntitle:\s*(.+)\n/);
   return match?.[1]?.trim() || fallback;
 };
 
-export const markdownForPath = async (
-  site: URL,
-  path: string,
-): Promise<AiPage | undefined> => {
+export const markdownForPath = async (site: URL, path: string): Promise<AiPage | undefined> => {
   const key = normalise(path);
 
   if (key === '') {
     const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
-    const portfolio = projects.filter(
-      (project) => collectionOfBlock(project.block) === 'portfolio',
-    );
-    const lab = projects.filter((project) => collectionOfBlock(project.block) === 'lab');
+    const portfolio = projects.filter(project => collectionOfBlock(project.block) === 'portfolio');
+    const lab = projects.filter(project => collectionOfBlock(project.block) === 'lab');
     const markdown = homeMarkdown({ site, profile, portfolio, lab });
     return page(titleFromFrontmatter(markdown, profile.headline), '/', '/index.md', markdown);
   }
@@ -81,9 +72,7 @@ export const markdownForPath = async (
 
   if (key === 'portfolio' || key === 'lab') {
     const collection = key as CatalogCollection;
-    const projects = (await getAllProjects()).filter(
-      (project) => collectionOfBlock(project.block) === collection,
-    );
+    const projects = (await getAllProjects()).filter(project => collectionOfBlock(project.block) === collection);
     const copy = COLLECTION_COPY[collection];
     const markdown = collectionMarkdown({
       site,
@@ -100,17 +89,12 @@ export const markdownForPath = async (
   if (caseMatch) {
     const collection = caseMatch[1] as CatalogCollection;
     const slug = caseMatch[2];
-    const project = (await getAllProjects()).find((entry) => entry.slug === slug);
+    const project = (await getAllProjects()).find(entry => entry.slug === slug);
     if (!project || collectionOfBlock(project.block) !== collection) {
       return undefined;
     }
     const markdown = buildCaseMarkdown({ site, project });
-    return page(
-      project.title,
-      `/${collection}/${slug}`,
-      `/${collection}/${slug}.md`,
-      markdown,
-    );
+    return page(project.title, `/${collection}/${slug}`, `/${collection}/${slug}.md`, markdown);
   }
 
   if (key === 'posts') {
@@ -175,12 +159,7 @@ export const markdownForPath = async (
       entry.body ?? '',
     ].join('\n');
 
-    return page(
-      entry.data.title,
-      `/${entry.data.slug}`,
-      `/${entry.data.slug}.md`,
-      markdown,
-    );
+    return page(entry.data.title, `/${entry.data.slug}`, `/${entry.data.slug}.md`, markdown);
   }
 
   return undefined;

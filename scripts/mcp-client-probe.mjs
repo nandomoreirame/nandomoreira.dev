@@ -13,7 +13,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 
 const url = new URL(process.argv[2] ?? 'http://127.0.0.1:8080/api/mcp');
 
-const fail = (message) => {
+const fail = message => {
   console.error(`FAIL: ${message}`);
   process.exit(1);
 };
@@ -39,16 +39,10 @@ if (serverInfo?.name !== 'nandomoreira-dev') {
 }
 
 const { tools } = await client.listTools();
-const names = tools.map((tool) => tool.name).sort();
+const names = tools.map(tool => tool.name).sort();
 console.log(`tools:    ${names.join(', ')}`);
 
-const EXPECTED = [
-  'check_availability',
-  'get_profile',
-  'get_project',
-  'get_resume',
-  'list_projects',
-];
+const EXPECTED = ['check_availability', 'get_profile', 'get_project', 'get_resume', 'list_projects'];
 
 if (JSON.stringify(names) !== JSON.stringify(EXPECTED)) {
   fail(`tool list mismatch. expected ${EXPECTED.join(', ')}`);
@@ -68,9 +62,7 @@ const profile = await structured('get_profile');
 console.log(`get_profile:        ${profile.name} — ${profile.headline}`);
 
 const availability = await structured('check_availability');
-console.log(
-  `check_availability: ${availability.status}, updated ${availability.updatedAt}`,
-);
+console.log(`check_availability: ${availability.status}, updated ${availability.updatedAt}`);
 
 const list = await structured('list_projects', { collection: 'lab' });
 console.log(`list_projects:      ${list.total} cases in lab`);

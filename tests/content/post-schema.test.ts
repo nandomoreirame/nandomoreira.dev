@@ -35,7 +35,7 @@ describe('postSchema', () => {
     expect(schema.safeParse(valid).success).toBe(true);
   });
 
-  it.each(['slug', 'title', 'summary', 'date'])('rejects a post missing %s', (field) => {
+  it.each(['slug', 'title', 'summary', 'date'])('rejects a post missing %s', field => {
     const { [field as keyof typeof valid]: _dropped, ...incomplete } = valid;
     expect(schema.safeParse(incomplete).success).toBe(false);
   });
@@ -98,15 +98,15 @@ describe('postSchema', () => {
 
   it.each(['2026-10-10T12:08-03:00', '2026-10-10T12:08:11', '2026-10-10 12:08:11-03:00', '12:08:11'])(
     'rejects the incomplete timestamp %s',
-    (publishedAt) => {
+    publishedAt => {
       expect(schema.safeParse({ ...base, date: '2026-10-10', publishedAt }).success).toBe(false);
     },
   );
 
   it('requires the timestamp to fall on the post date', () => {
-    expect(
-      schema.safeParse({ ...base, date: '2026-10-09', publishedAt: '2026-10-10T12:08:11-03:00' }).success,
-    ).toBe(false);
+    expect(schema.safeParse({ ...base, date: '2026-10-09', publishedAt: '2026-10-10T12:08:11-03:00' }).success).toBe(
+      false,
+    );
   });
 
   it('accepts a known art motif for a post without a cover', () => {

@@ -118,7 +118,7 @@ export const MCP_CLIENT_ALIASES: Readonly<Record<string, (typeof KNOWN_MCP_CLIEN
 
 const KNOWN_UTM_SET = new Set<string>(KNOWN_UTM_SOURCES);
 const KNOWN_MCP_METHOD_SET = new Set<string>(KNOWN_MCP_METHODS);
-const KNOWN_MCP_TOOL_SET = new Set<string>(MCP_TOOLS.map((t) => t.name));
+const KNOWN_MCP_TOOL_SET = new Set<string>(MCP_TOOLS.map(t => t.name));
 const KNOWN_MCP_CLIENT_SET = new Set<string>(KNOWN_MCP_CLIENTS);
 
 /** Cloudflare sends XX when unknown and T1 for Tor; neither is a country. */
@@ -135,11 +135,11 @@ const MAX_PLACE = 64;
  * UTF-8 reading is the one meant.
  */
 const repairUtf8 = (text: string): string => {
-  if (![...text].some((char) => char.charCodeAt(0) >= 0x80) || [...text].some((char) => char.charCodeAt(0) > 0xff)) {
+  if (![...text].some(char => char.charCodeAt(0) >= 0x80) || [...text].some(char => char.charCodeAt(0) > 0xff)) {
     return text;
   }
   try {
-    return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(text, (char) => char.charCodeAt(0)));
+    return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(text, char => char.charCodeAt(0)));
   } catch {
     return text;
   }
@@ -148,7 +148,11 @@ const repairUtf8 = (text: string): string => {
 /** A city or state name from a Cloudflare location header: repaired, cleaned, capped. */
 export const placeOf = (raw: string | null): string | null => {
   if (raw === null) return null;
-  const text = Array.from(repairUtf8(raw).replace(/[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Zl}\p{Zp}]/gu, '').trim())
+  const text = Array.from(
+    repairUtf8(raw)
+      .replace(/[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Zl}\p{Zp}]/gu, '')
+      .trim(),
+  )
     .slice(0, MAX_PLACE)
     .join('');
   return text === '' ? null : text;
@@ -211,8 +215,7 @@ export const buildEvent = (input: EventInput): AnalyticsEvent => ({
 });
 
 /** Crawlers only feed the per-class totals; their raw events would just burn the write quota. */
-export const keepsRawEvent = (event: AnalyticsEvent): boolean =>
-  event.class === 'human' || event.class === 'ai_agent';
+export const keepsRawEvent = (event: AnalyticsEvent): boolean => event.class === 'human' || event.class === 'ai_agent';
 
 /** A field path in `analytics_daily/<day>`, each one incremented by 1. */
 export type Increment = readonly string[];
@@ -225,13 +228,15 @@ const channelCounter = (channel: string): string => {
   return channel;
 };
 
-const mcpMethodCounter = (target: string): string =>
-  KNOWN_MCP_METHOD_SET.has(target) ? target : 'other';
+const mcpMethodCounter = (target: string): string => (KNOWN_MCP_METHOD_SET.has(target) ? target : 'other');
 
 const mcpToolCounter = (tool: string): string => (KNOWN_MCP_TOOL_SET.has(tool) ? tool : 'other');
 
 const mcpClientCounter = (client: string): string => {
-  const slug = client.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  const slug = client
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-');
   const name = MCP_CLIENT_ALIASES[slug] ?? slug;
   return KNOWN_MCP_CLIENT_SET.has(name) ? name : 'other';
 };

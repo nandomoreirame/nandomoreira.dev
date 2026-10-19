@@ -6,8 +6,8 @@ import OpenSourceList from '../../src/components/catalog/OpenSourceList.astro';
 import { GITHUB_REPOSITORIES_URL, OPEN_SOURCE_REPOS } from '../../src/lib/catalog/open-source';
 
 const caseRepos = readdirSync('src/content/projects')
-  .filter((file) => file.endsWith('.md'))
-  .map((file) => readFileSync(join('src/content/projects', file), 'utf8').match(/^repoUrl:\s*(\S+)/m)?.[1])
+  .filter(file => file.endsWith('.md'))
+  .map(file => readFileSync(join('src/content/projects', file), 'utf8').match(/^repoUrl:\s*(\S+)/m)?.[1])
   .filter((url): url is string => Boolean(url) && url !== 'null');
 
 const render = async () => {
@@ -68,7 +68,9 @@ describe('OpenSourceList', () => {
       expect(row).toContain(repo.year);
       expect(row).toContain(repo.language);
     }
-    expect(html.match(new RegExp('href="https://github.com/nandomoreirame/', 'g'))).toHaveLength(OPEN_SOURCE_REPOS.length);
+    expect(html.match(new RegExp('href="https://github.com/nandomoreirame/', 'g'))).toHaveLength(
+      OPEN_SOURCE_REPOS.length,
+    );
   });
 
   it('opens every GitHub link in a new tab, without passing ranking or the opener', async () => {

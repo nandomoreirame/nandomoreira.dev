@@ -13,18 +13,18 @@ export const sortProjects = (projects: readonly Project[]): Project[] =>
   [...projects].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'));
 
 export const featured = (projects: readonly Project[]): Project[] =>
-  sortProjects(projects.filter((project) => project.featured));
+  sortProjects(projects.filter(project => project.featured));
 
 /** Every block is present even when empty, so a missing block is visible. */
 export const groupByBlock = (projects: readonly Project[]): BlockGroup[] =>
-  BLOCKS.map((block) => ({
+  BLOCKS.map(block => ({
     block,
-    projects: sortProjects(projects.filter((project) => project.block === block)),
+    projects: sortProjects(projects.filter(project => project.block === block)),
   }));
 
 const load = async (): Promise<Project[]> => {
   const entries = await getCollection('projects');
-  const projects = entries.map((entry) => entry.data);
+  const projects = entries.map(entry => entry.data);
 
   assertUniqueSlugs(projects);
 
@@ -35,8 +35,7 @@ export const getAllProjects = async (): Promise<Project[]> => sortProjects(await
 
 export const getFeaturedProjects = async (): Promise<Project[]> => featured(await load());
 
-export const getProjectsByBlock = async (): Promise<BlockGroup[]> =>
-  groupByBlock(await load());
+export const getProjectsByBlock = async (): Promise<BlockGroup[]> => groupByBlock(await load());
 
 export const getProject = async (slug: string): Promise<Project | undefined> =>
-  (await load()).find((project) => project.slug === slug);
+  (await load()).find(project => project.slug === slug);

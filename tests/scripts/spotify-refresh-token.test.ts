@@ -1,10 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  assertCallbackState,
-  authorizeUrl,
-  exchangeCode,
-} from '../../scripts/spotify-refresh-token.mjs';
+import { assertCallbackState, authorizeUrl, exchangeCode } from '../../scripts/spotify-refresh-token.mjs';
 
 const redirectUri = 'http://127.0.0.1:8888/callback';
 
@@ -34,9 +30,7 @@ describe('spotify refresh token script', () => {
     expect(token).toBe('refresh');
     const [, init] = fetch.mock.calls[0] as [string, { body: string; headers: { authorization: string } }];
     expect(init.body).toContain('grant_type=authorization_code');
-    expect(init.headers.authorization).toBe(
-      `Basic ${Buffer.from('client:secret').toString('base64')}`,
-    );
+    expect(init.headers.authorization).toBe(`Basic ${Buffer.from('client:secret').toString('base64')}`);
   });
 
   it('rejects a callback whose state does not match', () => {

@@ -25,7 +25,7 @@ const publicText = (project: Project): string =>
     project.problem,
     project.decisions,
     project.outcome,
-    ...(project.images?.map((image) => image.alt) ?? []),
+    ...(project.images?.map(image => image.alt) ?? []),
   ].join('\n');
 
 describe('redactConfidential', () => {

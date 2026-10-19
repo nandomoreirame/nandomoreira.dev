@@ -38,9 +38,7 @@ export const formToPayload = (params: URLSearchParams): Record<string, unknown> 
 
   // Deduplicated: on a phone the chips give way to a <select multiple> with the
   // same name, and a visitor who resizes mid-form can send a value from both.
-  const interests = [
-    ...new Set(params.getAll('interesse').filter((value) => value.trim() !== '')),
-  ];
+  const interests = [...new Set(params.getAll('interesse').filter(value => value.trim() !== ''))];
   if (interests.length > 0) payload.interests = interests;
 
   return payload;

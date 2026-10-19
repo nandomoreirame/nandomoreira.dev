@@ -33,9 +33,7 @@ describe('BaseLayout structured data', () => {
 
   it('embeds parseable JSON', async () => {
     const html = await render();
-    const match = html.match(
-      /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
-    );
+    const match = html.match(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);
 
     expect(match).not.toBeNull();
     expect(() => JSON.parse(match![1])).not.toThrow();

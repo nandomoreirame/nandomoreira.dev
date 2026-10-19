@@ -14,30 +14,27 @@ const WIDTH = 80;
  * column limit, and `resume-txt.test.ts` asserts exactly that.
  */
 const wrap = (text: string, width = WIDTH): string[] =>
-  text
-    .split('\n')
-    .flatMap((paragraph) => {
-      const words = paragraph.trim().split(/\s+/).filter(Boolean);
-      if (words.length === 0) return [''];
+  text.split('\n').flatMap(paragraph => {
+    const words = paragraph.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return [''];
 
-      return words.reduce<string[]>((lines, word) => {
-        const current = lines.at(-1);
+    return words.reduce<string[]>((lines, word) => {
+      const current = lines.at(-1);
 
-        if (current === undefined || `${current} ${word}`.length > width) {
-          lines.push(word);
-        } else {
-          lines[lines.length - 1] = `${current} ${word}`;
-        }
+      if (current === undefined || `${current} ${word}`.length > width) {
+        lines.push(word);
+      } else {
+        lines[lines.length - 1] = `${current} ${word}`;
+      }
 
-        return lines;
-      }, []);
-    });
+      return lines;
+    }, []);
+  });
 
 const heading = (title: string): string[] => ['', title.toUpperCase(), '-'.repeat(title.length)];
 
 /** An absent end date means the position is still running, and says so. */
-const period = (startDate: string, endDate?: string): string =>
-  `${startDate} – ${endDate ?? 'present'}`;
+const period = (startDate: string, endDate?: string): string => `${startDate} – ${endDate ?? 'present'}`;
 
 /**
  * Renders the résumé as plain text derived from the SAME object the JSON route

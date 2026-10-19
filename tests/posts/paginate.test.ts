@@ -21,8 +21,22 @@ describe('paginate', () => {
   });
 
   it('slices the requested page and counts what it shows', () => {
-    expect(paginate(items, 1)).toEqual({ items: [1, 2, 3, 4, 5, 6], page: 1, totalPages: 2, first: 1, last: 6, total: 11 });
-    expect(paginate(items, 2)).toEqual({ items: [7, 8, 9, 10, 11], page: 2, totalPages: 2, first: 7, last: 11, total: 11 });
+    expect(paginate(items, 1)).toEqual({
+      items: [1, 2, 3, 4, 5, 6],
+      page: 1,
+      totalPages: 2,
+      first: 1,
+      last: 6,
+      total: 11,
+    });
+    expect(paginate(items, 2)).toEqual({
+      items: [7, 8, 9, 10, 11],
+      page: 2,
+      totalPages: 2,
+      first: 7,
+      last: 11,
+      total: 11,
+    });
   });
 
   it('clamps a page past the end to the last one', () => {

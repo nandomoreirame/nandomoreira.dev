@@ -3,11 +3,7 @@ import { describe, expect, it } from 'vitest';
 import CodeBlock from '../../src/components/ui/CodeBlock.astro';
 import StatItem from '../../src/components/ui/StatItem.astro';
 
-const render = async (
-  component: unknown,
-  props: Record<string, unknown>,
-  slot?: string,
-) => {
+const render = async (component: unknown, props: Record<string, unknown>, slot?: string) => {
   const container = await AstroContainer.create();
   return container.renderToString(component as never, {
     props,

@@ -44,7 +44,7 @@ describe('/servicos/site-institucional', () => {
 });
 
 describe('/servicos/<other>', () => {
-  it.each(['loja-virtual', 'nada-aqui'])('answers 404 for %s', async (slug) => {
+  it.each(['loja-virtual', 'nada-aqui'])('answers 404 for %s', async slug => {
     expect((await render(slug)).status).toBe(404);
   });
 });

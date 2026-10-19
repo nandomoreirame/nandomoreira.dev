@@ -152,9 +152,7 @@ describe('the MCP tools leak nothing', () => {
     const { callToolRaw } = await import('../mcp/client');
 
     return Promise.all(
-      TOOLS.map(async ([name, args]) =>
-        JSON.stringify(await callToolRaw(name, args as Record<string, unknown>)),
-      ),
+      TOOLS.map(async ([name, args]) => JSON.stringify(await callToolRaw(name, args as Record<string, unknown>))),
     );
   };
 
@@ -166,7 +164,7 @@ describe('the MCP tools leak nothing', () => {
 
   // The employer is public; the clients behind a confidential case are not.
   // Names come from the source, so the gate follows the content.
-  it.each(confidentialClientNames())('never names the confidential client %s', async (client) => {
+  it.each(confidentialClientNames())('never names the confidential client %s', async client => {
     for (const body of await bodies()) {
       expect(body).not.toMatch(clientPattern(client));
     }

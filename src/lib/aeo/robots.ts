@@ -21,7 +21,7 @@ export const buildRobotsTxt = ({ site }: { site: URL }): string => {
     'User-agent: *',
     'Allow: /',
     '',
-    ...ANSWER_ENGINE_CRAWLERS.flatMap((agent) => [`User-agent: ${agent}`, 'Allow: /', '']),
+    ...ANSWER_ENGINE_CRAWLERS.flatMap(agent => [`User-agent: ${agent}`, 'Allow: /', '']),
     `Sitemap: ${absoluteUrl(site, '/sitemap.xml')}`,
     '',
   ];

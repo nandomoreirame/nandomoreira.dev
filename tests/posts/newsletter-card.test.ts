@@ -43,14 +43,16 @@ describe('NewsletterCard', () => {
 
   it('closes the /posts page', async () => {
     const container = await AstroContainer.create();
-    const html = await container.renderToString(Posts, { request: new Request('https://nandomoreira.dev/posts?assinatura=ok') });
+    const html = await container.renderToString(Posts, {
+      request: new Request('https://nandomoreira.dev/posts?assinatura=ok'),
+    });
     expect(html).toContain('id="novidades"');
     expect(html).toMatch(/role="status"/);
   });
 
   it.each(['toString', 'constructor', '__proto__'])(
     'does not render an outcome paragraph for the inherited key %s',
-    async (key) => {
+    async key => {
       const container = await AstroContainer.create();
       const html = await container.renderToString(Posts, {
         request: new Request(`https://nandomoreira.dev/posts?assinatura=${encodeURIComponent(key)}`),
@@ -79,4 +81,3 @@ describe('NewsletterCard', () => {
     expect((await render()).match(/<section[^>]*id="novidades"[^>]*>/)?.[0]).not.toContain('mb-3xl');
   });
 });
-

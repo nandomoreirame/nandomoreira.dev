@@ -25,10 +25,10 @@ export const webpSize = (bytes: Buffer): { width: number; height: number } => {
 
 // Read from disk, not through the collection, like the other content gates.
 const images = readdirSync(DIR)
-  .filter((file) => file.endsWith('.md'))
-  .flatMap((file) => {
+  .filter(file => file.endsWith('.md'))
+  .flatMap(file => {
     const frontmatter = readFileSync(join(DIR, file), 'utf8').split(/^---$/m)[1] ?? '';
-    return [...frontmatter.matchAll(/- src: (\S+)\n\s+alt: .+\n\s+width: (\d+)\n\s+height: (\d+)/g)].map((match) => ({
+    return [...frontmatter.matchAll(/- src: (\S+)\n\s+alt: .+\n\s+width: (\d+)\n\s+height: (\d+)/g)].map(match => ({
       file,
       src: match[1],
       width: Number(match[2]),

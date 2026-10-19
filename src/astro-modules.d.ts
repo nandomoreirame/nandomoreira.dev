@@ -7,5 +7,7 @@ declare module '*.astro' {
   const Component: AstroComponentFactory;
   export default Component;
   /** Present on dynamic pages, which the tests call directly. */
-  export const getStaticPaths: () => Promise<Array<{ params: Record<string, string | undefined>; props?: Record<string, unknown> }>>;
+  export const getStaticPaths: () => Promise<
+    Array<{ params: Record<string, string | undefined>; props?: Record<string, unknown> }>
+  >;
 }

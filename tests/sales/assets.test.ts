@@ -10,7 +10,7 @@ const FILES = [
 ];
 
 describe('sales assets', () => {
-  it.each(FILES)('%s is a real WebP under 300 KB', (file) => {
+  it.each(FILES)('%s is a real WebP under 300 KB', file => {
     const head = readFileSync(file).subarray(0, 12).toString('latin1');
     expect(head.startsWith('RIFF') && head.endsWith('WEBP')).toBe(true);
     expect(statSync(file).size).toBeLessThan(300 * 1024);

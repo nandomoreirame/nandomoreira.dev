@@ -38,10 +38,7 @@ const tagAt = (html: string, marker: string) => {
 
 describe('eyebrow', () => {
   it('names /sobre as a terminal path and keeps the case category in muted caps', async () => {
-    const [about, tumodori] = await Promise.all([
-      render(SobrePage),
-      render(CaseArticle, { project }),
-    ]);
+    const [about, tumodori] = await Promise.all([render(SobrePage), render(CaseArticle, { project })]);
 
     const path = tagAt(about, 'data-page-path');
     expect(path).toContain('~/sobre');

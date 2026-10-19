@@ -186,7 +186,8 @@ describe('AiDocument', () => {
 
   it('lets a long URL wrap, so the page never overflows a 320px screen', async () => {
     const html = await renderDocument({ url: 'https://nandomoreira.dev/portfolio/financial-normalization' });
-    const link = html.match(/<a[^>]*href="https:\/\/nandomoreira\.dev\/portfolio\/financial-normalization"[^>]*>/)?.[0] ?? '';
+    const link =
+      html.match(/<a[^>]*href="https:\/\/nandomoreira\.dev\/portfolio\/financial-normalization"[^>]*>/)?.[0] ?? '';
     expect(link).toMatch(/\bbreak-all\b/);
   });
 

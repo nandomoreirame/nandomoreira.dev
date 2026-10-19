@@ -10,7 +10,7 @@ const css = readFileSync('src/styles/global.css', 'utf8');
 const token = (name: string): string | undefined =>
   css.match(new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`))?.[1]?.toLowerCase();
 
-const kebab = (name: string): string => name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+const kebab = (name: string): string => name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 
 describe('email color tokens', () => {
   it.each(Object.entries(EMAIL_COLORS))('%s mirrors --color-%s', (name, value) => {

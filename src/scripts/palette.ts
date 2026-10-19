@@ -49,7 +49,7 @@ const valid = (item: unknown): item is SearchItem =>
 
 const loadIndex = () =>
   (loading ??= fetch('/search.json')
-    .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+    .then(response => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
     .then((items: unknown) => {
       index = Array.isArray(items) ? items.filter(valid) : [];
     })
@@ -59,29 +59,31 @@ const loadIndex = () =>
 
 const kbd = (key: string) => {
   const element = document.createElement('kbd');
-  element.className = 'rounded-md border border-border-strong bg-background px-xs font-mono text-caption text-muted-foreground';
+  element.className =
+    'rounded-md border border-border-strong bg-background px-xs font-mono text-caption text-muted-foreground';
   element.textContent = key;
   return element;
 };
 
 const paint = () => {
   const groups = viewFor(index, input.value, pageViews());
-  options = groups.flatMap((group) => group.options);
+  options = groups.flatMap(group => group.options);
   list.replaceChildren(
-    ...groups.flatMap((group) => {
+    ...groups.flatMap(group => {
       const heading = document.createElement('li');
       heading.setAttribute('role', 'presentation');
       heading.className = 'px-lg pt-md pb-xs font-mono text-caption uppercase tracking-eyebrow text-muted-foreground';
       heading.textContent = group.label;
       return [
         heading,
-        ...group.options.map((option) => {
+        ...group.options.map(option => {
           const at = options.indexOf(option);
           const item = document.createElement('li');
           item.id = option.id;
           item.setAttribute('role', 'option');
           item.setAttribute('aria-selected', 'false');
-          item.className = 'flex min-h-11 cursor-pointer items-center justify-between gap-md px-lg text-body text-muted-foreground';
+          item.className =
+            'flex min-h-11 cursor-pointer items-center justify-between gap-md px-lg text-body text-muted-foreground';
           const label = document.createElement('span');
           label.textContent = option.label;
           const keys = document.createElement('span');
@@ -108,7 +110,9 @@ const paint = () => {
 
 const setActive = (next: number) => {
   active = next;
-  options.forEach((option, at) => document.getElementById(option.id)?.setAttribute('aria-selected', String(at === active)));
+  options.forEach((option, at) =>
+    document.getElementById(option.id)?.setAttribute('aria-selected', String(at === active)),
+  );
   const current = options[active];
   if (current) {
     input.setAttribute('aria-activedescendant', current.id);
@@ -122,18 +126,16 @@ const choose = (option: PaletteOption) => {
     if (announce) announce.textContent = '';
     // Success is claimed only once the write resolves; without a clipboard the
     // optional chain skips the whole call, so nothing is claimed either.
-    navigator.clipboard
-      ?.writeText(window.location.href)
-      .then(
-        () => {
-          // Visible first: a live region inside a hidden toast is not announced.
-          toast?.setAttribute('data-open', '');
-          if (announce) announce.textContent = PALETTE_COPY.copied;
-          clearTimeout(toastTimer);
-          toastTimer = setTimeout(hideToast, TOAST_MS);
-        },
-        () => undefined,
-      );
+    navigator.clipboard?.writeText(window.location.href).then(
+      () => {
+        // Visible first: a live region inside a hidden toast is not announced.
+        toast?.setAttribute('data-open', '');
+        if (announce) announce.textContent = PALETTE_COPY.copied;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(hideToast, TOAST_MS);
+      },
+      () => undefined,
+    );
     return;
   }
   dialog.close();
@@ -141,7 +143,7 @@ const choose = (option: PaletteOption) => {
 };
 
 input.addEventListener('input', paint);
-input.addEventListener('keydown', (event) => {
+input.addEventListener('keydown', event => {
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault();
     setActive(move(active, event.key === 'ArrowDown' ? 1 : -1, options.length));
@@ -151,7 +153,7 @@ input.addEventListener('keydown', (event) => {
   }
 });
 // A click on the backdrop lands on the dialog itself, outside the panel.
-dialog.addEventListener('click', (event) => {
+dialog.addEventListener('click', event => {
   if (event.target === dialog) dialog.close();
 });
 dialog.addEventListener('close', () => {
@@ -193,6 +195,8 @@ export const press = (key: string, at: number) => {
     return;
   }
   if (armed) return;
-  const shortcut = viewFor(undefined, '', pageViews())[0]?.options.find((option) => option.keys?.[0]?.toLowerCase() === letter);
+  const shortcut = viewFor(undefined, '', pageViews())[0]?.options.find(
+    option => option.keys?.[0]?.toLowerCase() === letter,
+  );
   if (shortcut) choose(shortcut);
 };

@@ -18,9 +18,7 @@ describe('Agora in the menu', () => {
 
   it('marks /now as the current page', async () => {
     const html = await render({ current: '/now', hasPosts: true });
-    expect(html).toMatch(
-      /<a[^>]*href="\/now"[^>]*aria-current="page"|<a[^>]*aria-current="page"[^>]*href="\/now"/,
-    );
+    expect(html).toMatch(/<a[^>]*href="\/now"[^>]*aria-current="page"|<a[^>]*aria-current="page"[^>]*href="\/now"/);
   });
 
   it('redirects /agora to /now from the config, not from a page', () => {

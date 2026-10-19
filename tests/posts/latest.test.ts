@@ -21,12 +21,7 @@ describe('latestPosts', () => {
       post({ slug: 'newest', date: '2026-08-01' }),
     ];
 
-    expect(latestPosts(posts, 4).map((item) => item.slug)).toEqual([
-      'newest',
-      'newer',
-      'new',
-      'mid',
-    ]);
+    expect(latestPosts(posts, 4).map(item => item.slug)).toEqual(['newest', 'newer', 'new', 'mid']);
   });
 
   it('excludes drafts even when they are newer', () => {
@@ -35,7 +30,7 @@ describe('latestPosts', () => {
       post({ slug: 'live', date: '2026-01-01' }),
     ];
 
-    expect(latestPosts(posts, 4).map((item) => item.slug)).toEqual(['live']);
+    expect(latestPosts(posts, 4).map(item => item.slug)).toEqual(['live']);
   });
 
   it('excludes archived posts', () => {
@@ -44,20 +39,16 @@ describe('latestPosts', () => {
       post({ slug: 'live', date: '2026-01-01' }),
     ];
 
-    expect(latestPosts(posts, 4).map((item) => item.slug)).toEqual(['live']);
+    expect(latestPosts(posts, 4).map(item => item.slug)).toEqual(['live']);
   });
 
   it('returns an empty list when there are no current published posts', () => {
     expect(latestPosts([], 4)).toEqual([]);
-    expect(
-      latestPosts([post({ slug: 'only-draft', date: '2026-01-01', draft: true })], 4),
-    ).toEqual([]);
+    expect(latestPosts([post({ slug: 'only-draft', date: '2026-01-01', draft: true })], 4)).toEqual([]);
   });
 
   it('defaults the limit to 4', () => {
-    const posts = Array.from({ length: 6 }, (_, index) =>
-      post({ slug: `p${index}`, date: `2026-0${index + 1}-01` }),
-    );
+    const posts = Array.from({ length: 6 }, (_, index) => post({ slug: `p${index}`, date: `2026-0${index + 1}-01` }));
 
     expect(latestPosts(posts)).toHaveLength(4);
   });

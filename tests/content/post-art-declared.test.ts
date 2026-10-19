@@ -10,8 +10,8 @@ const DIR = 'src/content/posts';
 const frontmatterOf = (file: string) => readFileSync(join(DIR, file), 'utf8').split(/^---$/m)[1] ?? '';
 
 const coverless = readdirSync(DIR)
-  .filter((file) => file.endsWith('.md'))
-  .map((file) => ({ file, frontmatter: frontmatterOf(file) }))
+  .filter(file => file.endsWith('.md'))
+  .map(file => ({ file, frontmatter: frontmatterOf(file) }))
   .filter(({ frontmatter }) => !/^cover:/m.test(frontmatter) && !/^draft:\s*true/m.test(frontmatter))
   .map(({ file, frontmatter }) => ({ file, art: frontmatter.match(/^art:\s*(\S+)/m)?.[1] }));
 

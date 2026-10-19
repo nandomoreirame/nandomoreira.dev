@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { SALES_DEV_HOST, SALES_HOST, SALES_STAGING_HOST, SALES_HOST_LIVE, salesLink, salesPath, salesRouting, salesUrl, salesContactLink } from '../../src/lib/sales/host';
+import {
+  SALES_DEV_HOST,
+  SALES_HOST,
+  SALES_STAGING_HOST,
+  SALES_HOST_LIVE,
+  salesLink,
+  salesPath,
+  salesRouting,
+  salesUrl,
+  salesContactLink,
+} from '../../src/lib/sales/host';
 
 const at = (url: string) => new URL(url);
 
@@ -88,9 +98,9 @@ describe('salesContactLink', () => {
     expect(salesContactLink(at('https://contrate.nandomoreira.dev/'), 'landing')).toBe(
       'https://nandomoreira.dev/contato?origem=landing',
     );
-    expect(salesContactLink(at('https://contrate.nandomoreira.dev/site-institucional'), 'site-institucional', 'website')).toBe(
-      'https://nandomoreira.dev/contato?origem=site-institucional&servico=website',
-    );
+    expect(
+      salesContactLink(at('https://contrate.nandomoreira.dev/site-institucional'), 'site-institucional', 'website'),
+    ).toBe('https://nandomoreira.dev/contato?origem=site-institucional&servico=website');
   });
 
   it('stays on the environment the request came from', () => {
@@ -100,7 +110,9 @@ describe('salesContactLink', () => {
     expect(salesContactLink(at('http://contrate.nandomoreira.home/'), 'landing')).toBe(
       'http://nandomoreira.home/contato?origem=landing',
     );
-    expect(salesContactLink(at('http://localhost:4321/servicos'), 'landing')).toBe('http://localhost:4321/contato?origem=landing');
+    expect(salesContactLink(at('http://localhost:4321/servicos'), 'landing')).toBe(
+      'http://localhost:4321/contato?origem=landing',
+    );
   });
 });
 
@@ -118,7 +130,9 @@ describe('salesLink', () => {
 
   it('follows the flag in production', () => {
     expect(salesLink(at('https://nandomoreira.dev/'), undefined, false)).toBe('https://nandomoreira.dev/servicos');
-    expect(salesLink(at('https://nandomoreira.dev/contato'), undefined, true)).toBe('https://contrate.nandomoreira.dev/');
+    expect(salesLink(at('https://nandomoreira.dev/contato'), undefined, true)).toBe(
+      'https://contrate.nandomoreira.dev/',
+    );
   });
 
   it('keeps the backend host on the production address', () => {
@@ -168,7 +182,14 @@ describe('local sales host', () => {
   });
 
   it('lets the API, /go, assets and /servicos through on the local host', () => {
-    for (const path of ['/api/hire', '/go/contato/whatsapp', '/v.gif', '/servicos', '/servicos/site-institucional', '/_astro/x.css']) {
+    for (const path of [
+      '/api/hire',
+      '/go/contato/whatsapp',
+      '/v.gif',
+      '/servicos',
+      '/servicos/site-institucional',
+      '/_astro/x.css',
+    ]) {
       expect(salesRouting(at(`http://contrate.nandomoreira.local:4321${path}`), false), path).toBeUndefined();
     }
   });

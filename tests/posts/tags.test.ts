@@ -8,7 +8,7 @@ const POSTS_DIR = 'src/content/posts';
 const markersOf = (file: string): string[] => {
   const frontmatter = readFileSync(join(POSTS_DIR, file), 'utf8').split('---')[1] ?? '';
   const block = frontmatter.match(/^markers:\n((?:\s+-.*\n?)+)/m)?.[1] ?? '';
-  return [...block.matchAll(/^\s+-\s*(.+)$/gm)].map((m) => m[1]!.trim());
+  return [...block.matchAll(/^\s+-\s*(.+)$/gm)].map(m => m[1]!.trim());
 };
 
 describe('toHashtag', () => {
@@ -27,8 +27,12 @@ describe('post markers', () => {
   // list squeezed into one string ("['sass', 'css']") would become one bogus tag.
   it('lists one plain tag per item, never a serialised list', () => {
     const offenders = readdirSync(POSTS_DIR)
-      .filter((file) => file.endsWith('.md'))
-      .flatMap((file) => markersOf(file).filter((m) => /[[\]'"]/.test(m)).map((m) => `${file}: ${m}`));
+      .filter(file => file.endsWith('.md'))
+      .flatMap(file =>
+        markersOf(file)
+          .filter(m => /[[\]'"]/.test(m))
+          .map(m => `${file}: ${m}`),
+      );
     expect(offenders).toEqual([]);
   });
 });

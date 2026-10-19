@@ -5,17 +5,15 @@ import { describe, expect, it } from 'vitest';
 const HOME_COMPONENTS = 'src/components/home';
 
 const sources = readdirSync(HOME_COMPONENTS)
-  .filter((file) => file.endsWith('.astro'))
-  .map((file) => ({ file, source: readFileSync(join(HOME_COMPONENTS, file), 'utf8') }));
+  .filter(file => file.endsWith('.astro'))
+  .map(file => ({ file, source: readFileSync(join(HOME_COMPONENTS, file), 'utf8') }));
 
 describe('single primary CTA', () => {
   it('declares the primary variant in no home section but the hero, and at most once', () => {
-    const offenders = sources.filter(({ source }) =>
-      source.includes('variant="primary"'),
-    );
+    const offenders = sources.filter(({ source }) => source.includes('variant="primary"'));
 
     // The hero lost its buttons on 2026-10-19 (Fernando): zero is fine, a second is not.
-    expect(offenders.map(({ file }) => file).filter((file) => file !== 'Hero.astro')).toEqual([]);
+    expect(offenders.map(({ file }) => file).filter(file => file !== 'Hero.astro')).toEqual([]);
     const hero = sources.find(({ file }) => file === 'Hero.astro')?.source ?? '';
     expect(hero.split('variant="primary"').length - 1).toBeLessThanOrEqual(1);
   });

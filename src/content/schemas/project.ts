@@ -39,9 +39,7 @@ export const projectSchema = z
     liveUrl: z.url().nullable().optional(),
     images: z.array(imageSchema).optional(),
     /** Keyboard shortcuts of a desktop tool, as typed in its README: "Mod+Shift+Space". */
-    shortcuts: z
-      .array(z.object({ keys: z.string().min(1), action: z.string().min(1) }))
-      .optional(),
+    shortcuts: z.array(z.object({ keys: z.string().min(1), action: z.string().min(1) })).optional(),
     featured: z.boolean(),
     confidential: z.boolean(),
     /**
@@ -51,9 +49,7 @@ export const projectSchema = z
      */
     discontinued: z.boolean().default(false),
     /** Shown as MM/YYYY in the leading column of the row pattern. */
-    date: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
     /** Client name kept in source; redacted on public read when confidential. */
     clientName: z.string().min(1).optional(),
     /** Sensitive metrics kept in source; stripped on public read when confidential. */
@@ -65,11 +61,7 @@ export const projectSchema = z
       .optional(),
   })
   .refine(
-    (project) =>
-      project.confidential ||
-      project.discontinued ||
-      Boolean(project.repoUrl) ||
-      Boolean(project.liveUrl),
+    project => project.confidential || project.discontinued || Boolean(project.repoUrl) || Boolean(project.liveUrl),
     {
       message:
         'A case needs at least one of repoUrl or liveUrl: without a link there is no verifiable evidence. Only a confidential or a discontinued case may omit both, and each must say so on the page (REQ-005, REQ-017).',
@@ -77,7 +69,7 @@ export const projectSchema = z
     },
   )
   .refine(
-    (project) => {
+    project => {
       if (!project.confidential || !project.clientName) return true;
       const client = project.clientName;
       return !(
@@ -92,9 +84,8 @@ export const projectSchema = z
       path: ['slug'],
     },
   )
-  .refine((project) => project.slug !== 'ia', {
-    message:
-      'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a case cannot claim that segment',
+  .refine(project => project.slug !== 'ia', {
+    message: 'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a case cannot claim that segment',
     path: ['slug'],
   });
 

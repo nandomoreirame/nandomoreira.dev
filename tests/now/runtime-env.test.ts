@@ -9,7 +9,13 @@ describe('/now credentials at runtime', () => {
 
   it('reads them through astro:env getSecret', () => {
     expect(source).toContain("from 'astro:env/server'");
-    for (const name of ['OPENXBL_API_KEY', 'SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET', 'SPOTIFY_REFRESH_TOKEN', 'GITHUB_TOKEN']) {
+    for (const name of [
+      'OPENXBL_API_KEY',
+      'SPOTIFY_CLIENT_ID',
+      'SPOTIFY_CLIENT_SECRET',
+      'SPOTIFY_REFRESH_TOKEN',
+      'GITHUB_TOKEN',
+    ]) {
       expect(source).toContain(`getSecret('${name}')`);
     }
   });

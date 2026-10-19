@@ -16,7 +16,7 @@ export const SELF_COOKIE = '__session';
 export const SELF_VALUE = 'self';
 
 export const isSelf = (headers: Headers): boolean =>
-  (headers.get('cookie') ?? '').split(';').some((pair) => pair.trim() === `${SELF_COOKIE}=${SELF_VALUE}`);
+  (headers.get('cookie') ?? '').split(';').some(pair => pair.trim() === `${SELF_COOKIE}=${SELF_VALUE}`);
 
 /** Resolves undefined on timeout or failure; measuring never breaks a response. */
 export const withTimeout = async <T>(work: Promise<T>, ms: number): Promise<T | undefined> => {
@@ -24,7 +24,7 @@ export const withTimeout = async <T>(work: Promise<T>, ms: number): Promise<T | 
   try {
     return await Promise.race([
       work,
-      new Promise<undefined>((resolve) => {
+      new Promise<undefined>(resolve => {
         timer = setTimeout(() => resolve(undefined), ms);
       }),
     ]);
@@ -77,7 +77,7 @@ export const createRecorder = ({
     const at = now();
     const day = saoPauloDay(at);
     const visitor = visitorOf(secret, request, day);
-    const events = hits.map((hit) =>
+    const events = hits.map(hit =>
       buildEvent({
         kind: hit.kind,
         at,
@@ -106,7 +106,7 @@ export const createRecorder = ({
     recordAll,
     record: (request, hit) => recordAll(request, [hit]),
 
-    journey: async (request) => {
+    journey: async request => {
       const secret = config.hashSecret;
       if (!secret) return undefined;
 

@@ -13,15 +13,15 @@ const bars = (shapes: Shape[]) => shapes.filter((shape): shape is Bar => shape.k
 // A usage row is a long weightless track with a fill drawn over it from the same start.
 const rowsOf = (shapes: Shape[]) => {
   const all = bars(shapes);
-  const tracks = all.filter((bar) => bar.layer === 0 && bar.weight === 0 && bar.w > 40);
-  return tracks.map((track) => ({
+  const tracks = all.filter(bar => bar.layer === 0 && bar.weight === 0 && bar.w > 40);
+  return tracks.map(track => ({
     track,
-    fill: all.find((bar) => bar !== track && bar.layer === 2 && bar.x === track.x && bar.y === track.y),
+    fill: all.find(bar => bar !== track && bar.layer === 2 && bar.x === track.x && bar.y === track.y),
   }));
 };
 
 describe('usage motif', () => {
-  it.each(FRAMES)('draws three to five usage rows, each a track with a fill ($width x $height)', (frame) => {
+  it.each(FRAMES)('draws three to five usage rows, each a track with a fill ($width x $height)', frame => {
     for (let i = 0; i < 20; i += 1) {
       const rows = rowsOf(usage(createRandom(hashString(`usage:${i}`)), frame));
 
@@ -39,12 +39,12 @@ describe('usage motif', () => {
   it('fills the most used row the most and makes it the strongest signal', () => {
     for (let i = 0; i < 20; i += 1) {
       const shapes = usage(createRandom(hashString(`usage:hero:${i}`)), FRAMES[0]);
-      const fills = rowsOf(shapes).map((row) => row.fill!);
-      const strongest = shapes.filter((shape) => shape.weight === 1);
+      const fills = rowsOf(shapes).map(row => row.fill!);
+      const strongest = shapes.filter(shape => shape.weight === 1);
 
       expect(strongest).toHaveLength(1);
       expect(fills).toContain(strongest[0]);
-      expect(Math.max(...fills.map((fill) => fill.w))).toBe((strongest[0] as Bar).w);
+      expect(Math.max(...fills.map(fill => fill.w))).toBe((strongest[0] as Bar).w);
     }
   });
 

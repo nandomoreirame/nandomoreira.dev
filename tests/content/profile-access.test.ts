@@ -11,7 +11,7 @@ describe('content access barrel', () => {
     'getProject',
     'getProfile',
     'getAvailability',
-  ])('exports %s, so every surface has one way in', (symbol) => {
+  ])('exports %s, so every surface has one way in', symbol => {
     expect(barrel).toContain(symbol);
   });
 });

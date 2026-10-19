@@ -29,7 +29,9 @@ describe('404 page', () => {
   it('shows the real curl of the requested path in a terminal window, with Copy', async () => {
     const html = await render();
     expect(html).toContain('data-terminal-bar');
-    expect(html).toMatch(/<code id="not-found-curl">\$ curl -I https:\/\/nandomoreira\.dev\/caminho\/que\/nao\/existe\nHTTP\/2 404 Not Found<\/code>/);
+    expect(html).toMatch(
+      /<code id="not-found-curl">\$ curl -I https:\/\/nandomoreira\.dev\/caminho\/que\/nao\/existe\nHTTP\/2 404 Not Found<\/code>/,
+    );
     expect(html).toMatch(/data-copy="not-found-curl"/);
   });
 
@@ -44,16 +46,23 @@ describe('404 page', () => {
     const html = await render();
     // Button renders `class` before `href`. The primary treatment still has to sit on the home anchor.
     const homeLinks = [...html.matchAll(/<a\b[^>]*>/g)]
-      .map((match) => match[0])
-      .filter((tag) => /\bhref="\/"(?=[\s>])/.test(tag));
-    expect(homeLinks.some((tag) => /\bbg-primary\b/.test(tag))).toBe(true);
+      .map(match => match[0])
+      .filter(tag => /\bhref="\/"(?=[\s>])/.test(tag));
+    expect(homeLinks.some(tag => /\bbg-primary\b/.test(tag))).toBe(true);
     expect(html).toContain('href="/portfolio"');
     expect(html).toContain('href="/lab"');
   });
 
   it('invents nothing from the Stitch screen', async () => {
     const html = await render();
-    for (const fake of ['HACKER_MODE', '0x7F', 'cachyos-edge-router', 'x-agent-status', 'command not found', 'Reportar link quebrado']) {
+    for (const fake of [
+      'HACKER_MODE',
+      '0x7F',
+      'cachyos-edge-router',
+      'x-agent-status',
+      'command not found',
+      'Reportar link quebrado',
+    ]) {
       expect(html).not.toContain(fake);
     }
   });

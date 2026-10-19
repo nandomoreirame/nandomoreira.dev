@@ -91,13 +91,13 @@ describe('createRecorder', () => {
     await recorder.record(request({ 'user-agent': `${CHROME} Other` }), { ...hit, path: '/lab' });
 
     const journey = await recorder.journey(request());
-    expect(journey?.views.map((view) => view.path)).toEqual(['/sobre']);
+    expect(journey?.views.map(view => view.path)).toEqual(['/sobre']);
   });
 
   it('writes several hits of one request in a single store call', async () => {
     const batches: number[] = [];
     const memory = memoryAnalyticsStore();
-    const store: AnalyticsStore = { ...memory.store, record: async (events) => void batches.push(events.length) };
+    const store: AnalyticsStore = { ...memory.store, record: async events => void batches.push(events.length) };
     const recorder = createRecorder({ store, config: { hashSecret: SECRET, selfToken: null }, now });
 
     await recorder.recordAll(request(), [hit, { ...hit, path: '/lab' }, { ...hit, path: '/now' }]);
@@ -106,8 +106,16 @@ describe('createRecorder', () => {
   });
 
   it('says whether this request would be recorded at all', () => {
-    const on = createRecorder({ store: memoryAnalyticsStore().store, config: { hashSecret: SECRET, selfToken: null }, now });
-    const off = createRecorder({ store: memoryAnalyticsStore().store, config: { hashSecret: null, selfToken: null }, now });
+    const on = createRecorder({
+      store: memoryAnalyticsStore().store,
+      config: { hashSecret: SECRET, selfToken: null },
+      now,
+    });
+    const off = createRecorder({
+      store: memoryAnalyticsStore().store,
+      config: { hashSecret: null, selfToken: null },
+      now,
+    });
 
     expect(on.active(request())).toBe(true);
     expect(on.active(request({ cookie: '__session=self' }))).toBe(false);

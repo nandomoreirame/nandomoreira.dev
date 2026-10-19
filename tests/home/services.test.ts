@@ -13,9 +13,7 @@ const projects = [
 
 describe('assertServicesHaveCases', () => {
   it('accepts services whose cases all exist', () => {
-    expect(() =>
-      assertServicesHaveCases(services, ['forja', 'bragstack', 'tumodori']),
-    ).not.toThrow();
+    expect(() => assertServicesHaveCases(services, ['forja', 'bragstack', 'tumodori'])).not.toThrow();
   });
 
   it('rejects a service advertised with no case behind it', () => {
@@ -23,9 +21,7 @@ describe('assertServicesHaveCases', () => {
   });
 
   it('names the service, not only the missing slug, so the error is actionable', () => {
-    expect(() => assertServicesHaveCases(services, ['forja'])).toThrow(
-      /Produtos com IA/,
-    );
+    expect(() => assertServicesHaveCases(services, ['forja'])).toThrow(/Produtos com IA/);
   });
 
   it('reports every offender at once, not just the first', () => {

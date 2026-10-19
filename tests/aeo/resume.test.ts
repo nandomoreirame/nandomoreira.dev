@@ -71,7 +71,7 @@ describe('buildResume: basics and skills', () => {
 
   it('publishes the network profiles that are not an e-mail', () => {
     const resume = buildResume({ site, profile, projects: [] });
-    const networks = resume.basics.profiles?.map((entry) => entry.network);
+    const networks = resume.basics.profiles?.map(entry => entry.network);
 
     expect(networks).toEqual(['github', 'linkedin']);
   });
@@ -184,9 +184,7 @@ describe('buildResume: projects', () => {
     const resume = buildResume({
       site,
       profile,
-      projects: [
-        project({ slug: 'sem-link', confidential: true, repoUrl: null, liveUrl: null }),
-      ],
+      projects: [project({ slug: 'sem-link', confidential: true, repoUrl: null, liveUrl: null })],
     });
 
     expect(resume.projects?.[0]?.url).toBe('https://nandomoreira.dev/lab/sem-link');
@@ -202,6 +200,6 @@ describe('buildResume: projects', () => {
       ],
     });
 
-    expect(resume.projects?.map((entry) => entry.name)).toEqual(['Com link', 'Sem link']);
+    expect(resume.projects?.map(entry => entry.name)).toEqual(['Com link', 'Sem link']);
   });
 });

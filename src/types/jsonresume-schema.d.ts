@@ -5,10 +5,7 @@
  * import to `any` at the call site.
  */
 declare module '@jsonresume/schema' {
-  export function validate(
-    resume: unknown,
-    callback: (error: unknown, valid: boolean) => void,
-  ): void;
+  export function validate(resume: unknown, callback: (error: unknown, valid: boolean) => void): void;
 
   export function validateSync(resume: unknown): { valid: boolean; errors?: unknown };
 }

@@ -15,9 +15,7 @@ describe('assertUniqueSlugs', () => {
   });
 
   it('names every duplicate, not just the first', () => {
-    expect(() =>
-      assertUniqueSlugs([{ slug: 'a' }, { slug: 'a' }, { slug: 'b' }, { slug: 'b' }]),
-    ).toThrow(/a.*b|b.*a/);
+    expect(() => assertUniqueSlugs([{ slug: 'a' }, { slug: 'a' }, { slug: 'b' }, { slug: 'b' }])).toThrow(/a.*b|b.*a/);
   });
 
   it('accepts an empty catalogue', () => {

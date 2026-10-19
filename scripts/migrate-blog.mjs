@@ -22,8 +22,8 @@ const REPORT_PATH = join(ROOT, 'MIGRATION-REPORT.md');
 const SKIP_GATSBY_SLUGS = new Set(['calendario-rapido-direto-no-terminal']);
 
 const args = process.argv.slice(2);
-const flag = (name) => args.includes(name);
-const valueOf = (name) => {
+const flag = name => args.includes(name);
+const valueOf = name => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : undefined;
 };
@@ -33,11 +33,7 @@ const imagesOnly = flag('--images-only');
 const notionMode = flag('--notion');
 const asCurrent = flag('--current');
 const sourceRoot = resolve(valueOf('--source') ?? join(process.env.HOME ?? '', 'dev/projects/blog-import-gatsby'));
-const assetsRoot = resolve(
-  valueOf('--assets') ??
-    process.env.BLOG_ASSETS ??
-    '/tmp/blog-gatsby-tarball/content/assets',
-);
+const assetsRoot = resolve(valueOf('--assets') ?? process.env.BLOG_ASSETS ?? '/tmp/blog-gatsby-tarball/content/assets');
 
 const report = {
   postsWritten: 0,
@@ -48,11 +44,11 @@ const report = {
   errors: [],
 };
 
-const ensureDir = (dir) => {
+const ensureDir = dir => {
   if (!dryRun) mkdirSync(dir, { recursive: true });
 };
 
-const yamlQuote = (value) => {
+const yamlQuote = value => {
   const s = String(value);
   if (/[:#{}[\],&*?|>!%@`]/.test(s) || s.includes("'") || s.includes('"') || s.includes('\n')) {
     return JSON.stringify(s);
@@ -60,7 +56,7 @@ const yamlQuote = (value) => {
   return s;
 };
 
-const parseFrontmatter = (raw) => {
+const parseFrontmatter = raw => {
   if (!raw.startsWith('---')) {
     return { data: {}, body: raw };
   }
@@ -102,7 +98,7 @@ const parseFrontmatter = (raw) => {
   return { data, body };
 };
 
-const pathFromImageField = (image) => {
+const pathFromImageField = image => {
   if (!image) return null;
   return String(image)
     .replace(/^['"]|['"]$/g, '')
@@ -192,7 +188,7 @@ const destNameFor = (_year, sourcePath, monthHint, usedNames) => {
 const yearUsedNames = new Map();
 /** source absolute path → relative cover path already copied */
 const copiedSources = new Map();
-const usedNamesForYear = (year) => {
+const usedNamesForYear = year => {
   if (!yearUsedNames.has(year)) yearUsedNames.set(year, new Set());
   return yearUsedNames.get(year);
 };
@@ -249,7 +245,7 @@ const slugFromPath = (pathField, fallbackDir) => {
   return fallbackDir;
 };
 
-const toIsoDate = (value) => {
+const toIsoDate = value => {
   if (!value) return null;
   const s = String(value).trim();
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
@@ -277,11 +273,11 @@ const toIsoDate = (value) => {
   return null;
 };
 
-const markersFromTags = (tags) => {
+const markersFromTags = tags => {
   if (!tags) return undefined;
   const list = Array.isArray(tags) ? tags : [tags];
   const cleaned = list
-    .map((t) => String(t).trim())
+    .map(t => String(t).trim())
     .filter(Boolean)
     .slice(0, 3);
   return cleaned.length ? cleaned : undefined;
@@ -313,7 +309,7 @@ const writePost = ({ slug, title, summary, date, markers, archived, body, cover 
   return outPath;
 };
 
-const findGatsbyPosts = (root) => {
+const findGatsbyPosts = root => {
   const posts = [];
   for (const year of readdirSync(root, { withFileTypes: true })) {
     if (!year.isDirectory() || !/^\d{4}$/.test(year.name)) continue;
@@ -377,9 +373,9 @@ const migrateGatsbyPost = ({ year, dirName, file }) => {
   });
 };
 
-const findNotionMarkdown = (root) => {
+const findNotionMarkdown = root => {
   const files = [];
-  const walk = (dir) => {
+  const walk = dir => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       const p = join(dir, entry.name);
       if (entry.isDirectory()) walk(p);
@@ -390,7 +386,7 @@ const findNotionMarkdown = (root) => {
   return files;
 };
 
-const slugify = (text) =>
+const slugify = text =>
   text
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -398,7 +394,7 @@ const slugify = (text) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-const migrateNotionPost = (file) => {
+const migrateNotionPost = file => {
   const raw = readFileSync(file, 'utf8');
   const lines = raw.split('\n');
   let title = basename(file, '.md').replace(/\s+[0-9a-f]{32}$/i, '');

@@ -18,9 +18,7 @@ export const postSchema = ({ image }: SchemaContext) =>
       /** Shorter title for the browser tab and the SERP, when `title` is long. */
       seoTitle: z.string().min(1).max(60, 'seoTitle must fit the 60 characters a SERP shows').optional(),
       summary: z.string().min(1),
-      date: z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be an ISO-8601 date (YYYY-MM-DD)'),
       /**
        * Optional full timestamp (ISO 8601 with seconds and offset), so posts of
        * the same day order by when they were written. A field, not the file's
@@ -77,13 +75,12 @@ export const postSchema = ({ image }: SchemaContext) =>
         })
         .optional(),
     })
-    .refine((post) => !post.publishedAt || post.publishedAt.slice(0, 10) === post.date, {
+    .refine(post => !post.publishedAt || post.publishedAt.slice(0, 10) === post.date, {
       message: 'publishedAt must fall on the post date',
       path: ['publishedAt'],
     })
-    .refine((post) => post.slug !== 'ia', {
-      message:
-        'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a post cannot claim that segment',
+    .refine(post => post.slug !== 'ia', {
+      message: 'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a post cannot claim that segment',
       path: ['slug'],
     });
 

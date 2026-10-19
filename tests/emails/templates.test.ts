@@ -28,7 +28,11 @@ describe('HireNotification', () => {
 
   it('says "não informado" for empty fields and renders without a journey', async () => {
     const html = await render(
-      h(HireNotification, { ...props, briefing: { ...props.briefing, company: null, budget: null }, journey: undefined }),
+      h(HireNotification, {
+        ...props,
+        briefing: { ...props.briefing, company: null, budget: null },
+        journey: undefined,
+      }),
     );
     expect(html).toContain('não informado');
     expect(html).not.toContain('Jornada de hoje');
@@ -48,7 +52,15 @@ describe('language', () => {
   ] as const)('%s is written in pt-BR', async (_name, Template) => {
     const html = await render(h(Template as never, Template.PreviewProps as never));
     expect(html).toContain('lang="pt-BR"');
-    for (const english of ['not given', 'Reply to', 'Journey today', 'Received', 'record ', 'wants to talk', 'downloaded your CV']) {
+    for (const english of [
+      'not given',
+      'Reply to',
+      'Journey today',
+      'Received',
+      'record ',
+      'wants to talk',
+      'downloaded your CV',
+    ]) {
       expect(html).not.toContain(english);
     }
   });

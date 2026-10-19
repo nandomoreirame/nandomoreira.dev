@@ -9,7 +9,7 @@ describe('newsletter privacy and rules', () => {
   });
 
   it('documents the newsletter in the privacy policy, with consent, storage and how to leave', () => {
-    const section = privacySections.find((item) => item.id === 'novidades');
+    const section = privacySections.find(item => item.id === 'novidades');
     expect(section?.title).toBe('Novidades por e-mail');
     const text = section?.paragraphs.join(' ') ?? '';
     expect(text).toContain('art. 7º, I');

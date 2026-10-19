@@ -27,7 +27,7 @@ describe('setup data', () => {
   });
 
   it('covers the system, the terminal, the agents, the apps, the homelab and what was dropped', () => {
-    const ids = SETUP_SECTIONS.map((section) => section.id);
+    const ids = SETUP_SECTIONS.map(section => section.id);
     for (const id of ['hardware', 'sistema', 'terminal', 'ia', 'apps', 'homelab', 'deixei-de-lado']) {
       expect(ids).toContain(id);
     }
@@ -35,7 +35,7 @@ describe('setup data', () => {
 
   it('opens with the hardware, as the reference /uses pages do', () => {
     expect(SETUP_SECTIONS[0]?.id).toBe('hardware');
-    const names = SETUP_SECTIONS[0]!.items.map((item) => item.name).join(' ');
+    const names = SETUP_SECTIONS[0]!.items.map(item => item.name).join(' ');
     for (const model of ['Latitude 3450', 'MSI G272', 'Keychron K2', 'AULA F75', 'MX Master 3S', 'WH-1000XM5']) {
       expect(names).toContain(model);
     }
@@ -53,8 +53,8 @@ describe('setup data', () => {
   });
 
   it('gives the apps the shortcuts that open them, as written in the Niri config', () => {
-    const items = SETUP_SECTIONS.flatMap((section) => section.items);
-    const ghostty = items.find((item) => item.name === 'Ghostty');
+    const items = SETUP_SECTIONS.flatMap(section => section.items);
+    const ghostty = items.find(item => item.name === 'Ghostty');
     expect(ghostty?.shortcuts).toContainEqual({ keys: 'Super+Enter' });
     for (const item of items) {
       for (const shortcut of item.shortcuts ?? []) expect(shortcut.keys).toMatch(/^(Super|Ctrl|Alt|Shift)(\+\S+)+$/);
@@ -62,12 +62,12 @@ describe('setup data', () => {
   });
 
   it('lists the Antigravity CLI right after the Grok CLI', () => {
-    const names = SETUP_SECTIONS.find((section) => section.id === 'ia')!.items.map((item) => item.name);
+    const names = SETUP_SECTIONS.find(section => section.id === 'ia')!.items.map(item => item.name);
     expect(names.indexOf('Antigravity CLI (agy)')).toBe(names.indexOf('Grok CLI') + 1);
   });
 
   it('points the hardware at the Mercado Livre affiliate links, marked as such', () => {
-    const items = SETUP_SECTIONS.flatMap((section) => section.items);
+    const items = SETUP_SECTIONS.flatMap(section => section.items);
     const expected: Record<string, string> = {
       'Logitech MX Master 3S': 'https://meli.la/1gqJmJC',
       'Logitech MX Vertical': 'https://meli.la/2xmCMvP',
@@ -79,17 +79,18 @@ describe('setup data', () => {
       'LG ultrawide 34" (2560x1080)': 'https://meli.la/2SGG5nP',
     };
     for (const [name, url] of Object.entries(expected)) {
-      const item = items.find((candidate) => candidate.name === name);
+      const item = items.find(candidate => candidate.name === name);
       expect(item?.url, name).toBe(url);
       expect(item?.affiliate, name).toBe(true);
     }
-    for (const item of items) if (item.url?.startsWith('https://meli.la/')) expect(item.affiliate, item.name).toBe(true);
+    for (const item of items)
+      if (item.url?.startsWith('https://meli.la/')) expect(item.affiliate, item.name).toBe(true);
   });
 
   it('lists the AULA F75 as the main keyboard, before the Keychron K2', () => {
     const items = SETUP_SECTIONS[0]!.items;
-    const aula = items.findIndex((item) => item.name === 'AULA F75');
-    const k2 = items.findIndex((item) => item.name === 'Keychron K2');
+    const aula = items.findIndex(item => item.name === 'AULA F75');
+    const k2 = items.findIndex(item => item.name === 'Keychron K2');
     expect(aula).toBeLessThan(k2);
     expect(items[aula]?.why).toMatch(/principal/);
     expect(items[k2]?.why).toMatch(/secundário/);
@@ -100,7 +101,7 @@ describe('setup data', () => {
   });
 
   it('links the homelab intro to the homelab post', () => {
-    const homelab = SETUP_SECTIONS.find((section) => section.id === 'homelab')!;
+    const homelab = SETUP_SECTIONS.find(section => section.id === 'homelab')!;
     expect(homelab.introLink).toEqual({ text: 'Um servidor em casa', href: '/meu-homelab-num-mac-mini-de-2018' });
     expect(homelab.intro).toContain(homelab.introLink!.text);
     expect(existsSync('src/content/posts/meu-homelab-num-mac-mini-de-2018.md')).toBe(true);
@@ -203,16 +204,16 @@ describe('Setup across the site', () => {
 });
 
 describe('setup agents', () => {
-  const section = (id: string) => SETUP_SECTIONS.find((item) => item.id === id)!;
+  const section = (id: string) => SETUP_SECTIONS.find(item => item.id === id)!;
 
   it('lists only the agents of the current RPI flow, with the Grok CLI linked to its repository', () => {
     const agents = section('ia').items;
-    expect(agents.map((item) => item.name)).not.toContain('Codex');
-    expect(agents.find((item) => item.name === 'Grok CLI')?.url).toBe('https://github.com/xai-org/grok-build');
+    expect(agents.map(item => item.name)).not.toContain('Codex');
+    expect(agents.find(item => item.name === 'Grok CLI')?.url).toBe('https://github.com/xai-org/grok-build');
   });
 
   it('keeps the Codex once, under what was tried and dropped', () => {
-    const dropped = section('deixei-de-lado').items.filter((item) => item.name.startsWith('Codex'));
+    const dropped = section('deixei-de-lado').items.filter(item => item.name.startsWith('Codex'));
     expect(dropped).toHaveLength(1);
     expect(dropped[0]?.url).toBe('https://github.com/openai/codex');
   });

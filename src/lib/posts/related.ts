@@ -39,10 +39,10 @@ const titleWords = (title: string): Set<string> =>
   new Set(
     normalise(title)
       .split(/[^a-z0-9]+/)
-      .filter((word) => word.length >= 4 && !STOPWORDS.has(word)),
+      .filter(word => word.length >= 4 && !STOPWORDS.has(word)),
   );
 
-const shared = (a: Set<string>, b: Set<string>): number => [...a].filter((item) => b.has(item)).length;
+const shared = (a: Set<string>, b: Set<string>): number => [...a].filter(item => b.has(item)).length;
 
 const days = (iso: string): number => Date.parse(`${iso}T00:00:00Z`) / 86_400_000;
 
@@ -58,12 +58,11 @@ export const relatedPosts = (current: Post, all: readonly Post[], limit = 3): Po
   const when = days(current.date);
 
   return all
-    .filter((post) => post.slug !== current.slug && post.draft !== true)
-    .map((post) => ({
+    .filter(post => post.slug !== current.slug && post.draft !== true)
+    .map(post => ({
       post,
       samePool: post.archived === current.archived ? 1 : 0,
-      score:
-        2 * shared(markers, new Set((post.markers ?? []).map(normalise))) + shared(words, titleWords(post.title)),
+      score: 2 * shared(markers, new Set((post.markers ?? []).map(normalise))) + shared(words, titleWords(post.title)),
       distance: Math.abs(days(post.date) - when),
     }))
     .sort((a, b) => b.samePool - a.samePool || b.score - a.score || a.distance - b.distance)

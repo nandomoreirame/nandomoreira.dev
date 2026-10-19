@@ -7,12 +7,7 @@ import Index from '../../src/pages/index.astro';
 // merging portfolio and lab into a single "Trabalho selecionado" section.
 // About and contact moved to /sobre and /contato. Portfolio and lab left the
 // home on 2026-10-17 (home-latest-post); their listings are /portfolio and /lab.
-const EXPECTED_ANCHORS = [
-  'inicio',
-  'blog',
-  'trajetoria',
-  'servicos',
-];
+const EXPECTED_ANCHORS = ['inicio', 'blog', 'trajetoria', 'servicos'];
 
 const nav = readFileSync('src/components/layout/SiteNav.astro', 'utf8');
 
@@ -25,7 +20,7 @@ describe('section anchors', () => {
     return container.renderToString(Index, {});
   };
 
-  it.each(EXPECTED_ANCHORS)('exposes a stable id for %s', async (anchor) => {
+  it.each(EXPECTED_ANCHORS)('exposes a stable id for %s', async anchor => {
     expect(await render()).toContain(`id="${anchor}"`);
   });
 

@@ -35,7 +35,7 @@ const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
   ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath, keys: ['I'] }] : []),
 ];
 
-const GO: PaletteOption[] = GO_TARGETS.map((target) => ({
+const GO: PaletteOption[] = GO_TARGETS.map(target => ({
   id: `opt-go-${target.key}`,
   label: target.label,
   href: target.path,
@@ -44,10 +44,15 @@ const GO: PaletteOption[] = GO_TARGETS.map((target) => ({
 
 const ORDER: SearchKind[] = ['post', 'case', 'page', 'service', 'archive'];
 
-const filter = (options: PaletteOption[], query: string) => options.filter((option) => scoreOf({ title: option.label }, query) > 0);
+const filter = (options: PaletteOption[], query: string) =>
+  options.filter(option => scoreOf({ title: option.label }, query) > 0);
 
 /** What the listbox shows for a query (REQ-007, REQ-008, REQ-009). */
-export const viewFor = (index: readonly SearchItem[] | undefined, query: string, views: PageViews = {}): PaletteGroup[] => {
+export const viewFor = (
+  index: readonly SearchItem[] | undefined,
+  query: string,
+  views: PageViews = {},
+): PaletteGroup[] => {
   const GENERAL = general(views);
   if (query.trim() === '') {
     return [
@@ -58,18 +63,24 @@ export const viewFor = (index: readonly SearchItem[] | undefined, query: string,
   const groups: PaletteGroup[] = [
     { label: PALETTE_COPY.groups.general, options: filter(GENERAL, query) },
     { label: PALETTE_COPY.groups.go, options: filter(GO, query) },
-    ...ORDER.map((kind) => ({
+    ...ORDER.map(kind => ({
       label: PALETTE_COPY.groups[kind],
       options: (index ?? [])
-        .filter((item) => item.kind === kind)
-        .map((item) => ({ item, score: scoreOf(item, query) }))
+        .filter(item => item.kind === kind)
+        .map(item => ({ item, score: scoreOf(item, query) }))
         .filter(({ score }) => score > 0)
         .sort((a, b) => b.score - a.score)
         .map(({ item }, at) => ({ id: `opt-${kind}-${at}`, label: item.title, href: item.path })),
     })),
-  ].filter((group) => group.options.length > 0);
+  ].filter(group => group.options.length > 0);
   if (groups.length > 0) return groups;
-  return [{ label: PALETTE_COPY.empty, empty: true, options: [{ id: 'opt-contact', label: PALETTE_COPY.actions.contact, href: '/contato' }] }];
+  return [
+    {
+      label: PALETTE_COPY.empty,
+      empty: true,
+      options: [{ id: 'opt-contact', label: PALETTE_COPY.actions.contact, href: '/contato' }],
+    },
+  ];
 };
 
 /** Next active index with wrap-around; -1 when the list is empty. */

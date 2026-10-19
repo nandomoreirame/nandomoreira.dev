@@ -19,11 +19,7 @@ describe('formatPeriod', () => {
 describe('careerStartYear', () => {
   it('returns the year of the earliest position, whatever the order', () => {
     expect(
-      careerStartYear([
-        { startDate: '2022-04-01' },
-        { startDate: '2010-11-01' },
-        { startDate: '2016-01-01' },
-      ]),
+      careerStartYear([{ startDate: '2022-04-01' }, { startDate: '2010-11-01' }, { startDate: '2016-01-01' }]),
     ).toBe(2010);
   });
 

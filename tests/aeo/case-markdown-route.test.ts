@@ -8,7 +8,9 @@ const call = (get: typeof labGet, slug: string) => get({ params: { slug }, site 
 
 describe('case markdown routes', () => {
   it('declare the human case page as canonical', async () => {
-    expect((await call(labGet, 'forja')).headers.get('link')).toBe('<https://nandomoreira.dev/lab/forja>; rel="canonical"');
+    expect((await call(labGet, 'forja')).headers.get('link')).toBe(
+      '<https://nandomoreira.dev/lab/forja>; rel="canonical"',
+    );
     expect((await call(portfolioGet, 'bragstack')).headers.get('link')).toBe(
       '<https://nandomoreira.dev/portfolio/bragstack>; rel="canonical"',
     );

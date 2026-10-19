@@ -6,14 +6,11 @@ import { isAllowedUrl } from './safe';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-const REPOS_URL =
-  'https://api.github.com/users/nandomoreirame/repos?sort=pushed&per_page=30&type=owner';
+const REPOS_URL = 'https://api.github.com/users/nandomoreirame/repos?sort=pushed&per_page=30&type=owner';
 
 const repoSchema = z.object({
   name: z.string(),
-  html_url: z
-    .string()
-    .refine((url) => isAllowedUrl(url, 'github.com') && url.startsWith('https://github.com/')),
+  html_url: z.string().refine(url => isAllowedUrl(url, 'github.com') && url.startsWith('https://github.com/')),
   description: z.string().nullable(),
   language: z.string().nullable(),
   pushed_at: z.string(),
@@ -53,19 +50,19 @@ export const parseActiveRepos = (
   if (!parsed.success) throw new SourceError('shape');
 
   const cutoff = now.getTime() - windowDays * DAY_MS;
-  const excluded = new Set(exclude.map((name) => name.toLowerCase()));
+  const excluded = new Set(exclude.map(name => name.toLowerCase()));
 
   return parsed.data
-    .flatMap((item) => {
+    .flatMap(item => {
       const repo = repoSchema.safeParse(item);
       return repo.success ? [repo.data] : [];
     })
-    .filter((repo) => !repo.fork && !repo.archived && !repo.private)
-    .filter((repo) => !excluded.has(repo.name.toLowerCase()))
-    .filter((repo) => Date.parse(repo.pushed_at) >= cutoff)
+    .filter(repo => !repo.fork && !repo.archived && !repo.private)
+    .filter(repo => !excluded.has(repo.name.toLowerCase()))
+    .filter(repo => Date.parse(repo.pushed_at) >= cutoff)
     .sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at))
     .slice(0, limit)
-    .map((repo) => ({
+    .map(repo => ({
       name: repo.name,
       url: repo.html_url,
       description: repo.description,
@@ -77,7 +74,7 @@ export const parseActiveRepos = (
 /** Case page when a project lists this repo; the GitHub URL otherwise (REQ-006). */
 export const linkForRepo = (repo: { url: string }, projects: readonly RepoCaseLink[]): string => {
   const key = repoKey(repo.url);
-  const match = projects.find((project) => project.repoUrl && repoKey(project.repoUrl) === key);
+  const match = projects.find(project => project.repoUrl && repoKey(project.repoUrl) === key);
   if (!match) return repo.url;
   return `/${collectionOfBlock(match.block)}/${match.slug}`;
 };

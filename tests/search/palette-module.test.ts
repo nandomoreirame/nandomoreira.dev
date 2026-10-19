@@ -45,7 +45,9 @@ const keyAt = (key: string, timeStamp: number, target: EventTarget = document) =
 };
 
 const serve = (body: unknown, init?: ResponseInit) => {
-  globalThis.fetch = vi.fn(async () => new Response(typeof body === 'string' ? body : JSON.stringify(body), init)) as never;
+  globalThis.fetch = vi.fn(
+    async () => new Response(typeof body === 'string' ? body : JSON.stringify(body), init),
+  ) as never;
 };
 
 const mockClipboard = (writeText: (text: string) => Promise<void>) => {
@@ -54,7 +56,7 @@ const mockClipboard = (writeText: (text: string) => Promise<void>) => {
   return spy;
 };
 
-const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+const flush = () => new Promise(resolve => setTimeout(resolve, 0));
 
 beforeEach(() => {
   document.body.innerHTML = markup;
@@ -276,7 +278,7 @@ describe('palette module', () => {
   describe('copy link', () => {
     it('copies the URL, closes and announces outside the dialog only after the write resolves', async () => {
       let resolve!: () => void;
-      const writeText = mockClipboard(() => new Promise<void>((done) => (resolve = done)));
+      const writeText = mockClipboard(() => new Promise<void>(done => (resolve = done)));
       const palette = await load();
       await palette.open(null);
       press('Enter');

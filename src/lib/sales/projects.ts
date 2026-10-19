@@ -22,8 +22,8 @@ export interface SalesProject {
 export const salesProjects = async (): Promise<SalesProject[]> => {
   const projects = await getAllProjects();
 
-  return SALES_COPY.projects.map((entry) => {
-    const project = projects.find((candidate) => candidate.slug === entry.slug);
+  return SALES_COPY.projects.map(entry => {
+    const project = projects.find(candidate => candidate.slug === entry.slug);
     if (!project?.liveUrl) throw new Error(`Sales project ${entry.slug} needs a live URL in the collection.`);
 
     return {

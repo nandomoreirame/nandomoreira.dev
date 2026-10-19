@@ -47,7 +47,7 @@ describe('closing CTA', () => {
   });
 
   it('gives every page its own title and a button to /contato', () => {
-    const titles = Object.values(CLOSING_CTA).map((copy) => copy.title);
+    const titles = Object.values(CLOSING_CTA).map(copy => copy.title);
     expect(new Set(titles).size).toBe(titles.length);
     for (const copy of Object.values(CLOSING_CTA)) {
       expect(copy.text).not.toMatch(/[\u2013\u2014]/);

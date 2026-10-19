@@ -44,9 +44,9 @@ describe('PWA web app manifest', () => {
       icons: Array<{ src: string; sizes: string; purpose: string }>;
     };
 
-    const any192 = manifest.icons.find((i) => i.sizes === '192x192' && i.purpose === 'any');
-    const any512 = manifest.icons.find((i) => i.sizes === '512x512' && i.purpose === 'any');
-    const maskable512 = manifest.icons.find((i) => i.sizes === '512x512' && i.purpose === 'maskable');
+    const any192 = manifest.icons.find(i => i.sizes === '192x192' && i.purpose === 'any');
+    const any512 = manifest.icons.find(i => i.sizes === '512x512' && i.purpose === 'any');
+    const maskable512 = manifest.icons.find(i => i.sizes === '512x512' && i.purpose === 'maskable');
 
     expect(any192).toBeDefined();
     expect(any512).toBeDefined();

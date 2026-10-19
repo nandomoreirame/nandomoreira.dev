@@ -8,7 +8,7 @@ const config = readFileSync('astro.config.mjs', 'utf8');
 const MOVED = ['bragstack', 'croonos', 'mousai', 'portfoliosnap'];
 
 describe('cases moved from the lab to the portfolio', () => {
-  it.each(MOVED)('redirects /lab/%s to the portfolio, with its markdown too', (slug) => {
+  it.each(MOVED)('redirects /lab/%s to the portfolio, with its markdown too', slug => {
     expect(config).toContain(`'/lab/${slug}': '/portfolio/${slug}'`);
     expect(config).toContain(`'/lab/${slug}.md': '/portfolio/${slug}.md'`);
   });

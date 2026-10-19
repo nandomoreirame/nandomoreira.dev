@@ -79,7 +79,9 @@ describe('SiteNav MCP entry', () => {
   });
 
   it('marks it current on /mcp', async () => {
-    expect(await render({ current: '/mcp' })).toMatch(/<a[^>]*href="\/mcp"[^>]*aria-current="page"|<a[^>]*aria-current="page"[^>]*href="\/mcp"/);
+    expect(await render({ current: '/mcp' })).toMatch(
+      /<a[^>]*href="\/mcp"[^>]*aria-current="page"|<a[^>]*aria-current="page"[^>]*href="\/mcp"/,
+    );
   });
 });
 
@@ -101,7 +103,9 @@ describe('SiteNav section items', () => {
   });
 
   it('marks Blog as the current location on a post, which lives at the root', async () => {
-    expect(linkTo(await render({ hasPosts: true, current: '/o-falso-verde', section: '/posts' }), '/posts')).toContain('aria-current="true"');
+    expect(linkTo(await render({ hasPosts: true, current: '/o-falso-verde', section: '/posts' }), '/posts')).toContain(
+      'aria-current="true"',
+    );
   });
 
   it('paints a section item like the current page', async () => {
@@ -161,7 +165,9 @@ describe('SiteNav mobile hamburger menu', () => {
     expect(html).toMatch(
       /<div\b[^>]*id="site-menu"[^>]*popover[^>]*role="dialog"|<div\b[^>]*id="site-menu"[^>]*role="dialog"[^>]*popover/,
     );
-    expect(html).toMatch(/id="site-menu"[^>]*class="[^"]*\bsite-menu\b|class="[^"]*\bsite-menu\b[^"]*"[^>]*id="site-menu"/);
+    expect(html).toMatch(
+      /id="site-menu"[^>]*class="[^"]*\bsite-menu\b|class="[^"]*\bsite-menu\b[^"]*"[^>]*id="site-menu"/,
+    );
     expect(html).toMatch(/aria-label="Menu"/);
   });
 
@@ -194,8 +200,7 @@ describe('SiteNav mobile hamburger menu', () => {
 
   it('keeps the desktop list hidden on small screens and flex from md up', async () => {
     const html = await render();
-    const desktopList =
-      html.match(/<nav[^>]*aria-label="Navegação principal"[^>]*>[\s\S]*?<ul([^>]*)>/)?.[1] ?? '';
+    const desktopList = html.match(/<nav[^>]*aria-label="Navegação principal"[^>]*>[\s\S]*?<ul([^>]*)>/)?.[1] ?? '';
 
     expect(desktopList).toMatch(/\bhidden\b/);
     expect(desktopList).toMatch(/\bmd:flex\b/);
@@ -203,11 +208,8 @@ describe('SiteNav mobile hamburger menu', () => {
 
   it('lists every item in the mobile menu in the same order as the desktop list', async () => {
     const html = await render({ hasPosts: true });
-    const mobileNav =
-      html.match(
-        /<nav[^>]*aria-label="Menu principal \(mobile\)"[^>]*>([\s\S]*?)<\/nav>/,
-      )?.[1] ?? '';
-    const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    const mobileNav = html.match(/<nav[^>]*aria-label="Menu principal \(mobile\)"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+    const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map(m => m[1]);
 
     expect(hrefs).toEqual(['/posts', '/portfolio', '/lab', '/setup', '/now', '/sobre', '/mcp', '/contato']);
   });

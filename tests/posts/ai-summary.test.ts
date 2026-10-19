@@ -21,15 +21,15 @@ describe('aiSummaryPrompt', () => {
   });
 });
 
-const target = (id: string) => AI_SUMMARY_TARGETS.find((item) => item.id === id)!;
+const target = (id: string) => AI_SUMMARY_TARGETS.find(item => item.id === id)!;
 
 describe('aiSummaryUrl', () => {
   it('offers Claude, Gemini and ChatGPT, in that order', () => {
-    expect(AI_SUMMARY_TARGETS.map((item) => item.name)).toEqual(['Claude', 'Gemini', 'ChatGPT']);
+    expect(AI_SUMMARY_TARGETS.map(item => item.name)).toEqual(['Claude', 'Gemini', 'ChatGPT']);
   });
 
   it('labels Gemini by where it lands, the Google AI', () => {
-    expect(AI_SUMMARY_TARGETS.map((item) => item.label)).toEqual([
+    expect(AI_SUMMARY_TARGETS.map(item => item.label)).toEqual([
       'Resumir com Claude',
       'Resumir com a IA do Google',
       'Resumir com ChatGPT',
@@ -96,12 +96,18 @@ describe('AiSummaryLink', () => {
   });
 
   it('shows the short name as text when labelled, the accessible name starting with it', async () => {
-    const html = await (await AstroContainer.create()).renderToString(AiSummaryLink, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(AiSummaryLink, {
       props: { markdownUrl: MARKDOWN, labelled: true },
     });
-    expect(AI_SUMMARY_TARGETS.map((target) => target.short)).toEqual(['Resumir com Claude', 'Google AI', 'ChatGPT']);
+    expect(AI_SUMMARY_TARGETS.map(target => target.short)).toEqual(['Resumir com Claude', 'Google AI', 'ChatGPT']);
     for (const { short } of AI_SUMMARY_TARGETS) {
-      expect(html).toMatch(new RegExp(`<span[^>]*aria-hidden="true"[^>]*>✨</span>\\s*${short}\\s*<span class="sr-only">, abre em nova aba</span>`));
+      expect(html).toMatch(
+        new RegExp(
+          `<span[^>]*aria-hidden="true"[^>]*>✨</span>\\s*${short}\\s*<span class="sr-only">, abre em nova aba</span>`,
+        ),
+      );
     }
     expect(html).not.toContain('aria-label=');
     expect(html).not.toContain('group-hover/ai:opacity-100');

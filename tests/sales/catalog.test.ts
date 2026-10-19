@@ -4,7 +4,7 @@ import { SALES_SERVICES, SHOW_DETAIL_LINKS, detailFor, detailSlugs, serviceAncho
 
 describe('sales catalog', () => {
   it('offers the six services in the landing order', () => {
-    expect(SALES_SERVICES.map((service) => service.service)).toEqual(SERVICES.filter((value) => value !== 'undecided'));
+    expect(SALES_SERVICES.map(service => service.service)).toEqual(SERVICES.filter(value => value !== 'undecided'));
   });
 
   it('gives every service 3 or 4 items of what the client receives', () => {
@@ -27,11 +27,11 @@ describe('sales catalog', () => {
     expect(detail.fit).toHaveLength(4);
     expect(detail.comparison.columns).toEqual(['Site institucional', 'Landing page', 'Loja virtual']);
     for (const row of detail.comparison.rows) expect(row.values).toHaveLength(3);
-    expect(detail.faq.map((item) => item.question)).toHaveLength(4);
+    expect(detail.faq.map(item => item.question)).toHaveLength(4);
   });
 
   it('lists the editing panel as an optional add-on (REQ-020)', () => {
-    expect(detailFor('site-institucional')!.detail.addons.map((addon) => addon.title)).toContain('Painel de edição');
+    expect(detailFor('site-institucional')!.detail.addons.map(addon => addon.title)).toContain('Painel de edição');
   });
 
   it('explains Firebase Hosting by the shop-window analogy', () => {
@@ -39,7 +39,9 @@ describe('sales catalog', () => {
   });
 
   it('states the delivery range in the detail FAQ', () => {
-    const answer = detailFor('site-institucional')!.detail.faq.find((item) => item.question.startsWith('Quanto tempo'))!.answer;
+    const answer = detailFor('site-institucional')!.detail.faq.find(item =>
+      item.question.startsWith('Quanto tempo'),
+    )!.answer;
     expect(answer).toContain('de 5 a 30 dias úteis de trabalho');
   });
 

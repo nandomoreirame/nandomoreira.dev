@@ -4,15 +4,15 @@ import { BUDGETS, INTERESTS } from '../../src/lib/hire/schema';
 
 describe('contact form options', () => {
   it('offers exactly the budgets the API accepts, in order', () => {
-    expect(BUDGET_OPTIONS.map((option) => option.value)).toEqual([...BUDGETS]);
+    expect(BUDGET_OPTIONS.map(option => option.value)).toEqual([...BUDGETS]);
   });
 
   it('offers exactly the interests the API accepts, in order', () => {
-    expect(INTEREST_OPTIONS.map((option) => option.value)).toEqual([...INTERESTS]);
+    expect(INTEREST_OPTIONS.map(option => option.value)).toEqual([...INTERESTS]);
   });
 
   it('labels the budgets in reais', () => {
-    expect(BUDGET_OPTIONS.find((option) => option.value === '10k-30k')?.label).toBe('R$ 10–30 mil');
+    expect(BUDGET_OPTIONS.find(option => option.value === '10k-30k')?.label).toBe('R$ 10–30 mil');
   });
 });
 
@@ -32,6 +32,6 @@ describe('outcomeMessage', () => {
 
   it('offers consultoria and no longer AEO as an interest', () => {
     expect(INTEREST_OPTIONS).toContainEqual({ value: 'consulting', label: 'Consultoria' });
-    expect(INTEREST_OPTIONS.map((option) => option.value)).not.toContain('aeo');
+    expect(INTEREST_OPTIONS.map(option => option.value)).not.toContain('aeo');
   });
 });

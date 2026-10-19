@@ -17,7 +17,7 @@ const contacts = [
 ];
 
 const srcFiles = (dir: string): string[] =>
-  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const path = join(dir, entry.name);
     return entry.isDirectory() ? srcFiles(path) : [path];
   });
@@ -72,8 +72,8 @@ describe('home no longer hosts About or Contact', () => {
 
   it('has no src/ links pointing at the old home anchors', () => {
     const offenders = srcFiles('src')
-      .filter((path) => path.endsWith('.astro') || path.endsWith('.ts') || path.endsWith('.tsx'))
-      .filter((path) => {
+      .filter(path => path.endsWith('.astro') || path.endsWith('.ts') || path.endsWith('.tsx'))
+      .filter(path => {
         const source = readFileSync(path, 'utf8');
         return source.includes('/#contato') || source.includes('/#sobre');
       });

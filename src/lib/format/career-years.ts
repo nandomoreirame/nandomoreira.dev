@@ -9,5 +9,4 @@ export const careerYears = (now: Date = new Date()): number => now.getUTCFullYea
 export const careerYearsLabel = (now?: Date): string => `+${careerYears(now)} anos`;
 
 /** Replaces every {anos} marker in a text with the label. */
-export const withCareerYears = (text: string, now?: Date): string =>
-  text.replaceAll('{anos}', careerYearsLabel(now));
+export const withCareerYears = (text: string, now?: Date): string => text.replaceAll('{anos}', careerYearsLabel(now));

@@ -39,16 +39,44 @@ const SITE_INSTITUCIONAL: ServiceDetail = {
     cta: 'Quero um site assim',
   },
   anatomy: [
-    { title: 'Início', text: 'A primeira impressão: quem você é, o que faz e para quem, com um convite para conversar.', note: 'Impacto imediato e clareza' },
-    { title: 'Sobre você ou a empresa', text: 'Sua história, seus princípios e o seu método. Constrói confiança antes da compra.', note: 'Confiança e reputação' },
-    { title: 'Serviços ou produtos', text: 'O que você entrega, com clareza. Responde às dúvidas mais comuns antes do primeiro contato.', note: 'Explicação sem rodeio' },
-    { title: 'Contato', text: 'Caminho direto para falar com você: botão de WhatsApp e um formulário simples.', note: 'Canal aberto sem atrito' },
+    {
+      title: 'Início',
+      text: 'A primeira impressão: quem você é, o que faz e para quem, com um convite para conversar.',
+      note: 'Impacto imediato e clareza',
+    },
+    {
+      title: 'Sobre você ou a empresa',
+      text: 'Sua história, seus princípios e o seu método. Constrói confiança antes da compra.',
+      note: 'Confiança e reputação',
+    },
+    {
+      title: 'Serviços ou produtos',
+      text: 'O que você entrega, com clareza. Responde às dúvidas mais comuns antes do primeiro contato.',
+      note: 'Explicação sem rodeio',
+    },
+    {
+      title: 'Contato',
+      text: 'Caminho direto para falar com você: botão de WhatsApp e um formulário simples.',
+      note: 'Canal aberto sem atrito',
+    },
   ],
   fit: [
-    { title: 'Indicações perdidas no meio do caminho', text: 'Você depende de indicação boca a boca e perde clientes que procuram o seu nome antes de fechar.' },
-    { title: 'Tempo gasto em explicações repetitivas', text: 'Você explica o seu método e responde às mesmas dúvidas em cada primeiro contato.' },
-    { title: 'Buscas no Google sem encontrar você', text: 'Você quer aparecer quando alguém da sua cidade procura pelo que você faz, sem depender só de anúncio pago.' },
-    { title: 'Superar a cara de amadorismo', text: 'Você quer passar mais segurança do que um perfil de rede social ou um cartão digital genérico.' },
+    {
+      title: 'Indicações perdidas no meio do caminho',
+      text: 'Você depende de indicação boca a boca e perde clientes que procuram o seu nome antes de fechar.',
+    },
+    {
+      title: 'Tempo gasto em explicações repetitivas',
+      text: 'Você explica o seu método e responde às mesmas dúvidas em cada primeiro contato.',
+    },
+    {
+      title: 'Buscas no Google sem encontrar você',
+      text: 'Você quer aparecer quando alguém da sua cidade procura pelo que você faz, sem depender só de anúncio pago.',
+    },
+    {
+      title: 'Superar a cara de amadorismo',
+      text: 'Você quer passar mais segurança do que um perfil de rede social ou um cartão digital genérico.',
+    },
   ],
   included: [
     { title: 'Design exclusivo feito sob medida', text: 'Nada de modelo pronto ou site genérico de construtor.' },
@@ -77,17 +105,56 @@ const SITE_INSTITUCIONAL: ServiceDetail = {
     caption: 'Site institucional, landing page e loja virtual lado a lado',
     columns: ['Site institucional', 'Landing page', 'Loja virtual'],
     rows: [
-      { criterion: 'Para que serve', values: ['Apresentar o negócio inteiro e passar credibilidade.', 'Vender uma única oferta ou captar contatos de uma campanha.', 'Vender produtos com carrinho de compras.'] },
-      { criterion: 'Quantidade de páginas', values: ['De uma a quatro seções ou páginas.', 'Uma página única e focada.', 'Muitas páginas de catálogo.'] },
-      { criterion: 'Foco principal', values: ['Autoridade, clareza e contato.', 'Conversão de quem chega por anúncio.', 'Venda concluída no checkout.'] },
-      { criterion: 'Quando escolher', values: ['Você presta serviços, tem escritório ou consultoria.', 'Você vai rodar uma campanha específica.', 'Você vende mercadorias e precisa de frete e estoque.'] },
+      {
+        criterion: 'Para que serve',
+        values: [
+          'Apresentar o negócio inteiro e passar credibilidade.',
+          'Vender uma única oferta ou captar contatos de uma campanha.',
+          'Vender produtos com carrinho de compras.',
+        ],
+      },
+      {
+        criterion: 'Quantidade de páginas',
+        values: ['De uma a quatro seções ou páginas.', 'Uma página única e focada.', 'Muitas páginas de catálogo.'],
+      },
+      {
+        criterion: 'Foco principal',
+        values: [
+          'Autoridade, clareza e contato.',
+          'Conversão de quem chega por anúncio.',
+          'Venda concluída no checkout.',
+        ],
+      },
+      {
+        criterion: 'Quando escolher',
+        values: [
+          'Você presta serviços, tem escritório ou consultoria.',
+          'Você vai rodar uma campanha específica.',
+          'Você vende mercadorias e precisa de frete e estoque.',
+        ],
+      },
     ],
   },
   faq: [
-    { question: 'Quantas páginas ou seções meu site institucional pode ter?', answer: 'Normalmente cabe em uma página com as quatro partes (início, sobre, serviços e contato) ou em até quatro páginas. Se precisar de mais, isso entra na proposta.' },
-    { question: 'Eu mesmo vou conseguir trocar textos e fotos depois?', answer: 'Pequenas trocas de texto e foto ficam por minha conta no acompanhamento. Se preferir editar sozinho, o site pode ganhar um painel de edição simples, como opcional.' },
-    { question: 'O domínio e o site ficam registrados em meu nome?', answer: 'Sim. Se você ainda não tem domínio, eu registro no seu nome, e as contas do site também ficam com você.' },
-    { question: 'Quanto tempo leva para ficar pronto?', answer: 'Em geral, de 5 a 30 dias úteis de trabalho, conforme o que o site precisa ter. O prazo exato vem na proposta, com a data de cada etapa.' },
+    {
+      question: 'Quantas páginas ou seções meu site institucional pode ter?',
+      answer:
+        'Normalmente cabe em uma página com as quatro partes (início, sobre, serviços e contato) ou em até quatro páginas. Se precisar de mais, isso entra na proposta.',
+    },
+    {
+      question: 'Eu mesmo vou conseguir trocar textos e fotos depois?',
+      answer:
+        'Pequenas trocas de texto e foto ficam por minha conta no acompanhamento. Se preferir editar sozinho, o site pode ganhar um painel de edição simples, como opcional.',
+    },
+    {
+      question: 'O domínio e o site ficam registrados em meu nome?',
+      answer: 'Sim. Se você ainda não tem domínio, eu registro no seu nome, e as contas do site também ficam com você.',
+    },
+    {
+      question: 'Quanto tempo leva para ficar pronto?',
+      answer:
+        'Em geral, de 5 a 30 dias úteis de trabalho, conforme o que o site precisa ter. O prazo exato vem na proposta, com a data de cada etapa.',
+    },
   ],
 };
 
@@ -100,7 +167,12 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     title: 'Site institucional',
     summary: 'Seu cartão de visita que trabalha 24 horas: explica quem você é, o que oferece e como falar com você.',
     audience: 'Empresas, clínicas e profissionais que precisam de uma presença confiável no Google.',
-    receives: ['Design sob medida', 'Feito para ser encontrado no Google', 'Rápido no celular', 'Botão de contato direto'],
+    receives: [
+      'Design sob medida',
+      'Feito para ser encontrado no Google',
+      'Rápido no celular',
+      'Botão de contato direto',
+    ],
     detail: SITE_INSTITUCIONAL,
   },
   {
@@ -110,14 +182,20 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     title: 'Landing page',
     summary: 'Uma página focada em um único objetivo: transformar visitantes em contatos ou vendas.',
     audience: 'Lançamentos de produtos, campanhas de anúncios e divulgação de serviços pontuais.',
-    receives: ['Texto claro e persuasivo', 'Carregamento rápido', 'Integração com WhatsApp', 'Medição de quem virou contato'],
+    receives: [
+      'Texto claro e persuasivo',
+      'Carregamento rápido',
+      'Integração com WhatsApp',
+      'Medição de quem virou contato',
+    ],
   },
   {
     slug: 'blog',
     service: 'blog',
     icon: 'lucide:newspaper',
     title: 'Blog',
-    summary: 'Seu espaço próprio para publicar artigos, ensinar o seu público e construir autoridade sem depender dos algoritmos das redes.',
+    summary:
+      'Seu espaço próprio para publicar artigos, ensinar o seu público e construir autoridade sem depender dos algoritmos das redes.',
     audience: 'Especialistas, consultores e marcas que querem ser encontrados no Google pelo conteúdo.',
     receives: ['Painel simples de escrita', 'Categorias e busca', 'Leitura confortável', 'Compartilhamento fácil'],
   },
@@ -128,16 +206,27 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     title: 'Loja virtual',
     summary: 'Sua vitrine online com catálogo organizado, carrinho e pagamento seguro.',
     audience: 'Quem quer vender produtos físicos ou digitais sem depender do WhatsApp.',
-    receives: ['Catálogo fácil de atualizar', 'Pagamento seguro com Pix e cartão', 'Cálculo de frete', 'Painel de pedidos'],
+    receives: [
+      'Catálogo fácil de atualizar',
+      'Pagamento seguro com Pix e cartão',
+      'Cálculo de frete',
+      'Painel de pedidos',
+    ],
   },
   {
     slug: 'produto-web',
     service: 'web-product',
     icon: 'lucide:layout-dashboard',
     title: 'Produto web completo',
-    summary: 'Um sistema com login, cadastro de usuários e dados guardados com segurança, como um aplicativo, só que direto no navegador.',
+    summary:
+      'Um sistema com login, cadastro de usuários e dados guardados com segurança, como um aplicativo, só que direto no navegador.',
     audience: 'Empreendedores e empresas com uma ideia de serviço digital ou plataforma própria.',
-    receives: ['Área logada com login', 'Painel administrativo', 'Banco de dados em tempo real', 'Cresce junto com o uso'],
+    receives: [
+      'Área logada com login',
+      'Painel administrativo',
+      'Banco de dados em tempo real',
+      'Cresce junto com o uso',
+    ],
   },
   {
     slug: 'automacao-ia',
@@ -146,7 +235,12 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     title: 'Automação e IA',
     summary: 'Rotinas inteligentes que cuidam das tarefas repetitivas da sua operação para liberar o seu tempo.',
     audience: 'Negócios que gastam horas alimentando planilhas, triando e-mails ou respondendo mensagens.',
-    receives: ['Integração entre as ferramentas que você já usa', 'Assistente com inteligência artificial', 'Relatórios automáticos', 'Menos erros manuais'],
+    receives: [
+      'Integração entre as ferramentas que você já usa',
+      'Assistente com inteligência artificial',
+      'Relatórios automáticos',
+      'Menos erros manuais',
+    ],
   },
 ]);
 
@@ -160,9 +254,9 @@ export const SHOW_DETAIL_LINKS = false;
 export const serviceAnchor = (slug: string): string => `servico-${slug}`;
 
 export const detailFor = (slug: string): (SalesService & { detail: ServiceDetail }) | undefined => {
-  const found = SALES_SERVICES.find((service) => service.slug === slug);
+  const found = SALES_SERVICES.find(service => service.slug === slug);
   return found?.detail ? (found as SalesService & { detail: ServiceDetail }) : undefined;
 };
 
 export const detailSlugs = (): string[] =>
-  SALES_SERVICES.filter((service) => service.detail).map((service) => service.slug);
+  SALES_SERVICES.filter(service => service.detail).map(service => service.slug);

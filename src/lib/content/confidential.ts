@@ -2,8 +2,7 @@ import type { Project } from '../../content/schemas/project';
 
 const REDACTED_CLIENT = 'cliente sob confidencialidade';
 
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** Case-insensitive replacement: client names rarely keep one capitalisation. */
 const strip = (text: string, needles: readonly string[]): string =>
@@ -23,10 +22,7 @@ const strip = (text: string, needles: readonly string[]): string =>
 export const redactConfidential = (project: Project): Project => {
   if (!project.confidential) return project;
 
-  const needles = [
-    project.clientName ?? '',
-    ...(project.confidentialMetrics ?? []),
-  ].filter(Boolean);
+  const needles = [project.clientName ?? '', ...(project.confidentialMetrics ?? [])].filter(Boolean);
 
   return {
     ...project,
@@ -37,7 +33,7 @@ export const redactConfidential = (project: Project): Project => {
     problem: strip(project.problem, needles),
     decisions: strip(project.decisions, needles),
     outcome: strip(project.outcome, needles),
-    images: project.images?.map((image) => ({
+    images: project.images?.map(image => ({
       ...image,
       alt: strip(image.alt, needles),
     })),

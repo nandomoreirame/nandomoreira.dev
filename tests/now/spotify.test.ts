@@ -1,16 +1,20 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { SourceError } from '../../src/lib/now/http';
-import { fetchRecentTracks, fetchTopArtists, parseRecentTracks, parseTopArtists, refreshAccessToken } from '../../src/lib/now/spotify';
+import {
+  fetchRecentTracks,
+  fetchTopArtists,
+  parseRecentTracks,
+  parseTopArtists,
+  refreshAccessToken,
+} from '../../src/lib/now/spotify';
 
-const fixture = JSON.parse(
-  readFileSync(new URL('./fixtures/spotify-recently-played.json', import.meta.url), 'utf8'),
-);
+const fixture = JSON.parse(readFileSync(new URL('./fixtures/spotify-recently-played.json', import.meta.url), 'utf8'));
 
 describe('parseRecentTracks', () => {
   it('dedupes by track id, keeps the latest play, and caps at five', () => {
     const tracks = parseRecentTracks(fixture);
-    expect(tracks.map((track) => track.title)).toEqual(['Same Song', 'Two', 'Three', 'Four', 'Five']);
+    expect(tracks.map(track => track.title)).toEqual(['Same Song', 'Two', 'Three', 'Four', 'Five']);
     expect(tracks[0]).toEqual({
       title: 'Same Song',
       artists: 'Artist A, Artist B',
@@ -47,19 +51,14 @@ describe('parseRecentTracks', () => {
     broken.track.id = 'no-album';
     delete broken.track.album;
     const tracks = parseRecentTracks({ items: [broken, fixture.items[3]] });
-    expect(tracks.map((track) => track.title)).toEqual(['Two']);
+    expect(tracks.map(track => track.title)).toEqual(['Two']);
   });
 
   it('drops a null track without failing the parse', () => {
-    const tracks = parseRecentTracks(
-      {
-        items: [
-          { played_at: '2026-10-11T18:00:00Z', track: null },
-          fixture.items[3],
-        ],
-      },
-    );
-    expect(tracks.map((track) => track.title)).toEqual(['Two']);
+    const tracks = parseRecentTracks({
+      items: [{ played_at: '2026-10-11T18:00:00Z', track: null }, fixture.items[3]],
+    });
+    expect(tracks.map(track => track.title)).toEqual(['Two']);
   });
 
   it('drops a track whose url is outside https://open.spotify.com and keeps the others', () => {
@@ -69,7 +68,7 @@ describe('parseRecentTracks', () => {
     evil.track.external_urls.spotify = 'javascript:alert(1)';
 
     const tracks = parseRecentTracks({ items: [evil, fixture.items[3]] });
-    expect(tracks.map((track) => track.title)).toEqual(['Two']);
+    expect(tracks.map(track => track.title)).toEqual(['Two']);
   });
 });
 
@@ -132,23 +131,46 @@ const artistImage = (width: number, hex: string) => ({
 });
 
 const topArtists = {
-  items: ['Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Evil', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico', 'Milton'].map((name, index) => ({
+  items: [
+    'Raul',
+    'Nando',
+    'Tim',
+    'Gal',
+    'Elis',
+    'Evil',
+    'Rita',
+    'Lia',
+    'Cazuza',
+    'Djavan',
+    'Caetano',
+    'Gil',
+    'Chico',
+    'Milton',
+  ].map((name, index) => ({
     name,
     external_urls: {
       spotify: name === 'Evil' ? 'javascript:alert(1)' : `https://open.spotify.com/artist/${name.toLowerCase()}`,
     },
-    images: [
-      artistImage(640, `${index}`.repeat(40)),
-      artistImage(320, `${index + 1}`.repeat(40)),
-    ],
+    images: [artistImage(640, `${index}`.repeat(40)), artistImage(320, `${index + 1}`.repeat(40))],
   })),
 };
 
 describe('parseTopArtists', () => {
   it('keeps twelve artists and the image closest to 320 px, as a local cover', () => {
     const artists = parseTopArtists(topArtists);
-    expect(artists.map((artist) => artist.name)).toEqual([
-      'Raul', 'Nando', 'Tim', 'Gal', 'Elis', 'Rita', 'Lia', 'Cazuza', 'Djavan', 'Caetano', 'Gil', 'Chico',
+    expect(artists.map(artist => artist.name)).toEqual([
+      'Raul',
+      'Nando',
+      'Tim',
+      'Gal',
+      'Elis',
+      'Rita',
+      'Lia',
+      'Cazuza',
+      'Djavan',
+      'Caetano',
+      'Gil',
+      'Chico',
     ]);
     expect(artists[0]?.cover).toBe(`/api/now/cover/spotify/${'1'.repeat(40)}`);
     expect(JSON.stringify(artists)).not.toContain('i.scdn.co');
@@ -172,7 +194,7 @@ describe('fetchTopArtists', () => {
     });
 
     expect(artists).toHaveLength(12);
-    const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('/top/artists'));
+    const played = fetchImpl.mock.calls.find(call => String(call[0]).includes('/top/artists'));
     expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=12');
     expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
   });
@@ -195,7 +217,7 @@ describe('fetchRecentTracks', () => {
     });
 
     expect(tracks[0]?.title).toBe('Same Song');
-    const played = fetchImpl.mock.calls.find((call) => String(call[0]).includes('recently-played'));
+    const played = fetchImpl.mock.calls.find(call => String(call[0]).includes('recently-played'));
     expect(String(played?.[0])).toBe('https://api.spotify.com/v1/me/player/recently-played?limit=50');
     expect(new Headers(played?.[1]?.headers).get('authorization')).toBe('Bearer access-1');
   });
@@ -227,10 +249,10 @@ describe('fetchRecentTracks previews', () => {
       previews: new Map(),
     });
 
-    const first = tracks.find((track) => track.isrc === 'GBUM70812423');
+    const first = tracks.find(track => track.isrc === 'GBUM70812423');
     expect(first?.preview).toBe('/api/now/preview/GBUM70812423');
-    expect(tracks.filter((track) => track.preview !== undefined)).toHaveLength(1);
-    expect(tracks.some((track) => track.isrc === 'not-an-isrc')).toBe(false);
+    expect(tracks.filter(track => track.preview !== undefined)).toHaveLength(1);
+    expect(tracks.some(track => track.isrc === 'not-an-isrc')).toBe(false);
   });
 });
 
@@ -279,8 +301,8 @@ describe('fetchTopArtists previews', () => {
     expect(racionais?.previewTitle).toBe('Vida Loka, Pt. 1');
     const ranges = fetchImpl.mock.calls
       .map(([url]) => String(url))
-      .filter((url) => url.includes('/me/top/tracks'))
-      .map((url) => new URL(url).searchParams.get('time_range'));
+      .filter(url => url.includes('/me/top/tracks'))
+      .map(url => new URL(url).searchParams.get('time_range'));
     expect(ranges.sort()).toEqual(['medium_term', 'short_term']);
   });
 
@@ -299,6 +321,6 @@ describe('fetchTopArtists previews', () => {
       previews: new Map(),
     });
     expect(result).toHaveLength(12);
-    expect(result.every((artist) => artist.preview === undefined)).toBe(true);
+    expect(result.every(artist => artist.preview === undefined)).toBe(true);
   });
 });

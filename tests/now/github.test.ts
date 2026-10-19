@@ -48,7 +48,7 @@ describe('parseActiveRepos', () => {
 
   it('caps the list at five', () => {
     const repos = Array.from({ length: 7 }, (_, index) => repo(`repo-${index}`, index));
-    expect(parseActiveRepos(repos, { now: NOW, exclude: [] }).map((item) => item.name)).toEqual([
+    expect(parseActiveRepos(repos, { now: NOW, exclude: [] }).map(item => item.name)).toEqual([
       'repo-0',
       'repo-1',
       'repo-2',
@@ -66,23 +66,20 @@ describe('parseActiveRepos', () => {
     evil.html_url = 'javascript:alert(1)';
     const kept = repo('kept', 1);
 
-    expect(parseActiveRepos([evil, kept], { now: NOW, exclude: [] }).map((item) => item.name)).toEqual(['kept']);
+    expect(parseActiveRepos([evil, kept], { now: NOW, exclude: [] }).map(item => item.name)).toEqual(['kept']);
   });
 });
 
 describe('linkForRepo', () => {
   it('points at the case page when the repo URL matches, ignoring case and a trailing slash', () => {
     expect(
-      linkForRepo(
-        { url: 'https://github.com/nandomoreirame/Forja' },
-        [
-          {
-            slug: 'forja',
-            block: 'systems-cli',
-            repoUrl: 'https://github.com/nandomoreirame/forja/',
-          },
-        ],
-      ),
+      linkForRepo({ url: 'https://github.com/nandomoreirame/Forja' }, [
+        {
+          slug: 'forja',
+          block: 'systems-cli',
+          repoUrl: 'https://github.com/nandomoreirame/forja/',
+        },
+      ]),
     ).toBe('/lab/forja');
   });
 });
@@ -117,9 +114,7 @@ describe('fetchActiveRepos', () => {
       name: 'Error',
       status: 403,
     });
-    await expect(fetchActiveRepos({ fetch: fetchImpl, now: NOW, exclude: [] })).rejects.toBeInstanceOf(
-      SourceError,
-    );
+    await expect(fetchActiveRepos({ fetch: fetchImpl, now: NOW, exclude: [] })).rejects.toBeInstanceOf(SourceError);
   });
 
   it('rejects a payload that is not a list of repositories', async () => {

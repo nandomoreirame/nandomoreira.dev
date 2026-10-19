@@ -74,7 +74,10 @@ describe('/contato layout', () => {
 
   it('gives the AGENTS.md column the wider share, with the form narrower', async () => {
     const html = await render();
-    const formCard = html.match(/<section[^>]*class="[^"]*"[^>]*aria-labelledby="form-heading"|<section[^>]*aria-labelledby="form-heading"[^>]*class="[^"]*"/)?.[0] ?? '';
+    const formCard =
+      html.match(
+        /<section[^>]*class="[^"]*"[^>]*aria-labelledby="form-heading"|<section[^>]*aria-labelledby="form-heading"[^>]*class="[^"]*"/,
+      )?.[0] ?? '';
     expect(formCard).toContain('lg:col-span-2');
     expect(html).toMatch(/<div class="[^"]*\blg:col-span-3\b[^"]*">[\s\S]*?id="agent-brief"/);
   });

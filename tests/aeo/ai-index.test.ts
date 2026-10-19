@@ -55,8 +55,8 @@ describe('buildAiIndex', () => {
   });
 
   it('lists one page entry per public surface', () => {
-    const pages = index().entries.filter((entry) => entry.type === 'page');
-    const urls = pages.map((entry) => entry.url);
+    const pages = index().entries.filter(entry => entry.type === 'page');
+    const urls = pages.map(entry => entry.url);
 
     expect(urls).toEqual([
       'https://nandomoreira.dev/',
@@ -71,7 +71,7 @@ describe('buildAiIndex', () => {
   });
 
   it('lists one case entry per project with a markdown alternate URL', () => {
-    const cases = index().entries.filter((entry) => entry.type === 'case');
+    const cases = index().entries.filter(entry => entry.type === 'case');
 
     expect(cases).toEqual([
       {
@@ -96,7 +96,7 @@ describe('buildAiIndex', () => {
   });
 
   it('lists one post entry per published post', () => {
-    const postEntries = index().entries.filter((entry) => entry.type === 'post');
+    const postEntries = index().entries.filter(entry => entry.type === 'post');
 
     expect(postEntries).toEqual([
       {
@@ -110,7 +110,7 @@ describe('buildAiIndex', () => {
   });
 
   it('lists the machine routes with one-line English descriptions', () => {
-    const routes = index().machineRoutes.map((route) => route.path);
+    const routes = index().machineRoutes.map(route => route.path);
 
     expect(routes).toEqual([
       '/llms.txt',

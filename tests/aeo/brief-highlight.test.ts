@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { BRIEF_TONE_CLASS, highlightBrief, type BriefToken } from '../../src/lib/aeo/brief-highlight';
 
-const text = (tokens: BriefToken[]) => tokens.map((token) => token.text).join('');
-const toneOf = (tokens: BriefToken[], fragment: string) =>
-  tokens.find((token) => token.text === fragment)?.tone;
+const text = (tokens: BriefToken[]) => tokens.map(token => token.text).join('');
+const toneOf = (tokens: BriefToken[], fragment: string) => tokens.find(token => token.text === fragment)?.tone;
 
 const BRIEF = [
   '# AGENTS.md: hire Fernando Moreira Costa',

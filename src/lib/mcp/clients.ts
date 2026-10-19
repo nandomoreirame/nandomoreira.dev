@@ -24,9 +24,7 @@ export const mcpClients = (endpoint: string): McpClient[] => [
   },
   {
     name: 'ChatGPT',
-    steps: [
-      'Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:',
-    ],
+    steps: ['Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:'],
     code: endpoint,
     after: 'Peça para ele chamar get_resume ou check_availability.',
   },
@@ -60,11 +58,11 @@ export const mcpHowToLd = (site: URL): McpHowToLd => ({
   description:
     'Adicione o servidor MCP do site ao seu cliente e o agente passa a ler perfil, cases, currículo e disponibilidade.',
   inLanguage: 'pt-BR',
-  step: mcpClients(absoluteUrl(site, '/api/mcp')).map((client) => ({
+  step: mcpClients(absoluteUrl(site, '/api/mcp')).map(client => ({
     '@type': 'HowToSection',
     name: client.name,
     itemListElement: [
-      ...client.steps.map((text) => ({ '@type': 'HowToStep' as const, text: `${text} ${client.code}` })),
+      ...client.steps.map(text => ({ '@type': 'HowToStep' as const, text: `${text} ${client.code}` })),
       { '@type': 'HowToStep' as const, text: client.after },
     ],
   })),

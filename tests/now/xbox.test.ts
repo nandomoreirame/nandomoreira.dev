@@ -3,8 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { NOW_GAME_EXCLUDE } from '../../src/lib/now/now';
 import { fetchXbox, parsePresence, parseRecentGames, xboxStoreUrl } from '../../src/lib/now/xbox';
 
-const readJson = (name: string) =>
-  JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
+const readJson = (name: string) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
 
 const webPresence = readJson('xbl-presence.json');
 const history = readJson('xbl-title-history.json');
@@ -71,14 +70,14 @@ describe('parsePresence', () => {
 describe('parseRecentGames', () => {
   it('drops apps and Microsoft Jewel, then keeps five games with the next one filling the gap', () => {
     const recent = parseRecentGames(history, { exclude: NOW_GAME_EXCLUDE });
-    expect(recent.map((game) => game.name)).toEqual([
+    expect(recent.map(game => game.name)).toEqual([
       'Halo Infinite',
       'Forza Horizon 5',
       'Starfield',
       'Age of Empires IV',
       'Hades',
     ]);
-    expect(recent.map((game) => game.lastPlayed)).toEqual([
+    expect(recent.map(game => game.lastPlayed)).toEqual([
       '2026-10-11',
       '2026-10-09',
       '2026-10-08',
@@ -123,13 +122,16 @@ describe('parseRecentGames', () => {
       },
     });
 
-    expect(recent.map((item) => item.name)).toEqual(['One', 'Two', 'Three', 'Four', 'Five']);
+    expect(recent.map(item => item.name)).toEqual(['One', 'Two', 'Three', 'Four', 'Five']);
   });
 
   it('keeps a local cover, known platforms and gamerscore, and drops a zero total', () => {
     const xboxId =
       'apps.46694.68182501197884443.ac728a87-7bc1-4a0d-8bc6-0123456789ab.0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0';
-    const game = (achievement: { currentGamerscore: number; totalGamerscore: number; progressPercentage: number }, image: string) => ({
+    const game = (
+      achievement: { currentGamerscore: number; totalGamerscore: number; progressPercentage: number },
+      image: string,
+    ) => ({
       name: 'Red Dead Redemption 2',
       type: 'Game',
       titleHistory: { lastTimePlayed: '2026-10-11T20:00:00Z' },
@@ -156,7 +158,9 @@ describe('parseRecentGames', () => {
 
     const [zero] = parseRecentGames({
       content: {
-        titles: [game({ currentGamerscore: 0, totalGamerscore: 0, progressPercentage: 0 }, 'https://evil.example/image/x')],
+        titles: [
+          game({ currentGamerscore: 0, totalGamerscore: 0, progressPercentage: 0 }, 'https://evil.example/image/x'),
+        ],
       },
     });
     expect(zero?.progress).toBeUndefined();
@@ -164,7 +168,9 @@ describe('parseRecentGames', () => {
 
     const [clamped] = parseRecentGames({
       content: {
-        titles: [game({ currentGamerscore: 10, totalGamerscore: 10, progressPercentage: 140.6 }, 'https://evil.example/nope')],
+        titles: [
+          game({ currentGamerscore: 10, totalGamerscore: 10, progressPercentage: 140.6 }, 'https://evil.example/nope'),
+        ],
       },
     });
     expect(clamped?.progress?.percent).toBe(100);
@@ -190,7 +196,7 @@ describe('parseRecentGames', () => {
       },
       { exclude: ['Microsoft Jewel'] },
     );
-    expect(recent.map((game) => game.name)).toEqual(['Hades']);
+    expect(recent.map(game => game.name)).toEqual(['Hades']);
   });
 });
 
@@ -235,7 +241,7 @@ describe('fetchXbox', () => {
       progress: { current: 690, total: 1000, percent: 69 },
     });
     expect(result.recent).toHaveLength(5);
-    expect(result.recent.map((game) => game.name)).not.toContain('Microsoft Jewel');
+    expect(result.recent.map(game => game.name)).not.toContain('Microsoft Jewel');
   });
 
   // Node's fetch sends `Accept-Language: *` when none is set, and titleHistory
@@ -277,7 +283,8 @@ describe('fetchXbox store links', () => {
   const fakeFetch = (catalog: (titleId: string) => unknown) =>
     vi.fn(async (url: string, _init?: RequestInit) => {
       const target = String(url);
-      if (target.endsWith('/presence')) return { ok: true, status: 200, json: async () => playing('Scarlett', 'Red Dead Redemption 2') };
+      if (target.endsWith('/presence'))
+        return { ok: true, status: 200, json: async () => playing('Scarlett', 'Red Dead Redemption 2') };
       if (target.endsWith('/titleHistory')) return { ok: true, status: 200, json: async () => historyWithIds };
       if (target.startsWith(CATALOG)) {
         const titleId = new URL(target).searchParams.get('value') ?? '';
@@ -289,7 +296,7 @@ describe('fetchXbox store links', () => {
     });
 
   it('links a game to its store page through the catalog and leaves the rest unlinked', async () => {
-    const fetchImpl = fakeFetch((titleId) =>
+    const fetchImpl = fakeFetch(titleId =>
       titleId === '591405932' ? { Products: [{ ProductId: 'BPSWGQBW7R3G' }] } : { Products: [] },
     );
 
@@ -307,7 +314,9 @@ describe('fetchXbox store links', () => {
 
   it('asks the catalog once per title, then answers from the cache', async () => {
     const productIds = new Map<string, string | null>();
-    const fetchImpl = fakeFetch((titleId) => (titleId === '591405932' ? { Products: [{ ProductId: 'BPSWGQBW7R3G' }] } : { Products: [] }));
+    const fetchImpl = fakeFetch(titleId =>
+      titleId === '591405932' ? { Products: [{ ProductId: 'BPSWGQBW7R3G' }] } : { Products: [] },
+    );
 
     await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
     await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
@@ -323,7 +332,7 @@ describe('fetchXbox store links', () => {
     const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds });
 
     expect(result.recent).toHaveLength(2);
-    expect(result.recent.every((game) => game.url === undefined)).toBe(true);
+    expect(result.recent.every(game => game.url === undefined)).toBe(true);
     expect(productIds.size).toBe(0);
   });
 
@@ -332,6 +341,6 @@ describe('fetchXbox store links', () => {
 
     const result = await fetchXbox({ fetch: fetchImpl as unknown as typeof fetch, apiKey: 'k', productIds: new Map() });
 
-    expect(result.recent.every((game) => game.url === undefined)).toBe(true);
+    expect(result.recent.every(game => game.url === undefined)).toBe(true);
   });
 });

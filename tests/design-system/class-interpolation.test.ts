@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 const GLUED = /[^\s`{]\$\{/;
 
 const offendersIn = (source: string): string[] =>
-  [...source.matchAll(/class=\{`([^`]*)`\}/g)].map((match) => match[1]).filter((value) => GLUED.test(value));
+  [...source.matchAll(/class=\{`([^`]*)`\}/g)].map(match => match[1]).filter(value => GLUED.test(value));
 
 describe('class templates', () => {
   it('never glue a class to an interpolation', async () => {

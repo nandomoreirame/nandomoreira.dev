@@ -31,7 +31,7 @@ const post = (body: string) =>
 /** The transport may answer as SSE, so read the JSON out of either framing. */
 const readJson = async (response: Response) => {
   const text = await response.text();
-  const line = text.split('\n').find((candidate) => candidate.startsWith('data: '));
+  const line = text.split('\n').find(candidate => candidate.startsWith('data: '));
 
   return JSON.parse(line ? line.slice('data: '.length) : text);
 };

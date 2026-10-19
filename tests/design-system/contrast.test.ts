@@ -28,10 +28,7 @@ describe('contrastRatio', () => {
   });
 
   it('is symmetric', () => {
-    expect(contrastRatio(token('primary'), BACKGROUND)).toBeCloseTo(
-      contrastRatio(BACKGROUND, token('primary')),
-      5,
-    );
+    expect(contrastRatio(token('primary'), BACKGROUND)).toBeCloseTo(contrastRatio(BACKGROUND, token('primary')), 5);
   });
 });
 

@@ -9,6 +9,8 @@ describe('SectionRule', () => {
     const classes = (html.match(/<hr[^>]*class="([^"]*)"/)?.[1] ?? '').split(/\s+/);
 
     expect(html).toMatch(/<hr[^>]*aria-hidden="true"/);
-    expect(classes).toEqual(expect.arrayContaining(['relative', 'left-1/2', 'w-screen', '-translate-x-1/2', 'border-t', 'border-border']));
+    expect(classes).toEqual(
+      expect.arrayContaining(['relative', 'left-1/2', 'w-screen', '-translate-x-1/2', 'border-t', 'border-border']),
+    );
   });
 });

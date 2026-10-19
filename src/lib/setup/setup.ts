@@ -149,7 +149,10 @@ export const SETUP_SECTIONS: SetupSection[] = [
         name: 'Noctalia',
         url: 'https://github.com/noctalia-dev/noctalia',
         why: 'O shell inteiro: barra, launcher, notificações e tela de bloqueio. Tem sistema de plugins, e foi por ele que comecei a escrever os meus.',
-        shortcuts: [{ keys: 'Ctrl+Space', label: 'launcher' }, { keys: 'Super+Alt+B', label: 'reinicia o shell' }],
+        shortcuts: [
+          { keys: 'Ctrl+Space', label: 'launcher' },
+          { keys: 'Super+Alt+B', label: 'reinicia o shell' },
+        ],
       },
     ],
     related: [
@@ -201,8 +204,7 @@ export const SETUP_SECTIONS: SetupSection[] = [
   {
     id: 'ia',
     title: 'IA e agentes',
-    intro:
-      'Trabalho em fluxo RPI (pesquisa, plano e implementação), com um agente para cada papel.',
+    intro: 'Trabalho em fluxo RPI (pesquisa, plano e implementação), com um agente para cada papel.',
     items: [
       {
         name: 'Claude Code',
@@ -286,8 +288,7 @@ export const SETUP_SECTIONS: SetupSection[] = [
   {
     id: 'homelab',
     title: 'Homelab',
-    intro:
-      'Um servidor em casa, acessado de qualquer lugar pelo Tailscale, com cada serviço num endereço .home.',
+    intro: 'Um servidor em casa, acessado de qualquer lugar pelo Tailscale, com cada serviço num endereço .home.',
     introLink: { text: 'Um servidor em casa', href: '/meu-homelab-num-mac-mini-de-2018' },
     items: [
       {
@@ -341,7 +342,10 @@ export const SETUP_SECTIONS: SetupSection[] = [
         name: 'Daybar',
         url: 'https://github.com/nandomoreirame/noctalia-daybar',
         why: 'Captura rápida, agenda do Google Calendar, timer de foco, favoritos e anotações em Markdown, na barra do Noctalia.',
-        shortcuts: [{ keys: 'Super+Space', label: 'captura rápida' }, { keys: 'Super+Shift+Space', label: 'painel' }],
+        shortcuts: [
+          { keys: 'Super+Space', label: 'captura rápida' },
+          { keys: 'Super+Shift+Space', label: 'painel' },
+        ],
       },
       {
         name: 'AI Bar',
@@ -352,7 +356,10 @@ export const SETUP_SECTIONS: SetupSection[] = [
         name: 'Gistbar',
         url: 'https://github.com/nandomoreirame/noctalia-gistbar',
         why: 'Busca, cópia e criação dos meus gists do GitHub, pelo teclado.',
-        shortcuts: [{ keys: 'Super+G', label: 'busca' }, { keys: 'Super+Ctrl+G', label: 'novo gist' }],
+        shortcuts: [
+          { keys: 'Super+G', label: 'busca' },
+          { keys: 'Super+Ctrl+G', label: 'novo gist' },
+        ],
       },
       {
         name: 'Desktop Sticky Notes',
@@ -432,7 +439,7 @@ export const setupMarkdown = ({ site }: { site: URL }): string => {
     for (const item of section.items) {
       const name = item.url ? `[${item.name}](${item.url})` : item.name;
       const keys = (item.shortcuts ?? [])
-        .map((shortcut) => (shortcut.label ? `\`${shortcut.keys}\` (${shortcut.label})` : `\`${shortcut.keys}\``))
+        .map(shortcut => (shortcut.label ? `\`${shortcut.keys}\` (${shortcut.label})` : `\`${shortcut.keys}\``))
         .join(', ');
       const label = (item.shortcuts?.length ?? 0) > 1 ? 'Atalhos' : 'Atalho';
       lines.push(`- ${name}: ${item.why}${keys ? ` ${label}: ${keys}.` : ''}`);

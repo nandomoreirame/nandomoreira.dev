@@ -34,20 +34,11 @@ export const formatMachineRoute = (site: URL, route: string, description: string
 
 /** Format follows the llms.txt convention: H1, blockquote summary, H2 sections. */
 export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): string => {
-  const lines: string[] = [
-    `# ${profile.name}`,
-    '',
-    `> ${profile.headline}. ${profile.bio}`,
-    '',
-    '## Projects',
-    '',
-  ];
+  const lines: string[] = [`# ${profile.name}`, '', `> ${profile.headline}. ${profile.bio}`, '', '## Projects', ''];
 
   for (const project of projects) {
     const collection = collectionOfBlock(project.block);
-    lines.push(
-      `- [${project.title}](${absoluteUrl(site, `/${collection}/${project.slug}`)}): ${project.summary}`,
-    );
+    lines.push(`- [${project.title}](${absoluteUrl(site, `/${collection}/${project.slug}`)}): ${project.summary}`);
   }
 
   if (projects.length === 0) {
@@ -57,9 +48,7 @@ export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): st
   if (posts.length > 0) {
     lines.push('', '## Posts', '');
     for (const post of posts) {
-      lines.push(
-        `- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`,
-      );
+      lines.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
     }
   }
 

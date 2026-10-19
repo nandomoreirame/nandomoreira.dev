@@ -22,21 +22,13 @@ describe('projectSchema', () => {
     expect(projectSchema.safeParse(valid).success).toBe(true);
   });
 
-  it.each([
-    'slug',
-    'title',
-    'block',
-    'summary',
-    'problem',
-    'decisions',
-    'outcome',
-    'tech',
-    'featured',
-    'confidential',
-  ])('rejects a project missing %s', (field) => {
-    const { [field as keyof typeof valid]: _removed, ...incomplete } = valid;
-    expect(projectSchema.safeParse(incomplete).success).toBe(false);
-  });
+  it.each(['slug', 'title', 'block', 'summary', 'problem', 'decisions', 'outcome', 'tech', 'featured', 'confidential'])(
+    'rejects a project missing %s',
+    field => {
+      const { [field as keyof typeof valid]: _removed, ...incomplete } = valid;
+      expect(projectSchema.safeParse(incomplete).success).toBe(false);
+    },
+  );
 
   it('accepts an art motif from the known list', () => {
     expect(projectSchema.safeParse({ ...valid, art: 'panels' }).success).toBe(true);
@@ -56,9 +48,7 @@ describe('projectSchema', () => {
   });
 
   it('rejects a relative repo URL', () => {
-    expect(
-      projectSchema.safeParse({ ...valid, repoUrl: '/nandomoreirame/forja' }).success,
-    ).toBe(false);
+    expect(projectSchema.safeParse({ ...valid, repoUrl: '/nandomoreirame/forja' }).success).toBe(false);
   });
 
   it('rejects an image without alternative text', () => {
@@ -166,9 +156,7 @@ describe('link requirement', () => {
   });
 
   it('still rejects a public case with no link', () => {
-    expect(() => projectSchema.parse({ ...base, confidential: false })).toThrow(
-      /verifiable evidence/,
-    );
+    expect(() => projectSchema.parse({ ...base, confidential: false })).toThrow(/verifiable evidence/);
   });
 });
 
@@ -196,9 +184,7 @@ describe('discontinued projects', () => {
   });
 
   it('defaults to false, so an ordinary case is unaffected', () => {
-    expect(projectSchema.parse({ ...base, liveUrl: 'https://x.example' }).discontinued).toBe(
-      false,
-    );
+    expect(projectSchema.parse({ ...base, liveUrl: 'https://x.example' }).discontinued).toBe(false);
   });
 
   it('still rejects a live case with no link', () => {

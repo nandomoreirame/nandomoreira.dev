@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { normalize, scoreOf, type Searchable } from '../../src/lib/search/match';
 
-const item: Searchable = { title: 'Meu homelab num Mac mini', summary: 'Discos, DNS e Tailscale', keywords: ['linux', 'redes'] };
+const item: Searchable = {
+  title: 'Meu homelab num Mac mini',
+  summary: 'Discos, DNS e Tailscale',
+  keywords: ['linux', 'redes'],
+};
 
 describe('search matching', () => {
   it('ignores case and accents', () => {

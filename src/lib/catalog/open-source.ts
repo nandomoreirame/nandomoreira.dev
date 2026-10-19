@@ -24,7 +24,12 @@ const repo = (name: string, description: string, language: string, year: string)
 });
 
 export const OPEN_SOURCE_REPOS: readonly OpenSourceRepo[] = [
-  repo('sextafeirachegou.com.br', 'Site que responde se já é sexta, com contagem regressiva e drama', 'TypeScript', '2026'),
+  repo(
+    'sextafeirachegou.com.br',
+    'Site que responde se já é sexta, com contagem regressiva e drama',
+    'TypeScript',
+    '2026',
+  ),
   repo('motivaai', 'Gerador de frases motivacionais, refeito em Remix', 'TypeScript', '2019'),
   repo('vovo-juju-ipsum', 'Gerador de falas da vovó Juju, da animação Irmão do Jorel', 'Vue', '2019'),
   repo('app-whatsapp-url', 'Gera o link de conversa do WhatsApp para qualquer número', 'Vue', '2018'),

@@ -45,9 +45,7 @@ export const toProjectSummaries = (
   projects: readonly Project[],
   collection?: CatalogCollection,
 ): ProjectSummaryAnswer[] =>
-  projects
-    .filter((project) => !collection || collectionOfBlock(project.block) === collection)
-    .map(toSummary);
+  projects.filter(project => !collection || collectionOfBlock(project.block) === collection).map(toSummary);
 
 export const toProjectDetail = (project: Project): ProjectDetailAnswer => ({
   ...toSummary(project),

@@ -46,7 +46,7 @@ export const READER_SETTINGS: ReaderSetting[] = [
     legend: 'Tamanho do texto',
     kind: 'stepper',
     initial: '18',
-    choices: range(14, 28, 2).map((px) => ({ value: String(px), label: `${px}px` })),
+    choices: range(14, 28, 2).map(px => ({ value: String(px), label: `${px}px` })),
   },
   {
     // Tenths of the text size; the panel shows the result in px (global.css).
@@ -54,13 +54,16 @@ export const READER_SETTINGS: ReaderSetting[] = [
     legend: 'Entrelinha',
     kind: 'stepper',
     initial: '17',
-    choices: range(13, 21, 1).map((tenths) => ({ value: String(tenths), label: (tenths / 10).toFixed(1).replace('.', ',') })),
+    choices: range(13, 21, 1).map(tenths => ({
+      value: String(tenths),
+      label: (tenths / 10).toFixed(1).replace('.', ','),
+    })),
   },
   {
     name: 'width',
     legend: 'Largura',
     kind: 'stepper',
     initial: '640',
-    choices: range(480, 960, 80).map((px) => ({ value: String(px), label: `${px}px` })),
+    choices: range(480, 960, 80).map(px => ({ value: String(px), label: `${px}px` })),
   },
 ];

@@ -33,7 +33,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     label: 'Resumir com Claude',
     short: 'Resumir com Claude',
     icon: 'simple-icons:claude',
-    url: (prompt) => `https://claude.ai/new?q=${encodeURIComponent(prompt)}`,
+    url: prompt => `https://claude.ai/new?q=${encodeURIComponent(prompt)}`,
   },
   {
     // gemini.google.com ignores q without a browser extension (2026-10-16);
@@ -43,7 +43,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     label: 'Resumir com a IA do Google',
     short: 'Google AI',
     icon: 'simple-icons:googlegemini',
-    url: (prompt) => `https://www.google.com/search?udm=50&q=${encodeURIComponent(prompt)}`,
+    url: prompt => `https://www.google.com/search?udm=50&q=${encodeURIComponent(prompt)}`,
   },
   {
     // hints=search turns web search on, so the model fetches the post.
@@ -52,7 +52,7 @@ export const AI_SUMMARY_TARGETS: AiSummaryTarget[] = [
     label: 'Resumir com ChatGPT',
     short: 'ChatGPT',
     icon: 'simple-icons:openai',
-    url: (prompt) => `https://chatgpt.com/?hints=search&q=${encodeURIComponent(prompt)}`,
+    url: prompt => `https://chatgpt.com/?hints=search&q=${encodeURIComponent(prompt)}`,
   },
 ];
 

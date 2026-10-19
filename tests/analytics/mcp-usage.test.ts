@@ -5,7 +5,12 @@ import type { Hit } from '../../src/lib/analytics/recorder';
 describe('mcpCalls', () => {
   it('reads method and tool name, never the arguments', () => {
     const calls = mcpCalls(
-      JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_project', arguments: { slug: 'secret' } } }),
+      JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: { name: 'get_project', arguments: { slug: 'secret' } },
+      }),
     );
     expect(calls).toEqual([{ method: 'tools/call', tool: 'get_project' }]);
     expect(JSON.stringify(calls)).not.toContain('secret');
@@ -13,7 +18,12 @@ describe('mcpCalls', () => {
 
   it('reads the client name from initialize, capped at 64', () => {
     const calls = mcpCalls(
-      JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { clientInfo: { name: `claude-code${'x'.repeat(80)}` } } }),
+      JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'initialize',
+        params: { clientInfo: { name: `claude-code${'x'.repeat(80)}` } },
+      }),
     );
     expect(calls[0]?.client).toHaveLength(64);
   });
@@ -35,7 +45,13 @@ describe('recordMcpUsage', () => {
 
   const fake = (active: boolean) => {
     const batches: Hit[][] = [];
-    return { batches, recorder: { active: () => active, recordAll: async (_request: Request, hits: readonly Hit[]) => void batches.push([...hits]) } };
+    return {
+      batches,
+      recorder: {
+        active: () => active,
+        recordAll: async (_request: Request, hits: readonly Hit[]) => void batches.push([...hits]),
+      },
+    };
   };
 
   it('records every message of a request in one write, leaving the body for the transport', async () => {
@@ -48,7 +64,7 @@ describe('recordMcpUsage', () => {
     await recordMcpUsage(request, recorder);
 
     expect(batches).toHaveLength(1);
-    expect(batches[0]!.map((hit) => hit.conversion)).toEqual([
+    expect(batches[0]!.map(hit => hit.conversion)).toEqual([
       { type: 'mcp', target: 'tools/list' },
       { type: 'mcp', target: 'tools/call', tool: 'get_profile' },
     ]);

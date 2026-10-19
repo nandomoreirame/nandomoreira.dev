@@ -12,7 +12,7 @@ describe('Liquid AI is a past position', () => {
   // The last day was 2026-09-30, so the profile speaks of it in the past.
   it.each(['Respondo', 'Orquestro', 'Sustento', 'respondo pela', 'que opero'])(
     'no longer says "%s" about it',
-    (present) => {
+    present => {
       expect(profile).not.toContain(present);
     },
   );

@@ -1,17 +1,4 @@
-const MONTHS = [
-  'jan',
-  'fev',
-  'mar',
-  'abr',
-  'mai',
-  'jun',
-  'jul',
-  'ago',
-  'set',
-  'out',
-  'nov',
-  'dez',
-] as const;
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'] as const;
 
 /**
  * Split the ISO string instead of building a Date: `new Date('2025-11-01')` is
@@ -27,9 +14,7 @@ export const formatPeriod = (startDate: string, endDate?: string): string =>
   `${monthYear(startDate)} – ${endDate ? monthYear(endDate) : 'atual'}`;
 
 /** Earliest start year in the history, or undefined when there is none. */
-export const careerStartYear = (
-  work: ReadonlyArray<{ startDate: string }> | undefined,
-): number | undefined => {
+export const careerStartYear = (work: ReadonlyArray<{ startDate: string }> | undefined): number | undefined => {
   if (!work || work.length === 0) return undefined;
-  return Math.min(...work.map((entry) => Number(entry.startDate.slice(0, 4))));
+  return Math.min(...work.map(entry => Number(entry.startDate.slice(0, 4))));
 };

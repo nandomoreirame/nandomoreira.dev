@@ -38,7 +38,9 @@ describe('palette trigger', () => {
   });
 
   it('left the header for the bottom-right corner', async () => {
-    const header = await (await AstroContainer.create()).renderToString(SiteHeader, { props: { availability: { status: 'open' } } });
+    const header = await (
+      await AstroContainer.create()
+    ).renderToString(SiteHeader, { props: { availability: { status: 'open' } } });
     expect(header).not.toContain('data-palette-trigger');
   });
 

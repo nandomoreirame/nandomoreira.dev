@@ -4,7 +4,9 @@ import Hero from '../../src/components/home/Hero.astro';
 
 describe('home palette hint', () => {
   it('ships hidden, opens the palette, shows the keys as kbd and never competes with the primary call', async () => {
-    const html = await (await AstroContainer.create()).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
     const hint = html.match(/<button[^>]*data-palette-hint[^>]*>[\s\S]*?<\/button>/)?.[0] ?? '';
     expect(hint).toMatch(/\bhidden\b/);
     expect(hint).toContain('data-palette-trigger');
@@ -15,7 +17,9 @@ describe('home palette hint', () => {
   });
 
   it('has a 44 px target, an accessible name with its visible text and the shortcut', async () => {
-    const html = await (await AstroContainer.create()).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
     const hint = html.match(/<button[^>]*data-palette-hint[^>]*>/)?.[0] ?? '';
     expect(hint).toMatch(/min-h-11/);
     expect(hint).toContain('aria-keyshortcuts="Control+K Meta+K"');
@@ -25,7 +29,9 @@ describe('home palette hint', () => {
 
 describe('home call on touch screens', () => {
   it('links to /sobre through the ghost Button, in place of the keyboard hint', async () => {
-    const html = await (await AstroContainer.create()).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(Hero, { props: { name: 'F', headline: 'H', positioning: 'P' } });
     const wrapper = html.match(/<div[^>]*data-hero-about[^>]*>[\s\S]*?<\/a>\s*<\/div>/)?.[0] ?? '';
     const link = wrapper.match(/<a\b[^>]*>/)?.[0] ?? '';
     expect(link).toContain('href="/sobre"');

@@ -39,21 +39,21 @@ describe('showDrafts', () => {
   });
 
   it('is off in this test run, so the suite sees what production sees', async () => {
-    const slugs = (await getCurrentPosts()).map((item) => item.slug);
+    const slugs = (await getCurrentPosts()).map(item => item.slug);
     expect(slugs).not.toContain('sessao-de-agente-que-voltava-zerada');
   });
 });
 
 describe('including drafts', () => {
   it('keeps drafts out by default and lets dev opt in', () => {
-    expect(publishedPosts(posts).map((item) => item.slug)).toEqual(['live']);
+    expect(publishedPosts(posts).map(item => item.slug)).toEqual(['live']);
     expect(publishedPosts(posts, true)).toHaveLength(4);
   });
 
   it('lists a draft with the current or archived posts it belongs to when opted in', () => {
-    expect(currentOf(posts, true).map((item) => item.slug)).toEqual(['live', 'draft-old', 'draft-new']);
-    expect(archivedOf(posts, true).map((item) => item.slug)).toEqual(['archived-draft']);
-    expect(currentOf(posts).map((item) => item.slug)).toEqual(['live']);
+    expect(currentOf(posts, true).map(item => item.slug)).toEqual(['live', 'draft-old', 'draft-new']);
+    expect(archivedOf(posts, true).map(item => item.slug)).toEqual(['archived-draft']);
+    expect(currentOf(posts).map(item => item.slug)).toEqual(['live']);
   });
 });
 
@@ -67,22 +67,22 @@ describe('draftsFirst', () => {
       post({ slug: 'draft-b', draft: true }),
     ];
 
-    expect(draftsFirst(ordered).map((item) => item.slug)).toEqual(['draft-a', 'draft-b', 'live-new', 'live-old']);
+    expect(draftsFirst(ordered).map(item => item.slug)).toEqual(['draft-a', 'draft-b', 'live-new', 'live-old']);
   });
 
   it('leaves a list without drafts untouched', () => {
     const ordered = [post({ slug: 'x' }), post({ slug: 'y' })];
-    expect(draftsFirst(ordered).map((item) => item.slug)).toEqual(['x', 'y']);
+    expect(draftsFirst(ordered).map(item => item.slug)).toEqual(['x', 'y']);
   });
 });
 
 describe('upcoming posts', () => {
   it('are the current drafts, newest first', () => {
-    expect(draftsOf(posts).map((item) => item.slug)).toEqual(['draft-new', 'draft-old']);
+    expect(draftsOf(posts).map(item => item.slug)).toEqual(['draft-new', 'draft-old']);
   });
 
   it('come from the real collection even outside dev, for the teaser', async () => {
-    const slugs = (await getUpcomingPosts()).map((item) => item.slug);
+    const slugs = (await getUpcomingPosts()).map(item => item.slug);
     expect(slugs.length).toBeGreaterThan(0);
     for (const item of await getUpcomingPosts()) expect(item.draft).toBe(true);
   });

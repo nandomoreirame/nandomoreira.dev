@@ -25,7 +25,7 @@ const IMAGE = /\.(png|jpe?g|gif|webp|avif)$/i;
 
 let files;
 try {
-  files = readdirSync(ASSETS).filter((file) => IMAGE.test(file));
+  files = readdirSync(ASSETS).filter(file => IMAGE.test(file));
 } catch {
   // No build output (or no images in it) is not an error worth failing on.
   console.log('prune-optimised-originals: nothing to do, no build assets found');
@@ -34,7 +34,7 @@ try {
 
 const names = new Set(files);
 
-const originals = files.filter((file) => {
+const originals = files.filter(file => {
   const base = file.replace(IMAGE, '');
   for (const other of names) {
     if (other !== file && other.startsWith(`${base}_`)) return true;
@@ -50,7 +50,5 @@ for (const file of originals) {
 }
 
 const megabytes = (freed / 1024 / 1024).toFixed(1);
-console.log(
-  `prune-optimised-originals: removed ${originals.length} optimised source images, freed ${megabytes} MB`,
-);
+console.log(`prune-optimised-originals: removed ${originals.length} optimised source images, freed ${megabytes} MB`);
 console.log('PRUNE PASSED');

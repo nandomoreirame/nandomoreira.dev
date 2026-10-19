@@ -182,6 +182,8 @@ describe('buildSitemap lastmod of living pages', () => {
     const xml = buildSitemap({ site, projects, posts, setupUpdatedAt: '2026-10-13' });
     expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/posts<\/loc>\s*<lastmod>2026-10-13<\/lastmod>/);
     expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/setup<\/loc>\s*<lastmod>2026-10-13<\/lastmod>/);
-    expect(xml).toMatch(/<loc>https:\/\/nandomoreira\.dev\/posts\/arquivo\/2017<\/loc>\s*<lastmod>2017-03-01<\/lastmod>/);
+    expect(xml).toMatch(
+      /<loc>https:\/\/nandomoreira\.dev\/posts\/arquivo\/2017<\/loc>\s*<lastmod>2017-03-01<\/lastmod>/,
+    );
   });
 });

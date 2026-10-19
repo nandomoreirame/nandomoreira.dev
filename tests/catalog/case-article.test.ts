@@ -34,7 +34,7 @@ describe('CaseArticle', () => {
 
   it('starts the heading hierarchy at h1 and never skips a level', async () => {
     const html = await render();
-    const levels = [...html.matchAll(/<h([1-6])/g)].map((match) => Number(match[1]));
+    const levels = [...html.matchAll(/<h([1-6])/g)].map(match => Number(match[1]));
 
     expect(levels[0]).toBe(1);
     for (let i = 1; i < levels.length; i += 1) {
@@ -55,7 +55,7 @@ describe('CaseArticle', () => {
     });
 
     // Each image also has a copy inside its lightbox; count the ones on the page.
-    const visible = (html.match(/<img\b[^>]*>/g) ?? []).filter((tag) => !tag.includes('lightbox-image'));
+    const visible = (html.match(/<img\b[^>]*>/g) ?? []).filter(tag => !tag.includes('lightbox-image'));
     expect(visible).toHaveLength(2);
     expect(html).not.toContain('carousel');
     expect(html).not.toContain('client:');
@@ -87,9 +87,11 @@ describe('CaseArticle', () => {
 
     it('opens each image in its own popover from a button, with no script', async () => {
       const html = await render({ images });
-      const triggers = [...html.matchAll(/<button\b[^>]*popovertarget="([^"]+)"(?![^>]*popovertargetaction="hide")[^>]*>/g)];
+      const triggers = [
+        ...html.matchAll(/<button\b[^>]*popovertarget="([^"]+)"(?![^>]*popovertargetaction="hide")[^>]*>/g),
+      ];
 
-      expect(triggers.map((match) => match[1])).toEqual(['case-image-1', 'case-image-2']);
+      expect(triggers.map(match => match[1])).toEqual(['case-image-1', 'case-image-2']);
       for (const [, id] of triggers) expect(html).toMatch(new RegExp(`<div\\b[^>]*id="${id}"[^>]*popover`));
       expect(html).not.toContain('<script');
       expect(html).not.toContain('client:');
@@ -107,7 +109,9 @@ describe('CaseArticle', () => {
       expect(box).toMatch(/role="dialog"/);
       expect(box).toMatch(/aria-label="Tela A"/);
       expect(box).toMatch(/<img\b[^>]*src="\/a.png"[^>]*class="[^"]*\blightbox-image\b/);
-      expect(box).toMatch(/<button\b[^>]*popovertarget="case-image-1"[^>]*popovertargetaction="hide"[^>]*aria-label="Fechar"/);
+      expect(box).toMatch(
+        /<button\b[^>]*popovertarget="case-image-1"[^>]*popovertargetaction="hide"[^>]*aria-label="Fechar"/,
+      );
     });
   });
 

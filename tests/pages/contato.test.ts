@@ -25,15 +25,11 @@ describe('/contato', () => {
 
   it('labels every control, since a placeholder is not an accessible name', async () => {
     const html = await render();
-    const ids = [...html.matchAll(/<(?:input|textarea)[^>]*\bid="([^"]+)"/g)].map(
-      (match) => match[1],
-    );
+    const ids = [...html.matchAll(/<(?:input|textarea)[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
 
     expect(ids.length).toBeGreaterThan(0);
     for (const id of ids) {
-      expect(html, `no <label for="${id}">`).toMatch(
-        new RegExp(`<label[^>]*for="${id}"`),
-      );
+      expect(html, `no <label for="${id}">`).toMatch(new RegExp(`<label[^>]*for="${id}"`));
     }
   });
 
@@ -44,7 +40,7 @@ describe('/contato', () => {
   it('bounds every free-text field, so the future endpoint never meets an unbounded payload', async () => {
     const html = await render();
     const controls = (html.match(/<(?:input|textarea)\b[^>]*>/g) ?? []).filter(
-      (control) => !/type="(checkbox|radio)"/.test(control),
+      control => !/type="(checkbox|radio)"/.test(control),
     );
 
     expect(controls.length).toBeGreaterThan(0);
@@ -82,7 +78,10 @@ describe('/contato', () => {
     expect(fieldset).not.toMatch(/<select[^>]*name="interesse"/);
     expect(fieldset).not.toContain('chip');
     for (const value of ['job', 'freelance', 'ai-product', 'agents-mcp', 'consulting']) {
-      const label = fieldset.match(new RegExp(`<label[^>]*>\\s*<input[^>]*type="checkbox"[^>]*value="${value}"[^>]*>[\\s\\S]*?<\\/label>`))?.[0] ?? '';
+      const label =
+        fieldset.match(
+          new RegExp(`<label[^>]*>\\s*<input[^>]*type="checkbox"[^>]*value="${value}"[^>]*>[\\s\\S]*?<\\/label>`),
+        )?.[0] ?? '';
       expect(label).toMatch(/name="interesse"/);
       expect(label).toMatch(/class="[^"]*\bcheck-input\b[^"]*\bsr-only\b/);
       expect(label).toMatch(/<span[^>]*aria-hidden="true"[^>]*class="[^"]*\bcheck-box\b/);
@@ -159,9 +158,7 @@ describe('/contato', () => {
     // JSON-LD is data the browser never executes. The pointer effect is the
     // one named exception (generative-case-art); anything else is an island.
     for (const tag of scripts) {
-      expect(tag, `executable script on the page: ${tag}`).toMatch(
-        /application\/ld\+json|PointerField\.astro/,
-      );
+      expect(tag, `executable script on the page: ${tag}`).toMatch(/application\/ld\+json|PointerField\.astro/);
     }
 
     expect(html).not.toContain('client:');

@@ -15,7 +15,7 @@ describe('security.allowedDomains', () => {
     'nandomoreira.dev',
     'www.nandomoreira.dev',
     'contrate.nandomoreira.dev',
-  ])('trusts forwarded headers for %s over https', (hostname) => {
+  ])('trusts forwarded headers for %s over https', hostname => {
     expect(domains).toContainEqual({ hostname, protocol: 'https' });
   });
 

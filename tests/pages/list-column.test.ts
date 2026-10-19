@@ -18,7 +18,7 @@ describe('blog pages container', () => {
     'src/pages/posts/index.astro',
     'src/pages/posts/arquivo/index.astro',
     'src/pages/posts/arquivo/[year].astro',
-  ])('%s does not narrow to max-w-list', (file) => {
+  ])('%s does not narrow to max-w-list', file => {
     expect(readFileSync(file, 'utf8')).not.toContain('max-w-list');
   });
 });

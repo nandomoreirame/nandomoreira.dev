@@ -40,7 +40,9 @@ describe('/contato, the one contact form', () => {
 describe('/contato reached from a sales page', () => {
   it('shows the chosen service and posts it along, hidden', async () => {
     const html = main(await render('?origem=site-institucional&servico=website'));
-    expect(html).toMatch(/<input[^>]*type="hidden"[^>]*name="servico"[^>]*value="website"|<input[^>]*name="servico"[^>]*type="hidden"[^>]*value="website"/);
+    expect(html).toMatch(
+      /<input[^>]*type="hidden"[^>]*name="servico"[^>]*value="website"|<input[^>]*name="servico"[^>]*type="hidden"[^>]*value="website"/,
+    );
     expect(html).toContain('Site institucional');
   });
 

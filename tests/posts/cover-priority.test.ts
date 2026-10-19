@@ -19,8 +19,7 @@ const render = async (entry: Awaited<ReturnType<typeof getAllPostEntries>>[numbe
   });
 };
 
-const withCover = async () =>
-  (await getAllPostEntries()).filter((entry) => entry.data.cover);
+const withCover = async () => (await getAllPostEntries()).filter(entry => entry.data.cover);
 
 const coverTag = (html: string): string | undefined => /<img[^>]*>/.exec(html)?.[0];
 

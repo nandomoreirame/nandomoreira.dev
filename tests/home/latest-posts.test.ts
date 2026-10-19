@@ -38,8 +38,8 @@ describe('LatestPosts', () => {
       ],
     });
     expect(html.match(/data-latest-post/g)).toHaveLength(3);
-    const order = ['/novo', '/meio', '/antigo'].map((href) => html.indexOf(`href="${href}"`));
-    expect(order.every((index) => index > -1)).toBe(true);
+    const order = ['/novo', '/meio', '/antigo'].map(href => html.indexOf(`href="${href}"`));
+    expect(order.every(index => index > -1)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
@@ -132,7 +132,9 @@ describe('LatestPosts', () => {
     expect(label).toContain('group-has-focus-visible/toggle:outline-2');
 
     const panel = footer.match(/<div[^>]*id="preview-panel-meu-post"[^>]*>[\s\S]*$/)?.[0] ?? '';
-    expect(panel).toMatch(/<div[^>]*data-post-preview[^>]*class="[^"]*\bhidden\b[^"]*\bgroup-has-checked\/footer:flex\b/);
+    expect(panel).toMatch(
+      /<div[^>]*data-post-preview[^>]*class="[^"]*\bhidden\b[^"]*\bgroup-has-checked\/footer:flex\b/,
+    );
     expect(panel).toMatch(/class="[^"]*\brelative\b[^"]*\bz-10\b/);
     expect(footer.indexOf('data-read-cue')).toBeLessThan(footer.indexOf('id="preview-panel-meu-post"'));
 

@@ -2,10 +2,7 @@
  * The slug is the routing key, the JSON-LD identifier and the argument of the
  * MCP get_project tool. A duplicate makes all three ambiguous.
  */
-export const assertUniqueSlugs = (
-  items: ReadonlyArray<{ slug: string }>,
-  label = 'project',
-): void => {
+export const assertUniqueSlugs = (items: ReadonlyArray<{ slug: string }>, label = 'project'): void => {
   const seen = new Set<string>();
   const duplicates = new Set<string>();
 
@@ -49,10 +46,7 @@ export type MarkdownSource = Readonly<{ path: string; source: string }>;
  * REQ-010 / REQ-007 at build time: scan every markdown file before the
  * collection store can silently overwrite same-slug entries.
  */
-export const assertUniqueMarkdownSlugs = (
-  files: ReadonlyArray<MarkdownSource>,
-  label = 'project',
-): void => {
+export const assertUniqueMarkdownSlugs = (files: ReadonlyArray<MarkdownSource>, label = 'project'): void => {
   const items: Array<{ slug: string }> = [];
 
   for (const file of files) {
@@ -69,6 +63,5 @@ export const assertUniqueMarkdownSlugs = (
 };
 
 /** @deprecated Prefer assertUniqueMarkdownSlugs — kept for existing call sites. */
-export const assertUniqueProjectMarkdownSlugs = (
-  files: ReadonlyArray<MarkdownSource>,
-): void => assertUniqueMarkdownSlugs(files, 'project');
+export const assertUniqueProjectMarkdownSlugs = (files: ReadonlyArray<MarkdownSource>): void =>
+  assertUniqueMarkdownSlugs(files, 'project');

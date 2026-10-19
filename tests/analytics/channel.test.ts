@@ -41,7 +41,7 @@ describe('channelOf', () => {
     expect(OWN_HOSTS).toContain('contrate.nandomoreira.dev');
   });
 
-  it.each([...OWN_HOSTS])('marks own host %s as internal', (host) => {
+  it.each([...OWN_HOSTS])('marks own host %s as internal', host => {
     expect(channel(`https://${host}/path`)).toBe('internal');
   });
 

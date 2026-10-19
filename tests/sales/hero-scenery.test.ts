@@ -29,10 +29,12 @@ describe('sales hero scenery', () => {
   });
 
   it('moves against the windows: parallax layers at distinct negative depths', async () => {
-    const depths = [...scenery(await render()).matchAll(/data-parallax[^>]*--depth:\s*(-[\d.]+)/g)].map((m) => Number(m[1]));
+    const depths = [...scenery(await render()).matchAll(/data-parallax[^>]*--depth:\s*(-[\d.]+)/g)].map(m =>
+      Number(m[1]),
+    );
     expect(depths.length).toBeGreaterThanOrEqual(3);
     expect(new Set(depths).size).toBe(depths.length);
-    expect(depths.every((depth) => depth < 0)).toBe(true);
+    expect(depths.every(depth => depth < 0)).toBe(true);
   });
 
   it('animates with the shared CSS scenery hooks, no script', async () => {

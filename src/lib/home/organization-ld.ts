@@ -24,8 +24,6 @@ export const organizationLd = (profile: Profile, site: URL): OrganizationLd => (
   name: profile.wordmark ?? site.hostname,
   url: site.toString(),
   logo: absoluteUrl(site, '/logo.png'),
-  sameAs: profile.contacts
-    .filter((contact) => PUBLIC_PROFILE_KINDS.has(contact.kind))
-    .map((contact) => contact.value),
+  sameAs: profile.contacts.filter(contact => PUBLIC_PROFILE_KINDS.has(contact.kind)).map(contact => contact.value),
   founder: { '@type': 'Person', name: profile.name },
 });

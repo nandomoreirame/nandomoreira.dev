@@ -23,7 +23,7 @@ const blocksOf = (source: string): Map<string, string> => {
 /** Variables that are absent are off. A declared one must be a runtime secret, never a literal. */
 const literalNowValues = (source: string): string[] => {
   const entries = blocksOf(source);
-  return NOW_VARIABLES.filter((variable) => {
+  return NOW_VARIABLES.filter(variable => {
     const block = entries.get(variable);
     if (!block) return false;
     return !block.includes('secret:') || !block.includes('RUNTIME') || /^\s*value:/m.test(block);
@@ -33,7 +33,7 @@ const literalNowValues = (source: string): string[] => {
 describe('apphosting.yaml analytics secrets', () => {
   it.each(['ANALYTICS_HASH_SECRET', 'ANALYTICS_SELF_TOKEN'])(
     'declares %s as a runtime secret, never a literal',
-    (variable) => {
+    variable => {
       const block = blocksOf(manifest).get(variable);
       expect(block).toBeDefined();
       expect(block).toContain('secret:');

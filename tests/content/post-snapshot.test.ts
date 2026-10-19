@@ -13,7 +13,10 @@ describe('post snapshot', () => {
   });
 
   it('keeps one to six label/value pairs and an optional version', () => {
-    const parsed = post.safeParse({ ...base, snapshot: { version: 'v0.1.9', items: [item(), item('Compositor', 'Niri')] } });
+    const parsed = post.safeParse({
+      ...base,
+      snapshot: { version: 'v0.1.9', items: [item(), item('Compositor', 'Niri')] },
+    });
     expect(parsed.success).toBe(true);
     expect(parsed.success && parsed.data.snapshot).toEqual({
       version: 'v0.1.9',
@@ -24,7 +27,9 @@ describe('post snapshot', () => {
 
   it('rejects no items, a seventh item, empty or long labels and values, and a long version', () => {
     expect(post.safeParse({ ...base, snapshot: { items: [] } }).success).toBe(false);
-    expect(post.safeParse({ ...base, snapshot: { items: Array.from({ length: 7 }, () => item()) } }).success).toBe(false);
+    expect(post.safeParse({ ...base, snapshot: { items: Array.from({ length: 7 }, () => item()) } }).success).toBe(
+      false,
+    );
     expect(post.safeParse({ ...base, snapshot: { items: [item('', 'x')] } }).success).toBe(false);
     expect(post.safeParse({ ...base, snapshot: { items: [item('x'.repeat(21), 'x')] } }).success).toBe(false);
     expect(post.safeParse({ ...base, snapshot: { items: [item('x', '')] } }).success).toBe(false);

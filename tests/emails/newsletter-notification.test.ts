@@ -19,7 +19,11 @@ describe('NewsletterNotification', () => {
 
 describe('subscriberMail', () => {
   it('builds the notification with a pt-BR subject', async () => {
-    const mail = await subscriberMail({ email: 'fulano@exemplo.com', origin: '/posts', at: '2026-10-19T12:00:00.000Z' });
+    const mail = await subscriberMail({
+      email: 'fulano@exemplo.com',
+      origin: '/posts',
+      at: '2026-10-19T12:00:00.000Z',
+    });
     expect(mail.subject).toBe('Nova assinatura: fulano@exemplo.com');
     expect(mail.text).toContain('fulano@exemplo.com');
   });

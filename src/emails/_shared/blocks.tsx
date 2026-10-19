@@ -11,7 +11,14 @@ export type { JourneyData, JourneyView } from '../../lib/analytics/journey';
 /** What a field shows when the visitor left it empty. Every mail is in pt-BR (asked on 2026-10-19). */
 export const NOT_GIVEN = 'não informado';
 
-const label = { margin: 0, fontFamily: f.mono, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: c.mutedForeground } as const;
+const label = {
+  margin: 0,
+  fontFamily: f.mono,
+  fontSize: 12,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  color: c.mutedForeground,
+} as const;
 
 /** Label and value rows: the data reads as a record, like the site's lists. */
 export const Fields = ({ rows }: { rows: ReadonlyArray<readonly [string, string | null | undefined]> }) => (
@@ -88,8 +95,11 @@ export const Journey = ({ journey }: { journey: JourneyData }) => (
       ]}
     />
     <Section style={{ marginTop: s.sm }}>
-      {journey.views.map((view) => (
-        <Text key={`${view.time}${view.path}`} style={{ margin: 0, fontFamily: f.mono, fontSize: 13, lineHeight: 1.8, color: c.mutedForeground }}>
+      {journey.views.map(view => (
+        <Text
+          key={`${view.time}${view.path}`}
+          style={{ margin: 0, fontFamily: f.mono, fontSize: 13, lineHeight: 1.8, color: c.mutedForeground }}
+        >
           <span style={{ color: c.primary }}>{view.time}</span>
           {'  '}
           <span style={{ color: c.foreground }}>{view.path}</span>

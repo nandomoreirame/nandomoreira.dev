@@ -21,7 +21,7 @@ describe('externalLinks', () => {
 
   it.each(['/lab/noctalia-daybar', 'https://nandomoreira.dev/posts', '#secao', 'mailto:x@y.z'])(
     'leaves %s as it is',
-    async (href) => {
+    async href => {
       const html = await render(`[link](${href})`);
       expect(html).not.toContain('target=');
       expect(html).not.toContain('nofollow');
@@ -45,7 +45,7 @@ describe('lightboxImages', () => {
 
   it('gives each image on the page its own popover', async () => {
     const html = await render('![A](/a.webp)\n\n![B](/b.webp)');
-    const ids = [...html.matchAll(/ id="([^"]+)" popover/g)].map((match) => match[1]);
+    const ids = [...html.matchAll(/ id="([^"]+)" popover/g)].map(match => match[1]);
 
     expect(ids).toHaveLength(2);
     expect(new Set(ids).size).toBe(2);

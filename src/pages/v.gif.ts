@@ -15,8 +15,9 @@ const limiter = createLimiter({ max: 30, windowMs: 10 * 60 * 1000 });
 /** The sitemap's pages, computed once per process: content only changes with a deploy. */
 const knownPaths = cachedUnlessRejected(() =>
   Promise.all([getAllProjects(), getAllPosts()]).then(
-    ([projects, posts]): ReadonlySet<string> => new Set(sitemapEntries({ projects, posts }).map((entry) => entry.path)),
+    ([projects, posts]): ReadonlySet<string> => new Set(sitemapEntries({ projects, posts }).map(entry => entry.path)),
   ),
 );
 
-export const ALL: APIRoute = ({ request }) => handlePixel(request, { recorder, limiter, knownPaths, ownHosts: OWN_HOSTS });
+export const ALL: APIRoute = ({ request }) =>
+  handlePixel(request, { recorder, limiter, knownPaths, ownHosts: OWN_HOSTS });

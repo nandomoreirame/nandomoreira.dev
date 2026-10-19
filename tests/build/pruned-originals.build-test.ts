@@ -11,14 +11,14 @@ const IMAGE = /\.(png|jpe?g|gif|webp|avif)$/i;
 const withVariant = (files: readonly string[]) => {
   const names = new Set(files);
 
-  return files.filter((file) => {
+  return files.filter(file => {
     const base = file.replace(IMAGE, '');
-    return [...names].some((other) => other !== file && other.startsWith(`${base}_`));
+    return [...names].some(other => other !== file && other.startsWith(`${base}_`));
   });
 };
 
 describe('build assets', () => {
-  const files = readdirSync(ASSETS).filter((f) => IMAGE.test(f));
+  const files = readdirSync(ASSETS).filter(f => IMAGE.test(f));
 
   it('emits images at all', () => {
     expect(files.length).toBeGreaterThan(0);

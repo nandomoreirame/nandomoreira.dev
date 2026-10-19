@@ -22,7 +22,7 @@ describe('/[slug] post page', () => {
 
   it('getStaticPaths includes current and archived slugs and excludes the draft', async () => {
     const paths = await getStaticPaths();
-    const slugs = paths.map((p) => p.params.slug);
+    const slugs = paths.map(p => p.params.slug);
 
     expect(slugs).toContain('fluxo-rpi-claude-code-grok-codex');
     expect(slugs).toContain('comece-com-gulp');
@@ -33,7 +33,7 @@ describe('/[slug] post page', () => {
 
   it('renders an archived post with the archive badge, time element and body', async () => {
     const entries = await getAllPostEntries();
-    const archived = entries.find((e) => e.data.archived === true && e.data.cover);
+    const archived = entries.find(e => e.data.archived === true && e.data.cover);
     expect(archived).toBeTruthy();
 
     const html = await renderEntry(archived!);
@@ -54,10 +54,10 @@ describe('/[slug] post page', () => {
     // words: long enough to be unique, free of anything the renderer rewrites.
     const probe = markdown
       .split('\n')
-      .filter((line) => !/^[#!\-|>` ]/.test(line))
-      .flatMap((line) => line.split(/[.,;:!?]/))
-      .map((run) => run.trim())
-      .find((run) => run.length > 30 && !/[[\]()*_`<>&"']/.test(run));
+      .filter(line => !/^[#!\-|>` ]/.test(line))
+      .flatMap(line => line.split(/[.,;:!?]/))
+      .map(run => run.trim())
+      .find(run => run.length > 30 && !/[[\]()*_`<>&"']/.test(run));
 
     expect(probe, 'no plain prose run found to assert against').toBeTruthy();
     expect(html).toContain(probe);
@@ -65,7 +65,7 @@ describe('/[slug] post page', () => {
 
   it('renders a current post without the archive badge', async () => {
     const entries = await getAllPostEntries();
-    const current = entries.find((e) => e.data.archived !== true && e.data.draft !== true);
+    const current = entries.find(e => e.data.archived !== true && e.data.draft !== true);
     expect(current).toBeTruthy();
 
     const html = await renderEntry(current!);
@@ -81,8 +81,8 @@ describe('/[slug] post page', () => {
     const entries = await getAllPostEntries();
     // Prefer a post whose body has no inline images so the cover <img> is unambiguous.
     const withCover =
-      entries.find((e) => e.data.cover && e.data.slug === 'como-exibir-calendario-do-terminal') ??
-      entries.find((e) => e.data.cover);
+      entries.find(e => e.data.cover && e.data.slug === 'como-exibir-calendario-do-terminal') ??
+      entries.find(e => e.data.cover);
     expect(withCover).toBeTruthy();
     const alt = withCover!.data.cover!.alt;
     expect(alt.length).toBeGreaterThan(0);
@@ -96,7 +96,7 @@ describe('/[slug] post page', () => {
 
   it('closes with three related posts linking to other posts', async () => {
     const entries = await getAllPostEntries();
-    const entry = entries.find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const entry = entries.find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
 
     const html = await renderEntry(entry);
     const start = html.search(/<section[^>]*aria-labelledby="related-heading"/);
@@ -107,14 +107,14 @@ describe('/[slug] post page', () => {
     expect(section).toContain('LEITURA COMPLEMENTAR');
     expect(section.match(/data-related-post/g)).toHaveLength(3);
     expect(section).toMatch(/<a[^>]*href="\/posts"[^>]*>[\s\S]*?Ver todos no blog/);
-    const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map((m) => m[1]).filter((slug) => slug !== 'posts');
+    const links = [...section.matchAll(/<a[^>]*href="\/([^"#/]+)"/g)].map(m => m[1]).filter(slug => slug !== 'posts');
     expect(links).toHaveLength(3);
     expect(links).not.toContain('fluxo-rpi-claude-code-grok-codex');
   });
 
   it('draws the declared art where a post has no cover', async () => {
     const entries = await getAllPostEntries();
-    const coverless = entries.find((e) => !e.data.cover && e.data.art);
+    const coverless = entries.find(e => !e.data.cover && e.data.art);
     expect(coverless).toBeTruthy();
 
     const html = await renderEntry(coverless!);
@@ -127,18 +127,20 @@ describe('/[slug] post page', () => {
 
   it('keeps the cover and draws no art when a post has one', async () => {
     const entries = await getAllPostEntries();
-    const html = await renderEntry(entries.find((e) => e.data.slug === '8-meses-de-malapronta-e-o-fim')!);
+    const html = await renderEntry(entries.find(e => e.data.slug === '8-meses-de-malapronta-e-o-fim')!);
 
     expect(html).toMatch(/<figure\b/i);
     expect(html).not.toMatch(/data-motif=/);
   });
 
   it('opens with date, tags and reading time, no prompt and no "publicado:"', async () => {
-    const post = (await getAllPostEntries()).find((entry) => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway')!;
+    const post = (await getAllPostEntries()).find(
+      entry => entry.data.slug === 'rdo-solo-red-dead-online-sozinho-pelo-gateway',
+    )!;
     const html = await renderEntry(post);
     const meta = html.match(/<p[^>]*data-post-meta[^>]*>[\s\S]*?<\/p>/)?.[0] ?? '';
     expect(meta).toMatch(/<time[^>]*datetime="2026-10-11"[^>]*>\s*11 de outubro de 2026\s*<\/time>/);
-    expect([...meta.matchAll(/>(#[^<]+)</g)].map((m) => m[1])).toEqual(['#linux', '#redes', '#open-source']);
+    expect([...meta.matchAll(/>(#[^<]+)</g)].map(m => m[1])).toEqual(['#linux', '#redes', '#open-source']);
     expect(meta).toMatch(/data-icon="lucide:clock"[\s\S]*\d+ min de leitura/);
     expect(meta.match(/<span[^>]*aria-hidden="true"[^>]*>•<\/span>/g)).toHaveLength(2);
     expect(html).not.toContain('publicado:');
@@ -147,14 +149,14 @@ describe('/[slug] post page', () => {
   });
 
   it('has no back trail: the menu already marks the blog', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
     const html = await renderEntry(entry);
     expect(html).not.toContain('Voltar aos posts');
     expect(html).not.toContain('Trilha de navegação');
   });
 
   it('puts the summary under the title as the lead', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
     const html = await renderEntry(entry);
     const lead = html.match(/<p[^>]*data-post-lead[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '';
     expect(lead.trim()).toBe(entry.data.summary);
@@ -166,7 +168,7 @@ describe('/[slug] post page', () => {
   });
 
   it('groups the reader switch, the labelled AI links, copy link and .md in one toolbar', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
     const html = await renderEntry(entry);
     const bar = html.slice(html.indexOf('data-post-toolbar'), html.indexOf('data-post-toolbar-end'));
     expect(bar).toContain('id="reader-on"');
@@ -174,11 +176,13 @@ describe('/[slug] post page', () => {
     expect(bar).toMatch(/<button[^>]*data-copy="post-url"[^>]*hidden/);
     expect(bar).toContain('Copiar link');
     expect(bar).toMatch(/<a[^>]*href="\/fluxo-rpi-claude-code-grok-codex\.md"/);
-    expect(html).toMatch(/<span id="post-url" hidden>https:\/\/nandomoreira\.dev\/fluxo-rpi-claude-code-grok-codex<\/span>/);
+    expect(html).toMatch(
+      /<span id="post-url" hidden>https:\/\/nandomoreira\.dev\/fluxo-rpi-claude-code-grok-codex<\/span>/,
+    );
   });
 
   it('rules the body sections and closes with the author box before the related posts', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
     const html = await renderEntry(entry);
     expect(html).toContain('data-prose-ruled');
     const box = html.indexOf('data-author-box');
@@ -187,7 +191,9 @@ describe('/[slug] post page', () => {
   });
 
   it('shows the snapshot card in the side column when the post has one', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'scratchpad-no-niri-janelas-que-somem-com-um-atalho')!;
+    const entry = (await getAllPostEntries()).find(
+      e => e.data.slug === 'scratchpad-no-niri-janelas-que-somem-com-um-atalho',
+    )!;
     expect(entry.data.snapshot).toBeDefined();
     const html = await renderEntry(entry);
     const aside = html.match(/<aside[^>]*data-post-aside[^>]*>[\s\S]*?<\/aside>/)?.[0] ?? '';
@@ -198,7 +204,7 @@ describe('/[slug] post page', () => {
   it('keeps the phone index popover out of a bare hidden ancestor when there is no snapshot', async () => {
     // A popover under display:none opens but paints at width 0 (Chromium).
     // Archived posts with an index and no snapshot hit that path below md.
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'comece-com-gulp')!;
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'comece-com-gulp')!;
     expect(entry.data.snapshot).toBeUndefined();
 
     const html = await renderEntry(entry);
@@ -223,7 +229,10 @@ describe('/[slug] post page', () => {
       stack.push(tag);
     }
 
-    expect(stack.some((open) => open.includes('data-post-aside')), 'aside must wrap data-toc').toBe(true);
+    expect(
+      stack.some(open => open.includes('data-post-aside')),
+      'aside must wrap data-toc',
+    ).toBe(true);
 
     for (const open of stack) {
       const cls = /\bclass="([^"]*)"/.exec(open)?.[1] ?? '';
@@ -233,7 +242,7 @@ describe('/[slug] post page', () => {
 
   it('puts the title and date above the cover', async () => {
     const entries = await getAllPostEntries();
-    const withCover = entries.find((e) => e.data.slug === '8-meses-de-malapronta-e-o-fim');
+    const withCover = entries.find(e => e.data.slug === '8-meses-de-malapronta-e-o-fim');
     expect(withCover?.data.cover).toBeTruthy();
 
     const html = await renderEntry(withCover!);
@@ -254,7 +263,7 @@ describe('/[slug] post page', () => {
     expect(source).toMatch(/post\.cover\s*&&/);
 
     const entries = await getAllPostEntries();
-    const withoutCover = entries.filter((e) => !e.data.cover);
+    const withoutCover = entries.filter(e => !e.data.cover);
     // Published posts may all have covers; when one does not, render it.
     // The cover is the eager, high-priority <img> in a <figure>; images in
     // the body (imported posts carry some) are not covers and may render.
@@ -267,7 +276,9 @@ describe('/[slug] post page', () => {
   });
 
   it('renders the images inside a post body', async () => {
-    const entry = (await getAllPostEntries()).find((e) => e.data.slug === 'criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos');
+    const entry = (await getAllPostEntries()).find(
+      e => e.data.slug === 'criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos',
+    );
     expect(entry).toBeDefined();
     const html = await renderEntry(entry!);
     expect(html).toMatch(/<img\b[^>]*alt="Meu desktop no CachyOS com o Niri/);
@@ -277,7 +288,7 @@ describe('/[slug] post page', () => {
 describe('/[slug] post page title', () => {
   it('uses the seoTitle in the browser tab and keeps the full title in the h1', async () => {
     const entry = (await getAllPostEntries()).find(
-      (item) => item.data.slug === 'sessoes-do-red-dead-online-p2p-relays-e-nat-duplo',
+      item => item.data.slug === 'sessoes-do-red-dead-online-p2p-relays-e-nat-duplo',
     )!;
     const html = await renderEntry(entry);
     const tab = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';

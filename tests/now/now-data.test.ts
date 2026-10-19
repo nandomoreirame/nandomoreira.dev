@@ -16,8 +16,8 @@ const curated = [
   NOW_LEAD,
   ...NOW_FOCUS,
   ...NOW_DECLINING,
-  ...NOW_GAMES.flatMap((game) => [game.name, game.note ?? '']),
-  ...NOW_STUDYING.flatMap((study) => [study.topic, study.note]),
+  ...NOW_GAMES.flatMap(game => [game.name, game.note ?? '']),
+  ...NOW_STUDYING.flatMap(study => [study.topic, study.note]),
 ];
 
 describe('now curated data', () => {

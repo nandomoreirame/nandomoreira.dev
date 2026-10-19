@@ -28,7 +28,7 @@ describe('/now machine surfaces', () => {
     expect(buildSitemap({ site, projects: [] })).toContain('<loc>https://nandomoreira.dev/now</loc>');
 
     const index = buildAiIndex({ site, profile: await getProfile(), projects: [], posts: [] });
-    const pages = index.entries.filter((entry) => entry.type === 'page');
+    const pages = index.entries.filter(entry => entry.type === 'page');
 
     expect(pages).toContainEqual({
       type: 'page',

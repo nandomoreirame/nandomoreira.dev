@@ -14,7 +14,7 @@ export const receivedAt = (iso: string): string => {
       hourCycle: 'h23',
     })
       .formatToParts(new Date(iso))
-      .map((part) => [part.type, part.value]),
+      .map(part => [part.type, part.value]),
   );
   return `${parts.day}/${parts.month}/${parts.year} às ${parts.hour}:${parts.minute}`;
 };

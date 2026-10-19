@@ -5,7 +5,7 @@ const site = new URL('https://nandomoreira.dev');
 const output = () => buildRobotsTxt({ site });
 
 describe('buildRobotsTxt', () => {
-  it.each(ANSWER_ENGINE_CRAWLERS)('grants %s explicit permission', (agent) => {
+  it.each(ANSWER_ENGINE_CRAWLERS)('grants %s explicit permission', agent => {
     expect(output()).toContain(`User-agent: ${agent}`);
   });
 

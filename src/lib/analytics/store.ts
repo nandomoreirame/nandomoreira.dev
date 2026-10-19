@@ -49,7 +49,7 @@ export const nestedIncrements = (
  * commit, not 20 racing on the same document.
  */
 export const firestoreAnalyticsStore = (): AnalyticsStore => ({
-  record: async (events) => {
+  record: async events => {
     if (events.length === 0) return;
     const db = getFirestoreClient();
     const batch = db.batch();
@@ -58,14 +58,14 @@ export const firestoreAnalyticsStore = (): AnalyticsStore => ({
       if (keepsRawEvent(event)) batch.set(db.collection(EVENTS_COLLECTION).doc(), event);
     }
 
-    for (const day of new Set(events.map((event) => event.day))) {
-      const ofDay = events.filter((event) => event.day === day);
+    for (const day of new Set(events.map(event => event.day))) {
+      const ofDay = events.filter(event => event.day === day);
       batch.set(
         db.collection(DAILY_COLLECTION).doc(day),
         {
           day,
           expiresAt: dailyExpiry(day),
-          ...nestedIncrements(ofDay.flatMap(dailyIncrements), (by) => FieldValue.increment(by)),
+          ...nestedIncrements(ofDay.flatMap(dailyIncrements), by => FieldValue.increment(by)),
         },
         { merge: true },
       );
@@ -87,7 +87,7 @@ export const firestoreAnalyticsStore = (): AnalyticsStore => ({
       .limit(200)
       .get();
 
-    return snapshot.docs.map((doc) => {
+    return snapshot.docs.map(doc => {
       const data = doc.data() as Omit<AnalyticsEvent, 'expiresAt'> & { expiresAt: Timestamp };
       return { ...data, expiresAt: data.expiresAt.toDate() };
     });

@@ -25,7 +25,7 @@ export type SubscriberNotifier = (mail: OutgoingMail) => Promise<void>;
 export const resendSubscriberNotifier = (config: HireConfig): SubscriberNotifier => {
   const client = new Resend(config.apiKey);
 
-  return async (mail) => {
+  return async mail => {
     const { error } = await client.emails.send({
       from: config.notifyFrom,
       to: config.notifyTo,

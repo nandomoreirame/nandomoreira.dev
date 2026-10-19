@@ -20,5 +20,5 @@ interface Heading {
 // Sections and their subsections; one section alone has nothing to index.
 export const tocFrom = (headings: readonly Heading[]): TocItem[] => {
   const items = headings.filter((heading): heading is TocItem => heading.depth === 2 || heading.depth === 3);
-  return items.filter((item) => item.depth === 2).length >= 2 ? items : [];
+  return items.filter(item => item.depth === 2).length >= 2 ? items : [];
 };

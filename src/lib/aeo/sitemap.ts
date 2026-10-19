@@ -56,12 +56,12 @@ export const sitemapEntries = ({
     { path: '/now' },
     { path: '/privacidade' },
     // On the main host only until the subdomain is live (sales-landing, REQ-033).
-    ...(salesLive ? [] : [salesPath(undefined, false), ...detailSlugs().map((slug) => salesPath(slug, false))]).map(
-      (path) => ({ path }),
+    ...(salesLive ? [] : [salesPath(undefined, false), ...detailSlugs().map(slug => salesPath(slug, false))]).map(
+      path => ({ path }),
     ),
     { path: '/api/resume.json' },
     { path: '/api/resume.txt' },
-    ...projects.map((project) => ({
+    ...projects.map(project => ({
       path: `/${collectionOfBlock(project.block)}/${project.slug}`,
       lastmod: project.updatedAt,
     })),
@@ -70,18 +70,19 @@ export const sitemapEntries = ({
   if (posts.length > 0) {
     // A listing changes when a post enters it: its date is the newest post's.
     const newest = (list: readonly Post[]): string | undefined =>
-      list.map((post) => post.date).sort().at(-1);
-    entries.push({ path: '/posts', lastmod: newest(posts.filter((post) => !post.archived)) });
+      list
+        .map(post => post.date)
+        .sort()
+        .at(-1);
+    entries.push({ path: '/posts', lastmod: newest(posts.filter(post => !post.archived)) });
 
-    const years = new Set(
-      posts.filter((post) => post.archived).map((post) => post.date.slice(0, 4)),
-    );
+    const years = new Set(posts.filter(post => post.archived).map(post => post.date.slice(0, 4)));
     if (years.size > 0) {
       entries.push({ path: '/posts/arquivo' });
       for (const year of [...years].sort().reverse()) {
         entries.push({
           path: `/posts/arquivo/${year}`,
-          lastmod: newest(posts.filter((post) => post.archived && post.date.startsWith(year))),
+          lastmod: newest(posts.filter(post => post.archived && post.date.startsWith(year))),
         });
       }
     }

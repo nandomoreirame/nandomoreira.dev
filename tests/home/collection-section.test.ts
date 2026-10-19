@@ -22,11 +22,7 @@ const project = (overrides: Partial<Project> = {}): Project =>
     ...overrides,
   }) as Project;
 
-const render = async (
-  collection: 'portfolio' | 'lab',
-  projects: Project[],
-  totalCount?: number,
-) => {
+const render = async (collection: 'portfolio' | 'lab', projects: Project[], totalCount?: number) => {
   const container = await AstroContainer.create();
   return container.renderToString(CollectionSection, {
     props: { collection, projects, totalCount: totalCount ?? projects.length },
@@ -37,23 +33,19 @@ describe('CollectionSection', () => {
   it('titles itself from the catalogue labels, not from a local string', async () => {
     // COLLECTION_LABELS is the single source: a local copy would drift from
     // the listing pages the section links to.
-    expect(await render('portfolio', [project({ block: 'professional' })])).toContain(
-      'Portfólio',
-    );
+    expect(await render('portfolio', [project({ block: 'professional' })])).toContain('Portfólio');
     expect(await render('lab', [project()])).toContain('Laboratório');
   });
 
   it.each(['portfolio', 'lab'] as const)(
     'describes %s with the same text as its own page, from one source',
-    async (collection) => {
+    async collection => {
       expect(await render(collection, [])).toContain(COLLECTION_COPY[collection].description);
     },
   );
 
   it('anchors itself on the collection it shows', async () => {
-    expect(await render('portfolio', [project({ block: 'professional' })])).toContain(
-      'id="portfolio"',
-    );
+    expect(await render('portfolio', [project({ block: 'professional' })])).toContain('id="portfolio"');
     expect(await render('lab', [project()])).toContain('id="lab"');
   });
 
@@ -69,9 +61,7 @@ describe('CollectionSection', () => {
   it('styles the see-all link as mono with a trailing Lucide arrow', async () => {
     const html = await render('lab', [project()], 9);
     const link =
-      html.match(/<a[^>]*href="\/lab"[^>]*>[\s\S]*?<\/a>/)?.[0] ??
-      html.match(/<a[^>]*href="\/lab"[^>]*>/)?.[0] ??
-      '';
+      html.match(/<a[^>]*href="\/lab"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? html.match(/<a[^>]*href="\/lab"[^>]*>/)?.[0] ?? '';
 
     expect(link).toContain('href="/lab"');
     expect(link).toContain('font-mono');
@@ -119,8 +109,6 @@ describe('CollectionSection', () => {
     // forja is ai-tooling, so it lives at /lab/forja. Rendered inside the
     // portfolio section its row href would be /portfolio/forja, a 404 that
     // nothing else in the suite would notice.
-    await expect(render('portfolio', [project({ block: 'ai-tooling' })])).rejects.toThrow(
-      /does not exist/,
-    );
+    await expect(render('portfolio', [project({ block: 'ai-tooling' })])).rejects.toThrow(/does not exist/);
   });
 });

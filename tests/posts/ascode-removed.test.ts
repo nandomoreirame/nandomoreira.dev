@@ -19,18 +19,16 @@ const REMOVED = [
 const config = readFileSync('astro.config.mjs', 'utf8');
 
 describe('posts removed in favour of ascode.com.br', () => {
-  it.each(REMOVED)('%s is no longer a post here', (slug) => {
+  it.each(REMOVED)('%s is no longer a post here', slug => {
     expect(existsSync(`src/content/posts/${slug}.md`)).toBe(false);
   });
 
-  it.each(REMOVED)('%s redirects to its original on ascode.com.br', (slug) => {
+  it.each(REMOVED)('%s redirects to its original on ascode.com.br', slug => {
     expect(config).toContain(`'/${slug}': 'https://ascode.com.br/blog/${slug}'`);
   });
 
   it('leaves no image behind that only those posts used', () => {
-    const leftovers = readdirSync('src/assets/posts/2026').filter((file) =>
-      REMOVED.some((slug) => file.startsWith(slug)),
-    );
+    const leftovers = readdirSync('src/assets/posts/2026').filter(file => REMOVED.some(slug => file.startsWith(slug)));
     expect(leftovers).toEqual([]);
   });
 });

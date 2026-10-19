@@ -25,8 +25,7 @@ export const createRandom = (seed: number): Random => {
   };
 };
 
-export const between = (random: Random, min: number, max: number): number =>
-  min + random() * (max - min);
+export const between = (random: Random, min: number, max: number): number => min + random() * (max - min);
 
 export const intBetween = (random: Random, min: number, max: number): number =>
   Math.floor(between(random, min, max + 1));

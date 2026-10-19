@@ -20,7 +20,9 @@ describe('/now sections', () => {
   it('keeps the focus block as plain text like the other sections, with only the availability in a card', async () => {
     const html = await render();
     const focus = html.slice(html.indexOf('id="foco"'), html.indexOf('id="projetos"'));
-    expect(focus.replace(/<(a|div)[^>]*data-availability-card[\s\S]*?<\/\1>/, '')).not.toMatch(/rounded-md border border-border bg-surface/);
+    expect(focus.replace(/<(a|div)[^>]*data-availability-card[\s\S]*?<\/\1>/, '')).not.toMatch(
+      /rounded-md border border-border bg-surface/,
+    );
     expect(focus).toContain('data-availability-card');
     expect(focus).toMatch(/Disponível para novos projetos|Disponibilidade limitada|Indisponível no momento/);
   });

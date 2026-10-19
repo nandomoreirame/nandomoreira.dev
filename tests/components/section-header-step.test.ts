@@ -12,7 +12,9 @@ describe('SectionHeader step', () => {
     const html = await render({ step: 1 });
     const heading = html.match(/<h2[^>]*>[\s\S]*?<\/h2>/)?.[0] ?? '';
 
-    expect(heading).toMatch(/<span aria-hidden="true" class="[^"]*\bfont-mono\b[^"]*\btext-primary\b[^"]*">01 \/\/<\/span>/);
+    expect(heading).toMatch(
+      /<span aria-hidden="true" class="[^"]*\bfont-mono\b[^"]*\btext-primary\b[^"]*">01 \/\/<\/span>/,
+    );
     expect(heading.indexOf('01 //')).toBeLessThan(heading.indexOf('Desktop e sistema'));
   });
 

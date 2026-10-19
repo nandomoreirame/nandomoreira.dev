@@ -18,10 +18,9 @@ export const COLLECTION_LABELS: Record<CatalogCollection, string> = {
   lab: 'Laboratório',
 };
 
-export const blocksOf = (collection: CatalogCollection): readonly Block[] =>
-  COLLECTION_BLOCKS[collection];
+export const blocksOf = (collection: CatalogCollection): readonly Block[] => COLLECTION_BLOCKS[collection];
 
 export const collectionOfBlock = (block: Block): CatalogCollection =>
-  (Object.keys(COLLECTION_BLOCKS) as CatalogCollection[]).find((collection) =>
+  (Object.keys(COLLECTION_BLOCKS) as CatalogCollection[]).find(collection =>
     (COLLECTION_BLOCKS[collection] as readonly Block[]).includes(block),
   )!;

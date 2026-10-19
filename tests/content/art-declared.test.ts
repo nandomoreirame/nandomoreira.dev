@@ -8,8 +8,8 @@ const DIR = 'src/content/projects';
 // Read from disk, not through the collection: the dev data store can lag
 // behind a new frontmatter field and would make this pass on stale content.
 const cases = readdirSync(DIR)
-  .filter((file) => file.endsWith('.md'))
-  .map((file) => ({
+  .filter(file => file.endsWith('.md'))
+  .map(file => ({
     file,
     art: (readFileSync(join(DIR, file), 'utf8').split(/^---$/m)[1] ?? '').match(/^art:\s*(\S+)/m)?.[1],
   }));

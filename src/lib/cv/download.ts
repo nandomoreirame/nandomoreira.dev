@@ -36,7 +36,7 @@ export const cvFileName = (now: Date): string => {
       hourCycle: 'h23',
     })
       .formatToParts(now)
-      .map((part) => [part.type, part.value]),
+      .map(part => [part.type, part.value]),
   );
 
   return `curriculo-fernando-moreira-senior-ai-engineer-${parts.year}${parts.month}${parts.day}${parts.hour}${parts.minute}.pdf`;
@@ -190,11 +190,11 @@ export const handleCvDownload = async (
 };
 
 export const firestoreCvStore = (): CvStore => ({
-  save: async (download) => {
+  save: async download => {
     const reference = await getFirestoreClient().collection(CV_COLLECTION).add(download);
     return reference.id;
   },
-  markNotified: async (id) => {
+  markNotified: async id => {
     await getFirestoreClient().collection(CV_COLLECTION).doc(id).update({ notified: true });
   },
 });
@@ -202,11 +202,7 @@ export const firestoreCvStore = (): CvStore => ({
 /**
  * Renders the CV download notification from the React Email template (pt-BR).
  */
-export const cvMail = async (
-  download: CvDownload,
-  id: string,
-  journey?: JourneyData,
-): Promise<OutgoingMail> => {
+export const cvMail = async (download: CvDownload, id: string, journey?: JourneyData): Promise<OutgoingMail> => {
   const who = download.name ?? download.company ?? download.email ?? 'Alguém';
   const html = await render(h(CvNotification, { download, id, journey }));
   const mail: OutgoingMail = {

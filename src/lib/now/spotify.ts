@@ -28,7 +28,7 @@ const trackSchema = z.object({
   external_urls: z.object({
     spotify: z
       .string()
-      .refine((url) => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
+      .refine(url => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
   }),
 });
 
@@ -59,12 +59,12 @@ export interface RecentTrack {
 
 /** 300 px when present, otherwise the smallest image that is still sharp enough. */
 const coverFromImages = (images: readonly { url: string; width: number | null }[]): string | undefined => {
-  const usable = images.flatMap((image) => {
+  const usable = images.flatMap(image => {
     if (image.width === null || image.width < 64) return [];
     const path = coverPathFromUpstream(image.url);
     return path ? [{ width: image.width, path }] : [];
   });
-  const exact = usable.find((image) => image.width === 300);
+  const exact = usable.find(image => image.width === 300);
   if (exact) return exact.path;
   return usable.sort((a, b) => a.width - b.width)[0]?.path;
 };
@@ -80,25 +80,25 @@ export const parseRecentTracks = (json: unknown, { limit = 5 }: { limit?: number
 
   const seen = new Set<string>();
   return parsed.data.items
-    .flatMap((item) => {
+    .flatMap(item => {
       const parsedItem = playedItemSchema.safeParse(item);
       if (!parsedItem.success || !parsedItem.data.track) return [];
       return [{ playedAt: parsedItem.data.played_at, track: parsedItem.data.track }];
     })
     .sort((a, b) => Date.parse(b.playedAt) - Date.parse(a.playedAt))
-    .filter((item) => {
+    .filter(item => {
       if (seen.has(item.track.id)) return false;
       seen.add(item.track.id);
       return true;
     })
     .slice(0, limit)
-    .map((item) => {
+    .map(item => {
       const year = yearOf(item.track.album.release_date);
       const cover = coverFromImages(item.track.album.images);
       const isrc = item.track.external_ids?.isrc?.toUpperCase();
       return {
         title: item.track.name,
-        artists: item.track.artists.map((artist) => artist.name).join(', '),
+        artists: item.track.artists.map(artist => artist.name).join(', '),
         album: item.track.album.name,
         ...(year ? { year } : {}),
         ...(cover ? { cover } : {}),
@@ -153,7 +153,7 @@ const artistSchema = z.object({
   external_urls: z.object({
     spotify: z
       .string()
-      .refine((url) => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
+      .refine(url => isAllowedUrl(url, 'open.spotify.com') && url.startsWith('https://open.spotify.com/')),
   }),
   images: z.array(imageSchema).default([]),
 });
@@ -167,7 +167,7 @@ const coverClosestTo = (
   images: readonly { url: string; width: number | null }[],
   target: number,
 ): string | undefined => {
-  const usable = images.flatMap((image) => {
+  const usable = images.flatMap(image => {
     if (image.width === null) return [];
     const path = coverPathFromUpstream(image.url);
     return path ? [{ width: image.width, path }] : [];
@@ -181,7 +181,7 @@ export const parseTopArtists = (json: unknown, { limit = 12 }: { limit?: number 
   if (!parsed.success) throw new SourceError('shape');
 
   return parsed.data.items
-    .flatMap((item) => {
+    .flatMap(item => {
       const artist = artistSchema.safeParse(item);
       if (!artist.success) return [];
       const cover = coverClosestTo(artist.data.images, 320);
@@ -220,7 +220,7 @@ interface OwnTrack {
  */
 const myTopTracks = async (fetchImpl: typeof fetch, headers: Record<string, string>): Promise<OwnTrack[]> => {
   const ranges = await Promise.all(
-    ['short_term', 'medium_term'].map(async (range) => {
+    ['short_term', 'medium_term'].map(async range => {
       try {
         const json = await fetchJson(fetchImpl, `${TOP_TRACKS_URL}${range}`, { headers });
         const items = z.object({ items: z.array(z.unknown()) }).safeParse(json);
@@ -230,11 +230,13 @@ const myTopTracks = async (fetchImpl: typeof fetch, headers: Record<string, stri
       }
     }),
   );
-  return ranges.flat().flatMap((item) => {
+  return ranges.flat().flatMap(item => {
     const track = ownTrackSchema.safeParse(item);
     if (!track.success) return [];
     const isrc = track.data.external_ids?.isrc?.toUpperCase();
-    return [{ title: track.data.name, ...(isrc ? { isrc } : {}), artistIds: track.data.artists.map((artist) => artist.id) }];
+    return [
+      { title: track.data.name, ...(isrc ? { isrc } : {}), artistIds: track.data.artists.map(artist => artist.id) },
+    ];
   });
 };
 
@@ -259,8 +261,8 @@ export const fetchTopArtists = async ({
   ]);
   const artists = parseTopArtists(json);
   return Promise.all(
-    artists.map(async (artist) => {
-      const tracks = artist.id ? ownTracks.filter((track) => track.artistIds.includes(artist.id!)) : [];
+    artists.map(async artist => {
+      const tracks = artist.id ? ownTracks.filter(track => track.artistIds.includes(artist.id!)) : [];
       const pick = await pickArtistPreview(fetchImpl, { name: artist.name, tracks }, previews);
       return pick ? { ...artist, ...pick } : artist;
     }),

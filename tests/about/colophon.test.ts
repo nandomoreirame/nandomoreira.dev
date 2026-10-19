@@ -14,7 +14,7 @@ describe('COLOPHON content', () => {
   });
 
   it('covers stack, agents, weight, privacy and process, each with a label', () => {
-    expect(COLOPHON.items.map((item) => item.label)).toEqual([
+    expect(COLOPHON.items.map(item => item.label)).toEqual([
       'Feito com',
       'Para agentes',
       'Leve por padrão',
@@ -25,7 +25,7 @@ describe('COLOPHON content', () => {
   });
 
   it('links only to routes the site serves, never to the private repository', () => {
-    const hrefs = COLOPHON.items.flatMap((item) => (item.link ? [item.link.href] : []));
+    const hrefs = COLOPHON.items.flatMap(item => (item.link ? [item.link.href] : []));
     expect(hrefs).toEqual(['/mcp', '/privacidade']);
     expect(JSON.stringify(COLOPHON)).not.toContain('github.com');
   });

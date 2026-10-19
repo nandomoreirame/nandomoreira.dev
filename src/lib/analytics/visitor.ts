@@ -18,5 +18,8 @@ export const visitorHash = ({
 }): string => {
   const dailyKey = createHmac('sha256', secret).update(day).digest();
 
-  return createHmac('sha256', dailyKey).update(`${ip}\n${userAgent ?? ''}`).digest('hex').slice(0, 32);
+  return createHmac('sha256', dailyKey)
+    .update(`${ip}\n${userAgent ?? ''}`)
+    .digest('hex')
+    .slice(0, 32);
 };

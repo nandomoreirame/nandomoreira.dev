@@ -65,10 +65,10 @@ describe('Portrait', () => {
   it('types the code lines one after another, with a blinking cursor', async () => {
     const svg = (await render({ name: 'F' })).match(/<svg[\s\S]*?<\/svg>/)?.[0] ?? '';
     const rows = svg.match(/<rect[^>]*data-typing[^>]*>/g) ?? [];
-    const delays = rows.map((row) => Number(row.match(/--delay:\s*([\d.]+)s/)?.[1]));
+    const delays = rows.map(row => Number(row.match(/--delay:\s*([\d.]+)s/)?.[1]));
 
     expect(rows.length).toBeGreaterThan(3);
-    expect(delays.every((delay) => Number.isFinite(delay))).toBe(true);
+    expect(delays.every(delay => Number.isFinite(delay))).toBe(true);
     expect(svg).toContain('data-cursor');
   });
 
@@ -89,7 +89,10 @@ describe('Portrait', () => {
 
   it('keeps a code block at the lower left, beside the left node graph', async () => {
     const svg = (await render({ name: 'F' })).match(/<svg[\s\S]*?<\/svg>/)?.[0] ?? '';
-    const rows = [...svg.matchAll(/<rect[^>]*data-typing[^>]*x="(\d+)"[^>]*y="(\d+)"/g)].map(([, x, y]) => [Number(x), Number(y)]);
+    const rows = [...svg.matchAll(/<rect[^>]*data-typing[^>]*x="(\d+)"[^>]*y="(\d+)"/g)].map(([, x, y]) => [
+      Number(x),
+      Number(y),
+    ]);
 
     expect(rows.some(([x, y]) => x! < 150 && y! > 700)).toBe(true);
   });
@@ -100,7 +103,7 @@ describe('Portrait', () => {
     const portrait = Number(html.match(/<picture[^>]*--depth:\s*(-?[\d.]+)/)?.[1]);
 
     expect(new Set(depths).size).toBeGreaterThan(2);
-    expect(depths.some((depth) => Math.sign(depth) !== Math.sign(portrait))).toBe(true);
+    expect(depths.some(depth => Math.sign(depth) !== Math.sign(portrait))).toBe(true);
   });
 
   it('drives the parallax from the pointer variables the site script already writes, adding no script', () => {

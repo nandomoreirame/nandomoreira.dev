@@ -13,7 +13,11 @@ export const GET: APIRoute = async () => {
     current,
     archived,
     projects,
-    services: SALES_SERVICES.map((service) => ({ title: service.title, summary: service.summary, url: salesUrl(service.slug) })),
+    services: SALES_SERVICES.map(service => ({
+      title: service.title,
+      summary: service.summary,
+      url: salesUrl(service.slug),
+    })),
     landingUrl: salesUrl(),
   });
   return new Response(JSON.stringify(index), { headers: { 'content-type': 'application/json; charset=utf-8' } });

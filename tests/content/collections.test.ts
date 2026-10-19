@@ -1,9 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import {
-  assertUniqueMarkdownSlugs,
-  assertUniqueProjectMarkdownSlugs,
-} from '../../src/lib/content/validate';
+import { assertUniqueMarkdownSlugs, assertUniqueProjectMarkdownSlugs } from '../../src/lib/content/validate';
 
 const config = readFileSync('src/content.config.ts', 'utf8');
 

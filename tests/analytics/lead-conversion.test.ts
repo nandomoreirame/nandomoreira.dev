@@ -50,8 +50,12 @@ describe('hire conversion', () => {
     );
 
     expect(response.status).toBe(202);
-    expect(hits[0]).toMatchObject({ kind: 'conversion', path: '/api/hire', conversion: { type: 'hire', refId: 'doc-1' } });
-    expect(sent[0]?.journey?.views.some((view) => view.path === '/lab/forja')).toBe(true);
+    expect(hits[0]).toMatchObject({
+      kind: 'conversion',
+      path: '/api/hire',
+      conversion: { type: 'hire', refId: 'doc-1' },
+    });
+    expect(sent[0]?.journey?.views.some(view => view.path === '/lab/forja')).toBe(true);
   });
 
   it('still notifies when there is no analytics', async () => {
@@ -62,7 +66,12 @@ describe('hire conversion', () => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ from: 'Ada', contact: 'ada@example.com', brief: 'Oi' }),
       }),
-      { store: { save: async () => 'doc-2', markNotified: async () => {} }, notifier, limiter: createLimiter({ max: 5, windowMs: 60_000 }), now },
+      {
+        store: { save: async () => 'doc-2', markNotified: async () => {} },
+        notifier,
+        limiter: createLimiter({ max: 5, windowMs: 60_000 }),
+        now,
+      },
     );
     expect(sent[0]).toEqual({ id: 'doc-2', journey: undefined });
   });
@@ -145,7 +154,7 @@ describe('cv conversion', () => {
       },
     );
     expect(hits[0]?.conversion).toEqual({ type: 'cv', refId: 'cv-1' });
-    expect(sent[0]?.journey?.views.some((view) => view.path === '/curriculo')).toBe(true);
+    expect(sent[0]?.journey?.views.some(view => view.path === '/curriculo')).toBe(true);
   });
 });
 

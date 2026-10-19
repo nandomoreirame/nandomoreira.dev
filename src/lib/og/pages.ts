@@ -39,7 +39,7 @@ const staticPage = (path: string, title: string, eyebrow: string, art: ArtMotif)
  */
 export const ogPages = async (): Promise<OgPage[]> => {
   const [profile, projects, posts] = await Promise.all([getProfile(), getAllProjects(), getAllPosts()]);
-  const years = [...new Set(posts.filter((post) => post.archived).map((post) => post.date.slice(0, 4)))];
+  const years = [...new Set(posts.filter(post => post.archived).map(post => post.date.slice(0, 4)))];
 
   return [
     staticPage('/', profile.headline, 'Portfólio, lab e blog', 'orbit'),
@@ -52,12 +52,19 @@ export const ogPages = async (): Promise<OgPage[]> => {
     staticPage('/now', 'O que estou fazendo agora', 'Agora', 'timeline'),
     staticPage('/privacidade', 'Política de privacidade', 'Privacidade', 'panels'),
     staticPage('/curriculo', profile.headline, 'Currículo', 'ascent'),
-    staticPage('/servicos', 'Seu site, sua loja ou seu sistema, do primeiro papo até estar no ar', 'Serviços', 'storefront'),
-    ...detailSlugs().map((slug) => staticPage(`/servicos/${slug}`, detailFor(slug)!.detail.hero.title, 'Serviços', 'wireframe')),
+    staticPage(
+      '/servicos',
+      'Seu site, sua loja ou seu sistema, do primeiro papo até estar no ar',
+      'Serviços',
+      'storefront',
+    ),
+    ...detailSlugs().map(slug =>
+      staticPage(`/servicos/${slug}`, detailFor(slug)!.detail.hero.title, 'Serviços', 'wireframe'),
+    ),
     staticPage('/posts', BLOG_COPY.title, 'Blog', 'calendar'),
     staticPage('/posts/arquivo', 'Textos de 2015 a 2019, mantidos como registro', 'Arquivo', 'gantt'),
-    ...years.map((year) => staticPage(`/posts/arquivo/${year}`, `Textos de ${year}`, 'Arquivo', 'calendar')),
-    ...projects.map((project) => {
+    ...years.map(year => staticPage(`/posts/arquivo/${year}`, `Textos de ${year}`, 'Arquivo', 'calendar')),
+    ...projects.map(project => {
       const collection = collectionOfBlock(project.block);
       return {
         key: `${collection}/${project.slug}`,
@@ -66,7 +73,7 @@ export const ogPages = async (): Promise<OgPage[]> => {
         art: { slug: project.slug, block: project.block, art: project.art },
       };
     }),
-    ...posts.map((post) => ({
+    ...posts.map(post => ({
       key: post.slug,
       title: post.title,
       eyebrow: `${post.archived ? 'Arquivo' : 'Blog'} · ${toLongDate(post.date)}`,

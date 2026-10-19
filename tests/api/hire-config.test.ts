@@ -29,9 +29,7 @@ describe('readHireConfig', () => {
   });
 
   it('treats an empty string as absent, since a blank secret notifies nobody', () => {
-    expect(() => readHireConfig({ ...complete, HIRE_NOTIFY_TO: '   ' })).toThrow(
-      /HIRE_NOTIFY_TO/,
-    );
+    expect(() => readHireConfig({ ...complete, HIRE_NOTIFY_TO: '   ' })).toThrow(/HIRE_NOTIFY_TO/);
   });
 
   it('names every missing variable at once, so one deploy fixes them all', () => {

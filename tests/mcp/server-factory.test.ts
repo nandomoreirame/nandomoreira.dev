@@ -24,10 +24,8 @@ describe('createMcpServer', () => {
 
   it('registers no write tool: the only write surface is /api/hire', async () => {
     const server = await createMcpServer();
-    const names = Object.keys(
-      (server as unknown as { _registeredTools: Record<string, unknown> })._registeredTools,
-    );
+    const names = Object.keys((server as unknown as { _registeredTools: Record<string, unknown> })._registeredTools);
 
-    expect(names.some((name) => /^(create|update|delete|send|post)_/.test(name))).toBe(false);
+    expect(names.some(name => /^(create|update|delete|send|post)_/.test(name))).toBe(false);
   });
 });

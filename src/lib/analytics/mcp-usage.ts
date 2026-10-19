@@ -12,7 +12,10 @@ const MAX_MESSAGES = 20;
 
 const name = (value: unknown): string | undefined => {
   if (typeof value !== 'string') return undefined;
-  const text = value.replace(/[\p{Cc}\p{Cf}]/gu, '').trim().slice(0, MAX_NAME);
+  const text = value
+    .replace(/[\p{Cc}\p{Cf}]/gu, '')
+    .trim()
+    .slice(0, MAX_NAME);
   return text === '' ? undefined : text;
 };
 
@@ -32,7 +35,10 @@ export const mcpCalls = (body: string): McpCall[] => {
 
   return messages.flatMap((message): McpCall[] => {
     if (!message || typeof message !== 'object') return [];
-    const { method, params } = message as { method?: unknown; params?: { name?: unknown; clientInfo?: { name?: unknown } } };
+    const { method, params } = message as {
+      method?: unknown;
+      params?: { name?: unknown; clientInfo?: { name?: unknown } };
+    };
     const methodName = name(method);
     if (!methodName) return [];
 
@@ -55,20 +61,18 @@ export const recordMcpUsage = async (
   if (request.method !== 'POST' || !recorder.active(request)) return;
 
   const body = await readLimitedText(request.clone()).catch(() => '');
-  const hits = mcpCalls(body).map(
-    (call): Hit => ({
-      kind: 'conversion',
-      path: '/api/mcp',
-      source: 'api',
-      referrer: null,
-      conversion: {
-        type: 'mcp',
-        target: call.method,
-        ...(call.tool ? { tool: call.tool } : {}),
-        ...(call.client ? { client: call.client } : {}),
-      },
-    }),
-  );
+  const hits = mcpCalls(body).map((call): Hit => ({
+    kind: 'conversion',
+    path: '/api/mcp',
+    source: 'api',
+    referrer: null,
+    conversion: {
+      type: 'mcp',
+      target: call.method,
+      ...(call.tool ? { tool: call.tool } : {}),
+      ...(call.client ? { client: call.client } : {}),
+    },
+  }));
 
   if (hits.length > 0) await recorder.recordAll(request, hits);
 };

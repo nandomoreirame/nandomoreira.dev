@@ -39,11 +39,8 @@ const withClient = async <T>(use: (client: Client) => Promise<T>): Promise<T> =>
 };
 
 /** Returns the structured payload, or throws with the tool's own message. */
-export const callTool = async <T>(
-  name: string,
-  args: Record<string, unknown> = {},
-): Promise<T> =>
-  withClient(async (client) => {
+export const callTool = async <T>(name: string, args: Record<string, unknown> = {}): Promise<T> =>
+  withClient(async client => {
     const result = (await client.callTool({ name, arguments: args })) as ToolResult;
 
     if (result.isError) {
@@ -53,12 +50,7 @@ export const callTool = async <T>(
     return result.structuredContent as T;
   });
 
-export const callToolRaw = async (
-  name: string,
-  args: Record<string, unknown> = {},
-): Promise<ToolResult> =>
-  withClient(
-    async (client) => (await client.callTool({ name, arguments: args })) as ToolResult,
-  );
+export const callToolRaw = async (name: string, args: Record<string, unknown> = {}): Promise<ToolResult> =>
+  withClient(async client => (await client.callTool({ name, arguments: args })) as ToolResult);
 
-export const listTools = async () => withClient((client) => client.listTools());
+export const listTools = async () => withClient(client => client.listTools());

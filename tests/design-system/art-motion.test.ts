@@ -58,9 +58,14 @@ describe('art motion', () => {
 
   it('keeps the resting dots at half strength, nearly lost in the background', () => {
     const layer = css.match(/\[data-pointer-field\]::before,\s*\[data-pointer-field\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
-    expect(layer).toMatch(/radial-gradient\(circle,\s*color-mix\(in oklch,\s*var\(--color-border\) 50%,\s*transparent\)/);
+    expect(layer).toMatch(
+      /radial-gradient\(circle,\s*color-mix\(in oklch,\s*var\(--color-border\) 50%,\s*transparent\)/,
+    );
     // The amber copy under the cursor keeps full strength: the glow is the contrast.
-    const glow = [...css.matchAll(/\[data-pointer-field\]::after\s*\{([^}]*)\}/g)].map((m) => m[1]).find((body) => /mask-image/.test(body ?? '')) ?? '';
+    const glow =
+      [...css.matchAll(/\[data-pointer-field\]::after\s*\{([^}]*)\}/g)]
+        .map(m => m[1])
+        .find(body => /mask-image/.test(body ?? '')) ?? '';
     expect(glow).toMatch(/radial-gradient\(circle,\s*var\(--color-primary\) 1px/);
   });
 
@@ -70,9 +75,9 @@ describe('art motion', () => {
   });
 
   it('drops --gx/--gy easing while data-snap is set, only under no-preference', () => {
-    const motion = css.match(
-      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{([\s\S]*)\}\s*$/,
-    )?.[1] ?? css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference)'));
+    const motion =
+      css.match(/@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{([\s\S]*)\}\s*$/)?.[1] ??
+      css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference)'));
     expect(motion).toMatch(/\[data-pointer-field\]\[data-snap\]::after\s*\{[^}]*transition:/);
     const snap = motion.match(/\[data-pointer-field\]\[data-snap\]::after\s*\{([^}]*)\}/)?.[1] ?? '';
     expect(snap).toMatch(/transition:/);

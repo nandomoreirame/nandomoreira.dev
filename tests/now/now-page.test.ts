@@ -22,7 +22,7 @@ const render = async (page: typeof NowPage) => {
 const visibleText = (html: string): string => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
 
 const headings = (html: string): string[] =>
-  [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((match) =>
+  [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map(match =>
     (match[1] ?? '')
       .replace(/<span[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/g, '')
       .replace(/<[^>]+>/g, '')
@@ -179,7 +179,7 @@ describe('/now page', () => {
   });
 
   it('links the latest post at /slug and never under /posts', async () => {
-    const latest = (await getCurrentPosts()).find((post) => post.draft !== true);
+    const latest = (await getCurrentPosts()).find(post => post.draft !== true);
     const html = await render(NowPage);
     const writing = html.split('id="escrevendo"')[1]?.split('id="estudando"')[0] ?? '';
 
@@ -207,8 +207,8 @@ describe('/now page', () => {
     const nowHtml = await render(NowPage);
     const setupHtml = await render(SetupPage);
     const sources = (html: string) =>
-      [...html.matchAll(/<script\b(?![^>]*application\/ld\+json)[^>]*>/gi)].map((match) => match[0]);
-    const extra = sources(nowHtml).filter((tag) => !sources(setupHtml).includes(tag));
+      [...html.matchAll(/<script\b(?![^>]*application\/ld\+json)[^>]*>/gi)].map(match => match[0]);
+    const extra = sources(nowHtml).filter(tag => !sources(setupHtml).includes(tag));
     expect(extra).toHaveLength(1);
     expect(extra[0]).toContain('components/now/NowMusic.astro?astro&type=script');
   });
@@ -229,7 +229,7 @@ describe('/now section headings', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(NowPage);
     vi.unstubAllGlobals();
-    const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map((match) => match[0]);
+    const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map(match => match[0]);
     expect(h2s).toHaveLength(8);
     for (const tag of h2s.slice(0, 6)) expect(tag).toContain('text-h3');
     expect(h2s[6]).toContain('tracking-eyebrow');
@@ -255,7 +255,7 @@ describe('section index on /now and /setup', () => {
   ])('%s has the post index card, linking every section, in a sticky side column', async (_route, page) => {
     const html = await render(page);
     const nav = html.match(/<nav[^>]*data-toc[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? '';
-    const sections = [...html.matchAll(/<section aria-labelledby="([^"]+)"/g)].map((match) => match[1]);
+    const sections = [...html.matchAll(/<section aria-labelledby="([^"]+)"/g)].map(match => match[1]);
 
     expect(nav).toContain('Índice');
     expect(sections.length).toBeGreaterThanOrEqual(2);

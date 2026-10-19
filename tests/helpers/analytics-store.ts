@@ -7,7 +7,7 @@ export const memoryAnalyticsStore = () => {
   const daily = new Map<string, Record<string, number>>();
 
   const store: AnalyticsStore = {
-    record: async (batch) => {
+    record: async batch => {
       for (const event of batch) {
         if (keepsRawEvent(event)) events.push(event);
         const counters = daily.get(event.day) ?? {};
@@ -18,7 +18,7 @@ export const memoryAnalyticsStore = () => {
         daily.set(event.day, counters);
       }
     },
-    eventsOf: async (day, visitor) => events.filter((event) => event.day === day && event.visitor === visitor),
+    eventsOf: async (day, visitor) => events.filter(event => event.day === day && event.visitor === visitor),
   };
 
   return { store, events, daily };

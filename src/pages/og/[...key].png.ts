@@ -6,7 +6,7 @@ import { renderOgPng } from '../../lib/og/render';
 export const prerender = true;
 
 export const getStaticPaths = (async () =>
-  (await ogPages()).map((page) => ({ params: { key: page.key }, props: { page } }))) satisfies GetStaticPaths;
+  (await ogPages()).map(page => ({ params: { key: page.key }, props: { page } }))) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) =>
   new Response(new Uint8Array(await renderOgPng((props as { page: OgPage }).page)), {

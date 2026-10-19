@@ -21,13 +21,18 @@ describe('UpdatedAt', () => {
     expect(root).toEqual(expect.stringContaining('font-mono'));
     expect(root).toEqual(expect.stringContaining('border-l-2'));
     expect(root).toEqual(expect.stringContaining('border-primary'));
-    expect(html).toMatch(/data-icon="lucide:clock"[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-icon="lucide:clock"/);
+    expect(html).toMatch(
+      /data-icon="lucide:clock"[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-icon="lucide:clock"/,
+    );
   });
 
-  it.each(['src/pages/setup.astro', 'src/pages/now.astro', 'src/pages/privacidade.astro'])('%s uses it through PageHeader', (file) => {
-    const source = readFileSync(file, 'utf8');
-    expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);
-    expect(source).not.toContain('Atualizada em <time');
-    expect(readFileSync('src/components/ui/PageHeader.astro', 'utf8')).toContain('<UpdatedAt');
-  });
+  it.each(['src/pages/setup.astro', 'src/pages/now.astro', 'src/pages/privacidade.astro'])(
+    '%s uses it through PageHeader',
+    file => {
+      const source = readFileSync(file, 'utf8');
+      expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);
+      expect(source).not.toContain('Atualizada em <time');
+      expect(readFileSync('src/components/ui/PageHeader.astro', 'utf8')).toContain('<UpdatedAt');
+    },
+  );
 });

@@ -21,7 +21,7 @@ const covered = [
 ] as const;
 
 describe('markdownForPath', () => {
-  it.each(covered)('returns non-empty markdown for covered path %j', async (path) => {
+  it.each(covered)('returns non-empty markdown for covered path %j', async path => {
     const page = await markdownForPath(site, path);
     expect(page).toBeDefined();
     expect(page!.markdown.length).toBeGreaterThan(0);
@@ -59,9 +59,7 @@ describe('markdownForPath', () => {
     const page = await markdownForPath(site, 'como-exibir-calendario-do-terminal');
     expect(page?.markdown.startsWith('---\n')).toBe(true);
     expect(page?.markdown).toContain('title:');
-    expect(page?.markdown).toContain(
-      'url: https://nandomoreira.dev/como-exibir-calendario-do-terminal',
-    );
+    expect(page?.markdown).toContain('url: https://nandomoreira.dev/como-exibir-calendario-do-terminal');
     expect(page?.markdown).toContain('date:');
     expect(page?.humanPath).toBe('/como-exibir-calendario-do-terminal');
     expect(page?.mdPath).toBe('/como-exibir-calendario-do-terminal.md');

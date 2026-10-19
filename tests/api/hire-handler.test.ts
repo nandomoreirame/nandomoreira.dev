@@ -176,10 +176,7 @@ describe('stored personal data', () => {
 
 describe('input handling', () => {
   it('answers 405 to anything that is not POST', async () => {
-    const response = await handleHire(
-      new Request('https://nandomoreira.dev/api/hire', { method: 'GET' }),
-      deps(),
-    );
+    const response = await handleHire(new Request('https://nandomoreira.dev/api/hire', { method: 'GET' }), deps());
 
     expect(response.status).toBe(405);
   });

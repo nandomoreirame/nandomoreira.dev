@@ -40,7 +40,7 @@ describe('collection copy', () => {
 });
 
 describe('collection meta descriptions', () => {
-  it.each(['portfolio', 'lab'] as const)('gives %s a meta description between 70 and 160 characters', (collection) => {
+  it.each(['portfolio', 'lab'] as const)('gives %s a meta description between 70 and 160 characters', collection => {
     const { metaDescription } = COLLECTION_COPY[collection];
     expect(metaDescription.length).toBeGreaterThanOrEqual(70);
     expect(metaDescription.length).toBeLessThanOrEqual(160);

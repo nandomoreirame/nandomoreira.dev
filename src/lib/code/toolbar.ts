@@ -19,8 +19,7 @@ export const CODE_TOOLBAR_LABELS = {
 const PLAIN_LANGS = new Set(['text', 'plaintext', 'txt', 'plain']);
 
 /** `title="..."` from the fence meta (```bash title="bin/x.sh"), if any. */
-export const fenceTitle = (meta: string | undefined): string | undefined =>
-  meta?.match(/title="([^"]+)"/)?.[1];
+export const fenceTitle = (meta: string | undefined): string | undefined => meta?.match(/title="([^"]+)"/)?.[1];
 
 const headerLabel = (meta: string | undefined, lang: string | undefined): string =>
   fenceTitle(meta) ?? (lang && !PLAIN_LANGS.has(lang) ? lang : CODE_TOOLBAR_LABELS.plain);
@@ -82,9 +81,7 @@ let sequence = 0;
 export const codeToolbar = (): ShikiTransformer => ({
   name: 'code-toolbar',
   root(root) {
-    const pre = root.children.find(
-      (child): child is Element => child.type === 'element' && child.tagName === 'pre',
-    );
+    const pre = root.children.find((child): child is Element => child.type === 'element' && child.tagName === 'pre');
     if (!pre) return;
 
     sequence += 1;

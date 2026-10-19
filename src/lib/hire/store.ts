@@ -49,12 +49,7 @@ export interface BriefingStore {
 /** Capped: a header is caller-controlled and this is personal data in a database. */
 const MAX_USER_AGENT = 256;
 
-export const toStoredBriefing = ({
-  payload,
-  sourceIp,
-  userAgent,
-  now,
-}: StoreInput): StoredBriefing => ({
+export const toStoredBriefing = ({ payload, sourceIp, userAgent, now }: StoreInput): StoredBriefing => ({
   from: payload.from,
   contact: payload.contact,
   brief: payload.brief,
@@ -74,18 +69,13 @@ export const toStoredBriefing = ({
  * Firestore TTL removes whole documents, never single fields, so the data with
  * the shorter life goes into its own document under the same id.
  */
-export const splitForStorage = ({
-  sourceIp,
-  userAgent,
-  networkExpiresAt,
-  ...document
-}: StoredBriefing) => ({
+export const splitForStorage = ({ sourceIp, userAgent, networkExpiresAt, ...document }: StoredBriefing) => ({
   document,
   network: { sourceIp, userAgent, expiresAt: networkExpiresAt },
 });
 
 export const firestoreStore = (): BriefingStore => ({
-  save: async (briefing) => {
+  save: async briefing => {
     const db = getFirestoreClient();
     const { document, network } = splitForStorage(briefing);
     const reference = db.collection(HIRE_COLLECTION).doc();
@@ -96,7 +86,7 @@ export const firestoreStore = (): BriefingStore => ({
 
     return reference.id;
   },
-  markNotified: async (id) => {
+  markNotified: async id => {
     await getFirestoreClient().collection(HIRE_COLLECTION).doc(id).update({ notified: true });
   },
 });

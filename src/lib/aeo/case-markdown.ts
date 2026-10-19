@@ -18,7 +18,7 @@ export const buildCaseMarkdown = ({ site, project }: Input): string => {
     `url: ${url}`,
     `collection: ${collection}`,
     'tech:',
-    ...project.tech.map((item) => `  - ${item}`),
+    ...project.tech.map(item => `  - ${item}`),
     `date: ${project.date}`,
     '---',
     '',

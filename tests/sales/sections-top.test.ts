@@ -34,7 +34,7 @@ describe('SalesHero', () => {
   it('layers the art like the home portrait: tilt on the frame, parallax at three depths', async () => {
     const out = await html(SalesHero);
     expect(out).toMatch(/data-hero-art[^>]*data-parallax[^>]*data-tilt|data-parallax[^>]*data-tilt[^>]*data-hero-art/);
-    const depths = [...out.matchAll(/--depth:\s*([\d.]+)/g)].map((match) => Number(match[1]));
+    const depths = [...out.matchAll(/--depth:\s*([\d.]+)/g)].map(match => Number(match[1]));
     expect(depths).toHaveLength(4);
     expect(new Set(depths).size).toBe(4);
   });

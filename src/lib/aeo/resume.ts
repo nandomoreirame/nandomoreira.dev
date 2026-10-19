@@ -96,8 +96,7 @@ export interface Resume {
   x_agent: AgentExtension;
 }
 
-const SCHEMA_URL =
-  'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json';
+const SCHEMA_URL = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json';
 
 /** The e-mail channel is deliberately absent: agents use POST /api/hire. */
 const PUBLISHABLE_CONTACTS = ['github', 'linkedin', 'site'] as const;
@@ -110,10 +109,8 @@ const usernameOf = (url: string): string => {
 
 const toProfiles = (profile: Profile): ResumeProfile[] =>
   profile.contacts
-    .filter((contact) =>
-      (PUBLISHABLE_CONTACTS as readonly string[]).includes(contact.kind),
-    )
-    .map((contact) => ({
+    .filter(contact => (PUBLISHABLE_CONTACTS as readonly string[]).includes(contact.kind))
+    .map(contact => ({
       network: contact.kind,
       username: usernameOf(contact.value),
       url: contact.value,
@@ -124,13 +121,10 @@ const toProfiles = (profile: Profile): ResumeProfile[] =>
  * link first keeps the strongest evidence at the top without hiding the rest
  * (REQ-010).
  */
-const evidenceRank = (project: Project): number =>
-  project.liveUrl ? 0 : project.repoUrl ? 1 : 2;
+const evidenceRank = (project: Project): number => (project.liveUrl ? 0 : project.repoUrl ? 1 : 2);
 
 const projectUrl = (site: URL, project: Project): string =>
-  project.liveUrl ??
-  project.repoUrl ??
-  absoluteUrl(site, `/${collectionOfBlock(project.block)}/${project.slug}`);
+  project.liveUrl ?? project.repoUrl ?? absoluteUrl(site, `/${collectionOfBlock(project.block)}/${project.slug}`);
 
 const toProject = (site: URL, project: Project): ResumeProject => ({
   name: project.title,
@@ -173,14 +167,10 @@ export const buildResume = ({ site, profile, projects }: Input): Resume => {
       url: site.toString(),
       profiles: toProfiles(profile),
     },
-    ...(profile.work ? { work: profile.work.map((entry) => ({ ...entry })) } : {}),
-    ...(profile.education
-      ? { education: profile.education.map((entry) => ({ ...entry })) }
-      : {}),
+    ...(profile.work ? { work: profile.work.map(entry => ({ ...entry })) } : {}),
+    ...(profile.education ? { education: profile.education.map(entry => ({ ...entry })) } : {}),
     skills: [{ name: 'Stack', keywords: [...profile.stack] }],
-    ...(safe.length > 0
-      ? { projects: safe.map((project) => toProject(site, project)) }
-      : {}),
+    ...(safe.length > 0 ? { projects: safe.map(project => toProject(site, project)) } : {}),
     meta: {
       canonical: absoluteUrl(site, '/api/resume.json'),
       version: 'v1.0.0',

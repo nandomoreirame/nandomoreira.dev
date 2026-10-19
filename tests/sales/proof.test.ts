@@ -5,7 +5,7 @@ import { inventedNumbersIn } from '../helpers/invented-numbers';
 
 describe('TESTIMONIALS', () => {
   it('keeps the two real testimonials word for word', () => {
-    expect(TESTIMONIALS.map((item) => `${item.name} (${item.company})`)).toEqual([
+    expect(TESTIMONIALS.map(item => `${item.name} (${item.company})`)).toEqual([
       'Yara Santiago (Ateliê éh Pique)',
       'Edson Luiz (Contador)',
     ]);
@@ -18,7 +18,7 @@ describe('TESTIMONIALS', () => {
 describe('MORE_WORK', () => {
   it('lists only client work, each with a real image', () => {
     expect(MORE_WORK.length).toBe(9);
-    expect(MORE_WORK.map((work) => work.slug)).not.toContain('gatman-corp');
+    expect(MORE_WORK.map(work => work.slug)).not.toContain('gatman-corp');
     for (const work of MORE_WORK) {
       expect(existsSync(`public/servicos/trabalhos/${work.slug}.webp`), work.slug).toBe(true);
       expect(work.alt.length, work.slug).toBeGreaterThan(10);
@@ -31,7 +31,7 @@ describe('MORE_WORK', () => {
   });
 
   it('links nothing: the gallery is a sample, not a list of live sites', () => {
-    expect(MORE_WORK.some((work) => 'url' in work)).toBe(false);
+    expect(MORE_WORK.some(work => 'url' in work)).toBe(false);
   });
 
   it('has a full-size image for the lightbox of each work', () => {
@@ -41,16 +41,13 @@ describe('MORE_WORK', () => {
   });
 
   it('never shows a template, a theme or a personal project as client work', () => {
-    const slugs = MORE_WORK.map((work) => work.slug).join(' ');
+    const slugs = MORE_WORK.map(work => work.slug).join(' ');
     expect(slugs).not.toMatch(/nutritionist|grgit|theme|tema|sob-medida|beholddy|blog-nandomoreira/);
   });
 
   it('carries no year and no invented figure', () => {
     // "Agenda Rio 2030" is the product name (UN SDG brand), not a project date.
-    const withoutBrandYears = JSON.stringify(MORE_WORK).replace(
-      /Agenda Rio 2030|agenda-rio-2030/g,
-      '',
-    );
+    const withoutBrandYears = JSON.stringify(MORE_WORK).replace(/Agenda Rio 2030|agenda-rio-2030/g, '');
     expect(withoutBrandYears).not.toMatch(/\b20\d\d\b/);
     expect(inventedNumbersIn(JSON.stringify({ MORE_WORK, TESTIMONIALS }))).toEqual([]);
   });

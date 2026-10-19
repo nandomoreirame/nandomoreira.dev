@@ -22,25 +22,25 @@ const on = `:root:has(#${READER_SWITCH_ID}:checked)`;
 
 describe('reader settings', () => {
   it('offers background, text size, line height and width', () => {
-    expect(READER_SETTINGS.map((setting) => setting.name)).toEqual(['theme', 'size', 'leading', 'width']);
+    expect(READER_SETTINGS.map(setting => setting.name)).toEqual(['theme', 'size', 'leading', 'width']);
   });
 
   it('starts every setting on one of its own choices', () => {
     for (const setting of READER_SETTINGS) {
-      expect(setting.choices.map((choice) => choice.value)).toContain(setting.initial);
+      expect(setting.choices.map(choice => choice.value)).toContain(setting.initial);
     }
   });
 
   it('starts on the site as it is: dark background, the prose size and measure', () => {
-    const initial = Object.fromEntries(READER_SETTINGS.map((setting) => [setting.name, setting.initial]));
+    const initial = Object.fromEntries(READER_SETTINGS.map(setting => [setting.name, setting.initial]));
     expect(initial).toEqual({ theme: 'dark', size: '18', leading: '17', width: '640' });
   });
 
   it('steps size, line height and width by number, with no word labels', () => {
-    const steppers = READER_SETTINGS.filter((setting) => setting.kind === 'stepper');
-    expect(steppers.map((setting) => setting.name)).toEqual(['size', 'leading', 'width']);
+    const steppers = READER_SETTINGS.filter(setting => setting.kind === 'stepper');
+    expect(steppers.map(setting => setting.name)).toEqual(['size', 'leading', 'width']);
     for (const setting of steppers) {
-      const values = setting.choices.map((choice) => Number(choice.value));
+      const values = setting.choices.map(choice => Number(choice.value));
       expect(values, setting.name).toEqual([...values].sort((a, b) => a - b));
       expect(setting.choices.length, setting.name).toBeGreaterThanOrEqual(5);
     }
@@ -48,7 +48,7 @@ describe('reader settings', () => {
 
   it('labels size and width in px', () => {
     for (const name of ['size', 'width']) {
-      for (const choice of READER_SETTINGS.find((setting) => setting.name === name)!.choices) {
+      for (const choice of READER_SETTINGS.find(setting => setting.name === name)!.choices) {
         expect(choice.label).toBe(`${choice.value}px`);
       }
     }
@@ -79,10 +79,12 @@ describe('ReaderMode', () => {
 
   it('gives each stepper value a minus and a plus pointing at its neighbours', async () => {
     const html = await render();
-    for (const setting of READER_SETTINGS.filter((setting) => setting.kind === 'stepper')) {
+    for (const setting of READER_SETTINGS.filter(setting => setting.kind === 'stepper')) {
       setting.choices.forEach((choice, index) => {
         const id = readerInputId(setting.name, choice.value);
-        const step = html.match(new RegExp(`<input[^>]*id="${id}"[^>]*>\\s*<div[^>]*data-step[^>]*>([\\s\\S]*?)</div>`))?.[1] ?? '';
+        const step =
+          html.match(new RegExp(`<input[^>]*id="${id}"[^>]*>\\s*<div[^>]*data-step[^>]*>([\\s\\S]*?)</div>`))?.[1] ??
+          '';
         expect(step, id).not.toBe('');
         const prev = setting.choices[index - 1];
         const next = setting.choices[index + 1];
@@ -95,7 +97,9 @@ describe('ReaderMode', () => {
   });
 
   it('shows the line height in px of the chosen text size', () => {
-    expect(css).toMatch(/counter-reset:\s*reader-leading calc\(var\(--reader-px, 18\) \* var\(--text-prose--line-height\)\)/);
+    expect(css).toMatch(
+      /counter-reset:\s*reader-leading calc\(var\(--reader-px, 18\) \* var\(--text-prose--line-height\)\)/,
+    );
     expect(css).toContain('content: counter(reader-leading) "px"');
   });
 
@@ -134,7 +138,7 @@ describe('reading mode styles', () => {
 
   it('has a rule for every choice that is not the initial one', () => {
     for (const setting of READER_SETTINGS) {
-      for (const choice of setting.choices.filter((choice) => choice.value !== setting.initial)) {
+      for (const choice of setting.choices.filter(choice => choice.value !== setting.initial)) {
         expect(css, choice.value).toContain(`${on}:has(#${readerInputId(setting.name, choice.value)}:checked)`);
       }
     }
@@ -168,8 +172,8 @@ describe('reading mode styles', () => {
 });
 
 describe('reading mode palettes', () => {
-  const themes = READER_SETTINGS.find((setting) => setting.name === 'theme')!.choices.filter(
-    (choice) => choice.value !== 'dark',
+  const themes = READER_SETTINGS.find(setting => setting.name === 'theme')!.choices.filter(
+    choice => choice.value !== 'dark',
   );
 
   const palette = (value: string) => {
@@ -182,7 +186,7 @@ describe('reading mode palettes', () => {
     return color;
   };
 
-  it.each(themes.map((choice) => choice.value))('%s keeps every text colour above WCAG AA', (value) => {
+  it.each(themes.map(choice => choice.value))('%s keeps every text colour above WCAG AA', value => {
     const color = palette(value);
     for (const ground of ['background', 'surface']) {
       for (const ink of ['foreground', 'muted-foreground', 'primary']) {
@@ -191,7 +195,7 @@ describe('reading mode palettes', () => {
     }
   });
 
-  it.each(themes.map((choice) => choice.value))('%s keeps the control outline perceivable', (value) => {
+  it.each(themes.map(choice => choice.value))('%s keeps the control outline perceivable', value => {
     const color = palette(value);
     expect(contrastRatio(color('border-strong'), color('background'))).toBeGreaterThanOrEqual(3);
   });

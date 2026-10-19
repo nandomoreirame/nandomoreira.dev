@@ -147,15 +147,10 @@ export const privacyMarkdown = ({ site }: { site: URL }): string => {
   ];
 
   for (const section of privacySections) {
-    lines.push(`## ${section.title}`, '', ...section.paragraphs.flatMap((paragraph) => [paragraph, '']));
+    lines.push(`## ${section.title}`, '', ...section.paragraphs.flatMap(paragraph => [paragraph, '']));
   }
 
-  lines.push(
-    '## Contato',
-    '',
-    `Pedidos sobre seus dados: pelo formulário em ${absoluteUrl(site, '/contato')}.`,
-    '',
-  );
+  lines.push('## Contato', '', `Pedidos sobre seus dados: pelo formulário em ${absoluteUrl(site, '/contato')}.`, '');
 
   return lines.join('\n');
 };

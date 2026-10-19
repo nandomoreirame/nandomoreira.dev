@@ -15,9 +15,7 @@ describe('renderMarkdown', () => {
   });
 
   it('strips a leading YAML frontmatter block before rendering', () => {
-    const source = ['---', 'title: Hidden', 'url: https://example.com/', '---', '', '# Visible'].join(
-      '\n',
-    );
+    const source = ['---', 'title: Hidden', 'url: https://example.com/', '---', '', '# Visible'].join('\n');
     const html = renderMarkdown(source);
     expect(html).toContain('Visible');
     expect(html).not.toContain('Hidden');

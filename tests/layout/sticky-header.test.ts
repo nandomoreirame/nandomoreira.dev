@@ -29,7 +29,7 @@ describe('SiteHeader stickiness', () => {
 
     expect(header).toContain('data-site-header');
     expect(classes).toContain('border-border');
-    for (const unconditional of classes.filter((name) => !name.includes(':'))) {
+    for (const unconditional of classes.filter(name => !name.includes(':'))) {
       expect(unconditional).not.toMatch(/^(bg-background|backdrop-blur)/);
     }
   });

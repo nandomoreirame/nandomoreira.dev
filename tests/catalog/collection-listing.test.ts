@@ -76,7 +76,7 @@ describe('CollectionListing', () => {
     expect(html).not.toMatch(/\bsm:grid-cols-2\b/);
   });
 
-  it.each(['portfolio', 'lab'])('alternates the art side in %s: odd items left, even items right', async (collection) => {
+  it.each(['portfolio', 'lab'])('alternates the art side in %s: odd items left, even items right', async collection => {
     const block = collection === 'lab' ? 'ai-tooling' : 'professional';
     const projects = ['2026-03-01', '2026-02-01', '2026-01-01'].map((date, index) =>
       project({ slug: `case-${index}`, title: `Case ${index}`, block, date }),
@@ -180,7 +180,7 @@ describe('CollectionListing', () => {
 describe('/portfolio and /lab pages', () => {
   it.each(['src/pages/portfolio/index.astro', 'src/pages/lab/index.astro'])(
     '%s reads through the access layer, never through getCollection',
-    (path) => {
+    path => {
       const source = pageSource(path);
 
       expect(source).toContain('getAllProjects');

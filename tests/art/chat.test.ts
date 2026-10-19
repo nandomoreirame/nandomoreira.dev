@@ -15,7 +15,7 @@ const stripesOf = (shapes: Shape[]) =>
   shapes.filter((shape): shape is Line => shape.kind === 'line' && shape.x1 === shape.x2 && shape.y2 - shape.y1 > 8);
 
 describe('chat motif', () => {
-  it.each(FRAMES)('draws two or three embeds, each with its stripe, inside the frame ($width x $height)', (frame) => {
+  it.each(FRAMES)('draws two or three embeds, each with its stripe, inside the frame ($width x $height)', frame => {
     for (let i = 0; i < 20; i += 1) {
       const shapes = chat(createRandom(hashString(`chat:${i}`)), frame);
       const stripes = stripesOf(shapes);
@@ -36,7 +36,7 @@ describe('chat motif', () => {
   it('lights exactly one embed title, the best match', () => {
     for (let i = 0; i < 20; i += 1) {
       const shapes = chat(createRandom(hashString(`chat:hero:${i}`)), FRAMES[0]);
-      const strongest = shapes.filter((shape) => shape.weight === 1);
+      const strongest = shapes.filter(shape => shape.weight === 1);
 
       expect(strongest).toHaveLength(1);
       expect(strongest[0].kind).toBe('bar');
@@ -44,6 +44,8 @@ describe('chat motif', () => {
   });
 
   it('is what the job-radar post, a Discord channel of jobs, declares', () => {
-    expect(readFileSync('src/content/posts/job-radar-radar-de-vagas-em-python-puro.md', 'utf8')).toMatch(/^art: chat$/m);
+    expect(readFileSync('src/content/posts/job-radar-radar-de-vagas-em-python-puro.md', 'utf8')).toMatch(
+      /^art: chat$/m,
+    );
   });
 });

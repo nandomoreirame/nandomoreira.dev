@@ -18,9 +18,24 @@ const fromRoot = (...parts: string[]): string => join(process.cwd(), ...parts);
 let fontCache: Parameters<typeof satori>[1]['fonts'] | undefined;
 const fonts = () =>
   (fontCache ??= [
-    { name: 'Literata', weight: 600, style: 'normal', data: readFileSync(fromRoot('src/assets/fonts/og/literata-latin-600-normal.woff')) },
-    { name: 'Alegreya Sans', weight: 500, style: 'normal', data: readFileSync(fromRoot('src/assets/fonts/og/alegreya-sans-latin-500-normal.woff')) },
-    { name: 'JetBrains Mono', weight: 400, style: 'normal', data: readFileSync(fromRoot('src/assets/fonts/og/jetbrains-mono-latin-400-normal.woff')) },
+    {
+      name: 'Literata',
+      weight: 600,
+      style: 'normal',
+      data: readFileSync(fromRoot('src/assets/fonts/og/literata-latin-600-normal.woff')),
+    },
+    {
+      name: 'Alegreya Sans',
+      weight: 500,
+      style: 'normal',
+      data: readFileSync(fromRoot('src/assets/fonts/og/alegreya-sans-latin-500-normal.woff')),
+    },
+    {
+      name: 'JetBrains Mono',
+      weight: 400,
+      style: 'normal',
+      data: readFileSync(fromRoot('src/assets/fonts/og/jetbrains-mono-latin-400-normal.woff')),
+    },
   ]);
 
 type Tokens = Record<'background' | 'foreground' | 'muted' | 'primary' | 'faint', string>;
@@ -43,7 +58,7 @@ export const colorTokens = (): Tokens => {
 };
 
 const rgba = (hex: string, alpha: number): string => {
-  const [r, g, b] = [1, 3, 5].map((start) => Number.parseInt(hex.slice(start, start + 2), 16));
+  const [r, g, b] = [1, 3, 5].map(start => Number.parseInt(hex.slice(start, start + 2), 16));
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
@@ -55,8 +70,14 @@ const paintArt = (svg: string, tokens: Tokens): string => {
   const tone = { 'art-hero': tokens.primary, 'art-base': tokens.muted, 'art-faint': tokens.faint } as const;
   return svg
     .replace('<svg ', `<svg width="${OG_WIDTH}" height="${OG_HEIGHT}" `)
-    .replace(/class="(art-hero|art-base|art-faint) art-ring"/g, (_, t: keyof typeof tone) => `fill="none" stroke="${tone[t]}" stroke-width="0.3"`)
-    .replace(/class="(art-hero|art-base|art-faint) art-line"/g, (_, t: keyof typeof tone) => `stroke="${tone[t]}" stroke-width="0.25"`)
+    .replace(
+      /class="(art-hero|art-base|art-faint) art-ring"/g,
+      (_, t: keyof typeof tone) => `fill="none" stroke="${tone[t]}" stroke-width="0.3"`,
+    )
+    .replace(
+      /class="(art-hero|art-base|art-faint) art-line"/g,
+      (_, t: keyof typeof tone) => `stroke="${tone[t]}" stroke-width="0.25"`,
+    )
     .replace(/class="(art-hero|art-base|art-faint)"/g, (_, t: keyof typeof tone) => `fill="${tone[t]}" stroke="none"`);
 };
 
@@ -69,7 +90,10 @@ const el = (style: Record<string, unknown>, children?: Node | Node[] | string): 
 });
 
 /** The text layer of the card, as SVG: eyebrow, title and signature over a fade. */
-export const ogTextSvg = async (page: Pick<OgPage, 'title' | 'eyebrow'>, tokens: Tokens = colorTokens()): Promise<string> => {
+export const ogTextSvg = async (
+  page: Pick<OgPage, 'title' | 'eyebrow'>,
+  tokens: Tokens = colorTokens(),
+): Promise<string> => {
   // Satori adds padding to the box size, so the margins live on an inner box.
   const [padX, padY] = [80, 72];
   const card = el(
@@ -78,17 +102,45 @@ export const ogTextSvg = async (page: Pick<OgPage, 'title' | 'eyebrow'>, tokens:
       height: OG_HEIGHT,
       backgroundImage: `linear-gradient(90deg, ${rgba(tokens.background, 1)} 0%, ${rgba(tokens.background, 0.96)} 50%, ${rgba(tokens.background, 0.55)} 80%, ${rgba(tokens.background, 0.25)} 100%)`,
     },
-    el({ width: OG_WIDTH - 2 * padX, height: OG_HEIGHT - 2 * padY, margin: `${padY}px ${padX}px`, flexDirection: 'column', justifyContent: 'space-between' }, [
-      el({ fontFamily: 'JetBrains Mono', fontSize: 26, color: tokens.primary, letterSpacing: 3, textTransform: 'uppercase' }, page.eyebrow),
-      el(
-        { fontFamily: 'Literata', fontWeight: 600, fontSize: titleSize(page.title), lineHeight: 1.15, color: tokens.foreground, maxWidth: 820 },
-        page.title,
-      ),
-      el({ justifyContent: 'space-between', alignItems: 'center', width: '100%' }, [
-        el({ fontFamily: 'Alegreya Sans', fontWeight: 500, fontSize: 32, color: tokens.foreground }, 'Fernando Moreira'),
-        el({ fontFamily: 'JetBrains Mono', fontSize: 24, color: tokens.muted }, 'nandomoreira.dev'),
-      ]),
-    ]),
+    el(
+      {
+        width: OG_WIDTH - 2 * padX,
+        height: OG_HEIGHT - 2 * padY,
+        margin: `${padY}px ${padX}px`,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      },
+      [
+        el(
+          {
+            fontFamily: 'JetBrains Mono',
+            fontSize: 26,
+            color: tokens.primary,
+            letterSpacing: 3,
+            textTransform: 'uppercase',
+          },
+          page.eyebrow,
+        ),
+        el(
+          {
+            fontFamily: 'Literata',
+            fontWeight: 600,
+            fontSize: titleSize(page.title),
+            lineHeight: 1.15,
+            color: tokens.foreground,
+            maxWidth: 820,
+          },
+          page.title,
+        ),
+        el({ justifyContent: 'space-between', alignItems: 'center', width: '100%' }, [
+          el(
+            { fontFamily: 'Alegreya Sans', fontWeight: 500, fontSize: 32, color: tokens.foreground },
+            'Fernando Moreira',
+          ),
+          el({ fontFamily: 'JetBrains Mono', fontSize: 24, color: tokens.muted }, 'nandomoreira.dev'),
+        ]),
+      ],
+    ),
   );
 
   return satori(card as never, { width: OG_WIDTH, height: OG_HEIGHT, fonts: fonts() });
@@ -104,7 +156,12 @@ export const renderOgPng = async (page: OgPage): Promise<Buffer> => {
     .flatten({ background: tokens.background })
     .png()
     .toBuffer();
-  const text = await sharp(Buffer.from(await ogTextSvg(page, tokens))).png().toBuffer();
+  const text = await sharp(Buffer.from(await ogTextSvg(page, tokens)))
+    .png()
+    .toBuffer();
 
-  return sharp(backdrop).composite([{ input: text }]).png({ compressionLevel: 9 }).toBuffer();
+  return sharp(backdrop)
+    .composite([{ input: text }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
 };

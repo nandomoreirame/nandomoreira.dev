@@ -41,15 +41,13 @@ describe('no tool diverges from what the site publishes', () => {
     const projects = await getAllProjects();
     const answer = await callTool<{ projects: ProjectSummaryAnswer[] }>('list_projects');
 
-    expect(answer.projects.map((project) => project.slug).sort()).toEqual(
-      projects.map((project) => project.slug).sort(),
-    );
+    expect(answer.projects.map(project => project.slug).sort()).toEqual(projects.map(project => project.slug).sort());
   });
 
   it('list_projects repeats the catalog title and summary verbatim', async () => {
     const projects = await getAllProjects();
     const answer = await callTool<{ projects: ProjectSummaryAnswer[] }>('list_projects');
-    const bySlug = new Map(answer.projects.map((project) => [project.slug, project]));
+    const bySlug = new Map(answer.projects.map(project => [project.slug, project]));
 
     for (const project of projects) {
       expect(bySlug.get(project.slug)?.title, project.slug).toBe(project.title);

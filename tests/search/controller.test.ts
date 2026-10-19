@@ -10,22 +10,22 @@ const index: SearchItem[] = [
 
 describe('palette view', () => {
   it('shows General then Go to on an empty query', () => {
-    expect(viewFor(index, '').map((group) => group.label)).toEqual(['Geral', 'Ir para']);
+    expect(viewFor(index, '').map(group => group.label)).toEqual(['Geral', 'Ir para']);
   });
 
   it('groups hits by kind, archive always last, best score first', () => {
     const groups = viewFor(index, 'homelab');
-    expect(groups.map((group) => group.label)).toEqual(['Posts', 'Arquivo']);
+    expect(groups.map(group => group.label)).toEqual(['Posts', 'Arquivo']);
   });
 
   it('sends "Enviar e-mail" to the contact page', () => {
     const general = viewFor(index, '')[0]?.options ?? [];
-    expect(general.find((option) => option.label === 'Enviar e-mail')?.href).toBe('/contato');
+    expect(general.find(option => option.label === 'Enviar e-mail')?.href).toBe('/contato');
   });
 
   it('offers the page markdown and AI view in General when the page has them', () => {
     const general = viewFor(index, '', { mdPath: '/sobre.md', aiPath: '/sobre/ia' })[0]?.options ?? [];
-    expect(general.map((option) => [option.label, option.href])).toEqual([
+    expect(general.map(option => [option.label, option.href])).toEqual([
       ['Copiar link', undefined],
       ['Enviar e-mail', '/contato'],
       ['Versão .md', '/sobre.md'],
@@ -36,7 +36,7 @@ describe('palette view', () => {
 
   it('offers the human version instead while on the AI view', () => {
     const general = viewFor(index, '', { mdPath: '/sobre.md', humanPath: '/sobre' })[0]?.options ?? [];
-    expect(general.map((option) => [option.label, option.href]).slice(2)).toEqual([
+    expect(general.map(option => [option.label, option.href]).slice(2)).toEqual([
       ['Versão .md', '/sobre.md'],
       ['Versão para humanos', '/sobre'],
     ]);
@@ -44,13 +44,13 @@ describe('palette view', () => {
 
   it('shows each General action with its one-letter shortcut', () => {
     const general = viewFor(index, '', { mdPath: '/sobre.md', aiPath: '/sobre/ia' })[0]?.options ?? [];
-    expect(general.map((option) => option.keys)).toEqual([['L'], ['E'], ['M'], ['I']]);
+    expect(general.map(option => option.keys)).toEqual([['L'], ['E'], ['M'], ['I']]);
     const human = viewFor(index, '', { humanPath: '/sobre' })[0]?.options.at(-1);
     expect(human?.keys).toEqual(['I']);
   });
 
   it('leaves them out on a page without those views', () => {
-    const labels = (viewFor(index, '')[0]?.options ?? []).map((option) => option.label);
+    const labels = (viewFor(index, '')[0]?.options ?? []).map(option => option.label);
     expect(labels).not.toContain('Versão .md');
     expect(labels).not.toContain('Versão para IA');
     expect(labels).not.toContain('Versão para humanos');
@@ -73,7 +73,7 @@ describe('palette view', () => {
   });
 
   it('gives every option a unique id for aria-activedescendant', () => {
-    const ids = viewFor(index, '').flatMap((group) => group.options.map((option) => option.id));
+    const ids = viewFor(index, '').flatMap(group => group.options.map(option => option.id));
     expect(new Set(ids).size).toBe(ids.length);
   });
 

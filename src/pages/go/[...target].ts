@@ -8,8 +8,8 @@ export const prerender = false;
 
 /** Built once per process: contacts and projects only change with a deploy. */
 const table = cachedUnlessRejected(() =>
-  Promise.all([getProfile(), getAllProjects()]).then(
-    ([profile, projects]): ReadonlyMap<string, string> => outboundTable({ contacts: profile.contacts, projects }),
+  Promise.all([getProfile(), getAllProjects()]).then(([profile, projects]): ReadonlyMap<string, string> =>
+    outboundTable({ contacts: profile.contacts, projects }),
   ),
 );
 

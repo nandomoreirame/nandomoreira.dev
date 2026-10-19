@@ -23,7 +23,7 @@ const heroesOf = (svg: string) => svg.match(/class="art-hero\b/g) ?? [];
 
 // Every motif a case can declare, in both aspects: a new motif inherits every
 // guarantee below without anyone remembering to list it.
-const cases = ART_MOTIFS.flatMap((art) => ASPECTS.map((aspect) => ({ art, aspect })));
+const cases = ART_MOTIFS.flatMap(art => ASPECTS.map(aspect => ({ art, aspect })));
 const draw = (art: (typeof ART_MOTIFS)[number], aspect: ArtAspect, slug = 'sample') =>
   generateArt({ slug, block: 'professional', art, aspect });
 
@@ -50,10 +50,10 @@ describe('generateArt', () => {
 
   it('falls back to the block motif when the case declares none', () => {
     const motifs = BLOCKS.map(
-      (block) => generateArt({ slug: 'x', block, aspect: 'card' }).match(/data-motif="([a-z]+)"/)?.[1],
+      block => generateArt({ slug: 'x', block, aspect: 'card' }).match(/data-motif="([a-z]+)"/)?.[1],
     );
     expect(motifs).toEqual(['orbit', 'wave', 'terminal', 'flow']);
-    expect(BLOCKS.map((block) => BLOCK_MOTIF[block])).toEqual(motifs);
+    expect(BLOCKS.map(block => BLOCK_MOTIF[block])).toEqual(motifs);
   });
 
   it('varies the drawing with the slug inside the same motif', () => {
@@ -61,15 +61,18 @@ describe('generateArt', () => {
   });
 
   it('draws every motif differently from the others', () => {
-    const drawings = ART_MOTIFS.map((art) => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
+    const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);
   });
 
-  it.each(cases)('colours $art/$aspect only through classes, never hex or presentation attributes', ({ art, aspect }) => {
-    const svg = draw(art, aspect);
-    expect(svg).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
-    expect(svg).not.toMatch(/\s(fill|stroke)="/);
-  });
+  it.each(cases)(
+    'colours $art/$aspect only through classes, never hex or presentation attributes',
+    ({ art, aspect }) => {
+      const svg = draw(art, aspect);
+      expect(svg).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+      expect(svg).not.toMatch(/\s(fill|stroke)="/);
+    },
+  );
 
   it.each(cases)('keeps amber on 10% to 20% of the $art/$aspect elements', ({ art, aspect }) => {
     const svg = draw(art, aspect);
@@ -102,7 +105,7 @@ describe('generateArt', () => {
 });
 
 describe('heroCount', () => {
-  it.each([20, 37, 64, 150, 300])('stays between 10% and 20% of %i', (total) => {
+  it.each([20, 37, 64, 150, 300])('stays between 10% and 20% of %i', total => {
     expect(heroCount(total)).toBeGreaterThanOrEqual(Math.ceil(total * 0.1));
     expect(heroCount(total)).toBeLessThanOrEqual(Math.floor(total * 0.2));
   });
@@ -133,7 +136,7 @@ describe('motif hero signal', () => {
         0,
         ELEMENT_BUDGET[aspect],
       );
-      const positive = shapes.filter((shape) => shape.weight > 0).length;
+      const positive = shapes.filter(shape => shape.weight > 0).length;
       expect(positive).toBeGreaterThanOrEqual(heroCount(shapes.length));
     }
   });

@@ -202,7 +202,15 @@ export const chart: Motif = (random, { width, height }) => {
 /** Online shop: a shelf of products, a few featured. */
 export const storefront: Motif = (random, { width, height }) => {
   const shapes: Shape[] = [];
-  shapes.push({ kind: 'bar', x: width * 0.06, y: height * 0.06, w: width * 0.88, h: height * 0.07, layer: 0, weight: 0 });
+  shapes.push({
+    kind: 'bar',
+    x: width * 0.06,
+    y: height * 0.06,
+    w: width * 0.88,
+    h: height * 0.07,
+    layer: 0,
+    weight: 0,
+  });
   const cols = intBetween(random, 5, 7);
   const rows = 3;
   const gap = 3;
@@ -216,7 +224,15 @@ export const storefront: Motif = (random, { width, height }) => {
       const y = height * 0.18 + row * (tileH + gap);
       const star = featured.has(index);
       shapes.push({ kind: 'bar', x, y, w: tileW, h: tileH * 0.7, layer: 1, weight: star ? 1 : 0.05 + random() * 0.4 });
-      shapes.push({ kind: 'bar', x, y: y + tileH * 0.78, w: tileW * between(random, 0.35, 0.7), h: tileH * 0.14, layer: 2, weight: star ? 0.9 : 0.02 });
+      shapes.push({
+        kind: 'bar',
+        x,
+        y: y + tileH * 0.78,
+        w: tileW * between(random, 0.35, 0.7),
+        h: tileH * 0.14,
+        layer: 2,
+        weight: star ? 0.9 : 0.02,
+      });
     }
   }
   return shapes;
@@ -230,8 +246,24 @@ export const map: Motif = (random, { width, height }) => {
     const at = random();
     shapes.push(
       vertical
-        ? { kind: 'line', x1: at * width, y1: 0, x2: at * width + between(random, -20, 20), y2: height, layer: 0, weight: 0 }
-        : { kind: 'line', x1: 0, y1: at * height, x2: width, y2: at * height + between(random, -12, 12), layer: 0, weight: 0 },
+        ? {
+            kind: 'line',
+            x1: at * width,
+            y1: 0,
+            x2: at * width + between(random, -20, 20),
+            y2: height,
+            layer: 0,
+            weight: 0,
+          }
+        : {
+            kind: 'line',
+            x1: 0,
+            y1: at * height,
+            x2: width,
+            y2: at * height + between(random, -12, 12),
+            layer: 0,
+            weight: 0,
+          },
     );
   }
   const you = { x: width * between(random, 0.35, 0.65), y: height * between(random, 0.35, 0.65) };
@@ -244,7 +276,14 @@ export const map: Motif = (random, { width, height }) => {
     const y = random() * height;
     const distance = Math.hypot(x - you.x, y - you.y);
     const inside = distance < reach;
-    shapes.push({ kind: 'dot', x, y, r: inside ? 1.4 : 0.9, layer: inside ? 2 : 1, weight: inside ? 0.2 + 0.7 * (1 - distance / reach) : 0.01 });
+    shapes.push({
+      kind: 'dot',
+      x,
+      y,
+      r: inside ? 1.4 : 0.9,
+      layer: inside ? 2 : 1,
+      weight: inside ? 0.2 + 0.7 * (1 - distance / reach) : 0.01,
+    });
   }
   return shapes;
 };
@@ -259,11 +298,27 @@ export const wireframe: Motif = (random, { width, height }) => {
   const navItems = intBetween(random, 3, 5);
   const active = intBetween(random, 0, navItems - 1);
   for (let i = 0; i < navItems; i += 1) {
-    shapes.push({ kind: 'bar', x: x0 + w - 6 - (navItems - i) * 13, y: height * 0.1, w: 9, h: 2.4, layer: 1, weight: i === active ? 0.8 : 0.05 });
+    shapes.push({
+      kind: 'bar',
+      x: x0 + w - 6 - (navItems - i) * 13,
+      y: height * 0.1,
+      w: 9,
+      h: 2.4,
+      layer: 1,
+      weight: i === active ? 0.8 : 0.05,
+    });
   }
   const heroH = height * between(random, 0.24, 0.32);
   shapes.push({ kind: 'bar', x: x0 + 4, y: height * 0.2, w: w - 8, h: heroH, layer: 0, weight: 0 });
-  shapes.push({ kind: 'bar', x: x0 + 10, y: height * 0.2 + heroH * 0.25, w: w * between(random, 0.35, 0.55), h: 4, layer: 1, weight: 0.7 });
+  shapes.push({
+    kind: 'bar',
+    x: x0 + 10,
+    y: height * 0.2 + heroH * 0.25,
+    w: w * between(random, 0.35, 0.55),
+    h: 4,
+    layer: 1,
+    weight: 0.7,
+  });
   shapes.push({ kind: 'bar', x: x0 + 10, y: height * 0.2 + heroH * 0.48, w: w * 0.3, h: 2.4, layer: 1, weight: 0.2 });
   shapes.push({ kind: 'bar', x: x0 + 10, y: height * 0.2 + heroH * 0.68, w: 18, h: 5, layer: 2, weight: 1 });
   const columns = intBetween(random, 2, 4);
@@ -274,7 +329,15 @@ export const wireframe: Motif = (random, { width, height }) => {
     const x = x0 + 4 + c * (colW + gap);
     shapes.push(...outline(x, top, colW, height * 0.2, 0, 0));
     for (let l = 0; l < 3; l += 1) {
-      shapes.push({ kind: 'bar', x: x + 3, y: top + 4 + l * 4.5, w: colW * between(random, 0.4, 0.8), h: 1.8, layer: 1, weight: l === 0 ? 0.4 : 0.03 });
+      shapes.push({
+        kind: 'bar',
+        x: x + 3,
+        y: top + 4 + l * 4.5,
+        w: colW * between(random, 0.4, 0.8),
+        h: 1.8,
+        layer: 1,
+        weight: l === 0 ? 0.4 : 0.03,
+      });
     }
   }
   shapes.push({ kind: 'bar', x: x0 + 4, y: height * 0.86, w: w - 8, h: 3, layer: 0, weight: 0 });
@@ -316,7 +379,15 @@ export const panels: Motif = (random, { width, height }) => {
     shapes.push({ kind: 'bar', x: x + 2, y: y + 2, w: paneW - 4, h: 3.5, layer: 1, weight: p === focus ? 1 : 0.4 });
     const lines = intBetween(random, 6, 9);
     for (let l = 0; l < lines; l += 1) {
-      shapes.push({ kind: 'bar', x: x + 3, y: y + 9 + l * 5.5, w: (paneW - 6) * between(random, 0.25, 0.9), h: 2, layer: 1, weight: p === focus ? 0.15 + random() * 0.4 : 0.02 });
+      shapes.push({
+        kind: 'bar',
+        x: x + 3,
+        y: y + 9 + l * 5.5,
+        w: (paneW - 6) * between(random, 0.25, 0.9),
+        h: 2,
+        layer: 1,
+        weight: p === focus ? 0.15 + random() * 0.4 : 0.02,
+      });
     }
   }
   return shapes;
@@ -338,7 +409,15 @@ export const windows: Motif = (random, { width, height }) => {
     shapes.push({ kind: 'bar', x, y, w: thumbW, h: thumbH, layer: 0, weight: 0 });
     shapes.push({ kind: 'bar', x, y, w: thumbW, h: 2.6, layer: 1, weight: on ? 0.9 : 0.1 });
     for (let l = 0; l < 3; l += 1) {
-      shapes.push({ kind: 'bar', x: x + 2, y: y + 6 + l * 4, w: thumbW * between(random, 0.3, 0.8), h: 1.6, layer: 1, weight: on ? 0.5 : 0.02 });
+      shapes.push({
+        kind: 'bar',
+        x: x + 2,
+        y: y + 6 + l * 4,
+        w: thumbW * between(random, 0.3, 0.8),
+        h: 1.6,
+        layer: 1,
+        weight: on ? 0.5 : 0.02,
+      });
     }
     if (on) shapes.push(...outline(x - 1.5, y - 1.5, thumbW + 3, thumbH + 3, 2, 1));
   }
@@ -379,7 +458,15 @@ export const timer: Motif = (random, { width, height }) => {
 export const ascent: Motif = (random, { width, height }) => {
   const shapes: Shape[] = [];
   for (let line = 1; line <= 4; line += 1) {
-    shapes.push({ kind: 'line', x1: 0, y1: (height * line) / 5, x2: width, y2: (height * line) / 5, layer: 0, weight: 0 });
+    shapes.push({
+      kind: 'line',
+      x1: 0,
+      y1: (height * line) / 5,
+      x2: width,
+      y2: (height * line) / 5,
+      layer: 0,
+      weight: 0,
+    });
   }
   const steps = intBetween(random, 7, 11);
   const stepW = (width * 0.84) / steps;
@@ -388,9 +475,24 @@ export const ascent: Motif = (random, { width, height }) => {
     level = Math.min(0.85, level + between(random, 0.03, 0.1));
     const h = height * level;
     const x = width * 0.08 + s * stepW;
-    shapes.push({ kind: 'bar', x, y: height * 0.92 - h, w: stepW * 0.86, h, layer: 1, weight: 0.1 + 0.8 * (s / steps) });
+    shapes.push({
+      kind: 'bar',
+      x,
+      y: height * 0.92 - h,
+      w: stepW * 0.86,
+      h,
+      layer: 1,
+      weight: 0.1 + 0.8 * (s / steps),
+    });
     if (random() < 0.6) {
-      shapes.push({ kind: 'dot', x: x + stepW * 0.43, y: height * 0.92 - h - 4, r: 1.2, layer: 2, weight: 0.2 + 0.7 * (s / steps) });
+      shapes.push({
+        kind: 'dot',
+        x: x + stepW * 0.43,
+        y: height * 0.92 - h - 4,
+        r: 1.2,
+        layer: 2,
+        weight: 0.2 + 0.7 * (s / steps),
+      });
     }
   }
   for (let i = 0; i < intBetween(random, 8, 14); i += 1) {
@@ -413,7 +515,15 @@ export const mosaic: Motif = (random, { width, height }) => {
       const top = Math.max(y, height * 0.04);
       const bottom = Math.min(y + h, height * 0.96);
       if (bottom - top > 2) {
-        shapes.push({ kind: 'bar', x, y: top, w: colW, h: bottom - top, layer: random() < 0.5 ? 1 : 0, weight: 0.05 + random() * 0.9 });
+        shapes.push({
+          kind: 'bar',
+          x,
+          y: top,
+          w: colW,
+          h: bottom - top,
+          layer: random() < 0.5 ? 1 : 0,
+          weight: 0.05 + random() * 0.9,
+        });
       }
       y += h + gap;
     }
@@ -437,7 +547,15 @@ export const timeline: Motif = (random, { width, height }) => {
     const y = up ? axis - reach : axis + reach;
     shapes.push({ kind: 'line', x1: x, y1: axis, x2: x, y2: y, layer: 0, weight: 0 });
     shapes.push({ kind: 'dot', x, y: axis, r: 1.3, layer: 2, weight: 0.1 + 0.6 * (e / events) });
-    shapes.push({ kind: 'bar', x: x - 4, y: up ? y - 3 : y, w: 8 + random() * 6, h: 3, layer: 1, weight: 0.05 + random() * 0.3 });
+    shapes.push({
+      kind: 'bar',
+      x: x - 4,
+      y: up ? y - 3 : y,
+      w: 8 + random() * 6,
+      h: 3,
+      layer: 1,
+      weight: 0.05 + random() * 0.3,
+    });
   }
   shapes.push({ kind: 'bar', x: width * 0.88, y: axis - 9, w: width * 0.08, h: 18, layer: 2, weight: 1 });
   return shapes;
@@ -462,7 +580,15 @@ export const gantt: Motif = (random, { width, height }) => {
     const length = between(random, (right - left) * 0.15, (right - left) * 0.4);
     const end = Math.min(right, start + length);
     const live = start < today && end > today;
-    shapes.push({ kind: 'bar', x: start, y, w: end - start, h: rowH * 0.5, layer: 1, weight: live ? 0.7 + random() * 0.2 : 0.05 + random() * 0.2 });
+    shapes.push({
+      kind: 'bar',
+      x: start,
+      y,
+      w: end - start,
+      h: rowH * 0.5,
+      layer: 1,
+      weight: live ? 0.7 + random() * 0.2 : 0.05 + random() * 0.2,
+    });
     shapes.push({ kind: 'dot', x: end, y: y + rowH * 0.25, r: 1.1, layer: 2, weight: live ? 0.6 : 0.03 });
   }
   shapes.push({ kind: 'line', x1: today, y1: height * 0.04, x2: today, y2: height * 0.96, layer: 2, weight: 1 });
@@ -480,13 +606,29 @@ export const calendar: Motif = (random, { width, height }) => {
   const rowH = gridHeight / 5;
 
   // Month title and the previous/next arrows.
-  shapes.push({ kind: 'bar', x: left, y: height * 0.07, w: gridWidth * between(random, 0.22, 0.32), h: 3, layer: 2, weight: 0.35 });
+  shapes.push({
+    kind: 'bar',
+    x: left,
+    y: height * 0.07,
+    w: gridWidth * between(random, 0.22, 0.32),
+    h: 3,
+    layer: 2,
+    weight: 0.35,
+  });
   shapes.push({ kind: 'dot', x: left + gridWidth - 7, y: height * 0.1, r: 1, layer: 1, weight: 0.02 });
   shapes.push({ kind: 'dot', x: left + gridWidth - 2, y: height * 0.1, r: 1, layer: 1, weight: 0.02 });
 
   // Weekday initials.
   for (let col = 0; col < 7; col += 1) {
-    shapes.push({ kind: 'bar', x: left + col * colW + 1.2, y: height * 0.19, w: colW * 0.3, h: 1.4, layer: 0, weight: 0 });
+    shapes.push({
+      kind: 'bar',
+      x: left + col * colW + 1.2,
+      y: height * 0.19,
+      w: colW * 0.3,
+      h: 1.4,
+      layer: 0,
+      weight: 0,
+    });
   }
 
   const lead = intBetween(random, 0, 5);
@@ -546,7 +688,15 @@ export const usage: Motif = (random, { width, height }) => {
   const critical = intBetween(random, 0, rows - 1);
 
   // Panel title and the refresh button.
-  shapes.push({ kind: 'bar', x: left, y: height * 0.07, w: trackWidth * between(random, 0.25, 0.35), h: 2.6, layer: 2, weight: 0.3 });
+  shapes.push({
+    kind: 'bar',
+    x: left,
+    y: height * 0.07,
+    w: trackWidth * between(random, 0.25, 0.35),
+    h: 2.6,
+    layer: 2,
+    weight: 0.3,
+  });
   shapes.push({ kind: 'ring', x: left + trackWidth - 2, y: height * 0.1, r: 2, layer: 1, weight: 0.02 });
 
   for (let row = 0; row < rows; row += 1) {
@@ -555,13 +705,45 @@ export const usage: Motif = (random, { width, height }) => {
     const trackY = y + rowH * 0.32;
 
     // Label on the left, percent on the right.
-    shapes.push({ kind: 'bar', x: left, y, w: trackWidth * between(random, 0.15, 0.3), h: 1.8, layer: 1, weight: 0.05 + random() * 0.1 });
-    shapes.push({ kind: 'bar', x: left + trackWidth * 0.9, y, w: trackWidth * 0.1, h: 1.8, layer: 1, weight: 0.05 + used * 0.2 });
+    shapes.push({
+      kind: 'bar',
+      x: left,
+      y,
+      w: trackWidth * between(random, 0.15, 0.3),
+      h: 1.8,
+      layer: 1,
+      weight: 0.05 + random() * 0.1,
+    });
+    shapes.push({
+      kind: 'bar',
+      x: left + trackWidth * 0.9,
+      y,
+      w: trackWidth * 0.1,
+      h: 1.8,
+      layer: 1,
+      weight: 0.05 + used * 0.2,
+    });
     // The track and, drawn over it from the same start, the used part.
     shapes.push({ kind: 'bar', x: left, y: trackY, w: trackWidth, h: 2.2, layer: 0, weight: 0 });
-    shapes.push({ kind: 'bar', x: left, y: trackY, w: trackWidth * used, h: 2.2, layer: 2, weight: row === critical ? 1 : used * 0.8 });
+    shapes.push({
+      kind: 'bar',
+      x: left,
+      y: trackY,
+      w: trackWidth * used,
+      h: 2.2,
+      layer: 2,
+      weight: row === critical ? 1 : used * 0.8,
+    });
     // Reset countdown under the track.
-    shapes.push({ kind: 'bar', x: left, y: trackY + 4, w: trackWidth * between(random, 0.2, 0.4), h: 1.2, layer: 0, weight: 0.02 });
+    shapes.push({
+      kind: 'bar',
+      x: left,
+      y: trackY + 4,
+      w: trackWidth * between(random, 0.2, 0.4),
+      h: 1.2,
+      layer: 0,
+      weight: 0.02,
+    });
   }
 
   const dust = intBetween(random, 12, 20);
@@ -586,7 +768,15 @@ export const gists: Motif = (random, { width, height }) => {
   let chipX = left;
   for (let chip = 0; chip < 3; chip += 1) {
     const w = (right - left) * between(random, 0.1, 0.14);
-    shapes.push({ kind: 'bar', x: chipX, y: height * 0.25, w, h: 2, layer: chip === 0 ? 2 : 1, weight: chip === 0 ? 0.35 : 0.06 });
+    shapes.push({
+      kind: 'bar',
+      x: chipX,
+      y: height * 0.25,
+      w,
+      h: 2,
+      layer: chip === 0 ? 2 : 1,
+      weight: chip === 0 ? 0.35 : 0.06,
+    });
     chipX += w + 4;
   }
 
@@ -602,9 +792,33 @@ export const gists: Motif = (random, { width, height }) => {
 
     // The </> glyph, the title, the file names under it, and the language pill.
     shapes.push({ kind: 'dot', x: left + 1.2, y: y + 1.5, r: 1, layer: 1, weight: lit ? 0.5 : 0.03 });
-    shapes.push({ kind: 'bar', x: left + 5, y, w: (right - left) * between(random, 0.3, 0.55), h: 2, layer: lit ? 2 : 1, weight: lit ? 1 : 0.04 + random() * 0.05 });
-    shapes.push({ kind: 'bar', x: left + 5, y: y + 3.6, w: (right - left) * between(random, 0.12, 0.3), h: 1.2, layer: lit ? 1 : 0, weight: lit ? 0.4 : 0.02 });
-    shapes.push({ kind: 'bar', x: right - pillW, y: y - 0.5, w: pillW, h: 3, layer: lit ? 2 : 0, weight: lit ? 0.6 : 0.03 });
+    shapes.push({
+      kind: 'bar',
+      x: left + 5,
+      y,
+      w: (right - left) * between(random, 0.3, 0.55),
+      h: 2,
+      layer: lit ? 2 : 1,
+      weight: lit ? 1 : 0.04 + random() * 0.05,
+    });
+    shapes.push({
+      kind: 'bar',
+      x: left + 5,
+      y: y + 3.6,
+      w: (right - left) * between(random, 0.12, 0.3),
+      h: 1.2,
+      layer: lit ? 1 : 0,
+      weight: lit ? 0.4 : 0.02,
+    });
+    shapes.push({
+      kind: 'bar',
+      x: right - pillW,
+      y: y - 0.5,
+      w: pillW,
+      h: 3,
+      layer: lit ? 2 : 0,
+      weight: lit ? 0.6 : 0.03,
+    });
   }
 
   const dust = intBetween(random, 8, 14);
@@ -624,13 +838,36 @@ export const chat: Motif = (random, { width, height }) => {
   // Server icons down the left rail, the current one brighter.
   const servers = intBetween(random, 4, 6);
   for (let server = 0; server < servers; server += 1) {
-    shapes.push({ kind: 'dot', x: rail, y: height * 0.1 + server * 9, r: 2.6, layer: 1, weight: server === 0 ? 0.25 : 0.03 });
+    shapes.push({
+      kind: 'dot',
+      x: rail,
+      y: height * 0.1 + server * 9,
+      r: 2.6,
+      layer: 1,
+      weight: server === 0 ? 0.25 : 0.03,
+    });
   }
 
   // Channel header: the hash, the name, and the rule under it.
   shapes.push({ kind: 'bar', x: left, y: height * 0.06, w: 2.4, h: 2.4, layer: 1, weight: 0.05 });
-  shapes.push({ kind: 'bar', x: left + 5, y: height * 0.06, w: (right - left) * between(random, 0.18, 0.26), h: 2.4, layer: 2, weight: 0.3 });
-  shapes.push({ kind: 'line', x1: left - 2, y1: height * 0.15, x2: width * 0.98, y2: height * 0.15, layer: 0, weight: 0 });
+  shapes.push({
+    kind: 'bar',
+    x: left + 5,
+    y: height * 0.06,
+    w: (right - left) * between(random, 0.18, 0.26),
+    h: 2.4,
+    layer: 2,
+    weight: 0.3,
+  });
+  shapes.push({
+    kind: 'line',
+    x1: left - 2,
+    y1: height * 0.15,
+    x2: width * 0.98,
+    y2: height * 0.15,
+    layer: 0,
+    weight: 0,
+  });
 
   const embeds = intBetween(random, 2, 3);
   const top = height * 0.2;
@@ -645,13 +882,37 @@ export const chat: Motif = (random, { width, height }) => {
     // Bot avatar, its name and the timestamp.
     shapes.push({ kind: 'ring', x: left + 2.5, y: y + 2.5, r: 2.5, layer: 1, weight: lit ? 0.4 : 0.04 });
     shapes.push({ kind: 'bar', x: embedLeft, y: y + 1, w: (right - left) * 0.14, h: 1.8, layer: 1, weight: 0.06 });
-    shapes.push({ kind: 'bar', x: embedLeft + (right - left) * 0.17, y: y + 1.3, w: (right - left) * 0.1, h: 1.2, layer: 0, weight: 0.02 });
+    shapes.push({
+      kind: 'bar',
+      x: embedLeft + (right - left) * 0.17,
+      y: y + 1.3,
+      w: (right - left) * 0.1,
+      h: 1.2,
+      layer: 0,
+      weight: 0.02,
+    });
 
     // The embed: stripe, title, description lines and the fields.
     const cardTop = y + 5;
     const cardBottom = y + rowH - 2;
-    shapes.push({ kind: 'line', x1: embedLeft, y1: cardTop, x2: embedLeft, y2: cardBottom, layer: 2, weight: lit ? 0.7 : 0.08 });
-    shapes.push({ kind: 'bar', x: embedLeft + 3, y: cardTop + 1, w: (right - embedLeft - 3) * between(random, 0.55, 0.85), h: 2, layer: 2, weight: lit ? 1 : 0.1 + random() * 0.1 });
+    shapes.push({
+      kind: 'line',
+      x1: embedLeft,
+      y1: cardTop,
+      x2: embedLeft,
+      y2: cardBottom,
+      layer: 2,
+      weight: lit ? 0.7 : 0.08,
+    });
+    shapes.push({
+      kind: 'bar',
+      x: embedLeft + 3,
+      y: cardTop + 1,
+      w: (right - embedLeft - 3) * between(random, 0.55, 0.85),
+      h: 2,
+      layer: 2,
+      weight: lit ? 1 : 0.1 + random() * 0.1,
+    });
     const lines = Math.max(2, Math.min(5, Math.floor((cardBottom - cardTop - 8) / 3.2)));
     for (let line = 0; line < lines; line += 1) {
       const w = (right - embedLeft - 3) * (line === lines - 1 ? between(random, 0.3, 0.6) : between(random, 0.8, 0.98));

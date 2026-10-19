@@ -8,7 +8,7 @@ describe('visibleLinks', () => {
       liveUrl: 'https://y.app',
     });
 
-    expect(links.map((link) => link.kind)).toEqual(['live', 'repo']);
+    expect(links.map(link => link.kind)).toEqual(['live', 'repo']);
   });
 
   it('omits the repo link entirely when the repository is private', () => {
@@ -43,7 +43,7 @@ describe('visibleLinks', () => {
       liveUrl: 'https://y.app',
     });
 
-    expect(links.map((link) => link.label)).toEqual(['Ver projeto', 'Código fonte']);
+    expect(links.map(link => link.label)).toEqual(['Ver projeto', 'Código fonte']);
   });
 
   it('leads with the running project and follows with the source', () => {
@@ -53,8 +53,8 @@ describe('visibleLinks', () => {
     });
 
     // The live product is the claim; the repository is the proof behind it.
-    expect(links.map((link) => link.kind)).toEqual(['live', 'repo']);
-    expect(links.map((link) => link.variant)).toEqual(['primary', 'secondary']);
+    expect(links.map(link => link.kind)).toEqual(['live', 'repo']);
+    expect(links.map(link => link.variant)).toEqual(['primary', 'secondary']);
   });
 
   it('keeps the source link secondary even when it is the only one', () => {
@@ -68,9 +68,11 @@ describe('visibleLinks', () => {
 
   it('routes case links through /go when a base is given', () => {
     expect(
-      visibleLinks({ repoUrl: 'https://github.com/x/forja', liveUrl: 'https://forja.dev', goBase: '/go/lab/forja' }).map(
-        (link) => link.href,
-      ),
+      visibleLinks({
+        repoUrl: 'https://github.com/x/forja',
+        liveUrl: 'https://forja.dev',
+        goBase: '/go/lab/forja',
+      }).map(link => link.href),
     ).toEqual(['/go/lab/forja/live', '/go/lab/forja/repo']);
   });
 });

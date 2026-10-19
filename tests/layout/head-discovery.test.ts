@@ -2,14 +2,16 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import BaseLayout from '../../src/layouts/BaseLayout.astro';
 
-const render = async (props: {
-  title?: string;
-  description?: string;
-  markdownAlternate?: string;
-  canonicalPath?: string;
-  pageType?: string;
-  pageItems?: string[];
-} = {}) => {
+const render = async (
+  props: {
+    title?: string;
+    description?: string;
+    markdownAlternate?: string;
+    canonicalPath?: string;
+    pageType?: string;
+    pageItems?: string[];
+  } = {},
+) => {
   const container = await AstroContainer.create();
   return container.renderToString(BaseLayout, {
     props: {
@@ -39,15 +41,9 @@ describe('BaseLayout head discovery tags', () => {
   it('advertises the machine discovery alternates', async () => {
     const html = await render();
 
-    expect(html).toContain(
-      '<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary">',
-    );
-    expect(html).toContain(
-      '<link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM full content">',
-    );
-    expect(html).toContain(
-      '<link rel="alternate" type="application/json" href="/ai-index.json" title="AI index">',
-    );
+    expect(html).toContain('<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary">');
+    expect(html).toContain('<link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM full content">');
+    expect(html).toContain('<link rel="alternate" type="application/json" href="/ai-index.json" title="AI index">');
   });
 
   it('renders a markdown alternate only when the page opts in', async () => {
@@ -55,9 +51,7 @@ describe('BaseLayout head discovery tags', () => {
     expect(without).not.toContain('type="text/markdown"');
 
     const withMd = await render({ markdownAlternate: '/lab/forja.md' });
-    expect(withMd).toContain(
-      '<link rel="alternate" type="text/markdown" href="/lab/forja.md">',
-    );
+    expect(withMd).toContain('<link rel="alternate" type="text/markdown" href="/lab/forja.md">');
   });
 });
 

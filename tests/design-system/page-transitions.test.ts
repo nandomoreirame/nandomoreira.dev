@@ -65,7 +65,9 @@ describe('page transitions', () => {
     const body = rule(selector);
     // Five tiers (0 to 4): 0.8x to 1.6x the slow token, 100ms apart.
     expect(body).toMatch(/--tier:\s*min\(var\(--block, 0\) \+ var\(--item, 0\), 4\)/);
-    expect(body).toMatch(/animation:\s*enter-rise calc\(var\(--duration-slow\) \* \(0\.8 \+ 0\.2 \* var\(--tier\)\)\) var\(--ease-out\) both/);
+    expect(body).toMatch(
+      /animation:\s*enter-rise calc\(var\(--duration-slow\) \* \(0\.8 \+ 0\.2 \* var\(--tier\)\)\) var\(--ease-out\) both/,
+    );
     expect(body).toMatch(/animation-delay:\s*calc\(var\(--tier\) \* 100ms\)/);
   });
 

@@ -45,10 +45,24 @@ describe('toShortDate', () => {
   });
 
   it('names every month', () => {
-    const months = Array.from({ length: 12 }, (_, index) =>
-      toShortDate(`2026-${String(index + 1).padStart(2, '0')}-01`).split(' ')[1],
+    const months = Array.from(
+      { length: 12 },
+      (_, index) => toShortDate(`2026-${String(index + 1).padStart(2, '0')}-01`).split(' ')[1],
     );
-    expect(months).toEqual(['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.']);
+    expect(months).toEqual([
+      'jan.',
+      'fev.',
+      'mar.',
+      'abr.',
+      'mai.',
+      'jun.',
+      'jul.',
+      'ago.',
+      'set.',
+      'out.',
+      'nov.',
+      'dez.',
+    ]);
   });
 
   it('keeps the first day of the year in that year, whatever the timezone', () => {

@@ -14,13 +14,13 @@ const gridOf = (shapes: Shape[]) => {
   const lines = shapes.filter((shape): shape is Line => shape.kind === 'line' && shape.layer === 0);
   return {
     lines,
-    columns: lines.filter((line) => line.x1 === line.x2),
-    rows: lines.filter((line) => line.y1 === line.y2),
+    columns: lines.filter(line => line.x1 === line.x2),
+    rows: lines.filter(line => line.y1 === line.y2),
   };
 };
 
 describe('calendar motif', () => {
-  it.each(FRAMES)('rules a month of five weeks in seven columns ($width x $height)', (frame) => {
+  it.each(FRAMES)('rules a month of five weeks in seven columns ($width x $height)', frame => {
     for (let i = 0; i < 20; i += 1) {
       const { columns, rows } = gridOf(calendar(createRandom(hashString(`calendar:${i}`)), frame));
 
@@ -29,7 +29,7 @@ describe('calendar motif', () => {
     }
   });
 
-  it.each(FRAMES)('keeps the whole month inside the frame ($width x $height)', (frame) => {
+  it.each(FRAMES)('keeps the whole month inside the frame ($width x $height)', frame => {
     const { lines } = gridOf(calendar(createRandom(hashString('calendar:frame')), frame));
 
     for (const line of lines) {
@@ -42,13 +42,13 @@ describe('calendar motif', () => {
 
   it('draws no filled day cells, which read as a heavy block', () => {
     const shapes = calendar(createRandom(hashString('calendar:cells')), FRAMES[0]);
-    const big = shapes.filter((shape) => shape.kind === 'bar' && shape.w > 10 && shape.h > 6);
+    const big = shapes.filter(shape => shape.kind === 'bar' && shape.w > 10 && shape.h > 6);
     expect(big).toHaveLength(0);
   });
 
   it('marks exactly one day as today, the strongest signal', () => {
     const shapes = calendar(createRandom(hashString('calendar:today')), FRAMES[0]);
-    expect(shapes.filter((shape) => shape.weight === 1)).toHaveLength(1);
+    expect(shapes.filter(shape => shape.weight === 1)).toHaveLength(1);
   });
 
   it('is what Daybar, a day planner with Google Calendar, declares', () => {

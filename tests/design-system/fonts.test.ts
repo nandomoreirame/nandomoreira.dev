@@ -23,7 +23,7 @@ const RETIRED_FILES = [
 ];
 
 describe('fonts', () => {
-  it.each(FONT_FILES)('ships %s from our own origin', (file) => {
+  it.each(FONT_FILES)('ships %s from our own origin', file => {
     expect(existsSync(file)).toBe(true);
   });
 
@@ -58,7 +58,7 @@ describe('fonts', () => {
 
   it('declares the variable faces with the weight range they were instanced to', () => {
     const face = (family: string) =>
-      (css.match(/@font-face\s*\{[^}]*\}/g) ?? []).find((block) => block.includes(`"${family}"`)) ?? '';
+      (css.match(/@font-face\s*\{[^}]*\}/g) ?? []).find(block => block.includes(`"${family}"`)) ?? '';
     expect(face('Newsreader')).toMatch(/font-weight:\s*400 500;/);
     expect(face('Inter')).toMatch(/font-weight:\s*400 600;/);
   });

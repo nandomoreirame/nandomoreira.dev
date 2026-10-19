@@ -11,7 +11,8 @@ const render = async (search = '') => {
   const container = await AstroContainer.create();
   return container.renderToString(PostsPage, { request: new Request(`https://nandomoreira.dev/posts${search}`) });
 };
-const slugsOn = (html: string) => [...html.matchAll(/<article[^>]*data-latest-post[\s\S]*?<a[^>]*href="\/([^"]+)"/g)].map((m) => m[1]);
+const slugsOn = (html: string) =>
+  [...html.matchAll(/<article[^>]*data-latest-post[\s\S]*?<a[^>]*href="\/([^"]+)"/g)].map(m => m[1]);
 
 describe('/posts listing', () => {
   it('reads through the access layer, never through getCollection', () => {
@@ -28,7 +29,7 @@ describe('/posts listing', () => {
     const html = pages.join('');
 
     expect(current.length).toBeGreaterThan(0);
-    expect(pages.flatMap(slugsOn)).toEqual(current.map((post) => post.slug));
+    expect(pages.flatMap(slugsOn)).toEqual(current.map(post => post.slug));
 
     for (const post of current) {
       expect(html).toContain(`href="/${post.slug}"`);
@@ -82,7 +83,7 @@ describe('/posts listing', () => {
   it('shows six current posts a page, newest first, with the pagination under them', async () => {
     const current = await getCurrentPosts();
     const first = await render();
-    expect(slugsOn(first)).toEqual(current.slice(0, 6).map((post) => post.slug));
+    expect(slugsOn(first)).toEqual(current.slice(0, 6).map(post => post.slug));
     expect(first).toMatch(/<nav[^>]*aria-label="Paginação"/);
     expect(first.indexOf('data-pagination')).toBeGreaterThan(first.lastIndexOf('data-latest-post'));
   });
@@ -90,7 +91,7 @@ describe('/posts listing', () => {
   it('reads the page from ?pagina and clamps a page past the end', async () => {
     const current = await getCurrentPosts();
     const second = await render('?pagina=2');
-    expect(slugsOn(second)).toEqual(current.slice(6, 12).map((post) => post.slug));
+    expect(slugsOn(second)).toEqual(current.slice(6, 12).map(post => post.slug));
     expect(second).toContain('href="/posts"');
     const far = await render('?pagina=99');
     expect(slugsOn(far)).toEqual(slugsOn(await render(`?pagina=${Math.ceil(current.length / 6)}`)));
@@ -99,7 +100,7 @@ describe('/posts listing', () => {
   it('keeps the post count on the whole blog, not the page', async () => {
     const html = await render('?pagina=2');
     expect(html).toMatch(/data-post-count[^>]*>\s*\d+ artigos?\s*</);
-    const published = (await getAllPosts()).filter((post) => !post.draft).length;
+    const published = (await getAllPosts()).filter(post => !post.draft).length;
     expect(html.match(/data-post-count[^>]*>\s*(\d+)/)?.[1]).toBe(String(published));
   });
 });

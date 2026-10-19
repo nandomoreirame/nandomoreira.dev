@@ -9,12 +9,12 @@ import { describe, expect, it } from 'vitest';
  * (production, 2026-10-13). The page must live inside that folder.
  */
 describe('case pages that share a path with their image folder', () => {
-  const cases = ['lab', 'portfolio'].flatMap((collection) => {
+  const cases = ['lab', 'portfolio'].flatMap(collection => {
     const dir = join('public', collection);
     return existsSync(dir)
       ? readdirSync(dir, { withFileTypes: true })
-          .filter((entry) => entry.isDirectory())
-          .map((entry) => `${collection}/${entry.name}`)
+          .filter(entry => entry.isDirectory())
+          .map(entry => `${collection}/${entry.name}`)
       : [];
   });
 
@@ -22,7 +22,7 @@ describe('case pages that share a path with their image folder', () => {
     expect(cases.length).toBeGreaterThan(0);
   });
 
-  it.each(cases)('%s is built as an index.html inside the folder', (path) => {
+  it.each(cases)('%s is built as an index.html inside the folder', path => {
     expect(existsSync(join('dist/client', path, 'index.html'))).toBe(true);
   });
 });

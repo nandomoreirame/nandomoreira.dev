@@ -48,7 +48,10 @@ const visit = (query: string) => salesVisitOf(new URLSearchParams(query));
 describe('salesVisitOf', () => {
   it('reads a visit from the landing or a detail page', () => {
     expect(visit('origem=landing')).toEqual({ origin: 'landing', service: undefined });
-    expect(visit('origem=site-institucional&servico=website')).toEqual({ origin: 'site-institucional', service: 'website' });
+    expect(visit('origem=site-institucional&servico=website')).toEqual({
+      origin: 'site-institucional',
+      service: 'website',
+    });
   });
 
   it('takes a known service even without an origin', () => {

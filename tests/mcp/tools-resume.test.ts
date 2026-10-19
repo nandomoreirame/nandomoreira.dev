@@ -17,16 +17,12 @@ describe('get_resume', () => {
   });
 
   it('carries the extension block, so an agent gets availability in one call', async () => {
-    const resume = await callTool<{ x_agent: { availability: { updatedAt: string } } }>(
-      'get_resume',
-    );
+    const resume = await callTool<{ x_agent: { availability: { updatedAt: string } } }>('get_resume');
 
     expect(resume.x_agent.availability.updatedAt).toBeTruthy();
   });
 
   it('never carries an e-mail', async () => {
-    expect(JSON.stringify(await callTool('get_resume'))).not.toMatch(
-      /[\w.+-]+@[\w-]+\.[\w.]+/,
-    );
+    expect(JSON.stringify(await callTool('get_resume'))).not.toMatch(/[\w.+-]+@[\w-]+\.[\w.]+/);
   });
 });

@@ -61,12 +61,15 @@ describe('AgentBrief', () => {
 });
 
 describe('AgentBrief placement', () => {
-  it.each(['src/pages/index.astro', 'src/pages/contato.astro'])('%s renders the brief from buildHireBrief', async (file) => {
-    const { readFileSync } = await import('node:fs');
-    const source = readFileSync(file, 'utf8');
-    expect(source).toContain('<AgentBrief');
-    expect(source).toContain('buildHireBrief(');
-  });
+  it.each(['src/pages/index.astro', 'src/pages/contato.astro'])(
+    '%s renders the brief from buildHireBrief',
+    async file => {
+      const { readFileSync } = await import('node:fs');
+      const source = readFileSync(file, 'utf8');
+      expect(source).toContain('<AgentBrief');
+      expect(source).toContain('buildHireBrief(');
+    },
+  );
 });
 
 describe('AgentBrief structure', () => {

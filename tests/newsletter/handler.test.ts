@@ -48,7 +48,9 @@ describe('handleSubscribe', () => {
   });
 
   it('reports a storage failure as erro, never the driver message', async () => {
-    const d = deps({ store: { save: vi.fn().mockRejectedValue(new Error('PERMISSION_DENIED collection newsletter_subscribers')) } });
+    const d = deps({
+      store: { save: vi.fn().mockRejectedValue(new Error('PERMISSION_DENIED collection newsletter_subscribers')) },
+    });
     const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), d);
     expect(location(response)).toBe('/posts?assinatura=erro#novidades');
     expect(await response.text()).not.toContain('newsletter_subscribers');
@@ -99,7 +101,6 @@ describe('handleSubscribe', () => {
   });
 });
 
-
 describe('handleSubscribe e-mails', () => {
   const mailDeps = (saved: boolean | Error = true) => {
     const notify = vi.fn().mockResolvedValue(undefined);
@@ -114,7 +115,10 @@ describe('handleSubscribe e-mails', () => {
     expect(location(response)).toBe('/posts?assinatura=ok#novidades');
     expect(notify).toHaveBeenCalledTimes(1);
     expect(notify.mock.calls[0]![0]).toMatchObject({ subject: expect.stringContaining('fulano@exemplo.com') });
-    expect(thankYou).toHaveBeenCalledWith('fulano@exemplo.com', expect.objectContaining({ subject: 'Assinatura confirmada' }));
+    expect(thankYou).toHaveBeenCalledWith(
+      'fulano@exemplo.com',
+      expect.objectContaining({ subject: 'Assinatura confirmada' }),
+    );
   });
 
   it('sends nothing for an address already on the list, so a repeat cannot flood an inbox', async () => {
@@ -137,7 +141,10 @@ describe('handleSubscribe e-mails', () => {
       expect(thankYou).not.toHaveBeenCalled();
     }
     const limited = mailDeps(true);
-    await handleSubscribe(form({ email: 'fulano@exemplo.com' }), { ...limited.d, limiter: { check: vi.fn().mockReturnValue(false) } });
+    await handleSubscribe(form({ email: 'fulano@exemplo.com' }), {
+      ...limited.d,
+      limiter: { check: vi.fn().mockReturnValue(false) },
+    });
     expect(limited.notify).not.toHaveBeenCalled();
     expect(limited.thankYou).not.toHaveBeenCalled();
   });

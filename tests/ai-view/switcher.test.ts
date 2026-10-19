@@ -5,19 +5,18 @@ import AiSwitcher from '../../src/components/ai-view/AiSwitcher.astro';
 import BaseLayout from '../../src/layouts/BaseLayout.astro';
 import { AI_VIEW_LABELS } from '../../src/lib/ai-view/labels';
 
-const renderSwitcher = async (props: {
-  humanPath: string;
-  view: 'human' | 'ai';
-}) => {
+const renderSwitcher = async (props: { humanPath: string; view: 'human' | 'ai' }) => {
   const container = await AstroContainer.create();
   return container.renderToString(AiSwitcher, { props });
 };
 
-const renderLayout = async (props: {
-  noindex?: boolean;
-  view?: 'human' | 'ai';
-  canonicalPath?: string;
-} = {}) => {
+const renderLayout = async (
+  props: {
+    noindex?: boolean;
+    view?: 'human' | 'ai';
+    canonicalPath?: string;
+  } = {},
+) => {
   const container = await AstroContainer.create();
   return container.renderToString(BaseLayout, {
     props: {

@@ -12,7 +12,7 @@ interface ValidationResult {
 
 /** The published validator is callback-based; wrap it once instead of at each use. */
 const validateResume = (resume: unknown): Promise<ValidationResult> =>
-  new Promise((resolve) => {
+  new Promise(resolve => {
     validate(resume, (error: unknown, valid: boolean) => resolve({ error, valid }));
   });
 

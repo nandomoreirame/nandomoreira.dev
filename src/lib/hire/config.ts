@@ -10,8 +10,7 @@ const REQUIRED = {
   HIRE_NOTIFY_FROM: 'notifyFrom',
 } as const satisfies Record<string, keyof HireConfig>;
 
-const present = (value: string | undefined): value is string =>
-  typeof value === 'string' && value.trim().length > 0;
+const present = (value: string | undefined): value is string => typeof value === 'string' && value.trim().length > 0;
 
 /**
  * Reads the hire configuration, failing loudly when anything is missing.
@@ -24,7 +23,7 @@ const present = (value: string | undefined): value is string =>
  * all, and never echoes a value: this message ends up in logs.
  */
 export const readHireConfig = (env: Record<string, string | undefined>): HireConfig => {
-  const missing = Object.keys(REQUIRED).filter((name) => !present(env[name]));
+  const missing = Object.keys(REQUIRED).filter(name => !present(env[name]));
 
   if (missing.length > 0) {
     throw new Error(

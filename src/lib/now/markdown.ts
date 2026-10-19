@@ -31,7 +31,7 @@ const mediaClause = (
   progress: { current: number; total: number; percent: number } | undefined,
 ): string => {
   const parts: string[] = [];
-  const names = platforms.filter((platform) => !leaksToMachine(platform)).map((platform) => machineText(platform));
+  const names = platforms.filter(platform => !leaksToMachine(platform)).map(platform => machineText(platform));
   if (names.length > 0) parts.push(names.join(', '));
   if (progress) parts.push(`${progress.current} / ${progress.total} G (${progress.percent}%)`);
   return parts.length > 0 ? `, ${parts.join(', ')}` : '';
@@ -54,11 +54,11 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
 
   const availability = leaksToMachine(data.focus.availability) ? '' : machineText(data.focus.availability);
   const focus = [
-    ...data.focus.items.map((item) => `- ${item}`),
+    ...data.focus.items.map(item => `- ${item}`),
     '',
     '### Recusando agora',
     '',
-    ...data.focus.declining.map((item) => `- ${item}`),
+    ...data.focus.declining.map(item => `- ${item}`),
     ...(availability ? ['', `Disponibilidade: ${availability}`] : []),
   ];
   pushSection(lines, 'Foco', focus);
@@ -66,10 +66,12 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   const projects =
     data.projects.state === 'empty'
       ? []
-      : data.projects.items.flatMap((repo) => {
+      : data.projects.items.flatMap(repo => {
           if (leaksToMachine(repo.name)) return [];
           const description =
-            repo.description && !leaksToMachine(repo.description) ? `${machineText(endSentence(repo.description))} ` : '';
+            repo.description && !leaksToMachine(repo.description)
+              ? `${machineText(endSentence(repo.description))} `
+              : '';
           const language = repo.language && !leaksToMachine(repo.language) ? `${machineText(repo.language)}. ` : '';
           const pushed = formatPolicyDate(repo.pushedAt.slice(0, 10));
           return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}Último push em ${pushed}.`];
@@ -84,7 +86,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
   for (const title of data.writing.drafts) writing.push(`- ${title}`);
   pushSection(lines, 'Escrevendo', writing);
 
-  const studying = data.studying.flatMap((study) => {
+  const studying = data.studying.flatMap(study => {
     if (leaksToMachine(study.topic) || leaksToMachine(study.note) || leaksToMachine(study.url)) return [];
     return [`- [${machineText(study.topic)}](${study.url}): ${machineText(study.note)}`];
   });
@@ -92,14 +94,14 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
 
   const music: string[] = [];
   if (data.music.topArtists.state === 'ok') {
-    const artists = data.music.topArtists.items.flatMap((artist) => {
+    const artists = data.music.topArtists.items.flatMap(artist => {
       if (leaksToMachine(artist.name)) return [];
       return [`- [${machineText(artist.name)}](${artist.url})`];
     });
     if (artists.length > 0) music.push('### Artistas do mês', '', ...artists);
   }
   if (data.music.recent.state !== 'empty') {
-    const tracks = data.music.recent.items.flatMap((track) => {
+    const tracks = data.music.recent.items.flatMap(track => {
       if (leaksToMachine(track.title) || leaksToMachine(track.artists)) return [];
       const album = albumClause(track.album, track.year);
       const line = `- [${machineText(track.title)}](${track.url}), ${machineText(endSentence(track.artists))} ${album}${track.day}`;
@@ -120,7 +122,9 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
     }
     for (const game of data.games.items.recent) {
       if (leaksToMachine(game.name)) continue;
-      games.push(`- ${linkedName(game.name, game.url)}, ${game.lastPlayed}${mediaClause(game.platforms, game.progress)}`);
+      games.push(
+        `- ${linkedName(game.name, game.url)}, ${game.lastPlayed}${mediaClause(game.platforms, game.progress)}`,
+      );
     }
   } else if (data.games.state === 'fallback') {
     for (const game of data.games.items) {

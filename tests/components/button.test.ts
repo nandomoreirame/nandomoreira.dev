@@ -16,12 +16,9 @@ describe('Button', () => {
     expect(await render()).toContain('<button');
   });
 
-  it.each(['hover:', 'focus-visible:', 'active:', 'disabled:'])(
-    'declares the %s state',
-    async (state) => {
-      expect(await render()).toContain(state);
-    },
-  );
+  it.each(['hover:', 'focus-visible:', 'active:', 'disabled:'])('declares the %s state', async state => {
+    expect(await render()).toContain(state);
+  });
 
   it('uses the accent as the focus indicator', async () => {
     expect(await render()).toContain('focus-visible:outline-primary');
@@ -81,7 +78,7 @@ describe('Button', () => {
 
   it.each(['primary', 'secondary', 'ghost'] as const)(
     'emits no hover: or active: class on a disabled %s link',
-    async (variant) => {
+    async variant => {
       const html = await render({ href: '/projetos', disabled: true, variant });
       const classes = html.match(/class="([^"]*)"/)?.[1] ?? '';
       expect(classes).not.toContain('hover:');
@@ -106,17 +103,14 @@ describe('Button', () => {
 describe('Button hover fill', () => {
   // The dot field behind the page shows through a transparent control; a solid
   // fill on hover keeps the label readable over it.
-  it.each(['secondary', 'ghost'] as const)('fills the %s variant on hover', async (variant) => {
+  it.each(['secondary', 'ghost'] as const)('fills the %s variant on hover', async variant => {
     const html = await render({ href: '/x', variant });
     expect(html).toMatch(/\bhover:bg-surface-elevated\b/);
   });
 });
 
 describe('Outline links fill on hover', () => {
-  it.each([
-    'src/components/home/Contact.astro',
-    'src/components/ai-view/AiBar.astro',
-  ])('%s', async (file) => {
+  it.each(['src/components/home/Contact.astro', 'src/components/ai-view/AiBar.astro'])('%s', async file => {
     const { readFileSync } = await import('node:fs');
     const source = readFileSync(file, 'utf8');
     expect(source).toMatch(/\bhover:bg-surface-elevated\b/);

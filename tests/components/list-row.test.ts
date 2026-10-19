@@ -106,8 +106,7 @@ describe('ListRow', () => {
 
   it('puts decorative separators between marker chips, never at the ends', async () => {
     const html = await render({ markers: ['Rust', 'Tauri', 'Astro'] });
-    const markersBlock =
-      html.match(/<span[^>]*data-markers[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';
+    const markersBlock = html.match(/<span[^>]*data-markers[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';
     const separators = [...markersBlock.matchAll(/<span[^>]*aria-hidden="true"[^>]*>·<\/span>/g)];
 
     expect(separators).toHaveLength(2);

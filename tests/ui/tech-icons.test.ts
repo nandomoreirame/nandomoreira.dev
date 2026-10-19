@@ -2,18 +2,21 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { techIconFor } from '../../src/lib/ui/tech-icons';
 
-const simpleIcons = JSON.parse(
-  readFileSync('node_modules/@iconify-json/simple-icons/icons.json', 'utf8'),
-) as { icons: Record<string, unknown> };
+const simpleIcons = JSON.parse(readFileSync('node_modules/@iconify-json/simple-icons/icons.json', 'utf8')) as {
+  icons: Record<string, unknown>;
+};
 
 const declaredTech = (): string[] => {
   const dir = 'src/content/projects';
   const names = new Set<string>();
-  for (const file of readdirSync(dir).filter((f) => f.endsWith('.md'))) {
+  for (const file of readdirSync(dir).filter(f => f.endsWith('.md'))) {
     const front = readFileSync(`${dir}/${file}`, 'utf8').split('---')[1] ?? '';
     const block = front.match(/^tech:\n((?:\s+- .+\n?)+)/m)?.[1] ?? '';
     for (const line of block.split('\n')) {
-      const name = line.replace(/^\s+- /, '').replace(/^["']|["']$/g, '').trim();
+      const name = line
+        .replace(/^\s+- /, '')
+        .replace(/^["']|["']$/g, '')
+        .trim();
       if (name) names.add(name);
     }
   }
@@ -62,7 +65,10 @@ describe('techIconFor', () => {
   it('covers the profile stack', () => {
     const profile = readFileSync('src/content/profile/profile.md', 'utf8');
     const stack = profile.match(/^stack:\n((?:\s+- .+\n?)+)/m)?.[1] ?? '';
-    const names = stack.split('\n').map((l) => l.replace(/^\s+- /, '').trim()).filter(Boolean);
+    const names = stack
+      .split('\n')
+      .map(l => l.replace(/^\s+- /, '').trim())
+      .filter(Boolean);
     expect(names.length).toBeGreaterThan(0);
     for (const name of names) expect(techIconFor(name), name).toBeDefined();
   });

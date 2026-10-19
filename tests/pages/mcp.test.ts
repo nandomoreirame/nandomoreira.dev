@@ -59,7 +59,7 @@ describe('/mcp copy buttons and agent brief', () => {
 
   it('gives the endpoint and every client snippet a copy button aimed at its own code', async () => {
     const html = await page();
-    const targets = [...html.matchAll(/<button[^>]*data-copy="([^"]+)"/g)].map((m) => m[1]);
+    const targets = [...html.matchAll(/<button[^>]*data-copy="([^"]+)"/g)].map(m => m[1]);
     // Endpoint + four clients + the AGENTS.md brief.
     expect(targets).toHaveLength(6);
     expect(new Set(targets).size).toBe(6);

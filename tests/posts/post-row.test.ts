@@ -57,7 +57,10 @@ describe('PostRow', () => {
 
   it('shows the extras line only when given, the first one in the accent', async () => {
     expect(await render()).not.toContain('data-extras');
-    const extras = (await render({ extras: ['5 dias → 30 min', 'Python'] })).match(/<span[^>]*data-extras[^>]*>[\s\S]*?<\/span>\s*<\/span>/)?.[0] ?? '';
+    const extras =
+      (await render({ extras: ['5 dias → 30 min', 'Python'] })).match(
+        /<span[^>]*data-extras[^>]*>[\s\S]*?<\/span>\s*<\/span>/,
+      )?.[0] ?? '';
     expect(extras).toMatch(/<span class="text-primary">5 dias → 30 min<\/span>/);
     expect(extras).toContain('•');
     expect(extras).toContain('Python');

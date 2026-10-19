@@ -9,7 +9,7 @@ export const toAvailability = (availability: Availability): Availability => avai
 export const applyCareerYears = (profile: Profile, now?: Date): Profile => ({
   ...profile,
   bio: withCareerYears(profile.bio, now),
-  trajectory: profile.trajectory.map((item) => ({
+  trajectory: profile.trajectory.map(item => ({
     ...item,
     value: withCareerYears(item.value, now),
     label: withCareerYears(item.label, now),
@@ -30,5 +30,4 @@ export const getProfile = async (): Promise<Profile> => {
 };
 
 /** F6.5: check_availability must return the status together with its date. */
-export const getAvailability = async (): Promise<Availability> =>
-  toAvailability((await getProfile()).availability);
+export const getAvailability = async (): Promise<Availability> => toAvailability((await getProfile()).availability);

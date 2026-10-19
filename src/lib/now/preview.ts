@@ -45,11 +45,11 @@ export const attachPreviews = async <T extends { isrc?: string }>(
   tracks: readonly T[],
   cache: PreviewCache = previewCache,
 ): Promise<Array<T & { preview?: string }>> => {
-  const isrcs = [...new Set(tracks.flatMap((track) => (previewPath(track.isrc) ? [track.isrc!] : [])))];
+  const isrcs = [...new Set(tracks.flatMap(track => (previewPath(track.isrc) ? [track.isrc!] : [])))];
   await Promise.all(
     isrcs
-      .filter((isrc) => !cache.has(isrc))
-      .map(async (isrc) => {
+      .filter(isrc => !cache.has(isrc))
+      .map(async isrc => {
         try {
           cache.set(isrc, (await deezerPreviewUrl(fetchImpl, isrc)) !== undefined);
         } catch {
@@ -57,7 +57,7 @@ export const attachPreviews = async <T extends { isrc?: string }>(
         }
       }),
   );
-  return tracks.map((track) => {
+  return tracks.map(track => {
     const path = previewPath(track.isrc);
     return path && cache.get(track.isrc!) ? { ...track, preview: path } : { ...track };
   });
@@ -86,8 +86,10 @@ const deezerArtistTop = async (
   // A search by name can land on a namesake ("Queen" gave another act); only an exact name counts.
   if (!artist || !sameName(artist.name, name)) return undefined;
 
-  const top = deezerTopSchema.safeParse(await fetchJson(fetchImpl, `https://api.deezer.com/artist/${artist.id}/top?limit=5`));
-  const track = top.success ? top.data.data.find((item) => item.preview && isDeezerPreview(item.preview)) : undefined;
+  const top = deezerTopSchema.safeParse(
+    await fetchJson(fetchImpl, `https://api.deezer.com/artist/${artist.id}/top?limit=5`),
+  );
+  const track = top.success ? top.data.data.find(item => item.preview && isDeezerPreview(item.preview)) : undefined;
   if (!track) return undefined;
 
   // The preview route is keyed by ISRC, which the top list does not carry.
@@ -107,8 +109,12 @@ export const pickArtistPreview = async (
   cache: PreviewCache = previewCache,
 ): Promise<{ preview: string; previewTitle: string } | undefined> => {
   try {
-    const own = await attachPreviews(fetchImpl, tracks.filter((track) => previewPath(track.isrc)).slice(0, OWN_TRACKS_TO_TRY), cache);
-    const hit = own.find((track) => track.preview);
+    const own = await attachPreviews(
+      fetchImpl,
+      tracks.filter(track => previewPath(track.isrc)).slice(0, OWN_TRACKS_TO_TRY),
+      cache,
+    );
+    const hit = own.find(track => track.preview);
     if (hit?.preview) return { preview: hit.preview, previewTitle: hit.title };
     return await deezerArtistTop(fetchImpl, name);
   } catch {
@@ -116,7 +122,13 @@ export const pickArtistPreview = async (
   }
 };
 
-export const servePreview = async ({ isrc, fetch: fetchImpl }: { isrc: string; fetch: typeof fetch }): Promise<Response> => {
+export const servePreview = async ({
+  isrc,
+  fetch: fetchImpl,
+}: {
+  isrc: string;
+  fetch: typeof fetch;
+}): Promise<Response> => {
   if (!ISRC.test(isrc)) return notFound();
   try {
     // Looked up on every request: the signed URL expires. Deezer forbids storing

@@ -3,3 +3,7 @@ package-lock.json
 *.jsonl
 # Prose (posts, docs, specs) keeps its own line breaks: proseWrap would rewrap it.
 *.md
+# CSS and YAML are read as text by the gates in tests/ (quotes and line shape).
+*.css
+*.yml
+*.yaml

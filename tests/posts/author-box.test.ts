@@ -19,7 +19,9 @@ describe('AuthorBox', () => {
   it('links the e-mail and the agent brief, both secondary', async () => {
     const html = await render({ email: 'oi@nandomoreira.dev' });
     expect(html).toMatch(/<a[^>]*href="mailto:oi@nandomoreira\.dev"[^>]*>[\s\S]*?oi@nandomoreira\.dev[\s\S]*?<\/a>/);
-    expect(html).toMatch(/<a[^>]*href="\/AGENTS\.md"[^>]*>[\s\S]*?\$ curl https:\/\/nandomoreira\.dev\/AGENTS\.md[\s\S]*?<\/a>/);
+    expect(html).toMatch(
+      /<a[^>]*href="\/AGENTS\.md"[^>]*>[\s\S]*?\$ curl https:\/\/nandomoreira\.dev\/AGENTS\.md[\s\S]*?<\/a>/,
+    );
     const row = html.slice(html.indexOf('href="/contato"'));
     expect(html.match(/bg-primary/g)).toHaveLength(1);
     expect(html.indexOf('href="/contato"')).toBeLessThan(html.indexOf('mailto:'));

@@ -33,13 +33,17 @@ const strings = (text: string): BriefToken[] =>
   text
     .split(STRING)
     .filter(Boolean)
-    .map((part) => ({ text: part, tone: STRING.test(part) && part.startsWith('"') ? 'string' : 'plain' }));
+    .map(part => ({ text: part, tone: STRING.test(part) && part.startsWith('"') ? 'string' : 'plain' }));
 
 const lineTokens = (line: string): BriefToken[] => {
   if (HEADING.test(line)) return [{ text: line, tone: 'heading' }];
 
   const method = METHOD.exec(line);
-  if (method) return [{ text: method[1]!, tone: 'method' }, { text: method[2]!, tone: 'plain' }];
+  if (method)
+    return [
+      { text: method[1]!, tone: 'method' },
+      { text: method[2]!, tone: 'plain' },
+    ];
 
   const key = KEY.exec(line);
   if (key) {
@@ -61,7 +65,11 @@ const lineTokens = (line: string): BriefToken[] => {
   }
 
   const label = LABEL.exec(line);
-  if (label) return [{ text: label[1]!, tone: 'label' }, { text: label[2]!, tone: 'plain' }];
+  if (label)
+    return [
+      { text: label[1]!, tone: 'label' },
+      { text: label[2]!, tone: 'plain' },
+    ];
 
   return [{ text: line, tone: 'plain' }];
 };
@@ -69,8 +77,5 @@ const lineTokens = (line: string): BriefToken[] => {
 export const highlightBrief = (brief: string): BriefToken[] =>
   brief
     .split('\n')
-    .flatMap((line, index) => [
-      ...(index > 0 ? [{ text: '\n', tone: 'plain' as const }] : []),
-      ...lineTokens(line),
-    ])
-    .filter((token) => token.text.length > 0);
+    .flatMap((line, index) => [...(index > 0 ? [{ text: '\n', tone: 'plain' as const }] : []), ...lineTokens(line)])
+    .filter(token => token.text.length > 0);

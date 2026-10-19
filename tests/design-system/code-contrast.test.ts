@@ -25,7 +25,7 @@ const render = async (entry: Awaited<ReturnType<typeof getAllPostEntries>>[numbe
 };
 
 const inlineColours = (html: string): string[] => [
-  ...new Set([...html.matchAll(/style="[^"]*color:\s*(#[0-9a-fA-F]{6})/g)].map((m) => m[1])),
+  ...new Set([...html.matchAll(/style="[^"]*color:\s*(#[0-9a-fA-F]{6})/g)].map(m => m[1])),
 ];
 
 const blockBackground = (html: string): string | undefined =>
@@ -34,7 +34,7 @@ const blockBackground = (html: string): string | undefined =>
 const withCode = async () => {
   const entries = await getAllPostEntries();
 
-  return entries.filter((entry) => (entry.body ?? '').includes('```'));
+  return entries.filter(entry => (entry.body ?? '').includes('```'));
 };
 
 describe('highlighted code meets AA', () => {
@@ -45,7 +45,7 @@ describe('highlighted code meets AA', () => {
   it('renders code with an inline theme, which is the blind spot being covered', async () => {
     // A fence with a language gets token colours; a bare ``` is plaintext, one
     // colour only (the homelab post, published 2026-10-19, has only those).
-    const [first] = (await withCode()).filter((entry) => /```[a-z]/.test(entry.body ?? ''));
+    const [first] = (await withCode()).filter(entry => /```[a-z]/.test(entry.body ?? ''));
     const html = await render(first);
 
     expect(blockBackground(html), 'no <pre> background: the selector drifted').toBeDefined();

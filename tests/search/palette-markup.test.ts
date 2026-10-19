@@ -68,7 +68,9 @@ describe('CommandPalette markup', () => {
   });
 
   it('points back to the human page from the AI view', async () => {
-    const html = await (await AstroContainer.create()).renderToString(BaseLayout, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(BaseLayout, {
       props: { title: 'Sobre', description: 'd', view: 'ai', canonicalPath: '/sobre' },
       slots: { default: '<p>x</p>' },
     });

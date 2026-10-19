@@ -11,7 +11,9 @@ describe('cover paths', () => {
   });
 
   it('maps an Xbox store image, http or https, and asks for a 320 px JPEG', () => {
-    expect(coverPathFromUpstream(`http://store-images.s-microsoft.com/image/${XBOX}`)).toBe(`/api/now/cover/xbox/${XBOX}`);
+    expect(coverPathFromUpstream(`http://store-images.s-microsoft.com/image/${XBOX}`)).toBe(
+      `/api/now/cover/xbox/${XBOX}`,
+    );
     expect(upstreamFromCover('xbox', XBOX)).toBe(
       `https://store-images.s-microsoft.com/image/${XBOX}?w=320&h=320&q=80&format=jpg`,
     );

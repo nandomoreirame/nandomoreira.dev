@@ -45,16 +45,10 @@ const toolError = (message: string) => ({
 export const createMcpServer = async (): Promise<McpServer> => {
   const server = new McpServer(MCP_SERVER_INFO);
 
-  server.registerTool(
-    'get_profile',
-    toolMeta('get_profile'),
-    async () => answer(toProfileAnswer(await getProfile())),
-  );
+  server.registerTool('get_profile', toolMeta('get_profile'), async () => answer(toProfileAnswer(await getProfile())));
 
-  server.registerTool(
-    'check_availability',
-    toolMeta('check_availability'),
-    async () => answer(toAvailabilityAnswer(await getProfile())),
+  server.registerTool('check_availability', toolMeta('check_availability'), async () =>
+    answer(toAvailabilityAnswer(await getProfile())),
   );
 
   server.registerTool(
@@ -98,15 +92,11 @@ export const createMcpServer = async (): Promise<McpServer> => {
     },
   );
 
-  server.registerTool(
-    'get_resume',
-    toolMeta('get_resume'),
-    async () => {
-      const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
+  server.registerTool('get_resume', toolMeta('get_resume'), async () => {
+    const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
 
-      return answer(buildResume({ site: SITE, profile, projects }));
-    },
-  );
+    return answer(buildResume({ site: SITE, profile, projects }));
+  });
 
   return server;
 };

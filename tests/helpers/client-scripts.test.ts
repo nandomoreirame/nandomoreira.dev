@@ -99,7 +99,9 @@ describe('command palette exception', () => {
     expect(paletteChunkViolations([{ file: 'palette.js', body: `/*${PALETTE_MARKER}*/` }])).toEqual([]);
     // Random bytes do not compress, so the gzip size really exceeds the budget; the marker stays intact.
     const big = `${PALETTE_MARKER}${randomBytes(PALETTE_BUDGET_BYTES * 2).toString('base64')}`;
-    expect(paletteChunkViolations([{ file: 'palette.js', body: big }])[0]).toMatch(/palette\.js: command palette is \d+ B gzip, budget 4096/);
+    expect(paletteChunkViolations([{ file: 'palette.js', body: big }])[0]).toMatch(
+      /palette\.js: command palette is \d+ B gzip, budget 4096/,
+    );
   });
 
   it('ignores an oversized chunk without the palette marker', () => {

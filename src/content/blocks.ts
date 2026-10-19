@@ -3,12 +3,7 @@
  * Alphabetical order would put ai-product before ai-tooling, inverting the
  * hierarchy the BRIEF wants to communicate.
  */
-export const BLOCKS = [
-  'ai-tooling',
-  'ai-product',
-  'systems-cli',
-  'professional',
-] as const;
+export const BLOCKS = ['ai-tooling', 'ai-product', 'systems-cli', 'professional'] as const;
 
 export type Block = (typeof BLOCKS)[number];
 

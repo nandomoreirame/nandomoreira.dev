@@ -32,7 +32,9 @@ describe('FloatingActions', () => {
   });
 
   it('is on every sales page, with the #topo anchor at the top', async () => {
-    const html = await (await AstroContainer.create()).renderToString(SalesLayout, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(SalesLayout, {
       props: { title: 'T', description: 'D' },
       slots: { default: '<h1>T</h1>' },
       request: new Request('https://nandomoreira.dev/servicos'),

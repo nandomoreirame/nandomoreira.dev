@@ -69,10 +69,13 @@ const ThankYou = ({ name, kind }: Props) => {
     >
       {kind === 'newsletter' ? (
         <>
-          <Paragraph>Sua assinatura está confirmada. Os próximos artigos chegam neste e-mail quando saírem no ar, sem marketing e sem nada além dos textos.</Paragraph>
           <Paragraph>
-            Enquanto isso, o que já publiquei está no <InlineLink href={`${SITE}/posts`}>blog</InlineLink>. Se mudar de ideia, é só pedir para sair pela página de{' '}
-            <InlineLink href={`${SITE}/contato`}>contato</InlineLink>.
+            Sua assinatura está confirmada. Os próximos artigos chegam neste e-mail quando saírem no ar, sem marketing e
+            sem nada além dos textos.
+          </Paragraph>
+          <Paragraph>
+            Enquanto isso, o que já publiquei está no <InlineLink href={`${SITE}/posts`}>blog</InlineLink>. Se mudar de
+            ideia, é só pedir para sair pela página de <InlineLink href={`${SITE}/contato`}>contato</InlineLink>.
           </Paragraph>
         </>
       ) : kind === 'briefing' ? (
@@ -86,7 +89,10 @@ const ThankYou = ({ name, kind }: Props) => {
         </>
       ) : (
         <>
-          <Paragraph>Recebi seus dados junto com o download. Se fizer sentido para o que você procura, retorno em breve para conversarmos.</Paragraph>
+          <Paragraph>
+            Recebi seus dados junto com o download. Se fizer sentido para o que você procura, retorno em breve para
+            conversarmos.
+          </Paragraph>
           <Paragraph>
             Se quiser adiantar a conversa, me conte o contexto da vaga ou do projeto pela página de{' '}
             <InlineLink href={`${SITE}/contato`}>contato</InlineLink>.

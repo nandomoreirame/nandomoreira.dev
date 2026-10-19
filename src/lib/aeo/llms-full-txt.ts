@@ -14,13 +14,10 @@ interface Input {
 
 const singleLine = (value: string): string => value.replace(/\s+/g, ' ').trim();
 
-const period = (startDate: string, endDate?: string): string =>
-  `${startDate} – ${endDate ?? 'present'}`;
+const period = (startDate: string, endDate?: string): string => `${startDate} – ${endDate ?? 'present'}`;
 
-const projectBySlug = (
-  projects: readonly Project[],
-  slug: string,
-): Project | undefined => projects.find((project) => project.slug === slug);
+const projectBySlug = (projects: readonly Project[], slug: string): Project | undefined =>
+  projects.find(project => project.slug === slug);
 
 const appendMachineRoutesAndLanguage = (lines: string[], site: URL): void => {
   lines.push('', '## Machine routes', '');
@@ -36,12 +33,7 @@ const appendMachineRoutesAndLanguage = (lines: string[], site: URL): void => {
 };
 
 /** Full-content sibling of llms.txt: same convention, deeper sections. */
-export const buildLlmsFullTxt = ({
-  site,
-  profile,
-  projects,
-  posts = [],
-}: Input): string => {
+export const buildLlmsFullTxt = ({ site, profile, projects, posts = [] }: Input): string => {
   const lines: string[] = [
     `# ${profile.name}`,
     '',
@@ -77,9 +69,7 @@ export const buildLlmsFullTxt = ({
   lines.push('', '## Work history', '');
 
   for (const job of profile.work ?? []) {
-    lines.push(
-      `- **${job.position}** at ${job.name} (${period(job.startDate, job.endDate)})`,
-    );
+    lines.push(`- **${job.position}** at ${job.name} (${period(job.startDate, job.endDate)})`);
     if (job.summary) lines.push(`  ${singleLine(job.summary)}`);
     for (const highlight of job.highlights ?? []) {
       lines.push(`  - ${singleLine(highlight)}`);
@@ -123,9 +113,7 @@ export const buildLlmsFullTxt = ({
   if (posts.length > 0) {
     lines.push('## Posts', '');
     for (const post of posts) {
-      lines.push(
-        `- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`,
-      );
+      lines.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
     }
   }
 

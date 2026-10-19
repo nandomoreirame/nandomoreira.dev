@@ -22,9 +22,7 @@ const profile = {
   bio: 'Construo software de ponta a ponta.',
   positioning: 'Produto, esteira e padrão de engenharia.',
   stack: ['TypeScript', 'Rust'],
-  trajectory: [
-    { value: '5→30', label: 'minutos', context: 'Liquid AI, bases de cliente.' },
-  ],
+  trajectory: [{ value: '5→30', label: 'minutos', context: 'Liquid AI, bases de cliente.' }],
   services: [
     {
       title: 'Produto de ponta a ponta',
@@ -215,11 +213,7 @@ describe('collectionMarkdown', () => {
       projects: [portfolioCase],
     });
 
-    opensWithFrontmatter(
-      text,
-      'Trabalho de cliente, do problema à produção',
-      'https://nandomoreira.dev/portfolio',
-    );
+    opensWithFrontmatter(text, 'Trabalho de cliente, do problema à produção', 'https://nandomoreira.dev/portfolio');
     expect(text).toContain('Plataformas de dados com IA.');
     expect(text).toContain('## Financial normalization');
     expect(text).toContain('Pré-normalização de bases.');

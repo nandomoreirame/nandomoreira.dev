@@ -27,16 +27,8 @@ export const fetchJson = async (
 };
 
 /** One line per failure, never the token, the key or the body (REQ-013). */
-export const logSourceError = (
-  source: string,
-  error: unknown,
-  logger: Pick<Console, 'warn'> = console,
-): void => {
+export const logSourceError = (source: string, error: unknown, logger: Pick<Console, 'warn'> = console): void => {
   const detail =
-    error instanceof SourceError
-      ? error.status
-        ? `status ${error.status}`
-        : error.reason
-      : 'unexpected error';
+    error instanceof SourceError ? (error.status ? `status ${error.status}` : error.reason) : 'unexpected error';
   logger.warn(`now: ${source} unavailable (${detail})`);
 };

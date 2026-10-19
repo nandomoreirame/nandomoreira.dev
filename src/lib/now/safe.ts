@@ -6,7 +6,7 @@
 const HTML: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
 
 export const machineText = (text: string): string =>
-  text.replace(/[&<>]/g, (char) => HTML[char]!).replace(/([\\`*_[\]()#|])/g, '\\$1');
+  text.replace(/[&<>]/g, char => HTML[char]!).replace(/([\\`*_[\]()#|])/g, '\\$1');
 
 export const isAllowedUrl = (url: string, host: string): boolean => {
   try {
@@ -26,4 +26,4 @@ const LEAKS = [
   /\b(?:(?:10|127)(?:\.\d+){3}|192\.168(?:\.\d+){2})\b/,
 ];
 
-export const leaksToMachine = (text: string): boolean => LEAKS.some((pattern) => pattern.test(text));
+export const leaksToMachine = (text: string): boolean => LEAKS.some(pattern => pattern.test(text));

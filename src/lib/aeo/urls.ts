@@ -4,9 +4,7 @@
  */
 export const requireSite = (site: URL | undefined): URL => {
   if (!site) {
-    throw new Error(
-      'Astro `site` is not configured. Machine routes require absolute URLs.',
-    );
+    throw new Error('Astro `site` is not configured. Machine routes require absolute URLs.');
   }
 
   return site;

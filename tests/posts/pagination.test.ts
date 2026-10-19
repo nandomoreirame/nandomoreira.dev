@@ -4,7 +4,11 @@ import Pagination from '../../src/components/posts/Pagination.astro';
 
 const render = async (props: Record<string, unknown>) =>
   (await AstroContainer.create()).renderToString(Pagination, { props });
-const text = (html: string) => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const text = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 describe('Pagination', () => {
   it('is a named navigation landmark with the count on the right', async () => {

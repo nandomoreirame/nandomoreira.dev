@@ -40,7 +40,11 @@ describe('Prose code blocks', () => {
 
   it('marks inline code apart from the sentence, without touching code inside blocks', async () => {
     const list = await classes();
-    for (const name of ['[&_:not(pre)>code]:font-mono', '[&_:not(pre)>code]:bg-surface-elevated', '[&_:not(pre)>code]:px-xs']) {
+    for (const name of [
+      '[&_:not(pre)>code]:font-mono',
+      '[&_:not(pre)>code]:bg-surface-elevated',
+      '[&_:not(pre)>code]:px-xs',
+    ]) {
       expect(list).toContain(name);
     }
   });
@@ -60,7 +64,14 @@ describe('Prose rhythm and headings', () => {
 
   it('opens each section with a large semibold h2, far from what came before', async () => {
     const list = await classes();
-    for (const name of ['[&_h2]:mt-2xl', '[&_h2]:text-h2', '[&_h2]:font-semibold', '[&_h2]:leading-tight', '[&_h2]:text-pretty', '[&_:is(h2,h3)]:font-serif']) {
+    for (const name of [
+      '[&_h2]:mt-2xl',
+      '[&_h2]:text-h2',
+      '[&_h2]:font-semibold',
+      '[&_h2]:leading-tight',
+      '[&_h2]:text-pretty',
+      '[&_:is(h2,h3)]:font-serif',
+    ]) {
       expect(list).toContain(name);
     }
     expect(list).not.toContain('sm:[&_h2]:text-h1');
@@ -134,21 +145,38 @@ describe('Prose rhythm and headings', () => {
 
   it('restores list markers and indent, which the reset removes', async () => {
     const list = await classes();
-    for (const name of ['[&_ul]:list-disc', '[&_ol]:list-decimal', '[&_:is(ul,ol)]:mt-lg', '[&_:is(ul,ol)]:pl-lg', '[&_li]:mt-xs', '[&_li]:marker:text-muted-foreground']) {
+    for (const name of [
+      '[&_ul]:list-disc',
+      '[&_ol]:list-decimal',
+      '[&_:is(ul,ol)]:mt-lg',
+      '[&_:is(ul,ol)]:pl-lg',
+      '[&_li]:mt-xs',
+      '[&_li]:marker:text-muted-foreground',
+    ]) {
       expect(list).toContain(name);
     }
   });
 
   it('sets quotes and rules apart', async () => {
     const list = await classes();
-    for (const name of ['[&_blockquote]:border-l-2', '[&_blockquote]:border-primary', '[&_blockquote]:pl-md', '[&_hr]:my-2xl', '[&_hr]:border-border']) {
+    for (const name of [
+      '[&_blockquote]:border-l-2',
+      '[&_blockquote]:border-primary',
+      '[&_blockquote]:pl-md',
+      '[&_hr]:my-2xl',
+      '[&_hr]:border-border',
+    ]) {
       expect(list).toContain(name);
     }
   });
 
   it('frames inline code like the reference, with a border', async () => {
     const list = await classes();
-    for (const name of ['[&_:not(pre)>code]:border', '[&_:not(pre)>code]:border-border-strong', '[&_:not(pre)>code]:rounded-md']) {
+    for (const name of [
+      '[&_:not(pre)>code]:border',
+      '[&_:not(pre)>code]:border-border-strong',
+      '[&_:not(pre)>code]:rounded-md',
+    ]) {
       expect(list).toContain(name);
     }
   });

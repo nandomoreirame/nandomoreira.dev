@@ -10,7 +10,7 @@ describe('SERVICE_LABELS', () => {
   });
 
   it('offers the options in the schema order', () => {
-    expect(SERVICE_OPTIONS.map((option) => option.value)).toEqual([...SERVICES]);
+    expect(SERVICE_OPTIONS.map(option => option.value)).toEqual([...SERVICES]);
   });
 });
 
@@ -19,10 +19,7 @@ describe('isService', () => {
     expect(isService('website')).toBe(true);
   });
 
-  it.each(['toString', 'constructor', '', undefined, 42] as const)(
-    'rejects %j',
-    (value) => {
-      expect(isService(value)).toBe(false);
-    },
-  );
+  it.each(['toString', 'constructor', '', undefined, 42] as const)('rejects %j', value => {
+    expect(isService(value)).toBe(false);
+  });
 });

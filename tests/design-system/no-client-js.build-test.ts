@@ -16,13 +16,25 @@ const PORT = Number(process.env.GATE_PORT ?? 4931);
 const BASE = `http://127.0.0.1:${PORT}`;
 const CLIENT = 'dist/client';
 // /404 is SSR too (no prerender) and renders the full BaseLayout; /projetos* only redirect.
-const SSR_ROUTES = ['/', '/sobre', '/contato', '/posts', '/posts/arquivo', '/portfolio', '/lab', '/now', '/404', '/servicos', '/servicos/site-institucional'];
+const SSR_ROUTES = [
+  '/',
+  '/sobre',
+  '/contato',
+  '/posts',
+  '/posts/arquivo',
+  '/portfolio',
+  '/lab',
+  '/now',
+  '/404',
+  '/servicos',
+  '/servicos/site-institucional',
+];
 
 const readSrc = (src: string): string => readFileSync(join(CLIENT, src.replace(/^\//, '')), 'utf8');
 
 /** Every pre-rendered page: case pages, posts, the yearly archive. */
 const prerendered = (dir = CLIENT, route = ''): PageScripts[] =>
-  readdirSync(dir).flatMap((entry) => {
+  readdirSync(dir).flatMap(entry => {
     const path = join(dir, entry);
     if (statSync(path).isDirectory()) {
       return entry === '_astro' ? [] : prerendered(path, `${route}/${entry}`);
@@ -67,7 +79,7 @@ beforeAll(async () => {
   for (let attempt = 0; attempt < 50; attempt += 1) {
     if (server.exitCode !== null) throw new Error(`the built server exited with ${server.exitCode}`);
     if (await answers()) return;
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 200));
   }
   throw new Error(`the built server never answered on ${BASE}; is the port free?`);
 }, 20_000);
@@ -86,31 +98,36 @@ describe('client JavaScript', () => {
     expect(scriptViolations(pages)).toEqual([]);
   });
 
-  it.each(['/', '/lab', '/sobre'])('actually ships the effect on %s, so the gate is not vacuous', async (route) => {
+  it.each(['/', '/lab', '/sobre'])('actually ships the effect on %s, so the gate is not vacuous', async route => {
     const { scripts } = await served(route);
-    expect(scripts.some((script) => script.includes(POINTER_MARKER))).toBe(true);
+    expect(scripts.some(script => script.includes(POINTER_MARKER))).toBe(true);
   });
 
   it('ships the audio preview on /now and nowhere else', async () => {
     const { scripts } = await served('/now');
-    expect(scripts.some((script) => script.includes(NOW_PREVIEW_MARKER))).toBe(true);
+    expect(scripts.some(script => script.includes(NOW_PREVIEW_MARKER))).toBe(true);
     const home = await served('/');
-    expect(home.scripts.some((script) => script.includes(NOW_PREVIEW_MARKER))).toBe(false);
+    expect(home.scripts.some(script => script.includes(NOW_PREVIEW_MARKER))).toBe(false);
   });
 
   it('leaves no stray script file in the client asset dir', () => {
     const dir = join(CLIENT, '_astro');
-    const files = existsSync(dir) ? readdirSync(dir).filter((file) => file.endsWith('.js')) : [];
+    const files = existsSync(dir) ? readdirSync(dir).filter(file => file.endsWith('.js')) : [];
     for (const file of files) {
       const body = readFileSync(join(dir, file), 'utf8');
-      expect(body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER) || body.includes(PALETTE_MARKER), file).toBe(true);
+      expect(
+        body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER) || body.includes(PALETTE_MARKER),
+        file,
+      ).toBe(true);
     }
   });
 
   it('ships the command palette only as an on-demand chunk within budget', () => {
     const dir = join(CLIENT, '_astro');
     expect(existsSync(dir)).toBe(true);
-    const chunks = readdirSync(dir).filter((file) => file.endsWith('.js')).map((file) => ({ file, body: readFileSync(join(dir, file), 'utf8') }));
+    const chunks = readdirSync(dir)
+      .filter(file => file.endsWith('.js'))
+      .map(file => ({ file, body: readFileSync(join(dir, file), 'utf8') }));
     expect(chunks.some(({ body }) => body.includes(PALETTE_MARKER))).toBe(true);
     expect(paletteChunkViolations(chunks)).toEqual([]);
   });

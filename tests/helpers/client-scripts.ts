@@ -31,7 +31,7 @@ export const NOW_PREVIEW_BUDGET_BYTES = 1024;
 /** The site-wide exception (docs/specs/generative-case-art, REQ-012) plus the /now one. */
 export const scriptViolations = (pages: PageScripts[]): string[] =>
   pages.flatMap(({ route, scripts }) =>
-    scripts.flatMap((script) => {
+    scripts.flatMap(script => {
       if (script.includes(NOW_PREVIEW_MARKER)) {
         if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
@@ -59,5 +59,7 @@ export const paletteChunkViolations = (chunks: Array<{ file: string; body: strin
     .filter(({ body }) => body.includes(PALETTE_MARKER))
     .flatMap(({ file, body }) => {
       const size = gzipSync(body).length;
-      return size > PALETTE_BUDGET_BYTES ? [`${file}: command palette is ${size} B gzip, budget ${PALETTE_BUDGET_BYTES}`] : [];
+      return size > PALETTE_BUDGET_BYTES
+        ? [`${file}: command palette is ${size} B gzip, budget ${PALETTE_BUDGET_BYTES}`]
+        : [];
     });

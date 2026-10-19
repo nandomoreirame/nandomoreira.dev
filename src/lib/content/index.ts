@@ -1,9 +1,4 @@
-export {
-  getAllProjects,
-  getFeaturedProjects,
-  getProject,
-  getProjectsByBlock,
-} from './projects';
+export { getAllProjects, getFeaturedProjects, getProject, getProjectsByBlock } from './projects';
 export {
   getAllPosts,
   getAllPostEntries,

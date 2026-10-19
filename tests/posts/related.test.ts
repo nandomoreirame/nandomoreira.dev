@@ -13,11 +13,11 @@ const post = (slug: string, overrides: Partial<Post> = {}): Post => ({
   ...overrides,
 });
 
-const slugs = (posts: Post[]) => posts.map((p) => p.slug);
+const slugs = (posts: Post[]) => posts.map(p => p.slug);
 
 describe('relatedPosts', () => {
   it('never includes the post itself and returns at most the limit', () => {
-    const all = ['a', 'b', 'c', 'd', 'e'].map((s) => post(s));
+    const all = ['a', 'b', 'c', 'd', 'e'].map(s => post(s));
     const related = relatedPosts(all[0], all);
 
     expect(related).toHaveLength(3);

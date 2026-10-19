@@ -24,7 +24,7 @@ const PUBLIC_PROFILE_KINDS = new Set(['github', 'linkedin', 'site']);
  * visible links go through /go, so the identity assertion lives in the head.
  */
 export const profileUrls = (contacts: Profile['contacts']): string[] =>
-  contacts.filter((contact) => PUBLIC_PROFILE_KINDS.has(contact.kind)).map((contact) => contact.value);
+  contacts.filter(contact => PUBLIC_PROFILE_KINDS.has(contact.kind)).map(contact => contact.value);
 
 export const personLd = (profile: Profile, site: string): PersonLd => ({
   '@context': 'https://schema.org',

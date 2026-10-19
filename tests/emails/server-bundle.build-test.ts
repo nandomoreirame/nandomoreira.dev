@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
  * only the real build proves the server bundle carries them.
  */
 const files = (dir: string): string[] =>
-  readdirSync(dir).flatMap((entry) => {
+  readdirSync(dir).flatMap(entry => {
     const path = join(dir, entry);
     return statSync(path).isDirectory() ? files(path) : path.endsWith('.mjs') ? [path] : [];
   });
@@ -20,7 +20,9 @@ describe('e-mail templates in the server build', () => {
   });
 
   it('bundles the rendered templates, with JSX compiled away', () => {
-    const bundle = files('dist/server').map((file) => readFileSync(file, 'utf8')).join('\n');
+    const bundle = files('dist/server')
+      .map(file => readFileSync(file, 'utf8'))
+      .join('\n');
     for (const text of ['quer conversar', 'baixou seu currículo', 'mensagem automática']) {
       expect(bundle).toContain(text);
     }

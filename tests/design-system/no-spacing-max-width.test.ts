@@ -11,14 +11,14 @@ import { describe, expect, it } from 'vitest';
 const COLLIDING = /\bmax-w-(xs|sm|md|lg|xl|2xl|3xl)\b/;
 
 const files = (dir: string): string[] =>
-  readdirSync(dir).flatMap((entry) => {
+  readdirSync(dir).flatMap(entry => {
     const path = join(dir, entry);
     return statSync(path).isDirectory() ? files(path) : /\.(astro|ts|tsx|css)$/.test(entry) ? [path] : [];
   });
 
 describe('max-width utilities that collide with the spacing scale', () => {
   it('are never used in src/', () => {
-    const offenders = files('src').filter((file) => COLLIDING.test(readFileSync(file, 'utf8')));
+    const offenders = files('src').filter(file => COLLIDING.test(readFileSync(file, 'utf8')));
     expect(offenders).toEqual([]);
   });
 

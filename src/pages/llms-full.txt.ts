@@ -6,17 +6,10 @@ import { getAllPosts, getAllProjects, getProfile } from '../lib/content';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const [profile, projects, posts] = await Promise.all([
-    getProfile(),
-    getAllProjects(),
-    getAllPosts(),
-  ]);
+  const [profile, projects, posts] = await Promise.all([getProfile(), getAllProjects(), getAllPosts()]);
 
-  return new Response(
-    buildLlmsFullTxt({ site: requireSite(site), profile, projects, posts }),
-    {
-      status: 200,
-      headers: { 'content-type': 'text/plain; charset=utf-8' },
-    },
-  );
+  return new Response(buildLlmsFullTxt({ site: requireSite(site), profile, projects, posts }), {
+    status: 200,
+    headers: { 'content-type': 'text/plain; charset=utf-8' },
+  });
 };

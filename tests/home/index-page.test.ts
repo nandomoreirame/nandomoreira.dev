@@ -12,16 +12,10 @@ describe('home page assembly', () => {
   });
 
   it('places the sections in the order the home now declares', () => {
-    const order = [
-      'Hero',
-      'LatestPosts',
-      'NewsletterCard',
-      'Trajectory',
-      'Services',
-    ];
-    const positions = order.map((name) => page.lastIndexOf(`<${name}`));
+    const order = ['Hero', 'LatestPosts', 'NewsletterCard', 'Trajectory', 'Services'];
+    const positions = order.map(name => page.lastIndexOf(`<${name}`));
 
-    expect(positions.every((position) => position > -1)).toBe(true);
+    expect(positions.every(position => position > -1)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 

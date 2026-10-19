@@ -12,7 +12,9 @@ describe('EmptyState', () => {
     const html = await render({ icon: 'lucide:mail-check', title: 'Mensagem enviada', description: 'Já chegou.' });
 
     expect(html).toMatch(/<div[^>]*class="[^"]*\bitems-center\b[^"]*\btext-center\b/);
-    expect(html).toMatch(/<svg[^>]*aria-hidden="true"[^>]*data-icon="lucide:mail-check"|<svg[^>]*data-icon="lucide:mail-check"[^>]*aria-hidden="true"/);
+    expect(html).toMatch(
+      /<svg[^>]*aria-hidden="true"[^>]*data-icon="lucide:mail-check"|<svg[^>]*data-icon="lucide:mail-check"[^>]*aria-hidden="true"/,
+    );
     expect(html).toMatch(/<h2[^>]*>Mensagem enviada<\/h2>/);
     expect(html).toContain('Já chegou.');
   });
@@ -24,7 +26,10 @@ describe('EmptyState', () => {
   });
 
   it('renders actions from the default slot', async () => {
-    const html = await render({ icon: 'lucide:inbox', title: 'T', description: 'D' }, { default: '<a href="/x">Ação</a>' });
+    const html = await render(
+      { icon: 'lucide:inbox', title: 'T', description: 'D' },
+      { default: '<a href="/x">Ação</a>' },
+    );
     expect(html).toContain('<a href="/x">Ação</a>');
   });
 });

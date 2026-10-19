@@ -58,7 +58,7 @@ describe('legacy /projetos redirects', () => {
 describe('new case routes', () => {
   it.each(['src/pages/portfolio/[slug].astro', 'src/pages/lab/[slug].astro'])(
     '%s derives paths from the access layer',
-    (path) => {
+    path => {
       const source = read(path);
 
       expect(source).toContain('getAllProjects');

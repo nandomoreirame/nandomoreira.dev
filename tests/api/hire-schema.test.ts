@@ -41,9 +41,7 @@ describe('hireSchema', () => {
   it('accepts a filled honeypot at the schema, because the route decides what to do', () => {
     // Rejecting here would answer 400 and teach the attacker which field is the
     // trap. The route answers as if accepted instead (REQ-004).
-    expect(hireSchema.safeParse({ ...valid, [HONEYPOT_FIELD]: 'http://spam' }).success).toBe(
-      true,
-    );
+    expect(hireSchema.safeParse({ ...valid, [HONEYPOT_FIELD]: 'http://spam' }).success).toBe(true);
   });
 
   it('trims, so a padded field cannot smuggle length past the cap', () => {

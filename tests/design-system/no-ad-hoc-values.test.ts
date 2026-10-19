@@ -49,7 +49,7 @@ describe('no ad-hoc values outside the scale', () => {
 
   it('scans the e-mail templates and exempts only their token file', async () => {
     const sources = await collectSources();
-    expect(sources.some((file) => file.endsWith('.tsx'))).toBe(true);
+    expect(sources.some(file => file.endsWith('.tsx'))).toBe(true);
     expect(sources).not.toContain(EMAIL_TOKEN_FILE);
   });
 
@@ -60,9 +60,7 @@ describe('no ad-hoc values outside the scale', () => {
       const source = readFileSync(file, 'utf8');
       const withoutAllowed = source.replace(ALLOWED_ARBITRARY, '');
       const matches =
-        withoutAllowed.match(
-          /\b(p|m|gap|w|h|text|rounded|duration|ease|transition)[a-z]*-\[[^\]]+\]/g,
-        ) ?? [];
+        withoutAllowed.match(/\b(p|m|gap|w|h|text|rounded|duration|ease|transition)[a-z]*-\[[^\]]+\]/g) ?? [];
       if (matches.length > 0) offenders.push(`${file}: ${matches.join(', ')}`);
     }
 

@@ -77,7 +77,9 @@ describe('SiteHeader', () => {
 
   it('keeps the menu toggle after the pill on phones', async () => {
     const html = await render({ availability: { status: 'open' } });
-    expect(html).toMatch(/<div[^>]*class="[^"]*\bmax-md:order-last\b[^"]*"[^>]*>\s*<button[^>]*popovertarget="site-menu"/);
+    expect(html).toMatch(
+      /<div[^>]*class="[^"]*\bmax-md:order-last\b[^"]*"[^>]*>\s*<button[^>]*popovertarget="site-menu"/,
+    );
   });
 
   it('leaves the pill out when no availability is given', async () => {
@@ -96,8 +98,7 @@ describe('SiteHeader', () => {
 
   it('keeps wordmark and hamburger on one row on mobile, left and right', async () => {
     const html = await render();
-    const row =
-      html.match(/<header[\s\S]*?<div([^>]*)>[\s\S]*?href="\/"/)?.[1] ?? '';
+    const row = html.match(/<header[\s\S]*?<div([^>]*)>[\s\S]*?href="\/"/)?.[1] ?? '';
 
     expect(row).toMatch(/\bflex\b/);
     expect(row).toMatch(/\bitems-center\b/);

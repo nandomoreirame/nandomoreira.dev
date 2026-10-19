@@ -26,7 +26,7 @@ describe('legacy notes cleanup', () => {
 
     for await (const file of glob('src/**/*')) {
       const normalized = file.replaceAll('\\', '/');
-      if (normalized.split('/').some((segment) => LEGACY.test(segment))) {
+      if (normalized.split('/').some(segment => LEGACY.test(segment))) {
         offenders.push(normalized);
       }
     }

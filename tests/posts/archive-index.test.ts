@@ -30,7 +30,7 @@ describe('/posts/arquivo index', () => {
     }
 
     // 2024 holds only current posts, so it must not appear as an archive year.
-    expect(years.some((y) => y.year === '2024')).toBe(false);
+    expect(years.some(y => y.year === '2024')).toBe(false);
     expect(html).not.toContain('href="/posts/arquivo/2024"');
   });
 

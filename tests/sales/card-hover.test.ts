@@ -10,19 +10,18 @@ import Landing from '../../src/pages/servicos/index.astro';
  */
 const cards = (html: string) =>
   [...html.matchAll(/<[^>]*\bclass="([^"]*)"[^>]*>/g)]
-    .filter((match) => !match[0].includes('data-hero-art'))
-    .map((match) => match[1]!)
-    .filter(
-      (cls) =>
-        /\bborder-border(?!-)\b/.test(cls) && /\bbg-surface(?!-)\b/.test(cls),
-    );
+    .filter(match => !match[0].includes('data-hero-art'))
+    .map(match => match[1]!)
+    .filter(cls => /\bborder-border(?!-)\b/.test(cls) && /\bbg-surface(?!-)\b/.test(cls));
 
 describe('card hover on the sales pages', () => {
   it.each([
     ['/servicos', Landing, {}],
     ['/servicos/site-institucional', Detail, { slug: 'site-institucional' }],
   ])('%s softens every card border on hover', async (path, page, params) => {
-    const html = await (await AstroContainer.create()).renderToString(page as never, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(page as never, {
       params,
       request: new Request(`https://nandomoreira.dev${path}`),
     });
@@ -38,24 +37,25 @@ describe('card hover on the sales pages', () => {
     ['/servicos', Landing, {}],
     ['/servicos/site-institucional', Detail, { slug: 'site-institucional' }],
   ])('%s has no noop hover on already-strong borders', async (path, page, params) => {
-    const html = await (await AstroContainer.create()).renderToString(page as never, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(page as never, {
       params,
       request: new Request(`https://nandomoreira.dev${path}`),
     });
     const strongWithHover = [...html.matchAll(/class="([^"]*)"/g)]
-      .map((match) => match[1]!)
-      .filter((cls) => {
+      .map(match => match[1]!)
+      .filter(cls => {
         const tokens = cls.split(/\s+/);
-        return (
-          tokens.includes('border-border-strong') &&
-          tokens.includes('hover:border-border-strong')
-        );
+        return tokens.includes('border-border-strong') && tokens.includes('hover:border-border-strong');
       });
     expect(strongWithHover).toEqual([]);
   });
 
   it('keeps the hero frame still and lifts only the windows inside it', async () => {
-    const html = await (await AstroContainer.create()).renderToString(Landing as never, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(Landing as never, {
       request: new Request('https://nandomoreira.dev/servicos'),
     });
     const frame = html.match(/<div[^>]*data-hero-art[^>]*>/)?.[0] ?? '';

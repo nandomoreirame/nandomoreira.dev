@@ -1,10 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
-import { attachPreviews, deezerPreviewUrl, pickArtistPreview, previewPath, servePreview } from '../../src/lib/now/preview';
+import {
+  attachPreviews,
+  deezerPreviewUrl,
+  pickArtistPreview,
+  previewPath,
+  servePreview,
+} from '../../src/lib/now/preview';
 
 const ISRC = 'GBUM70812423';
 const SIGNED = 'https://cdnt-preview.dzcdn.net/api/1/1/a/b/c/0/abc.mp3?hdnea=exp=1~acl=x~hmac=y';
 
-type Answer = { status?: number; json?: unknown; body?: Uint8Array<ArrayBuffer>; type?: string; headers?: Record<string, string> };
+type Answer = {
+  status?: number;
+  json?: unknown;
+  body?: Uint8Array<ArrayBuffer>;
+  type?: string;
+  headers?: Record<string, string>;
+};
 
 const fakeFetch = (deezer: Answer, audio: Answer = { body: new Uint8Array(10), type: 'audio/mpeg' }) =>
   vi.fn(async (url: string, _init?: RequestInit) => {
@@ -55,22 +67,19 @@ describe('deezerPreviewUrl', () => {
 });
 
 describe('attachPreviews', () => {
-  const tracks = [
-    { title: 'A', isrc: ISRC },
-    { title: 'B', isrc: 'USDJ20201135' },
-    { title: 'C' },
-  ];
+  const tracks = [{ title: 'A', isrc: ISRC }, { title: 'B', isrc: 'USDJ20201135' }, { title: 'C' }];
 
   it('adds the local preview path only to tracks Deezer can play', async () => {
-    const fetchImpl = vi.fn(async (url: string) =>
-      new Response(JSON.stringify(String(url).endsWith(ISRC) ? { preview: SIGNED } : { error: { code: 800 } }), {
-        headers: { 'content-type': 'application/json' },
-      }),
+    const fetchImpl = vi.fn(
+      async (url: string) =>
+        new Response(JSON.stringify(String(url).endsWith(ISRC) ? { preview: SIGNED } : { error: { code: 800 } }), {
+          headers: { 'content-type': 'application/json' },
+        }),
     );
 
     const result = await attachPreviews(fetchImpl as unknown as typeof fetch, tracks, new Map());
 
-    expect(result.map((track) => track.preview)).toEqual([`/api/now/preview/${ISRC}`, undefined, undefined]);
+    expect(result.map(track => track.preview)).toEqual([`/api/now/preview/${ISRC}`, undefined, undefined]);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
@@ -86,7 +95,7 @@ describe('attachPreviews', () => {
       throw new Error('down');
     });
     const result = await attachPreviews(down as unknown as typeof fetch, tracks, failing);
-    expect(result.every((track) => track.preview === undefined)).toBe(true);
+    expect(result.every(track => track.preview === undefined)).toBe(true);
     expect(failing.size).toBe(0);
   });
 });
@@ -137,15 +146,20 @@ describe('servePreview', () => {
 
 describe('pickArtistPreview', () => {
   const PREVIEW = 'https://cdnt-preview.dzcdn.net/api/1/1/x.mp3?hdnea=y';
-  const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json' } });
+  const json = (body: unknown) =>
+    new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json' } });
 
   // Deezer double: ISRC lookups answer from `byIsrc`; the artist search and top answer from `catalog`.
-  const deezer = (byIsrc: Record<string, boolean>, catalog: { artist?: string; top?: unknown[]; track?: unknown } = {}) =>
+  const deezer = (
+    byIsrc: Record<string, boolean>,
+    catalog: { artist?: string; top?: unknown[]; track?: unknown } = {},
+  ) =>
     vi.fn(async (url: string) => {
       const target = String(url);
       const isrc = target.match(/track\/isrc:([A-Z0-9]+)$/)?.[1];
       if (isrc) return json(byIsrc[isrc] ? { preview: PREVIEW } : { error: { code: 800 } });
-      if (target.includes('/search/artist')) return json({ data: catalog.artist ? [{ id: 7, name: catalog.artist }] : [] });
+      if (target.includes('/search/artist'))
+        return json({ data: catalog.artist ? [{ id: 7, name: catalog.artist }] : [] });
       if (target.includes('/artist/7/top')) return json({ data: catalog.top ?? [] });
       if (target.includes('/track/99')) return json(catalog.track ?? {});
       throw new Error(`unexpected ${target}`);
@@ -171,22 +185,41 @@ describe('pickArtistPreview', () => {
   it('falls back to the artist top on Deezer when the name matches exactly', async () => {
     const fetchImpl = deezer(
       { BRWMB0101850: true },
-      { artist: 'Raul Seixas', top: [{ id: 99, title: 'Metamorfose Ambulante', preview: PREVIEW }], track: { isrc: 'BRWMB0101850' } },
+      {
+        artist: 'Raul Seixas',
+        top: [{ id: 99, title: 'Metamorfose Ambulante', preview: PREVIEW }],
+        track: { isrc: 'BRWMB0101850' },
+      },
     );
-    const pick = await pickArtistPreview(fetchImpl as unknown as typeof fetch, { name: 'Raul Seixas', tracks: [] }, new Map());
+    const pick = await pickArtistPreview(
+      fetchImpl as unknown as typeof fetch,
+      { name: 'Raul Seixas', tracks: [] },
+      new Map(),
+    );
     expect(pick).toEqual({ preview: '/api/now/preview/BRWMB0101850', previewTitle: 'Metamorfose Ambulante' });
   });
 
   it('refuses a namesake: a different name on Deezer gives no preview', async () => {
     const fetchImpl = deezer({}, { artist: 'Queen Naija', top: [{ id: 99, title: '#War', preview: PREVIEW }] });
-    const pick = await pickArtistPreview(fetchImpl as unknown as typeof fetch, { name: 'Queen', tracks: [] }, new Map());
+    const pick = await pickArtistPreview(
+      fetchImpl as unknown as typeof fetch,
+      { name: 'Queen', tracks: [] },
+      new Map(),
+    );
     expect(pick).toBeUndefined();
   });
 
   it('looks at no more than five own tracks, then falls back', async () => {
-    const own = Array.from({ length: 8 }, (_, index) => ({ title: `T${index}`, isrc: `BRWMB01018${String(index).padStart(2, '0')}` }));
+    const own = Array.from({ length: 8 }, (_, index) => ({
+      title: `T${index}`,
+      isrc: `BRWMB01018${String(index).padStart(2, '0')}`,
+    }));
     const fetchImpl = deezer({ BRWMB0101807: true }, { artist: 'Barão Vermelho', top: [] });
-    const pick = await pickArtistPreview(fetchImpl as unknown as typeof fetch, { name: 'Barão Vermelho', tracks: own }, new Map());
+    const pick = await pickArtistPreview(
+      fetchImpl as unknown as typeof fetch,
+      { name: 'Barão Vermelho', tracks: own },
+      new Map(),
+    );
     expect(pick).toBeUndefined();
     const isrcCalls = fetchImpl.mock.calls.filter(([url]) => String(url).includes('track/isrc:'));
     expect(isrcCalls).toHaveLength(5);

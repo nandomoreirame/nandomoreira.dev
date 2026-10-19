@@ -63,7 +63,7 @@ describe('case shortcuts', () => {
 
   it.each(['noctalia-daybar', 'noctalia-desktop-sticky-notes', 'noctalia-gistbar'])(
     '%s declares its keyboard shortcuts',
-    (slug) => {
+    slug => {
       expect(readFileSync(`src/content/projects/${slug}.md`, 'utf8')).toMatch(/^shortcuts:\n {2}- keys: /m);
     },
   );

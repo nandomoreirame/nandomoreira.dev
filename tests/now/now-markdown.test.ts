@@ -49,7 +49,7 @@ const snapshot = (availability: string): NowSnapshot => ({
 describe('nowMarkdown', () => {
   it('lists the six sections in page order, with links only where a human can open them', () => {
     const markdown = nowMarkdown({ site, data: snapshot('Aberto a projetos.') });
-    const headings = [...markdown.matchAll(/^## .+$/gm)].map((match) => match[0]);
+    const headings = [...markdown.matchAll(/^## .+$/gm)].map(match => match[0]);
 
     expect(headings).toEqual([
       '## Foco',
@@ -90,7 +90,8 @@ describe('nowMarkdown', () => {
 
   it('escapes hostile API text and omits a description that leaks', () => {
     const data = snapshot('Aberto a projetos.');
-    if (data.projects.state === 'empty' || data.music.recent.state === 'empty') throw new Error('fixture must be populated');
+    if (data.projects.state === 'empty' || data.music.recent.state === 'empty')
+      throw new Error('fixture must be populated');
     data.projects.items[0]!.description = 'contato: x@y.com';
     data.music.recent.items[0]!.title = '<script>alert(1)</script>';
     const markdown = nowMarkdown({ site, data });
@@ -159,7 +160,8 @@ describe('nowMarkdown', () => {
 
   it('does not double the period after text that already ends a sentence', () => {
     const data = snapshot('Aberto a projetos.');
-    if (data.projects.state === 'empty' || data.music.recent.state === 'empty') throw new Error('fixture must be populated');
+    if (data.projects.state === 'empty' || data.music.recent.state === 'empty')
+      throw new Error('fixture must be populated');
     data.projects.items[0]!.description = 'CLI de dados.';
     data.music.recent.items[0]!.artists = 'Charlie Brown Jr.';
     const markdown = nowMarkdown({ site, data });

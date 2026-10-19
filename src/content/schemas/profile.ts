@@ -17,9 +17,7 @@ const serviceSchema = z.object({
 const availabilitySchema = z.object({
   status: z.enum(['open', 'limited', 'closed']),
   detail: z.string().min(1),
-  updatedAt: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'updatedAt must be an ISO-8601 date (YYYY-MM-DD)'),
+  updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'updatedAt must be an ISO-8601 date (YYYY-MM-DD)'),
 });
 
 const contactSchema = z.object({

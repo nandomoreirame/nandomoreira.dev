@@ -107,8 +107,7 @@ const element = (shape: Shape, tone: string): string => {
  * none (REQ-003). A post has no block, so it must name its motif.
  */
 export type ArtInput = { slug: string; aspect: ArtAspect } & (
-  | { block: Block; art?: ArtMotif }
-  | { block?: undefined; art: ArtMotif }
+  { block: Block; art?: ArtMotif } | { block?: undefined; art: ArtMotif }
 );
 
 /**
@@ -124,7 +123,7 @@ export const generateArt = ({ slug, block, art, aspect }: ArtInput): string => {
   const heroes = heroIndexes(shapes);
 
   const layers = ([0, 1, 2] as const)
-    .map((layer) => {
+    .map(layer => {
       const body = shapes
         .map((shape, index) => ({ shape, index }))
         .filter(({ shape }) => shape.layer === layer)

@@ -19,11 +19,12 @@ describe('serveCover', () => {
 
   it('returns a jpeg with the long cache and nosniff, and drops set-cookie', async () => {
     const body = new Uint8Array([0xff, 0xd8, 0xff]);
-    const fetchImpl = vi.fn(async () =>
-      new Response(body, {
-        status: 200,
-        headers: { 'content-type': 'image/jpeg', 'set-cookie': 'sid=1' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(body, {
+          status: 200,
+          headers: { 'content-type': 'image/jpeg', 'set-cookie': 'sid=1' },
+        }),
     );
 
     const response = await serveCover({ source: 'spotify', id: HEX, fetch: asFetch(fetchImpl) });
@@ -38,11 +39,12 @@ describe('serveCover', () => {
   });
 
   it('answers 404 when the origin is html, even if it sets a cookie', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response('<html></html>', {
-        status: 200,
-        headers: { 'content-type': 'text/html', 'set-cookie': 'sid=1' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response('<html></html>', {
+          status: 200,
+          headers: { 'content-type': 'text/html', 'set-cookie': 'sid=1' },
+        }),
     );
     const response = await serveCover({ source: 'spotify', id: HEX, fetch: asFetch(fetchImpl) });
 
@@ -52,11 +54,12 @@ describe('serveCover', () => {
   });
 
   it('answers 404 when content-length is above 512 KB', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(new Uint8Array([1, 2, 3]), {
-        status: 200,
-        headers: { 'content-type': 'image/jpeg', 'content-length': '600000' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(new Uint8Array([1, 2, 3]), {
+          status: 200,
+          headers: { 'content-type': 'image/jpeg', 'content-length': '600000' },
+        }),
     );
     const response = await serveCover({ source: 'spotify', id: HEX, fetch: asFetch(fetchImpl) });
 

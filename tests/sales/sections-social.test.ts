@@ -36,7 +36,11 @@ describe('MoreWork', () => {
     expect(html.match(/id="trabalho-[a-z0-9-]+"[^>]*popover/g)).toHaveLength(9);
     expect(html).toMatch(/aria-label="Ampliar imagem: Ateliê éh Pique"/);
     expect(html).toMatch(/role="dialog"/);
-    expect(html.match(/popovertargetaction="hide"[^>]*aria-label="Fechar"|aria-label="Fechar"[^>]*popovertargetaction="hide"/g)).toHaveLength(9);
+    expect(
+      html.match(
+        /popovertargetaction="hide"[^>]*aria-label="Fechar"|aria-label="Fechar"[^>]*popovertargetaction="hide"/g,
+      ),
+    ).toHaveLength(9);
     expect(html).toContain('src="/servicos/trabalhos/atelie-eh-pique-ampliada.webp"');
   });
 });

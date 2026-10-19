@@ -47,7 +47,9 @@ describe('palette style', () => {
   });
 
   it('rules the input with a gray a little darker than border-strong', () => {
-    expect(block).toMatch(/\.palette input\s*\{\s*border-bottom-color:\s*color-mix\(in oklab, var\(--color-border-strong\) 60%, var\(--color-surface\)\);/);
+    expect(block).toMatch(
+      /\.palette input\s*\{\s*border-bottom-color:\s*color-mix\(in oklab, var\(--color-border-strong\) 60%, var\(--color-surface\)\);/,
+    );
   });
 
   it('keeps the toast out of sight until it opens, above the corner buttons', () => {

@@ -13,7 +13,7 @@ export const SERVICE_LABELS: Record<Service, string> = {
   undecided: 'Ainda não sei',
 };
 
-export const SERVICE_OPTIONS = SERVICES.map((value) => ({ value, label: SERVICE_LABELS[value] }));
+export const SERVICE_OPTIONS = SERVICES.map(value => ({ value, label: SERVICE_LABELS[value] }));
 
 export const isService = (value: unknown): value is Service =>
   typeof value === 'string' && Object.hasOwn(SERVICE_LABELS, value);

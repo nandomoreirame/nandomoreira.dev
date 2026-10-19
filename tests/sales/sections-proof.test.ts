@@ -13,8 +13,13 @@ const render = async (component: Parameters<AstroContainer['renderToString']>[0]
 describe('salesProjects', () => {
   it('joins the copy to the collection: name, domain and /go link', async () => {
     const projects = await salesProjects();
-    expect(projects.map((project) => project.slug)).toEqual(['encantos-brincantes', 'portfoliosnap', 'bragstack', 'mousai']);
-    expect(projects.find((project) => project.slug === 'mousai')).toMatchObject({
+    expect(projects.map(project => project.slug)).toEqual([
+      'encantos-brincantes',
+      'portfoliosnap',
+      'bragstack',
+      'mousai',
+    ]);
+    expect(projects.find(project => project.slug === 'mousai')).toMatchObject({
       title: 'Mousai',
       domain: 'mousai.gallery',
       href: '/go/portfolio/mousai/live',

@@ -30,10 +30,7 @@ export class BodyTimeoutError extends Error {
  * and REQ-003 requires the rejection to happen BEFORE the JSON is parsed. The
  * read is the only place that knows how many bytes actually arrived.
  */
-export const readLimitedText = async (
-  request: Request,
-  timeoutMs: number = READ_TIMEOUT_MS,
-): Promise<string> => {
+export const readLimitedText = async (request: Request, timeoutMs: number = READ_TIMEOUT_MS): Promise<string> => {
   if (!request.body) return '';
 
   const reader = request.body.getReader();

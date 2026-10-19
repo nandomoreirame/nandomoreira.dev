@@ -89,15 +89,14 @@ const main = async () => {
     }
   });
 
-  await new Promise((resolve) => {
+  await new Promise(resolve => {
     server.listen(8888, '127.0.0.1', () => resolve(undefined));
   });
 
   console.log(authorizeUrl({ clientId, redirectUri: REDIRECT_URI, state }));
 };
 
-const invokedDirectly =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+const invokedDirectly = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (invokedDirectly) {
   await main();

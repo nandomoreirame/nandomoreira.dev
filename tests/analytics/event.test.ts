@@ -169,7 +169,10 @@ describe('dailyIncrements', () => {
   });
 
   it('leaves internal navigation out of the channels', () => {
-    expect(dailyIncrements(pageview({ referrer: 'https://nandomoreira.dev/' }))).not.toContainEqual(['channels', 'internal']);
+    expect(dailyIncrements(pageview({ referrer: 'https://nandomoreira.dev/' }))).not.toContainEqual([
+      'channels',
+      'internal',
+    ]);
   });
 
   it('folds unknown UTM sources to utm:other in the daily key only', () => {
@@ -188,7 +191,9 @@ describe('dailyIncrements', () => {
   });
 
   it('counts machine surfaces by class', () => {
-    expect(dailyIncrements(pageview({ kind: 'machine', userAgent: 'ClaudeBot/1.0' }))).toEqual([['machine', 'ai_agent']]);
+    expect(dailyIncrements(pageview({ kind: 'machine', userAgent: 'ClaudeBot/1.0' }))).toEqual([
+      ['machine', 'ai_agent'],
+    ]);
   });
 
   it('counts an mcp call by method, tool and client', () => {
@@ -237,15 +242,24 @@ describe('dailyIncrements', () => {
   });
 
   it('keys bounded vocabularies literally, as the Data Contract names them', () => {
-    const event = pageview({ source: 'pixel', referrer: null, utm: { source: 'LinkedIn', medium: null, campaign: null } });
+    const event = pageview({
+      source: 'pixel',
+      referrer: null,
+      utm: { source: 'LinkedIn', medium: null, campaign: null },
+    });
     expect(dailyIncrements(event)).toContainEqual(['channels', 'utm:linkedin']);
   });
 
   it('recognises the names real MCP clients send', () => {
     const clientOf = (client: string) =>
       dailyIncrements(
-        pageview({ kind: 'conversion', source: 'api', userAgent: 'node', conversion: { type: 'mcp', target: 'initialize', client } }),
-      ).find((path) => path[1] === 'clients')?.[2];
+        pageview({
+          kind: 'conversion',
+          source: 'api',
+          userAgent: 'node',
+          conversion: { type: 'mcp', target: 'initialize', client },
+        }),
+      ).find(path => path[1] === 'clients')?.[2];
 
     expect(clientOf('Visual Studio Code')).toBe('vscode');
     expect(clientOf('cursor-vscode')).toBe('cursor');
@@ -280,8 +294,18 @@ describe('dailyIncrements', () => {
 
   it('counts an outbound click only when a person made it', () => {
     const click = (userAgent: string) =>
-      dailyIncrements(pageview({ kind: 'conversion', source: 'api', userAgent, conversion: { type: 'outbound', target: 'contato/github' } }));
-    expect(click(CHROME)).toEqual([['conversions', 'outbound'], ['outbound', 'contato%2Fgithub']]);
+      dailyIncrements(
+        pageview({
+          kind: 'conversion',
+          source: 'api',
+          userAgent,
+          conversion: { type: 'outbound', target: 'contato/github' },
+        }),
+      );
+    expect(click(CHROME)).toEqual([
+      ['conversions', 'outbound'],
+      ['outbound', 'contato%2Fgithub'],
+    ]);
     expect(click('LinkedInBot/1.0')).toEqual([]);
   });
 

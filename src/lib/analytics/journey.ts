@@ -35,14 +35,14 @@ export const journeyOf = (events: readonly AnalyticsEvent[]): JourneyData => {
   // A stored document without a usable time (a manual fix, a future writer)
   // is skipped: the lead mail must never fail over the journey (REQ-006).
   const views = events
-    .filter((event) => event.kind === 'pageview' && typeof event.at === 'string' && !Number.isNaN(Date.parse(event.at)))
+    .filter(event => event.kind === 'pageview' && typeof event.at === 'string' && !Number.isNaN(Date.parse(event.at)))
     .sort((a, b) => a.at.localeCompare(b.at));
 
   if (views.length === 0) {
     return { entry: 'direto', utm: 'nenhuma', country: 'desconhecido', views: [] };
   }
 
-  const entry = views.find((event) => event.channel !== 'internal') ?? views[0]!;
+  const entry = views.find(event => event.channel !== 'internal') ?? views[0]!;
   const utm = entry.utm
     ? [entry.utm.source, entry.utm.medium, entry.utm.campaign].filter(Boolean).join(' / ')
     : 'nenhuma';
@@ -51,6 +51,6 @@ export const journeyOf = (events: readonly AnalyticsEvent[]): JourneyData => {
     entry: channelLabel(entry.channel),
     utm,
     country: entry.country ?? 'desconhecido',
-    views: views.map((event) => ({ time: clock(event.at), path: event.path })),
+    views: views.map(event => ({ time: clock(event.at), path: event.path })),
   };
 };

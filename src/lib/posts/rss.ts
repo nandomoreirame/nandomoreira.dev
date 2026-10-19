@@ -32,7 +32,7 @@ const toRfc822 = (iso: string): string => {
 export const buildRss = ({ site, posts, title, description }: Input): string => {
   const channelLink = absoluteUrl(site, '/posts');
   const items = posts
-    .map((post) => {
+    .map(post => {
       const link = absoluteUrl(site, `/${post.slug}`);
 
       return [

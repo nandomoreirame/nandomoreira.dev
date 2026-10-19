@@ -16,7 +16,11 @@ const PAGES = [
   ['/mcp', Mcp, '~/mcp'],
 ] as const;
 
-const text = (html: string) => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const text = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 describe.each(PAGES)('%s header', (route, Page, eyebrow) => {
   const render = async () => {

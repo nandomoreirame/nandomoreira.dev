@@ -20,7 +20,8 @@ describe('metaDescription', () => {
   });
 
   it('cuts a long description at the last full sentence within 160 characters', () => {
-    const first = 'Passei dez dias olhando o tráfego do meu Xbox para entender como uma sessão do Red Dead Online se forma.';
+    const first =
+      'Passei dez dias olhando o tráfego do meu Xbox para entender como uma sessão do Red Dead Online se forma.';
     const text = `${first} Aprendi a separar jogador de relay numa captura, descobri que o meu gateway tinha derrubado o tipo de NAT para Moderado.`;
     expect(metaDescription(text)).toBe(first);
   });

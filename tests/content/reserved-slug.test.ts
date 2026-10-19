@@ -36,9 +36,7 @@ describe('reserved slug ia', () => {
     const result = projectSchema.safeParse({ ...projectBase, slug: 'ia' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => /\/<x>\/ia|visão IA|AI view/i.test(issue.message))).toBe(
-        true,
-      );
+      expect(result.error.issues.some(issue => /\/<x>\/ia|visão IA|AI view/i.test(issue.message))).toBe(true);
     }
   });
 
@@ -46,9 +44,7 @@ describe('reserved slug ia', () => {
     const result = post.safeParse({ ...postBase, slug: 'ia' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => /\/<x>\/ia|visão IA|AI view/i.test(issue.message))).toBe(
-        true,
-      );
+      expect(result.error.issues.some(issue => /\/<x>\/ia|visão IA|AI view/i.test(issue.message))).toBe(true);
     }
   });
 

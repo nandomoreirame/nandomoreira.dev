@@ -34,7 +34,9 @@ describe('AvailabilityCard', () => {
     const title = html.match(/<span[^>]*data-availability-title[^>]*>/)?.[0] ?? '';
     expect(title).toMatch(/font-mono/);
     expect(title).toMatch(/uppercase/);
-    expect(html).toMatch(/<span[^>]*class="[^"]*\btext-h3\b[^"]*\bfont-medium\b[^"]*"[^>]*>\s*Veja o que posso fazer por você/);
+    expect(html).toMatch(
+      /<span[^>]*class="[^"]*\btext-h3\b[^"]*\bfont-medium\b[^"]*"[^>]*>\s*Veja o que posso fazer por você/,
+    );
     expect(html.indexOf('data-availability-title')).toBeLessThan(html.indexOf('Veja o que posso fazer por você'));
     expect(html.indexOf('Veja o que posso fazer por você')).toBeLessThan(html.indexOf('Aberto a projetos'));
   });
@@ -69,6 +71,8 @@ describe('AvailabilityCard', () => {
   });
 
   it('is a hairline box on surface, like the /contato block', async () => {
-    expect(await render('open')).toMatch(/<(?:a|div)[^>]*data-availability-card[^>]*class="[^"]*\bborder-border(?:-strong)?\b[^"]*\bbg-surface\b/);
+    expect(await render('open')).toMatch(
+      /<(?:a|div)[^>]*data-availability-card[^>]*class="[^"]*\bborder-border(?:-strong)?\b[^"]*\bbg-surface\b/,
+    );
   });
 });

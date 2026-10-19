@@ -62,9 +62,7 @@ describe('renderResumeText', () => {
   it('closes a finished position with its end date', () => {
     const withPastJob: Profile = {
       ...profile,
-      work: [
-        { name: 'Empresa', position: 'Cargo', startDate: '2020-01-01', endDate: '2023-06-01' },
-      ],
+      work: [{ name: 'Empresa', position: 'Cargo', startDate: '2020-01-01', endDate: '2023-06-01' }],
     };
 
     expect(render(withPastJob, [])).toContain('2020-01-01 – 2023-06-01');
@@ -95,7 +93,7 @@ describe('renderResumeText', () => {
   it('wraps long prose instead of truncating it', () => {
     const long = 'palavra '.repeat(60).trim();
     const text = render({ ...profile, bio: long }, []);
-    const widest = Math.max(...text.split('\n').map((line) => line.length));
+    const widest = Math.max(...text.split('\n').map(line => line.length));
 
     expect(widest).toBeLessThanOrEqual(80);
     expect(text.replace(/\n/g, ' ')).toContain('palavra palavra');
@@ -116,7 +114,7 @@ describe('renderResumeText', () => {
 
     for (const line of text.split('\n')) {
       const tokens = line.trim().split(/\s+/).filter(Boolean);
-      const oversized = tokens.filter((token) => token.length > 80);
+      const oversized = tokens.filter(token => token.length > 80);
 
       // A line may exceed the width only because ONE token already does.
       expect(line.length <= 80 || oversized.length > 0).toBe(true);

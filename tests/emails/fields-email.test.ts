@@ -18,7 +18,14 @@ describe('Fields with an e-mail value', () => {
   });
 
   it('leaves a value that is not an e-mail as plain text', async () => {
-    const html = await render(h(Fields, { rows: [['Página', '/posts'], ['Contato', '11 91234-5678']] }));
+    const html = await render(
+      h(Fields, {
+        rows: [
+          ['Página', '/posts'],
+          ['Contato', '11 91234-5678'],
+        ],
+      }),
+    );
     expect(html).not.toContain('<a');
   });
 });

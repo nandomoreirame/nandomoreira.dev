@@ -4,7 +4,7 @@ import { GET } from '../../src/pages/api/health';
 
 const invoke = () => GET({} as unknown as APIContext);
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('GET /api/health', () => {
   it('responds 200 with a JSON content type', async () => {

@@ -27,7 +27,7 @@ const catalogue = [
 
 describe('groupByBlock', () => {
   it('returns the four blocks in positioning order, not alphabetically', () => {
-    expect(groupByBlock(catalogue).map((group) => group.block)).toEqual([
+    expect(groupByBlock(catalogue).map(group => group.block)).toEqual([
       'ai-tooling',
       'ai-product',
       'systems-cli',
@@ -36,14 +36,14 @@ describe('groupByBlock', () => {
   });
 
   it('keeps an empty block in the result, so the gap is visible', () => {
-    const group = groupByBlock(catalogue).find((g) => g.block === 'systems-cli');
+    const group = groupByBlock(catalogue).find(g => g.block === 'systems-cli');
     expect(group?.projects).toEqual([]);
   });
 });
 
 describe('featured', () => {
   it('returns only the highlighted projects', () => {
-    expect(featured(catalogue).map((p) => p.slug)).toEqual(['a', 'b']);
+    expect(featured(catalogue).map(p => p.slug)).toEqual(['a', 'b']);
   });
 
   it('is stable: the same input always yields the same order', () => {
@@ -53,6 +53,6 @@ describe('featured', () => {
 
 describe('sortProjects', () => {
   it('orders by title, so the grid never reshuffles between builds', () => {
-    expect(sortProjects(catalogue).map((p) => p.slug)).toEqual(['a', 'b', 'c']);
+    expect(sortProjects(catalogue).map(p => p.slug)).toEqual(['a', 'b', 'c']);
   });
 });

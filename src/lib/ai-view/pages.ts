@@ -3,32 +3,21 @@ import { GITHUB_REPOSITORIES_URL, type OpenSourceRepo } from '../catalog/open-so
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { formatPeriod } from '../about/period';
-import {
-  COLLECTION_LABELS,
-  collectionOfBlock,
-  type CatalogCollection,
-} from '../catalog/groups';
+import { COLLECTION_LABELS, collectionOfBlock, type CatalogCollection } from '../catalog/groups';
 import type { ArchiveYear } from '../content';
 import { COLOPHON } from '../about/colophon';
 import { absoluteUrl } from '../aeo/urls';
 import { MCP_TOOLS } from '../mcp/catalog';
 import { AVAILABILITY_LABEL } from '../layout/availability';
 
-const frontmatter = (title: string, url: string): string[] => [
-  '---',
-  `title: ${title}`,
-  `url: ${url}`,
-  '---',
-  '',
-];
+const frontmatter = (title: string, url: string): string[] => ['---', `title: ${title}`, `url: ${url}`, '---', ''];
 
 const situationOf = (project: Project): string[] => [
   ...(project.discontinued ? ['Descontinuado'] : []),
   ...(project.confidential ? ['Confidencial'] : []),
 ];
 
-const caseHref = (project: Project): string =>
-  `/${collectionOfBlock(project.block)}/${project.slug}`;
+const caseHref = (project: Project): string => `/${collectionOfBlock(project.block)}/${project.slug}`;
 
 export const homeMarkdown = ({
   site,
@@ -51,11 +40,10 @@ export const homeMarkdown = ({
     '',
   ];
 
-  const collections: Array<{ label: string; path: CatalogCollection; items: readonly Project[] }> =
-    [
-      { label: COLLECTION_LABELS.portfolio, path: 'portfolio', items: portfolio },
-      { label: COLLECTION_LABELS.lab, path: 'lab', items: lab },
-    ];
+  const collections: Array<{ label: string; path: CatalogCollection; items: readonly Project[] }> = [
+    { label: COLLECTION_LABELS.portfolio, path: 'portfolio', items: portfolio },
+    { label: COLLECTION_LABELS.lab, path: 'lab', items: lab },
+  ];
 
   for (const { label, path, items } of collections) {
     lines.push(`## ${label}`, '');
@@ -65,9 +53,7 @@ export const homeMarkdown = ({
       continue;
     }
     for (const project of shown) {
-      lines.push(
-        `- [${project.title}](${absoluteUrl(site, `/${path}/${project.slug}`)}): ${project.summary}`,
-      );
+      lines.push(`- [${project.title}](${absoluteUrl(site, `/${path}/${project.slug}`)}): ${project.summary}`);
     }
     lines.push('');
   }
@@ -89,7 +75,7 @@ export const aboutMarkdown = ({
   profile: Profile;
   projects: readonly Project[];
 }): string => {
-  const bySlug = new Map(projects.map((project) => [project.slug, project]));
+  const bySlug = new Map(projects.map(project => [project.slug, project]));
   const lines: string[] = [
     ...frontmatter(`Sobre | ${profile.name}`, absoluteUrl(site, '/sobre')),
     `# ${profile.headline}`,
@@ -111,10 +97,7 @@ export const aboutMarkdown = ({
     lines.push(`### ${service.title}`, '', service.description.trim());
     const project = bySlug.get(service.caseSlug);
     if (project) {
-      lines.push(
-        '',
-        `- Case: [${project.title}](${absoluteUrl(site, caseHref(project))})`,
-      );
+      lines.push('', `- Case: [${project.title}](${absoluteUrl(site, caseHref(project))})`);
     }
     lines.push('');
   }
@@ -122,11 +105,7 @@ export const aboutMarkdown = ({
   if (profile.work && profile.work.length > 0) {
     lines.push('## Experiência', '');
     for (const job of profile.work) {
-      lines.push(
-        `### ${job.position}`,
-        '',
-        `- ${formatPeriod(job.startDate, job.endDate)} · ${job.name}`,
-      );
+      lines.push(`### ${job.position}`, '', `- ${formatPeriod(job.startDate, job.endDate)} · ${job.name}`);
       if (job.summary) lines.push(`- ${job.summary}`);
       if (job.highlights) {
         for (const highlight of job.highlights) {
@@ -195,10 +174,7 @@ export const collectionMarkdown = ({
     if (situation.length > 0) {
       lines.push(`- Situação: ${situation.join(', ')}`);
     }
-    lines.push(
-      `- Markdown: [${project.slug}.md](${absoluteUrl(site, `/${path}/${project.slug}.md`)})`,
-      '',
-    );
+    lines.push(`- Markdown: [${project.slug}.md](${absoluteUrl(site, `/${path}/${project.slug}.md`)})`, '');
   }
 
   if (openSource.length > 0) {
@@ -215,20 +191,12 @@ export const collectionMarkdown = ({
 const postListLines = (site: URL, posts: readonly Post[]): string[] => {
   const lines: string[] = [];
   for (const post of posts) {
-    lines.push(
-      `- ${post.date}: [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`,
-    );
+    lines.push(`- ${post.date}: [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
   }
   return lines;
 };
 
-export const postsMarkdown = ({
-  site,
-  posts,
-}: {
-  site: URL;
-  posts: readonly Post[];
-}): string => {
+export const postsMarkdown = ({ site, posts }: { site: URL; posts: readonly Post[] }): string => {
   const lines: string[] = [
     ...frontmatter('Posts', absoluteUrl(site, '/posts')),
     '# Posts',
@@ -239,24 +207,12 @@ export const postsMarkdown = ({
   return lines.join('\n');
 };
 
-export const archiveMarkdown = ({
-  site,
-  years,
-}: {
-  site: URL;
-  years: readonly ArchiveYear[];
-}): string => {
-  const lines: string[] = [
-    ...frontmatter('Arquivo', absoluteUrl(site, '/posts/arquivo')),
-    '# Arquivo',
-    '',
-  ];
+export const archiveMarkdown = ({ site, years }: { site: URL; years: readonly ArchiveYear[] }): string => {
+  const lines: string[] = [...frontmatter('Arquivo', absoluteUrl(site, '/posts/arquivo')), '# Arquivo', ''];
 
   for (const entry of years) {
     const label = entry.count === 1 ? '1 texto' : `${entry.count} textos`;
-    lines.push(
-      `- [${entry.year}](${absoluteUrl(site, `/posts/arquivo/${entry.year}`)}): ${label}`,
-    );
+    lines.push(`- [${entry.year}](${absoluteUrl(site, `/posts/arquivo/${entry.year}`)}): ${label}`);
   }
   lines.push('');
   return lines.join('\n');
@@ -281,15 +237,9 @@ export const archiveYearMarkdown = ({
   return lines.join('\n');
 };
 
-export const contactMarkdown = ({
-  site,
-  profile,
-}: {
-  site: URL;
-  profile: Profile;
-}): string => {
-  const github = profile.contacts.find((contact) => contact.kind === 'github');
-  const linkedin = profile.contacts.find((contact) => contact.kind === 'linkedin');
+export const contactMarkdown = ({ site, profile }: { site: URL; profile: Profile }): string => {
+  const github = profile.contacts.find(contact => contact.kind === 'github');
+  const linkedin = profile.contacts.find(contact => contact.kind === 'linkedin');
 
   const lines: string[] = [
     ...frontmatter('Contato', absoluteUrl(site, '/contato')),
@@ -331,9 +281,7 @@ const MCP_CLIENTS = [
   },
   {
     name: 'ChatGPT',
-    steps: [
-      'Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:',
-    ],
+    steps: ['Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:'],
     code: (endpoint: string) => endpoint,
     after: 'Peça para ele chamar get_resume ou check_availability.',
   },

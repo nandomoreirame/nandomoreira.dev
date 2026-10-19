@@ -46,7 +46,7 @@ export const hireSchema = z
       .array(z.enum(INTERESTS))
       .min(1)
       .max(INTERESTS.length)
-      .refine((list) => new Set(list).size === list.length, 'Interests must not repeat.')
+      .refine(list => new Set(list).size === list.length, 'Interests must not repeat.')
       .optional(),
     service: z.enum(SERVICES).optional(),
     [HONEYPOT_FIELD]: z.string().max(LIMITS.from).optional(),
@@ -55,5 +55,4 @@ export const hireSchema = z
 
 export type HireRequest = z.infer<typeof hireSchema>;
 
-export const isHoneypotFilled = (payload: HireRequest): boolean =>
-  (payload[HONEYPOT_FIELD] ?? '').trim().length > 0;
+export const isHoneypotFilled = (payload: HireRequest): boolean => (payload[HONEYPOT_FIELD] ?? '').trim().length > 0;

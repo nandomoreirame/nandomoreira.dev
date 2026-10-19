@@ -118,9 +118,7 @@ describe('buildLlmsFullTxt', () => {
   it('opens with an H1 title and a blockquote summary', () => {
     const text = output();
     expect(text.split('\n')[0]).toBe('# Fernando Moreira Costa');
-    expect(text).toMatch(
-      /\n> Product engineer working with AI agents\. I build agent tooling/,
-    );
+    expect(text).toMatch(/\n> Product engineer working with AI agents\. I build agent tooling/);
   });
 
   it('includes an About section with positioning, availability and stack', () => {

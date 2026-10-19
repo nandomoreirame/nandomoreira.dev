@@ -15,7 +15,7 @@ const site = new URL('https://nandomoreira.dev');
 /** Top-level JSON-LD objects, which is what AEO checkers read. */
 const jsonLd = (html: string) =>
   [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(
-    (match) => JSON.parse(match[1]) as Record<string, unknown>,
+    match => JSON.parse(match[1]) as Record<string, unknown>,
   );
 
 const render = async (page: unknown, path = '/') => {
@@ -84,7 +84,7 @@ describe('WebPage on every page', () => {
       props: { title: 'Título', description: 'Descrição' },
       slots: { default: '<p>x</p>' },
     });
-    expect(jsonLd(html).map((item) => item['@type'])).toContain('WebPage');
+    expect(jsonLd(html).map(item => item['@type'])).toContain('WebPage');
   });
 });
 
@@ -96,7 +96,7 @@ describe('Organization on the home (the site brand)', () => {
     expect(org.name).toBe('nandomoreira.dev');
     expect(org.logo).toBe('https://nandomoreira.dev/logo.png');
     expect(org.sameAs.length).toBeGreaterThan(0);
-    expect(org.sameAs.every((url) => url.startsWith('https://'))).toBe(true);
+    expect(org.sameAs.every(url => url.startsWith('https://'))).toBe(true);
     expect(org.founder).toEqual({ '@type': 'Person', name: profile.name });
     expect(JSON.stringify(org)).not.toContain('@nandomoreira');
   });
@@ -110,7 +110,7 @@ describe('Organization on the home (the site brand)', () => {
   });
 
   it('is a top-level object on the home', async () => {
-    expect(jsonLd(await render(Home)).map((item) => item['@type'])).toContain('Organization');
+    expect(jsonLd(await render(Home)).map(item => item['@type'])).toContain('Organization');
   });
 });
 
@@ -128,6 +128,6 @@ describe('HowTo on /mcp', () => {
   });
 
   it('is a top-level object on the page', async () => {
-    expect(jsonLd(await render(Mcp, '/mcp')).map((item) => item['@type'])).toContain('HowTo');
+    expect(jsonLd(await render(Mcp, '/mcp')).map(item => item['@type'])).toContain('HowTo');
   });
 });

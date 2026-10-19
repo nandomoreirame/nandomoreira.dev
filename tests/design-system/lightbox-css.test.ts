@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
-const rule = (selector: string) => css.match(new RegExp(`${selector.replace(/[.:]/g, '\\$&')}\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+const rule = (selector: string) =>
+  css.match(new RegExp(`${selector.replace(/[.:]/g, '\\$&')}\\s*\\{([^}]*)\\}`))?.[1] ?? '';
 
 describe('lightbox styles', () => {
   it('keeps the whole image inside the viewport', () => {

@@ -16,7 +16,7 @@ describe('svgBody', () => {
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0]).toMatchObject({ type: 'element', tagName: 'g', properties: { fill: 'none' } });
-    expect((nodes[0] as { children: { tagName: string }[] }).children.map((child) => child.tagName)).toEqual([
+    expect((nodes[0] as { children: { tagName: string }[] }).children.map(child => child.tagName)).toEqual([
       'rect',
       'path',
     ]);
@@ -43,13 +43,17 @@ describe('codeToolbar', () => {
   });
 
   it('draws a decorative dot before the label', async () => {
-    expect(await highlight('a')).toMatch(/<span class="code-dot" aria-hidden="true"><\/span>\s*<span class="code-title">/);
+    expect(await highlight('a')).toMatch(
+      /<span class="code-dot" aria-hidden="true"><\/span>\s*<span class="code-title">/,
+    );
   });
 
   it('shows Raw and Copiar as text actions on the right, no tooltip', async () => {
     const html = await highlight('print("oi")');
     const actions = html.match(/<div class="code-actions">[\s\S]*?<\/div>/)?.[0] ?? '';
-    expect(actions).toMatch(/<label class="code-action"><input type="checkbox" class="code-raw-toggle sr-only"[^>]*>Raw<\/label>/);
+    expect(actions).toMatch(
+      /<label class="code-action"><input type="checkbox" class="code-raw-toggle sr-only"[^>]*>Raw<\/label>/,
+    );
     expect(actions).toMatch(/<button[^>]*class="code-action"[^>]*><span>Copiar<\/span><\/button>/);
     expect(html).not.toContain('code-tooltip');
   });
@@ -63,7 +67,9 @@ describe('codeToolbar', () => {
   });
 
   it('gives each block its own id', async () => {
-    const ids = [await highlight('a = 1'), await highlight('b = 2')].map((html) => html.match(/<pre[^>]*id="([^"]+)"/)?.[1]);
+    const ids = [await highlight('a = 1'), await highlight('b = 2')].map(
+      html => html.match(/<pre[^>]*id="([^"]+)"/)?.[1],
+    );
     expect(new Set(ids).size).toBe(2);
   });
 

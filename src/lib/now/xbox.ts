@@ -97,7 +97,7 @@ const lookupProductId = async (
     });
     const parsed = catalogSchema.safeParse(await fetchJson(fetchImpl, `${CATALOG_URL}?${query}`));
     if (!parsed.success) return undefined;
-    const productId = parsed.data.Products.map((product) => product.ProductId).find((id) => STORE_PRODUCT.test(id));
+    const productId = parsed.data.Products.map(product => product.ProductId).find(id => STORE_PRODUCT.test(id));
     cache.set(titleId, productId ?? null);
     return productId;
   } catch {
@@ -176,10 +176,7 @@ const playedOn = (iso: string): string | undefined => {
  * Console title in the foreground, and only when that name survived the
  * history filter. Web, Home and excluded games stay out (REQ-009).
  */
-export const parsePresence = (
-  json: unknown,
-  recentGames: readonly RecentGame[],
-): PlayingNow | undefined => {
+export const parsePresence = (json: unknown, recentGames: readonly RecentGame[]): PlayingNow | undefined => {
   const parsed = presenceSchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
@@ -187,7 +184,7 @@ export const parsePresence = (
     if (device.type === 'Web') continue;
     for (const title of device.titles) {
       if (title.placement !== 'Full' || title.name.trim().length === 0) continue;
-      const match = recentGames.find((game) => game.name.toLowerCase() === title.name.toLowerCase());
+      const match = recentGames.find(game => game.name.toLowerCase() === title.name.toLowerCase());
       if (!match) continue;
       return {
         title: title.name,
@@ -214,9 +211,9 @@ const acceptedGames = (
   const parsed = historySchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
 
-  const excluded = new Set(exclude.map((name) => name.toLowerCase()));
+  const excluded = new Set(exclude.map(name => name.toLowerCase()));
   return parsed.data.content.titles
-    .flatMap((item) => {
+    .flatMap(item => {
       const title = titleSchema.safeParse(item);
       if (!title.success) return [];
       if (title.data.type !== 'Game' || excluded.has(title.data.name.toLowerCase())) return [];
@@ -268,21 +265,22 @@ export const fetchXbox = async ({
   const eligible = acceptedGames(history);
   const shown = eligible.slice(0, 5);
   const playing = parsePresence(presence, eligible);
-  const playingGame = playing && eligible.find((game) => game.name.toLowerCase() === playing.title.toLowerCase());
+  const playingGame = playing && eligible.find(game => game.name.toLowerCase() === playing.title.toLowerCase());
 
   // Only the games on the page are looked up, in parallel; the cache makes
   // later refreshes free.
-  const titleIds = [...new Set([...shown, ...(playingGame ? [playingGame] : [])].flatMap((game) => game.titleId ?? []))];
+  const titleIds = [...new Set([...shown, ...(playingGame ? [playingGame] : [])].flatMap(game => game.titleId ?? []))];
   const urls = new Map<string, string>();
   await Promise.all(
-    titleIds.map(async (titleId) => {
+    titleIds.map(async titleId => {
       const url = xboxStoreUrl(await lookupProductId(fetchImpl, titleId, productIds));
       if (url) urls.set(titleId, url);
     }),
   );
-  const urlOf = (game: HistoryGame | undefined): string | undefined => (game?.titleId ? urls.get(game.titleId) : undefined);
+  const urlOf = (game: HistoryGame | undefined): string | undefined =>
+    game?.titleId ? urls.get(game.titleId) : undefined;
 
-  const recent = shown.map((game) => {
+  const recent = shown.map(game => {
     const url = urlOf(game);
     return { ...publicGame(game), ...(url ? { url } : {}) };
   });

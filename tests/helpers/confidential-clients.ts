@@ -11,8 +11,8 @@ const PROJECTS_DIR = 'src/content/projects';
  */
 export const confidentialClientNames = (dir = PROJECTS_DIR): string[] =>
   readdirSync(dir)
-    .filter((file) => file.endsWith('.md'))
-    .flatMap((file) => {
+    .filter(file => file.endsWith('.md'))
+    .flatMap(file => {
       const source = readFileSync(join(dir, file), 'utf8');
       const frontmatter = source.split(/^---$/m)[1] ?? '';
       if (!/^confidential:\s*true\s*$/m.test(frontmatter)) return [];
@@ -20,8 +20,6 @@ export const confidentialClientNames = (dir = PROJECTS_DIR): string[] =>
       return client ? [client] : [];
     });
 
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-export const clientPattern = (name: string): RegExp =>
-  new RegExp(`\\b${escapeRegExp(name)}\\b`, 'i');
+export const clientPattern = (name: string): RegExp => new RegExp(`\\b${escapeRegExp(name)}\\b`, 'i');

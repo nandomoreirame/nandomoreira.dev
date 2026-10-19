@@ -3,9 +3,8 @@ import { type Limiter, clientIpOf } from '../hire/rate-limit';
 import type { Recorder } from './recorder';
 
 /** The canonical 43-byte transparent GIF89a. */
-const GIF = Uint8Array.from(
-  atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'),
-  (char) => char.charCodeAt(0),
+const GIF = Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'), char =>
+  char.charCodeAt(0),
 );
 
 const gif = (): Response =>
@@ -44,7 +43,13 @@ export const handlePixel = async (
   const known = page ? await deps.knownPaths().catch(() => null) : null;
 
   if (page && known?.has(page.path) && deps.limiter.check(clientIpOf(request.headers))) {
-    await deps.recorder.record(request, { kind: 'pageview', path: page.path, source: 'pixel', referrer: null, search: page.search });
+    await deps.recorder.record(request, {
+      kind: 'pageview',
+      path: page.path,
+      source: 'pixel',
+      referrer: null,
+      search: page.search,
+    });
   }
 
   return gif();

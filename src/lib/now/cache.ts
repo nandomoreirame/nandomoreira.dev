@@ -28,7 +28,7 @@ export const createCachedSource = <T>({
     if (!value && failure && now() - failure.at < failureTtlMs) throw failure.error;
 
     inflight ??= load()
-      .then((data) => {
+      .then(data => {
         value = { data, at: now() };
         failure = undefined;
         return data;

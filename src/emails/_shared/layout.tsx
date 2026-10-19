@@ -48,7 +48,15 @@ export const EmailLayout = ({ preview, eyebrow, title, footer, children }: Props
           {'// '}
           {eyebrow}
         </Text>
-        <Text style={{ margin: `${s.xs}px 0 ${s.lg}px`, fontFamily: f.serif, fontSize: 30, lineHeight: 1.2, color: c.foreground }}>
+        <Text
+          style={{
+            margin: `${s.xs}px 0 ${s.lg}px`,
+            fontFamily: f.serif,
+            fontSize: 30,
+            lineHeight: 1.2,
+            color: c.foreground,
+          }}
+        >
           {title}
         </Text>
 
@@ -64,7 +72,9 @@ export const EmailLayout = ({ preview, eyebrow, title, footer, children }: Props
         </Section>
 
         <Hr style={{ margin: `${s.xl}px 0 ${s.md}px`, border: 'none', borderTop: `1px solid ${c.border}` }} />
-        <Text style={{ margin: 0, fontFamily: f.mono, fontSize: 12, lineHeight: 1.6, color: c.mutedForeground }}>{footer}</Text>
+        <Text style={{ margin: 0, fontFamily: f.mono, fontSize: 12, lineHeight: 1.6, color: c.mutedForeground }}>
+          {footer}
+        </Text>
       </Container>
     </Body>
   </Html>

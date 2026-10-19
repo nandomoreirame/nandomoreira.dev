@@ -11,16 +11,16 @@ type RenderProps = {
 };
 
 const render = async (props: RenderProps = {}) => {
-  const {
-    title = 'Serviços // Fernando Moreira',
-    description = 'Sites e sistemas.',
-    slug,
-    serviceName,
-  } = props;
+  const { title = 'Serviços // Fernando Moreira', description = 'Sites e sistemas.', slug, serviceName } = props;
   const path = slug ? `/servicos/${slug}` : '/servicos';
   const container = await AstroContainer.create();
   return container.renderToString(SalesLayout, {
-    props: { title, description, ...(slug !== undefined ? { slug } : {}), ...(serviceName !== undefined ? { serviceName } : {}) },
+    props: {
+      title,
+      description,
+      ...(slug !== undefined ? { slug } : {}),
+      ...(serviceName !== undefined ? { serviceName } : {}),
+    },
     slots: { default: '<h1>Teste</h1>' },
     request: new Request(`https://nandomoreira.dev${path}`),
   });
@@ -28,9 +28,9 @@ const render = async (props: RenderProps = {}) => {
 
 const serviceFromHtml = (html: string) => {
   const blocks = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(
-    (match) => JSON.parse(match[1]!) as Record<string, unknown>,
+    match => JSON.parse(match[1]!) as Record<string, unknown>,
   );
-  const service = blocks.find((block) => block['@type'] === 'Service');
+  const service = blocks.find(block => block['@type'] === 'Service');
   expect(service).toBeDefined();
   return service!;
 };
@@ -85,8 +85,7 @@ describe('SalesLayout', () => {
 
     const headerAndFooter = html.match(/<header[\s\S]*?<\/header>|<footer[\s\S]*?<\/footer>/g) ?? [];
     expect(headerAndFooter.length).toBeGreaterThanOrEqual(2);
-    const links = headerAndFooter
-      .flatMap((chunk) => [...chunk.matchAll(/<a\b[^>]*>/g)].map((match) => match[0]!));
+    const links = headerAndFooter.flatMap(chunk => [...chunk.matchAll(/<a\b[^>]*>/g)].map(match => match[0]!));
     expect(links.length).toBeGreaterThan(0);
     for (const link of links) {
       expect(link).toContain('min-h-11');

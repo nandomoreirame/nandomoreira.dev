@@ -38,7 +38,7 @@ const uniqueSlugLoader = (directory: string, label: string) => {
       const contentDir = fileURLToPath(new URL(`./content/${directory}`, import.meta.url));
       const paths = await listMarkdownFiles(contentDir);
       const files = await Promise.all(
-        paths.map(async (path) => ({
+        paths.map(async path => ({
           path,
           source: await readFile(path, 'utf8'),
         })),
