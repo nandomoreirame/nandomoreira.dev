@@ -258,8 +258,11 @@ declarado e inexistente quebra o rollout. Para cada fonte, nesta ordem:
 | `now-spotify-client-id` | `SPOTIFY_CLIENT_ID` |
 | `now-spotify-client-secret` | `SPOTIFY_CLIENT_SECRET` |
 | `now-spotify-refresh-token` | `SPOTIFY_REFRESH_TOKEN` |
+| `now-github-token` | `GITHUB_TOKEN` |
 
-`GITHUB_TOKEN` fica de fora: a API pública responde sem token.
+O `GITHUB_TOKEN` (fine-grained, só repositórios públicos em leitura) existe por causa do calendário de contribuições: a API GraphQL do GitHub exige token mesmo para dado público. A lista de repositórios funcionaria sem ele.
+
+**Armadilha:** o `firebase apphosting:secrets:set` oferece "adicionar ao apphosting.yaml" e, rodado fora da pasta do projeto, **sobrescreve o arquivo inteiro** só com a entrada nova (aconteceu em 2026-10-19). Responda não a essa pergunta e acrescente a entrada à mão.
 
 ## Homologação no homelab
 

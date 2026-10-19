@@ -51,6 +51,13 @@ env:
     availability:
       - RUNTIME
 
+  # Contribution calendar (GitHub GraphQL needs a token even for public data).
+  # Fine-grained, public repositories read-only, no extra permission.
+  - variable: GITHUB_TOKEN
+    secret: now-github-token
+    availability:
+      - RUNTIME
+
   # Visit counting. Declare only after the secret exists and the backend can
   # read it; a missing one breaks the rollout. A short secret turns measurement
   # off instead of crashing boot.
