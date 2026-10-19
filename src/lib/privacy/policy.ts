@@ -57,6 +57,7 @@ export const privacySections: PolicySection[] = [
       'Pelos formulários de contato e de serviços, ou pela API para agents (/api/hire), chegam os campos que você preenche: nome, contato (e-mail ou WhatsApp), empresa, orçamento, interesses, serviço desejado e mensagem. A finalidade é responder você e tratar uma possível proposta de trabalho (art. 7º, V da LGPD).',
       'Junto com a mensagem ficam o endereço IP e o user agent, usados só para limitar abuso e distinguir um agent de um script (legítimo interesse, art. 7º, IX).',
       'A mensagem fica no Firestore, banco do Google Cloud na região us-east4, nos Estados Unidos, e uma cópia chega ao meu e-mail pelo Resend, serviço de envio de e-mail também nos Estados Unidos.',
+      'Se o contato que você deixar no formulário for um e-mail, ele recebe uma confirmação automática pelo Resend, dizendo que a mensagem chegou. Ela não repete nada do que você escreveu além do primeiro nome, e o e-mail não entra em nenhuma lista. Pedidos pela API para agents não recebem confirmação.',
       'A mensagem é apagada automaticamente 12 meses depois do envio, e a cópia no meu e-mail segue o mesmo prazo. O IP e o user agent ficam em um registro separado, apagado depois de 30 dias, e não vão no e-mail.',
       'Não envie dados sensíveis, como saúde, documentos ou senhas. Nada disso é necessário para começar uma conversa.',
     ],
@@ -68,6 +69,7 @@ export const privacySections: PolicySection[] = [
       'Antes de baixar o currículo, a página /curriculo pede nome, empresa e e-mail, todos opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
       'Todo download, com ou sem esses dados, passa por /go/curriculo e entra na contagem de visitas descrita acima como um download, ligado ao código daquele dia, sem nome nem e-mail. Se você pular, é só isso que fica.',
       'Se você deixar nome, empresa ou e-mail, eles ficam no Firestore, junto com a data, e uma cópia chega ao meu e-mail pelo Resend. Não guardo o IP nem o user agent desse envio. O registro é apagado automaticamente 12 meses depois, e a cópia no meu e-mail segue o mesmo prazo.',
+      'Se você deixar um e-mail, ele recebe uma confirmação automática pelo Resend, agradecendo o download. Ela não repete nada do que você digitou além do primeiro nome, e o e-mail não entra em nenhuma lista.',
     ],
   },
   {

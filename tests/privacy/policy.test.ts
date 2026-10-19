@@ -39,6 +39,15 @@ describe('privacy policy content', () => {
     expect(text).not.toMatch(/nem um registro anônimo do download/);
   });
 
+  it('mentions the automatic confirmation sent to the e-mail the visitor gave', () => {
+    for (const id of ['formulario', 'curriculo']) {
+      const section = privacySections.find((candidate) => candidate.id === id);
+      const text = (section?.paragraphs ?? []).join('\n');
+      expect(text, id).toMatch(/confirmação automática/);
+      expect(text, id).toMatch(/primeiro nome/);
+    }
+  });
+
   it('states the retention the code enforces', () => {
     const text = all();
     expect(text).toContain('12 meses');
