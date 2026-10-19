@@ -50,6 +50,8 @@ export const ogPages = async (): Promise<OgPage[]> => {
     staticPage('/mcp', 'Este site fala com Agentes de IA', 'MCP', 'terminal'),
     staticPage('/setup', 'O que eu uso', 'Setup', 'windows'),
     staticPage('/now', 'O que estou fazendo agora', 'Agora', 'timeline'),
+    staticPage('/version', 'As versões deste site desde 2015', 'Versões', 'gantt'),
+    staticPage('/releases', 'O que entrou em cada versão', 'Lançamentos', 'timeline'),
     staticPage('/privacidade', 'Política de privacidade', 'Privacidade', 'panels'),
     staticPage('/curriculo', profile.headline, 'Currículo', 'ascent'),
     staticPage(

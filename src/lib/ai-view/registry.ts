@@ -6,6 +6,9 @@ import { loadNow } from '../now/load';
 import { nowMarkdown } from '../now/markdown';
 import { NOW_PATH } from '../now/now';
 import { SETUP_PATH, setupMarkdown } from '../setup/setup';
+import { HISTORY_PATH, historyMarkdown } from '../history/history';
+import { loadSiteCommits } from '../history/commits';
+import { RELEASES_PATH, releasesMarkdown } from '../releases/releases';
 import { absoluteUrl } from '../aeo/urls';
 import { collectionOfBlock, type CatalogCollection } from '../catalog/groups';
 import {
@@ -130,6 +133,19 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
 
   if (key === 'setup') {
     return page('Setup', SETUP_PATH, `${SETUP_PATH}.md`, setupMarkdown({ site }));
+  }
+
+  if (key === 'version') {
+    return page(
+      'Versões do site',
+      HISTORY_PATH,
+      `${HISTORY_PATH}.md`,
+      historyMarkdown({ site, commits: await loadSiteCommits(), now: new Date() }),
+    );
+  }
+
+  if (key === 'releases') {
+    return page('Lançamentos', RELEASES_PATH, `${RELEASES_PATH}.md`, releasesMarkdown({ site }));
   }
 
   if (key === 'now') {
