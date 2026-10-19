@@ -160,9 +160,10 @@ dialog.addEventListener('close', () => {
 
 /** Opens the palette (REQ-001, REQ-002); `from` gets the focus back on close. */
 export const open = async (from: HTMLElement | null) => {
-  input.value = '';
-  // Ctrl+K again while open would hand back the palette's own input.
+  // Ctrl+K again while open would hand back the palette's own input and wipe
+  // the query: only a new opening resets both.
   if (!dialog.open) {
+    input.value = '';
     opener = from;
     dialog.showModal();
   }

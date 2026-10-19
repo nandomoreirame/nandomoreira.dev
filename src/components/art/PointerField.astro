@@ -108,6 +108,7 @@
       trigger.addEventListener('click', () => palette().then((module) => module.open(trigger)));
     });
     let loaded: Awaited<ReturnType<typeof palette>> | undefined;
+    let queue: [string, number][] | undefined;
     // Touch screens get no letter shortcuts, even with a keyboard attached.
     const touch = matchMedia('(hover: none)').matches;
     document.addEventListener('keydown', (event) => {
@@ -122,10 +123,18 @@
         !target.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
       ) {
         // G and the one-letter shortcuts fetch the module; once it is here,
-        // every letter goes through, so G + letter reaches it too.
+        // every letter goes through, so G + letter reaches it too. Letters
+        // typed while it loads wait in the queue instead of being lost.
         const { key, timeStamp } = event;
         if (loaded) loaded.press(key, timeStamp);
-        else if (/^[glemi]$/i.test(key)) palette().then((module) => (loaded = module).press(key, timeStamp));
+        else if (queue) queue.push([key, timeStamp]);
+        else if (/^[glemi]$/i.test(key)) {
+          const pending: [string, number][] = (queue = [[key, timeStamp]]);
+          palette().then((module) => {
+            loaded = module;
+            pending.forEach(([letter, at]) => module.press(letter, at));
+          });
+        }
       }
     });
   }

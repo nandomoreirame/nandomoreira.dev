@@ -179,6 +179,24 @@ describe('palette module', () => {
     expect(document.activeElement).toBe(opener);
   });
 
+  it('keeps the typed query when Ctrl+K fires again while open', async () => {
+    const palette = await load();
+    await palette.open(null);
+    type('homelab');
+    await palette.open(input());
+    expect(input().value).toBe('homelab');
+    expect(listbox().textContent).toContain('Meu homelab');
+  });
+
+  it('starts empty on every new opening', async () => {
+    const palette = await load();
+    await palette.open(null);
+    type('homelab');
+    dialog().close();
+    await palette.open(null);
+    expect(input().value).toBe('');
+  });
+
   it('closes on a click on the backdrop, not on a click inside the panel', async () => {
     const palette = await load();
     await palette.open(null);

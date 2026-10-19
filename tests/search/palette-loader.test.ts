@@ -29,6 +29,11 @@ describe('palette loader in the site script', () => {
     expect(loader).not.toMatch(/armGo/);
   });
 
+  it('queues the letters typed while the module is still loading, so G + letter survives a slow network', () => {
+    expect(loader).toMatch(/else if \(queue\) queue\.push\(\[key, timeStamp\]\)/);
+    expect(loader).toMatch(/pending\.forEach\(\(\[letter, at\]\) => module\.press\(letter, at\)\)/);
+  });
+
   it('turns the letter shortcuts off on touch screens', () => {
     expect(loader).toMatch(/matchMedia\('\(hover: none\)'\)\.matches/);
   });
