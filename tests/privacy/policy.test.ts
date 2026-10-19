@@ -27,14 +27,16 @@ describe('privacy policy content', () => {
     ]);
   });
 
-  it('explains the optional e-mail before the CV download, and that skipping records nothing', () => {
+  it('explains the optional details before the CV download, and what skipping still records', () => {
     const section = privacySections.find((candidate) => candidate.id === 'curriculo');
     const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
     expect(text).toMatch(/opcion(al|ais)/);
     expect(text).toContain('12 meses');
-    expect(text).toMatch(/nada é gravado/);
     expect(text).toMatch(/[Nn]ão guardo o IP/);
-    expect(text).toMatch(/nome e (o )?e-mail/);
+    expect(text).toMatch(/nome, empresa e e-mail/);
+    // Every download goes through /go/curriculo and counts in the visit measurement.
+    expect(text).toContain('/go/curriculo');
+    expect(text).not.toMatch(/nem um registro anônimo do download/);
   });
 
   it('states the retention the code enforces', () => {
@@ -58,7 +60,7 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-18');
+    expect(POLICY_UPDATED_AT).toBe('2026-10-19');
   });
 
   it('describes the visit measurement honestly', () => {
@@ -108,7 +110,7 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('18 de outubro de 2026');
+    expect(await render()).toContain('19 de outubro de 2026');
   });
 });
 

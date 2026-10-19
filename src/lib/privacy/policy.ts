@@ -6,7 +6,7 @@ import { absoluteUrl } from '../aeo/urls';
  * or by the platform default, so changing a number here without changing that
  * is how the policy starts to lie.
  */
-export const POLICY_UPDATED_AT = '2026-10-18';
+export const POLICY_UPDATED_AT = '2026-10-19';
 
 export interface PolicySection {
   id: string;
@@ -26,7 +26,7 @@ export const privacySections: PolicySection[] = [
     id: 'nao-coletado',
     title: 'O que não é coletado',
     paragraphs: [
-      'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor e não guarda seu IP nem seu nome. Enquanto você só navega, ela não diz quem você é; se você enviar o formulário ou baixar o currículo, as páginas que viu naquele dia passam a ir junto com o nome e o e-mail que você informou.',
+      'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor e não guarda seu IP nem seu nome. Enquanto você só navega, ela não diz quem você é; se você enviar o formulário ou baixar o currículo, as páginas que viu naquele dia passam a ir junto com o nome, a empresa e o e-mail que você informou.',
       'Fontes, estilos e o único script são servidos pelo próprio domínio. O script faz o efeito do ponteiro e o botão Copiar, e não envia nada a lugar nenhum.',
       'Uma exceção: um texto antigo do blog exibe uma imagem hospedada no CodePen. Ao abrir esse texto, seu navegador pede a imagem ao CodePen, que recebe seu endereço IP como em qualquer requisição.',
     ],
@@ -38,7 +38,7 @@ export const privacySections: PolicySection[] = [
       'Para saber quais textos e canais trazem leitores, o servidor conta as visitas sem nenhum script e sem cookie. Nas páginas montadas a cada acesso, a contagem acontece na própria requisição; nos textos e cases, que são arquivos estáticos, uma imagem transparente de 1×1 pixel servida pelo próprio domínio faz a mesma contagem.',
       'Em cada visita guardo a página, o horário, o site de onde você veio (só o domínio, como linkedin.com), os parâmetros utm_source, utm_medium e utm_campaign quando o link os trouxer, o país informado pela Cloudflare, a cidade e o estado aproximados que ela deduz do seu IP (esses dois só no registro de cada visita, apagado em 30 dias, nunca nos totais) e o tipo de visitante (pessoa, agente de IA ou robô).',
       'Para ligar as páginas de uma mesma visita sem cookie, calculo um código a partir do seu IP e do seu navegador, misturados com uma chave secreta que muda todo dia. O IP não é gravado, e o código de um dia não se liga ao do dia seguinte. Se você enviar o formulário ou baixar o currículo, o aviso que eu recebo inclui as páginas que você viu naquele dia.',
-      'Os cliques nos meus contatos e nos links dos projetos passam por um endereço /go/ do próprio site antes de seguir para o destino, para que eu saiba quais são usados.',
+      'Os cliques nos meus contatos e nos links dos projetos, e o download do currículo, passam por um endereço /go/ do próprio site antes de seguir para o destino, para que eu saiba quais são usados.',
       'Os registros de cada visita são apagados em 30 dias. Depois disso ficam só totais por dia, sem nenhum código de visitante, por 24 meses. Tudo fica no Firestore, do Google Cloud, nos Estados Unidos. Base legal: legítimo interesse (art. 7º, IX da LGPD).',
     ],
   },
@@ -63,11 +63,11 @@ export const privacySections: PolicySection[] = [
   },
   {
     id: 'curriculo',
-    title: 'Nome e e-mail antes de baixar o currículo',
+    title: 'Nome, empresa e e-mail antes de baixar o currículo',
     paragraphs: [
-      'Antes de baixar o currículo, a página /curriculo pede nome e e-mail, os dois opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
-      'Se você pular, nada é gravado: nem nome e e-mail, nem um registro anônimo do download.',
-      'Se você deixar nome ou e-mail, eles ficam no Firestore, junto com a data, e uma cópia chega ao meu e-mail pelo Resend. Não guardo o IP nem o user agent desse envio. O registro é apagado automaticamente 12 meses depois, e a cópia no meu e-mail segue o mesmo prazo.',
+      'Antes de baixar o currículo, a página /curriculo pede nome, empresa e e-mail, todos opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
+      'Todo download, com ou sem esses dados, passa por /go/curriculo e entra na contagem de visitas descrita acima como um download, ligado ao código daquele dia, sem nome nem e-mail. Se você pular, é só isso que fica.',
+      'Se você deixar nome, empresa ou e-mail, eles ficam no Firestore, junto com a data, e uma cópia chega ao meu e-mail pelo Resend. Não guardo o IP nem o user agent desse envio. O registro é apagado automaticamente 12 meses depois, e a cópia no meu e-mail segue o mesmo prazo.',
     ],
   },
   {

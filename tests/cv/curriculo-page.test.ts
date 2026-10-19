@@ -15,6 +15,21 @@ const render = async (query = '') => {
 const main = (html: string) => html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
 describe('/curriculo', () => {
+  it('centres the content and drops the terminal path', async () => {
+    const html = main(await render());
+    const article = html.match(/<article[^>]*>/)?.[0] ?? '';
+    const form = html.match(/<section[^>]*>/)?.[0] ?? '';
+
+    expect(html).not.toContain('data-page-path');
+    expect(html).not.toContain('~/curriculo');
+    expect(article).toMatch(/\bmx-auto\b/);
+    expect(article).toMatch(/\bitems-center\b/);
+    expect(html).toMatch(/<header[^>]*\btext-center\b/);
+    expect(form).toMatch(/\bw-full\b/);
+    // The card is about 30% narrower than the 68ch column (asked on 2026-10-19).
+    expect(form).toMatch(/max-w-\[48ch\]/);
+  });
+
   it('asks for an optional name too', async () => {
     const html = main(await render());
     const input = html.match(/<input[^>]*name="nome"[^>]*>/)?.[0] ?? '';
@@ -22,8 +37,29 @@ describe('/curriculo', () => {
     expect(input).toMatch(/type="text"/);
     expect(input).toMatch(/autocomplete="name"/);
     expect(input).not.toMatch(/\brequired\b/);
-    expect(html).toMatch(/<label[^>]*for="cv-nome"[^>]*>\s*Nome \(opcional\)/);
+    expect(html).toMatch(/<label[^>]*for="cv-nome"[^>]*>\s*Nome\s*<\/label>/);
     expect(html.indexOf('name="nome"')).toBeLessThan(html.indexOf('name="email"'));
+  });
+
+  it('asks for an optional company, between the name and the e-mail', async () => {
+    const html = main(await render());
+    const input = html.match(/<input[^>]*name="empresa"[^>]*>/)?.[0] ?? '';
+
+    expect(input).toMatch(/type="text"/);
+    expect(input).toMatch(/autocomplete="organization"/);
+    expect(input).toMatch(/maxlength="200"/);
+    expect(input).not.toMatch(/\brequired\b/);
+    expect(html).toMatch(/<label[^>]*for="cv-empresa"[^>]*>\s*Empresa\s*<\/label>/);
+    expect(html.indexOf('name="nome"')).toBeLessThan(html.indexOf('name="empresa"'));
+    expect(html.indexOf('name="empresa"')).toBeLessThan(html.indexOf('name="email"'));
+  });
+
+  it('labels the fields without "(opcional)", saying it once in the lead', async () => {
+    const html = main(await render());
+
+    expect(html).not.toMatch(/\(opcional\)/i);
+    expect(html).toMatch(/<label[^>]*for="cv-email"[^>]*>\s*E-mail\s*<\/label>/);
+    expect(html).toContain('Todos são opcionais');
   });
 
   it('asks for an optional e-mail, posting to /api/cv without JavaScript', async () => {
@@ -42,23 +78,32 @@ describe('/curriculo', () => {
     const html = main(await render());
 
     expect(html).toContain('só para eu saber quem está baixando');
-    expect(html).toMatch(/opcional/i);
+    expect(html).toMatch(/opcion(al|ais)/i);
     expect(html).toMatch(/href="\/privacidade#curriculo"/);
   });
 
-  it('lets the visitor skip straight to the PDF', async () => {
+  it('lets the visitor skip straight to the PDF, through /go so the download counts', async () => {
     const html = main(await render());
-    const skip = html.match(/<a[^>]*href="\/curriculo-fernando-moreira\.pdf"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const skip = html.match(/<a[^>]*href="\/go\/curriculo"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
 
     expect(skip).toMatch(/\bdownload="curriculo-fernando-moreira-senior-ai-engineer-\d{12}\.pdf"/);
     expect(skip).toMatch(/Pular/);
+    expect(html).not.toContain('href="/curriculo-fernando-moreira.pdf"');
+  });
+
+  it('downloads through /go after the form too', async () => {
+    const html = main(await render('?envio=ok'));
+    const link = html.match(/<a[^>]*href="\/go\/curriculo"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+
+    expect(link).toMatch(/\bdownload="curriculo-fernando-moreira-senior-ai-engineer-\d{12}\.pdf"/);
+    expect(html).not.toContain('href="/curriculo-fernando-moreira.pdf"');
   });
 
   it('offers the download once the e-mail was sent', async () => {
     const html = main(await render('?envio=ok'));
 
     expect(html).toMatch(/role="status"/);
-    expect(html).toMatch(/<a[^>]*href="\/curriculo-fernando-moreira\.pdf"[^>]*download=/);
+    expect(html).toMatch(/<a[^>]*href="\/go\/curriculo"[^>]*download=/);
     expect(html).not.toMatch(/<form/);
   });
 

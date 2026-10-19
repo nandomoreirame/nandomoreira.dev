@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { caseGoPath, contactGoPath, handleOutbound, outboundTable } from '../../src/lib/analytics/outbound';
+import { CV_GO_PATH, caseGoPath, contactGoPath, handleOutbound, outboundTable } from '../../src/lib/analytics/outbound';
+import { CV_PDF_PATH } from '../../src/lib/cv/paths';
 import type { Hit } from '../../src/lib/analytics/recorder';
 
 const table = outboundTable({
@@ -65,6 +66,20 @@ describe('outbound', () => {
     });
 
     expect([...withGone.keys()]).toEqual(['/go/portfolio/vivo/live']);
+  });
+
+  it('serves the CV through /go and records the download as a cv conversion', async () => {
+    expect(CV_GO_PATH).toBe('/go/curriculo');
+    const { response, hits } = await go(CV_GO_PATH);
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe(CV_PDF_PATH);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(hits).toHaveLength(1);
+    expect(hits[0]).toMatchObject({ kind: 'conversion', path: CV_GO_PATH, conversion: { type: 'cv', target: 'curriculo' } });
+  });
+
+  it('keeps the CV out of the profile-built table', () => {
+    expect([...table.keys()]).not.toContain(CV_GO_PATH);
   });
 
   it('does not record a HEAD', async () => {

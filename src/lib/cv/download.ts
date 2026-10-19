@@ -7,9 +7,9 @@ import { FORM_HONEYPOT } from '../hire/form';
 import { type Limiter, clientIpOf } from '../hire/rate-limit';
 import { readLimitedText } from '../hire/read-body';
 
-/** The file /sobre offers, served from public/. */
-export const CV_PDF_PATH = '/curriculo-fernando-moreira.pdf';
-export const CV_PAGE = '/curriculo';
+import { CV_PAGE } from './paths';
+
+export { CV_PAGE, CV_PDF_PATH } from './paths';
 
 /**
  * The name the browser saves the PDF under, stamped with the moment of the
@@ -40,10 +40,11 @@ export const CV_COLLECTION = 'cv_downloads';
  * Only what the visitor typed, on purpose: the page asks "só para eu saber quem
  * está baixando", so the IP and the user agent the contact form keeps have no
  * use here. The rate limit reads the IP in memory and never writes it.
- * Both fields are optional; a record exists only when at least one was given.
+ * Every field is optional; a record exists only when at least one was given.
  */
 export interface CvDownload {
   name: string | null;
+  company: string | null;
   email: string | null;
   receivedAt: string;
   /** False until delivery is confirmed, never optimistically true. */
@@ -74,11 +75,12 @@ const RETENTION_MONTHS = 12;
 
 const emailSchema = z.email().max(254);
 const MAX_NAME = 200;
+const MAX_COMPANY = 200;
 
 /** Where the form lands; the page reads `envio`. */
 type Outcome = 'ok' | 'invalido' | 'limite';
 /** Which field the page should point the visitor back to. */
-type Field = 'nome' | 'email';
+type Field = 'nome' | 'empresa' | 'email';
 
 const redirect = (location: string): Response =>
   new Response(null, { status: 303, headers: { location, 'cache-control': 'no-store' } });
@@ -87,13 +89,13 @@ const outcome = (kind: Outcome, field: Field = 'email'): Response =>
   redirect(kind === 'ok' ? `${CV_PAGE}?envio=ok#baixar` : `${CV_PAGE}?envio=${kind}#${field}`);
 
 export const toCvDownload = (
-  { name, email }: { name: string | null; email: string | null },
+  { name, company, email }: { name: string | null; company: string | null; email: string | null },
   now: Date,
 ): CvDownload => {
   const expiresAt = new Date(now);
   expiresAt.setUTCMonth(expiresAt.getUTCMonth() + RETENTION_MONTHS);
 
-  return { name, email, receivedAt: now.toISOString(), notified: false, expiresAt };
+  return { name, company, email, receivedAt: now.toISOString(), notified: false, expiresAt };
 };
 
 /**
@@ -121,15 +123,17 @@ export const handleCvDownload = async (
   if ((fields.get(FORM_HONEYPOT) ?? '').trim() !== '') return outcome('ok');
 
   const name = (fields.get('nome') ?? '').trim();
+  const company = (fields.get('empresa') ?? '').trim();
   const email = (fields.get('email') ?? '').trim();
 
-  // Skipping is skipping: no record, not even an anonymous one.
-  if (name === '' && email === '') return outcome('ok');
+  // Nothing typed, nothing stored here (the download itself counts in /go).
+  if (name === '' && company === '' && email === '') return outcome('ok');
 
   if (name.length > MAX_NAME) return outcome('invalido', 'nome');
+  if (company.length > MAX_COMPANY) return outcome('invalido', 'empresa');
   if (email !== '' && !emailSchema.safeParse(email).success) return outcome('invalido', 'email');
 
-  const download = toCvDownload({ name: name || null, email: email || null }, now());
+  const download = toCvDownload({ name: name || null, company: company || null, email: email || null }, now());
 
   let id: string;
   try {
@@ -183,6 +187,7 @@ export const renderCvNotification = (download: CvDownload, id: string, journey?:
     'Someone downloaded your CV from /curriculo and left their details.',
     '',
     `Name:     ${download.name ?? 'not given'}`,
+    `Company:  ${download.company ?? 'not given'}`,
     `E-mail:   ${download.email ?? 'not given'}`,
     `Received: ${download.receivedAt}`,
     `Record:   ${id}`,
@@ -199,7 +204,7 @@ export const resendCvNotifier = (config: HireConfig): CvNotifier => {
       const { error } = await client.emails.send({
         from: config.notifyFrom,
         to: config.notifyTo,
-        subject: `CV downloaded by ${download.name ?? download.email}`,
+        subject: `CV downloaded by ${download.name ?? download.company ?? download.email}`,
         text: renderCvNotification(download, id, journey),
       });
 

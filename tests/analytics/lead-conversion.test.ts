@@ -147,7 +147,12 @@ describe('notification text', () => {
   });
 
   it('appends the journey to the CV mail', () => {
-    const download = toCvDownload({ name: 'Ada', email: null }, now());
+    const download = toCvDownload({ name: 'Ada', company: null, email: null }, now());
     expect(renderCvNotification(download, 'cv-1', 'Journey today')).toContain('Journey today');
+  });
+
+  it('names the company in the CV mail', () => {
+    const download = toCvDownload({ name: null, company: 'Acme', email: null }, now());
+    expect(renderCvNotification(download, 'cv-1')).toMatch(/Company:\s+Acme/);
   });
 });

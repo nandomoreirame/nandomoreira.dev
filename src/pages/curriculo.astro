@@ -1,11 +1,11 @@
 ---
 import EmptyState from '../components/ui/EmptyState.astro';
 import Button from '../components/ui/Button.astro';
-import PageHeader from '../components/ui/PageHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
-import { CV_PDF_PATH, cvFileName } from '../lib/cv/download';
+import { CV_GO_PATH } from '../lib/analytics/outbound';
+import { cvFileName } from '../lib/cv/download';
 import { FORM_HONEYPOT } from '../lib/hire/form';
 
 export const prerender = false;
@@ -18,7 +18,7 @@ const envio = Astro.url.searchParams.get('envio');
 const sent = envio === 'ok';
 const alert =
   envio === 'invalido'
-    ? 'Algo no que você digitou não passou: confira o e-mail (e o nome, se estiver muito longo), ou pule e baixe direto.'
+    ? 'Algo no que você digitou não passou: confira o e-mail (e o nome ou a empresa, se estiverem muito longos), ou pule e baixe direto.'
     : envio === 'limite'
       ? 'Muitas tentativas seguidas. Espere alguns minutos, ou pule e baixe direto.'
       : undefined;
@@ -33,13 +33,17 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
   description="Baixe o currículo em PDF."
   noindex
 >
-  <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader
-      title="Antes de baixar"
-      description="Se quiser, deixe seu nome e e-mail. É só para eu saber quem está baixando meu currículo e poder retornar o contato, caso faça sentido. Os dois são opcionais: dá para pular e baixar direto."
-    />
+  {/* A single task, so the page is centred and has no terminal path: the
+      header and the form share one column (asked on 2026-10-19). */}
+  <article class="mx-auto mb-3xl flex max-w-[68ch] flex-col items-center gap-xl">
+    <header class="mt-2xl text-center">
+      <h1 class="font-serif text-h1 font-normal tracking-tight text-balance text-foreground sm:text-display">Antes de baixar</h1>
+      <p class="mt-md text-h3 text-pretty text-muted-foreground">
+        Se quiser, deixe seu nome, empresa e e-mail. É só para eu saber quem está baixando meu currículo e poder retornar o contato, caso faça sentido. Todos são opcionais: dá para pular e baixar direto.
+      </p>
+    </header>
 
-    <section class="flex max-w-[68ch] flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg">
+    <section class="flex w-full max-w-[48ch] flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg">
       {
         sent ? (
           <EmptyState
@@ -47,9 +51,9 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
             role="status"
             icon="lucide:file-check"
             title="Pronto, é só baixar"
-            description="Obrigado. Se você deixou nome ou e-mail, eles chegaram até mim."
+            description="Obrigado. O que você deixou chegou até mim."
           >
-            <Button href={CV_PDF_PATH} download={fileName}>
+            <Button href={CV_GO_PATH} download={fileName}>
               Baixar currículo (PDF)
             </Button>
           </EmptyState>
@@ -66,7 +70,7 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
             <form action="/api/cv" method="post" class="flex flex-col gap-lg">
               <div>
                 <label for="cv-nome" class={labelClass}>
-                  Nome (opcional)
+                  Nome
                 </label>
                 <input
                   id="cv-nome"
@@ -80,8 +84,23 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
               </div>
 
               <div>
+                <label for="cv-empresa" class={labelClass}>
+                  Empresa
+                </label>
+                <input
+                  id="cv-empresa"
+                  name="empresa"
+                  type="text"
+                  autocomplete="organization"
+                  maxlength="200"
+                  aria-describedby={alert ? 'email-alerta' : undefined}
+                  class={field}
+                />
+              </div>
+
+              <div>
                 <label for="cv-email" class={labelClass}>
-                  E-mail (opcional)
+                  E-mail
                 </label>
                 <input
                   id="cv-email"
@@ -106,7 +125,7 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
 
               <div class="flex flex-wrap items-center gap-md">
                 <Button type="submit">Enviar e baixar</Button>
-                <Button href={CV_PDF_PATH} variant="ghost" download={fileName}>
+                <Button href={CV_GO_PATH} variant="ghost" download={fileName}>
                   Pular e baixar
                 </Button>
               </div>

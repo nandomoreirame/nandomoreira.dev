@@ -50,6 +50,7 @@ describe('handleCvDownload', () => {
     expect(saved).toEqual([
       {
         name: 'Ana Souza',
+        company: null,
         email: 'ana@example.com',
         receivedAt: '2026-10-11T12:00:00.000Z',
         notified: false,
@@ -78,6 +79,19 @@ describe('handleCvDownload', () => {
     expect(saved).toEqual([expect.objectContaining({ name: null, email: 'ana@example.com' })]);
   });
 
+  it('stores the company, trimmed, and keeps it even without name or e-mail', async () => {
+    await post({ nome: '', empresa: '  Acme Ltda ', email: '' });
+
+    expect(saved).toEqual([expect.objectContaining({ name: null, company: 'Acme Ltda', email: null })]);
+  });
+
+  it('caps the company, since it is free text from a stranger', async () => {
+    const response = await post({ empresa: 'a'.repeat(201) });
+
+    expect(locationOf(response)).toBe('/curriculo?envio=invalido#empresa');
+    expect(save).not.toHaveBeenCalled();
+  });
+
   it('caps the name, since it is free text from a stranger', async () => {
     const response = await post({ nome: 'a'.repeat(201) });
 
@@ -85,8 +99,8 @@ describe('handleCvDownload', () => {
     expect(save).not.toHaveBeenCalled();
   });
 
-  it('records nothing when both fields are left empty', async () => {
-    const response = await post({ nome: ' ', email: '   ' });
+  it('records nothing when every field is left empty', async () => {
+    const response = await post({ nome: ' ', empresa: ' ', email: '   ' });
 
     expect(locationOf(response)).toBe('/curriculo?envio=ok#baixar');
     expect(save).not.toHaveBeenCalled();
