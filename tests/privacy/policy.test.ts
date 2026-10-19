@@ -39,6 +39,12 @@ describe('privacy policy content', () => {
     expect(text).not.toMatch(/nem um registro anônimo do download/);
   });
 
+  it('describes a single contact form, the one the services pages lead to', () => {
+    const text = (privacySections.find((candidate) => candidate.id === 'formulario')?.paragraphs ?? []).join('\n');
+    expect(text).not.toMatch(/formulários de contato e de serviços/);
+    expect(text).toMatch(/página de serviços leva/);
+  });
+
   it('mentions the automatic confirmation sent to the e-mail the visitor gave', () => {
     for (const id of ['formulario', 'curriculo']) {
       const section = privacySections.find((candidate) => candidate.id === id);

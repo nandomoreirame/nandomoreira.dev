@@ -15,12 +15,20 @@ import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
 import { BUDGET_OPTIONS, INTEREST_OPTIONS, outcomeMessage } from '../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../lib/hire/form';
+import { salesVisitOf } from '../lib/sales/form';
 import { salesLink } from '../lib/sales/host';
+import { SERVICE_LABELS } from '../lib/sales/service-labels';
 
 const profile = await getProfile();
 const email = profile.contacts.find((contact) => contact.kind === 'email');
 
 const outcome = outcomeMessage(Astro.url.searchParams.get('envio'));
+// The sales pages have no form of their own: they send the visitor here with
+// ?origem and ?servico. That visit gets a leaner page, without what is meant
+// for agents and developers, and the chosen service goes along with the form.
+const visit = salesVisitOf(Astro.url.searchParams);
+const fromSales = visit !== undefined;
+const serviceLabel = visit?.service ? SERVICE_LABELS[visit.service] : undefined;
 // Success replaces the form; a failure keeps it, with the alert above it.
 const sent = outcome?.role === 'status';
 
@@ -45,18 +53,22 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
       description="Conte o que você precisa. Respondo com o que dá para fazer e o que não dá."
     />
 
-    <p class="text-small text-muted-foreground">
-      Tem um negócio e precisa de um site ou sistema? Veja a página feita para você.{' '}
-      <a href={salesLink(Astro.url)} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver os serviços</a>
-    </p>
+    {
+      !fromSales && (
+        <p class="text-small text-muted-foreground">
+          Tem um negócio e precisa de um site ou sistema? Veja a página feita para você.{' '}
+          <a href={salesLink(Astro.url)} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver os serviços</a>
+        </p>
+      )
+    }
 
     {/* Posts natively to the same endpoint agents use, so the form works with
         no JavaScript; the handler answers a form post with a redirect back here
         carrying `envio`, read above. */}
-    <div class="grid grid-cols-1 gap-xl lg:grid-cols-5">
+    <div class={fromSales ? 'flex' : 'grid grid-cols-1 gap-xl lg:grid-cols-5'}>
     <Card
       as="section"
-      class="flex flex-col gap-lg lg:col-span-2"
+      class={`flex flex-col gap-lg ${fromSales ? 'mx-auto w-full max-w-[60ch]' : 'lg:col-span-2'}`}
       aria-labelledby={sent ? undefined : 'form-heading'}
       aria-label={sent ? 'Mensagem enviada' : undefined}
     >
@@ -99,7 +111,15 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
         )
       }
 
-      <form action="/api/hire" method="post" class="flex flex-col gap-lg">
+      <form action="/api/hire" method="post" class="flex flex-1 flex-col gap-lg">
+        {
+          visit?.service && serviceLabel && (
+            <p class="rounded-md border border-border bg-background px-md py-sm font-mono text-small text-muted-foreground">
+              Sobre: <span class="text-foreground">{serviceLabel}</span>
+              <input type="hidden" name="servico" value={visit.service} />
+            </p>
+          )
+        }
         <div class="grid grid-cols-1 gap-lg">
           <div>
             <label for="contato-nome" class={labelClass}>Nome <span aria-hidden="true">*</span></label>
@@ -163,6 +183,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
                   id={`contato-interesse-${option.value}`}
                   name="interesse"
                   value={option.value}
+                  checked={fromSales && option.value === 'freelance'}
                   class="check-input sr-only"
                 />
                 <span aria-hidden="true" class="check-box inline-flex size-5 shrink-0 items-center justify-center rounded-sm border transition-[border-color,background-color,color] duration-(--duration-fast) ease-out">
@@ -174,7 +195,8 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
           </div>
         </fieldset>
 
-        <div>
+        {/* The message grows into the room the taller side column leaves on desktop. */}
+        <div class="flex flex-1 flex-col">
           <label for="contato-mensagem" class={labelClass}>Mensagem <span aria-hidden="true">*</span></label>
           <textarea
             id="contato-mensagem"
@@ -183,7 +205,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
             maxlength="8000"
             required
             placeholder="O que você está construindo, como é o sucesso para você e para quando precisa?"
-            class={field}></textarea>
+            class={`${field} flex-1`}></textarea>
         </div>
 
         {/* Honeypot: display:none, so people, screen readers and password
@@ -212,14 +234,25 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
           }
         </div>
       </form>
+
+      {/* WhatsApp lives in the form card: one place to start a conversation. */}
+      <div class="flex flex-wrap items-center justify-between gap-md border-t border-border pt-lg">
+        <p class="text-small text-muted-foreground">Prefere conversar por mensagem?</p>
+        <div class="shrink-0 whitespace-nowrap">
+          <Button href={contactGoPath('whatsapp')} variant="secondary" target="_blank" rel="noopener">
+            <Icon name="simple-icons:whatsapp" class="size-4 shrink-0" aria-hidden="true" />
+            Conversar no WhatsApp
+          </Button>
+        </div>
+      </div>
       </>
         )
       }
     </Card>
 
+    {
+      !fromSales && (
     <div class="flex flex-col gap-lg lg:col-span-3">
-      {/* Availability heads the machine-contact column, above the brief. */}
-      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" />
       <AgentBrief brief={hireBrief} variant="panel" />
       <Card class="flex flex-col gap-sm">
         <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">MCP</h2>
@@ -230,7 +263,11 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
         </div>
         <a href="/mcp" class="font-mono text-small text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Como conectar</a>
       </Card>
+      {/* Availability closes the machine-contact column, below the MCP card (moved on 2026-10-19). */}
+      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" compact />
     </div>
+      )
+    }
     </div>
   </article>
 </BaseLayout>

@@ -8,7 +8,8 @@ describe('privacy policy and the sales form', () => {
     expect(text).toContain('serviço desejado');
   });
 
-  it('says the contact may be a WhatsApp number', () => {
-    expect(text).toContain('e-mail ou WhatsApp');
+  it('says the form asks for an e-mail, since WhatsApp is a link and not a form field any more', () => {
+    expect(text).toContain('no formulário, o e-mail');
+    expect(text).not.toContain('e-mail ou WhatsApp');
   });
 });

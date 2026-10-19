@@ -54,7 +54,7 @@ export const privacySections: PolicySection[] = [
     id: 'formulario',
     title: 'O que você envia de propósito',
     paragraphs: [
-      'Pelos formulários de contato e de serviços, ou pela API para agents (/api/hire), chegam os campos que você preenche: nome, contato (e-mail ou WhatsApp), empresa, orçamento, interesses, serviço desejado e mensagem. A finalidade é responder você e tratar uma possível proposta de trabalho (art. 7º, V da LGPD).',
+      'Pelo formulário de contato (o mesmo para onde a página de serviços leva) ou pela API para agents (/api/hire), chegam os campos que você preenche: nome, contato (no formulário, o e-mail), empresa, orçamento, interesses, serviço desejado e mensagem. A finalidade é responder você e tratar uma possível proposta de trabalho (art. 7º, V da LGPD).',
       'Junto com a mensagem ficam o endereço IP e o user agent, usados só para limitar abuso e distinguir um agent de um script (legítimo interesse, art. 7º, IX).',
       'A mensagem fica no Firestore, banco do Google Cloud na região us-east4, nos Estados Unidos, e uma cópia chega ao meu e-mail pelo Resend, serviço de envio de e-mail também nos Estados Unidos.',
       'Se o contato que você deixar no formulário for um e-mail, ele recebe uma confirmação automática pelo Resend, dizendo que a mensagem chegou. Ela não repete nada do que você escreveu além do primeiro nome, e o e-mail não entra em nenhuma lista. Pedidos pela API para agents não recebem confirmação.',

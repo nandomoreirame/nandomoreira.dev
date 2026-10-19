@@ -31,18 +31,37 @@ describe('/contato layout', () => {
     expect(html).toMatch(/<button[^>]*data-copy="mcp-url"/);
   });
 
-  it('shows the availability in the AGENTS.md column, above the brief', async () => {
+  it('shows the availability at the foot of the AGENTS.md column, below the MCP card', async () => {
     const html = await render();
-    const box = html.match(/<div[^>]*data-contact-availability[^>]*>[\s\S]*?<\/div>/)?.[0] ?? '';
-    const open = box.match(/^<div[^>]*>/)?.[0] ?? '';
+    const box = html.match(/<(a|div)[^>]*data-contact-availability[^>]*>[\s\S]*?<\/\1>/)?.[0] ?? '';
+    const open = box.match(/^<(?:a|div)[^>]*>/)?.[0] ?? '';
     expect(open).toContain('data-availability-card');
     expect(box).toContain('data-status-dot');
     expect(box).toMatch(/Disponível para novos projetos|Disponibilidade limitada|Indisponível no momento/);
 
-    const column = html.match(/<div class="[^"]*\blg:col-span-3\b[^"]*">[\s\S]*?id="agent-brief"/)?.[0] ?? '';
+    const column = html.slice(html.search(/<div class="[^"]*\blg:col-span-3\b/));
     expect(column).toContain('data-contact-availability');
-    expect(column.indexOf('data-contact-availability')).toBeLessThan(column.indexOf('id="agent-brief"'));
+    expect(column.indexOf('id="agent-brief"')).toBeLessThan(column.indexOf('id="mcp-url"'));
+    expect(column.indexOf('id="mcp-url"')).toBeLessThan(column.indexOf('data-contact-availability'));
     expect(html.indexOf('id="form-heading"')).toBeLessThan(html.indexOf('data-contact-availability'));
+  });
+
+  it('uses the compact availability card in the narrow column', async () => {
+    const html = await render();
+    const box = html.match(/<(a|div)[^>]*data-contact-availability[^>]*>[\s\S]*?<\/\1>/)?.[0] ?? '';
+    expect(box).toMatch(/text-caption[^"]*"[^>]*>[^<]+<\/span>/);
+  });
+
+  it('stretches the form so the message field fills the card down to the column foot', async () => {
+    const html = await render();
+    const form = html.match(/<form[^>]*action="\/api\/hire"[^>]*>/)?.[0] ?? '';
+    expect(form).toMatch(/\bflex-1\b/);
+    const textarea = html.match(/<textarea[^>]*id="contato-mensagem"[^>]*>/)?.[0] ?? '';
+    expect(textarea).toMatch(/\bflex-1\b/);
+    expect(textarea).toContain('rows="4"');
+    const wrapper = html.slice(0, html.indexOf('for="contato-mensagem"')).match(/<div[^>]*>(?![\s\S]*<div)/)?.[0] ?? '';
+    expect(wrapper).toMatch(/\bflex-1\b/);
+    expect(wrapper).toMatch(/\bflex-col\b/);
   });
 
   it('puts the status dot on the same line as the availability title', async () => {
