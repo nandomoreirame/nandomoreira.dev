@@ -6,7 +6,8 @@ export interface PageScripts {
 }
 
 export const POINTER_MARKER = 'data-pointer-field';
-export const POINTER_BUDGET_BYTES = 1536;
+// Raised from 1536 on 2026-10-19 (command-palette): Vite wraps the loader's import() in __vitePreload (~717 B gzip).
+export const POINTER_BUDGET_BYTES = 2304;
 
 /**
  * Every executable script of a page: inline bodies, plus external ones read
@@ -48,3 +49,15 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
       return problems;
     }),
   );
+
+/** Third named exception (docs/specs/command-palette, D1): an on-demand chunk, never a page script. */
+export const PALETTE_MARKER = 'data-command-palette';
+export const PALETTE_BUDGET_BYTES = 4096;
+
+export const paletteChunkViolations = (chunks: Array<{ file: string; body: string }>): string[] =>
+  chunks
+    .filter(({ body }) => body.includes(PALETTE_MARKER))
+    .flatMap(({ file, body }) => {
+      const size = gzipSync(body).length;
+      return size > PALETTE_BUDGET_BYTES ? [`${file}: command palette is ${size} B gzip, budget ${PALETTE_BUDGET_BYTES}`] : [];
+    });

@@ -1,6 +1,12 @@
 import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { executableScripts, scriptViolations } from './client-scripts';
+import {
+  PALETTE_BUDGET_BYTES,
+  PALETTE_MARKER,
+  executableScripts,
+  paletteChunkViolations,
+  scriptViolations,
+} from './client-scripts';
 
 const POINTER = "document.querySelectorAll('[data-pointer-field]')";
 const PREVIEW = "document.querySelectorAll('[data-now-preview]')";
@@ -47,10 +53,16 @@ describe('scriptViolations', () => {
     ).toEqual([]);
   });
 
-  it('rejects the pointer effect above 1.5 KB gzip', () => {
+  it('rejects the pointer effect above 2304 B gzip', () => {
     const bloated = `${POINTER};${randomBytes(3000).toString('hex')}`;
     const [violation] = scriptViolations([{ route: '/lab', scripts: [bloated] }]);
-    expect(violation).toMatch(/^\/lab: pointer effect is \d+ B gzip, budget 1536$/);
+    expect(violation).toMatch(/^\/lab: pointer effect is \d+ B gzip, budget 2304$/);
+  });
+
+  it('accepts the pointer effect with the palette loader, up to 2304 B gzip', () => {
+    // Random hex compresses to about half: ~3600 chars land near 1.9 KB gzip, above the old 1536.
+    const loaded = `${POINTER};${randomBytes(1800).toString('hex')}`;
+    expect(scriptViolations([{ route: '/lab', scripts: [loaded] }])).toEqual([]);
   });
 
   it('accepts the audio preview script on /now, beside the pointer effect', () => {
@@ -73,5 +85,25 @@ describe('scriptViolations', () => {
     expect(scriptViolations([{ route: '/now', scripts: [POINTER, PREVIEW, 'console.log(1)'] }])).toEqual([
       '/now: script outside the allowlist',
     ]);
+  });
+});
+
+describe('command palette exception', () => {
+  it('refuses the palette as a script on the page itself', () => {
+    expect(scriptViolations([{ route: '/', scripts: [`document.querySelector('[${PALETTE_MARKER}]')`] }])).toEqual([
+      '/: script outside the allowlist',
+    ]);
+  });
+
+  it('accepts an on-demand chunk within budget and refuses a bigger one', () => {
+    expect(paletteChunkViolations([{ file: 'palette.js', body: `/*${PALETTE_MARKER}*/` }])).toEqual([]);
+    // Random bytes do not compress, so the gzip size really exceeds the budget; the marker stays intact.
+    const big = `${PALETTE_MARKER}${randomBytes(PALETTE_BUDGET_BYTES * 2).toString('base64')}`;
+    expect(paletteChunkViolations([{ file: 'palette.js', body: big }])[0]).toMatch(/palette\.js: command palette is \d+ B gzip, budget 4096/);
+  });
+
+  it('ignores an oversized chunk without the palette marker', () => {
+    const other = randomBytes(PALETTE_BUDGET_BYTES * 2).toString('base64');
+    expect(paletteChunkViolations([{ file: 'vendor.js', body: other }])).toEqual([]);
   });
 });

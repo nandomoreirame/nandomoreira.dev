@@ -4,8 +4,10 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   NOW_PREVIEW_MARKER,
+  PALETTE_MARKER,
   POINTER_MARKER,
   executableScripts,
+  paletteChunkViolations,
   scriptViolations,
   type PageScripts,
 } from '../helpers/client-scripts';
@@ -101,7 +103,15 @@ describe('client JavaScript', () => {
     const files = existsSync(dir) ? readdirSync(dir).filter((file) => file.endsWith('.js')) : [];
     for (const file of files) {
       const body = readFileSync(join(dir, file), 'utf8');
-      expect(body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER), file).toBe(true);
+      expect(body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER) || body.includes(PALETTE_MARKER), file).toBe(true);
     }
+  });
+
+  it('ships the command palette only as an on-demand chunk within budget', () => {
+    const dir = join(CLIENT, '_astro');
+    expect(existsSync(dir)).toBe(true);
+    const chunks = readdirSync(dir).filter((file) => file.endsWith('.js')).map((file) => ({ file, body: readFileSync(join(dir, file), 'utf8') }));
+    expect(chunks.some(({ body }) => body.includes(PALETTE_MARKER))).toBe(true);
+    expect(paletteChunkViolations(chunks)).toEqual([]);
   });
 });
