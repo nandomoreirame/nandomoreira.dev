@@ -44,7 +44,7 @@ pub fn lead_detail(lead: &Lead, record: Option<&Value>, events: &[Event]) -> Lea
         name: text(record, if hire { "from" } else { "name" }),
         contact: text(record, if hire { "contact" } else { "email" }),
         brief: if hire { text(record, "brief") } else { None },
-        company: if hire { text(record, "company") } else { None },
+        company: text(record, "company"),
         budget: if hire { text(record, "budget") } else { None },
         entry: lead.entry.clone(),
         pages: views
@@ -121,6 +121,16 @@ mod tests {
         assert_eq!(detail.contact, None);
         assert_eq!(collection_of("cv"), "cv_downloads");
         assert_eq!(collection_of("hire"), "hire_requests");
+    }
+
+    #[test]
+    fn reads_the_company_of_a_cv_download() {
+        let detail = lead_detail(
+            &lead("cv"),
+            Some(&json!({"name": null, "company": "Acme", "email": null})),
+            &[],
+        );
+        assert_eq!(detail.company.as_deref(), Some("Acme"));
     }
 
     #[test]

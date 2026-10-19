@@ -686,11 +686,12 @@ fn draw_detail(frame: &mut Frame, detail: &LeadDetail, theme: &Theme) {
         label("contato"),
         Span::raw(dash(&detail.contact)),
     ]));
+    // Both forms ask for the company: the contact form and /curriculo.
+    lines.push(Line::from(vec![
+        label("empresa"),
+        Span::raw(dash(&detail.company)),
+    ]));
     if detail.kind == "hire" {
-        lines.push(Line::from(vec![
-            label("empresa"),
-            Span::raw(dash(&detail.company)),
-        ]));
         lines.push(Line::from(vec![
             label("orçamento"),
             Span::raw(dash(&detail.budget)),
@@ -881,6 +882,25 @@ mod tests {
         let text = screen(&app);
         assert!(text.contains("Ada"));
         assert!(text.contains("Preciso de um MCP"));
+    }
+
+    #[test]
+    fn shows_the_company_of_a_cv_lead() {
+        let mut app = app();
+        app.detail = Some(crate::lead::LeadDetail {
+            kind: "cv".into(),
+            found: true,
+            name: Some("Grace".into()),
+            contact: None,
+            brief: None,
+            company: Some("Acme Ltda".into()),
+            budget: None,
+            entry: "direct".into(),
+            pages: vec![],
+        });
+        let text = screen(&app);
+        assert!(text.contains("empresa"), "{text}");
+        assert!(text.contains("Acme Ltda"), "{text}");
     }
 
     #[test]
