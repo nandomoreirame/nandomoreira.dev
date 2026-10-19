@@ -96,6 +96,34 @@
     window.addEventListener('scroll', () => (pending ||= requestAnimationFrame(markCurrent)), { passive: true });
   }
 
+  // Command palette loader (docs/specs/command-palette, D2). The palette itself
+  // is a separate chunk, fetched on the first Ctrl+K, click or G. Only pages
+  // with a trigger (the main site) arm it, so the sales layout gets nothing.
+  const triggers = document.querySelectorAll<HTMLElement>('[data-palette-trigger]');
+  if (triggers.length) {
+    const palette = () => import('../../scripts/palette');
+    if (/Mac|iP/.test(navigator.platform)) document.querySelectorAll('[data-palette-mod]').forEach((key) => (key.textContent = '⌘'));
+    triggers.forEach((trigger) => {
+      trigger.hidden = false;
+      trigger.addEventListener('click', () => palette().then((module) => module.open(trigger)));
+    });
+    document.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement;
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        palette().then((module) => module.open(document.activeElement as HTMLElement));
+      } else if (
+        event.key === 'g' &&
+        !event.ctrlKey && !event.metaKey && !event.altKey &&
+        !target.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
+      ) {
+        const at = event.timeStamp;
+        palette().then((module) => module.armGo(at));
+      }
+    });
+  }
+  // End command palette loader
+
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
