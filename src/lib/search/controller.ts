@@ -1,5 +1,5 @@
 import type { SearchItem, SearchKind } from './build-index';
-import { GO_TARGETS, PALETTE_COPY } from './copy';
+import { GO_TARGETS, PALETTE_COPY, SOURCE_URL } from './copy';
 import { scoreOf } from './match';
 
 export interface PaletteOption {
@@ -8,6 +8,8 @@ export interface PaletteOption {
   /** Destination; absent for an in-page action. */
   href?: string;
   action?: 'copy-link';
+  /** Opens href in a new tab, leaving the site where it is. */
+  newTab?: boolean;
   /** Keys shown with <kbd>, e.g. ['G', 'B']. */
   keys?: string[];
 }
@@ -30,6 +32,8 @@ const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
   // One letter each, pressed alone outside a field (Fernando, 2026-10-19).
   { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link', keys: ['L'] },
   { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato', keys: ['E'] },
+  // Alone, S opens the source; G then S is still Sobre.
+  { id: 'opt-source', label: PALETTE_COPY.actions.source, href: SOURCE_URL, newTab: true, keys: ['S'] },
   ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath, keys: ['M'] }] : []),
   ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath, keys: ['I'] }] : []),
   ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath, keys: ['I'] }] : []),

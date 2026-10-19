@@ -24,6 +24,7 @@ export const PALETTE_COPY = {
   actions: {
     copyLink: 'Copiar link',
     email: 'Enviar e-mail',
+    source: 'Código-fonte',
     contact: 'Ir para o contato',
     markdown: 'Versão .md',
     ai: 'Versão para IA',
@@ -36,6 +37,9 @@ export interface GoTarget {
   path: string;
   label: string;
 }
+
+/** The repository of this site, public since 2026-10-19. */
+export const SOURCE_URL = 'https://github.com/nandomoreirame/nandomoreira.dev';
 
 /** G + letter (D6): global, only in sequence, never a lone key. */
 export const GO_TARGETS: readonly GoTarget[] = [

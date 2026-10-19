@@ -404,6 +404,23 @@ describe('palette module', () => {
       expect(writeText).toHaveBeenCalledWith(window.location.href);
     });
 
+    it('opens the source code in a new tab on S, leaving this page where it is', async () => {
+      const { palette, go } = await setup();
+      const open = vi.spyOn(palette.nav, 'open').mockImplementation(() => undefined);
+      palette.press('s', 5000);
+      expect(open).toHaveBeenCalledWith('https://github.com/nandomoreirame/nandomoreira.dev');
+      expect(go).not.toHaveBeenCalled();
+    });
+
+    it('still reads G then S as the about page', async () => {
+      const { palette, go } = await setup();
+      const open = vi.spyOn(palette.nav, 'open').mockImplementation(() => undefined);
+      palette.press('g', 1000);
+      palette.press('s', 1100);
+      expect(go).toHaveBeenCalledWith('/sobre');
+      expect(open).not.toHaveBeenCalled();
+    });
+
     it('goes to the contact on E', async () => {
       const { palette, go } = await setup();
       palette.press('e', 5000);

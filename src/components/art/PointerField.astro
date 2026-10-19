@@ -128,7 +128,7 @@
         const { key, timeStamp } = event;
         if (loaded) loaded.press(key, timeStamp);
         else if (queue) queue.push([key, timeStamp]);
-        else if (/^[glemi]$/i.test(key)) {
+        else if (/^[glemsi]$/i.test(key)) {
           const pending: [string, number][] = (queue = [[key, timeStamp]]);
           palette().then((module) => {
             loaded = module;

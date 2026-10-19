@@ -27,7 +27,7 @@ describe('palette loader in the site script', () => {
   it('forwards bare letters typed outside fields to press, loading on G or a shortcut letter', () => {
     expect(loader).toMatch(/!event\.ctrlKey && !event\.metaKey && !event\.altKey/);
     expect(loader).toMatch(/isContentEditable/);
-    expect(loader).toMatch(/\[glemi\]/);
+    expect(loader).toMatch(/\[glemsi\]/);
     expect(loader).toMatch(/\.press\(/);
     expect(loader).not.toMatch(/armGo/);
   });

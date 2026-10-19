@@ -23,7 +23,10 @@ const hideToast = () => toast?.removeAttribute('data-open');
 toast?.querySelector('[data-palette-toast-close]')?.addEventListener('click', hideToast);
 
 /** Indirection so the test can watch navigation. */
-export const nav = { go: (href: string) => window.location.assign(href) };
+export const nav = {
+  go: (href: string) => window.location.assign(href),
+  open: (href: string) => window.open(href, '_blank', 'noopener,noreferrer'),
+};
 
 let index: SearchItem[] | undefined;
 let loading: Promise<void> | undefined;
@@ -139,7 +142,7 @@ const choose = (option: PaletteOption) => {
     return;
   }
   dialog.close();
-  if (option.href) nav.go(option.href);
+  if (option.href) (option.newTab ? nav.open : nav.go)(option.href);
 };
 
 input.addEventListener('input', paint);

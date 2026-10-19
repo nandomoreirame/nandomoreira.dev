@@ -28,6 +28,7 @@ describe('palette view', () => {
     expect(general.map(option => [option.label, option.href])).toEqual([
       ['Copiar link', undefined],
       ['Enviar e-mail', '/contato'],
+      ['Código-fonte', 'https://github.com/nandomoreirame/nandomoreira.dev'],
       ['Versão .md', '/sobre.md'],
       ['Versão para IA', '/sobre/ia'],
     ]);
@@ -36,7 +37,7 @@ describe('palette view', () => {
 
   it('offers the human version instead while on the AI view', () => {
     const general = viewFor(index, '', { mdPath: '/sobre.md', humanPath: '/sobre' })[0]?.options ?? [];
-    expect(general.map(option => [option.label, option.href]).slice(2)).toEqual([
+    expect(general.map(option => [option.label, option.href]).slice(3)).toEqual([
       ['Versão .md', '/sobre.md'],
       ['Versão para humanos', '/sobre'],
     ]);
@@ -44,9 +45,20 @@ describe('palette view', () => {
 
   it('shows each General action with its one-letter shortcut', () => {
     const general = viewFor(index, '', { mdPath: '/sobre.md', aiPath: '/sobre/ia' })[0]?.options ?? [];
-    expect(general.map(option => option.keys)).toEqual([['L'], ['E'], ['M'], ['I']]);
+    expect(general.map(option => option.keys)).toEqual([['L'], ['E'], ['S'], ['M'], ['I']]);
     const human = viewFor(index, '', { humanPath: '/sobre' })[0]?.options.at(-1);
     expect(human?.keys).toEqual(['I']);
+  });
+
+  it('opens the source code of the site on GitHub in a new tab, after the e-mail, on S', () => {
+    const general = viewFor(index, '')[0]?.options ?? [];
+    expect(general[2]).toEqual({
+      id: 'opt-source',
+      label: 'Código-fonte',
+      href: 'https://github.com/nandomoreirame/nandomoreira.dev',
+      newTab: true,
+      keys: ['S'],
+    });
   });
 
   it('leaves them out on a page without those views', () => {
