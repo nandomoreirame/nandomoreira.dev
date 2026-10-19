@@ -24,11 +24,16 @@ const flow = [
   '[&_ul]:list-disc [&_ol]:list-decimal [&_:is(ul,ol)]:mt-lg [&_:is(ul,ol)]:pl-lg [&_li]:mt-xs [&_li]:marker:text-muted-foreground',
   '[&_blockquote]:mt-lg [&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-md [&_blockquote]:text-muted-foreground',
   '[&_hr]:my-2xl [&_hr]:border-border',
-  '[&_table]:mt-lg [&_table]:block [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-small',
-  '[&_table]:rounded-md [&_table]:border [&_table]:border-border-strong [&_table]:bg-surface',
-  '[&_:is(th,td)]:px-md [&_:is(th,td)]:py-xs [&_:is(th,td)]:align-top',
-  '[&_th]:text-left [&_th]:font-bold [&_th]:bg-surface-elevated [&_th]:border-b [&_th]:border-border-strong',
-  '[&_td]:border-b [&_td]:border-border [&_tr:last-child>td]:border-b-0',
+  // Tables follow the Stitch design (2026-10-19). The frame is a wrapper div
+  // (tableFrames in src/lib/markdown/post-plugins.ts) that scrolls, so the
+  // table keeps full width and its rules reach the border.
+  '[&_.table-frame]:mt-paragraph [&_.table-frame]:overflow-x-auto [&_.table-frame]:rounded-md [&_.table-frame]:border [&_.table-frame]:border-border-strong [&_.table-frame]:bg-surface',
+  '[&_table]:w-full [&_table]:border-collapse [&_table]:text-small',
+  '[&_:is(th,td)]:px-lg [&_:is(th,td)]:py-md [&_:is(th,td)]:align-middle [&_:is(th,td)]:text-left',
+  '[&_th]:font-mono [&_th]:text-caption [&_th]:uppercase [&_th]:tracking-eyebrow [&_th]:font-normal [&_th]:text-muted-foreground [&_th]:bg-surface-elevated [&_th]:border-b [&_th]:border-border',
+  '[&_td]:border-b [&_td]:border-border [&_td]:text-muted-foreground [&_tr:last-child>td]:border-b-0',
+  // Code in a cell reads as coloured mono, without the inline pill.
+  '[&_td>code]:border-0! [&_td>code]:bg-transparent! [&_td>code]:px-0! [&_td>code]:text-success [&_td:first-child>code]:text-primary [&_td:not(:first-child):last-child>code]:text-foreground',
 ];
 
 // Code blocks come from Shiki with their own colours (measured in

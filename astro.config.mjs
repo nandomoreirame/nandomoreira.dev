@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import { codeToolbar } from './src/lib/code/toolbar.ts';
-import { externalLinks, lightboxImages } from './src/lib/markdown/post-plugins.ts';
+import { externalLinks, lightboxImages, tableFrames } from './src/lib/markdown/post-plugins.ts';
 import { SALES_DEV_HOST, SALES_HOST } from './src/lib/sales/host.ts';
 
 export default defineConfig({
@@ -86,7 +86,7 @@ export default defineConfig({
     // Post body, at build: images open in a popover lightbox like the case
     // pages, and external links get target=_blank and rel=nofollow
     // (src/lib/markdown/post-plugins.ts).
-    processor: satteri({ hastPlugins: [lightboxImages(), externalLinks()] }),
+    processor: satteri({ hastPlugins: [lightboxImages(), externalLinks(), tableFrames()] }),
     // Shiki writes its colours inline, from its own theme, so the palette gate
     // in tests/design-system/contrast.test.ts never saw them. The default
     // `github-dark` renders comments at #6a737d on #24292e — 3.04:1, below AA,

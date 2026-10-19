@@ -40,6 +40,24 @@ const element = (tagName: string, properties: Properties, children: ElementConte
   children,
 });
 
+/**
+ * Wraps every table in a div that scrolls and draws the frame. The table
+ * itself stays display: table at full width, so its rows always fill the
+ * frame; a table made display: block to scroll shrinks to its content and
+ * leaves the rules stopping short of the border.
+ */
+export const tableFrames = (): HastPluginDefinition => ({
+  name: 'table-frames',
+  element: {
+    filter: ['table'],
+    visit(node, ctx) {
+      const parent = ctx.parent(node);
+      if (parent?.type === 'element' && parent.tagName === 'div') return;
+      ctx.replaceNode(node, element('div', { className: ['table-frame'] }, [node]));
+    },
+  },
+});
+
 const FOCUS_RING = ['focus-visible:outline-2', 'focus-visible:outline-offset-2', 'focus-visible:outline-primary'];
 
 // Per document: the counter lives on the compile's data bag, so every post

@@ -96,46 +96,61 @@ describe('Prose rhythm and headings', () => {
     expect(await classes()).toContain('[&_:is(h2,h3)+:is(p,ul,ol,pre,blockquote,.code-block)]:mt-sm');
   });
 
-  it('formats tables: left-aligned bold header, ruled rows, padded cells', async () => {
+  it('formats tables like the Stitch design: full width, mono uppercase header, roomy ruled rows', async () => {
     const list = await classes();
     for (const name of [
-      '[&_table]:mt-lg',
-      '[&_table]:text-small',
+      '[&_table]:w-full',
       '[&_table]:border-collapse',
-      '[&_:is(th,td)]:px-md',
-      '[&_:is(th,td)]:py-xs',
-      '[&_:is(th,td)]:align-top',
-      '[&_th]:text-left',
-      '[&_th]:font-bold',
+      '[&_table]:text-small',
+      '[&_:is(th,td)]:px-lg',
+      '[&_:is(th,td)]:py-md',
+      '[&_:is(th,td)]:align-middle',
+      '[&_:is(th,td)]:text-left',
+      '[&_th]:font-mono',
+      '[&_th]:text-caption',
+      '[&_th]:uppercase',
+      '[&_th]:tracking-eyebrow',
+      '[&_th]:font-normal',
+      '[&_th]:text-muted-foreground',
+      '[&_th]:bg-surface-elevated',
       '[&_th]:border-b',
-      '[&_th]:border-border-strong',
       '[&_td]:border-b',
       '[&_td]:border-border',
-    ]) {
-      expect(list).toContain(name);
-    }
-  });
-
-  it('frames tables like the code blocks, on a surface with a rounded border', async () => {
-    const list = await classes();
-    for (const name of [
-      '[&_table]:rounded-md',
-      '[&_table]:border',
-      '[&_table]:border-border-strong',
-      '[&_table]:bg-surface',
-      '[&_th]:bg-surface-elevated',
+      '[&_td]:text-muted-foreground',
       '[&_tr:last-child>td]:border-b-0',
     ]) {
       expect(list).toContain(name);
     }
-    // Inside a frame the first column needs its padding back.
-    expect(list).not.toContain('[&_:is(th,td)]:first:pl-0');
+    expect(list).not.toContain('[&_table]:block');
   });
 
-  it('keeps a wide table scrollable instead of widening the page', async () => {
+  it('frames tables in a rounded, scrollable box on the surface', async () => {
     const list = await classes();
-    expect(list).toContain('[&_table]:block');
-    expect(list).toContain('[&_table]:overflow-x-auto');
+    for (const name of [
+      '[&_.table-frame]:mt-paragraph',
+      '[&_.table-frame]:overflow-x-auto',
+      '[&_.table-frame]:rounded-md',
+      '[&_.table-frame]:border',
+      '[&_.table-frame]:border-border-strong',
+      '[&_.table-frame]:bg-surface',
+    ]) {
+      expect(list).toContain(name);
+    }
+  });
+
+  it('shows code in a cell as plain coloured mono: amber in the first column, green after', async () => {
+    const list = await classes();
+    for (const name of [
+      '[&_td>code]:border-0!',
+      '[&_td>code]:bg-transparent!',
+      '[&_td>code]:px-0!',
+      '[&_td>code]:text-success',
+      '[&_td:first-child>code]:text-primary',
+      // The last column is prose, so code inside it stays neutral.
+      '[&_td:not(:first-child):last-child>code]:text-foreground',
+    ]) {
+      expect(list).toContain(name);
+    }
   });
 
   it('gives h3 weight of its own', async () => {

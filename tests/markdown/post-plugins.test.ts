@@ -1,12 +1,12 @@
 import { createSatteriMarkdownProcessor } from '@astrojs/markdown-satteri';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { externalLinks, lightboxImages } from '../../src/lib/markdown/post-plugins';
+import { externalLinks, lightboxImages, tableFrames } from '../../src/lib/markdown/post-plugins';
 
 const render = async (markdown: string) => {
   const processor = await createSatteriMarkdownProcessor({
     syntaxHighlight: false,
-    hastPlugins: [lightboxImages(), externalLinks()],
+    hastPlugins: [lightboxImages(), externalLinks(), tableFrames()],
   });
   return (await processor.render(markdown)).code;
 };
@@ -27,6 +27,15 @@ describe('externalLinks', () => {
       expect(html).not.toContain('nofollow');
     },
   );
+});
+
+describe('tableFrames', () => {
+  it('wraps every table in a scrollable frame, so the table itself can fill the width', async () => {
+    const html = await render('| Atalho | O que faz |\n|---|---|\n| `Super+Y` | liga o tiling |\n');
+    expect(html).toMatch(/<div class="table-frame"><table>/);
+    expect(html).toMatch(/<\/table><\/div>/);
+    expect(html.match(/table-frame/g)).toHaveLength(1);
+  });
 });
 
 describe('lightboxImages', () => {
@@ -65,6 +74,6 @@ describe('lightboxImages', () => {
 
   it('is wired into the site markdown pipeline', () => {
     const config = readFileSync('astro.config.mjs', 'utf8');
-    expect(config).toMatch(/hastPlugins: \[lightboxImages\(\), externalLinks\(\)\]/);
+    expect(config).toMatch(/hastPlugins: \[lightboxImages\(\), externalLinks\(\), tableFrames\(\)\]/);
   });
 });
