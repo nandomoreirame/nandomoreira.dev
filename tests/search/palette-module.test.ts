@@ -321,57 +321,97 @@ describe('palette module', () => {
     });
   });
 
-  describe('G sequence', () => {
-    it('navigates on G then a mapped letter inside the window', async () => {
+  describe('keyboard shortcuts (letters forwarded by the loader)', () => {
+    const setup = async () => {
       const palette = await load();
       const go = vi.spyOn(palette.nav, 'go').mockImplementation(() => undefined);
-      palette.armGo(1000);
-      keyAt('b', 1500);
+      return { palette, go };
+    };
+
+    it('navigates on G then a mapped letter inside the window', async () => {
+      const { palette, go } = await setup();
+      palette.press('g', 1000);
+      palette.press('b', 1500);
       expect(go).toHaveBeenCalledWith('/posts');
     });
 
     it('ignores the letter once the window expired', async () => {
-      const palette = await load();
-      const go = vi.spyOn(palette.nav, 'go').mockImplementation(() => undefined);
-      palette.armGo(1000);
-      keyAt('b', 2001);
+      const { palette, go } = await setup();
+      palette.press('g', 1000);
+      palette.press('b', 2001);
       expect(go).not.toHaveBeenCalled();
     });
 
-    it('ignores a letter that was not preceded by G', async () => {
-      const palette = await load();
-      const go = vi.spyOn(palette.nav, 'go').mockImplementation(() => undefined);
-      keyAt('b', 1500);
+    it('does nothing on a lone letter that is no shortcut', async () => {
+      const { palette, go } = await setup();
+      palette.press('b', 1500);
       expect(go).not.toHaveBeenCalled();
     });
 
     it('does not navigate on G then an unmapped key, and disarms', async () => {
-      const palette = await load();
-      const go = vi.spyOn(palette.nav, 'go').mockImplementation(() => undefined);
-      palette.armGo(1000);
-      keyAt('x', 1100);
-      keyAt('b', 1200);
+      const { palette, go } = await setup();
+      palette.press('g', 1000);
+      palette.press('x', 1100);
+      palette.press('b', 1200);
       expect(go).not.toHaveBeenCalled();
     });
 
-    it('does not navigate when the letter is typed in a field', async () => {
-      const palette = await load();
-      const go = vi.spyOn(palette.nav, 'go').mockImplementation(() => undefined);
-      palette.armGo(1000);
-      keyAt('b', 1100, document.getElementById('field')!);
-      expect(go).not.toHaveBeenCalled();
+    it('reads a letter after G as a destination, never as a lone shortcut', async () => {
+      const writeText = mockClipboard(async () => undefined);
+      const { palette, go } = await setup();
+      palette.press('g', 1000);
+      palette.press('l', 1100);
+      expect(go).toHaveBeenCalledWith('/lab');
+      expect(writeText).not.toHaveBeenCalled();
     });
 
     it('closes the open palette before navigating', async () => {
-      const palette = await load();
+      const { palette } = await setup();
       await palette.open(null);
       let openWhenNavigating: boolean | undefined;
       vi.spyOn(palette.nav, 'go').mockImplementation(() => {
         openWhenNavigating = dialog().hasAttribute('open');
       });
-      palette.armGo(1000);
-      keyAt('h', 1100);
+      palette.press('g', 1000);
+      palette.press('h', 1100);
       expect(openWhenNavigating).toBe(false);
+    });
+
+    it('copies the link on L', async () => {
+      const writeText = mockClipboard(async () => undefined);
+      const { palette } = await setup();
+      palette.press('L', 5000);
+      expect(writeText).toHaveBeenCalledWith(window.location.href);
+    });
+
+    it('goes to the contact on E', async () => {
+      const { palette, go } = await setup();
+      palette.press('e', 5000);
+      expect(go).toHaveBeenCalledWith('/contato');
+    });
+
+    it('opens the markdown on M and the AI view on I, when the page has them', async () => {
+      const element = dialog();
+      element.dataset.paletteMd = '/sobre.md';
+      element.dataset.paletteAi = '/sobre/ia';
+      const { palette, go } = await setup();
+      palette.press('m', 5000);
+      palette.press('i', 6000);
+      expect(go.mock.calls).toEqual([['/sobre.md'], ['/sobre/ia']]);
+    });
+
+    it('opens the human page on I from the AI view', async () => {
+      dialog().dataset.paletteHuman = '/sobre';
+      const { palette, go } = await setup();
+      palette.press('i', 5000);
+      expect(go).toHaveBeenCalledWith('/sobre');
+    });
+
+    it('does nothing on M or I where the page has no such view', async () => {
+      const { palette, go } = await setup();
+      palette.press('m', 5000);
+      palette.press('i', 6000);
+      expect(go).not.toHaveBeenCalled();
     });
   });
 

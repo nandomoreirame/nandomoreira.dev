@@ -56,6 +56,10 @@ describe('palette style', () => {
     expect(block).toMatch(/\.palette-toast\[data-open\]\s*\{[^}]*visibility:\s*visible/);
   });
 
+  it('locks the page scroll while the palette is open', () => {
+    expect(block).toMatch(/html:has\(\.palette\[open\]\)\s*\{\s*overflow:\s*hidden/);
+  });
+
   it('sits in the middle of the viewport', () => {
     expect(block).toMatch(/\.palette\s*\{[^}]*margin:\s*auto;/);
   });

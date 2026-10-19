@@ -870,6 +870,11 @@
     }
   }
 
+  /* The page behind the open palette does not scroll. */
+  html:has(.palette[open]) {
+    overflow: hidden;
+  }
+
   .palette::backdrop {
     background: color-mix(in oklab, var(--color-background) 72%, transparent);
     backdrop-filter: blur(var(--blur-sm));

@@ -27,11 +27,12 @@ export interface PageViews {
 }
 
 const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
-  { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link' },
-  { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato' },
-  ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath }] : []),
-  ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath }] : []),
-  ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath }] : []),
+  // One letter each, pressed alone outside a field (Fernando, 2026-10-19).
+  { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link', keys: ['L'] },
+  { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato', keys: ['E'] },
+  ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath, keys: ['M'] }] : []),
+  ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath, keys: ['I'] }] : []),
+  ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath, keys: ['I'] }] : []),
 ];
 
 const GO: PaletteOption[] = GO_TARGETS.map((target) => ({

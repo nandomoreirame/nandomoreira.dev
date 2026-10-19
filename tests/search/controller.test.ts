@@ -42,6 +42,13 @@ describe('palette view', () => {
     ]);
   });
 
+  it('shows each General action with its one-letter shortcut', () => {
+    const general = viewFor(index, '', { mdPath: '/sobre.md', aiPath: '/sobre/ia' })[0]?.options ?? [];
+    expect(general.map((option) => option.keys)).toEqual([['L'], ['E'], ['M'], ['I']]);
+    const human = viewFor(index, '', { humanPath: '/sobre' })[0]?.options.at(-1);
+    expect(human?.keys).toEqual(['I']);
+  });
+
   it('leaves them out on a page without those views', () => {
     const labels = (viewFor(index, '')[0]?.options ?? []).map((option) => option.label);
     expect(labels).not.toContain('Versão .md');

@@ -6,7 +6,7 @@
 import type { SearchItem } from '../lib/search/build-index';
 import { move, viewFor, type PaletteOption } from '../lib/search/controller';
 import { PALETTE_COPY } from '../lib/search/copy';
-import { goPathFor, isTypingTarget } from '../lib/search/go-sequence';
+import { GO_WINDOW_MS, goPathFor } from '../lib/search/go-sequence';
 
 const dialog = document.querySelector<HTMLDialogElement>('[data-command-palette]')!;
 const input = dialog.querySelector('input')!;
@@ -32,6 +32,12 @@ let active = -1;
 let opener: HTMLElement | null = null;
 let armedAt: number | undefined;
 let unavailable = false;
+
+const pageViews = () => ({
+  mdPath: dialog.dataset.paletteMd,
+  aiPath: dialog.dataset.paletteAi,
+  humanPath: dialog.dataset.paletteHuman,
+});
 
 /** Only an object with a string title and a site or https path reaches the list. */
 const valid = (item: unknown): item is SearchItem =>
@@ -59,7 +65,7 @@ const kbd = (key: string) => {
 };
 
 const paint = () => {
-  const groups = viewFor(index, input.value, { mdPath: dialog.dataset.paletteMd, aiPath: dialog.dataset.paletteAi, humanPath: dialog.dataset.paletteHuman });
+  const groups = viewFor(index, input.value, pageViews());
   options = groups.flatMap((group) => group.options);
   list.replaceChildren(
     ...groups.flatMap((group) => {
@@ -152,15 +158,6 @@ dialog.addEventListener('close', () => {
   opener?.focus();
 });
 
-document.addEventListener('keydown', (event) => {
-  const path = goPathFor({ armedAt, now: event.timeStamp || performance.now(), key: event.key });
-  if (event.key.toLowerCase() !== 'g') armedAt = undefined;
-  if (path && !isTypingTarget(event.target instanceof HTMLElement ? event.target : null)) {
-    if (dialog.open) dialog.close();
-    nav.go(path);
-  }
-});
-
 /** Opens the palette (REQ-001, REQ-002); `from` gets the focus back on close. */
 export const open = async (from: HTMLElement | null) => {
   input.value = '';
@@ -175,7 +172,26 @@ export const open = async (from: HTMLElement | null) => {
   paint();
 };
 
-/** Called by the loader on a lone G (REQ-011). */
-export const armGo = (at: number) => {
-  armedAt = at;
+/**
+ * A bare letter typed outside a field, forwarded by the loader, which already
+ * dropped modifiers and fields. G arms the sequence (REQ-011); a letter inside
+ * the window is a destination; any other lone letter may be a General shortcut.
+ */
+export const press = (key: string, at: number) => {
+  const letter = key.toLowerCase();
+  if (letter === 'g') {
+    armedAt = at;
+    return;
+  }
+  const armed = armedAt !== undefined && at - armedAt <= GO_WINDOW_MS;
+  const path = goPathFor({ armedAt, now: at, key: letter });
+  armedAt = undefined;
+  if (path) {
+    if (dialog.open) dialog.close();
+    nav.go(path);
+    return;
+  }
+  if (armed) return;
+  const shortcut = viewFor(undefined, '', pageViews())[0]?.options.find((option) => option.keys?.[0]?.toLowerCase() === letter);
+  if (shortcut) choose(shortcut);
 };

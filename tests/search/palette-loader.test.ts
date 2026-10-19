@@ -15,11 +15,17 @@ describe('palette loader in the site script', () => {
     expect(loader).not.toContain('data-command-palette');
   });
 
-  it('opens on Ctrl or Cmd + K, arms G outside fields and swaps Ctrl for ⌘ on a Mac', () => {
+  it('opens on Ctrl or Cmd + K and swaps Ctrl for ⌘ on a Mac', () => {
     expect(loader).toMatch(/event\.ctrlKey \|\| event\.metaKey/);
     expect(loader).toMatch(/preventDefault\(\)/);
-    expect(loader).toMatch(/armGo/);
-    expect(loader).toMatch(/isContentEditable/);
     expect(loader).toMatch(/data-palette-mod/);
+  });
+
+  it('forwards bare letters typed outside fields to press, loading on G or a shortcut letter', () => {
+    expect(loader).toMatch(/!event\.ctrlKey && !event\.metaKey && !event\.altKey/);
+    expect(loader).toMatch(/isContentEditable/);
+    expect(loader).toMatch(/\[glemi\]/);
+    expect(loader).toMatch(/\.press\(/);
+    expect(loader).not.toMatch(/armGo/);
   });
 });

@@ -107,18 +107,22 @@
       trigger.hidden = false;
       trigger.addEventListener('click', () => palette().then((module) => module.open(trigger)));
     });
+    let loaded: Awaited<ReturnType<typeof palette>> | undefined;
     document.addEventListener('keydown', (event) => {
       const target = event.target as HTMLElement;
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         palette().then((module) => module.open(document.activeElement as HTMLElement));
       } else if (
-        event.key === 'g' &&
         !event.ctrlKey && !event.metaKey && !event.altKey &&
+        /^[a-z]$/i.test(event.key) &&
         !target.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
       ) {
-        const at = event.timeStamp;
-        palette().then((module) => module.armGo(at));
+        // G and the one-letter shortcuts fetch the module; once it is here,
+        // every letter goes through, so G + letter reaches it too.
+        const { key, timeStamp } = event;
+        if (loaded) loaded.press(key, timeStamp);
+        else if (/^[glemi]$/i.test(key)) palette().then((module) => (loaded = module).press(key, timeStamp));
       }
     });
   }
