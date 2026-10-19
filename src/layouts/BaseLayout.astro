@@ -1,6 +1,9 @@
 ---
 import AiSwitcher from '../components/ai-view/AiSwitcher.astro';
 import PointerField from '../components/art/PointerField.astro';
+import CommandPalette from '../components/search/CommandPalette.astro';
+import { aiPathFor, mdPathFor } from '../lib/ai-view/paths';
+import PaletteTrigger from '../components/search/PaletteTrigger.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
@@ -165,11 +168,16 @@ const switcherView = view ?? 'human';
     </div>
 
     <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} />
-    {
-      showSwitcher && (
-        <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />
-      )
-    }
+    {/* Bottom-right corner stack: the palette trigger above the AI switcher. */}
+    <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm">
+      <PaletteTrigger />
+      {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />}
+    </div>
+    <CommandPalette
+      mdPath={showSwitcher ? mdPathFor(switcherHumanPath) : undefined}
+      aiPath={showSwitcher && switcherView === 'human' ? aiPathFor(switcherHumanPath) : undefined}
+      humanPath={showSwitcher && switcherView === 'ai' ? switcherHumanPath : undefined}
+    />
     <PointerField />
     {
       showsPixel({ isPrerendered: Astro.isPrerendered, view }) && (

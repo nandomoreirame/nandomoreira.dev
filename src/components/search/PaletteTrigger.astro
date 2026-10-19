@@ -1,0 +1,25 @@
+---
+import { Icon } from 'astro-icon/components';
+import { PALETTE_COPY } from '../../lib/search/copy';
+---
+
+{/* Ships hidden: only the palette loader shows it (REQ-004). */}
+<button
+  type="button"
+  hidden
+  data-palette-trigger
+  aria-label={PALETTE_COPY.trigger}
+  aria-haspopup="dialog"
+  aria-keyshortcuts="Control+K Meta+K"
+  class="group/palette box-content inline-flex min-h-11 shrink-0 items-center justify-center rounded-md border border-border-strong bg-surface/90 px-md font-mono text-micro uppercase tracking-wide text-muted-foreground backdrop-blur-md transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <Icon name="lucide:command" class="size-3.5 shrink-0" aria-hidden="true" />
+  {/* Same reveal as the AI switcher's label. Content box plus px-md gives the
+      switcher's outer size, whose border sits on the <nav> around its link. */}
+  <span
+    aria-hidden="true"
+    class="text-trim-cap max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-(--duration-base) ease-out group-hover/palette:ml-xs group-hover/palette:max-w-20 group-hover/palette:opacity-100 group-focus-visible/palette:ml-xs group-focus-visible/palette:max-w-20 group-focus-visible/palette:opacity-100"
+  >
+    + K
+  </span>
+</button>
