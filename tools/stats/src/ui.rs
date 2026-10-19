@@ -23,7 +23,7 @@ const HEADLINE: [&str; 7] = [
     "Tools MCP",
 ];
 
-const HELP: &str = "1-4 abas · r tempo real · [ ] período · Enter lead · q sai";
+const HELP: &str = "1-5 abas · r tempo real · [ ] período · Enter lead · q sai";
 /// Width of the bar beside a ranked counter.
 const BAR: usize = 16;
 
@@ -60,6 +60,7 @@ pub fn draw(frame: &mut Frame, app: &App, now: DateTime<Utc>, theme: &Theme) {
         Tab::Funnel => draw_funnel(frame, body, app, now, theme),
         Tab::Traffic => draw_traffic(frame, body, app, now, theme),
         Tab::Mcp => draw_mcp(frame, body, app, now, theme),
+        Tab::Sales => draw_sales(frame, body, app, now, theme),
     }
     frame.render_widget(Paragraph::new(status_line(app, theme)), status);
 
@@ -497,6 +498,110 @@ fn draw_traffic(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, th
     );
 }
 
+/// Whole percent of `part` over `whole`, or None when there is no base.
+fn share(part: usize, whole: usize) -> Option<usize> {
+    (whole > 0).then(|| (part * 100 + whole / 2) / whole)
+}
+
+/// The sales landing (contrate.nandomoreira.dev) read apart from the site:
+/// who arrived, from where, and how many clicked WhatsApp or sent a brief.
+fn draw_sales(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
+    let sales = app.sales(now);
+    let period = app.period.label();
+    let [cards, _, bottom] = Layout::vertical([
+        Constraint::Length(8),
+        Constraint::Length(1),
+        Constraint::Min(0),
+    ])
+    .areas(area);
+
+    let of_people = |n: usize| match share(n, sales.people) {
+        Some(rate) => format!("{rate}% das pessoas"),
+        None => "—".to_owned(),
+    };
+    let headline = [
+        (
+            "Pessoas na landing",
+            sales.people,
+            false,
+            format!("visitas · {period}"),
+        ),
+        ("Páginas vistas", sales.pageviews, false, period.to_owned()),
+        (
+            "Cliques no WhatsApp",
+            sales.whatsapp,
+            true,
+            of_people(sales.whatsapp),
+        ),
+        ("Leads", sales.stages[2], true, of_people(sales.stages[2])),
+    ];
+    let slots = Layout::horizontal([Constraint::Ratio(1, 4); 4])
+        .spacing(1)
+        .split(cards);
+    for ((label, value, conversion, caption), slot) in headline.into_iter().zip(slots.iter()) {
+        card(
+            frame,
+            *slot,
+            label,
+            value as i64,
+            conversion && value > 0,
+            Some(caption),
+            theme,
+        );
+    }
+
+    let [stages, channels, pages] = Layout::horizontal([
+        Constraint::Percentage(30),
+        Constraint::Percentage(35),
+        Constraint::Percentage(35),
+    ])
+    .spacing(2)
+    .areas(bottom);
+    let stage_rows = crate::sales::STAGES.iter().enumerate().map(|(i, stage)| {
+        let rate = match i {
+            0 => "—".to_owned(),
+            _ => share(sales.stages[i], sales.stages[i - 1])
+                .map_or("—".to_owned(), |rate| format!("{rate}%")),
+        };
+        Row::new(vec![stage.to_string(), sales.stages[i].to_string(), rate])
+    });
+    frame.render_widget(
+        Table::new(
+            stage_rows,
+            [
+                Constraint::Length(12),
+                Constraint::Length(8),
+                Constraint::Min(6),
+            ],
+        )
+        .header(header_row(
+            ["etapa", "visitas", "da anterior"]
+                .map(str::to_owned)
+                .to_vec(),
+            theme,
+        ))
+        .column_spacing(2)
+        .block(panel("Funil da landing", theme)),
+        stages,
+    );
+    let limit = bottom.height.saturating_sub(3) as usize;
+    let top = |rows: &[(String, i64)]| rows.iter().take(limit).cloned().collect::<Vec<_>>();
+    ranking(
+        frame,
+        channels,
+        "Canal de chegada",
+        top(&sales.channels),
+        theme,
+    );
+    ranking(
+        frame,
+        pages,
+        &format!("Páginas · {period}"),
+        top(&sales.pages),
+        theme,
+    );
+}
+
 fn draw_mcp(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme: &Theme) {
     let totals = app.totals(now);
     let [cards, _, lists] = Layout::vertical([
@@ -674,7 +779,16 @@ mod tests {
     #[test]
     fn shows_the_tabs_and_the_refresh_mode() {
         let text = screen(&App::default());
-        for title in ["Ao vivo", "Funil", "Tráfego", "MCP", "a cada 30 s", "hoje"] {
+        for title in [
+            "Ao vivo",
+            "Funil",
+            "Tráfego",
+            "MCP",
+            "Vendas",
+            "1-5 abas",
+            "a cada 30 s",
+            "hoje",
+        ] {
             assert!(text.contains(title), "missing {title}");
         }
     }
@@ -710,6 +824,35 @@ mod tests {
         ] {
             assert!(text.contains(stage), "missing {stage}");
         }
+    }
+
+    #[test]
+    fn reads_the_sales_landing_on_its_own_tab() {
+        let mut app = app();
+        app.log.merge(vec![
+            Document { name: "s/1".into(), data: json!({"kind": "pageview", "at": "2026-10-14T17:00:00.000Z", "day": "2026-10-14",
+                "visitor": "s1", "class": "human", "path": "/servicos", "channel": "google"}) },
+            Document { name: "s/2".into(), data: json!({"kind": "conversion", "at": "2026-10-14T17:01:00.000Z", "day": "2026-10-14",
+                "visitor": "s1", "class": "human", "path": "/go/contato/whatsapp", "channel": "internal",
+                "conversion": {"type": "outbound", "target": "contato/whatsapp"}}) },
+        ]);
+        app.tab = Tab::Sales;
+        let text = screen(&app);
+        for label in [
+            "Pessoas na landing",
+            "Páginas vistas",
+            "Cliques no WhatsApp",
+            "Leads",
+            "Chegou",
+            "Agiu",
+            "Virou lead",
+            "/servicos",
+            "google",
+        ] {
+            assert!(text.contains(label), "missing {label}");
+        }
+        // The home visitor of app() never reached the landing.
+        assert!(!text.contains("/lab/forja"));
     }
 
     #[test]

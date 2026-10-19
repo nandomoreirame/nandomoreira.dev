@@ -3,6 +3,7 @@ use crate::funnel::{Funnel, Lead, funnel};
 use crate::lead::LeadDetail;
 use crate::model::{Daily, Event};
 use crate::period::{Period, today};
+use crate::sales::{Sales, sales};
 use crate::schedule::Schedule;
 use crate::totals::{Totals, sum};
 use chrono::{DateTime, Utc};
@@ -17,10 +18,11 @@ pub enum Tab {
     Funnel,
     Traffic,
     Mcp,
+    Sales,
 }
 
-pub const TAB_TITLES: [&str; 4] = ["Ao vivo", "Funil", "Tráfego", "MCP"];
-const TABS: [Tab; 4] = [Tab::Live, Tab::Funnel, Tab::Traffic, Tab::Mcp];
+pub const TAB_TITLES: [&str; 5] = ["Ao vivo", "Funil", "Tráfego", "MCP", "Vendas"];
+const TABS: [Tab; 5] = [Tab::Live, Tab::Funnel, Tab::Traffic, Tab::Mcp, Tab::Sales];
 
 impl Tab {
     pub fn index(self) -> usize {
@@ -162,6 +164,11 @@ impl App {
         funnel(self.log.events(), &self.period.days(now))
     }
 
+    /// The sales landing alone, over the period (raw events, so at most 30 days).
+    pub fn sales(&self, now: DateTime<Utc>) -> Sales {
+        sales(self.log.events(), &self.period.days(now))
+    }
+
     pub fn totals(&self, now: DateTime<Utc>) -> Totals {
         let days = self.period.days(now);
         let dailies: Vec<&Daily> = days
@@ -192,7 +199,7 @@ impl App {
         match key.code {
             KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => Action::Quit,
             KeyCode::Char('q') => Action::Quit,
-            KeyCode::Char(digit @ '1'..='4') => {
+            KeyCode::Char(digit @ '1'..='5') => {
                 self.tab = TABS[digit as usize - '1' as usize];
                 Action::None
             }
@@ -324,7 +331,11 @@ mod tests {
         app.on_key(key(KeyCode::Tab), Instant::now(), now());
         assert_eq!(app.tab, Tab::Mcp);
         app.on_key(key(KeyCode::Tab), Instant::now(), now());
+        assert_eq!(app.tab, Tab::Sales);
+        app.on_key(key(KeyCode::Tab), Instant::now(), now());
         assert_eq!(app.tab, Tab::Live);
+        app.on_key(key(KeyCode::Char('5')), Instant::now(), now());
+        assert_eq!(app.tab, Tab::Sales);
     }
 
     #[test]

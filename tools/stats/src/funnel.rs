@@ -32,7 +32,7 @@ pub fn pass_rate(counts: &[usize; 4], stage: usize) -> Option<u32> {
 
 /// REQ-009: the channel of the visit's first pageview that did not come from
 /// inside the site; with none, direct.
-fn entry_channel(visit: &[&Event]) -> String {
+pub(crate) fn entry_channel(visit: &[&Event]) -> String {
     visit
         .iter()
         .find(|event| event.kind == "pageview" && event.channel != "internal")

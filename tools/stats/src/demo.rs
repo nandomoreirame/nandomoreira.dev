@@ -11,7 +11,7 @@ use chrono::{DateTime, Duration, NaiveDate, TimeZone, Utc};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, HashMap};
 
-const PAGES: [&str; 12] = [
+const PAGES: [&str; 14] = [
     "/",
     "/",
     "/sobre",
@@ -24,6 +24,8 @@ const PAGES: [&str; 12] = [
     "/memoria-para-agentes-em-4-camadas",
     "/contato",
     "/now",
+    "/servicos",
+    "/servicos/site-institucional",
 ];
 const CHANNELS: [&str; 9] = [
     "linkedin",

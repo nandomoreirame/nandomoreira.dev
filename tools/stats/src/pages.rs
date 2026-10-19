@@ -1,5 +1,6 @@
-/// Pages that are not evidence of work: the site's fixed pages and listings.
-const FIXED: [&str; 11] = [
+/// Pages that are not evidence of work: the site's fixed pages and listings,
+/// and the sales landing (`/servicos`), which has its own tab.
+const FIXED: [&str; 12] = [
     "sobre",
     "contato",
     "now",
@@ -11,6 +12,7 @@ const FIXED: [&str; 11] = [
     "portfolio",
     "lab",
     "eu",
+    "servicos",
 ];
 
 /// REQ-008: a case (`/portfolio/<slug>`, `/lab/<slug>`) or a post (one path
@@ -56,6 +58,8 @@ mod tests {
             "/lab",
             "/eu",
             "/posts/arquivo/2017",
+            "/servicos",
+            "/servicos/site-institucional",
             "/llms.txt",
             "",
         ] {
