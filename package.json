@@ -16,7 +16,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:build": "vitest run --config vitest.build.config.ts",
-    "verify": "npm run check && npm test && npm run build && npm run test:build",
+    "verify": "npm run check && npm test && npm run build && npm run test:build && npm run releases:check",
+    "releases:draft": "node scripts/release-draft.mjs",
+    "releases:check": "node scripts/release-draft.mjs --check",
     "postbuild": "node scripts/prune-optimised-originals.mjs"
   },
   "dependencies": {

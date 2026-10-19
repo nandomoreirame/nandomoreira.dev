@@ -264,6 +264,18 @@ O `GITHUB_TOKEN` (fine-grained, só repositórios públicos em leitura) existe p
 
 **Armadilha:** o `firebase apphosting:secrets:set` oferece "adicionar ao apphosting.yaml" e, rodado fora da pasta do projeto, **sobrescreve o arquivo inteiro** só com a entrada nova (aconteceu em 2026-10-19). Responda não a essa pergunta e acrescente a entrada à mão.
 
+## Lançamentos (`/releases/17`)
+
+Um arquivo por dia de trabalho em `src/data/releases/<data>.md`, só frontmatter (`version`, `date`, `title`, `summary`, `highlights` de 2 a 6), validado por Zod em `src/lib/releases/data.ts`. Não é content collection de propósito: coleção nova só chega ao Vitest depois que o `astro dev` regrava o `.astro/data-store.json`.
+
+```bash
+npm run releases:draft -- [AAAA-MM-DD]            # commits visíveis do dia e a tag (v17.<commits no fim do dia>)
+npm run releases:draft -- [AAAA-MM-DD] --write    # cria o arquivo com [[PREENCHER]], que reprova o schema
+npm run releases:check                            # avisa dias com feat/fix/perf sem lançamento; sempre sai 0
+```
+
+O texto é escrito pelo comando global `/release-day [data]`, que lê o `--json` do script, escreve em pt-BR o que o visitante percebe (não commit por commit) e mostra para revisão. Dia cujos commits visíveis não mudam nada para quem visita entra em `src/data/releases/skipped.json` (`{"AAAA-MM-DD": "motivo"}`). O `npm run verify` termina com o `releases:check`, que só avisa.
+
 ## Homologação no homelab
 
 `bash scripts/deploy-staging.sh` publica a árvore local (rascunhos não commitados
