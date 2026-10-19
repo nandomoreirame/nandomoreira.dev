@@ -1,6 +1,7 @@
 ---
 Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 
+import ClosingCta from '../components/catalog/ClosingCta.astro';
 import NowGames from '../components/now/NowGames.astro';
 import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
@@ -41,6 +42,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 
     <TocColumns items={toc}>
       <NowSection id="foco" title="Foco" step={1}>
+        <AvailabilityCard status={profile.availability.status} detail={data.focus.availability} />
         <ul>
           {data.focus.items.map((item) => <li>{item}</li>)}
         </ul>
@@ -48,7 +50,6 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
         <ul>
           {data.focus.declining.map((item) => <li>{item}</li>)}
         </ul>
-        <AvailabilityCard status={profile.availability.status} detail={data.focus.availability} />
       </NowSection>
 
       <NowSection id="projetos" title="Projetos em andamento" step={2}>
@@ -113,6 +114,8 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
         </p>
       </Card>
     </TocColumns>
+
+    <ClosingCta page="now" />
 
     <PostTocToggle />
   </article>

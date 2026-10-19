@@ -1,4 +1,5 @@
 ---
+import AvailabilityCard from '../components/ui/AvailabilityCard.astro';
 import EmptyState from '../components/ui/EmptyState.astro';
 import Button from '../components/ui/Button.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -141,5 +142,9 @@ const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide tex
         )
       }
     </section>
+
+    <div class="w-full max-w-[48ch]">
+      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
+    </div>
   </article>
 </BaseLayout>

@@ -138,6 +138,7 @@ describe('/now page', () => {
       'Ouvindo',
       'Jogando',
       'O que é uma página Agora?',
+      'Algo daqui tem a ver com você?',
     ]);
     expect(html).toContain('Atualizada em');
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
@@ -168,13 +169,13 @@ describe('/now page', () => {
     expect(declining).toBeGreaterThan(heading);
   });
 
-  it('shows the availability with the shared AvailabilityCard, after what is declined', async () => {
+  it('shows the availability with the shared AvailabilityCard, before the focus list (moved on 2026-10-19)', async () => {
     const html = await render(NowPage);
     const foco = html.split('id="foco"')[1]?.split('id="projetos"')[0] ?? '';
     expect(foco).not.toContain('data-alert');
     expect(foco).toContain('data-availability-card');
     expect(foco).toContain('data-status-dot');
-    expect(foco.indexOf('data-availability-card')).toBeGreaterThan(foco.indexOf('>Recusando agora<'));
+    expect(foco.indexOf('data-availability-card')).toBeLessThan(foco.indexOf('>Recusando agora<'));
   });
 
   it('links the latest post at /slug and never under /posts', async () => {
@@ -229,9 +230,11 @@ describe('/now section headings', () => {
     const html = await container.renderToString(NowPage);
     vi.unstubAllGlobals();
     const h2s = [...html.matchAll(/<h2\b[^>]*>/g)].map((match) => match[0]);
-    expect(h2s).toHaveLength(7);
+    expect(h2s).toHaveLength(8);
     for (const tag of h2s.slice(0, 6)) expect(tag).toContain('text-h3');
     expect(h2s[6]).toContain('tracking-eyebrow');
+    // The closing call to action keeps its own serif title.
+    expect(h2s[7]).toContain('font-serif');
   });
 });
 

@@ -17,7 +17,7 @@ const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
     tablets (the menu fills the row up to lg), the full label from lg; the
     accessible name is always the full label. */}
 <a
-  href="/mcp"
+  href="/servicos"
   aria-label={AVAILABILITY_LABEL[status]}
   class={`inline-flex min-h-8 shrink-0 items-center gap-sm rounded-full border border-border bg-surface px-md font-mono text-caption text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong ${focus} ${extra ?? ''}`}
   {...rest}
@@ -25,5 +25,5 @@ const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
   <StatusDot status={status} />
   <span class="lg:hidden">{AVAILABILITY_SHORT[status]}</span>
   <span class="hidden lg:inline">{AVAILABILITY_LABEL[status]}</span>
-  <span aria-hidden="true" class="hidden lg:inline">↗</span>
+  <span aria-hidden="true" class="hidden lg:inline">→</span>
 </a>

@@ -1,5 +1,6 @@
 ---
 import CaseArticle from '../../components/catalog/CaseArticle.astro';
+import AvailabilityCard from '../../components/ui/AvailabilityCard.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { jsonLdForProject, serialiseJsonLd } from '../../lib/catalog/json-ld';
 import { collectionOfBlock } from '../../lib/catalog/groups';
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const { project } = Astro.props as Props;
+const profile = await getProfile();
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const jsonLd = serialiseJsonLd(jsonLdForProject(project, site));
 
@@ -50,4 +52,8 @@ const authorName = displayNameOf(await getProfile());
   </nav>
 
   <CaseArticle project={project} />
+
+  <div class="my-3xl">
+    <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
+  </div>
 </BaseLayout>

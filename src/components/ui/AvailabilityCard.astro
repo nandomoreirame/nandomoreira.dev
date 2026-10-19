@@ -1,24 +1,58 @@
 ---
+import { Icon } from 'astro-icon/components';
 import type { Availability } from '../../lib/content';
 import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
 import StatusDot from './StatusDot.astro';
 
-/** The availability box shared by /contato and /now: dot beside the label, detail underneath. */
+/** The availability box shared by /contato and /now: status eyebrow, then the detail.
+    While I take work, the whole box links to /servicos with an invitation headline. */
 interface Props {
   status: Availability['status'];
   detail: string;
   /** Extra data hook for a page that targets this box in its own tests. */
   hook?: string;
+  /** A smaller detail line, for a narrow column (/contato). */
+  compact?: boolean;
 }
 
-const { status, detail, hook } = Astro.props;
+const { status, detail, hook, compact = false } = Astro.props;
 const extra = hook ? { [`data-${hook}`]: '' } : {};
+const linked = status !== 'closed';
+const Tag = linked ? 'a' : 'div';
+// no-underline! and text-foreground! beat the [&_a] rules of a Prose parent (/now).
+const interactive =
+  'group no-underline! text-foreground! transition-[border-color,background-color] duration-(--duration-fast) ease-out border-border-strong hover:border-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
-<div data-availability-card {...extra} class="flex flex-col gap-xs rounded-md border border-border bg-surface p-md">
-  <span data-availability-title class="flex items-center gap-sm text-body text-foreground">
-    <StatusDot status={status} />
-    <span>{AVAILABILITY_LABEL[status]}</span>
+<Tag
+  {...(linked ? { href: '/servicos' } : {})}
+  data-availability-card
+  {...extra}
+  class={`not-prose flex items-center justify-between gap-lg rounded-md border bg-surface p-lg ${linked ? interactive : 'border-border'}`}
+>
+  <span class="flex min-w-0 flex-col gap-xs">
+    <span
+      data-availability-title
+      class="flex items-center gap-sm font-mono text-caption uppercase tracking-eyebrow text-muted-foreground"
+    >
+      <StatusDot status={status} />
+      <span>{AVAILABILITY_LABEL[status]}</span>
+    </span>
+    {
+      linked && (
+        <span class="text-h3 font-medium leading-snug text-pretty text-foreground">Veja o que posso fazer por você</span>
+      )
+    }
+    <span class={`max-w-[60ch] text-muted-foreground ${compact ? 'text-caption' : 'text-small'}`}>{detail}</span>
   </span>
-  <span class="text-small text-muted-foreground">{detail}</span>
-</div>
+  {
+    linked && (
+      <span
+        aria-hidden="true"
+        class="flex size-11 shrink-0 items-center justify-center rounded-md border border-border-strong text-foreground transition-[border-color,background-color,color] duration-(--duration-fast) ease-out group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
+      >
+        <Icon name="lucide:arrow-right" class="size-5 transition-transform duration-(--duration-fast) ease-out group-hover:translate-x-0.5" />
+      </span>
+    )
+  }
+</Tag>

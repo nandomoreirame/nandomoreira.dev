@@ -15,6 +15,16 @@ const render = async (query = '') => {
 const main = (html: string) => html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
 describe('/curriculo', () => {
+  it('shows the availability card under the form card, at the same width', async () => {
+    for (const query of ['', '?envio=ok']) {
+      const html = main(await render(query));
+      const card = html.indexOf('data-availability-card');
+      expect(card).toBeGreaterThan(html.indexOf('</section>'));
+      const wrapper = html.slice(0, card).match(/<div[^>]*>(?![\s\S]*<div)/)?.[0] ?? '';
+      expect(wrapper).toMatch(/max-w-\[48ch\]/);
+    }
+  });
+
   it('centres the content and drops the terminal path', async () => {
     const html = main(await render());
     const article = html.match(/<article[^>]*>/)?.[0] ?? '';
