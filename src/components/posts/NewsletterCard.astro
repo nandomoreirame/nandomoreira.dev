@@ -10,7 +10,7 @@ interface Props {
   /** A secondary submit, for a page that already has its one primary CTA (the home). */
   quiet?: boolean;
   /** Page the answer comes back to; /posts when absent. */
-  returnTo?: '/' | '/posts';
+  returnTo?: '/' | '/posts' | '/setup';
 }
 
 const { outcome, quiet = false, returnTo } = Astro.props;

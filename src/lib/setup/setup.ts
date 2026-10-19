@@ -8,7 +8,7 @@ import { absoluteUrl } from '../aeo/urls';
 export const SETUP_PATH = '/setup';
 
 /** Bump when the list changes: it is a living document. */
-export const SETUP_UPDATED_AT = '2026-10-13';
+export const SETUP_UPDATED_AT = '2026-10-19';
 
 export const SETUP_LEAD =
   'O hardware e as ferramentas que eu uso todo dia, as que eu mesmo fiz para preencher o que faltava e as que testei e deixei de lado. Não é uma página estática: muda quando o meu setup muda.';
@@ -17,6 +17,8 @@ export interface SetupItem {
   name: string;
   /** Official page; absent when there is no stable one to point at. */
   url?: string;
+  /** The url is a Mercado Livre affiliate link: rendered with rel="sponsored". */
+  affiliate?: boolean;
   /** Why it is here, in one or two sentences. */
   why: string;
   /** Keys that open it, from the Niri config (`Mod` written as Super). */
@@ -38,6 +40,8 @@ export interface SetupSection {
   id: string;
   title: string;
   intro?: string;
+  /** Turns the first occurrence of `text` in the intro into a link. */
+  introLink?: { text: string; href: string };
   items: SetupItem[];
   /** "Veja também": published posts and site pages only, never drafts. */
   related?: SetupLink[];
@@ -47,19 +51,25 @@ export const SETUP_SECTIONS: SetupSection[] = [
   {
     id: 'hardware',
     title: 'Hardware',
+    intro:
+      'Os links do Mercado Livre são de afiliado: se você comprar por eles, eu recebo uma comissão, sem custo extra para você.',
     items: [
       {
         name: 'Dell Latitude 3450',
-        url: 'https://www.dell.com/pt-br',
+        url: 'https://meli.la/2XtgKqp',
+        affiliate: true,
         why: 'O notebook de trabalho: Intel Core i5-1345U de 13ª geração, 32 GB de RAM, SSD WD SN740 de 1 TB e Intel Iris Xe. A tela de 14" em 1920x1080 fica como terceiro monitor.',
       },
       {
         name: 'LG ultrawide 34" (2560x1080)',
-        url: 'https://www.lg.com/br/monitores/',
+        url: 'https://meli.la/2SGG5nP',
+        affiliate: true,
         why: 'Monitor ultrawide em 21:9 (o LG HDR WFHD).',
       },
       {
         name: 'MSI G272',
+        url: 'https://meli.la/1WwJsLp',
+        affiliate: true,
         why: 'Monitor de 27" em 1920x1080, ao lado do ultrawide.',
       },
       {
@@ -83,18 +93,39 @@ export const SETUP_SECTIONS: SetupSection[] = [
         why: 'Tela mesh preta, braço 4D e assento deslizante, na versão Relax.',
       },
       {
-        name: 'Keychron K2 e AULA F75',
+        name: 'AULA F75',
+        url: 'https://meli.la/1bCTqew',
+        affiliate: true,
+        why: 'O teclado principal: mecânico, compacto, de layout 75%.',
+      },
+      {
+        name: 'Keychron K2',
         url: 'https://www.keychron.com/products/keychron-k2-wireless-mechanical-keyboard',
-        why: 'Dois teclados mecânicos compactos, de layout 75%.',
+        why: 'O teclado secundário, também mecânico e de layout 75%.',
       },
       {
-        name: 'Logitech MX Master 3S e MX Vertical',
-        url: 'https://www.logitech.com/pt-br/products/mice/mx-master-3s.910-006561.html',
-        why: 'O MX Master 3S é o mouse principal; o MX Vertical é o secundário.',
+        name: 'Logitech MX Master 3S',
+        url: 'https://meli.la/1gqJmJC',
+        affiliate: true,
+        why: 'O mouse principal.',
       },
       {
-        name: 'Sony WH-1000XM5 e Logitech Zone Vibe 100',
-        why: 'Os dois headphones: o Sony com cancelamento de ruído, o Zone Vibe 100 como segundo.',
+        name: 'Logitech MX Vertical',
+        url: 'https://meli.la/2xmCMvP',
+        affiliate: true,
+        why: 'O mouse secundário, vertical, para variar a posição do pulso.',
+      },
+      {
+        name: 'Sony WH-1000XM5',
+        url: 'https://meli.la/2H5M9sr',
+        affiliate: true,
+        why: 'O headphone principal, com cancelamento de ruído.',
+      },
+      {
+        name: 'Logitech Zone Vibe 100',
+        url: 'https://meli.la/1qUTCvu',
+        affiliate: true,
+        why: 'O segundo headphone, leve e sem fio.',
       },
     ],
   },
@@ -185,6 +216,11 @@ export const SETUP_SECTIONS: SetupSection[] = [
         why: 'Implementa as tarefas do plano, uma por vez, sem permissão para rodar git.',
       },
       {
+        name: 'Antigravity CLI (agy)',
+        url: 'https://antigravity.google',
+        why: 'Revisa o diff de cada tarefa numa cópia descartável do repositório, como um segundo modelo ao lado da revisão do Claude Code.',
+      },
+      {
         name: 'Ollama e OpenCode',
         url: 'https://ollama.com',
         why: 'IA local, com o qwen2.5-coder rodando na própria máquina.',
@@ -252,6 +288,7 @@ export const SETUP_SECTIONS: SetupSection[] = [
     title: 'Homelab',
     intro:
       'Um servidor em casa, acessado de qualquer lugar pelo Tailscale, com cada serviço num endereço .home.',
+    introLink: { text: 'Um servidor em casa', href: '/meu-homelab-num-mac-mini-de-2018' },
     items: [
       {
         name: 'Mac mini (2018)',
@@ -352,7 +389,7 @@ export const SETUP_SECTIONS: SetupSection[] = [
       {
         name: 'Codex',
         url: 'https://github.com/openai/codex',
-        why: 'Começou commitando, até receber uma lista com um arquivo e fazer cinco commits. Passou a só revisar o diff em sandbox somente leitura, e depois saiu do fluxo RPI, que hoje é só o Claude Code e o Grok.',
+        why: 'Começou commitando, até receber uma lista com um arquivo e fazer cinco commits. Passou a só revisar o diff em sandbox somente leitura, e depois saiu do fluxo RPI, que hoje é o Claude Code, o Grok e o agy.',
       },
       {
         name: 'TickTick',
@@ -385,7 +422,13 @@ export const setupMarkdown = ({ site }: { site: URL }): string => {
 
   for (const section of SETUP_SECTIONS) {
     lines.push(`## ${section.title}`, '');
-    if (section.intro) lines.push(section.intro, '');
+    if (section.intro) {
+      const link = section.introLink;
+      const intro = link
+        ? section.intro.replace(link.text, `[${link.text}](${absoluteUrl(site, link.href)})`)
+        : section.intro;
+      lines.push(intro, '');
+    }
     for (const item of section.items) {
       const name = item.url ? `[${item.name}](${item.url})` : item.name;
       const keys = (item.shortcuts ?? [])

@@ -3,13 +3,16 @@ import PageHeader from '../components/ui/PageHeader.astro';
 import Prose from '../components/ui/Prose.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
 import TocColumns from '../components/ui/TocColumns.astro';
+import NewsletterCard from '../components/posts/NewsletterCard.astro';
 import PostTocToggle from '../components/posts/PostTocToggle.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { displayNameOf } from '../lib/content/display-name';
 import { getProfile } from '../lib/content';
+import { outcomeOf } from '../lib/newsletter/copy';
 import { SETUP_LEAD, SETUP_SECTIONS, SETUP_UPDATED_AT } from '../lib/setup/setup';
 
 const profile = await getProfile();
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
 const toc = SETUP_SECTIONS.map((section) => ({ depth: 2 as const, slug: section.id, text: section.title }));
 ---
 
@@ -26,12 +29,28 @@ const toc = SETUP_SECTIONS.map((section) => ({ depth: 2 as const, slug: section.
           <section aria-labelledby={section.id}>
             <SectionHeader id={section.id} title={section.title} step={index + 1} />
             <Prose>
-              {section.intro && <p>{section.intro}</p>}
+              {section.intro && (
+                <p>
+                  {section.introLink && section.intro.includes(section.introLink.text) ? (
+                    <Fragment>
+                      {section.intro.slice(0, section.intro.indexOf(section.introLink.text))}
+                      <a href={section.introLink.href}>{section.introLink.text}</a>
+                      {section.intro.slice(section.intro.indexOf(section.introLink.text) + section.introLink.text.length)}
+                    </Fragment>
+                  ) : (
+                    section.intro
+                  )}
+                </p>
+              )}
               <ul>
                 {section.items.map((item) => (
                   <li>
                     {item.url ? (
-                      <a href={item.url} target="_blank" rel="nofollow noopener noreferrer">
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel={item.affiliate ? 'sponsored nofollow noopener noreferrer' : 'nofollow noopener noreferrer'}
+                      >
                         <strong>{item.name}</strong>
                       </a>
                     ) : (
@@ -73,6 +92,8 @@ const toc = SETUP_SECTIONS.map((section) => ({ depth: 2 as const, slug: section.
         ))
       }
     </TocColumns>
+
+    <NewsletterCard outcome={outcome} returnTo="/setup" />
 
     <PostTocToggle />
   </article>

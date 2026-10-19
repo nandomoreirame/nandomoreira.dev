@@ -61,6 +61,51 @@ describe('setup data', () => {
     }
   });
 
+  it('lists the Antigravity CLI right after the Grok CLI', () => {
+    const names = SETUP_SECTIONS.find((section) => section.id === 'ia')!.items.map((item) => item.name);
+    expect(names.indexOf('Antigravity CLI (agy)')).toBe(names.indexOf('Grok CLI') + 1);
+  });
+
+  it('points the hardware at the Mercado Livre affiliate links, marked as such', () => {
+    const items = SETUP_SECTIONS.flatMap((section) => section.items);
+    const expected: Record<string, string> = {
+      'Logitech MX Master 3S': 'https://meli.la/1gqJmJC',
+      'Logitech MX Vertical': 'https://meli.la/2xmCMvP',
+      'Sony WH-1000XM5': 'https://meli.la/2H5M9sr',
+      'Logitech Zone Vibe 100': 'https://meli.la/1qUTCvu',
+      'AULA F75': 'https://meli.la/1bCTqew',
+      'MSI G272': 'https://meli.la/1WwJsLp',
+      'Dell Latitude 3450': 'https://meli.la/2XtgKqp',
+      'LG ultrawide 34" (2560x1080)': 'https://meli.la/2SGG5nP',
+    };
+    for (const [name, url] of Object.entries(expected)) {
+      const item = items.find((candidate) => candidate.name === name);
+      expect(item?.url, name).toBe(url);
+      expect(item?.affiliate, name).toBe(true);
+    }
+    for (const item of items) if (item.url?.startsWith('https://meli.la/')) expect(item.affiliate, item.name).toBe(true);
+  });
+
+  it('lists the AULA F75 as the main keyboard, before the Keychron K2', () => {
+    const items = SETUP_SECTIONS[0]!.items;
+    const aula = items.findIndex((item) => item.name === 'AULA F75');
+    const k2 = items.findIndex((item) => item.name === 'Keychron K2');
+    expect(aula).toBeLessThan(k2);
+    expect(items[aula]?.why).toMatch(/principal/);
+    expect(items[k2]?.why).toMatch(/secundário/);
+  });
+
+  it('discloses the affiliate links in the hardware section', () => {
+    expect(SETUP_SECTIONS[0]?.intro).toMatch(/afiliado/);
+  });
+
+  it('links the homelab intro to the homelab post', () => {
+    const homelab = SETUP_SECTIONS.find((section) => section.id === 'homelab')!;
+    expect(homelab.introLink).toEqual({ text: 'Um servidor em casa', href: '/meu-homelab-num-mac-mini-de-2018' });
+    expect(homelab.intro).toContain(homelab.introLink!.text);
+    expect(existsSync('src/content/posts/meu-homelab-num-mac-mini-de-2018.md')).toBe(true);
+  });
+
   it('dates the page as a living document', () => {
     expect(SETUP_UPDATED_AT).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
@@ -86,12 +131,42 @@ describe('/setup page', () => {
     expect(external.length).toBeGreaterThan(0);
     for (const link of external) {
       expect(link).toContain('target="_blank"');
-      expect(link).toMatch(/rel="nofollow noopener noreferrer"/);
+      expect(link).toMatch(/rel="(sponsored )?nofollow noopener noreferrer"/);
     }
+  });
+
+  it('marks affiliate links as sponsored', async () => {
+    const html = await render();
+    const links = html.match(/<a[^>]*href="https:\/\/meli\.la\/[^"]*"[^>]*>/g) ?? [];
+    expect(links).toHaveLength(8);
+    for (const link of links) expect(link).toContain('rel="sponsored nofollow noopener noreferrer"');
+  });
+
+  it('closes with the newsletter card, answering back to /setup', async () => {
+    const html = await render();
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    expect(main).toContain('id="novidades"');
+    expect(main).toContain('action="/api/subscribe?origem=/setup"');
+    expect(main.indexOf('id="novidades"')).toBeGreaterThan(main.indexOf('id="deixei-de-lado"'));
+  });
+
+  it('shows the subscription answer when it comes back', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SetupPage, {
+      request: new Request('https://nandomoreira.dev/setup?assinatura=ok'),
+    });
+    expect(html).toMatch(/role="status"/);
   });
 
   it('shows each shortcut as keys', async () => {
     expect(await render()).toMatch(/<kbd[^>]*>Super<\/kbd>\s*\+\s*<kbd[^>]*>Enter<\/kbd>/);
+  });
+
+  it('renders the homelab intro link on the page and in the AI view', async () => {
+    expect(await render()).toMatch(/<a href="\/meu-homelab-num-mac-mini-de-2018">Um servidor em casa<\/a>/);
+    expect(setupMarkdown({ site })).toContain(
+      '[Um servidor em casa](https://nandomoreira.dev/meu-homelab-num-mac-mini-de-2018), acessado',
+    );
   });
 
   it('lists the shortcuts in the AI view too', () => {

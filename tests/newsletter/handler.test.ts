@@ -68,6 +68,15 @@ describe('handleSubscribe', () => {
     expect(location(await handleSubscribe(request, deps()))).toBe('/?assinatura=ok#novidades');
   });
 
+  it('sends a /setup subscriber back to /setup', async () => {
+    const request = new Request('https://nandomoreira.dev/api/subscribe?origem=/setup', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-forwarded-for': '203.0.113.7' },
+      body: new URLSearchParams({ email: 'fulano@exemplo.com' }).toString(),
+    });
+    expect(location(await handleSubscribe(request, deps()))).toBe('/setup?assinatura=ok#novidades');
+  });
+
   it('also sends the rate-limit answer back to the origin', async () => {
     const request = new Request('https://nandomoreira.dev/api/subscribe?origem=/', {
       method: 'POST',

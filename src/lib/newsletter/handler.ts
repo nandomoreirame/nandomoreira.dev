@@ -26,7 +26,7 @@ export interface SubscribeDependencies {
  * (the rate limit); anything off this list falls back to /posts, so the field
  * is never an open redirect.
  */
-const ORIGINS = new Set(['/', '/posts']);
+const ORIGINS = new Set(['/', '/posts', '/setup']);
 
 const originOf = (request: Request): string => {
   const origem = new URL(request.url).searchParams.get('origem') ?? '';
