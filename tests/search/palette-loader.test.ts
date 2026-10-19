@@ -28,4 +28,8 @@ describe('palette loader in the site script', () => {
     expect(loader).toMatch(/\.press\(/);
     expect(loader).not.toMatch(/armGo/);
   });
+
+  it('turns the letter shortcuts off on touch screens', () => {
+    expect(loader).toMatch(/matchMedia\('\(hover: none\)'\)\.matches/);
+  });
 });

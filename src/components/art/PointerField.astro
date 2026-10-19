@@ -108,6 +108,8 @@
       trigger.addEventListener('click', () => palette().then((module) => module.open(trigger)));
     });
     let loaded: Awaited<ReturnType<typeof palette>> | undefined;
+    // Touch screens get no letter shortcuts, even with a keyboard attached.
+    const touch = matchMedia('(hover: none)').matches;
     document.addEventListener('keydown', (event) => {
       const target = event.target as HTMLElement;
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -116,6 +118,7 @@
       } else if (
         !event.ctrlKey && !event.metaKey && !event.altKey &&
         /^[a-z]$/i.test(event.key) &&
+        !touch &&
         !target.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
       ) {
         // G and the one-letter shortcuts fetch the module; once it is here,

@@ -937,6 +937,11 @@
     [data-hero-about] {
       display: block;
     }
+
+    /* No letter shortcuts on touch screens, so no keys to show. */
+    .palette-list kbd {
+      display: none;
+    }
   }
 
   /* Copy notice, above the bottom-right stack (two 2.75rem buttons with

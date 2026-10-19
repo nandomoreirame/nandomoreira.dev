@@ -56,6 +56,10 @@ describe('palette style', () => {
     expect(block).toMatch(/\.palette-toast\[data-open\]\s*\{[^}]*visibility:\s*visible/);
   });
 
+  it('hides the shortcut keys on touch screens', () => {
+    expect(block).toMatch(/@media \(hover: none\)\s*\{[^@]*\.palette-list kbd\s*\{\s*display:\s*none/);
+  });
+
   it('locks the page scroll while the palette is open', () => {
     expect(block).toMatch(/html:has\(\.palette\[open\]\)\s*\{\s*overflow:\s*hidden/);
   });
