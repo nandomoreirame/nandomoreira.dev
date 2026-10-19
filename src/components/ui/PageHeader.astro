@@ -14,6 +14,8 @@ interface Props {
 }
 
 const { path, title, description, updatedAt } = Astro.props;
+// A page can put its own strip where the date goes (/version: the version tag).
+const hasMeta = Astro.slots.has('meta');
 const shown = terminalPath(path ?? Astro.url.pathname);
 ---
 
@@ -30,5 +32,12 @@ const shown = terminalPath(path ?? Astro.url.pathname);
       </div>
     )
   }
-  <p data-page-lead class={`${updatedAt ? 'mt-lg' : 'mt-md'} text-h3 text-muted-foreground`}>{description}</p>
+  {
+    hasMeta && (
+      <div class="mt-lg">
+        <slot name="meta" />
+      </div>
+    )
+  }
+  <p data-page-lead class={`${updatedAt || hasMeta ? 'mt-lg' : 'mt-md'} text-h3 text-muted-foreground`}>{description}</p>
 </header>

@@ -437,8 +437,10 @@
     position: static;
     display: block;
     width: auto;
-    max-height: none;
-    overflow: visible;
+    /* A long index (one entry per version on /version) scrolls inside the
+       sticky card instead of running past the bottom of the screen. */
+    max-height: calc(100dvh - 2 * var(--spacing-3xl));
+    overflow-y: auto;
     padding: var(--spacing-md);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
