@@ -1,14 +1,16 @@
 ---
 import Button from '../ui/Button.astro';
 import Card from '../ui/Card.astro';
-import type { CatalogCollection } from '../../lib/catalog/groups';
-import { CLOSING_CTA } from '../../lib/catalog/closing-cta';
+import { CLOSING_CTA, type ClosingCtaPage } from '../../lib/catalog/closing-cta';
 
 interface Props {
-  collection: CatalogCollection;
+  page: ClosingCtaPage;
+  /** A secondary button, for a page that already has its one primary CTA (/sobre). */
+  quiet?: boolean;
 }
 
-const copy = CLOSING_CTA[Astro.props.collection];
+const { page, quiet = false } = Astro.props;
+const copy = CLOSING_CTA[page];
 ---
 
 <Card as="section" class="my-3xl flex flex-col gap-lg p-xl lg:flex-row lg:items-center lg:justify-between">
@@ -17,5 +19,5 @@ const copy = CLOSING_CTA[Astro.props.collection];
     <h2 class="font-serif text-h1 font-normal tracking-tight text-pretty text-foreground">{copy.title}</h2>
     <p class="max-w-[60ch] text-body text-muted-foreground">{copy.text}</p>
   </div>
-  <Button href="/contato" variant="primary" arrow>{copy.button}</Button>
+  <Button href="/contato" variant={quiet ? 'secondary' : 'primary'} arrow>{copy.button}</Button>
 </Card>

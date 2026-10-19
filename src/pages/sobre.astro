@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../lib/analytics/outbound';
 import { contactIconFor } from '../lib/ui/contact-icons';
 import Experience from '../components/about/Experience.astro';
+import ClosingCta from '../components/catalog/ClosingCta.astro';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
 import Portrait from '../components/ui/Portrait.astro';
@@ -178,5 +179,7 @@ const serviceProjects = projects.map((project) => ({
         }
       </dl>
     </section>
+
+    <ClosingCta page="sobre" quiet />
   </article>
 </BaseLayout>
