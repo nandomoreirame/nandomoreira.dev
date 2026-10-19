@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getCurrentPosts, getUpcomingPosts } from '../../src/lib/content';
-import { NOW_DECLINING, NOW_STUDYING, NOW_UPDATED_AT } from '../../src/lib/now/now';
+import { NOW_STUDYING, NOW_UPDATED_AT } from '../../src/lib/now/now';
 import NowPage from '../../src/pages/now.astro';
 import SetupPage from '../../src/pages/setup.astro';
 
@@ -132,7 +132,7 @@ describe('/now page', () => {
     const html = await render(NowPage);
     expect(headings(html)).toEqual([
       'Foco',
-      'Projetos em andamento',
+      'Trabalhando',
       'Escrevendo',
       'Estudando',
       'Ouvindo',
@@ -141,6 +141,7 @@ describe('/now page', () => {
       'Algo daqui tem a ver com você?',
     ]);
     expect(html).toContain('Atualizada em');
+    // Without Spotify or Xbox in the test, the date is the text's own.
     expect(html).toContain(`datetime="${NOW_UPDATED_AT}"`);
     const playing = html.split('id="jogando"')[1]?.split('</section>')[0] ?? '';
     expect(playing).toContain('Sem dados no momento.');
@@ -158,15 +159,9 @@ describe('/now page', () => {
     }
   });
 
-  it('labels what is being declined inside Foco', async () => {
+  it('no longer lists what is being declined (removed on 2026-10-19)', async () => {
     const html = await render(NowPage);
-    const foco = html.split('id="foco"')[1]?.split('id="projetos"')[0] ?? '';
-    const heading = foco.indexOf('>Recusando agora<');
-    const declining = foco.indexOf(NOW_DECLINING[0]!);
-
-    expect(foco).toContain('<h3');
-    expect(heading).toBeGreaterThan(-1);
-    expect(declining).toBeGreaterThan(heading);
+    expect(html).not.toContain('Recusando agora');
   });
 
   it('shows the availability with the shared AvailabilityCard, before the focus list (moved on 2026-10-19)', async () => {
@@ -175,7 +170,7 @@ describe('/now page', () => {
     expect(foco).not.toContain('data-alert');
     expect(foco).toContain('data-availability-card');
     expect(foco).toContain('data-status-dot');
-    expect(foco.indexOf('data-availability-card')).toBeLessThan(foco.indexOf('>Recusando agora<'));
+    expect(foco.indexOf('data-availability-card')).toBeLessThan(foco.indexOf('<ul'));
   });
 
   it('links the latest post at /slug and never under /posts', async () => {

@@ -1,0 +1,27 @@
+---
+import type { ContributionCalendar } from '../../lib/now/contributions';
+import type { LastCommit } from '../../lib/now/github';
+import NowContributions from './NowContributions.astro';
+import NowLastCommit from './NowLastCommit.astro';
+
+/** The year on GitHub and the last commit, in one card closing "Trabalhando". */
+interface Props {
+  calendar?: ContributionCalendar;
+  commit?: LastCommit;
+}
+
+const { calendar, commit } = Astro.props;
+---
+
+{
+  (calendar || commit) && (
+    <div data-github-card class="not-prose mt-xl flex flex-col rounded-md border border-border-strong bg-surface p-lg">
+      {calendar && <NowContributions calendar={calendar} />}
+      {commit && (
+        <div class={calendar ? 'mt-lg border-t border-border pt-lg' : ''}>
+          <NowLastCommit commit={commit} />
+        </div>
+      )}
+    </div>
+  )
+}

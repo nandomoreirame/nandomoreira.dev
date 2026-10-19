@@ -1,0 +1,40 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { LastCommit } from '../../lib/now/github';
+import { saoPauloDay } from '../../lib/now/day';
+import { formatPolicyDate } from '../../lib/privacy/policy';
+
+/** The last commit on GitHub: a row inside the GitHub card (NowGithub). */
+interface Props {
+  commit: LastCommit;
+}
+
+const { commit } = Astro.props;
+const day = saoPauloDay(new Date(commit.committedAt));
+---
+
+{/* no-underline! and text-foreground! beat the [&_a] rules of the Prose parent. */}
+<a
+  data-last-commit
+  href={commit.url}
+  target="_blank"
+  rel="nofollow noopener noreferrer"
+  class="group flex items-center justify-between gap-lg rounded-md no-underline! text-foreground! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <span class="flex min-w-0 flex-col gap-xs">
+    <span class="flex items-center gap-sm font-mono text-caption uppercase tracking-eyebrow text-muted-foreground">
+      <Icon name="lucide:git-commit-horizontal" class="size-4 shrink-0 text-primary" aria-hidden="true" />
+      Último commit
+    </span>
+    <span class="font-mono text-body break-words text-foreground">{commit.message}</span>
+    <span class="text-small text-muted-foreground">
+      {commit.repo} · <time datetime={day}>{formatPolicyDate(day)}</time>
+    </span>
+  </span>
+  <span
+    aria-hidden="true"
+    class="flex size-11 shrink-0 items-center justify-center rounded-md border border-border-strong text-foreground transition-[border-color,background-color,color] duration-(--duration-fast) ease-out group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
+  >
+    <Icon name="lucide:arrow-up-right" class="size-5" />
+  </span>
+</a>

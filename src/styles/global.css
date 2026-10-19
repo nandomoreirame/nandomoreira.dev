@@ -1182,6 +1182,36 @@
     height: 100%;
   }
 
+  /* GitHub contribution grid on /now: the amber scale of the site, by level. */
+  /* Too small to read below this width: the grid scrolls sideways instead. */
+  .contrib-grid {
+    min-width: 42rem;
+  }
+
+  .contrib-0 {
+    fill: var(--color-surface-elevated);
+  }
+
+  .contrib-1 {
+    fill: color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-elevated));
+  }
+
+  .contrib-2 {
+    fill: color-mix(in oklab, var(--color-primary) 55%, var(--color-surface-elevated));
+  }
+
+  .contrib-3 {
+    fill: color-mix(in oklab, var(--color-primary) 80%, var(--color-surface-elevated));
+  }
+
+  .contrib-4 {
+    fill: var(--color-primary);
+  }
+
+  .contrib-label {
+    fill: var(--color-muted-foreground);
+  }
+
   .art-hero {
     fill: var(--color-primary);
     stroke: var(--color-primary);

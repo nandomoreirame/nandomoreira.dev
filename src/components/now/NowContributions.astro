@@ -1,0 +1,91 @@
+---
+import type { ContributionCalendar } from '../../lib/now/contributions';
+import { formatPolicyDate } from '../../lib/privacy/policy';
+
+/**
+ * The year on GitHub as a contribution grid, drawn on the server (no client
+ * script). Colours come from classes in global.css.
+ */
+interface Props {
+  calendar?: ContributionCalendar;
+}
+
+const { calendar } = Astro.props;
+
+// Whole class names, so Tailwind and the class gate see every one of them.
+const LEVEL_CLASS = ['contrib contrib-0', 'contrib contrib-1', 'contrib contrib-2', 'contrib contrib-3', 'contrib contrib-4'] as const;
+
+const CELL = 10;
+const GAP = 3;
+const STEP = CELL + GAP;
+const LEFT = 28;
+const TOP = 16;
+const weeks = calendar?.weeks ?? [];
+const width = LEFT + weeks.length * STEP;
+const height = TOP + 7 * STEP;
+
+const monthName = (date: string) =>
+  new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`)).replace('.', '');
+
+// A month label sits over the first week whose first day opens a new month.
+const months = weeks.flatMap((week, index) => {
+  const first = week[0];
+  if (!first) return [];
+  const previous = weeks[index - 1]?.[0];
+  if (previous && previous.date.slice(5, 7) === first.date.slice(5, 7)) return [];
+  return [{ x: LEFT + index * STEP, label: monthName(first.date) }];
+});
+
+const plural = (count: number) => (count === 1 ? '1 contribuição' : `${count.toLocaleString('pt-BR')} contribuições`);
+const summary = calendar
+  ? `${calendar.total.toLocaleString('pt-BR')} contribuições no GitHub no último ano${
+      calendar.busiest ? `, com o dia mais movimentado em ${formatPolicyDate(calendar.busiest.date)} (${plural(calendar.busiest.count)})` : ''
+    }.`
+  : '';
+---
+
+{
+  calendar && (
+    <figure data-contributions class="flex flex-col gap-sm">
+      <div class="overflow-x-auto">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          role="img"
+          aria-labelledby="contrib-summary"
+          class="contrib-grid block h-auto w-full font-mono text-micro"
+        >
+          {months.map((month) => (
+            <text x={month.x} y={TOP - 6} class="contrib-label">{month.label}</text>
+          ))}
+          {[['Seg', 1], ['Qua', 3], ['Sex', 5]].map(([label, row]) => (
+            <text x="0" y={TOP + (row as number) * STEP + CELL - 1} class="contrib-label">{label}</text>
+          ))}
+          {weeks.map((week, column) =>
+            week.map((day, row) => (
+              <rect
+                x={LEFT + column * STEP}
+                y={TOP + row * STEP}
+                width={CELL}
+                height={CELL}
+                rx="2"
+                class={LEVEL_CLASS[day.level]}
+              >
+                <title>{`${plural(day.count)} em ${formatPolicyDate(day.date)}`}</title>
+              </rect>
+            )),
+          )}
+        </svg>
+      </div>
+      <figcaption class="flex flex-wrap items-center justify-between gap-sm text-small text-muted-foreground">
+        <span id="contrib-summary">{summary}</span>
+        <span aria-hidden="true" class="flex items-center gap-xs font-mono text-caption">
+          Menos
+          {([0, 1, 2, 3, 4] as const).map((level) => (
+            <svg viewBox="0 0 10 10" class="size-2.5"><rect width="10" height="10" rx="2" class={LEVEL_CLASS[level]} /></svg>
+          ))}
+          Mais
+        </span>
+      </figcaption>
+    </figure>
+  )
+}

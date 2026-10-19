@@ -3,6 +3,7 @@ import { TITLE_SEPARATOR } from '../lib/seo/meta';
 Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
 
 import ClosingCta from '../components/catalog/ClosingCta.astro';
+import NowGithub from '../components/now/NowGithub.astro';
 import NowGames from '../components/now/NowGames.astro';
 import NowMusic from '../components/now/NowMusic.astro';
 import NowSection from '../components/now/NowSection.astro';
@@ -19,7 +20,7 @@ import { saoPauloDay } from '../lib/now/day';
 import { linkForRepo } from '../lib/now/github';
 import { endSentence } from '../lib/now/sentence';
 import { loadNow } from '../lib/now/load';
-import { NOW_LEAD, NOW_UPDATED_AT } from '../lib/now/now';
+import { NOW_LEAD } from '../lib/now/now';
 import { formatPolicyDate } from '../lib/privacy/policy';
 
 const profile = await getProfile();
@@ -28,7 +29,7 @@ const data = await loadNow();
 // Mirrors the NowSection ids and titles below, in order.
 const toc = [
   { depth: 2 as const, slug: 'foco', text: 'Foco' },
-  { depth: 2 as const, slug: 'projetos', text: 'Projetos em andamento' },
+  { depth: 2 as const, slug: 'projetos', text: 'Trabalhando' },
   { depth: 2 as const, slug: 'escrevendo', text: 'Escrevendo' },
   { depth: 2 as const, slug: 'estudando', text: 'Estudando' },
   { depth: 2 as const, slug: 'ouvindo', text: 'Ouvindo' },
@@ -39,7 +40,7 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 
 <BaseLayout title={`Agora${TITLE_SEPARATOR}${displayNameOf(profile)}`} description={NOW_LEAD}>
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} updatedAt={NOW_UPDATED_AT} />
+    <PageHeader title="O que estou fazendo agora" description={NOW_LEAD} updatedAt={data.updatedAt} />
 
     <TocColumns items={toc}>
       <NowSection id="foco" title="Foco" step={1}>
@@ -47,13 +48,9 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
         <ul>
           {data.focus.items.map((item) => <li>{item}</li>)}
         </ul>
-        <h3>Recusando agora</h3>
-        <ul>
-          {data.focus.declining.map((item) => <li>{item}</li>)}
-        </ul>
       </NowSection>
 
-      <NowSection id="projetos" title="Projetos em andamento" step={2}>
+      <NowSection id="projetos" title="Trabalhando" step={2}>
           {
             data.projects.state === 'empty' ? (
               <p class="text-muted-foreground">Sem dados no momento.</p>
@@ -72,6 +69,8 @@ const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
               </ul>
             )
           }
+          {/* The list first, then the year on GitHub and the last commit in one card. */}
+          <NowGithub calendar={data.contributions.state === 'ok' ? data.contributions.items : undefined} commit={data.lastCommit} />
       </NowSection>
 
       <NowSection id="escrevendo" title="Escrevendo" step={3}>
