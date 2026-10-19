@@ -1,7 +1,7 @@
 # Plano: reescrever na voz do Fernando os posts redigidos pelo Claude
 
 > **Criado:** 2026-10-10
-> **Skill:** `blog-post-writer` (seção 2, traços de voz tirados do arquivo de 2015 a 2019)
+> **Skill:** `post-writer` (seção 2, traços de voz tirados do arquivo de 2015 a 2019)
 
 ## Por que
 
@@ -33,7 +33,7 @@ creditado) e o arquivo de 2015 a 2019 (escrito por ele).
    STATE.md, commit, lição do `CLAUDE.md`, currículo). O que não tiver fonte vira pergunta.
 2. **Entrevista.** De 3 a 5 perguntas, de uma vez (listadas abaixo para cada post). As
    respostas dele, com as palavras dele, são a matéria-prima da voz.
-3. **Reescrita.** Com a skill `blog-post-writer`, usando os traços: honestidade sobre o que
+3. **Reescrita.** Com a skill `post-writer`, usando os traços: honestidade sobre o que
    doeu, número que ele contou, humor curto entre parênteses, opinião assumida. Um ou dois
    traços por seção, sem caricatura.
 4. **Conferência de fatos.** Comparar o inventário do passo 1 com o texto novo: nada
