@@ -1,0 +1,50 @@
+---
+import { Icon } from 'astro-icon/components';
+import { withCareerYears } from '../../lib/format/career-years';
+import { SALES_COPY } from '../../lib/sales/copy';
+
+interface Props {
+  /** Small label above the name: "Quem vai construir" on the landing, "O autor" on a post. */
+  eyebrow: string;
+  /** Id of the name heading, for the parent's aria-labelledby. */
+  headingId: string;
+  /** "Saiba mais sobre mim": absolute on the sales host, relative on the main site. */
+  aboutHref: string;
+  /** A narrower photo column, for the post's reading width. */
+  compact?: boolean;
+  /** The three sales facts; off on the post's author card. */
+  points?: boolean;
+  /** The line under the name; the landing's client-facing one by default. */
+  role?: string;
+}
+
+const { eyebrow, headingId, aboutHref, compact = false, points = true, role } = Astro.props;
+const { about } = SALES_COPY;
+const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy'];
+---
+
+{/* The photo, the name and the three facts: shared by the landing's about
+    card and the closing card of every post. */}
+<div class={`grid grid-cols-1 items-stretch gap-lg ${compact ? 'sm:grid-cols-photo-sm' : 'sm:grid-cols-photo'}`}>
+  <img src="/servicos/fernando.webp" alt={about.photoAlt} width="480" height="480" loading="lazy" class="aspect-square w-32 justify-self-start rounded-md border border-primary object-cover object-top sm:aspect-square sm:h-auto sm:w-full sm:self-start" />
+  <div class="flex min-w-0 flex-col gap-md">
+    <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">{eyebrow}</p>
+    <h2 id={headingId} class="font-serif text-h1 font-normal text-foreground">{about.name}</h2>
+    <p class="text-small text-muted-foreground">{role ?? about.role}</p>
+    {
+      points && (
+        <ul class="flex flex-col gap-sm">
+          {about.points.map((point, index) => (
+            <li class="flex items-start gap-sm text-small text-muted-foreground">
+              <Icon name={ICONS[index]!} class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
+              <span><strong class="font-semibold text-foreground">{withCareerYears(point.title)}</strong> {point.text}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {/* On the post card the 44px target left a gap under the text; there it
+        sits flush with the card's padding (24px tall, still above WCAG 2.5.8). */}
+    <a href={aboutHref} class:list={['mt-auto inline-flex w-fit items-center', compact ? 'min-h-6' : 'min-h-11', 'gap-xs font-mono text-small text-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary']}>Saiba mais sobre mim<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
+  </div>
+</div>

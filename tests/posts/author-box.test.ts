@@ -2,42 +2,35 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import AuthorBox from '../../src/components/posts/AuthorBox.astro';
 
-const SITE = 'https://nandomoreira.dev';
-const render = async (props: Record<string, unknown>) =>
-  (await AstroContainer.create()).renderToString(AuthorBox, { props: { site: SITE, ...props } });
+const render = async () => (await AstroContainer.create()).renderToString(AuthorBox);
 
 describe('AuthorBox', () => {
-  it('asks the reader in, with the fixed copy', async () => {
-    const html = await render({ email: 'oi@nandomoreira.dev' });
-    expect(html).toMatch(/<h2[^>]*>\s*Conversar com o autor\s*<\/h2>/);
-    expect(html).toContain(
-      'Ficou alguma dúvida, achou um erro ou quer propor uma melhoria? Me chama por e-mail ou entrega este site para o seu agente.',
-    );
-    expect(html).toContain('data-icon="lucide:square-terminal"');
+  it('closes the post with the author, like the sales about card', async () => {
+    const html = await render();
+    const aside = html.match(/<aside[\s\S]*<\/aside>/)?.[0] ?? '';
+    expect(aside).toContain('O autor');
+    expect(aside).not.toContain('Sobre o autor');
+    expect(aside).not.toContain('Quem vai construir');
+    expect(aside).toMatch(/<h2[^>]*>\s*Fernando Moreira\s*<\/h2>/);
+    expect(aside).toMatch(/<img[^>]*src="\/servicos\/fernando\.webp"[^>]*alt="Foto de Fernando Moreira/);
+    expect(aside).toMatch(/<a[^>]*href="\/sobre"[^>]*>[\s\S]*?Saiba mais sobre mim/);
+    // The three sales facts stay on the landing only.
+    expect(aside).not.toContain('<ul');
+    expect(aside).not.toContain('Itaú Unibanco');
+    // The blog speaks to readers, not to clients.
+    expect(aside).not.toContain('atendendo todo o Brasil');
+    expect(aside).toContain('Sou desenvolvedor de software sênior em São Paulo. Escrevo aqui sobre meus estudos e experimentos pra mim mesmo; se você está lendo, é um bônus :)');
+    expect(html.match(/<aside/g)).toHaveLength(1);
   });
 
-  it('links the e-mail and the agent brief, both secondary', async () => {
-    const html = await render({ email: 'oi@nandomoreira.dev' });
-    expect(html).toMatch(/<a[^>]*href="mailto:oi@nandomoreira\.dev"[^>]*>[\s\S]*?oi@nandomoreira\.dev[\s\S]*?<\/a>/);
-    expect(html).toMatch(
-      /<a[^>]*href="\/AGENTS\.md"[^>]*>[\s\S]*?\$ curl https:\/\/nandomoreira\.dev\/AGENTS\.md[\s\S]*?<\/a>/,
-    );
-    const row = html.slice(html.indexOf('href="/contato"'));
-    expect(html.match(/bg-primary/g)).toHaveLength(1);
-    expect(html.indexOf('href="/contato"')).toBeLessThan(html.indexOf('mailto:'));
-    expect(row).toMatch(/^href="\/contato"[^>]*>[\s\S]*?Contato/);
-    expect(html.match(/<a[^>]*href="mailto:[^"]*"[^>]*>/)?.[0]).not.toContain('bg-primary');
+  it('has no call of its own: the author card only presents', async () => {
+    const html = await render();
+    expect(html).not.toContain('href="/contato"');
+    expect(html).not.toContain('Fale comigo');
+    expect(html).not.toContain('Conversar com o autor');
   });
 
-  it('starts the row with the contact button, also without an e-mail', async () => {
-    const html = await render({});
-    expect(html).toMatch(/<a[^>]*href="\/contato"[^>]*>[\s\S]*?Contato[\s\S]*?<\/a>/);
-  });
-
-  it('drops the e-mail link without an e-mail, and leaves the page in reading mode', async () => {
-    const html = await render({});
-    expect(html).not.toContain('mailto:');
-    expect(html).toContain('href="/AGENTS.md"');
-    expect(html).toContain('data-reader-hide');
+  it('leaves the page in reading mode', async () => {
+    expect(await render()).toContain('data-reader-hide');
   });
 });

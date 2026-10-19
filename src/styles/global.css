@@ -167,6 +167,11 @@
   grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
 }
 
+/* The same pair at the post's reading width (the author card). */
+@utility grid-cols-photo-sm {
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+}
+
 /* Reading mode on a post (2026-10-16). The switch and the radios in
    ReaderMode.astro hold the state, so it works with CSS alone; the site script
    only remembers the choices and adds Escape. Unlayered, so hiding wins over the

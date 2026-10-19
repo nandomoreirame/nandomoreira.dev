@@ -58,7 +58,6 @@ const layout = hasAside
   : '';
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
 const profile = await getProfile();
-const email = profile.contacts.find((contact) => contact.kind === 'email')?.value;
 const minutes = readingMinutes(live.body ?? '');
 const markdownUrl = `${site}/${post.slug}.md`;
 const canonical = `${site}/${post.slug}`;
@@ -186,7 +185,7 @@ const authorName = displayNameOf(profile);
         <Prose ruled>
           <Content />
         </Prose>
-        <AuthorBox site={site} email={email} />
+        <AuthorBox />
       </div>
     </div>
     {toc.length > 0 && <PostTocToggle />}

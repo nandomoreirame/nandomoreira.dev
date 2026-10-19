@@ -1,30 +1,11 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { withCareerYears } from '../../lib/format/career-years';
-import { SALES_COPY } from '../../lib/sales/copy';
-
-const { about } = SALES_COPY;
-const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy'];
+import AboutProfile from './AboutProfile.astro';
 ---
 
 <section aria-labelledby="sobre-title" class="border-t border-border">
   <div class="mx-auto w-full max-w-page px-lg py-2xl lg:py-3xl">
-    <div class="grid grid-cols-1 items-stretch gap-lg rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong sm:grid-cols-photo">
-      <img src="/servicos/fernando.webp" alt={about.photoAlt} width="480" height="480" loading="lazy" class="aspect-square w-32 justify-self-start rounded-md border border-primary object-cover object-top sm:aspect-square sm:h-auto sm:w-full sm:self-start" />
-      <div class="flex min-w-0 flex-col gap-md">
-        <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">Quem vai construir</p>
-        <h2 id="sobre-title" class="font-serif text-h1 font-normal text-foreground">{about.name}</h2>
-        <p class="text-small text-muted-foreground">{about.role}</p>
-        <ul class="flex flex-col gap-sm">
-          {about.points.map((point, index) => (
-            <li class="flex items-start gap-sm text-small text-muted-foreground">
-              <Icon name={ICONS[index]!} class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
-              <span><strong class="font-semibold text-foreground">{withCareerYears(point.title)}</strong> {point.text}</span>
-            </li>
-          ))}
-        </ul>
-        <a href="https://nandomoreira.dev/sobre" class="mt-auto inline-flex min-h-11 w-fit items-center gap-xs font-mono text-small text-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Saiba mais sobre mim<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
-      </div>
+    <div class="rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
+      <AboutProfile eyebrow="Quem vai construir" headingId="sobre-title" aboutHref="https://nandomoreira.dev/sobre" />
     </div>
   </div>
 </section>
