@@ -18,7 +18,8 @@ const headingClass = numbered
   : 'font-mono text-small uppercase tracking-eyebrow text-muted-foreground';
 ---
 
-<header class="mb-xl">
+{/* A numbered title (Setup, Now) sits close to its content; the room goes above it instead (2026-10-19). */}
+<header class={numbered ? 'mb-md' : 'mb-xl'}>
   <div class="flex items-baseline justify-between border-b border-border pb-sm">
     <Heading id={id} class={headingClass}>
       {numbered && (

@@ -14,6 +14,8 @@ const measure = wide ? 'max-w-none' : 'max-w-[68ch]';
 // above and close to its own first paragraph (after rubenmarcus.dev, 2026-10-10).
 const flow = [
   '[&_p]:mt-paragraph',
+  // The first block starts flush with whatever opens the section.
+  '[&>:first-child]:mt-0',
   '[&_a]:text-primary [&_a]:underline',
   '[&_strong]:font-bold',
   '[&_:is(h2,h3)]:font-serif',
