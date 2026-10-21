@@ -3,8 +3,7 @@ import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { absoluteUrl } from '../lib/aeo/urls';
 import { ogImagePath } from '../lib/og/pages';
 import { metaDescription } from '../lib/seo/meta';
-import { detailFor } from '../lib/sales/catalog';
-import { salesContactLink, salesPath, salesUrl } from '../lib/sales/host';
+import { salesPath, salesUrl } from '../lib/sales/host';
 import { serviceLd } from '../lib/sales/service-ld';
 import { contactGoPath } from '../lib/analytics/outbound';
 import FloatingActions from '../components/sales/FloatingActions.astro';
@@ -29,8 +28,8 @@ const canonical = salesUrl(slug);
 const ogImage = absoluteUrl(new URL('https://nandomoreira.dev'), ogImagePath(salesPath(slug, false)));
 const jsonLd = serialiseJsonLd(serviceLd({ name: serviceName ?? title, description, url: canonical }));
 const home = salesPath();
-// The one contact form lives on the main site; a detail page passes its service along.
-const contact = salesContactLink(Astro.url, slug ?? 'landing', slug ? detailFor(slug)?.service : undefined);
+// Every sales page closes with its own form (#contato).
+const contact = '#contato';
 const year = new Date().getUTCFullYear();
 
 const NAV = [

@@ -1,7 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { SALES_COPY } from '../../lib/sales/copy';
-import { salesContactLink } from '../../lib/sales/host';
 
 interface Props {
   /** Position in SALES_COPY.ctas, so each call on the page has its own copy. */
@@ -11,10 +10,10 @@ interface Props {
 const { index } = Astro.props;
 const copy = SALES_COPY.ctas[index]!;
 const id = `cta-${index + 1}-title`;
-const contact = salesContactLink(Astro.url, 'landing');
+const contact = '#contato';
 ---
 
-{/* A quote call between the landing sections; the form lives on /contato. */}
+{/* A quote call between the landing sections; it jumps to the form that closes the page. */}
 <section data-sales-cta aria-labelledby={id} class="border-t border-border">
   <div class="mx-auto w-full max-w-page px-lg py-xl lg:py-2xl">
     <div class="flex flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-primary sm:p-xl lg:flex-row lg:items-center lg:justify-between">
