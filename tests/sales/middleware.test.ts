@@ -13,6 +13,6 @@ describe('middleware wiring for the sales host', () => {
   });
 
   it('rewrites through next() instead of redirecting', () => {
-    expect(source).toContain('next(sales.rewrite)');
+    expect(source).toContain('next(rewriteTarget(sales.rewrite, context.url))');
   });
 });

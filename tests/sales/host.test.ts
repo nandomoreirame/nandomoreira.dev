@@ -4,11 +4,11 @@ import {
   SALES_HOST,
   SALES_STAGING_HOST,
   SALES_HOST_LIVE,
+  rewriteTarget,
   salesLink,
   salesPath,
   salesRouting,
   salesUrl,
-  salesContactLink,
 } from '../../src/lib/sales/host';
 
 const at = (url: string) => new URL(url);
@@ -48,6 +48,11 @@ describe('salesRouting', () => {
     expect(salesRouting(at('https://contrate.nandomoreira.dev/site-institucional'), true)).toEqual({
       rewrite: '/servicos/site-institucional',
     });
+  });
+
+  it('keeps the query on the rewritten request, so the form outcome reaches the page', () => {
+    expect(rewriteTarget('/servicos', at('https://contrate.nandomoreira.dev/?envio=ok'))).toBe('/servicos?envio=ok');
+    expect(rewriteTarget('/servicos/blog', at('https://contrate.nandomoreira.dev/blog'))).toBe('/servicos/blog');
   });
 
   it('lets the API, /go, the pixel and assets through on the subdomain', () => {
@@ -90,29 +95,6 @@ describe('salesRouting', () => {
     expect(
       salesRouting(at('https://nandomoreira-dev--nandomoreira-dev.us-east4.hosted.app/servicos'), true),
     ).toBeUndefined();
-  });
-});
-
-describe('salesContactLink', () => {
-  it('sends the sales pages to the one contact form on the main site, carrying the origin and the service', () => {
-    expect(salesContactLink(at('https://contrate.nandomoreira.dev/'), 'landing')).toBe(
-      'https://nandomoreira.dev/contato?origem=landing',
-    );
-    expect(
-      salesContactLink(at('https://contrate.nandomoreira.dev/site-institucional'), 'site-institucional', 'website'),
-    ).toBe('https://nandomoreira.dev/contato?origem=site-institucional&servico=website');
-  });
-
-  it('stays on the environment the request came from', () => {
-    expect(salesContactLink(at('http://contrate.nandomoreira.local:4321/'), 'landing')).toBe(
-      'http://localhost:4321/contato?origem=landing',
-    );
-    expect(salesContactLink(at('http://contrate.nandomoreira.home/'), 'landing')).toBe(
-      'http://nandomoreira.home/contato?origem=landing',
-    );
-    expect(salesContactLink(at('http://localhost:4321/servicos'), 'landing')).toBe(
-      'http://localhost:4321/contato?origem=landing',
-    );
   });
 });
 

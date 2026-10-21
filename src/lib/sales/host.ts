@@ -55,28 +55,6 @@ const previewOrigin = (url: URL): string | undefined => {
   return undefined;
 };
 
-/** Main-site origin of the environment a request came from, sales host included. */
-const mainOriginOf = (url: URL): string => {
-  const port = url.port ? `:${url.port}` : '';
-  if (url.hostname === SALES_DEV_HOST || DEV_MAIN_HOSTS.has(url.hostname)) return `${url.protocol}//localhost${port}`;
-  if (url.hostname === SALES_STAGING_HOST || url.hostname === STAGING_MAIN_HOST) {
-    return `${url.protocol}//${STAGING_MAIN_HOST}${port}`;
-  }
-  return MAIN_ORIGIN;
-};
-
-/**
- * The sales pages have no form of their own (one form, asked on 2026-10-19):
- * their calls open /contato on the main site, saying which page sent the
- * visitor and, on a detail page, which service. Absolute, because a bare
- * /contato on the sales host would be rewritten as a sales slug.
- */
-export const salesContactLink = (url: URL, origin: string, service?: string): string => {
-  const params = new URLSearchParams({ origem: origin });
-  if (service) params.set('servico', service);
-  return `${mainOriginOf(url)}/contato?${params}`;
-};
-
 /** Link to a sales page from the main site, on the environment the request came from. */
 export const salesLink = (url: URL, slug?: string, live: boolean = SALES_HOST_LIVE): string => {
   const origin = previewOrigin(url);
@@ -113,6 +91,13 @@ export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE): SalesRo
   if (!MAIN_HOSTS.has(url.hostname)) return undefined;
   return mainHostRedirect(url, `https://${SALES_HOST}`);
 };
+
+/**
+ * The internal path a rewrite asks for, with the request's query: next() takes
+ * only what it is given, and without this the `?envio=` the form handler sends
+ * back would never reach the landing on the subdomain.
+ */
+export const rewriteTarget = (rewrite: string, url: URL): string => `${rewrite}${url.search}`;
 
 /** 301 from /servicos[/slug] on a main host to the same page on `origin`. */
 const mainHostRedirect = (url: URL, origin: string): SalesRoute => {
