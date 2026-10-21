@@ -1,6 +1,6 @@
 ---
 feature: theme-modes
-phase: review
+phase: none
 started_at: 2026-10-20
 depth: deep
 spec_path: docs/specs/theme-modes/SPEC.md
@@ -20,6 +20,7 @@ transitions:
   - "2026-10-20: plano revisto: contraste do site inteiro e temas Shiki do Terminal Noir; depende de contrast-gate (terminalnoir)"
   - "2026-10-20: implement started (--agentic)"
   - "2026-10-20: 12 tasks done (Grok implemented, Claude reviewed: agy unavailable); gates green except two store-bound tests; browser check 31/31"
+  - "2026-10-20: review round 1 (3 Low) fixed by Grok; round 2 zero code findings; agy unavailable both rounds"
 ---
 
 # Estado: theme-modes
@@ -36,10 +37,8 @@ repositório do Terminal Noir (antes da tarefa 8). Colide com `i18n-foundation`
   e esconde o botão; modo leitura preto vence o Paper.
 - Blocos de código no build: 132 blocos com as duas variantes, nenhuma cor inline, pior token
   7,68:1 (Noir) e 5,38:1 (Paper).
-- **Pendente do ambiente:** os dois testes de variante de `code-contrast.test.ts` leem o HTML
-  do `.astro/data-store.json` do dev, que ainda tem o Shiki antigo. Ficam verdes depois de
-  `./node_modules/.bin/astro dev stop && rm .astro/data-store.json && npm run dev` e, com o
-  "ready", outro `astro dev stop` (o store só é gravado no shutdown).
+- Os dois testes de variante de `code-contrast.test.ts` leem o HTML do `.astro/data-store.json`
+  do dev; ficaram verdes depois que o dev server foi reiniciado (store regravado às 22:27).
 - `motion.test.ts` (reduced-motion da paleta) continua vermelho, falha anterior a esta feature.
 - Desvios do plano, todos com teste: o modo leitura preto redefine os seis tokens que o Paper
   muda e ele não declarava (REQ-009); `tokens.test.ts` deixou de proibir `prefers-color-scheme`
