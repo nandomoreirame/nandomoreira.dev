@@ -225,8 +225,7 @@ describe('reading mode over the site theme (theme-modes, REQ-009)', () => {
   });
 
   it('declares in the black palette every token Paper re-points, so no Paper colour leaks into it', () => {
-    const names = (selector: string) =>
-      [...block(selector).matchAll(/--color-([a-z-]+):/g)].map(m => m[1]).sort();
+    const names = (selector: string) => [...block(selector).matchAll(/--color-([a-z-]+):/g)].map(m => m[1]).sort();
     expect(names(':root:has(#reader-on:checked):has(#reader-theme-black:checked)')).toEqual(
       names(':root[data-theme="paper"]'),
     );

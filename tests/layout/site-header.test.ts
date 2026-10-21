@@ -127,7 +127,7 @@ describe('SiteHeader', () => {
     expect(toggles).toHaveLength(2);
     const from = html.indexOf('Menu principal (mobile)');
     const menu = html.slice(from, html.indexOf('</nav>', from));
-    const inMenu = menu.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    const inMenu: string[] = menu.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
     expect(inMenu).toHaveLength(1);
     expect(inMenu[0]).not.toContain('max-md:hidden');
     const bar = toggles.find(tag => !inMenu.includes(tag)) ?? '';

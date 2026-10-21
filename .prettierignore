@@ -7,3 +7,5 @@ package-lock.json
 *.css
 *.yml
 *.yaml
+# Copied byte for byte from Terminal Noir (theme-modes, REQ-013): shiki-themes.test.ts compares them.
+src/lib/code/themes/*.json
