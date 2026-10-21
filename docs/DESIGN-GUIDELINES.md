@@ -119,6 +119,38 @@ Calculado sobre `background` (`#0b0b0c`), fórmula de luminância relativa WCAG 
 interativo**. Serve como separador decorativo. Contorno que precisa ser percebido
 (campo de formulário, elemento em foco) usa `border-strong` ou `primary`.
 
+### Paper (tema claro, 2026-10-20)
+
+Variante clara do Terminal Noir, com os valores depois da `contrast-gate` de lá
+(`docs/specs/theme-modes`). A primeira visita segue o sistema; o botão do header
+troca e lembra a escolha. Calculado sobre `background` (`#fbfaf7`); a última
+coluna é o pior caso, sobre `surface-elevated` (`#e9e6df`).
+
+| Par | Sobre `background` | Pior superfície | Situação |
+|-----|-------|-------|----------|
+| `foreground` (`#1c1a17`) | 16,63:1 | 13,93:1 | Aprova AA e AAA |
+| `muted-foreground` (`#5e5a53`) | 6,57:1 | 5,50:1 | Aprova AA |
+| `primary` (`#865700`) | 5,96:1 | 4,99:1 | Aprova AA |
+| `primary-foreground` (`#fbfaf7`) sobre `primary` | 5,96:1 | n/a | Aprova AA (texto do botão) |
+| `success` (`#0b7656`) | 5,38:1 | 4,51:1 | Aprova AA |
+| `warning` (`#8a5300`) | 6,06:1 | 5,08:1 | Aprova AA |
+| `destructive` (`#b42318`) | 6,30:1 | 5,27:1 | Aprova AA |
+| `border-strong` (`#88837a`) | 3,61:1 | 3,02:1 | Aprova 3:1 para componente gráfico |
+| `whatsapp` (`#075e54`) | 7,35:1 | 6,15:1 | Aprova 3:1; ícone `#fbfaf7` sobre ele a 7,35:1 |
+| `border` (`#dcd8cf`) | **1,36:1** | 1,14:1 | **Reprova.** Mesma regra do Noir |
+
+- **Regra:** todo token de texto passa 4,5:1 sobre `background`, `surface` e
+  `surface-elevated`, nos dois temas. `tests/design-system/paper-contrast.test.ts`
+  lê os valores do CSS e reprova se os dois blocos Paper (o do sistema e o da
+  escolha) divergirem.
+- **WhatsApp:** o verde da marca (`#25d366`) dá 1,90:1 no papel, então o botão
+  usa o verde-petróleo da própria marca (`#075e54`) com o ícone claro.
+- **Código:** os blocos usam o port Shiki do Terminal Noir (`terminal-noir` e
+  `terminal-noir-paper`) como variáveis CSS; o CSS escolhe a do tema efetivo.
+  Pior token medido no build: 7,68:1 no Noir e 5,38:1 no Paper.
+- **Modo leitura:** preto, sépia e claro vencem o tema do site enquanto o modo
+  está ligado; o preto redefine todos os tokens que o Paper muda.
+
 ### Regras de uso
 
 - O acento é reservado para ação, link e foco. Nunca decoração.

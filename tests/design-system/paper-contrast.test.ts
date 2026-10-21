@@ -125,3 +125,15 @@ describe('Paper worst cases, as measured in the spec', () => {
     expect(contrastRatio(noirTokens.whatsapp!, t('background'))).toBeLessThan(3);
   });
 });
+
+describe('documentation (theme-modes, REQ-012)', () => {
+  it('no longer promises a single dark theme, and names the theme boot exception', () => {
+    const guide = readFileSync('CLAUDE.md', 'utf8');
+    expect(guide).not.toContain('Tema escuro único');
+    expect(guide).toContain('data-theme-boot');
+  });
+
+  it('documents the Paper palette with its measured ratios', () => {
+    expect(readFileSync('docs/DESIGN-GUIDELINES.md', 'utf8')).toMatch(/### Paper[\s\S]*16,63:1/);
+  });
+});
