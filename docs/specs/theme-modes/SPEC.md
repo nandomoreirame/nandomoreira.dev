@@ -141,16 +141,16 @@ dava 1,90:1 no papel.
 
 | ID | Descrição | Prioridade | Status |
 |---|---|---|---|
-| REQ-001 | Tokens Paper | P1 | Pendente |
-| REQ-002 | Padrão pelo sistema, sem JS | P1 | Pendente |
-| REQ-003 | Script de boot no `<head>` | P1 | Pendente |
-| REQ-004 | Botão de tema no header | P1 | Pendente |
-| REQ-005 | Troca e persistência | P1 | Pendente |
-| REQ-006 | Acompanha o sistema ao vivo | P1 | Pendente |
-| REQ-007 | Shiki dual theme | P1 | Pendente |
-| REQ-008 | Portão de contraste nos dois temas | P1 | Pendente |
-| REQ-009 | Modo leitura prevalece | P1 | Pendente |
-| REQ-010 | Exceção de JS nomeada | P1 | Pendente |
-| REQ-011 | Ação na paleta de comandos | P2 | Pendente |
-| REQ-012 | Documentação | P2 | Pendente |
-| REQ-013 | Cópia dos temas Shiki igual à fonte | P1 | Pendente |
+| REQ-001 | Tokens Paper | P1 | Feito |
+| REQ-002 | Padrão pelo sistema, sem JS | P1 | Feito |
+| REQ-003 | Script de boot no `<head>` | P1 | Feito |
+| REQ-004 | Botão de tema no header | P1 | Feito |
+| REQ-005 | Troca e persistência | P1 | Feito |
+| REQ-006 | Acompanha o sistema ao vivo | P1 | Feito |
+| REQ-007 | Shiki dual theme | P1 | Feito |
+| REQ-008 | Portão de contraste nos dois temas | P1 | Feito |
+| REQ-009 | Modo leitura prevalece | P1 | Feito |
+| REQ-010 | Exceção de JS nomeada | P1 | Feito |
+| REQ-011 | Ação na paleta de comandos | P2 | Feito |
+| REQ-012 | Documentação | P2 | Feito |
+| REQ-013 | Cópia dos temas Shiki igual à fonte | P1 | Feito |
