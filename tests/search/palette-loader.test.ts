@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { viewFor } from '../../src/lib/search/controller';
 
 const source = readFileSync('src/components/art/PointerField.astro', 'utf8');
 const loader = source.slice(
@@ -27,9 +28,20 @@ describe('palette loader in the site script', () => {
   it('forwards bare letters typed outside fields to press, loading on G or a shortcut letter', () => {
     expect(loader).toMatch(/!event\.ctrlKey && !event\.metaKey && !event\.altKey/);
     expect(loader).toMatch(/isContentEditable/);
-    expect(loader).toMatch(/\[glemsi\]/);
+    expect(loader).toMatch(/\[glemsit\]/);
     expect(loader).toMatch(/\.press\(/);
     expect(loader).not.toMatch(/armGo/);
+  });
+
+  // The loader only fetches the module on these letters, so a General shortcut
+  // missing from them does nothing on a fresh page (theme-modes, REQ-011: T).
+  it('loads on every one-letter General shortcut the controller offers', () => {
+    const letters = loader.match(/\/\^\[([a-z]+)\]\$\/i\.test\(key\)/)?.[1] ?? '';
+    const all = { mdPath: '/x.md', aiPath: '/x/ia', humanPath: '/x', theme: 'noir' as const };
+    const keys = (viewFor(undefined, '', all)[0]?.options ?? []).map(option => option.keys?.[0]?.toLowerCase());
+    expect(keys.length).toBeGreaterThan(0);
+    for (const key of keys) expect(letters, `shortcut ${key}`).toContain(key);
+    expect(letters).toContain('g');
   });
 
   it('queues the letters typed while the module is still loading, so G + letter survives a slow network', () => {
