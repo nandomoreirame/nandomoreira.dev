@@ -206,6 +206,33 @@ describe('reading mode palettes', () => {
   });
 });
 
+describe('reading mode over the site theme (theme-modes, REQ-009)', () => {
+  const block = (selector: string) => {
+    const at = css.indexOf(`${selector} {`);
+    return css.slice(at, css.indexOf('}', at));
+  };
+
+  it('outranks the Paper blocks: every reader palette selector carries ids, Paper carries none', () => {
+    expect(css).toContain(':root[data-theme="paper"] {');
+    expect(css).toContain(':root:not([data-theme="noir"]) {');
+    for (const theme of ['black', 'sepia', 'light']) {
+      expect(css).toContain(`:root:has(#reader-on:checked):has(#reader-theme-${theme}:checked) {`);
+    }
+  });
+
+  it('turns the colour scheme back to dark on black, since Paper may have set light', () => {
+    expect(block(':root:has(#reader-on:checked):has(#reader-theme-black:checked)')).toMatch(/color-scheme:\s*dark/);
+  });
+
+  it('declares in the black palette every token Paper re-points, so no Paper colour leaks into it', () => {
+    const names = (selector: string) =>
+      [...block(selector).matchAll(/--color-([a-z-]+):/g)].map(m => m[1]).sort();
+    expect(names(':root:has(#reader-on:checked):has(#reader-theme-black:checked)')).toEqual(
+      names(':root[data-theme="paper"]'),
+    );
+  });
+});
+
 describe('reading mode script', () => {
   it('remembers the choices, tolerating storage that throws', () => {
     expect(script).toContain('[data-reader]');

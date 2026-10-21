@@ -308,6 +308,7 @@
    site's dark ramp is the default and needs no rule. Code blocks keep their
    Shiki colours on every background. */
 :root:has(#reader-on:checked):has(#reader-theme-black:checked) {
+  color-scheme: dark;
   --color-background: #000000;
   --color-surface: #0d0c0b;
   --color-surface-elevated: #171615;
@@ -317,6 +318,12 @@
   --color-selection: #45413c;
   --color-muted-foreground: #9c988f;
   --color-primary: #f5a623;
+  --color-primary-foreground: #0b0b0c;
+  --color-success: #34d399;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-foreground: #0b0b0c;
+  --color-warning: #facf9e;
+  --color-destructive: #ffb7b0;
 }
 
 :root:has(#reader-on:checked):has(#reader-theme-sepia:checked) {
