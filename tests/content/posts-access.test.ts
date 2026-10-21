@@ -80,9 +80,9 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('tiling-dinamico-ou-janelas-sobrepostas');
-    expect(second.slug).toBe('revisao-cruzada-entre-modelos');
-    expect(third.slug).toBe('meu-homelab-num-mac-mini-de-2018');
+    expect(first.slug).toBe('terminal-noir-o-tema-do-meu-site-no-sistema-inteiro');
+    expect(second.slug).toBe('tiling-dinamico-ou-janelas-sobrepostas');
+    expect(third.slug).toBe('revisao-cruzada-entre-modelos');
   });
 });
 
