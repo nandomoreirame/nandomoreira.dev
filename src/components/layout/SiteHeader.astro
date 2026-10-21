@@ -42,10 +42,12 @@ const {
     <SiteNav current={current} section={section} hasPosts={hasPosts}>
       <Wordmark slot="wordmark" name={name} accent={accent} status={availability?.status} />
       {availability && <AvailabilityPill slot="availability" status={availability.status} data-menu-availability class="ml-auto" />}
+      <ThemeToggle slot="theme" />
     </SiteNav>
 
     {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
-    {/* Below md the menu button takes order-last, so this sits just before it. */}
-    <ThemeToggle />
+    {/* From md only: below it the wordmark, the pill and the menu button fill a
+        390px bar, so the switch moves into the menu (slot="theme" above). */}
+    <ThemeToggle class="max-md:hidden" />
   </div>
 </header>

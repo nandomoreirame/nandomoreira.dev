@@ -1,12 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
+import ThemeToggle from '../layout/ThemeToggle.astro';
 
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 {/* Fixed bottom-right, no script: the hint shows on hover and on keyboard focus. */}
 <div class="fixed right-md bottom-md z-40 flex flex-col items-end gap-sm">
+  {/* The theme switch below sm (theme-modes, REQ-004): at 320px the header
+      bar has no room for it beside "Orçamento". */}
+  <ThemeToggle class="rounded-full border border-border-strong bg-surface-elevated sm:hidden" />
   <a
     href={contactGoPath('whatsapp')}
     target="_blank"

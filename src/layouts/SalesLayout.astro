@@ -94,7 +94,8 @@ const link =
           </ul>
         </nav>
         <div class="flex items-center gap-sm">
-          <ThemeToggle />
+          {/* From sm only; below it FloatingActions carries the switch. */}
+          <ThemeToggle class="max-sm:hidden" />
           <a
             href={contact}
             class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

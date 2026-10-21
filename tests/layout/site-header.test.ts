@@ -117,10 +117,21 @@ describe('SiteHeader', () => {
     expect(html).toContain('max-w-frame');
   });
 
-  it('carries one theme switch, after the navigation (theme-modes, REQ-004)', async () => {
+  // At 390px the wordmark, the pill (shown at every width since 2026-10-17)
+  // and one icon button already fill the bar: a second button clipped the menu
+  // button off screen. So the bar carries the switch from md, and below md it
+  // sits in the menu, under the links.
+  it('carries the theme switch in the bar from md and in the menu below md (theme-modes, REQ-004)', async () => {
     const html = await render({ availability: { status: 'open' } });
-    expect(html.match(/data-theme-toggle/g) ?? []).toHaveLength(1);
-    expect(html.indexOf('data-theme-toggle')).toBeGreaterThan(html.indexOf('<nav'));
+    const toggles = html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    expect(toggles).toHaveLength(2);
+    const from = html.indexOf('Menu principal (mobile)');
+    const menu = html.slice(from, html.indexOf('</nav>', from));
+    const inMenu = menu.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    expect(inMenu).toHaveLength(1);
+    expect(inMenu[0]).not.toContain('max-md:hidden');
+    const bar = toggles.find(tag => !inMenu.includes(tag)) ?? '';
+    expect(bar).toContain('max-md:hidden');
   });
 
   it('forwards the posts flag and the current route to the navigation', async () => {

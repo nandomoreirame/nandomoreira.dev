@@ -1,6 +1,13 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { THEME_COPY } from '../../lib/theme/copy';
+
+interface Props {
+  /** Layout utilities from the header that places it. */
+  class?: string;
+}
+
+const { class: extra } = Astro.props;
 ---
 
 {/* The theme boot script owns the click (src/lib/theme/boot.ts) and global.css
@@ -10,7 +17,7 @@ import { THEME_COPY } from '../../lib/theme/copy';
 <button
   type="button"
   data-theme-toggle
-  class="inline-flex size-11 shrink-0 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+  class={`inline-flex size-11 shrink-0 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${extra ?? ''}`}
 >
   <span data-theme-when="noir" class="contents">
     <Icon name="lucide:sun" aria-hidden="true" class="size-5" />

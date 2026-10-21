@@ -44,6 +44,20 @@ describe('SalesLayout header call', () => {
     expect(header.indexOf('data-theme-toggle')).toBeLessThan(header.indexOf('Orçamento'));
   });
 
+  // At 320px the wordmark, the switch and "Orçamento" overflow the bar, so
+  // below sm the switch moves to the floating stack, beside WhatsApp.
+  it('shows the bar switch from sm and a floating one below sm (theme-modes, REQ-004)', async () => {
+    const html = await render();
+    const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+    expect(header.match(/<button[^>]*data-theme-toggle[^>]*>/)?.[0]).toContain('max-sm:hidden');
+    const after = html.slice(html.indexOf('</header>'));
+    const floating = after.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    expect(floating).toHaveLength(1);
+    expect(floating[0]).toContain('sm:hidden');
+    expect(floating[0]).not.toContain('max-sm:hidden');
+    expect(after.indexOf('data-theme-toggle')).toBeLessThan(after.indexOf('Fale comigo no WhatsApp'));
+  });
+
   it('sends "Orçamento" to the one contact form on the main site', async () => {
     const html = await render();
     expect(html).toMatch(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>\s*Orçamento\s*</);
