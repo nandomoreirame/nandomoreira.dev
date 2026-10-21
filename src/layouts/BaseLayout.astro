@@ -20,6 +20,7 @@ import { websiteLd } from '../lib/aeo/website-ld';
 import { showsPixel } from '../lib/analytics/pixel-placement';
 import { getAllPosts, getProfile } from '../lib/content';
 import { profileUrls } from '../lib/home/person-ld';
+import { THEME_BOOT_SCRIPT } from '../lib/theme/boot';
 import '../styles/global.css';
 
 interface Props {
@@ -77,6 +78,10 @@ const switcherView = view ?? 'human';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    {/* Theme boot (theme-modes): blocking on purpose, so the stored theme is
+        on <html> before the first paint, on pre-rendered routes too. */}
+    <script is:inline set:html={THEME_BOOT_SCRIPT} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />

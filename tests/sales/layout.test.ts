@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import SalesLayout from '../../src/layouts/SalesLayout.astro';
 import { serviceLd } from '../../src/lib/sales/service-ld';
+import { THEME_BOOT_MARKER, THEME_BOOT_SCRIPT } from '../../src/lib/theme/boot';
 
 type RenderProps = {
   title?: string;
@@ -61,6 +62,17 @@ describe('serviceLd', () => {
 });
 
 describe('SalesLayout', () => {
+  it('runs the theme boot inside <head>, before the title (theme-modes, REQ-003)', async () => {
+    const html = await render();
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head).toContain(THEME_BOOT_SCRIPT);
+    expect(head.indexOf(THEME_BOOT_MARKER)).toBeLessThan(head.indexOf('<title>'));
+  });
+
+  it('declares both colour schemes, so form controls and scrollbars follow the theme', async () => {
+    expect(await render()).toContain('<meta name="color-scheme" content="dark light">');
+  });
+
   it('points the canonical at the live subdomain', async () => {
     expect(await render({ slug: 'site-institucional' })).toContain(
       '<link rel="canonical" href="https://contrate.nandomoreira.dev/site-institucional"',

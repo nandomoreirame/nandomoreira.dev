@@ -1,6 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import BaseLayout from '../../src/layouts/BaseLayout.astro';
+import { THEME_BOOT_MARKER, THEME_BOOT_SCRIPT } from '../../src/lib/theme/boot';
 
 const render = async () => {
   const container = await AstroContainer.create();
@@ -11,6 +12,17 @@ const render = async () => {
 };
 
 describe('BaseLayout', () => {
+  it('runs the theme boot inside <head>, before the title (theme-modes, REQ-003)', async () => {
+    const html = await render();
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head).toContain(THEME_BOOT_SCRIPT);
+    expect(head.indexOf(THEME_BOOT_MARKER)).toBeLessThan(head.indexOf('<title>'));
+  });
+
+  it('declares both colour schemes, so form controls and scrollbars follow the theme', async () => {
+    expect(await render()).toContain('<meta name="color-scheme" content="dark light">');
+  });
+
   it('declares the page language as Brazilian Portuguese', async () => {
     expect(await render()).toContain('lang="pt-BR"');
   });
