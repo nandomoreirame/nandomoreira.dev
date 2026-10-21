@@ -51,15 +51,15 @@ describe('SalesLayout header call', () => {
     expect(toggle).toBeLessThan(html.indexOf('aria-label="Voltar ao topo"'));
   });
 
-  it('sends "Orçamento" to the one contact form on the main site', async () => {
+  it('sends "Orçamento" to the form on the page', async () => {
     const html = await render();
-    expect(html).toMatch(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>\s*Orçamento\s*</);
-    expect(html).not.toContain('href="#contato"');
+    expect(html).toMatch(/<a[^>]*href="#contato"[^>]*>\s*Orçamento\s*</);
+    expect(html).not.toContain('/contato?origem=');
   });
 
   it('shrinks only the height of the header call on scroll, never its width', async () => {
     const html = await render();
-    const call = html.match(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>/)?.[0] ?? '';
+    const call = html.match(/<a[^>]*href="#contato"[^>]*>/)?.[0] ?? '';
     expect(call).toMatch(/group-data-scrolled:min-h-9/);
     expect(call).not.toMatch(/group-data-scrolled:px-/);
     expect(call).not.toMatch(/transition-\[[^\]]*padding/);
