@@ -9,8 +9,8 @@ const rule = (selector: string): string => {
 };
 const token = (name: string) => css.match(new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`))?.[1] ?? '';
 
-// Shiki's github-dark-default paints every block on this background.
-const CODE_BACKGROUND = '#0d1117';
+// Terminal Noir's Shiki theme paints every block on the page background.
+const CODE_BACKGROUND = '#0b0b0c';
 
 describe('code blocks keep their lines intact', () => {
   // Wrapping was tried on 2026-10-10 and reverted: code reads as written, and

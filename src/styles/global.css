@@ -625,10 +625,40 @@
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--color-border-strong) transparent;
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
   }
 
   .astro-code code {
     counter-reset: code-line;
+  }
+
+  /* Token colours come as variables only (defaultColor: false). The raw view
+     below still wins with its !important inherit. */
+  .astro-code span {
+    color: var(--shiki-dark);
+  }
+
+  /* Paper takes the light variant, under the same two conditions as the
+     palette (theme-modes, REQ-007). */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="noir"]) .astro-code {
+      color: var(--shiki-light);
+      background-color: var(--shiki-light-bg);
+    }
+
+    :root:not([data-theme="noir"]) .astro-code span {
+      color: var(--shiki-light);
+    }
+  }
+
+  :root[data-theme="paper"] .astro-code {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  :root[data-theme="paper"] .astro-code span {
+    color: var(--shiki-light);
   }
 
   /* Code block (src/lib/code/toolbar.ts, after the Stitch post screen): a bar

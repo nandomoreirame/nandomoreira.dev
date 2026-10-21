@@ -6,6 +6,8 @@ import { defineConfig } from 'astro/config';
 import { codeToolbar } from './src/lib/code/toolbar.ts';
 import { externalLinks, lightboxImages, tableFrames } from './src/lib/markdown/post-plugins.ts';
 import { SALES_DEV_HOST, SALES_HOST } from './src/lib/sales/host.ts';
+import terminalNoir from './src/lib/code/themes/terminal-noir.json' with { type: 'json' };
+import terminalNoirPaper from './src/lib/code/themes/terminal-noir-paper.json' with { type: 'json' };
 
 export default defineConfig({
   site: 'https://nandomoreira.dev',
@@ -87,17 +89,13 @@ export default defineConfig({
     // pages, and external links get target=_blank and rel=nofollow
     // (src/lib/markdown/post-plugins.ts).
     processor: satteri({ hastPlugins: [lightboxImages(), externalLinks(), tableFrames()] }),
-    // Shiki writes its colours inline, from its own theme, so the palette gate
-    // in tests/design-system/contrast.test.ts never saw them. The default
-    // `github-dark` renders comments at #6a737d on #24292e — 3.04:1, below AA,
-    // which Lighthouse found in a published post.
-    //
-    // `github-dark-default` is the same family (so the look barely moves) and
-    // measures 6.15:1 at its worst token. The choice was measured, not picked:
-    // tests/design-system/code-contrast.test.ts fails on any theme that drops a
-    // token below 4.5:1.
+    // Terminal Noir's own Shiki port, copied in (theme-modes, REQ-007): both
+    // variants as CSS variables, and global.css picks the one of the current
+    // site theme. Every token is held to AA by code-contrast.test.ts here and by
+    // tests/contrast.bats in Terminal Noir.
     shikiConfig: {
-      theme: 'github-dark-default',
+      themes: { dark: terminalNoir, light: terminalNoirPaper },
+      defaultColor: false,
       // Raw and Copy icon actions on every block (src/lib/code/toolbar.ts).
       transformers: [codeToolbar()],
     },
