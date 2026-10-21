@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import SalesHero from '../../src/components/sales/SalesHero.astro';
 import ServiceBlocks from '../../src/components/sales/ServiceBlocks.astro';
+import { SERVICES_QUOTE } from '../../src/lib/sales/proof';
 import SituationGrid from '../../src/components/sales/SituationGrid.astro';
 import { careerYearsLabel } from '../../src/lib/format/career-years';
 import { inventedNumbersIn, visibleText } from '../helpers/invented-numbers';
@@ -13,7 +14,7 @@ describe('SalesHero', () => {
   it('has the page h1 and the two calls', async () => {
     const out = await html(SalesHero);
     expect(out.match(/<h1/g)).toHaveLength(1);
-    expect(out).toContain('href="https://nandomoreira.dev/contato?origem=landing"');
+    expect(out).toContain('href="#contato"');
     expect(out).toContain('href="#como-trabalho"');
   });
 
@@ -21,9 +22,18 @@ describe('SalesHero', () => {
     expect(inventedNumbersIn(visibleText(await html(SalesHero)))).toEqual([]);
   });
 
+  it('lays the four proofs out as a two-by-two grid, one column on phones', async () => {
+    const out = await html(SalesHero);
+    const list = out.match(/<ul[^>]*>(?=[\s\S]*?construindo sites)/)?.[0] ?? '';
+    expect(list).toMatch(/\bgrid\b/);
+    expect(list).toMatch(/\bgrid-cols-1\b/);
+    expect(list).toMatch(/\bsm:grid-cols-2\b/);
+    expect(list).not.toMatch(/flex-wrap/);
+  });
+
   it('shows the career years computed at render', async () => {
     const out = await html(SalesHero);
-    expect(out).toContain(`${careerYearsLabel()} de código em produção`);
+    expect(out).toContain(`${careerYearsLabel()} construindo sites<`);
     expect(out).not.toContain('{anos}');
   });
 
@@ -49,6 +59,14 @@ describe('SituationGrid', () => {
 });
 
 describe('ServiceBlocks', () => {
+  it('backs the services with a short real quote right below them', async () => {
+    const out = await html(ServiceBlocks);
+    const quote = out.slice(out.lastIndexOf('</ul>'));
+    expect(quote).toContain('<blockquote');
+    expect(quote).toContain(SERVICES_QUOTE.excerpt);
+    expect(quote).toContain(SERVICES_QUOTE.name);
+  });
+
   it('renders six anchored services', async () => {
     const out = await html(ServiceBlocks);
     expect(out.match(/id="servico-/g)).toHaveLength(6);

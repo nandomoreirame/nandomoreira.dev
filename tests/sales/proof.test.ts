@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { MORE_WORK, TESTIMONIALS } from '../../src/lib/sales/proof';
+import { MORE_WORK, SERVICES_QUOTE, TESTIMONIALS } from '../../src/lib/sales/proof';
 import { inventedNumbersIn } from '../helpers/invented-numbers';
 
 describe('TESTIMONIALS', () => {
@@ -50,5 +50,13 @@ describe('MORE_WORK', () => {
     const withoutBrandYears = JSON.stringify(MORE_WORK).replace(/Agenda Rio 2030|agenda-rio-2030/g, '');
     expect(withoutBrandYears).not.toMatch(/\b20\d\d\b/);
     expect(inventedNumbersIn(JSON.stringify({ MORE_WORK, TESTIMONIALS }))).toEqual([]);
+  });
+});
+
+describe('SERVICES_QUOTE', () => {
+  it('is a verbatim excerpt of a real testimonial, with its author', () => {
+    const source = TESTIMONIALS.find(item => item.name === SERVICES_QUOTE.name);
+    expect(source?.text).toContain(SERVICES_QUOTE.excerpt);
+    expect(SERVICES_QUOTE.company).toBe(source?.company);
   });
 });
