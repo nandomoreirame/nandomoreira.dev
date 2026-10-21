@@ -209,6 +209,15 @@
   --color-destructive: #b42318;
 }
 
+/* Theme switch (theme-modes, REQ-004). Unlayered, so hiding wins over the
+   display utilities: hidden until the boot script marked <html>, then only the
+   current theme's icon and name show. */
+:root:not([data-theme-boot]) [data-theme-toggle],
+:root[data-theme="noir"] [data-theme-when="paper"],
+:root[data-theme="paper"] [data-theme-when="noir"] {
+  display: none;
+}
+
 /* Photo column capped at 20rem (320px) beside the copy (sales-landing-tweaks). */
 @utility grid-cols-photo {
   grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);

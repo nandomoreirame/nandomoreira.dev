@@ -1,0 +1,23 @@
+---
+import { Icon } from 'astro-icon/components';
+import { THEME_COPY } from '../../lib/theme/copy';
+---
+
+{/* The theme boot script owns the click (src/lib/theme/boot.ts) and global.css
+    hides the button until that script ran, so without JS it never promises an
+    action. Each state names the theme it switches to; CSS shows only the
+    current one, and display:none also drops the other name from the tree. */}
+<button
+  type="button"
+  data-theme-toggle
+  class="inline-flex size-11 shrink-0 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <span data-theme-when="noir" class="contents">
+    <Icon name="lucide:sun" aria-hidden="true" class="size-5" />
+    <span class="sr-only">{THEME_COPY.toPaper}</span>
+  </span>
+  <span data-theme-when="paper" class="contents">
+    <Icon name="lucide:moon" aria-hidden="true" class="size-5" />
+    <span class="sr-only">{THEME_COPY.toNoir}</span>
+  </span>
+</button>
