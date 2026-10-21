@@ -2,6 +2,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { THEME_BOOT_MARKER } from '../../src/lib/theme/boot';
 import {
   NOW_PREVIEW_MARKER,
   PALETTE_MARKER,
@@ -101,6 +102,25 @@ describe('client JavaScript', () => {
   it.each(['/', '/lab', '/sobre'])('actually ships the effect on %s, so the gate is not vacuous', async route => {
     const { scripts } = await served(route);
     expect(scripts.some(script => script.includes(POINTER_MARKER))).toBe(true);
+  });
+
+  it.each(['/', '/sobre', '/servicos'])(
+    'runs the theme boot inside <head> on %s (theme-modes, REQ-003)',
+    async route => {
+      const html = await (await fetch(`${BASE}${route}`)).text();
+      const boot = html.indexOf(THEME_BOOT_MARKER);
+      expect(boot).toBeGreaterThan(-1);
+      expect(boot).toBeLessThan(html.indexOf('</head>'));
+    },
+  );
+
+  it('runs the theme boot inside <head> on every pre-rendered page', () => {
+    for (const page of prerendered()) {
+      expect(
+        page.scripts.some(script => script.includes(THEME_BOOT_MARKER)),
+        page.route,
+      ).toBe(true);
+    }
   });
 
   it('ships the audio preview on /now and nowhere else', async () => {

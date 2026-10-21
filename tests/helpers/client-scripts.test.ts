@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
+import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_SCRIPT } from '../../src/lib/theme/boot';
 import {
   PALETTE_BUDGET_BYTES,
   PALETTE_MARKER,
@@ -107,5 +108,23 @@ describe('command palette exception', () => {
   it('ignores an oversized chunk without the palette marker', () => {
     const other = randomBytes(PALETTE_BUDGET_BYTES * 2).toString('base64');
     expect(paletteChunkViolations([{ file: 'vendor.js', body: other }])).toEqual([]);
+  });
+});
+
+describe('theme boot exception (theme-modes, REQ-010)', () => {
+  it('accepts the theme boot on every page', () => {
+    expect(
+      scriptViolations([
+        { route: '/', scripts: [THEME_BOOT_SCRIPT] },
+        { route: '/sobre', scripts: [THEME_BOOT_SCRIPT] },
+        { route: '/portfolio/forja', scripts: [THEME_BOOT_SCRIPT] },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('rejects a theme boot over budget', () => {
+    const bloated = `${THEME_BOOT_SCRIPT}/*${randomBytes(THEME_BOOT_BUDGET_BYTES * 2).toString('base64')}*/`;
+    const [violation] = scriptViolations([{ route: '/', scripts: [bloated] }]);
+    expect(violation).toMatch(/^\/: theme boot is \d+ B gzip, budget 512$/);
   });
 });

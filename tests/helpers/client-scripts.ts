@@ -1,4 +1,5 @@
 import { gzipSync } from 'node:zlib';
+import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_MARKER } from '../../src/lib/theme/boot';
 
 export interface PageScripts {
   route: string;
@@ -28,10 +29,17 @@ export const NOW_PREVIEW_MARKER = 'data-now-preview';
 export const NOW_PREVIEW_ROUTE = '/now';
 export const NOW_PREVIEW_BUDGET_BYTES = 1024;
 
-/** The site-wide exception (docs/specs/generative-case-art, REQ-012) plus the /now one. */
+/** The site-wide exceptions (generative-case-art REQ-012, theme-modes REQ-010) plus the /now one. */
 export const scriptViolations = (pages: PageScripts[]): string[] =>
   pages.flatMap(({ route, scripts }) =>
     scripts.flatMap(script => {
+      // Fourth named exception: the theme boot, inline in <head> on every page.
+      if (script.includes(THEME_BOOT_MARKER)) {
+        const size = gzipSync(script).length;
+        return size > THEME_BOOT_BUDGET_BYTES
+          ? [`${route}: theme boot is ${size} B gzip, budget ${THEME_BOOT_BUDGET_BYTES}`]
+          : [];
+      }
       if (script.includes(NOW_PREVIEW_MARKER)) {
         if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
