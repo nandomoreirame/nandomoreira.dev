@@ -37,6 +37,13 @@ const serviceFromHtml = (html: string) => {
 };
 
 describe('SalesLayout header call', () => {
+  it('carries one theme switch in the header, before the quote button (theme-modes, REQ-004)', async () => {
+    const html = await render();
+    const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+    expect(header.match(/data-theme-toggle/g) ?? []).toHaveLength(1);
+    expect(header.indexOf('data-theme-toggle')).toBeLessThan(header.indexOf('Orçamento'));
+  });
+
   it('sends "Orçamento" to the one contact form on the main site', async () => {
     const html = await render();
     expect(html).toMatch(/<a[^>]*href="https:\/\/nandomoreira\.dev\/contato\?origem=landing"[^>]*>\s*Orçamento\s*</);

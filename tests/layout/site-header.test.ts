@@ -117,12 +117,10 @@ describe('SiteHeader', () => {
     expect(html).toContain('max-w-frame');
   });
 
-  it('ships no theme toggle, per the dark-only decision', async () => {
-    const html = await render();
-
-    expect(html).not.toContain('<script');
-    expect(html).not.toContain('theme-toggle');
-    expect(html).not.toContain('client:');
+  it('carries one theme switch, after the navigation (theme-modes, REQ-004)', async () => {
+    const html = await render({ availability: { status: 'open' } });
+    expect(html.match(/data-theme-toggle/g) ?? []).toHaveLength(1);
+    expect(html.indexOf('data-theme-toggle')).toBeGreaterThan(html.indexOf('<nav'));
   });
 
   it('forwards the posts flag and the current route to the navigation', async () => {
