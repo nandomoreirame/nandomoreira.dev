@@ -94,4 +94,22 @@ describe('palette view', () => {
     expect(move(4, 1, 5)).toBe(0);
     expect(move(0, 1, 0)).toBe(-1);
   });
+
+  describe('theme action (theme-modes, REQ-011)', () => {
+    it('offers the theme it switches to, last in General, on T', () => {
+      const onNoir = viewFor(index, '', { theme: 'noir' })[0]?.options.at(-1);
+      expect(onNoir).toEqual({ id: 'opt-theme', label: 'Usar tema claro', action: 'toggle-theme', keys: ['T'] });
+      const onPaper = viewFor(index, '', { theme: 'paper' })[0]?.options.at(-1);
+      expect(onPaper?.label).toBe('Usar tema escuro');
+    });
+
+    it('leaves it out when the page does not know its theme (no boot, no button)', () => {
+      const labels = (viewFor(index, '')[0]?.options ?? []).map(option => option.label);
+      expect(labels).not.toContain('Usar tema claro');
+    });
+
+    it('finds it by typing', () => {
+      expect(viewFor(index, 'tema', { theme: 'noir' })[0]?.options[0]?.id).toBe('opt-theme');
+    });
+  });
 });

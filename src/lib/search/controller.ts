@@ -7,7 +7,7 @@ export interface PaletteOption {
   label: string;
   /** Destination; absent for an in-page action. */
   href?: string;
-  action?: 'copy-link';
+  action?: 'copy-link' | 'toggle-theme';
   /** Opens href in a new tab, leaving the site where it is. */
   newTab?: boolean;
   /** Keys shown with <kbd>, e.g. ['G', 'B']. */
@@ -26,9 +26,11 @@ export interface PageViews {
   aiPath?: string;
   /** Set on the AI view instead of aiPath: the way back to the page. */
   humanPath?: string;
+  /** Current site theme, known only once the theme boot ran (theme-modes). */
+  theme?: 'noir' | 'paper';
 }
 
-const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
+const general = ({ mdPath, aiPath, humanPath, theme }: PageViews): PaletteOption[] => [
   // One letter each, pressed alone outside a field (Fernando, 2026-10-19).
   { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link', keys: ['L'] },
   { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato', keys: ['E'] },
@@ -37,6 +39,16 @@ const general = ({ mdPath, aiPath, humanPath }: PageViews): PaletteOption[] => [
   ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath, keys: ['M'] }] : []),
   ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath, keys: ['I'] }] : []),
   ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath, keys: ['I'] }] : []),
+  ...(theme
+    ? [
+        {
+          id: 'opt-theme',
+          label: theme === 'paper' ? PALETTE_COPY.actions.themeNoir : PALETTE_COPY.actions.themePaper,
+          action: 'toggle-theme' as const,
+          keys: ['T'],
+        },
+      ]
+    : []),
 ];
 
 const GO: PaletteOption[] = GO_TARGETS.map(target => ({

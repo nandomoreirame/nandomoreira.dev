@@ -1,4 +1,5 @@
 import { salesUrl } from '../sales/host';
+import { THEME_COPY } from '../theme/copy';
 
 /** Visible strings of the command palette (docs/specs/command-palette, D9), in pt-BR. */
 export const PALETTE_COPY = {
@@ -29,6 +30,8 @@ export const PALETTE_COPY = {
     markdown: 'Versão .md',
     ai: 'Versão para IA',
     human: 'Versão para humanos',
+    themePaper: THEME_COPY.toPaper,
+    themeNoir: THEME_COPY.toNoir,
   },
 } as const;
 
