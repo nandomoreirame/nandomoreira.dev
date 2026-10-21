@@ -36,10 +36,16 @@ let opener: HTMLElement | null = null;
 let armedAt: number | undefined;
 let unavailable = false;
 
+const currentTheme = (): 'noir' | 'paper' | undefined => {
+  const theme = document.documentElement.dataset.theme;
+  return theme === 'noir' || theme === 'paper' ? theme : undefined;
+};
+
 const pageViews = () => ({
   mdPath: dialog.dataset.paletteMd,
   aiPath: dialog.dataset.paletteAi,
   humanPath: dialog.dataset.paletteHuman,
+  theme: currentTheme(),
 });
 
 /** Only an object with a string title and a site or https path reaches the list. */
@@ -124,6 +130,12 @@ const setActive = (next: number) => {
 };
 
 const choose = (option: PaletteOption) => {
+  if (option.action === 'toggle-theme') {
+    dialog.close();
+    // One switch, one code path: the theme boot script handles this click.
+    document.querySelector<HTMLElement>('[data-theme-toggle]')?.click();
+    return;
+  }
   if (option.action === 'copy-link') {
     dialog.close();
     if (announce) announce.textContent = '';

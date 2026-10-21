@@ -455,4 +455,43 @@ describe('palette module', () => {
   it('carries the gate marker in its own source', () => {
     expect(readFileSync('src/scripts/palette.ts', 'utf8')).toContain('data-command-palette');
   });
+
+  describe('theme action (theme-modes, REQ-011)', () => {
+    const withToggle = () => {
+      const button = document.createElement('button');
+      button.setAttribute('data-theme-toggle', '');
+      document.body.append(button);
+      const click = vi.fn();
+      button.addEventListener('click', click);
+      return click;
+    };
+
+    afterEach(() => {
+      delete document.documentElement.dataset.theme;
+    });
+
+    it('lists the switch with the name of the other theme', async () => {
+      document.documentElement.dataset.theme = 'paper';
+      withToggle();
+      const palette = await load();
+      await palette.open(null);
+      expect(listbox().textContent).toContain('Usar tema escuro');
+    });
+
+    it('closes and presses the header switch on T, so the boot script does the work', async () => {
+      document.documentElement.dataset.theme = 'noir';
+      const click = withToggle();
+      const palette = await load();
+      await palette.open(null);
+      palette.press('T', 5000);
+      expect(click).toHaveBeenCalledTimes(1);
+      expect(dialog().hasAttribute('open')).toBe(false);
+    });
+
+    it('offers nothing when the theme is unknown', async () => {
+      const palette = await load();
+      await palette.open(null);
+      expect(listbox().textContent).not.toContain('Usar tema');
+    });
+  });
 });
