@@ -233,7 +233,8 @@ export const SALES_SERVICES: readonly SalesService[] = z.array(serviceSchema).pa
     service: 'automation',
     icon: 'lucide:bot',
     title: 'Automação e IA',
-    summary: 'Rotinas inteligentes que cuidam das tarefas repetitivas da sua operação para liberar o seu tempo.',
+    summary:
+      'A planilha que se preenche sozinha, o e-mail que chega triado e a mensagem respondida no automático, para você parar de fazer à mão o que se repete.',
     audience: 'Negócios que gastam horas alimentando planilhas, triando e-mails ou respondendo mensagens.',
     receives: [
       'Integração entre as ferramentas que você já usa',

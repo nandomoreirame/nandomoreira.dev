@@ -4,6 +4,7 @@ import AboutCard from '../../components/sales/AboutCard.astro';
 import FaqList from '../../components/sales/FaqList.astro';
 import MoreWork from '../../components/sales/MoreWork.astro';
 import ProjectShowcase from '../../components/sales/ProjectShowcase.astro';
+import SalesContact from '../../components/sales/SalesContact.astro';
 import SalesCta from '../../components/sales/SalesCta.astro';
 import SalesHero from '../../components/sales/SalesHero.astro';
 import ServiceBlocks from '../../components/sales/ServiceBlocks.astro';
@@ -15,6 +16,8 @@ import SalesLayout from '../../layouts/SalesLayout.astro';
 import { SALES_COPY } from '../../lib/sales/copy';
 
 export const prerender = false;
+
+const outcome = Astro.url.searchParams.get('envio');
 ---
 
 <SalesLayout
@@ -23,7 +26,7 @@ export const prerender = false;
   serviceName="Desenvolvimento de sites e produtos web"
 >
   <SalesHero />
-  {/* A quote call after every two sections; past the about card, the FAQ comes first and the last call closes the page. */}
+  {/* A quote call after every two sections; past the about card, the FAQ comes first and the form closes the page. */}
   <SituationGrid />
   <ServiceBlocks />
   <SalesCta index={0} />
@@ -36,5 +39,5 @@ export const prerender = false;
   <MoreWork />
   <AboutCard />
   <FaqList id="duvidas" items={SALES_COPY.faq} {...SALES_COPY.faqHeader} />
-  <SalesCta index={3} />
+  <SalesContact origin="landing" outcome={outcome} />
 </SalesLayout>

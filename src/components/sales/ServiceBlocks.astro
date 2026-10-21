@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { SALES_SERVICES, SHOW_DETAIL_LINKS, serviceAnchor } from '../../lib/sales/catalog';
 import { SALES_COPY } from '../../lib/sales/copy';
 import { salesPath } from '../../lib/sales/host';
+import { SERVICES_QUOTE } from '../../lib/sales/proof';
 import SectionIntro from './SectionIntro.astro';
 ---
 
@@ -38,5 +39,12 @@ import SectionIntro from './SectionIntro.astro';
         </li>
       ))}
     </ul>
+    {/* Proof right beside the first claim; the full testimonials come later. */}
+    <figure class="flex flex-col gap-sm border-l-2 border-primary pl-lg">
+      <blockquote class="max-w-measure text-body text-foreground">“{SERVICES_QUOTE.excerpt}”</blockquote>
+      <figcaption class="text-small text-muted-foreground">
+        <span class="font-semibold text-foreground">{SERVICES_QUOTE.name}</span>, {SERVICES_QUOTE.company}
+      </figcaption>
+    </figure>
   </div>
 </section>

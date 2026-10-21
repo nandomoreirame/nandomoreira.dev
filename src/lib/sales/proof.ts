@@ -82,3 +82,14 @@ export const MORE_WORK: readonly PastWork[] = [
     alt: 'Catálogo de ferramentas de marketing digital, organizado por categoria',
   },
 ];
+
+/**
+ * A short, verbatim slice of a testimonial shown right below the services, so
+ * the first claim on the page has proof beside it; the full quote stays in the
+ * testimonials section.
+ */
+export const SERVICES_QUOTE = {
+  excerpt: 'Moderno e funcional, facilitou a navegação dos clientes e maior conversão de vendas!',
+  name: TESTIMONIALS[0]!.name,
+  company: TESTIMONIALS[0]!.company,
+} as const;

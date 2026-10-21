@@ -2,11 +2,10 @@
 import { Icon } from 'astro-icon/components';
 import { withCareerYears } from '../../lib/format/career-years';
 import { SALES_COPY } from '../../lib/sales/copy';
-import { salesContactLink } from '../../lib/sales/host';
 import HeroArt from './HeroArt.astro';
 
 const { hero } = SALES_COPY;
-const contact = salesContactLink(Astro.url, 'landing');
+const contact = '#contato';
 ---
 
 <section aria-labelledby="hero-title" class="mx-auto grid w-full max-w-page gap-xl px-lg py-2xl lg:grid-cols-2 lg:items-center lg:py-3xl">
@@ -22,10 +21,10 @@ const contact = salesContactLink(Astro.url, 'landing');
         {hero.secondary}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
       </a>
     </div>
-    <ul class="flex flex-wrap gap-x-lg gap-y-sm border-t border-border pt-md">
+    <ul class="grid grid-cols-1 gap-x-lg gap-y-sm border-t border-border pt-md sm:grid-cols-2">
       {hero.proofs.map((proof) => (
-        <li class="inline-flex items-center gap-xs font-mono text-micro text-muted-foreground">
-          <Icon name="lucide:check" class="size-3 text-primary" aria-hidden="true" />{withCareerYears(proof)}
+        <li class="flex items-center gap-xs font-mono text-micro text-muted-foreground">
+          <Icon name="lucide:check" class="size-3 shrink-0 text-primary" aria-hidden="true" />{withCareerYears(proof)}
         </li>
       ))}
     </ul>

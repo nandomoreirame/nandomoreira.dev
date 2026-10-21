@@ -1,3 +1,5 @@
+import { PAYMENT_ANSWER } from './payment';
+
 /** One step of the work, with an optional text label for the approval steps. */
 export interface SalesStep {
   title: string;
@@ -10,7 +12,7 @@ const STEPS: readonly SalesStep[] = [
   {
     title: 'Entrevista',
     text: 'Uma conversa para entender o seu negócio, o seu cliente e o seu objetivo.',
-    youDo: 'Você só precisa contar a sua história.',
+    youDo: 'Você me conta como o seu negócio funciona hoje.',
   },
   {
     title: 'Pesquisa',
@@ -50,21 +52,21 @@ const STEPS: readonly SalesStep[] = [
 export const SALES_COPY = {
   hero: {
     eyebrow: 'Sites, lojas e sistemas para o seu negócio',
-    title: 'Seu site, sua loja ou seu sistema, do primeiro papo até estar no ar.',
-    lead: 'Você me conta o que o seu negócio precisa, mesmo que ainda não saiba o nome disso. Eu traduzo em um projeto, desenho, construo e entrego funcionando.',
-    primary: 'Quero conversar sobre meu projeto',
+    title: 'Seu site ou sua loja no ar em 5 a 30 dias úteis, sem precisar entender de tecnologia.',
+    lead: 'Você me conta o que precisa, mesmo sem saber o nome disso, e fala direto comigo do começo ao fim. Você aprova o design antes de eu escrever qualquer código.',
+    primary: 'Quero meu orçamento',
     secondary: 'Ver como funciona',
     proofs: [
-      '{anos} de código em produção',
-      'Design aprovado antes da programação',
-      'Entrega em 5 a 30 dias úteis',
-      'Sem jargão técnico',
+      '{anos} construindo sites',
+      'Proposta com a data de cada etapa',
+      'O site fica no seu nome',
+      'Acompanhamento depois da entrega',
     ],
   },
   situationsHeader: {
     eyebrow: 'Ponto de partida',
     title: 'Não sabe por onde começar? Comece pela sua situação.',
-    lead: 'Você não precisa conhecer termos técnicos nem saber qual tecnologia contratar. Escolha a frase que mais parece com o seu momento.',
+    lead: 'Escolha a frase que mais parece com o seu momento.',
   },
   situations: [
     { label: 'Presença', quote: 'Quero que me encontrem no Google', service: 'site-institucional' },
@@ -79,22 +81,52 @@ export const SALES_COPY = {
     { label: 'Tempo', quote: 'Perco horas com tarefas repetitivas e planilhas', service: 'automacao-ia' },
   ],
   servicesHeader: {
-    eyebrow: 'Soluções sob medida',
-    title: 'Serviços pensados para o momento do seu negócio',
-    lead: 'Tudo explicado sem enrolação: o que é, para quem serve e o que você recebe.',
+    eyebrow: 'O que eu faço',
+    title: 'Escolha pelo que você quer resolver',
+    lead: 'Cada serviço diz o que é, para quem serve e o que você recebe.',
   },
   stepsHeader: {
-    eyebrow: 'Transparência total',
+    eyebrow: 'Passo a passo',
     title: 'Como eu trabalho',
-    lead: 'Um processo simples e previsível. Você sempre sabe em que pé está o projeto e o que precisa fazer.',
+    lead: 'Sete etapas, e em duas delas nada anda sem a sua aprovação. Você sempre sabe em que pé está o projeto e o que precisa fazer.',
   },
   steps: STEPS,
   stepsNote: 'As etapas 03 e 04 garantem que nada é construído sem a sua aprovação.',
   toolsHeader: {
     eyebrow: 'Infraestrutura explicada',
-    title: 'As ferramentas por trás, explicadas sem complicação',
-    lead: 'Pense na tecnologia como uma loja física. Eu uso o Firebase, a plataforma do Google, e alguns serviços parceiros, e cada peça faz um papel conhecido.',
+    title: 'O que a tecnologia faz pelo seu negócio',
+    lead: 'Você não precisa saber o nome de nenhuma ferramenta. Isto é o que elas garantem para você e para o seu cliente.',
   },
+  /** What the tools below do for the client, said without their names; each comes from a tool's own text. */
+  toolBenefits: [
+    {
+      title: 'Rápido em qualquer lugar',
+      text: 'O site abre rápido no celular e no computador, aqui ou do outro lado do mundo.',
+    },
+    {
+      title: 'Seguro desde o primeiro dia',
+      text: 'Cadeado de segurança incluso, e login com e-mail ou conta Google para cada pessoa ver só o que é dela.',
+    },
+    {
+      title: 'Custo que acompanha o negócio',
+      text: 'Para um site institucional, uma landing page ou um blog, manter no ar costuma custar perto de zero, e o custo só sobe quando o movimento sobe.',
+    },
+    {
+      title: 'Pagamento com Pix, cartão e boleto',
+      text: 'O seu cliente paga com segurança e o sistema fica sabendo assim que o pagamento cai.',
+    },
+    {
+      title: 'Avisos e tarefas no automático',
+      text: 'Confirmação de pedido, aviso de cadastro e relatórios saem sozinhos, sem ninguém precisar lembrar.',
+    },
+    {
+      title: 'Inteligência artificial quando fizer sentido',
+      text: 'Resumos, textos e automações dentro do seu produto, quando ajudam o seu cliente de verdade.',
+    },
+  ],
+  toolsDetails: 'Ver as ferramentas por trás',
+  toolsDetailsLead:
+    'Para quem quer saber os nomes: eu uso o Firebase, a plataforma do Google, e alguns serviços parceiros. Pense numa loja física, em que cada peça faz um papel conhecido.',
   tools: [
     {
       name: 'Firebase Hosting',
@@ -182,11 +214,11 @@ export const SALES_COPY = {
     points: [
       {
         title: '{anos} construindo software',
-        text: 'com passagem por grandes empresas de tecnologia, como Itaú Unibanco, Pipefy e Skyone.',
+        text: 'com passagem por empresas como Itaú Unibanco, Pipefy e Skyone.',
       },
       {
         title: 'Você fala direto com quem constrói',
-        text: 'sem intermediário e sem telefone sem fio. A sua necessidade é entendida na raiz.',
+        text: 'do primeiro papo à entrega, sem passar por atendente nem gerente de projeto.',
       },
       {
         title: 'O acompanhamento continua depois da entrega',
@@ -208,12 +240,26 @@ export const SALES_COPY = {
     {
       question: 'Quanto custa?',
       answer:
-        'Depende do que o seu projeto precisa e do que você quer incluir. Depois da primeira conversa, montamos o escopo juntos e eu envio uma proposta; o valor varia conforme o que entra agora e o que fica para depois.',
+        'Depende do que entra agora e do que fica para depois. Depois da primeira conversa, montamos o escopo juntos e eu envio uma proposta com o valor e a data de cada etapa.',
+    },
+    {
+      question: 'Como funciona o pagamento?',
+      answer: PAYMENT_ANSWER,
     },
     {
       question: 'Quanto tempo leva?',
       answer:
         'Em geral, de 5 a 30 dias úteis de trabalho, conforme o tamanho do projeto. O prazo exato vem na proposta, com a data de cada etapa, e você acompanha o andamento pelo link de teste.',
+    },
+    {
+      question: 'Quanto custa manter o site no ar?',
+      answer:
+        'Para um site institucional, uma landing page ou um blog, costuma ficar perto de zero. O custo só sobe quando o movimento sobe, e a proposta já diz o que esperar no seu caso.',
+    },
+    {
+      question: 'E se eu não gostar do design?',
+      answer:
+        'Você vê as telas antes de qualquer código e pede ajustes até ficar do seu jeito. A construção só começa depois da sua aprovação.',
     },
     {
       question: 'Vou conseguir atualizar sozinho?',
@@ -229,7 +275,7 @@ export const SALES_COPY = {
       answer: 'Sim. Continuo acompanhando o projeto, com suporte, ajustes e evolução conforme o seu negócio cresce.',
     },
   ],
-  /** Quote calls between the landing sections, in page order; the last one closes the page. */
+  /** Quote calls between the landing sections, in page order; the form closes the page. */
   ctas: [
     {
       title: 'Já sabe o que precisa?',
@@ -243,10 +289,15 @@ export const SALES_COPY = {
       title: 'Quer ser o próximo projeto no ar?',
       text: 'Conte o que você tem hoje e onde quer chegar. Eu digo o que dá para fazer e o que não dá.',
     },
-    {
-      title: 'Vamos conversar sobre o seu projeto?',
-      text: 'Quem atende é quem constrói. Sem intermediário, sem jargão.',
-    },
   ],
   ctaButton: 'Pedir orçamento',
+  /** The form that closes the landing and each detail page (restored 2026-10-21, asked by Fernando). */
+  contact: {
+    eyebrow: 'Orçamento sem compromisso',
+    title: 'Vamos conversar sobre o seu projeto?',
+    lead: 'Quem atende é quem constrói, sem intermediário. Você conta o que precisa e eu te digo o caminho mais simples.',
+    note: 'Respondo pessoalmente, pelo canal que você escolher.',
+    submit: 'Quero meu orçamento',
+    whatsapp: 'Prefiro conversar pelo WhatsApp',
+  },
 } as const;

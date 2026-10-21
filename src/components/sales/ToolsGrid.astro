@@ -1,22 +1,43 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { SALES_COPY } from '../../lib/sales/copy';
 import SectionIntro from './SectionIntro.astro';
 
-const { tools, toolsHeader, toolsNote } = SALES_COPY;
+const { tools, toolBenefits, toolsDetails, toolsDetailsLead, toolsHeader, toolsNote } = SALES_COPY;
 ---
 
+{/* What the infrastructure does comes first, in plain words; the product names
+    stay one click away, in a native <details> (no client script). */}
 <section aria-labelledby="ferramentas-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
     <SectionIntro id="ferramentas-title" {...toolsHeader} />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
-      {tools.map((tool) => (
+      {toolBenefits.map((benefit) => (
         <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
-          <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">Analogia: “{tool.analogy}”</p>
-          <h3 class="text-h3 font-semibold text-foreground">{tool.name}</h3>
-          <p class="text-small text-muted-foreground">{tool.text}</p>
+          <h3 class="text-h3 font-semibold text-foreground">{benefit.title}</h3>
+          <p class="text-small text-muted-foreground">{benefit.text}</p>
         </li>
       ))}
     </ul>
     <p class="rounded-md border border-border-strong bg-surface px-md py-sm text-center font-mono text-small text-muted-foreground">{toolsNote}</p>
+    <details class="group rounded-md border border-border-strong bg-surface transition-[border-color] duration-(--duration-base) ease-out hover:border-primary">
+      <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-md px-lg py-md text-body text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        {toolsDetails}
+        <Icon name="lucide:chevron-down" class="size-4 shrink-0 text-primary transition-transform duration-(--duration-fast) group-open:rotate-180" aria-hidden="true" />
+      </summary>
+      <div class="flex flex-col gap-md px-lg pb-lg">
+        <p class="max-w-measure text-small text-muted-foreground">{toolsDetailsLead}</p>
+        <dl class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool) => (
+            <div class="flex flex-col gap-xs">
+              <dt class="text-body font-semibold text-foreground">
+                {tool.name} <span class="font-mono text-micro uppercase tracking-eyebrow text-primary">({tool.analogy})</span>
+              </dt>
+              <dd class="text-small text-muted-foreground">{tool.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </details>
   </div>
 </section>
