@@ -10,6 +10,12 @@ describe('thankYouMail', () => {
     expect(mail).not.toHaveProperty('replyTo');
   });
 
+  it('uses its own subject for a quote request, naming the chosen service', async () => {
+    const mail = await thankYouMail({ name: 'Ana Souza', kind: 'quote', service: 'website' });
+    expect(mail.subject).toBe('Recebi seu pedido de orçamento');
+    expect(mail.text).toContain('orçamento para site institucional');
+  });
+
   it('uses the CV subject', async () => {
     const mail = await thankYouMail({ name: null, kind: 'cv' });
     expect(mail.subject).toBe('Obrigado por baixar meu currículo');

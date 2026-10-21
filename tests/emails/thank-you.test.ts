@@ -72,6 +72,27 @@ describe('ThankYou', () => {
     expect(text).toMatch(/mensagem automática/i);
   });
 
+  it('answers a quote request with the service and the next steps toward a proposal', async () => {
+    const text = toPlainText(await html({ name: 'Ana Souza', kind: 'quote', service: 'website' }));
+    expect(text).toContain('Obrigado pelo pedido de orçamento, Ana');
+    expect(text).toMatch(/orçamento para site institucional/);
+    const ai = toPlainText(await html({ name: 'Ana', kind: 'quote', service: 'automation' }));
+    expect(ai).toMatch(/orçamento para automação e IA/);
+    expect(text).toMatch(/conversa/);
+    expect(text).toMatch(/proposta/);
+    expect(text).toMatch(/contrate\.nandomoreira\.dev/);
+    expect(text).toMatch(/mensagem automática/i);
+    expect(text).not.toMatch(/horas|[–—]/);
+  });
+
+  it('leaves the service out of a quote when the visitor did not pick one', async () => {
+    for (const service of [undefined, 'undecided'] as const) {
+      const text = toPlainText(await html({ name: 'Ana', kind: 'quote', service }));
+      expect(text).toMatch(/Seu pedido de orçamento chegou/);
+      expect(text).not.toMatch(/Ainda não sei/);
+    }
+  });
+
   it('has preview props for email dev', () => {
     expect(ThankYou.PreviewProps.kind).toBe('briefing');
   });

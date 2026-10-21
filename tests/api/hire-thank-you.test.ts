@@ -67,6 +67,22 @@ describe('thank-you after a hire form', () => {
     expect(markNotified).toHaveBeenCalledWith('doc-1');
   });
 
+  it('answers a sales-page form with the quote mail, naming the service', async () => {
+    await handleHire(
+      new Request('https://contrate.nandomoreira.dev/api/hire?origem=landing', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ nome: 'Ana', contato: 'ana@example.com', servico: 'online-store' }).toString(),
+      }),
+      deps(),
+    );
+
+    const [to, mail] = thankYou.mock.calls[0] as [string, OutgoingMail];
+    expect(to).toBe('ana@example.com');
+    expect(mail.subject).toBe('Recebi seu pedido de orçamento');
+    expect(mail.text).toContain('loja virtual');
+  });
+
   it('does not send a thank-you for a WhatsApp contact', async () => {
     await form({
       nome: 'Ana',

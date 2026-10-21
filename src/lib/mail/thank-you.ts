@@ -5,23 +5,26 @@ import ThankYou from '../../emails/thank-you';
 import type { HireConfig } from '../hire/config';
 import type { OutgoingMail } from './outgoing';
 
-export type ThankYouKind = 'briefing' | 'cv' | 'newsletter';
+export type ThankYouKind = 'briefing' | 'cv' | 'newsletter' | 'quote';
 
 const SUBJECT: Record<ThankYouKind, string> = {
   briefing: 'Recebi sua mensagem',
+  quote: 'Recebi seu pedido de orçamento',
   cv: 'Obrigado por baixar meu currículo',
   newsletter: 'Assinatura confirmada',
 };
 
-/** Confirmation sent to the visitor after a form briefing or a CV download. */
+/** Confirmation sent to the visitor after a form briefing, a quote request or a CV download. */
 export const thankYouMail = async ({
   name,
   kind,
+  service,
 }: {
   name: string | null;
   kind: ThankYouKind;
+  service?: string | null;
 }): Promise<OutgoingMail> => {
-  const html = await render(h(ThankYou, { name, kind }));
+  const html = await render(h(ThankYou, { name, kind, service }));
   return { subject: SUBJECT[kind], html, text: toPlainText(html) };
 };
 

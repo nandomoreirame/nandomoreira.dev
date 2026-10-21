@@ -4,15 +4,30 @@ import { Text } from 'react-email';
 import { InlineLink, Paragraph } from './_shared/blocks';
 import { EmailLayout } from './_shared/layout';
 import { EMAIL_COLORS as c, EMAIL_FONTS as f, EMAIL_SPACE as s } from './_shared/tokens';
+import { salesUrl } from '../lib/sales/host';
+import { SERVICE_LABELS, isService } from '../lib/sales/service-labels';
 
-type Kind = 'briefing' | 'cv' | 'newsletter';
+type Kind = 'briefing' | 'cv' | 'newsletter' | 'quote';
 
 interface Props {
   /** What the visitor typed as name; only a safe first name is used. */
   name: string | null;
-  /** A message sent through a form, a CV download with details left, or a newsletter signup. */
+  /** A message sent through a form, a CV download with details left, a newsletter signup or a quote request from the sales pages. */
   kind: Kind;
+  /** The service picked on a quote request; a closed list, so its label is safe to repeat. */
+  service?: string | null;
 }
+
+/**
+ * Label of a picked service for the middle of a sentence (first letter only in
+ * lower case, so "Automação e IA" keeps its IA), or null for none, an unknown
+ * value or "Ainda não sei".
+ */
+const pickedService = (service: string | null | undefined): string | null => {
+  if (!service || service === 'undecided' || !isService(service)) return null;
+  const label = SERVICE_LABELS[service];
+  return label.charAt(0).toLocaleLowerCase('pt-BR') + label.slice(1);
+};
 
 /**
  * The first name, or null. This mail goes to an address nobody verified, so
@@ -42,6 +57,12 @@ const COPY: Record<Kind, { eyebrow: string; title: string; preview: string; foot
     preview: 'Recebi seus dados, e eu retorno em breve se fizer sentido.',
     footer: `${AUTOMATIC} Você recebeu este e-mail porque deixou seu contato em nandomoreira.dev. Ele não entra em nenhuma lista, e não vou mandar newsletter sem você pedir.`,
   },
+  quote: {
+    eyebrow: 'pedido de orçamento',
+    title: 'Obrigado pelo pedido de orçamento',
+    preview: 'Seu pedido de orçamento chegou, e eu retorno em breve.',
+    footer: `${AUTOMATIC} Você recebeu este e-mail porque pediu um orçamento em contrate.nandomoreira.dev. Ele não entra em nenhuma lista, e não vou mandar newsletter sem você pedir.`,
+  },
   newsletter: {
     eyebrow: 'assinatura confirmada',
     title: 'Obrigado por assinar',
@@ -56,9 +77,11 @@ const COPY: Record<Kind, { eyebrow: string; title: string; preview: string; foot
  * repeats nothing they wrote and offers no button: the reply comes from me,
  * in person, through the contact they left.
  */
-const ThankYou = ({ name, kind }: Props) => {
+const ThankYou = ({ name, kind, service }: Props) => {
   const first = greetingName(name);
   const copy = COPY[kind];
+  const picked = pickedService(service);
+  const sales = salesUrl();
 
   return (
     <EmailLayout
@@ -76,6 +99,21 @@ const ThankYou = ({ name, kind }: Props) => {
           <Paragraph>
             Enquanto isso, o que já publiquei está no <InlineLink href={`${SITE}/posts`}>blog</InlineLink>. Se mudar de
             ideia, é só pedir para sair pela página de <InlineLink href={`${SITE}/contato`}>contato</InlineLink>.
+          </Paragraph>
+        </>
+      ) : kind === 'quote' ? (
+        <>
+          <Paragraph>
+            {picked ? `Seu pedido de orçamento para ${picked} chegou` : 'Seu pedido de orçamento chegou'} e já está
+            comigo. Vou ler com calma e retorno em breve pelo e-mail que você deixou.
+          </Paragraph>
+          <Paragraph>
+            O próximo passo é uma conversa para eu entender o seu negócio e o que você precisa. Depois dela, montamos o
+            escopo juntos e eu envio uma proposta com o valor e a data de cada etapa.
+          </Paragraph>
+          <Paragraph>
+            Enquanto isso, você pode ver <InlineLink href={`${sales}#como-trabalho`}>como eu trabalho</InlineLink> e os{' '}
+            <InlineLink href={`${sales}#projetos`}>projetos que já estão no ar</InlineLink>.
           </Paragraph>
         </>
       ) : kind === 'briefing' ? (
