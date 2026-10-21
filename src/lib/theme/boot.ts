@@ -19,7 +19,7 @@ export const THEME_BOOT_SCRIPT = `(() => {
   const pick = () => (stored === 'noir' || stored === 'paper' ? stored : system.matches ? 'paper' : 'noir');
   root.dataset.theme = pick();
   root.setAttribute('${THEME_BOOT_MARKER}', '');
-  system.addEventListener('change', () => { root.dataset.theme = pick(); });
+  system.addEventListener?.('change', () => { root.dataset.theme = pick(); });
   document.addEventListener('click', (event) => {
     const target = event.target;
     if (!(target instanceof Element) || !target.closest('[data-theme-toggle]')) return;

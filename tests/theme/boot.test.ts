@@ -8,6 +8,8 @@ interface BootOptions {
   stored?: string | null;
   light?: boolean;
   storageThrows?: boolean;
+  /** Old Safari MediaQueryList had no addEventListener (only addListener). */
+  systemHasAddEventListener?: boolean;
 }
 
 /**
@@ -15,13 +17,23 @@ interface BootOptions {
  * starts with one click listener on its own document. vm is test-only: the
  * production page runs the same string as a plain <script>.
  */
-const boot = ({ stored = null, light = false, storageThrows = false }: BootOptions = {}) => {
+const boot = ({
+  stored = null,
+  light = false,
+  storageThrows = false,
+  systemHasAddEventListener = true,
+}: BootOptions = {}) => {
   const window = new Window();
   const { document } = window;
   document.body.innerHTML =
     '<button type="button" data-theme-toggle><svg><path></path></svg></button><p id="other">texto</p>';
   const listeners: Array<() => void> = [];
-  const system = { matches: light, addEventListener: (_type: string, fn: () => void) => listeners.push(fn) };
+  const system: { matches: boolean; addEventListener?: (type: string, fn: () => void) => void } = {
+    matches: light,
+  };
+  if (systemHasAddEventListener) {
+    system.addEventListener = (_type: string, fn: () => void) => listeners.push(fn);
+  }
   const store = new Map<string, string>(stored === null ? [] : [['theme', stored]]);
   const localStorage = {
     getItem: (key: string) => {
@@ -76,6 +88,13 @@ describe('theme boot script', () => {
     page.click('[data-theme-toggle]');
     expect(page.root.dataset.theme).toBe('noir');
     expect(page.store.get('theme')).toBe('noir');
+  });
+
+  it('keeps the toggle working when matchMedia has no addEventListener', () => {
+    const page = boot({ light: false, systemHasAddEventListener: false });
+    page.click('[data-theme-toggle]');
+    expect(page.root.dataset.theme).toBe('paper');
+    expect(page.store.get('theme')).toBe('paper');
   });
 
   it('ignores clicks elsewhere', () => {
