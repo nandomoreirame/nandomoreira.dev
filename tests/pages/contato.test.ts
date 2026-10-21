@@ -1,6 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import { FORM_HONEYPOT } from '../../src/lib/hire/form';
+import { THEME_BOOT_SCRIPT } from '../../src/lib/theme/boot';
 import Contato from '../../src/pages/contato.astro';
 
 const render = async (query = '') => {
@@ -153,11 +154,13 @@ describe('/contato', () => {
 
   it('ships no client JavaScript besides the pointer effect', async () => {
     const html = await render();
-    const scripts = html.match(/<script\b[^>]*>/g) ?? [];
+    const scripts = [...html.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/g)];
 
-    // JSON-LD is data the browser never executes. The pointer effect is the
-    // one named exception (generative-case-art); anything else is an island.
-    for (const tag of scripts) {
+    // JSON-LD is data the browser never executes. The pointer effect and the
+    // theme boot, byte for byte (theme-modes, REQ-010), are the named
+    // exceptions; anything else is an island.
+    for (const [, tag, body] of scripts) {
+      if (body === THEME_BOOT_SCRIPT) continue;
       expect(tag, `executable script on the page: ${tag}`).toMatch(/application\/ld\+json|PointerField\.astro/);
     }
 
