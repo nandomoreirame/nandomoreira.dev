@@ -66,9 +66,17 @@ describe('design tokens', () => {
     expect(durations).toHaveLength(3);
   });
 
-  it('ships a single dark theme, with no light-mode override', () => {
-    expect(css).not.toContain('prefers-color-scheme');
-    expect(css).not.toContain('data-theme');
+  // Since theme-modes (2026-10-20) Paper is the second theme. The override
+  // stays narrow: system light only, always behind the explicit Noir choice.
+  it('ships Noir by default and Paper only through the theme-modes selectors', () => {
+    const media = [...css.matchAll(/@media\s*\(prefers-color-scheme:\s*(\w+)\)\s*\{\s*([^{]+)\{/g)];
+    expect(media.length).toBeGreaterThan(0);
+    for (const [, scheme, selector] of media) {
+      expect(scheme).toBe('light');
+      expect(selector!.trim().startsWith(':root:not([data-theme="noir"])')).toBe(true);
+    }
+    const values = [...css.matchAll(/data-theme="([^"]*)"/g)].map(([, value]) => value);
+    expect(new Set(values)).toEqual(new Set(['noir', 'paper']));
   });
 });
 

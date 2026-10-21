@@ -162,6 +162,53 @@
   --shadow-window: 0 12px 32px rgb(0 0 0 / 0.45);
 }
 
+/* Paper, the light variant of Terminal Noir (docs/specs/theme-modes). Unlayered,
+   so it beats the @theme tokens; the reading mode's palettes carry ids in their
+   :has() and still win over it (REQ-009). The two blocks must stay identical:
+   tests/design-system/paper-contrast.test.ts compares them. Values from Terminal
+   Noir after its contrast-gate: every text token clears 4.5:1 on every surface.
+   The WhatsApp brand green is 1.90:1 on paper, so the button takes the brand's
+   dark teal. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="noir"]) {
+    color-scheme: light;
+    --color-background: #fbfaf7;
+    --color-surface: #f1efea;
+    --color-surface-elevated: #e9e6df;
+    --color-border: #dcd8cf;
+    --color-border-strong: #88837a;
+    --color-selection: #d6d2c8;
+    --color-foreground: #1c1a17;
+    --color-muted-foreground: #5e5a53;
+    --color-primary: #865700;
+    --color-primary-foreground: #fbfaf7;
+    --color-success: #0b7656;
+    --color-whatsapp: #075e54;
+    --color-whatsapp-foreground: #fbfaf7;
+    --color-warning: #8a5300;
+    --color-destructive: #b42318;
+  }
+}
+
+:root[data-theme="paper"] {
+  color-scheme: light;
+  --color-background: #fbfaf7;
+  --color-surface: #f1efea;
+  --color-surface-elevated: #e9e6df;
+  --color-border: #dcd8cf;
+  --color-border-strong: #88837a;
+  --color-selection: #d6d2c8;
+  --color-foreground: #1c1a17;
+  --color-muted-foreground: #5e5a53;
+  --color-primary: #865700;
+  --color-primary-foreground: #fbfaf7;
+  --color-success: #0b7656;
+  --color-whatsapp: #075e54;
+  --color-whatsapp-foreground: #fbfaf7;
+  --color-warning: #8a5300;
+  --color-destructive: #b42318;
+}
+
 /* Photo column capped at 20rem (320px) beside the copy (sales-landing-tweaks). */
 @utility grid-cols-photo {
   grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
