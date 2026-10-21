@@ -37,25 +37,18 @@ const serviceFromHtml = (html: string) => {
 };
 
 describe('SalesLayout header call', () => {
-  it('carries one theme switch in the header, before the quote button (theme-modes, REQ-004)', async () => {
+  // The sales page has no footer link to the top: its "Voltar ao topo" is
+  // in the floating stack, so the switch sits right before it, at every width.
+  it('carries the theme switch only beside "Voltar ao topo" in the floating stack (theme-modes, REQ-004)', async () => {
     const html = await render();
     const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
-    expect(header.match(/data-theme-toggle/g) ?? []).toHaveLength(1);
-    expect(header.indexOf('data-theme-toggle')).toBeLessThan(header.indexOf('Orçamento'));
-  });
-
-  // At 320px the wordmark, the switch and "Orçamento" overflow the bar, so
-  // below sm the switch moves to the floating stack, beside WhatsApp.
-  it('shows the bar switch from sm and a floating one below sm (theme-modes, REQ-004)', async () => {
-    const html = await render();
-    const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
-    expect(header.match(/<button[^>]*data-theme-toggle[^>]*>/)?.[0]).toContain('max-sm:hidden');
-    const after = html.slice(html.indexOf('</header>'));
-    const floating = after.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
-    expect(floating).toHaveLength(1);
-    expect(floating[0]).toContain('sm:hidden');
-    expect(floating[0]).not.toContain('max-sm:hidden');
-    expect(after.indexOf('data-theme-toggle')).toBeLessThan(after.indexOf('Fale comigo no WhatsApp'));
+    expect(header).not.toContain('data-theme-toggle');
+    const toggles = html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    expect(toggles).toHaveLength(1);
+    expect(toggles[0]).not.toMatch(/\bsm:hidden\b/);
+    const toggle = html.search(/<button[^>]*data-theme-toggle/);
+    expect(toggle).toBeGreaterThan(html.indexOf('Fale comigo no WhatsApp'));
+    expect(toggle).toBeLessThan(html.indexOf('aria-label="Voltar ao topo"'));
   });
 
   it('sends "Orçamento" to the one contact form on the main site', async () => {

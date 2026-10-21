@@ -9,7 +9,6 @@ import { serviceLd } from '../lib/sales/service-ld';
 import { contactGoPath } from '../lib/analytics/outbound';
 import FloatingActions from '../components/sales/FloatingActions.astro';
 import PointerField from '../components/art/PointerField.astro';
-import ThemeToggle from '../components/layout/ThemeToggle.astro';
 import serifHeadingFont from '../assets/fonts/newsreader-latin-variable.woff2?url';
 import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
 import { THEME_BOOT_SCRIPT } from '../lib/theme/boot';
@@ -93,16 +92,12 @@ const link =
             {NAV.map((item) => <li><a href={item.href} class={link}>{item.label}</a></li>)}
           </ul>
         </nav>
-        <div class="flex items-center gap-sm">
-          {/* From sm only; below it FloatingActions carries the switch. */}
-          <ThemeToggle class="max-sm:hidden" />
-          <a
-            href={contact}
-            class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Orçamento
-          </a>
-        </div>
+        <a
+          href={contact}
+          class="inline-flex min-h-11 items-center rounded-md bg-primary px-md text-small font-medium text-primary-foreground transition-[min-height] duration-(--duration-base) ease-out group-data-scrolled:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Orçamento
+        </a>
       </div>
     </header>
 

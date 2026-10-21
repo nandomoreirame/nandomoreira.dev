@@ -1,6 +1,7 @@
 ---
 import { contactGoPath } from '../../lib/analytics/outbound';
 import { RELEASES_PATH } from '../../lib/releases/releases';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   name: string;
@@ -50,6 +51,8 @@ const link =
       <a href="/rss.xml" class={link}>RSS</a>
       <a href="/AGENTS.md" class={link}>AGENTS.md</a>
       <a href="#main" class={link}>Topo ↑</a>
+      {/* The theme switch (theme-modes, REQ-004), beside the way back to the top. */}
+      <ThemeToggle />
     </nav>
   </div>
 </footer>

@@ -43,8 +43,8 @@ repositório do Terminal Noir (antes da tarefa 8). Colide com `i18n-foundation`
 - Desvios do plano, todos com teste: o modo leitura preto redefine os seis tokens que o Paper
   muda e ele não declarava (REQ-009); `tokens.test.ts` deixou de proibir `prefers-color-scheme`
   e passou a aceitar só os seletores do theme-modes; `contato.test.ts` aceita o boot de tema
-  byte a byte; o carregador da paleta busca o módulo também no `T`; abaixo de `md` o botão vai
-  para o menu (a pílula ocupa a barra desde 2026-10-17) e, em `/servicos`, abaixo de `sm`, para
-  a pilha flutuante.
+  byte a byte; o carregador da paleta busca o módulo também no `T`; o botão saiu do header e foi
+  para o rodapé, ao lado de "Topo", e em `/servicos` para a pilha flutuante, antes de "Voltar ao
+  topo" (pedido do Fernando, 2026-10-20, depois que ele não cabia na barra de 390px).
 - Fora do escopo, anotado: em 320px o botão "Abrir menu" já saía da tela antes desta feature
   (marca + pílula + botão somam 374px).

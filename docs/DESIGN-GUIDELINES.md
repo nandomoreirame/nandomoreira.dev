@@ -122,8 +122,8 @@ interativo**. Serve como separador decorativo. Contorno que precisa ser percebid
 ### Paper (tema claro, 2026-10-20)
 
 Variante clara do Terminal Noir, com os valores depois da `contrast-gate` de lá
-(`docs/specs/theme-modes`). A primeira visita segue o sistema; o botão do header
-troca e lembra a escolha. Calculado sobre `background` (`#fbfaf7`); a última
+(`docs/specs/theme-modes`). A primeira visita segue o sistema; o botão do rodapé,
+ao lado de "Topo", troca e lembra a escolha. Calculado sobre `background` (`#fbfaf7`); a última
 coluna é o pior caso, sobre `surface-elevated` (`#e9e6df`).
 
 | Par | Sobre `background` | Pior superfície | Situação |

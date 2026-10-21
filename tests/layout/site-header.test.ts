@@ -117,21 +117,10 @@ describe('SiteHeader', () => {
     expect(html).toContain('max-w-frame');
   });
 
-  // At 390px the wordmark, the pill (shown at every width since 2026-10-17)
-  // and one icon button already fill the bar: a second button clipped the menu
-  // button off screen. So the bar carries the switch from md, and below md it
-  // sits in the menu, under the links.
-  it('carries the theme switch in the bar from md and in the menu below md (theme-modes, REQ-004)', async () => {
+  // Since 2026-10-20 the switch is in the footer, beside "Topo" (Fernando).
+  it('leaves the theme switch out of the bar and the menu (theme-modes, REQ-004)', async () => {
     const html = await render({ availability: { status: 'open' } });
-    const toggles = html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
-    expect(toggles).toHaveLength(2);
-    const from = html.indexOf('Menu principal (mobile)');
-    const menu = html.slice(from, html.indexOf('</nav>', from));
-    const inMenu: string[] = menu.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
-    expect(inMenu).toHaveLength(1);
-    expect(inMenu[0]).not.toContain('max-md:hidden');
-    const bar = toggles.find(tag => !inMenu.includes(tag)) ?? '';
-    expect(bar).toContain('max-md:hidden');
+    expect(html).not.toContain('data-theme-toggle');
   });
 
   it('forwards the posts flag and the current route to the navigation', async () => {

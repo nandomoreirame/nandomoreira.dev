@@ -73,10 +73,13 @@ describe('SiteFooter', () => {
     expect(html).toMatch(/<a[^>]*href="\/AGENTS\.md"[^>]*>\s*AGENTS\.md\s*<\/a>/);
   });
 
-  it('reads as one line of mono text, without icons', async () => {
+  // Text only, except the theme switch's sun and moon (Fernando, 2026-10-20).
+  it('reads as one line of mono text, with no icon but the theme switch', async () => {
     const html = await render();
+    const toggle = html.match(/<button[^>]*data-theme-toggle[\s\S]*?<\/button>/)?.[0] ?? '';
 
-    expect(html).not.toContain('<svg');
+    expect(toggle.match(/<svg/g) ?? []).toHaveLength(2);
+    expect(html.replace(toggle, '')).not.toContain('<svg');
     expect(html).toContain('font-mono');
   });
 
@@ -89,5 +92,18 @@ describe('SiteFooter', () => {
 
   it('caps its inner row at the frame token, like the header', async () => {
     expect(await render()).toMatch(/<footer[^>]*>\s*<div[^>]*max-w-frame/);
+  });
+
+  // The theme switch lives here, right after the way back to the top
+  // (Fernando, 2026-10-20), not in the header bar.
+  it('carries the one theme switch right after the back-to-top link (theme-modes, REQ-004)', async () => {
+    const html = await render();
+    const toggles = html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
+    expect(toggles).toHaveLength(1);
+    const top = html.indexOf('href="#main"');
+    const toggle = html.search(/<button[^>]*data-theme-toggle/);
+    expect(top).toBeGreaterThan(-1);
+    expect(toggle).toBeGreaterThan(top);
+    expect(html.slice(top, toggle)).not.toMatch(/<a\b/);
   });
 });
