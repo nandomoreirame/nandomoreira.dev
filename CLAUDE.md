@@ -136,6 +136,10 @@ As duas consultam `markdownForPath` (`src/lib/ai-view/registry.ts`), a **única*
 caminho → markdown; caminho fora dela responde 404. Página nova só ganha visão IA quando
 entra no registro. O slug `ia` é reservado nos schemas. Rótulos em `src/lib/ai-view/labels.ts`.
 
+### Revisor de texto (`docs/specs/post-review`)
+
+No `astro dev`, a Dev Toolbar tem o app "Revisar texto": grife um trecho de um post (ou selecione com Shift+setas e aperte Alt+R), escreva o pedido ou o texto novo e clique "Salvar revisão". O arquivo vai para `docs/post-reviews/<slug>.md` (gitignored). Para aplicar, peça "aplica a revisão do post <slug>": leia esse arquivo, edite só os trechos anotados em `src/content/posts/<slug>.md` e, no fim, apague a revisão aplicada. O app só existe no dev; o portão "Revisor fora do build" prova que nada dele chega ao `dist/`.
+
 ### JSON-LD, dividido de propósito
 
 - `Person` — `src/lib/home/person-ld.ts`, derivado do perfil.
@@ -148,7 +152,7 @@ regra mudar, e o teste reprova isso.
 
 ## Portões automatizados
 
-Sete testes transformam em falha regras que os documentos declaram mas que nada
+Oito testes transformam em falha regras que os documentos declaram mas que nada
 impediria de violar. **Nunca relaxe um deles para fazer a suíte passar: corrija o
 código.**
 
@@ -161,6 +165,7 @@ código.**
 | Schema quebra o build | `scripts/verify-schema-gate.sh` | Conteúdo inválido chegando em produção |
 | CTA primário único | `tests/home/single-primary-cta.test.ts` | Botão primary fora do hero, ou mais de um nele (zero é aceito desde 2026-10-19, quando o hero perdeu os botões por decisão do Fernando) |
 | Vazamento nas rotas de máquina | `tests/aeo/no-leak.test.ts` | E-mail, chave, caminho absoluto, IP privado |
+| Revisor fora do build | `tests/post-review/no-reviewer-in-dist.build-test.ts` | Qualquer arquivo de `dist/` com `post-review:` ou "Revisar texto" |
 
 Ao criar um portão novo, prove que ele fica vermelho antes de considerá-lo pronto. Um
 portão que nunca falhou não é portão.

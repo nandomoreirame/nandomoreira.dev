@@ -1,0 +1,1 @@
+{"round": 1, "implementer": "grok", "reviewer": "claude", "identities": ["src/lib/post-review/panel.ts:41", "src/components/art/PointerField.astro:124", "src/lib/post-review/panel.ts:112", "src/lib/post-review/panel.ts:154", "tests/post-review/save.test.ts:46"], "open_count": 5}
