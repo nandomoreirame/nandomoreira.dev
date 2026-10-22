@@ -1,4 +1,5 @@
 import { gzipSync } from 'node:zlib';
+import { GISCUS_LOADER_MARKER } from '../../src/lib/posts/giscus-loader';
 import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_MARKER } from '../../src/lib/theme/boot';
 
 export interface PageScripts {
@@ -40,6 +41,12 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
           ? [`${route}: theme boot is ${size} B gzip, budget ${THEME_BOOT_BUDGET_BYTES}`]
           : [];
       }
+      if (script.includes(GISCUS_MARKER)) {
+        const size = gzipSync(script).length;
+        return size > GISCUS_BUDGET_BYTES
+          ? [`${route}: giscus loader is ${size} B gzip, budget ${GISCUS_BUDGET_BYTES}`]
+          : [];
+      }
       if (script.includes(NOW_PREVIEW_MARKER)) {
         if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
@@ -57,6 +64,10 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
       return problems;
     }),
   );
+
+/** Fifth named exception (docs/specs/giscus-comments, REQ-004): the loader, within budget. The external widget is not part of the page. */
+export const GISCUS_MARKER = GISCUS_LOADER_MARKER;
+export const GISCUS_BUDGET_BYTES = 2048;
 
 /** Third named exception (docs/specs/command-palette, D1): an on-demand chunk, never a page script. */
 export const PALETTE_MARKER = 'data-command-palette';

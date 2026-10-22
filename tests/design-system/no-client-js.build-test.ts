@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { THEME_BOOT_MARKER } from '../../src/lib/theme/boot';
 import {
+  GISCUS_MARKER,
   NOW_PREVIEW_MARKER,
   PALETTE_MARKER,
   POINTER_MARKER,
@@ -136,7 +137,10 @@ describe('client JavaScript', () => {
     for (const file of files) {
       const body = readFileSync(join(dir, file), 'utf8');
       expect(
-        body.includes(POINTER_MARKER) || body.includes(NOW_PREVIEW_MARKER) || body.includes(PALETTE_MARKER),
+        body.includes(POINTER_MARKER) ||
+          body.includes(NOW_PREVIEW_MARKER) ||
+          body.includes(PALETTE_MARKER) ||
+          body.includes(GISCUS_MARKER),
         file,
       ).toBe(true);
     }

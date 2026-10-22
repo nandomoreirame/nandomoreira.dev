@@ -2,6 +2,8 @@ import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_SCRIPT } from '../../src/lib/theme/boot';
 import {
+  GISCUS_BUDGET_BYTES,
+  GISCUS_MARKER,
   PALETTE_BUDGET_BYTES,
   PALETTE_MARKER,
   executableScripts,
@@ -11,6 +13,7 @@ import {
 
 const POINTER = "document.querySelectorAll('[data-pointer-field]')";
 const PREVIEW = "document.querySelectorAll('[data-now-preview]')";
+const GISCUS = `document.querySelector('[${GISCUS_MARKER}]')`;
 
 describe('executableScripts', () => {
   it('ignores JSON-LD data blocks', () => {
@@ -80,6 +83,19 @@ describe('scriptViolations', () => {
     const bloated = `${PREVIEW};${randomBytes(3000).toString('hex')}`;
     const [violation] = scriptViolations([{ route: '/now', scripts: [bloated] }]);
     expect(violation).toMatch(/^\/now: audio preview is \d+ B gzip, budget 1024$/);
+  });
+
+  it('accepts the giscus loader within budget and rejects a larger one', () => {
+    expect(scriptViolations([{ route: '/um-post', scripts: [GISCUS] }])).toEqual([]);
+    const bloated = `${GISCUS};${randomBytes(GISCUS_BUDGET_BYTES * 2).toString('base64')}`;
+    const [violation] = scriptViolations([{ route: '/um-post', scripts: [bloated] }]);
+    expect(violation).toMatch(new RegExp(`^/um-post: giscus loader is \\d+ B gzip, budget ${GISCUS_BUDGET_BYTES}$`));
+  });
+
+  it('still rejects an unnamed script beside the giscus loader', () => {
+    expect(scriptViolations([{ route: '/um-post', scripts: [GISCUS, 'console.log(1)'] }])).toEqual([
+      '/um-post: script outside the allowlist',
+    ]);
   });
 
   it('still rejects a third, unnamed script on /now', () => {
