@@ -14,9 +14,9 @@ describe('nowUpdatedAt', () => {
 
   it('moves to the day of the latest track, in São Paulo time', () => {
     // 01:30 UTC on the 19th is still the 18th in São Paulo.
-    expect(nowUpdatedAt({ base: '2026-10-17', trackPlayedAt: ['2026-10-19T01:30:00Z', '2026-10-18T10:00:00Z'], today })).toBe(
-      '2026-10-18',
-    );
+    expect(
+      nowUpdatedAt({ base: '2026-10-17', trackPlayedAt: ['2026-10-19T01:30:00Z', '2026-10-18T10:00:00Z'], today }),
+    ).toBe('2026-10-18');
   });
 
   it('moves to the day of the latest game, and to today while a game is playing', () => {

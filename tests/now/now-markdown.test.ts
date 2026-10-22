@@ -47,7 +47,11 @@ const snapshot = (availability: string): NowSnapshot => ({
   updatedAt: '2026-10-19',
   contributions: {
     state: 'ok',
-    items: { total: 9497, weeks: [[{ date: '2026-03-12', count: 80, level: 4 }]], busiest: { date: '2026-03-12', count: 80 } },
+    items: {
+      total: 9497,
+      weeks: [[{ date: '2026-03-12', count: 80, level: 4 }]],
+      busiest: { date: '2026-03-12', count: 80 },
+    },
   },
   lastCommit: {
     repo: 'nandomoreira.dev',
@@ -62,11 +66,15 @@ describe('nowMarkdown', () => {
     const markdown = nowMarkdown({ site: new URL('https://nandomoreira.dev'), data: snapshot('x') });
     const section = markdown.split('## Trabalhando')[1]?.split('## ')[0] ?? '';
     expect(section).toContain('9.497 contribuições no GitHub no último ano');
-    expect(section).toContain('Último commit: [feat: one thing](https://github.com/nandomoreirame/nandomoreira.dev/commit/1) em nandomoreira.dev, 19 de outubro de 2026.');
+    expect(section).toContain(
+      'Último commit: [feat: one thing](https://github.com/nandomoreirame/nandomoreira.dev/commit/1) em nandomoreira.dev, 19 de outubro de 2026.',
+    );
   });
 
   it('dates the view with the day the sources last moved', () => {
-    expect(nowMarkdown({ site: new URL('https://nandomoreira.dev'), data: snapshot('x') })).toContain('updated: 2026-10-19');
+    expect(nowMarkdown({ site: new URL('https://nandomoreira.dev'), data: snapshot('x') })).toContain(
+      'updated: 2026-10-19',
+    );
   });
 
   it('lists the six sections in page order, with links only where a human can open them', () => {

@@ -135,7 +135,10 @@ describe('fetchLastCommit', () => {
     {
       sha: '91c9da421ef64a24cc7310a7184f1fc1764b2b69',
       html_url: 'https://github.com/nandomoreirame/nandomoreira.dev/commit/91c9da4',
-      commit: { message: '✨ feat(about): merge related jobs\n\nbody that stays out', committer: { date: '2026-10-19T15:30:06Z' } },
+      commit: {
+        message: '✨ feat(about): merge related jobs\n\nbody that stays out',
+        committer: { date: '2026-10-19T15:30:06Z' },
+      },
     },
   ];
 
@@ -159,11 +162,16 @@ describe('fetchLastCommit', () => {
   it('refuses a link outside github.com and an empty history', async () => {
     const outside = [{ ...commit[0], html_url: 'https://evil.example/commit/1' }];
     await expect(
-      fetchLastCommit({ fetch: vi.fn(async () => new Response(JSON.stringify(outside))) as unknown as typeof fetch, repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' } }),
+      fetchLastCommit({
+        fetch: vi.fn(async () => new Response(JSON.stringify(outside))) as unknown as typeof fetch,
+        repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' },
+      }),
     ).rejects.toThrow();
     await expect(
-      fetchLastCommit({ fetch: vi.fn(async () => new Response('[]')) as unknown as typeof fetch, repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' } }),
+      fetchLastCommit({
+        fetch: vi.fn(async () => new Response('[]')) as unknown as typeof fetch,
+        repo: { name: 'x', url: 'https://github.com/nandomoreirame/x' },
+      }),
     ).rejects.toThrow();
   });
 });
-

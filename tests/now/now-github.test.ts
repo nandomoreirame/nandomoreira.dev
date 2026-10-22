@@ -2,7 +2,11 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import NowGithub from '../../src/components/now/NowGithub.astro';
 
-const calendar = { total: 12, weeks: [[{ date: '2026-10-10', count: 12, level: 4 as const }]], busiest: { date: '2026-10-10', count: 12 } };
+const calendar = {
+  total: 12,
+  weeks: [[{ date: '2026-10-10', count: 12, level: 4 as const }]],
+  busiest: { date: '2026-10-10', count: 12 },
+};
 const commit = {
   repo: 'noctalia-aibar',
   message: 'feat: one thing',

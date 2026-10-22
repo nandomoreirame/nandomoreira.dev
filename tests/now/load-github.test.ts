@@ -12,7 +12,9 @@ const calendar = {
       contributionsCollection: {
         contributionCalendar: {
           totalContributions: 12,
-          weeks: [{ contributionDays: [{ date: '2026-10-10', contributionCount: 12, contributionLevel: 'FOURTH_QUARTILE' }] }],
+          weeks: [
+            { contributionDays: [{ date: '2026-10-10', contributionCount: 12, contributionLevel: 'FOURTH_QUARTILE' }] },
+          ],
         },
       },
     },
@@ -30,7 +32,8 @@ const fetchWith = (overrides: { graphql?: () => Response; commits?: () => Respon
   vi.fn(async (url: string) => {
     const target = String(url);
     if (target.endsWith('/graphql')) return overrides.graphql?.() ?? new Response(JSON.stringify(calendar));
-    if (target.includes('/commits?per_page=1')) return overrides.commits?.() ?? new Response(JSON.stringify(commit('2026-10-11T10:00:00Z')));
+    if (target.includes('/commits?per_page=1'))
+      return overrides.commits?.() ?? new Response(JSON.stringify(commit('2026-10-11T10:00:00Z')));
     if (target.includes('/users/nandomoreirame/repos')) return new Response(JSON.stringify(repos));
     throw new Error(`unexpected ${target}`);
   });
@@ -59,12 +62,15 @@ describe('loadNow GitHub work', () => {
     const fetchImpl = fetchWith();
     const data = await loader(fetchImpl)();
     expect(data.contributions.state).toBe('empty');
-    expect(fetchImpl.mock.calls.some((call) => String(call[0]).endsWith('/graphql'))).toBe(false);
+    expect(fetchImpl.mock.calls.some(call => String(call[0]).endsWith('/graphql'))).toBe(false);
     expect(data.lastCommit).toBeDefined();
   });
 
   it('keeps the repos when the last commit or the calendar fails', async () => {
-    const fetchImpl = fetchWith({ graphql: () => new Response('{}', { status: 401 }), commits: () => new Response('[]') });
+    const fetchImpl = fetchWith({
+      graphql: () => new Response('{}', { status: 401 }),
+      commits: () => new Response('[]'),
+    });
     const data = await loader(fetchImpl, 'ghp_x')();
     expect(data.projects.state).toBe('ok');
     expect(data.lastCommit).toBeUndefined();
@@ -72,7 +78,9 @@ describe('loadNow GitHub work', () => {
   });
 
   it('dates the page with the last commit when it is the newest thing', async () => {
-    const data = await loader(fetchWith({ commits: () => new Response(JSON.stringify(commit('2026-12-01T12:00:00Z'))) }))();
+    const data = await loader(
+      fetchWith({ commits: () => new Response(JSON.stringify(commit('2026-12-01T12:00:00Z'))) }),
+    )();
     expect(data.updatedAt).toBe('2026-12-01');
   });
 });

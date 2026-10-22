@@ -4,7 +4,11 @@ import NowContributions from '../../src/components/now/NowContributions.astro';
 import type { ContributionCalendar } from '../../src/lib/now/contributions';
 
 const week = (start: number, level: 0 | 1 | 2 | 3 | 4) =>
-  Array.from({ length: 7 }, (_, d) => ({ date: `2026-10-${String(start + d).padStart(2, '0')}`, count: level * 10, level }));
+  Array.from({ length: 7 }, (_, d) => ({
+    date: `2026-10-${String(start + d).padStart(2, '0')}`,
+    count: level * 10,
+    level,
+  }));
 
 const calendar: ContributionCalendar = {
   total: 9497,
