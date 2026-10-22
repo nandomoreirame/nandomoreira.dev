@@ -1,0 +1,4 @@
+{"round": 1, "implementer": "grok", "reviewer": "codex", "identities": ["(portão)", "src/pages/[slug].astro:195", "tests/posts/giscus-loader.test.ts:53", "src/lib/privacy/policy.ts:105", "src/lib/privacy/policy.ts:97"], "open_count": 5}
+{"round": 2, "implementer": "grok", "reviewer": "codex", "identities": ["(portão)", "src/lib/posts/giscus-loader.ts:81"], "open_count": 2}
+{"round": 3, "implementer": "grok", "reviewer": "codex", "identities": ["(portão)", "src/pages/[slug].astro:195"], "open_count": 2}
+{"round": 4, "implementer": "grok", "reviewer": "codex", "identities": [], "open_count": 0}

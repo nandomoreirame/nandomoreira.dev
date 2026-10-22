@@ -70,7 +70,7 @@ Antes da implantação, confirmar que `nandomoreirame/nandomoreira.dev` é públ
 - Implementador: frontend-engineer (skills: accessibility-guardrails)
 - Revisores: test-reviewer, accessibility-guardrails
 
-**TDD:** Ampliar os testes de rota para falhar se o widget faltar em post atual publicado, aparecer em post arquivado/rascunho, ou vier antes de `<AuthorBox />`/depois dos posts relacionados. Rodar `./node_modules/.bin/vitest run tests/posts/post-page.test.ts`. Inserir o componente após o fechamento do artigo, que contém `<AuthorBox />`, e antes da seção de posts relacionados; aplicar a condição de elegibilidade usando os campos atuais do post. Repetir o comando e confirmar aprovação para os casos atuais, arquivados e rascunhos. Revisar o diff sem operação Git.
+**TDD:** Ampliar os testes de rota para falhar se o widget faltar em post atual publicado, aparecer em post arquivado/rascunho, ou vier antes de `<AuthorBox />`/depois dos posts relacionados. Rodar `./node_modules/.bin/vitest run tests/posts/post-page.test.ts`. Inserir o componente imediatamente depois de `<AuthorBox />`, ainda dentro do `<article>`, e antes da seção de posts relacionados; aplicar a condição de elegibilidade usando os campos atuais do post. Repetir o comando e confirmar aprovação para os casos atuais, arquivados e rascunhos. Revisar o diff sem operação Git.
 
 ### Tarefa 4: Integrar com o portão de scripts do cliente e build
 
