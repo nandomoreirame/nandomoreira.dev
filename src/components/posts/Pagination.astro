@@ -1,4 +1,6 @@
 ---
+import { listingHref } from '../../lib/posts/listing-view';
+
 interface Props {
   page: number;
   totalPages: number;
@@ -9,7 +11,8 @@ interface Props {
 
 const { page, totalPages, first, last, total } = Astro.props;
 // Page 1 is /posts itself, never /posts?pagina=1: one URL per page.
-const hrefOf = (target: number) => (target === 1 ? '/posts' : `/posts?pagina=${target}`);
+// The grid or list choice is a cookie, so the links do not carry it.
+const hrefOf = (target: number) => listingHref(target);
 const prev = page > 1 ? hrefOf(page - 1) : undefined;
 const next = page < totalPages ? hrefOf(page + 1) : undefined;
 const range = first === last ? `artigo ${first}` : `artigos ${first}-${last}`;

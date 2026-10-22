@@ -1,10 +1,13 @@
 /**
- * Pages of the /posts listing (2026-10-17): six current posts a page, the page
- * read from ?pagina. Anything that is not a positive integer reads as the
+ * Pages of the /posts listing, read from ?pagina. The list shows eight posts
+ * and the grid twelve. Anything that is not a positive integer reads as the
  * first page, and a page past the end shows the last one, so a stale or typed
  * link never lands on an empty list.
  */
-export const POSTS_PER_PAGE = 6;
+export const LIST_PAGE_SIZE = 8;
+export const GRID_PAGE_SIZE = 12;
+
+export const pageSizeFor = (view: 'list' | 'grid'): number => (view === 'grid' ? GRID_PAGE_SIZE : LIST_PAGE_SIZE);
 
 export interface Page<T> {
   items: T[];
@@ -18,7 +21,7 @@ export interface Page<T> {
 
 export const parsePage = (raw: string | null): number => (raw && /^[1-9]\d*$/.test(raw) ? Number(raw) : 1);
 
-export const paginate = <T>(items: readonly T[], requested: number, size = POSTS_PER_PAGE): Page<T> => {
+export const paginate = <T>(items: readonly T[], requested: number, size = LIST_PAGE_SIZE): Page<T> => {
   const totalPages = Math.max(1, Math.ceil(items.length / size));
   const page = Math.min(Math.max(1, requested), totalPages);
   const start = (page - 1) * size;

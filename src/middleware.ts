@@ -1,10 +1,17 @@
 import { defineMiddleware } from 'astro:middleware';
 import { measureRequest } from './lib/analytics/measure';
 import { recorder } from './lib/analytics/runtime';
+import { handleListingView } from './lib/posts/listing-view';
 import { rewriteTarget, salesRouting } from './lib/sales/host';
 import { robotsTagFor } from './lib/seo/backend-host';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // The listing view is a preference, not a page. The form posts here so the
+  // address bar stays /posts; the origin check already ran ahead of this.
+  if (context.request.method === 'POST' && context.url.pathname === '/posts') {
+    return handleListingView(context.request, context.url);
+  }
+
   // Dev and staging always; production once SALES_HOST_LIVE
   // (docs/runbooks/sales-subdomain.md).
   const sales = salesRouting(context.url);

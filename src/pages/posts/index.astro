@@ -4,6 +4,7 @@ import { Icon } from 'astro-icon/components';
 import NewsletterCard from '../../components/posts/NewsletterCard.astro';
 import Pagination from '../../components/posts/Pagination.astro';
 import PostCard from '../../components/posts/PostCard.astro';
+import RelatedPostCard from '../../components/posts/RelatedPostCard.astro';
 import PageHeader from '../../components/ui/PageHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import UpcomingPosts from '../../components/posts/UpcomingPosts.astro';
@@ -11,13 +12,25 @@ import { getAllPosts, getCurrentPosts, getUpcomingPosts, getProfile } from '../.
 import { showDrafts } from '../../lib/content/posts';
 import { outcomeOf } from '../../lib/newsletter/copy';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
-import { paginate, parsePage } from '../../lib/posts/paginate';
+import { LISTING_VIEW_COOKIE, listingHref, parseListingView } from '../../lib/posts/listing-view';
+import { pageSizeFor, paginate, parsePage } from '../../lib/posts/paginate';
 import { displayNameOf } from '../../lib/content/display-name';
+
+// A leftover ?visao= from the first version of the toggle must not stay in the
+// address bar. The cookie, not the query, decides the view.
+const requestedPage = parsePage(Astro.url.searchParams.get('pagina'));
+if (Astro.url.searchParams.has('visao')) {
+  return Astro.redirect(listingHref(requestedPage));
+}
+
+// Personalized by the cookie, so a shared or browser cache must not reuse it.
+Astro.response.headers.set('Cache-Control', 'private, no-store');
 
 const posts = await getCurrentPosts();
 // Drafts stay out of the list in every mode; in dev they are linked from the drafts card below.
 const listed = posts.filter((post) => !post.draft);
-const page = paginate(listed, parsePage(Astro.url.searchParams.get('pagina')));
+const view = parseListingView(Astro.cookies.get(LISTING_VIEW_COOKIE)?.value);
+const page = paginate(listed, requestedPage, pageSizeFor(view));
 const upcoming = await getUpcomingPosts();
 // The whole blog, archive included, not just the current posts listed here.
 const publishedCount = (await getAllPosts()).filter((post) => !post.draft).length;
@@ -56,13 +69,26 @@ const headerLink =
           {publishedCount} {publishedCount === 1 ? 'artigo' : 'artigos'}
         </span>
       </div>
-      <a
-        href="/rss.xml"
-        class={headerLink}
-      >
-        <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-        RSS FEED
-      </a>
+      <div class="flex flex-wrap items-center gap-sm">
+        <form data-view-form method="post" action={listingHref(page.page)} class="inline-flex">
+          <input type="hidden" name="visao" value={view === 'list' ? 'grade' : 'lista'} />
+          <button type="submit" data-view-toggle class={headerLink}>
+            <Icon
+              name={view === 'list' ? 'lucide:layout-grid' : 'lucide:layout-list'}
+              aria-hidden="true"
+              class="size-4 shrink-0 text-primary"
+            />
+            {view === 'list' ? 'Ver em grade' : 'Ver em lista'}
+          </button>
+        </form>
+        <a
+          href="/rss.xml"
+          class={headerLink}
+        >
+          <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+          RSS FEED
+        </a>
+      </div>
     </div>
 
     {
@@ -71,13 +97,23 @@ const headerLink =
           Nenhum post corrente no momento.
         </p>
       ) : (
-        <ul class="flex list-none flex-col gap-md p-0">
-          {page.items.map((post) => (
-            <li>
-              <PostCard post={post} site={site} />
-            </li>
-          ))}
-        </ul>
+        view === 'grid' ? (
+          <ul class="grid list-none grid-cols-1 gap-md p-0 md:grid-cols-3">
+            {page.items.map((post) => (
+              <li>
+                <RelatedPostCard post={post} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul class="flex list-none flex-col gap-md p-0">
+            {page.items.map((post) => (
+              <li>
+                <PostCard post={post} site={site} />
+              </li>
+            ))}
+          </ul>
+        )
       )
     }
 

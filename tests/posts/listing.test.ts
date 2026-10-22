@@ -22,9 +22,9 @@ describe('/posts listing', () => {
 
   it('renders exactly the current posts, each linked at the root', async () => {
     const [current, archived] = await Promise.all([getCurrentPosts(), getArchivedPosts()]);
-    // Six a page since 2026-10-17: walk every page.
+    // Eight a page on the list: walk every page.
     const pages = await Promise.all(
-      Array.from({ length: Math.ceil(current.length / 6) }, (_, index) => render(index ? `?pagina=${index + 1}` : '')),
+      Array.from({ length: Math.ceil(current.length / 8) }, (_, index) => render(index ? `?pagina=${index + 1}` : '')),
     );
     const html = pages.join('');
 
@@ -80,10 +80,10 @@ describe('/posts listing', () => {
     expect(await render()).toContain('<title>Blog // Fernando Moreira</title>');
   });
 
-  it('shows six current posts a page, newest first, with the pagination under them', async () => {
+  it('shows eight current posts a page, newest first, with the pagination under them', async () => {
     const current = await getCurrentPosts();
     const first = await render();
-    expect(slugsOn(first)).toEqual(current.slice(0, 6).map(post => post.slug));
+    expect(slugsOn(first)).toEqual(current.slice(0, 8).map(post => post.slug));
     expect(first).toMatch(/<nav[^>]*aria-label="Paginação"/);
     expect(first.indexOf('data-pagination')).toBeGreaterThan(first.lastIndexOf('data-latest-post'));
   });
@@ -91,10 +91,10 @@ describe('/posts listing', () => {
   it('reads the page from ?pagina and clamps a page past the end', async () => {
     const current = await getCurrentPosts();
     const second = await render('?pagina=2');
-    expect(slugsOn(second)).toEqual(current.slice(6, 12).map(post => post.slug));
+    expect(slugsOn(second)).toEqual(current.slice(8, 16).map(post => post.slug));
     expect(second).toContain('href="/posts"');
     const far = await render('?pagina=99');
-    expect(slugsOn(far)).toEqual(slugsOn(await render(`?pagina=${Math.ceil(current.length / 6)}`)));
+    expect(slugsOn(far)).toEqual(slugsOn(await render(`?pagina=${Math.ceil(current.length / 8)}`)));
   });
 
   it('keeps the post count on the whole blog, not the page', async () => {
