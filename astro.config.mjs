@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import { codeToolbar } from './src/lib/code/toolbar.ts';
+import { postReview } from './src/integrations/post-review.ts';
 import { externalLinks, lightboxImages, tableFrames } from './src/lib/markdown/post-plugins.ts';
 import { SALES_DEV_HOST, SALES_HOST } from './src/lib/sales/host.ts';
 import terminalNoir from './src/lib/code/themes/terminal-noir.json' with { type: 'json' };
@@ -14,8 +15,9 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   // Icons are inlined as SVG at render time; nothing ships to the browser.
-  // Only the icons used are bundled into the server build.
-  integrations: [icon()],
+  // Only the icons used are bundled into the server build. The post reviewer
+  // is a Dev Toolbar app: it registers on `astro dev` only (spec post-review).
+  integrations: [icon(), postReview()],
   // One stylesheet request before first paint cost ~540 ms on mobile PageSpeed
   // (2026-10-09); inlined, the CSS arrives with the HTML.
   build: {

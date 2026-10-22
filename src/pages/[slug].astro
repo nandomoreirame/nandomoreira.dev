@@ -72,7 +72,7 @@ const authorName = displayNameOf(profile);
 <BaseLayout title={pageTitle(post.seoTitle ?? post.title, authorName)} description={post.summary} section="/posts">
   <script type="application/ld+json" is:inline set:html={jsonLd} />
 
-  <article class="mt-2xl flex flex-col gap-xl" data-reader-article>
+  <article class="mt-2xl flex flex-col gap-xl" data-reader-article data-post-slug={post.slug}>
     <header class="flex flex-col gap-md">
       {
         post.draft && (
