@@ -12,6 +12,8 @@
     footer rules still reach the viewport edges. */}
 
 <script>
+  import { forwardBareLetter } from '../../lib/search/bare-letter';
+
   // Copy buttons (AI view, AGENTS.md brief). Lives in this, the site's only
   // script, so the JS gate keeps accepting one script. A button names its
   // source by id in data-copy, ships hidden and appears only here, so without
@@ -112,16 +114,11 @@
     // Touch screens get no letter shortcuts, even with a keyboard attached.
     const touch = matchMedia('(hover: none)').matches;
     document.addEventListener('keydown', (event) => {
-      const target = event.target as HTMLElement;
+      const origin = event.composedPath()[0] as HTMLElement | undefined;
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         palette().then((module) => module.open(document.activeElement as HTMLElement));
-      } else if (
-        !event.ctrlKey && !event.metaKey && !event.altKey &&
-        /^[a-z]$/i.test(event.key) &&
-        !touch &&
-        !target.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
-      ) {
+      } else if (forwardBareLetter(origin, event, touch)) {
         // G and the one-letter shortcuts fetch the module; once it is here,
         // every letter goes through, so G + letter reaches it too. Letters
         // typed while it loads wait in the queue instead of being lost.
