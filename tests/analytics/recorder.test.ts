@@ -67,6 +67,20 @@ describe('createRecorder', () => {
     expect(memory.daily.size).toBe(0);
   });
 
+  it('records nothing for the author when the same cookie also stores the grid', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+    await recorder.record(request({ cookie: '__session=self.grid' }), hit);
+    expect(memory.daily.size).toBe(0);
+  });
+
+  it('still records a visitor whose session cookie only stores the grid', async () => {
+    const memory = memoryAnalyticsStore();
+    const recorder = createRecorder({ store: memory.store, config: { hashSecret: SECRET, selfToken: null }, now });
+    await recorder.record(request({ cookie: '__session=grid' }), hit);
+    expect(memory.daily.size).toBe(1);
+  });
+
   it('gives up after the timeout and never throws', async () => {
     const slow: AnalyticsStore = { record: () => new Promise(() => {}), eventsOf: () => new Promise(() => {}) };
     const failing: AnalyticsStore = {
@@ -119,6 +133,8 @@ describe('createRecorder', () => {
 
     expect(on.active(request())).toBe(true);
     expect(on.active(request({ cookie: '__session=self' }))).toBe(false);
+    expect(on.active(request({ cookie: '__session=self.grid' }))).toBe(false);
+    expect(on.active(request({ cookie: '__session=grid' }))).toBe(true);
     expect(off.active(request())).toBe(false);
   });
 });

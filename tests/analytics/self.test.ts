@@ -28,6 +28,13 @@ describe('handleSelf', () => {
     }
   });
 
+  it('keeps the grid choice when this browser is marked again', () => {
+    const request = new Request(`https://nandomoreira.dev/eu?token=${TOKEN}`, {
+      headers: { cookie: '__session=grid' },
+    });
+    expect(handleSelf(request, TOKEN).headers.get('set-cookie')?.split('; ')[0]).toBe('__session=self.grid');
+  });
+
   it('shares the cookie with the subdomains, so the sales landing skips the author too', () => {
     const cookie = visit(`?token=${TOKEN}`).headers.get('set-cookie') ?? '';
     expect(cookie).toContain('Domain=nandomoreira.dev');

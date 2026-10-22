@@ -1,35 +1,36 @@
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from '../hire/read-body';
+import {
+  cookieDomainFor,
+  parseSession,
+  serializeSession,
+  sessionSetCookie,
+  sessionValueFrom,
+} from '../http/session-cookie';
 import { parsePage } from './paginate';
 
 /**
  * The /posts listing has two views. The list is the default. The choice lives
- * in an HttpOnly cookie, never in the query: `/posts` with no parameters still
- * renders the grid when the browser sends `listing-view=grid`.
+ * in the `__session` cookie, never in the query: App Hosting drops every other
+ * cookie name, so `/posts` with no parameters still renders the grid when the
+ * browser sends `__session=grid` or `__session=self.grid`.
  */
-export const LISTING_VIEW_COOKIE = 'listing-view';
-
-/** A year. The choice is a preference, so it outlives the browser session. */
-const YEAR_SECONDS = 60 * 60 * 24 * 365;
-
 export type ListingView = 'list' | 'grid';
 
-/** Only the exact cookie value `grid` leaves the list. Anything else is the list. */
-export const parseListingView = (raw: string | null | undefined): ListingView => (raw === 'grid' ? 'grid' : 'list');
+/** `grid` and `self.grid` are the grid. The author mark alone stays on the list. */
+export const parseListingView = (raw: string | null | undefined): ListingView => parseSession(raw).view;
 
 /** Page 1 is `/posts` itself, never `?pagina=1`. The view is not part of the URL. */
 export const listingHref = (page: number): string => (page > 1 ? `/posts?pagina=${page}` : '/posts');
 
-export const listingViewSetCookie = (view: ListingView, secure: boolean): string => {
-  const parts = [
-    `${LISTING_VIEW_COOKIE}=${view}`,
-    'Path=/posts',
-    `Max-Age=${YEAR_SECONDS}`,
-    'HttpOnly',
-    'SameSite=Lax',
-  ];
-  if (secure) parts.push('Secure');
-
-  return parts.join('; ');
+export const listingViewSetCookie = (
+  view: ListingView,
+  options: { secure: boolean; current?: string | null; domain?: string },
+): string => {
+  const current = parseSession(options.current);
+  return sessionSetCookie(serializeSession({ self: current.self, view }), {
+    secure: options.secure,
+    domain: options.domain,
+  });
 };
 
 const formBody = async (request: Request): Promise<URLSearchParams | undefined> => {
@@ -63,7 +64,11 @@ export const handleListingView = async (request: Request, url = new URL(request.
     headers: {
       location: listingHref(parsePage(url.searchParams.get('pagina'))),
       'cache-control': 'no-store',
-      'set-cookie': listingViewSetCookie(view, url.protocol === 'https:'),
+      'set-cookie': listingViewSetCookie(view, {
+        secure: url.protocol === 'https:',
+        current: sessionValueFrom(request.headers.get('cookie')),
+        domain: cookieDomainFor(url.hostname),
+      }),
     },
   });
 };

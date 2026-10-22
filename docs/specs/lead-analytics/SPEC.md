@@ -73,7 +73,7 @@ medir o uso por agentes.
 5. [REQ-005] QUANDO o hash do visitante é calculado ENTÃO ele DEVE ser HMAC(HMAC(`ANALYTICS_HASH_SECRET`, dia em São Paulo), IP + user agent), truncado em 16 bytes, e o IP NÃO DEVE ser gravado. QUANDO o segredo está ausente ENTÃO a coleta DEVE ficar desligada sem erro.
 6. [REQ-006] QUANDO o referrer é externo ENTÃO o canal DEVE ser derivado do host (`google`, `bing`, `duckduckgo`, `linkedin`, `github`, `x`, `bluesky`, `other`); sem referrer o canal DEVE ser `direct`; referrer do próprio domínio NÃO DEVE definir canal. As UTMs `source`, `medium` e `campaign` DEVEM ser limpas de caracteres de controle e truncadas em 64 caracteres.
 7. [REQ-007] QUANDO um GET atinge uma superfície de máquina (`.md`, `/ia`, `llms.txt`, `AGENTS.md`, `/api/resume.*`) ENTÃO ele DEVE ser registrado como `kind: 'machine'`, com a classe do user agent.
-8. [REQ-008] QUANDO a requisição traz o cookie `__session=self` ENTÃO nada DEVE ser gravado. QUANDO `/eu?token=<ANALYTICS_SELF_TOKEN>` é acessado com o token correto ENTÃO o sistema DEVE gravar `nm_self=1` (HttpOnly, Secure, SameSite=Lax, 1 ano); token errado ou ausente DEVE responder 404.
+8. [REQ-008] QUANDO a requisição traz o cookie `__session` com o token `self` (`self` ou `self.grid`) ENTÃO nada DEVE ser gravado. QUANDO `/eu?token=<ANALYTICS_SELF_TOKEN>` é acessado com o token correto ENTÃO o sistema DEVE gravar `nm_self=1` (HttpOnly, Secure, SameSite=Lax, 1 ano); token errado ou ausente DEVE responder 404.
 
 **Conversões**
 
@@ -176,7 +176,7 @@ somando as repetições. Um lote JSON-RPC de 20 mensagens é um commit, não 20.
 
 ## Constraints
 
-- Nada de script, `client:*` ou cookie para visitante; `__session=self` existe só no navegador do autor. O nome é `__session` porque o Firebase App Hosting só repassa ao servidor o cookie com esse nome; um `nm_self` chegava ao navegador e era descartado no caminho (corrigido em 2026-10-14).
+- Nada de script ou `client:*`. `__session=self` marca o navegador do autor. O nome é `__session` porque o Firebase App Hosting só repassa ao servidor o cookie com esse nome; um `nm_self` chegava ao navegador e era descartado no caminho (corrigido em 2026-10-14). A grade da listagem de posts mora nesse mesmo cookie (`grid` ou `self.grid`): um visitante que escolhe a grade passa a ter `__session=grid`.
 - Segredos novos, nesta ordem para cada um: `firebase apphosting:secrets:set`, `grantaccess`, só então a entrada no `apphosting.yaml`.
   - `analytics-hash-secret` → `ANALYTICS_HASH_SECRET`
   - `analytics-self-token` → `ANALYTICS_SELF_TOKEN`
@@ -220,7 +220,7 @@ Decisões levantadas e resolvidas no grilling (2026-10-14).
 | 9 | Latência no SSR | Espera de até 250 ms, falha silenciosa | CPU reduzida após a resposta |
 | 10 | Fronteira do dia | Meia-noite de São Paulo | Mesmo fuso do `cvFileName` |
 | 11 | O que guardar da URL | Caminho sem query, 3 UTMs (64), canal pelo host | Cardinalidade e privacidade |
-| 12 | Visitas do autor | Cookie `__session=self` por `/eu?token=` | Nenhum visitante recebe cookie |
+| 12 | Visitas do autor | Cookie `__session` com o token `self` por `/eu?token=` | Visitante só recebe esse cookie se escolher a grade (`grid`) |
 | 13 | Abuso do pixel | Referer próprio, caminho conhecido, limiter 30/10 min | Evita inflar contagem e cota |
 | 14 | Segredo do hash | `analytics-hash-secret`; sem ele, coleta desligada | Falha segura |
 | 15 | MCP | Método + tool, nunca argumentos; `clientInfo.name` em P2 | Uso por agentes sem conteúdo |

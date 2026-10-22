@@ -46,7 +46,7 @@ describe('/posts grid view', () => {
 
   it('renders the grid from the cookie on a clean /posts url', async () => {
     const current = await getCurrentPosts();
-    const html = await render('', 'theme=paper; listing-view=grid');
+    const html = await render('', 'theme=paper; __session=grid');
     const cards = [...html.matchAll(/<article[^>]*data-related-post[\s\S]*?<\/article>/g)].map(match => match[0]);
 
     expect(html).not.toContain('data-latest-post');
@@ -62,7 +62,7 @@ describe('/posts grid view', () => {
   it('pages the grid by twelve and keeps the toggle on the page it shows', async () => {
     const current = await getCurrentPosts();
     const size = 12;
-    const html = await render('?pagina=2', 'listing-view=grid');
+    const html = await render('?pagina=2', '__session=self.grid');
     const totalPages = Math.max(1, Math.ceil(current.length / size));
     const shown = Math.min(2, totalPages);
     const start = (shown - 1) * size;
@@ -80,10 +80,14 @@ describe('/posts grid view', () => {
     expect(html).not.toContain('pagina=1');
   });
 
-  it('ignores an unknown cookie and drops a leftover ?visao from the url', async () => {
-    const list = await render('', 'listing-view=grade');
+  it('ignores the old listing-view cookie and drops a leftover ?visao from the url', async () => {
+    const list = await render('', 'listing-view=grid');
     expect(list).toContain('data-latest-post');
     expect(list).not.toContain('data-related-post');
+
+    const author = await render('', '__session=self');
+    expect(author).toContain('data-latest-post');
+    expect(author).not.toContain('data-related-post');
 
     const container = await AstroContainer.create();
     const response = await container.renderToResponse(PostsPage, {

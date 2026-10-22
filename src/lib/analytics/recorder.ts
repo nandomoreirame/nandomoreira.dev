@@ -1,4 +1,5 @@
 import { clientIpOf } from '../hire/rate-limit';
+import { parseSession, SESSION_COOKIE, sessionValueFrom } from '../http/session-cookie';
 import { saoPauloDay } from '../now/day';
 import { utmOf } from './channel';
 import type { AnalyticsConfig } from './config';
@@ -11,12 +12,12 @@ import { visitorHash } from './visitor';
  * Firebase App Hosting forwards only the cookie named `__session` to the
  * server and drops every other one from the request: an `nm_self` cookie
  * reached the browser but never the recorder, so the author was counted.
+ * The posts grid lives in the same cookie (`self.grid`), and the `self` token
+ * still means this request is the author's.
  */
-export const SELF_COOKIE = '__session';
-export const SELF_VALUE = 'self';
+export const SELF_COOKIE = SESSION_COOKIE;
 
-export const isSelf = (headers: Headers): boolean =>
-  (headers.get('cookie') ?? '').split(';').some(pair => pair.trim() === `${SELF_COOKIE}=${SELF_VALUE}`);
+export const isSelf = (headers: Headers): boolean => parseSession(sessionValueFrom(headers.get('cookie'))).self;
 
 /** Resolves undefined on timeout or failure; measuring never breaks a response. */
 export const withTimeout = async <T>(work: Promise<T>, ms: number): Promise<T | undefined> => {

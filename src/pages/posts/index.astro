@@ -12,7 +12,8 @@ import { getAllPosts, getCurrentPosts, getUpcomingPosts, getProfile } from '../.
 import { showDrafts } from '../../lib/content/posts';
 import { outcomeOf } from '../../lib/newsletter/copy';
 import { BLOG_COPY } from '../../lib/posts/blog-copy';
-import { LISTING_VIEW_COOKIE, listingHref, parseListingView } from '../../lib/posts/listing-view';
+import { SESSION_COOKIE } from '../../lib/http/session-cookie';
+import { listingHref, parseListingView } from '../../lib/posts/listing-view';
 import { pageSizeFor, paginate, parsePage } from '../../lib/posts/paginate';
 import { displayNameOf } from '../../lib/content/display-name';
 
@@ -29,7 +30,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 const posts = await getCurrentPosts();
 // Drafts stay out of the list in every mode; in dev they are linked from the drafts card below.
 const listed = posts.filter((post) => !post.draft);
-const view = parseListingView(Astro.cookies.get(LISTING_VIEW_COOKIE)?.value);
+const view = parseListingView(Astro.cookies.get(SESSION_COOKIE)?.value);
 const page = paginate(listed, requestedPage, pageSizeFor(view));
 const upcoming = await getUpcomingPosts();
 // The whole blog, archive included, not just the current posts listed here.
