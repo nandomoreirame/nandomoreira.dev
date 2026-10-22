@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { viewFor } from '../../src/lib/search/controller';
 
 const source = readFileSync('src/components/art/PointerField.astro', 'utf8');
+const bare = readFileSync('src/lib/search/bare-letter.ts', 'utf8');
 const loader = source.slice(
   source.indexOf('// Command palette loader'),
   source.indexOf('// End command palette loader'),
@@ -26,8 +27,9 @@ describe('palette loader in the site script', () => {
   });
 
   it('forwards bare letters typed outside fields to press, loading on G or a shortcut letter', () => {
-    expect(loader).toMatch(/!event\.ctrlKey && !event\.metaKey && !event\.altKey/);
-    expect(loader).toMatch(/isContentEditable/);
+    expect(loader).toMatch(/forwardBareLetter\(origin, event, touch\)/);
+    expect(bare).toMatch(/!event\.ctrlKey && !event\.metaKey && !event\.altKey/);
+    expect(bare).toMatch(/isContentEditable/);
     expect(loader).toMatch(/\[glemsit\]/);
     expect(loader).toMatch(/\.press\(/);
     expect(loader).not.toMatch(/armGo/);
@@ -51,5 +53,10 @@ describe('palette loader in the site script', () => {
 
   it('turns the letter shortcuts off on touch screens', () => {
     expect(loader).toMatch(/matchMedia\('\(hover: none\)'\)\.matches/);
+  });
+
+  it('reads the typed node through the shadow root', () => {
+    expect(loader).toMatch(/const origin = event\.composedPath\(\)\[0\]/);
+    expect(loader).not.toContain('data-post-review');
   });
 });
