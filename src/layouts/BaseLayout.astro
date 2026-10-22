@@ -188,7 +188,7 @@ const switcherView = view ?? 'human';
     />
     <PointerField />
     {
-      showsPixel({ isPrerendered: Astro.isPrerendered, view }) && (
+      import.meta.env.PROD && showsPixel({ isPrerendered: Astro.isPrerendered, view }) && (
         <img
           src="/v.gif"
           alt=""
