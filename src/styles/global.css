@@ -1071,8 +1071,9 @@
     transform: none;
   }
 
-  /* Last in the block, after any display rule: tests/design-system/motion.test.ts
-     reads from the first reduced-motion query on. */
+  /* tests/design-system/motion.test.ts reads each prefers-reduced-motion:
+     reduce block and rejects display: none inside it. Hiding a decorative
+     effect stays outside that block. */
   @media (prefers-reduced-motion: reduce) {
     .palette,
     .palette::backdrop,
