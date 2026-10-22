@@ -4,7 +4,13 @@ import ReleasesPage from '../../src/pages/releases/17.astro';
 import { buildSitemap } from '../../src/lib/aeo/sitemap';
 import { markdownForPath } from '../../src/lib/ai-view/registry';
 import { SITE_VERSIONS } from '../../src/lib/history/history';
-import { RELEASES, RELEASES_PATH, releaseAnchor, releaseTocLabelOf, releasesMarkdown } from '../../src/lib/releases/releases';
+import {
+  RELEASES,
+  RELEASES_PATH,
+  releaseAnchor,
+  releaseTocLabelOf,
+  releasesMarkdown,
+} from '../../src/lib/releases/releases';
 
 const site = new URL('https://nandomoreira.dev');
 

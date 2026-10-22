@@ -19,7 +19,9 @@ describe('AuthorBox', () => {
     expect(aside).not.toContain('Itaú Unibanco');
     // The blog speaks to readers, not to clients.
     expect(aside).not.toContain('atendendo todo o Brasil');
-    expect(aside).toContain('Sou desenvolvedor de software sênior em São Paulo. Escrevo aqui sobre meus estudos e experimentos pra mim mesmo; se você está lendo, é um bônus :)');
+    expect(aside).toContain(
+      'Sou desenvolvedor de software sênior em São Paulo. Escrevo aqui sobre meus estudos e experimentos pra mim mesmo; se você está lendo, é um bônus :)',
+    );
     expect(html.match(/<aside/g)).toHaveLength(1);
   });
 
