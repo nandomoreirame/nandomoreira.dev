@@ -1,6 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import type { Block } from '../../src/content/blocks';
+import { collectionOfBlock } from '../../src/lib/catalog/groups';
 
 const DIR = 'src/content/projects';
 
@@ -28,8 +30,10 @@ const images = readdirSync(DIR)
   .filter(file => file.endsWith('.md'))
   .flatMap(file => {
     const frontmatter = readFileSync(join(DIR, file), 'utf8').split(/^---$/m)[1] ?? '';
+    const block = frontmatter.match(/^block: ([a-z-]+)$/m)?.[1] as Block | undefined;
     return [...frontmatter.matchAll(/- src: (\S+)\n\s+alt: .+\n\s+width: (\d+)\n\s+height: (\d+)/g)].map(match => ({
       file,
+      block,
       src: match[1],
       width: Number(match[2]),
       height: Number(match[3]),
@@ -41,8 +45,9 @@ describe('case images', () => {
     expect(images.length).toBeGreaterThan(0);
   });
 
-  it.each(images)('$src is a WebP under public/ with the declared size', ({ src, width, height }) => {
-    expect(src).toMatch(/^\/lab\/[a-z0-9-]+\/[a-z0-9-]+\.webp$/);
+  it.each(images)('$src is a WebP under public/ with the declared size', ({ src, block, width, height }) => {
+    expect(block).toBeDefined();
+    expect(src).toMatch(new RegExp('^/' + collectionOfBlock(block!) + '/[a-z0-9-]+/[a-z0-9-]+\.webp$'));
     const path = join('public', src);
     expect(existsSync(path)).toBe(true);
     expect(webpSize(readFileSync(path))).toEqual({ width, height });

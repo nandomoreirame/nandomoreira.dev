@@ -31,27 +31,27 @@ tech:
 repoUrl: null
 liveUrl: https://www.camillasaboia.com.br
 images:
-  - src: /lab/camilla-saboia/hero.webp
+  - src: /portfolio/camilla-saboia/hero.webp
     alt: "Topo do site sobre fundo verde-sálvia: a palavra PORTFÓLIO em letras condensadas gigantes, sólidas atrás e só contorno na frente, ao redor do recorte da foto da Camilla sorrindo com camisa de oncinha"
     width: 1400
     height: 860
-  - src: /lab/camilla-saboia/mobile.webp
+  - src: /portfolio/camilla-saboia/mobile.webp
     alt: "Dois celulares lado a lado sobre o verde-sálvia do site: à esquerda o topo com a palavra PORTFÓLIO reduzida em volta da foto e o menu num botão quadrado; à direita a seção Customer Experience com o título em duas linhas e os itens com check empilhados"
     width: 1400
     height: 860
-  - src: /lab/camilla-saboia/cx.webp
+  - src: /portfolio/camilla-saboia/cx.webp
     alt: "Seção Customer Experience | CX: título em letras condensadas, um parágrafo sobre o ciclo de vida do cliente, quatro itens com ícone de check (jornada, expectativas, indicadores e churn) e a foto de perfil dela em preto e branco à direita"
     width: 1400
     height: 860
-  - src: /lab/camilla-saboia/eventos.webp
+  - src: /portfolio/camilla-saboia/eventos.webp
     alt: "Seção Eventos sobre fundo creme: título grande, uma frase sobre assessoria de eventos e três cartões numerados, eventos corporativos, eventos particulares e experiência do convidado"
     width: 1400
     height: 860
-  - src: /lab/camilla-saboia/perguntas.webp
+  - src: /portfolio/camilla-saboia/perguntas.webp
     alt: "Seção Perguntas frequentes: título à esquerda e, à direita, o acordeão com a primeira pergunta aberta, Quem é Camilla Saboia, e outras quatro fechadas"
     width: 1400
     height: 860
-  - src: /lab/camilla-saboia/contato.webp
+  - src: /portfolio/camilla-saboia/contato.webp
     alt: "Fechamento do site: a palavra OBRIGADA em letras gigantes, sólidas e em contorno, em volta de três recortes de fotos da Camilla, um colorido e dois em preto e branco"
     width: 1400
     height: 800
