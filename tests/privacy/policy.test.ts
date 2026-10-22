@@ -21,6 +21,7 @@ describe('privacy policy content', () => {
       'curriculo',
       'novidades',
       'agentes',
+      'comentarios',
       'compartilhamento',
       'direitos',
       'mudancas',
@@ -69,7 +70,7 @@ describe('privacy policy content', () => {
 
   it('names every processor and where the data lives', () => {
     const text = all();
-    for (const name of ['Google Cloud', 'Firestore', 'Resend', 'Estados Unidos', 'CodePen']) {
+    for (const name of ['Google Cloud', 'Firestore', 'Resend', 'Estados Unidos', 'CodePen', 'GitHub']) {
       expect(text).toContain(name);
     }
   });
@@ -82,7 +83,7 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-19');
+    expect(POLICY_UPDATED_AT).toBe('2026-10-22');
   });
 
   it('describes the visit measurement honestly', () => {
@@ -118,6 +119,28 @@ describe('privacy policy content', () => {
     expect(text).toMatch(/só no registro de cada visita/);
   });
 
+  it('explains that comments use a GitHub account and stay public on Discussions', () => {
+    const section = privacySections.find(candidate => candidate.id === 'comentarios');
+    const text = [section?.title, ...(section?.paragraphs ?? [])].join('\n');
+    for (const fact of ['Giscus', 'conta do GitHub', 'GitHub Discussions', 'públic']) {
+      expect(text).toContain(fact);
+    }
+    const link = section?.links?.find(
+      item => item.href === 'https://docs.github.com/pt/site-policy/privacy-policies/github-privacy-statement',
+    );
+    expect(link?.phrase).toBe('política de privacidade do GitHub');
+    expect(text).toContain(link?.phrase);
+    const share = (privacySections.find(candidate => candidate.id === 'compartilhamento')?.paragraphs ?? []).join('\n');
+    expect(share).toContain('GitHub');
+    expect(share).toContain('Giscus');
+    expect(share).toContain('giscus.app/client.js');
+    expect(share).toMatch(/metadados da conexão/);
+    expect(share).toMatch(/endereço IP/);
+    expect(share).toContain('GitHub Discussions');
+    expect(share).not.toMatch(/recebe só/);
+    expect(all()).not.toMatch(/o único script/);
+  });
+
   it('no longer claims there is no measurement', () => {
     expect(all()).not.toMatch(/não usa cookies, analytics/);
     expect(all()).not.toMatch(/não guardam nada sobre quem consulta/);
@@ -142,7 +165,14 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('19 de outubro de 2026');
+    expect(await render()).toContain('22 de outubro de 2026');
+  });
+
+  it('renders the GitHub privacy statement as a link', async () => {
+    const html = await render();
+    expect(html).toMatch(
+      /<a[^>]*href="https:\/\/docs\.github\.com\/pt\/site-policy\/privacy-policies\/github-privacy-statement"[^>]*>política de privacidade do GitHub<\/a>/,
+    );
   });
 });
 
@@ -161,6 +191,16 @@ describe('privacy in the site surfaces', () => {
     expect(page?.markdown).toContain('# Política de privacidade');
     expect(page?.markdown).not.toContain('@');
     expect(privacyMarkdown({ site })).toContain('/contato');
+    const markdown = privacyMarkdown({ site });
+    expect(markdown).toContain('Giscus');
+    expect(markdown).toContain('conta do GitHub');
+    expect(markdown).toContain('GitHub Discussions');
+    expect(markdown).toContain(
+      'Quem trata o comentário publicado é o GitHub, nos termos da [política de privacidade do GitHub](https://docs.github.com/pt/site-policy/privacy-policies/github-privacy-statement). Eu modero as conversas por lá.',
+    );
+    expect(markdown).toContain('Este site é pessoal. O responsável pelos dados');
+    expect(markdown).toContain('giscus.app/client.js');
+    expect(markdown).toMatch(/metadados da conexão/);
   });
 
   it('is in the sitemap', () => {

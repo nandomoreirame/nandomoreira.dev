@@ -6,13 +6,49 @@ import { absoluteUrl } from '../aeo/urls';
  * or by the platform default, so changing a number here without changing that
  * is how the policy starts to lie.
  */
-export const POLICY_UPDATED_AT = '2026-10-19';
+export const POLICY_UPDATED_AT = '2026-10-22';
+
+export interface PolicyLink {
+  phrase: string;
+  href: string;
+}
 
 export interface PolicySection {
   id: string;
   title: string;
   paragraphs: string[];
+  links?: PolicyLink[];
 }
+
+export type PolicyRun = string | { href: string; label: string };
+
+/** Splits a paragraph on the phrases this section knows. Anything else stays put. */
+export const paragraphRuns = (paragraph: string, links: readonly PolicyLink[] | undefined = []): PolicyRun[] => {
+  const known = links ?? [];
+  const hits = known
+    .flatMap(link => {
+      if (link.phrase.length === 0) return [];
+      const index = paragraph.indexOf(link.phrase);
+      return index === -1 ? [] : [{ index, link }];
+    })
+    .sort((left, right) => left.index - right.index);
+
+  const runs: PolicyRun[] = [];
+  let cursor = 0;
+  for (const hit of hits) {
+    if (hit.index < cursor) continue;
+    if (hit.index > cursor) runs.push(paragraph.slice(cursor, hit.index));
+    runs.push({ href: hit.link.href, label: hit.link.phrase });
+    cursor = hit.index + hit.link.phrase.length;
+  }
+  if (cursor < paragraph.length) runs.push(paragraph.slice(cursor));
+  return runs.length > 0 ? runs : [paragraph];
+};
+
+const markdownParagraph = (paragraph: string, links?: readonly PolicyLink[]): string =>
+  paragraphRuns(paragraph, links)
+    .map(run => (typeof run === 'string' ? run : `[${run.label}](${run.href})`))
+    .join('');
 
 export const privacySections: PolicySection[] = [
   {
@@ -27,7 +63,7 @@ export const privacySections: PolicySection[] = [
     title: 'O que não é coletado',
     paragraphs: [
       'O site não usa cookies de rastreamento, pixel de anúncio, gravação de sessão nem serviços de analytics de terceiros. A contagem de visitas descrita na seção seguinte roda no próprio servidor e não guarda seu IP nem seu nome. Enquanto você só navega, ela não diz quem você é; se você enviar o formulário ou baixar o currículo, as páginas que viu naquele dia passam a ir junto com o nome, a empresa e o e-mail que você informou.',
-      'Fontes, estilos e o único script são servidos pelo próprio domínio. O script faz o efeito do ponteiro e o botão Copiar, e não envia nada a lugar nenhum.',
+      'Fontes e estilos são servidos pelo próprio domínio. O script do site faz o efeito do ponteiro e o botão Copiar, e não envia nada a lugar nenhum. Os comentários dos textos atuais carregam o Giscus, como a seção própria descreve.',
       'Uma exceção: um texto antigo do blog exibe uma imagem hospedada no CodePen. Ao abrir esse texto, seu navegador pede a imagem ao CodePen, que recebe seu endereço IP como em qualquer requisição.',
     ],
   },
@@ -90,11 +126,25 @@ export const privacySections: PolicySection[] = [
     ],
   },
   {
+    id: 'comentarios',
+    title: 'Comentários nos textos',
+    paragraphs: [
+      'Nos textos atuais do blog, a seção de comentários é o Giscus. Para comentar, você entra com a sua conta do GitHub. O comentário fica público no GitHub Discussions, na conversa daquele texto, no repositório nandomoreirame/nandomoreira.dev.',
+      'Quem trata o comentário publicado é o GitHub, nos termos da política de privacidade do GitHub. Eu modero as conversas por lá. O texto do post continua neste site e pode ser lido sem o GitHub.',
+    ],
+    links: [
+      {
+        phrase: 'política de privacidade do GitHub',
+        href: 'https://docs.github.com/pt/site-policy/privacy-policies/github-privacy-statement',
+      },
+    ],
+  },
+  {
     id: 'compartilhamento',
     title: 'Com quem os dados são compartilhados',
     paragraphs: [
-      'Ninguém compra, recebe ou usa seus dados para marketing. Os únicos que tratam dados em meu nome são o Google Cloud (hospedagem, banco e registros) e o Resend (envio do e-mail de notificação).',
-      'Os dois operam nos Estados Unidos, o que é uma transferência internacional de dados, feita para executar o pedido que você fez ao me contatar (art. 33 da LGPD).',
+      'Ninguém compra, recebe ou usa seus dados para marketing. Os que tratam dados em meu nome são o Google Cloud (hospedagem, banco e registros) e o Resend (envio do e-mail de notificação). Os comentários usam dois serviços externos, os dois nos Estados Unidos: o Giscus (giscus.app), que desenha a seção, e o GitHub, que guarda as conversas públicas.',
+      'O Google Cloud e o Resend operam nos Estados Unidos. Essa transferência acompanha o pedido que você fez ao me contatar ou o download do currículo (art. 33 da LGPD). Quando a seção de comentários se aproxima da tela, o navegador pede o script em https://giscus.app/client.js. Essa requisição envia ao Giscus os metadados da conexão, como o endereço IP, o navegador e a página aberta. O comentário que você publica vai para o GitHub Discussions e fica público na conversa daquele texto.',
     ],
   },
   {
@@ -115,7 +165,7 @@ export const privacySections: PolicySection[] = [
 ];
 
 export const POLICY_LEAD =
-  'Versão curta: este site não usa cookies nem analytics de terceiros. Ele conta visitas no próprio servidor, sem guardar seu IP, e guarda o que você envia de propósito por até 12 meses.';
+  'Versão curta: este site não usa cookies nem analytics de terceiros. Ele conta visitas no próprio servidor, sem guardar seu IP, e guarda o que você envia de propósito por até 12 meses. Comentários nos textos atuais pedem uma conta do GitHub e ficam públicos no GitHub Discussions.';
 
 /** "8 de outubro de 2026", parsed as a calendar date so no timezone shifts it. */
 export const formatPolicyDate = (iso: string): string => {
@@ -147,7 +197,11 @@ export const privacyMarkdown = ({ site }: { site: URL }): string => {
   ];
 
   for (const section of privacySections) {
-    lines.push(`## ${section.title}`, '', ...section.paragraphs.flatMap(paragraph => [paragraph, '']));
+    lines.push(
+      `## ${section.title}`,
+      '',
+      ...section.paragraphs.flatMap(paragraph => [markdownParagraph(paragraph, section.links), '']),
+    );
   }
 
   lines.push('## Contato', '', `Pedidos sobre seus dados: pelo formulário em ${absoluteUrl(site, '/contato')}.`, '');

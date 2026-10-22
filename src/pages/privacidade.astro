@@ -9,6 +9,7 @@ import { getProfile } from '../lib/content';
 import {
   POLICY_LEAD,
   POLICY_UPDATED_AT,
+  paragraphRuns,
   privacySections,
 } from '../lib/privacy/policy';
 
@@ -29,7 +30,11 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
           <section aria-labelledby={section.id}>
             <h2 id={section.id}>{section.title}</h2>
             {section.paragraphs.map((paragraph) => (
-              <p>{paragraph}</p>
+              <p>
+                {paragraphRuns(paragraph, section.links).map((run) =>
+                  typeof run === 'string' ? run : <a href={run.href}>{run.label}</a>,
+                )}
+              </p>
             ))}
           </section>
         ))
