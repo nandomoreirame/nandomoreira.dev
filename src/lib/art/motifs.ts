@@ -403,7 +403,7 @@ export const tiling: Motif = (random, { width, height }) => {
   const x0 = width * 0.04;
   const w = (width * 0.92 - gap) / 2;
   const focused = intBetween(random, 0, 1);
-  return [0, 1].flatMap((i) => pageWindow(random, x0 + i * (w + gap), w, height, i === focused));
+  return [0, 1].flatMap(i => pageWindow(random, x0 + i * (w + gap), w, height, i === focused));
 };
 
 /** Children's learning: loose shapes at play. */

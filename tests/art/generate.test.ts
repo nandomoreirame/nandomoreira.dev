@@ -65,8 +65,8 @@ describe('generateArt', () => {
     const shapes = MOTIF_DRAWERS.tiling(createRandom(hashString('tiling')), frame);
     const edges = shapes
       .filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line')
-      .filter((line) => line.x1 === line.x2 && Math.abs(line.y2 - line.y1) > frame.height * 0.8)
-      .map((line) => line.x1)
+      .filter(line => line.x1 === line.x2 && Math.abs(line.y2 - line.y1) > frame.height * 0.8)
+      .map(line => line.x1)
       .sort((a, b) => a - b);
     expect(edges).toHaveLength(4);
     const [leftStart, leftEnd, rightStart, rightEnd] = edges as [number, number, number, number];
