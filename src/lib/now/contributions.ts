@@ -34,7 +34,13 @@ const responseSchema = z.object({
                 z.object({
                   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
                   contributionCount: z.number().int().nonnegative(),
-                  contributionLevel: z.enum(['NONE', 'FIRST_QUARTILE', 'SECOND_QUARTILE', 'THIRD_QUARTILE', 'FOURTH_QUARTILE']),
+                  contributionLevel: z.enum([
+                    'NONE',
+                    'FIRST_QUARTILE',
+                    'SECOND_QUARTILE',
+                    'THIRD_QUARTILE',
+                    'FOURTH_QUARTILE',
+                  ]),
                 }),
               ),
             }),
@@ -64,8 +70,8 @@ export const parseContributions = (json: unknown): ContributionCalendar => {
   const parsed = responseSchema.safeParse(json);
   if (!parsed.success) throw new SourceError('shape');
   const calendar = parsed.data.data.user.contributionsCollection.contributionCalendar;
-  const weeks = calendar.weeks.map((week) =>
-    week.contributionDays.map((day) => ({
+  const weeks = calendar.weeks.map(week =>
+    week.contributionDays.map(day => ({
       date: day.date,
       count: day.contributionCount,
       level: LEVELS[day.contributionLevel],

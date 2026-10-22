@@ -113,7 +113,10 @@ export const createNowLoader = ({
       const [newest] = repos;
       if (!newest) return { repos };
       try {
-        return { repos, lastCommit: await fetchLastCommit({ fetch: fetchImpl, token: config.github.token, repo: newest }) };
+        return {
+          repos,
+          lastCommit: await fetchLastCommit({ fetch: fetchImpl, token: config.github.token, repo: newest }),
+        };
       } catch (error) {
         logSourceError('github-commit', error, logger);
         return { repos };
@@ -155,18 +158,19 @@ export const createNowLoader = ({
     : undefined;
 
   return async (): Promise<NowSnapshot> => {
-    const [[projectsResult, musicResult, gamesResult, topResult, calendarResult], posts, drafts, availability] = await Promise.all([
-      Promise.allSettled([
-        github(),
-        spotify ? spotify() : Promise.resolve('unconfigured' as const),
-        xbox ? xbox() : Promise.resolve('unconfigured' as const),
-        spotifyTop ? spotifyTop() : Promise.resolve('unconfigured' as const),
-        contributions ? contributions() : Promise.resolve('unconfigured' as const),
-      ]),
-      currentPosts(),
-      getUpcomingPosts(),
-      getAvailability(),
-    ]);
+    const [[projectsResult, musicResult, gamesResult, topResult, calendarResult], posts, drafts, availability] =
+      await Promise.all([
+        Promise.allSettled([
+          github(),
+          spotify ? spotify() : Promise.resolve('unconfigured' as const),
+          xbox ? xbox() : Promise.resolve('unconfigured' as const),
+          spotifyTop ? spotifyTop() : Promise.resolve('unconfigured' as const),
+          contributions ? contributions() : Promise.resolve('unconfigured' as const),
+        ]),
+        currentPosts(),
+        getUpcomingPosts(),
+        getAvailability(),
+      ]);
 
     const projects =
       projectsResult.status === 'rejected'

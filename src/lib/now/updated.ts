@@ -21,7 +21,7 @@ export const nowUpdatedAt = ({
   commitAt?: string;
   today: Date;
 }): string => {
-  const trackDays = [...trackPlayedAt, ...(commitAt ? [commitAt] : [])].flatMap((iso) => {
+  const trackDays = [...trackPlayedAt, ...(commitAt ? [commitAt] : [])].flatMap(iso => {
     const date = new Date(iso);
     return Number.isNaN(date.getTime()) ? [] : [saoPauloDay(date)];
   });

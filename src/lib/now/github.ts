@@ -145,4 +145,3 @@ export const fetchLastCommit = async ({
     committedAt: latest!.commit.committer.date,
   };
 };
-
