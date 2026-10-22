@@ -1,27 +1,31 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
-import { Icon } from 'astro-icon/components';
-import Prose from '../components/ui/Prose.astro';
-import CopyButton from '../components/ui/CopyButton.astro';
-import ReaderMode from '../components/posts/ReaderMode.astro';
 import AiSummaryLink from '../components/posts/AiSummaryLink.astro';
+import AuthorBox from '../components/posts/AuthorBox.astro';
+import GiscusComments from '../components/posts/GiscusComments.astro';
+import NewsletterCard from '../components/posts/NewsletterCard.astro';
+import PostSnapshot from '../components/posts/PostSnapshot.astro';
 import PostToc from '../components/posts/PostToc.astro';
 import PostTocToggle from '../components/posts/PostTocToggle.astro';
-import PostSnapshot from '../components/posts/PostSnapshot.astro';
-import AuthorBox from '../components/posts/AuthorBox.astro';
+import ReaderMode from '../components/posts/ReaderMode.astro';
 import RelatedPostCard from '../components/posts/RelatedPostCard.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
+import Prose from '../components/ui/Prose.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
-import type { PostEntry } from '../lib/content';
 import { generateArt } from '../lib/art';
-import { toLongDate } from '../lib/format/date';
-import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
-import { relatedPosts } from '../lib/posts/related';
-import { readingMinutes } from '../lib/posts/reading-time';
-import { tocFrom } from '../lib/posts/toc';
-import { toHashtag } from '../lib/posts/tags';
+import type { PostEntry } from '../lib/content';
+import { getAllPostEntries, getAllPosts, getPostEntry, getProfile } from '../lib/content';
 import { displayNameOf } from '../lib/content/display-name';
+import { toLongDate } from '../lib/format/date';
+import { outcomeOf } from '../lib/newsletter/copy';
+import { isCommentsPost } from '../lib/posts/giscus-config';
+import { jsonLdForPost, serialiseJsonLd } from '../lib/posts/post-ld';
+import { readingMinutes } from '../lib/posts/reading-time';
+import { relatedPosts } from '../lib/posts/related';
+import { toHashtag } from '../lib/posts/tags';
+import { tocFrom } from '../lib/posts/toc';
 import { pageTitle } from '../lib/seo/meta';
 
 export const prerender = true;
@@ -46,6 +50,8 @@ const live = await getPostEntry(entry.data.slug);
 if (!live) {
   return Astro.redirect('/404');
 }
+
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
 
 const post = live.data;
 const { Content, headings } = await render(live);
@@ -186,6 +192,7 @@ const authorName = displayNameOf(profile);
           <Content />
         </Prose>
         <AuthorBox />
+        {isCommentsPost(post) && <GiscusComments />}
       </div>
     </div>
     {toc.length > 0 && <PostTocToggle />}
@@ -219,4 +226,8 @@ const authorName = displayNameOf(profile);
       </section>
     )
   }
+
+  <div class="mt-2xl mb-3xl">
+    <NewsletterCard outcome={outcome} />
+  </div>
 </BaseLayout>

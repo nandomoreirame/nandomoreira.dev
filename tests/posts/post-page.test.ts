@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import { getAllPostEntries } from '../../src/lib/content';
+import { isCommentsPost } from '../../src/lib/posts/giscus-config';
 import PostPage, { getStaticPaths } from '../../src/pages/[slug].astro';
 
 const source = readFileSync('src/pages/[slug].astro', 'utf8');
@@ -273,6 +274,37 @@ describe('/[slug] post page', () => {
       expect(html).not.toMatch(/<figure\b/i);
       expect(html).toContain(entry.data.title);
     }
+  });
+
+  it('shows Giscus inside the article after the author box, and before related posts', async () => {
+    const entry = (await getAllPostEntries()).find(e => e.data.slug === 'fluxo-rpi-claude-code-grok-codex')!;
+    expect(isCommentsPost(entry.data)).toBe(true);
+    const html = await renderEntry(entry);
+    const author = html.indexOf('data-author-box');
+    const comments = html.indexOf('data-giscus-comments');
+    const articleEnd = html.indexOf('</article>', comments);
+    const related = html.search(/aria-labelledby="related-heading"/);
+    expect(author).toBeGreaterThan(-1);
+    expect(comments).toBeGreaterThan(author);
+    expect(articleEnd).toBeGreaterThan(comments);
+    expect(related).toBeGreaterThan(articleEnd);
+  });
+
+  it('omits Giscus on an archived post and on a draft', async () => {
+    expect(isCommentsPost({ archived: true, draft: false })).toBe(false);
+    expect(isCommentsPost({ archived: false, draft: true })).toBe(false);
+
+    const archived = (await getAllPostEntries()).find(e => e.data.archived === true)!;
+    const archivedHtml = await renderEntry(archived);
+    expect(archivedHtml).toContain(archived.data.title);
+    expect(archivedHtml).not.toContain('data-giscus-comments');
+
+    const container = await AstroContainer.create();
+    const draftHtml = await container.renderToString(PostPage, {
+      props: { entry: { data: { slug: 'exemplo' } } },
+      params: { slug: 'exemplo' },
+    });
+    expect(draftHtml).not.toContain('data-giscus-comments');
   });
 
   it('renders the images inside a post body', async () => {
