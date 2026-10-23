@@ -2,7 +2,8 @@
 slug: paleta-de-comandos-ctrl-k-no-meu-site
 title: "Ctrl+K no meu site: uma paleta de comandos que só baixa quando alguém aperta a tecla"
 summary: "Busca no site inteiro, atalhos G + letra e ações de uma tecla só, em TypeScript puro e sem biblioteca. Quem nunca abre a paleta não baixa nada dela, e o que mais custou bytes foi o carregador, não a paleta."
-date: "2026-10-22"
+date: "2026-10-23"
+publishedAt: "2026-10-23T19:52:14-03:00"
 markers:
   - front-end
   - javascript
@@ -28,12 +29,11 @@ snapshot:
     - label: "Testes"
       value: "Vitest + happy-dom"
 art: wireframe
-draft: true
 ---
 
 Aperta `Ctrl+K` em qualquer página deste site (ou `⌘K`, no Mac). Abre um campo escrito "Digite um comando ou busque…", e dali dá pra achar um post digitando o título sem acento, copiar o link da página com `L` ou ir pro blog com `G` e depois `B`, sem nem abrir a paleta. A ideia veio do [zenorocha.com](https://zenorocha.com), que faz isso com o [kbar](https://github.com/timc1/kbar), uma biblioteca em React.
 
-Aqui não tem React no navegador, e nem pode ter. O site só aceita JavaScript de cliente por exceção com nome, e um teste reprova o build se aparecer qualquer script fora da lista (contei essa regra no [post do site que conversa via MCP](/como-construi-meu-site-que-conversa-com-ia-via-mcp)). Então a pergunta que eu tinha era quanto uma paleta de comandos custa pra quem nunca vai abrir ela, e a resposta que eu queria era zero. Se o seu site baixa a busca inteira no primeiro acesso pra servir as poucas pessoas que apertam `Ctrl+K`, todo mundo está pagando por elas.
+Aqui não tem React no navegador, e nem quero que tenha. O site só aceita JavaScript de cliente por exceção com nome, e um teste reprova o build se aparecer qualquer script fora da lista (contei essa regra no [post do site que conversa via MCP](/como-construi-meu-site-que-conversa-com-ia-via-mcp)). Então a pergunta que eu tinha era quanto uma paleta de comandos custa pra quem nunca vai abrir ela, e a resposta que eu queria era zero. Se o seu site baixa a busca inteira no primeiro acesso pra servir as poucas pessoas que apertam `Ctrl+K`, todo mundo está pagando por elas.
 
 ## A paleta mora num arquivo que ninguém baixa sem pedir
 
