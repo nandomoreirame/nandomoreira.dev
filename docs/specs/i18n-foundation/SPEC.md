@@ -18,6 +18,7 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 
 - Hoje tudo é fixo em pt-BR: `<html lang="pt-BR">` em `BaseLayout` e `SalesLayout`, `inLanguage: 'pt-BR'` em `website-ld`, `webpage-ld`, `post-ld` e `mcp/clients`, `<language>pt-BR</language>` no RSS, `Intl.DateTimeFormat('pt-BR')` em `src/lib/format/date.ts`, e cerca de 110 componentes com texto literal.
 - **Reversão de decisão registrada.** O `docs/MVP-SCOPE.md` (seção Idioma) descartou "bilíngue completo", e o `docs/PRD.md` deixou a F15 (`english-pages`) como P2, condicionada à H3. O Fernando pediu a versão inglesa completa em 2026-10-18. Esta spec substitui a F15 e registra a reversão no Decision Log de `docs/specs/00-roadmap.md`.
+- **Revisão de 2026-10-23.** Depois do plano entraram o tema Noir/Paper, a paleta de comandos já no teto de 2304 B, o Giscus nos posts, a grade do blog no cookie `__session` e as páginas `/releases`. A spec absorve isso. `/releases` fica só em pt-BR.
 - A regra "camada humana em pt-BR, camada de máquina em inglês" passa a ser "camada humana em pt-BR **e** em inglês; camada de máquina em inglês". A troca do conteúdo das rotas de máquina para o inglês fica na `i18n-content`, porque depende das traduções.
 
 ## Decisões
@@ -36,6 +37,8 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 | D10 | Tradução do perfil (`src/content/profile-en/profile.md`) entra aqui, não na `i18n-content` | deixar o perfil para a feature de conteúdo | Home, Sobre, Currículo e Contato em inglês não renderizam sem perfil inglês |
 | D11 | Perfil inglês é um arquivo completo validado pelo mesmo `profileSchema`, com teste de paridade estrutural | sobreposição só com os campos traduzíveis | É um arquivo só, com estrutura profunda (work, education, services). Uma sobreposição exigiria um schema paralelo inteiro. O teste de paridade cobre a deriva de contatos, datas e `caseSlug` |
 | D12 | `/posts/arquivo` não tem versão inglesa | traduzir o arquivo | Posts arquivados estão fora do escopo por pedido do Fernando |
+| D13 | A sugestão de idioma continua no script do `PointerField`. O teto vigente é 2304 B gzip. Se o build com a sugestão passar disso, o teto sobe uma vez, para no máximo 2560, com o tamanho medido escrito ao lado da constante | script novo; subir o teto sem medir | O REQ-020 ainda citava 1,5 KB. Esse número caiu em 2026-10-19, quando a paleta levou o teto a 2304 por causa do `__vitePreload`. Uma medição local do script atual, com o `palette` fora do bundle, dá 1585 B gzip; o build real soma o auxiliar. A sugestão acrescenta cerca de 122 B |
+| D14 | `/releases` e `/releases/17` ficam só em pt-BR, sem `hreflang` e sem rota `/en` | traduzi-las nesta feature | As páginas chegaram em 2026-10-19, depois do mapa. A D6 já diz que página sem tradução não existe em `/en`. O link do rodapé continua em `RELEASES_PATH` |
 
 ## Mapa de rotas
 
@@ -58,6 +61,7 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 | `/rss.xml` | `/en/rss.xml` |
 | `/<x>.md`, `/<x>/ia` | `/en/<y>.md`, `/en/<y>/ia` |
 | `/posts/arquivo[/<ano>]` | (sem par) |
+| `/releases`, `/releases/17` | (sem par, D14) |
 | `/servicos[/<slug>]` | ver `i18n-sales` |
 
 ## Requisitos
@@ -92,7 +96,7 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 - **REQ-017** QUANDO uma página é renderizada ENTÃO o header DEVE mostrar um link de troca de idioma com `hreflang` e `lang` do destino, apontando para o par da página ou, sem par, para a home do outro idioma; o link DEVE ser alcançável por teclado e ter nome acessível no idioma de destino.
 - **REQ-018** QUANDO a página tem par e o primeiro idioma de `navigator.languages` que for `pt` ou `en` é diferente do idioma da página ENTÃO o script do site DEVE revelar um aviso, no idioma do visitante, com link para o par e um botão de dispensar; o sistema NUNCA DEVE redirecionar automaticamente.
 - **REQ-019** QUANDO o visitante dispensa o aviso ENTÃO o sistema DEVE guardar a escolha no `localStorage` e não mostrá-lo de novo; se o storage falhar, o aviso só some na página atual.
-- **REQ-020** QUANDO o script do site é medido pelo portão de JS ENTÃO ele DEVE continuar dentro de 1,5 KB gzip com a sugestão incluída; sem JavaScript, o aviso nunca aparece.
+- **REQ-020** QUANDO o script do site é medido pelo portão de JS ENTÃO ele DEVE continuar dentro de `POINTER_BUDGET_BYTES`, com a sugestão incluída. O teto vigente é 2304 B gzip. Se o build com a sugestão passar de 2304, o teto DEVE subir uma única vez, para no máximo 2560, e o tamanho medido DEVE ficar escrito ao lado da constante. Acima de 2560 a tarefa para. Sem JavaScript, o aviso nunca aparece. Nenhum `<script>` novo.
 
 ### Perfil
 
@@ -103,11 +107,18 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 
 - **REQ-023** QUANDO qualquer superfície precisa de conteúdo num idioma ENTÃO ela DEVE pedir à camada de acesso (`src/lib/content/index.ts`) passando o `locale`; só os arquivos da camada de acesso podem chamar `getCollection`, incluindo as coleções inglesas.
 
+### Paleta, tema, comentários e listagem
+
+- **REQ-024** QUANDO a paleta, o botão de tema ou o atalho do hero renderizam ENTÃO os rótulos visíveis DEVEM seguir o idioma da página. O `/search.json` continua em pt-BR. Numa página inglesa a paleta DEVE buscar `/en/search.json`: títulos das páginas estáticas em inglês, posts e cases ainda em pt-BR até a `i18n-content`, serviços ainda em pt-BR até a `i18n-sales`.
+- **REQ-025** QUANDO um post com comentários renderiza em inglês ENTÃO o Giscus DEVE usar `lang` `en`, e o título da seção, a mensagem de falha e a mensagem de lista vazia DEVEM estar em inglês. `mapping`, `strict` e a categoria não mudam. A thread segue o pathname, então `/en/<slug>` e `/<slug>` são discussões diferentes.
+- **REQ-026** QUANDO a listagem do blog renderiza ENTÃO a escolha grade/lista DEVE continuar no cookie `__session`. O POST DEVE ir para `/posts` ou `/en/posts`, com o campo `visao` nos valores `grade` e `lista`, e o 303 DEVE voltar para a mesma listagem. Os rótulos do botão saem do dicionário.
+
 ## Fora de escopo
 
 - Tradução de cases e posts, e troca das rotas de máquina para o inglês: `i18n-content`.
 - Landing `contrate.nandomoreira.dev` e `/servicos`: `i18n-sales`.
 - Posts arquivados e `/posts/arquivo`.
+- `/releases` e `/releases/17` (D14).
 - Detecção de idioma no servidor e redirecionamento automático.
 - Terceiro idioma. O tipo `Locale` admite mais um, mas nada é desenhado para isso.
 
@@ -130,3 +141,6 @@ entrega o encanamento e o perfil traduzido; a tradução de cases e posts é a
 | Como impedir `/en` incompleto em produção? | bandeira `EN_LIVE` | padrão (D8) |
 | Onde fica o perfil inglês? | nesta feature, arquivo completo e teste de paridade | padrão (D10, D11) |
 | Divisão do trabalho | 3 features irmãs | Fernando |
+| Teto do script em 2026-10-23 | 2304 B; sobe no máximo até 2560 se a sugestão não couber | medição local (D13) |
+| `/releases` | só pt-BR | D6 no que chegou depois do mapa (D14) |
+| Paleta, tema, Giscus e grade do blog | entram nesta feature | código de 2026-10-19 a 2026-10-22 |

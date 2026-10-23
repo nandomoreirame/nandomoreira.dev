@@ -9,9 +9,12 @@ siblings: [i18n-foundation, i18n-sales]
 
 # SPEC: i18n-content
 
-Tradução para o inglês de todo o conteúdo não arquivado do nandomoreira.dev: os 26
-cases e os 22 posts não arquivados (16 publicados e 6 rascunhos), mais a troca das
+Tradução para o inglês de todo o conteúdo não arquivado do nandomoreira.dev: os 28
+cases e os 25 posts não arquivados (18 publicados e 7 rascunhos), mais a troca das
 rotas de máquina para o conteúdo inglês. No fim, a bandeira `EN_LIVE` é ligada.
+A contagem de 2026-10-18 era 26 e 22. A revisão de 2026-10-23 inclui o que entrou
+depois: cases `camilla-saboia` e `terminal-noir`; posts `terminal-noir-o-tema-do-meu-site-no-sistema-inteiro`,
+`tiling-dinamico-ou-janelas-sobrepostas` e o rascunho `paleta-de-comandos-ctrl-k-no-meu-site`.
 
 ## Contexto
 
@@ -30,7 +33,7 @@ rotas de máquina para o conteúdo inglês. No fim, a bandeira `EN_LIVE` é liga
 | C5 | O guia de tradução (`docs/specs/i18n-content/TRANSLATION-GUIDE.md`) é parte da feature, e cada tarefa de tradução o segue | traduzir sem guia | Sem revisão humana, o guia e os portões são o único controle de voz e de terminologia |
 | C6 | As rotas de máquina preferem o inglês por item, com fallback para o pt-BR quando o item não tem tradução, e listam a URL `/en` quando existe | trocar só os rótulos | Escolha do Fernando: completa a regra "camada de máquina em inglês", que até aqui só valia para rótulos |
 | C7 | `EN_LIVE = true` só na última tarefa, depois do portão de cobertura verde | ligar na fundação | Ligar antes publicaria `/en` com portfólio e blog vazios |
-| C8 | Cobertura inicial é um portão com a lista fixa dos slugs de 2026-10-18 | portão "todo não arquivado tem par" | A D6 da fundação permite post novo só em pt-BR. A lista fixa garante a migração inicial sem proibir isso depois |
+| C8 | Cobertura inicial é um portão com a lista fixa dos slugs de 2026-10-23 | portão "todo não arquivado tem par" | A D6 da fundação permite post novo só em pt-BR. A lista fixa garante a migração inicial sem proibir isso depois. A lista de 2026-10-18 foi atualizada com os dois cases e os três posts que chegaram até 2026-10-23 |
 
 ## Requisitos
 
@@ -53,7 +56,7 @@ rotas de máquina para o conteúdo inglês. No fim, a bandeira `EN_LIVE` é liga
 
 ### Cobertura
 
-- **REQ-012** QUANDO a suíte roda ENTÃO cada um dos 26 cases e dos 22 posts não arquivados listados em `tests/i18n/coverage.test.ts` DEVE ter tradução.
+- **REQ-012** QUANDO a suíte roda ENTÃO cada um dos 28 cases e dos 25 posts não arquivados listados em `tests/i18n/coverage.test.ts` DEVE ter tradução. A lista é a de 2026-10-23, no plano.
 - **REQ-013** QUANDO um post pt-BR novo é publicado sem tradução ENTÃO o build DEVE passar, e o post DEVE existir só em pt-BR, sem `hreflang`.
 
 ### Rotas de máquina em inglês
@@ -77,7 +80,7 @@ rotas de máquina para o conteúdo inglês. No fim, a bandeira `EN_LIVE` é liga
 
 - `npm run verify` verde e os portões de paridade, de dash, de marcadores pt-BR e de cobertura verdes.
 - `bash scripts/verify-aeo-routes.sh` com `AEO ROUTES PASSED`.
-- No build de produção: `/en/portfolio` e `/en/lab` listam juntos os 26 cases, `/en/posts` lista os 16 publicados, e cada página tem `hreflang` recíproco com o par pt-BR.
+- No build de produção: `/en/portfolio` e `/en/lab` listam juntos os 28 cases, `/en/posts` lista os 18 publicados, e cada página tem `hreflang` recíproco com o par pt-BR. O `/en/search.json` prefere o título traduzido e cai no pt-BR quando o item não tem par.
 
 ## Grilling Log
 

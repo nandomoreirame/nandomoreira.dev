@@ -17,6 +17,7 @@ de serviço, com o formulário de contato funcionando em inglês.
 - Desde 2026-10-18 a landing vive no subdomínio `contrate.nandomoreira.dev` (`SALES_HOST_LIVE = true`). O middleware reescreve `/` → `/servicos` e `/<slug>` → `/servicos/<slug>`, e o host principal responde 301 de `/servicos[/<slug>]` para o subdomínio (`src/lib/sales/host.ts`).
 - O formulário posta em `/api/hire?origem=<landing|slug>`. O `salesOriginOf` resolve a página de volta, e o `formRedirect` devolve 303 para `<base>?envio=<resultado>#envio`.
 - O texto atual fala com pequeno negócio brasileiro: WhatsApp, "Google da sua cidade". A versão inglesa é tradução fiel, sem adaptar a oferta a outro mercado (fora de escopo).
+- **Revisão de 2026-10-23.** A copy em disco não é mais a de 2026-10-18: entraram prazo, pagamento (`src/lib/sales/payment.ts`), situações com orçamento e o formulário de volta na landing. A tradução parte dos arquivos atuais, sem restaurar o texto antigo.
 
 ## Decisões
 

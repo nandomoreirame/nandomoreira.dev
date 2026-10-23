@@ -5,16 +5,28 @@
 **Objetivo:** versão inglesa do site sob `/en`, com slugs traduzidos, `hreflang`, dicionário de UI tipado, seletor e sugestão de idioma, SEO e visão IA em inglês, e o perfil traduzido. Tudo atrás da bandeira `EN_LIVE`.
 **Arquitetura:** funções puras em `src/lib/i18n/` (idioma pelo caminho, mapa de rotas, alternados, bandeira, dicionário). As páginas humanas viram componentes em `src/components/pages/` que recebem `locale`, e as rotas pt-BR e en são cascas. A camada de acesso ganha o parâmetro `locale`. Posts e cases ingleses ainda devolvem vazio, porque o modelo de sobreposição chega na `i18n-content`.
 **Stack:** Astro 7.2 SSR, Zod 4, Tailwind 4, Vitest com `experimental_AstroContainer`.
-**Total de tarefas:** 34, em 6 lotes.
+**Total de tarefas:** 35, em 6 lotes (a 14b entrou na revisão de 2026-10-23).
 **Complexidade estimada:** large.
-**Depende de:** nada. Colide com o trabalho não commitado em `src/middleware.ts` e `src/lib/analytics/measure.ts` (o plano não mexe nesses dois arquivos, mas a árvore precisa estar limpa antes do `/rpi-implement`).
+**Depende de:** nada.
 **Features irmãs:** `i18n-content` (depende desta) e `i18n-sales` (depende desta).
+
+## Revisão de 2026-10-23
+
+O plano de 2026-10-19 vale. Esta revisão cobre o que o código ganhou depois, para o implementador não seguir instrução vencida.
+
+- O aviso de árvore suja em `src/middleware.ts` e `src/lib/analytics/measure.ts` caducou: isso já está commitado. O rascunho de gitflow que estava modificado em 2026-10-23 foi descartado. A tradução usa o arquivo commitado.
+- Se `shadcn-ui` for implementado ao mesmo tempo, os dois mexem em `src/pages/contato.astro`, `src/pages/curriculo.astro` e `src/components/sales/SalesContact.astro`. Esta fundação vem primeiro.
+- Orçamento do script: REQ-020 e D13. A tarefa 14 mede o build. O teto sobe de 2304 para no máximo 2560 só se a sugestão não couber.
+- Tema, paleta, Giscus e a grade do blog entram nas tarefas 13, 14b e 26 (REQ-024, REQ-025, REQ-026).
+- `/releases` e `/releases/17` ficam de fora (D14). O teste da tarefa 3 precisa provar que não têm par.
+
 
 ## Regras para quem implementa
 
 - DO NOT run any git commands (commit, push, branch, merge, add). DO NOT invoke the git-commit skill.
 - TDD: cada tarefa começa pelo teste vermelho.
-- Nenhum hex fora do `@theme`, nenhum valor arbitrário `[...]`, nenhum `<script>` novo: a sugestão de idioma entra no script do `PointerField` (D9).
+- Nenhum hex fora do `@theme`, nenhum valor arbitrário `[...]`, nenhum `<script>` novo: a sugestão de idioma entra no script do `PointerField` (D9, D13).
+- O portão do script do ponteiro é `POINTER_BUDGET_BYTES` em `tests/helpers/client-scripts.ts` (2304). O texto antigo de 1,5 KB não vale. Não crie outro `<script>`.
 - **Toda string de interface sai do dicionário** (`src/lib/i18n/messages/`). Chave nova vai nos dois arquivos, e o tipo `Messages` reprova a que faltar.
 - **Como traduzir o texto de interface:** inglês americano, frases curtas e diretas na primeira pessoa (é o site do Fernando), sem travessão e sem meia-risca. Nomes próprios, de produto e de comando ficam intocados, e nenhum número muda. Os rótulos da navegação são `Blog`, `Portfolio`, `Lab`, `Setup`, `Now`, `About`, `MCP` e `Contact`.
 - **Pares pt e en não se misturam numa string só:** cada idioma tem a frase inteira, sem concatenar pedaços traduzidos.
@@ -27,7 +39,7 @@
 |---|---|---|
 | A. Núcleo i18n | 1 a 7 | — |
 | B. Conteúdo | 8 a 10 | A |
-| C. Layout e navegação | 11 a 14 | A, B |
+| C. Layout e navegação | 11 a 14b | A, B |
 | D. Páginas | 15 a 27 | C |
 | E. SEO e máquina | 28 a 32 | D |
 | F. Documentação e verificação | 33 e 34 | E |
@@ -274,9 +286,11 @@ describe('staticCounterpart', () => {
     expect(staticCounterpart('/en/about')).toEqual({ 'pt-BR': '/sobre', en: '/en/about' });
   });
 
-  it('has no pair for the archive (D12) or unknown paths', () => {
+  it('has no pair for the archive (D12), the releases (D14) or unknown paths', () => {
     expect(staticCounterpart('/posts/arquivo')).toBeUndefined();
     expect(staticCounterpart('/posts/arquivo/2017')).toBeUndefined();
+    expect(staticCounterpart('/releases')).toBeUndefined();
+    expect(staticCounterpart('/releases/17')).toBeUndefined();
     expect(staticCounterpart('/en/nope')).toBeUndefined();
   });
 });
@@ -294,7 +308,8 @@ export type RoutePair = Record<Locale, string>;
 /**
  * Human pages that exist in both languages (spec route map). Content pages
  * (cases, posts) pair through their translations, in src/lib/i18n/alternates.ts.
- * The archive has no English side (D12); the sales pages are i18n-sales.
+ * The archive has no English side (D12). /releases and /releases/17 neither (D14).
+ * The sales pages are i18n-sales.
  */
 export const STATIC_ROUTES: readonly RoutePair[] = [
   { 'pt-BR': '/', en: '/en' },
@@ -1193,9 +1208,9 @@ const short = target === 'en' ? 'EN' : 'PT';
 
 ### Tarefa 13: rodapé, seletor da visão IA e 404 em inglês
 
-**Requisito:** REQ-003, REQ-004
+**Requisito:** REQ-003, REQ-004, REQ-024
 **Arquivos:**
-- Modificar: `src/components/layout/SiteFooter.astro`, `src/components/ai-view/AiSwitcher.astro`, `src/components/ai-view/AiBar.astro`, `src/components/ai-view/AiDocument.astro`, `src/lib/ai-view/labels.ts`, `src/pages/404.astro`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
+- Modificar: `src/components/layout/SiteFooter.astro`, `src/components/layout/ThemeToggle.astro`, `src/lib/theme/copy.ts`, `src/components/ai-view/AiSwitcher.astro`, `src/components/ai-view/AiBar.astro`, `src/components/ai-view/AiDocument.astro`, `src/lib/ai-view/labels.ts`, `src/pages/404.astro`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
 - Criar: `src/components/pages/NotFoundPage.astro`
 - Teste: `tests/i18n/chrome-en.test.ts`
 
@@ -1251,6 +1266,7 @@ describe('English chrome', () => {
 
 - `labels.ts`: mantenha `AI_VIEW_LABELS` (o pt-BR) e acrescente `AI_VIEW_LABELS_EN` com as mesmas chaves (`Human`, `AI`, `LLM ready`, `Rendered`, `Source`, `Copy`, `Copied`, `Download .md`, `Close`, `Title`, `URL`) e `aiViewLabels(locale)`. Tipar o en como `Record<AiViewLabel, string>`.
 - `SiteFooter`, `AiSwitcher`, `AiBar`, `AiDocument`: prop `locale` (padrão pt-BR); todo literal visível e todo `aria-label` sai do dicionário (seção `footer`) ou de `aiViewLabels(locale)`. Os links internos do rodapé passam por `routeFor`.
+- O `ThemeToggle` mora no rodapé desde 2026-10-20. Ele recebe `locale` e lê `themeCopy(locale)`. Mantenha `THEME_COPY` como o objeto pt-BR (`themeCopy('pt-BR')`), porque a paleta ainda importa essa constante até a tarefa 14b. O `aria-label` da versão no rodapé traduz, e o `href` continua `RELEASES_PATH` (D14): não crie `/en/releases`.
 - `NotFoundPage.astro`: mova o corpo de `src/pages/404.astro` para o componente, com prop `locale` e textos na seção `notFound` do dicionário, e links da home e do blog por `routeFor`. O `BaseLayout` recebe `canonicalPath` e descobre o idioma pela URL; para o 404, passe `locale` explicitamente com uma prop nova `locale?: Locale` do `BaseLayout`, que vence o caminho.
 - `src/pages/404.astro` vira casca: `<NotFoundPage locale={localeOfPath(Astro.url.pathname)} />`. Assim um `/en/qualquer` que cai no 404 recebe o 404 inglês (REQ-004).
 
@@ -1265,7 +1281,7 @@ describe('English chrome', () => {
 **Requisito:** REQ-018, REQ-019, REQ-020, D9
 **Arquivos:**
 - Criar: `src/components/layout/LanguageSuggestion.astro`
-- Modificar: `src/components/art/PointerField.astro`, `src/layouts/BaseLayout.astro`
+- Modificar: `src/components/art/PointerField.astro`, `src/layouts/BaseLayout.astro`, `tests/helpers/client-scripts.ts`
 - Teste: `tests/i18n/language-suggestion.test.ts`
 
 **Time:**
@@ -1398,7 +1414,101 @@ No `PointerField.astro`, acrescente antes do bloco do ponteiro:
   }
 ```
 
-**Passo 4:** `npx vitest run tests/i18n/language-suggestion.test.ts`. Esperado: PASS. Depois: `npm run build && npm run test:build -- tests/design-system/no-client-js.build-test.ts`. Esperado: PASS, com o script ainda dentro de 1,5 KB gzip (REQ-020). Se estourar, encurte comentários do bloco novo, que o build já remove; se ainda assim estourar, pare e reporte, porque relaxar o portão está proibido.
+**Passo 4:** `npx vitest run tests/i18n/language-suggestion.test.ts`. Esperado: PASS. Depois: `npm run build && npm run test:build -- tests/design-system/no-client-js.build-test.ts`. Esperado: PASS dentro de `POINTER_BUDGET_BYTES` (REQ-020, D13).
+
+Meça o gzip do script do ponteiro no HTML do build, não no fonte. Comentário não conta: o build já remove. Se couber em 2304, não mexa na constante. Se passar de 2304 e o tamanho for no máximo 2560, suba `POINTER_BUDGET_BYTES` para esse tamanho medido e escreva na constante a data 2026-10-23 e o número. Se passar de 2560, pare e reporte. Não crie outro `<script>`.
+
+**Passo 5:** `/git commit`.
+
+---
+
+### Tarefa 14b: paleta e índice inglês
+
+**Requisito:** REQ-024
+**Depende de:** tarefas 11 e 14
+**Arquivos:**
+- Criar: `src/pages/en/search.json.ts`
+- Modificar: `src/lib/search/copy.ts`, `src/lib/search/controller.ts`, `src/lib/search/build-index.ts`, `src/scripts/palette.ts`, `src/components/search/CommandPalette.astro`, `src/components/search/PaletteTrigger.astro`, `src/components/home/Hero.astro`, `src/layouts/BaseLayout.astro`, `src/pages/search.json.ts`
+- Teste: `tests/i18n/palette-en.test.ts`
+
+**Time:**
+- Track: frontend
+- Implementer: frontend-engineer (skills: frontend-design)
+- Reviewers: accessibility-guardrails, test-reviewer, type-safety-reviewer
+
+**Passo 1: teste que falha.**
+
+```ts
+import { readFileSync } from 'node:fs';
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { describe, expect, it } from 'vitest';
+import CommandPalette from '../../src/components/search/CommandPalette.astro';
+import { buildSearchIndex } from '../../src/lib/search/build-index';
+import { GO_TARGETS, PALETTE_COPY, paletteCopy } from '../../src/lib/search/copy';
+import { ptLeftovers } from '../helpers/pt-leftovers';
+
+describe('palette copy by locale (REQ-024)', () => {
+  it('keeps the pt-BR strings on the current export', () => {
+    expect(paletteCopy('pt-BR').groups.general).toBe('Geral');
+    expect(PALETTE_COPY.groups.general).toBe('Geral');
+    expect(GO_TARGETS.map((target) => target.path)).toContain('/sobre');
+  });
+
+  it('translates the chrome and keeps paths', () => {
+    const copy = paletteCopy('en');
+    expect(ptLeftovers(`<p>${JSON.stringify(copy)}</p>`)).toEqual([]);
+    expect(copy.groups.general).not.toBe('Geral');
+    expect(GO_TARGETS.map((target) => target.key).sort()).toEqual(
+      ['b', 'c', 'h', 'l', 'm', 'n', 'p', 's', 'u', 'v'].sort(),
+    );
+  });
+
+  it('renders the dialog in English', async () => {
+    const html = await (await AstroContainer.create()).renderToString(CommandPalette, {
+      props: { locale: 'en' },
+    });
+    expect(ptLeftovers(html)).toEqual([]);
+  });
+
+  it('builds static page titles in English and leaves posts for later', () => {
+    const index = buildSearchIndex({
+      locale: 'en',
+      current: [],
+      archived: [],
+      projects: [],
+      services: [],
+      landingUrl: 'https://contrate.nandomoreira.dev/',
+    });
+    const about = index.find((item) => item.path === '/sobre');
+    expect(about?.title).toBe('About');
+    expect(about?.path).toBe('/sobre');
+  });
+});
+
+describe('palette loader', () => {
+  const source = readFileSync('src/scripts/palette.ts', 'utf8');
+
+  it('fetches the English index when the page is English', () => {
+    expect(source).toContain('/en/search.json');
+    expect(source).toContain('documentElement.lang');
+  });
+});
+```
+
+Confira as teclas reais de `GO_TARGETS` em `src/lib/search/copy.ts` e use essa lista no `toEqual`. O título inglês de `/sobre` é `About`, o de `/agora` é `Now`, o de `/contato` é `Contact`, o de `/portfolio` é `Portfolio`.
+
+**Passo 2:** `npx vitest run tests/i18n/palette-en.test.ts`. Esperado: FAIL.
+
+**Passo 3: implementação.**
+
+- `paletteCopy(locale)` devolve a mesma forma de `PALETTE_COPY`. `PALETTE_COPY` passa a ser `paletteCopy('pt-BR')`, para a suíte de busca atual continuar verde.
+- `buildSearchIndex` ganha `locale: Locale = 'pt-BR'`. Os títulos de página estática saem de `paletteCopy(locale)`. Paths não mudam. Posts, cases e serviços continuam nos dados recebidos. O `/search.json` não passa `locale` e segue pt-BR.
+- `src/pages/en/search.json.ts` repete o GET de `search.json.ts` com `locale: 'en'`. Posts e cases vêm das coleções pt-BR. Os serviços continuam `SALES_SERVICES` até a `i18n-sales` trocar esta rota.
+- `CommandPalette`, `PaletteTrigger` e `Hero` recebem `locale` (padrão `'pt-BR'`). O `BaseLayout` repassa o `locale` da página. O `Hero` da home ainda é pt-BR até a tarefa 17 passar `locale`.
+- `controller.ts` monta os grupos a partir de `paletteCopy(locale)`. As teclas (`G`, `L`, `E`, `M`, `I`, `T`, `S`) não mudam.
+- `palette.ts` escolhe a copy e a URL do índice por `document.documentElement.lang` (`en` busca `/en/search.json`). As duas copys viajam no chunk. Se `PALETTE_BUDGET_BYTES` (4096) estourar, pare e reporte. Não suba esse teto.
+
+**Passo 4:** `npx vitest run tests/i18n/palette-en.test.ts tests/search`. Esperado: PASS. Depois o portão de JS do build, como na tarefa 14.
 
 **Passo 5:** `/git commit`.
 
@@ -1480,7 +1590,7 @@ export const enStaticPaths = async <T>(paths: () => Promise<T[]>, live: boolean 
 
 **Requisito:** REQ-003, REQ-008
 **Arquivos:**
-- Modificar: `src/components/home/Hero.astro`, `src/components/home/Services.astro`, `src/components/home/Trajectory.astro`, `src/components/home/LatestPosts.astro`, `src/components/home/Contact.astro`, `src/components/home/About.astro`, `src/components/home/CollectionSection.astro`, `src/components/contact/AgentBrief.astro`, `src/components/contact/AgentBriefWindow.astro`, `src/lib/home/hero.ts`, `src/lib/home/meta.ts`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
+- Modificar: `src/components/home/Hero.astro`, `src/components/home/Services.astro`, `src/components/home/Trajectory.astro`, `src/components/home/LatestPosts.astro`, `src/components/home/Contact.astro`, `src/components/home/About.astro`, `src/components/home/CollectionSection.astro`, `src/components/contact/AgentBrief.astro`, `src/components/contact/AgentBriefWindow.astro`, `src/lib/home/meta.ts`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
 - Teste: `tests/i18n/home-components-en.test.ts`
 
 **Time:**
@@ -1492,7 +1602,7 @@ export const enStaticPaths = async <T>(paths: () => Promise<T[]>, live: boolean 
 
 **Passo 2:** `npx vitest run tests/i18n/home-components-en.test.ts`. Esperado: FAIL (texto pt-BR no HTML inglês).
 
-**Passo 3: implementação.** Siga o padrão do lote. `HERO_FACTS` vira `heroFacts(locale)`, e `homeMeta(profile)` não muda (recebe o perfil já no idioma). A seção do dicionário é `home`.
+**Passo 3: implementação.** Siga o padrão do lote. Não existe `src/lib/home/hero.ts` nem `HERO_FACTS`: título e posicionamento vêm do perfil do idioma, e o texto do atalho no `Hero` já sai de `paletteCopy(locale)` desde a tarefa 14b. Passe `locale` ao `Hero`. `homeMeta(profile)` não muda (recebe o perfil já no idioma). A seção do dicionário é `home`.
 
 **Passo 4:** `npx vitest run tests/i18n tests/home`. Esperado: PASS, inclusive `tests/home/single-primary-cta.test.ts`.
 
@@ -1545,7 +1655,7 @@ Rode o primeiro `it` **antes** de mexer em `index.astro`, sem o `HomePage` ainda
 
 **Passo 2:** `npx vitest run tests/i18n/home-page-en.test.ts`. Esperado: FAIL (componente inexistente).
 
-**Passo 3: implementação.** Padrão do lote. O `personLd` e o `organizationLd` recebem o perfil do idioma. O `NewsletterCard` recebe `locale` (o texto dele é da tarefa 27; até lá, passe a prop e deixe o card com o pt-BR, e marque o `it` inglês como `it.todo` apenas para o card, removendo o `todo` na tarefa 27).
+**Passo 3: implementação.** Padrão do lote. O `personLd` e o `organizationLd` recebem o perfil do idioma. O `Hero` já aceita `locale` desde a tarefa 14b: passe o `locale` da página, sem traduzir de novo as frases da paleta. O `NewsletterCard` recebe `locale` (o texto dele é da tarefa 27; até lá, passe a prop e deixe o card com o pt-BR, e marque o `it` inglês como `it.todo` apenas para o card, removendo o `todo` na tarefa 27).
 
 **Passo 4:** mesmo comando. Esperado: PASS.
 
@@ -1804,7 +1914,7 @@ Ajuste os nomes de campo do `shape` aos reais de `SetupSection` (leia a interfac
 
 **Passo 2:** `npx vitest run tests/i18n/privacy-en.test.ts`. Esperado: FAIL.
 
-**Passo 3: implementação.** `policy-en.ts` com `privacySectionsEn`, `POLICY_LEAD_EN` e `policyFor(locale)`; `formatPolicyDate(iso, locale)` usa `toLongDate(iso, locale)`. A tradução é fiel: a política descreve o que o site faz com os dados, e nenhuma cláusula pode ser suavizada nem acrescentada.
+**Passo 3: implementação.** `policy-en.ts` com `privacySectionsEn`, `POLICY_LEAD_EN` e `policyFor(locale)`; `formatPolicyDate(iso, locale)` usa `toLongDate(iso, locale)`. A tradução é fiel ao `policy.ts` do dia da implementação, inclusive a seção `comentarios` do Giscus (2026-10-22). Mesmos `id`. Nenhuma cláusula pode ser suavizada nem acrescentada.
 
 **Passo 4:** `npx vitest run tests/i18n tests/privacy`. Esperado: PASS.
 
@@ -1869,10 +1979,10 @@ Mais os snapshots pt-BR de `/portfolio`, `/lab` e de um case (`/portfolio/forja`
 
 ### Tarefa 26: Blog: listagem e página de post
 
-**Requisito:** REQ-002, REQ-003, REQ-009
+**Requisito:** REQ-002, REQ-003, REQ-009, REQ-025, REQ-026
 **Arquivos:**
 - Criar: `src/components/pages/PostsPage.astro`, `src/components/pages/PostPage.astro`, `src/pages/en/posts/index.astro`, `src/pages/en/[slug].astro`
-- Modificar: `src/pages/posts/index.astro`, `src/pages/[slug].astro`, `src/lib/posts/blog-copy.ts`, `src/components/posts/PostCard.astro`, `src/components/posts/PostRow.astro`, `src/components/posts/Pagination.astro`, `src/components/posts/UpcomingPosts.astro`, `src/components/posts/ReaderMode.astro`, `src/components/posts/AuthorBox.astro`, `src/components/posts/PostToc.astro`, `src/components/posts/PostTocToggle.astro`, `src/components/posts/PostSnapshot.astro`, `src/components/posts/RelatedPostCard.astro`, `src/components/posts/AiSummaryLink.astro`, `src/components/ui/CopyButton.astro`, `src/lib/posts/post-ld.ts`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
+- Modificar: `src/pages/posts/index.astro`, `src/pages/[slug].astro`, `src/middleware.ts`, `src/lib/posts/listing-view.ts`, `src/lib/posts/blog-copy.ts`, `src/lib/posts/giscus-config.ts`, `src/components/posts/GiscusComments.astro`, `src/components/posts/PostCard.astro`, `src/components/posts/PostRow.astro`, `src/components/posts/Pagination.astro`, `src/components/posts/UpcomingPosts.astro`, `src/components/posts/ReaderMode.astro`, `src/components/posts/AuthorBox.astro`, `src/components/posts/PostToc.astro`, `src/components/posts/PostTocToggle.astro`, `src/components/posts/PostSnapshot.astro`, `src/components/posts/RelatedPostCard.astro`, `src/components/posts/AiSummaryLink.astro`, `src/components/ui/CopyButton.astro`, `src/lib/posts/post-ld.ts`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
 - Teste: `tests/i18n/blog-en.test.ts`
 
 **Time:**
@@ -1920,6 +2030,20 @@ Mais os snapshots pt-BR de `/posts` e de um post publicado com capa e índice, g
 **Passo 2:** `npx vitest run tests/i18n/blog-en.test.ts`. Esperado: FAIL.
 
 **Passo 3: implementação.** Padrão do lote. `BLOG_COPY` continua exportado e ganha `blogCopy(locale)`. `jsonLdForPost(post, site, author, locale = 'pt-BR')` monta a URL com `withLocale` e o `image` com `ogImagePath(withLocale('/<slug>', locale))`. A paginação usa o mesmo `?pagina=`. O `/en/[slug].astro` usa `enStaticPaths(() => getAllPostEntries('en'))`. O `PostPage` monta `.md` e o canonical com `withLocale`. Os posts relacionados vêm de `getAllPosts(locale)`. A seção `posts` do dicionário recebe todos os rótulos (Rascunho, Arquivo, Copiar link, Posts relacionados, Ver todos no blog, LEITURA COMPLEMENTAR, rótulos do modo leitura e do índice).
+
+Grade e lista (REQ-026), como estão desde 2026-10-22:
+
+- A casca lê `parseListingView` do cookie `__session` e passa a view para `PostsPage`. O formulário continua POST, sem JavaScript.
+- `listingHref(page, base = '/posts')`. A página inglesa passa `'/en/posts'`. Quem chama com um argumento segue em `/posts`, e a suíte atual permanece verde.
+- O middleware aceita POST só em `/posts` e `/en/posts`. `handleListingView` redireciona para o pathname do pedido, com `?pagina=` quando a página é maior que 1. Os valores de `visao` continuam `grade` e `lista`. O cookie não muda.
+- Um `?visao=` sobrando na listagem inglesa também sai da URL, como já acontece em `/posts`.
+- Acrescente ao teste da tarefa um POST em `/en/posts` que espera 303 para `/en/posts`, e outro com `?pagina=2` que espera `/en/posts?pagina=2`.
+
+Giscus (REQ-025), como está desde 2026-10-22:
+
+- `giscusCopy(locale)` devolve `lang`, `eyebrow`, `heading`, `failureMessage` e `emptyMessage`. O export pt-BR atual permanece, com `lang: 'pt'` e as duas frases de `giscus-config.ts`.
+- `GiscusComments` recebe `locale`. `data-lang` e os textos visíveis saem de `giscusCopy`. O loader não muda: ele já lê `data-lang` do HTML.
+- `PostPage` renderiza o widget quando `isCommentsPost(post)`, nos dois idiomas. A thread é por pathname, então a página inglesa não reaproveita a discussão do pt-BR.
 
 **Passo 4:** `npx vitest run tests/i18n tests/posts`. Esperado: PASS.
 
