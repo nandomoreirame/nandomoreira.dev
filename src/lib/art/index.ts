@@ -22,6 +22,7 @@ import {
   windows,
   wireframe,
   tiling,
+  gitflow,
   type Motif,
   type Shape,
 } from './motifs';
@@ -60,6 +61,7 @@ export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
   gists,
   chat,
   tiling,
+  gitflow,
 };
 
 /** Fallback when a case declares no `art`: one motif per block. */

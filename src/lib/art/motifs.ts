@@ -988,3 +988,88 @@ export const chat: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** gitflow: five branch lanes, features off develop, releases and hotfixes tagged on main. */
+export const gitflow: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const [main, hotfix, release, develop, feature] = [0.18, 0.35, 0.52, 0.69, 0.86].map(f => height * f) as [
+    number,
+    number,
+    number,
+    number,
+    number,
+  ];
+  const x0 = width * 0.04;
+  const step = 6;
+  const columns = Math.floor((width * 0.92) / step);
+  const at = (column: number) => x0 + column * step;
+  const busy = new Set<number>();
+
+  for (const y of [main, hotfix, release, develop, feature]) {
+    shapes.push({ kind: 'line', x1: x0, y1: y, x2: width * 0.96, y2: y, layer: 0, weight: 0 });
+  }
+  const commit = (column: number, y: number, weight: number) => {
+    if (y === develop) busy.add(column);
+    shapes.push({ kind: 'dot', x: at(column), y, r: 1.4, layer: 2, weight });
+  };
+  const edge = (from: number, y1: number, to: number, y2: number) =>
+    shapes.push({ kind: 'line', x1: at(from), y1, x2: at(to), y2, layer: 1, weight: 0.05 });
+  // A branch always starts from a commit on its base lane.
+  const branch = (from: number, y1: number, y2: number) => {
+    commit(from, y1, y1 === main ? 0.6 : 0.2);
+    edge(from, y1, from + 1, y2);
+  };
+  const tag = (column: number) => {
+    commit(column, main, 0.8);
+    shapes.push({ kind: 'bar', x: at(column) - 3, y: main - 8, w: 6, h: 3.5, layer: 2, weight: 0.9 + random() * 0.1 });
+  };
+
+  commit(0, main, 0.6);
+  commit(0, develop, 0.2);
+  let column = 1;
+  let tagged = false;
+  while (column < columns - 3) {
+    const roll = random();
+    const forceRelease = !tagged && column > columns / 2;
+    if (roll < 0.55 && !forceRelease) {
+      const length = Math.min(intBetween(random, 2, 4), columns - column - 2);
+      branch(column, develop, feature);
+      shapes.push({
+        kind: 'line',
+        x1: at(column + 1),
+        y1: feature,
+        x2: at(column + length),
+        y2: feature,
+        layer: 1,
+        weight: 0,
+      });
+      for (let i = 1; i <= length; i += 1) commit(column + i, feature, 0.15 + random() * 0.3);
+      edge(column + length, feature, column + length + 1, develop);
+      commit(column + length + 1, develop, 0.3);
+      column += length + 2;
+    } else if (roll < 0.82 || forceRelease) {
+      const length = intBetween(random, 1, 2);
+      branch(column, develop, release);
+      for (let i = 1; i <= length; i += 1) commit(column + i, release, 0.3 + random() * 0.2);
+      edge(column + length, release, column + length + 1, main);
+      edge(column + length, release, column + length + 1, develop);
+      tag(column + length + 1);
+      commit(column + length + 1, develop, 0.3);
+      tagged = true;
+      column += length + 2;
+    } else {
+      branch(column, main, hotfix);
+      commit(column + 1, hotfix, 0.4);
+      edge(column + 1, hotfix, column + 2, main);
+      edge(column + 1, hotfix, column + 2, develop);
+      tag(column + 2);
+      commit(column + 2, develop, 0.3);
+      tagged = true;
+      column += 3;
+    }
+  }
+  for (let c = 0; c <= columns; c += 1) {
+    if (!busy.has(c) && random() < 0.6) commit(c, develop, 0.05 + random() * 0.15);
+  }
+  return shapes;
+};

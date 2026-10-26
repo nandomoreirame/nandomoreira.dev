@@ -74,6 +74,28 @@ describe('generateArt', () => {
     expect(leftEnd - leftStart).toBeCloseTo(rightEnd - rightStart, 5);
   });
 
+  it('draws gitflow as five branch lanes joined by branch and merge diagonals, tags on top', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.gitflow(createRandom(hashString('gitflow')), frame);
+    const lines = shapes.filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line');
+    const lanes = lines
+      .filter(line => line.y1 === line.y2 && Math.abs(line.x2 - line.x1) > frame.width * 0.8)
+      .map(line => line.y1);
+    expect(new Set(lanes).size).toBe(5);
+
+    const diagonals = lines.filter(line => line.y1 !== line.y2);
+    expect(diagonals.length).toBeGreaterThan(3);
+    for (const line of diagonals) {
+      expect(lanes).toContain(line.y1);
+      expect(lanes).toContain(line.y2);
+    }
+    for (const dot of shapes.filter(shape => shape.kind === 'dot')) {
+      expect(lanes).toContain((dot as Extract<Shape, { kind: 'dot' }>).y);
+    }
+    const top = Math.min(...lanes);
+    expect(shapes.some(shape => shape.kind === 'bar' && shape.y < top)).toBe(true);
+  });
+
   it('draws every motif differently from the others', () => {
     const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);
