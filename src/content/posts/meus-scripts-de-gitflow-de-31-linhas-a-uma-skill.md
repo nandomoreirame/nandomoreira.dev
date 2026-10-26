@@ -2,12 +2,13 @@
 slug: meus-scripts-de-gitflow-de-31-linhas-a-uma-skill
 title: "Meus scripts de Gitflow: de 31 linhas em Bash a uma skill do Claude Code"
 summary: "Lá por 2019 eu escrevi uns scripts pra não digitar o mesmo fluxo de git toda vez que abria uma branch. Eles cresceram, foram reescritos com IA e hoje moram numa skill. A ideia continua a mesma."
-date: "2026-10-17"
+date: "2026-10-26"
+publishedAt: "2026-10-26T13:05:54-03:00"
 markers:
   - git
   - shell
   - produtividade
-draft: true
+art: gitflow
 ---
 
 `feature DEV-123`. Era isso que eu digitava pra começar qualquer tarefa: um comando, o ID do card, e o script fazia o resto. Guardava o que eu tinha de alteração, atualizava a branch de desenvolvimento, criava a branch da feature, publicava no remoto e devolvia as minhas alterações. Eram 31 linhas de Bash que eu escrevi lá por 2019, 2020, muito antes de ter IA no terminal.

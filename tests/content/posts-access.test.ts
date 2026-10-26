@@ -80,9 +80,9 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('paleta-de-comandos-ctrl-k-no-meu-site');
-    expect(second.slug).toBe('terminal-noir-o-tema-do-meu-site-no-sistema-inteiro');
-    expect(third.slug).toBe('tiling-dinamico-ou-janelas-sobrepostas');
+    expect(first.slug).toBe('meus-scripts-de-gitflow-de-31-linhas-a-uma-skill');
+    expect(second.slug).toBe('paleta-de-comandos-ctrl-k-no-meu-site');
+    expect(third.slug).toBe('terminal-noir-o-tema-do-meu-site-no-sistema-inteiro');
   });
 });
 
