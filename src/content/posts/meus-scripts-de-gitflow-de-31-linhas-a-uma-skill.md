@@ -9,6 +9,20 @@ markers:
   - shell
   - produtividade
 art: gitflow
+snapshot:
+  items:
+    - label: "Primeira versão"
+      value: "feature.sh, 31 linhas"
+    - label: "Dependência"
+      value: "git-flow (gitflow-avh)"
+    - label: "Biblioteca"
+      value: "lib/gitflow.sh"
+    - label: "Release"
+      value: "git-release, 867 linhas"
+    - label: "Changelog"
+      value: "Conventional Commits"
+    - label: "Hoje"
+      value: "skill /git + release.sh"
 ---
 
 `feature DEV-123`. Era isso que eu digitava pra começar qualquer tarefa: um comando, o ID do card, e o script fazia o resto. Guardava o que eu tinha de alteração, atualizava a branch de desenvolvimento, criava a branch da feature, publicava no remoto e devolvia as minhas alterações. Eram 31 linhas de Bash que eu escrevi lá por 2019, 2020, muito antes de ter IA no terminal.
