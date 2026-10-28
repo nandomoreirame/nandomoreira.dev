@@ -125,6 +125,55 @@ describe('generateArt', () => {
     );
   });
 
+  it('draws symlinks as repo files on the left, each linked to exactly one home target on the right', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.symlinks(createRandom(hashString('symlinks')), frame);
+    const sources = shapes.filter((shape): shape is Extract<Shape, { kind: 'dot' }> => shape.kind === 'dot' && shape.layer === 1);
+    const targets = shapes.filter((shape): shape is Extract<Shape, { kind: 'ring' }> => shape.kind === 'ring');
+    const links = shapes.filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line');
+
+    expect(sources.length).toBeGreaterThanOrEqual(5);
+    expect(targets.length).toBe(sources.length);
+    const left = Math.max(...sources.map(dot => dot.x));
+    const right = Math.min(...targets.map(ring => ring.x));
+    expect(left).toBeLessThan(frame.width * 0.4);
+    expect(right).toBeGreaterThan(frame.width * 0.6);
+
+    const key = (x: number, y: number) => `${Math.round(x * 1000)},${Math.round(y * 1000)}`;
+    const sourceKeys = new Set(sources.map(dot => key(dot.x, dot.y)));
+    const targetKeys = targets.map(ring => key(ring.x, ring.y));
+    expect(links.length).toBe(sources.length);
+    for (const line of links) {
+      expect(sourceKeys.has(key(line.x1, line.y1))).toBe(true);
+      expect(targetKeys).toContain(key(line.x2, line.y2));
+    }
+    // one link per target: no home path is linked twice
+    expect(new Set(links.map(line => key(line.x2, line.y2))).size).toBe(targets.length);
+  });
+
+  it('draws suite as rows of test cases sharing one grid, the newest case of each row weighing most', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.suite(createRandom(hashString('suite')), frame);
+    const cases = shapes.filter((shape): shape is Extract<Shape, { kind: 'bar' }> => shape.kind === 'bar');
+
+    const rows = new Set(cases.map(bar => bar.y));
+    expect(rows.size).toBeGreaterThanOrEqual(5);
+    expect(new Set(cases.map(bar => bar.w)).size).toBe(1);
+    // every row starts at the same column and its cases sit on a fixed pitch
+    const starts = [...rows].map(y => Math.min(...cases.filter(bar => bar.y === y).map(bar => bar.x)));
+    expect(new Set(starts.map(x => Math.round(x * 1000))).size).toBe(1);
+    const pitch = (cases.filter(bar => bar.y === [...rows][0]).map(bar => bar.x).sort((a, b) => a - b)[1] ?? 0) - starts[0]!;
+    for (const bar of cases) {
+      const steps = (bar.x - starts[0]!) / pitch;
+      expect(Math.abs(steps - Math.round(steps))).toBeLessThan(1e-6);
+    }
+    // cases are appended to the right, so weight (amber) grows with x inside each row
+    for (const y of rows) {
+      const row = cases.filter(bar => bar.y === y).sort((a, b) => a.x - b.x);
+      for (let i = 1; i < row.length; i += 1) expect(row[i]!.weight).toBeGreaterThan(row[i - 1]!.weight);
+    }
+  });
+
   it('draws every motif differently from the others', () => {
     const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);

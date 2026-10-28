@@ -1118,3 +1118,64 @@ export const watcher: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** symlinks: files in the repo on the left, each linked to its one place in the home on the right. */
+export const symlinks: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const groups = [intBetween(random, 2, 3), intBetween(random, 2, 4), intBetween(random, 2, 3)];
+  const count = groups.reduce((a, b) => a + b, 0);
+  const top = height * 0.12;
+  const span = height * 0.76;
+  const gap = span / (count + groups.length - 1);
+  const sourceX = width * 0.18;
+  const targetX = width * 0.82;
+
+  const sources: number[] = [];
+  let slot = 0;
+  for (const size of groups) {
+    for (let i = 0; i < size; i += 1) sources.push(top + gap * (slot + i));
+    slot += size + 1;
+  }
+  // targets keep the vertical rhythm but land in shuffled order, so links cross
+  const targets = sources.map(y => y + between(random, -gap * 0.3, gap * 0.3));
+  for (let i = targets.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(random() * (i + 1));
+    [targets[i], targets[j]] = [targets[j]!, targets[i]!];
+  }
+
+  sources.forEach((y, i) => {
+    const ty = targets[i]!;
+    const hero = random() < 0.25;
+    shapes.push({ kind: 'line', x1: sourceX, y1: y, x2: targetX, y2: ty, layer: 0, weight: hero ? 0.5 : 0.1 });
+    shapes.push({ kind: 'dot', x: sourceX, y, r: 1.6, layer: 1, weight: 0.2 + random() * 0.3 });
+    shapes.push({ kind: 'ring', x: targetX, y: ty, r: 2.4, layer: 2, weight: hero ? 0.85 + random() * 0.15 : 0.3 });
+  });
+
+  const dust = intBetween(random, 20, 35);
+  for (let i = 0; i < dust; i += 1) {
+    shapes.push({ kind: 'dot', x: random() * width, y: random() * height, r: 0.4, layer: 0, weight: 0 });
+  }
+  return shapes;
+};
+
+/** suite: one row of test cases per test file on a shared grid; the newest cases, on the right, stand out. */
+export const suite: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const rows = intBetween(random, 6, 8);
+  const x0 = width * 0.08;
+  const pitch = 6;
+  const size = 3.4;
+  const maxCases = Math.floor((width * 0.84) / pitch);
+  const rowGap = (height * 0.76) / (rows - 1);
+
+  for (let row = 0; row < rows; row += 1) {
+    const y = height * 0.12 + row * rowGap - size / 2;
+    const cases = intBetween(random, Math.floor(maxCases * 0.3), maxCases);
+    for (let c = 0; c < cases; c += 1) {
+      // position in the row, not a dice roll: the last case written weighs the most
+      const age = (c + 1) / cases;
+      shapes.push({ kind: 'bar', x: x0 + c * pitch, y, w: size, h: size, layer: age > 0.8 ? 2 : 1, weight: 0.05 + age * 0.95 });
+    }
+  }
+  return shapes;
+};

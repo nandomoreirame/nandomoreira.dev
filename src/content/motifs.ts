@@ -28,6 +28,8 @@ export const ART_MOTIFS = [
   'tiling',
   'gitflow',
   'watcher',
+  'symlinks',
+  'suite',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];
