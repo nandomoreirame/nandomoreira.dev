@@ -3,12 +3,12 @@ import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
-import { codeToolbar } from './src/lib/code/toolbar.ts';
 import { postReview } from './src/integrations/post-review.ts';
+import terminalNoirPaper from './src/lib/code/themes/terminal-noir-paper.json' with { type: 'json' };
+import terminalNoir from './src/lib/code/themes/terminal-noir.json' with { type: 'json' };
+import { codeToolbar } from './src/lib/code/toolbar.ts';
 import { externalLinks, lightboxImages, tableFrames } from './src/lib/markdown/post-plugins.ts';
 import { SALES_DEV_HOST, SALES_HOST } from './src/lib/sales/host.ts';
-import terminalNoir from './src/lib/code/themes/terminal-noir.json' with { type: 'json' };
-import terminalNoirPaper from './src/lib/code/themes/terminal-noir-paper.json' with { type: 'json' };
 
 export default defineConfig({
   site: 'https://nandomoreira.dev',
@@ -45,7 +45,7 @@ export default defineConfig({
   },
   // `astro dev` answers the local sales host too (sales-landing): map
   // contrate.nandomoreira.local to ::1 in /etc/hosts and open it on :4321.
-  server: { allowedHosts: [SALES_DEV_HOST] },
+  server: { port: 4321, strictPort: true, allowedHosts: [SALES_DEV_HOST] },
   // Legacy /notas never made the production sitemap; these are courtesy 301s.
   // Declared here, not as pre-rendered pages: `Astro.redirect` in a pre-rendered
   // page cannot send a status, so it degrades to 200 plus a <meta refresh>.
