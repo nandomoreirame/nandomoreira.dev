@@ -96,6 +96,35 @@ describe('generateArt', () => {
     expect(shapes.some(shape => shape.kind === 'bar' && shape.y < top)).toBe(true);
   });
 
+  it('draws watcher as a polled on/off signal that acts only on its transitions', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.watcher(createRandom(hashString('watcher')), frame);
+    const lines = shapes.filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line');
+    const signal = lines.filter(line => line.layer === 2);
+    // the state is a square wave: only horizontal and vertical segments, on two levels
+    for (const line of signal) expect(line.x1 === line.x2 || line.y1 === line.y2).toBe(true);
+    const levels = new Set(signal.filter(line => line.y1 === line.y2).map(line => line.y1));
+    expect(levels.size).toBe(2);
+    const edges = signal.filter(line => line.x1 === line.x2);
+    expect(edges.length).toBeGreaterThanOrEqual(2);
+
+    // the loop polls at a fixed interval on the time axis
+    const polls = shapes
+      .filter((shape): shape is Extract<Shape, { kind: 'dot' }> => shape.kind === 'dot' && shape.layer === 1)
+      .map(dot => dot.x)
+      .sort((a, b) => a - b);
+    expect(polls.length).toBeGreaterThan(10);
+    const gaps = polls.slice(1).map((x, i) => x - polls[i]!);
+    for (const gap of gaps) expect(gap).toBeCloseTo(gaps[0]!, 5);
+
+    // one action mark per transition, at the transition
+    const actions = shapes.filter((shape): shape is Extract<Shape, { kind: 'bar' }> => shape.kind === 'bar');
+    const round = (x: number) => Math.round(x * 1000) / 1000;
+    expect(actions.map(bar => round(bar.x + bar.w / 2)).sort((a, b) => a - b)).toEqual(
+      edges.map(line => round(line.x1)).sort((a, b) => a - b),
+    );
+  });
+
   it('draws every motif differently from the others', () => {
     const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);

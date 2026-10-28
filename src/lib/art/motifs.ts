@@ -1073,3 +1073,48 @@ export const gitflow: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** watcher: a loop polling at a fixed interval, a square on/off state, and an action only where it flips. */
+export const watcher: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const axis = height * 0.84;
+  const [high, low] = [height * 0.3, height * 0.64];
+  const x0 = width * 0.04;
+  const polls = Math.floor((width * 0.92) / 7);
+  const step = (width * 0.92) / polls;
+  const at = (i: number) => x0 + i * step;
+
+  shapes.push({ kind: 'line', x1: x0, y1: axis, x2: at(polls), y2: axis, layer: 0, weight: 0 });
+  for (let i = 0; i <= polls; i += 1) {
+    shapes.push({ kind: 'dot', x: at(i), y: axis, r: 0.9, layer: 1, weight: 0.05 + random() * 0.1 });
+  }
+
+  // State per poll: runs of at least three polls, starting off, flipping at least twice.
+  const flips: number[] = [];
+  let run = 0;
+  for (let i = 1; i < polls; i += 1) {
+    run += 1;
+    const remaining = polls - i;
+    const needed = 2 - flips.length;
+    const force = needed > 0 && remaining <= needed * 3;
+    if (run >= 3 && (force || random() < 0.3)) {
+      flips.push(i);
+      run = 0;
+    }
+  }
+
+  let on = false;
+  let from = 0;
+  for (const i of [...flips, polls]) {
+    const y = on ? high : low;
+    shapes.push({ kind: 'line', x1: at(from), y1: y, x2: at(i), y2: y, layer: 2, weight: on ? 0.4 : 0.1 });
+    if (i === polls) break;
+    shapes.push({ kind: 'line', x1: at(i), y1: high, x2: at(i), y2: low, layer: 2, weight: 0.3 });
+    shapes.push({ kind: 'bar', x: at(i) - 2.5, y: high - 9, w: 5, h: 3.5, layer: 2, weight: 0.85 + random() * 0.15 });
+    // a faint drop line from the action to the poll that saw the change
+    shapes.push({ kind: 'line', x1: at(i), y1: low, x2: at(i), y2: axis, layer: 0, weight: 0 });
+    on = !on;
+    from = i;
+  }
+  return shapes;
+};

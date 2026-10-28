@@ -27,6 +27,7 @@ export const ART_MOTIFS = [
   'chat',
   'tiling',
   'gitflow',
+  'watcher',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];
