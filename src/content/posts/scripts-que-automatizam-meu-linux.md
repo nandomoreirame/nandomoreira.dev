@@ -137,7 +137,7 @@ Script que passa a importar ganha teste. O `nocta-hold` e o `audio-jack-autoswit
 
 ## Ideias pra roubar
 
-Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código. Alguns viraram post próprio, e o link está no item.
+Tudo isso mora no meu dotfiles, que é privado, então não tem link pro código. Alguns viraram post próprio, com o link no item.
 
 **Git**
 
@@ -148,7 +148,7 @@ Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código
 
 **Instalar e configurar**
 
-- `dotfiles`: symlinks das configs, pacotes de cada gerenciador e scripts de máquina nova ([a série sobre ele](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles)).
+- `dotfiles`: symlinks das configs, pacotes de cada gerenciador e scripts de máquina nova ([o post sobre ele](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles)).
 - `sys-ssh-keys`: gera a chave, adiciona no agent e copia a pública.
 - `sys-gpg-keys`: gera a chave GPG, copia a pública e configura o git pra assinar commits e tags.
 - `appimage-install`: guarda o AppImage em `~/.local/opt`, cria o link no PATH e o atalho no lançador.
@@ -186,6 +186,6 @@ Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código
 
 ## Comece pelo mais chato
 
-Não comece pelo script mais legal da lista. Comece pelo que mais te irrita na semana. Os meus primeiros instalavam o básico de uma máquina nova (git, curl, PHP), e o de Gitflow era só a sequência que eu já digitava, colada num arquivo. Os que reagem sozinhos vieram anos depois, um problema de cada vez.
+Não comece pelo script mais legal da lista. Comece pelo que mais te irrita na semana. O meu de Gitflow era só a sequência que eu já digitava, colada num arquivo; os que reagem sozinhos vieram anos depois, um problema de cada vez.
 
 `exit 0`
