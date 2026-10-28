@@ -7,25 +7,45 @@ markers:
   - linux
   - shell
   - produtividade
+extras:
+  - "66 linhas que ligam o Não perturbe sozinhas na call"
+  - "bash · systemd · PipeWire · Niri"
+keyPoints:
+  - "O primeiro script só precisa fazer o que você fazia na mão; tratar erro e aceitar opção vêm depois."
+  - "Script que você precisa lembrar de rodar ainda depende de você: dê a ele um atalho, o login, um timer ou um hook."
+  - "Um vigia só age quando o estado muda, e antes de escrevê-lo vale perguntar o que mais no sistema parece com o que ele vigia."
+snapshot:
+  items:
+    - label: "Vigia"
+      value: "niri-mic-dnd"
+    - label: "Intervalo"
+      value: "2 s"
+    - label: "Áudio"
+      value: "PipeWire (pw-dump)"
+    - label: "Compositor"
+      value: "Niri"
+    - label: "Timer"
+      value: "systemd"
+art: watcher
 draft: true
 ---
 
-Quando eu entro numa call, as notificações somem e a tela para de apagar. Quando acaba, volta tudo. Eu não aperto nada: um script de 58 linhas olha o microfone a cada poucos segundos e faz isso por mim.
+Quando eu entro numa call, as notificações somem e a tela para de apagar. Quando acaba, volta tudo. Eu não aperto nada: um script de 66 linhas olha o microfone a cada dois segundos e faz isso por mim.
 
-Esse script não é especial. Ele resolve um problema meu, do jeito mais simples que funcionou, e é isso que eu quero que você faça com os seus. **Ferramenta pronta resolve o problema de todo mundo; script resolve o seu**, e o seu problema quase nunca está numa ferramenta pronta. Não importa se você escreve em shell, Python, Rust ou outra coisa: o caminho é o mesmo, e ele cabe em cinco passos. No fim tem a lista do que roda no meu Linux, pra você roubar ideias.
+Esse script não é especial. Ele resolve um problema meu, do jeito mais simples que funcionou, e é isso que eu quero que você faça com os seus. **Ferramenta pronta resolve o problema de todo mundo; script resolve o seu**, e o seu problema quase nunca está numa ferramenta pronta. Não importa se você escreve em shell, Python, Rust ou outra coisa: o caminho é o mesmo.
 
 ## Ache o problema que se repete
 
 Um bom candidato a script tem uma destas caras:
 
-- **Uma sequência de comandos que você digita igual toda vez.** Abre o histórico do terminal (`history | less`) depois de uma semana de trabalho e procura o que se repete. Os meus [scripts de Gitflow](/meus-scripts-de-gitflow-de-31-linhas-a-uma-skill) nasceram assim, lá por 2019: eram a sequência que eu digitava toda vez que abria uma branch.
-- **Uma coisa que você esquece de fazer.** Backup, limpar cache, apagar screenshot velho. Se depende de você lembrar, não vai acontecer.
-- **Uma irritação pequena que se repete todo dia.** Ligar o "Não perturbe" antes da call, trocar a saída de áudio quando pluga o fone, procurar a janela do Spotify. Cada uma custa segundos, e elas se repetem o dia inteiro.
-- **Uma tarefa que você faz uma vez por ano e sempre tem que pesquisar de novo.** Gerar chave SSH, instalar um AppImage direito. O script vira a documentação que você não escreveu.
+- A sequência de comandos que você digita igual toda vez. Abra o histórico do terminal (`history | less`) depois de uma semana de trabalho e procura o que se repete. Os meus [scripts de Gitflow](/meus-scripts-de-gitflow-de-31-linhas-a-uma-skill) nasceram assim, lá por 2019: eram a sequência que eu digitava toda vez que abria uma branch.
+- O que você esquece de fazer: backup, limpar cache, apagar screenshot velho. Se depende de você lembrar, não vai acontecer.
+- Irritação pequena de todo dia: ligar o "Não perturbe" antes da call, trocar a saída de áudio quando pluga o fone, procurar a janela do Spotify. Cada uma custa segundos, e elas se repetem o dia inteiro.
+- Tarefa de uma vez por ano, que você sempre tem que pesquisar de novo: gerar chave SSH, instalar um AppImage direito. O script vira a documentação que você não escreveu.
 
 ## Escreva a versão mais burra que funciona
 
-O primeiro script não precisa tratar erro, ter ajuda nem aceitar opção. Ele precisa fazer o que você fazia na mão. O meu primeiro script de Gitflow tinha 31 linhas: validava o argumento e rodava em sequência os mesmos comandos que eu digitava. Usei aquilo por anos antes de ele crescer.
+O primeiro script não precisa tratar erro, ter ajuda nem aceitar opção; precisa fazer o que você fazia na mão, e só. O meu de Gitflow tinha 31 linhas. Validava o argumento e rodava, na mesma ordem, os comandos que eu já digitava, e eu usei aquilo por anos antes de ele crescer.
 
 Em shell, o mínimo é isto:
 
@@ -67,7 +87,7 @@ No meu dotfiles, cada subpasta de `bin/` entra no PATH pelo `.zshrc`, e o script
 
 ## Dê uma porta de entrada pro script
 
-Um script que você precisa lembrar de rodar ainda depende de você. O que mais me ajudou a automatizar foi pensar em como cada script é chamado:
+Script que você precisa lembrar de rodar ainda depende de você. O que mais me ajudou foi decidir, pra cada um, quem aperta o botão: eu no terminal, um atalho, o login, um horário ou outro programa.
 
 | Porta | Como funciona | Exemplo meu |
 |---|---|---|
@@ -83,7 +103,7 @@ No Niri, o atalho e o login são uma linha cada no `config.kdl`:
 spawn-at-startup "sh" "-c" "~/.dotfiles/bin/utils/niri-mic-dnd"
 ```
 
-Se você usa GNOME, KDE ou outro, o equivalente é o atalho personalizado das configurações e um `.desktop` em `~/.config/autostart/`. Pra timer, um `.service` mais um `.timer` do systemd (ou o bom e velho `cron`).
+No GNOME, no KDE ou em outro ambiente, o equivalente é o atalho personalizado das configurações, e pro login um `.desktop` em `~/.config/autostart/`. Pra timer, `.service` mais `.timer` do systemd (ou o bom e velho `cron`).
 
 ## Faça ele rodar sozinho
 
@@ -109,15 +129,15 @@ main() {
 }
 ```
 
-Agir só na mudança é o que impede o script de ligar o "Não perturbe" de novo a cada volta do loop. E como ele sobe no login, tem um `flock` no começo pra garantir que só exista uma cópia rodando.
+Agir só na mudança impede o script de religar o "Não perturbe" a cada volta do loop, que roda de dois em dois segundos. Como ele sobe no login, um `flock` no começo garante uma cópia só.
 
-O cuidado que mais importa nesse tipo de script é definir bem o que conta como "estado". A barra do meu desktop tem um visualizador de áudio, e ele também captura som (o que sai do alto-falante, pra desenhar as ondas). Se o script contasse qualquer captura como microfone em uso, o "Não perturbe" ficaria ligado pra sempre, como se eu estivesse numa call eterna. Por isso a consulta ao PipeWire ignora as capturas do alto-falante. Antes de escrever o seu vigia, pergunte o que mais no sistema parece com o que você está vigiando.
+O que mais importa nesse tipo de script é definir o que conta como "estado". A barra do meu desktop tem um visualizador de áudio. Ele também captura som: o que sai do alto-falante, pra desenhar as ondas. Se o script contasse qualquer captura como microfone em uso, o "Não perturbe" ficaria ligado pra sempre, como se eu estivesse numa call eterna. Por isso a consulta ao PipeWire ignora as capturas do alto-falante. Antes de escrever o seu vigia, pergunte o que mais no sistema parece com o que você está vigiando.
 
-Quando um script desses passa a importar de verdade, vale escrever teste pra ele. Contei como eu testo os meus em [tratando dotfiles como software](/tratando-dotfiles-como-software).
+Script que passa a importar ganha teste. O `nocta-hold` e o `audio-jack-autoswitch` têm o deles, e contei como eu testo os meus em [tratando dotfiles como software](/tratando-dotfiles-como-software).
 
 ## Ideias pra roubar
 
-Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código, mas a ideia é o que vale. Alguns viraram post próprio, e o link está no item.
+Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código. Alguns viraram post próprio, e o link está no item.
 
 **Git**
 
@@ -129,7 +149,8 @@ Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código
 **Instalar e configurar**
 
 - `dotfiles`: symlinks das configs, pacotes de cada gerenciador e scripts de máquina nova ([a série sobre ele](/seu-sistema-tem-memoria-por-que-manter-um-dotfiles)).
-- `sys-ssh-keys` e `sys-gpg-keys`: geram a chave, adicionam no agent, copiam a pública e configuram o git pra assinar commits.
+- `sys-ssh-keys`: gera a chave, adiciona no agent e copia a pública.
+- `sys-gpg-keys`: gera a chave GPG, copia a pública e configura o git pra assinar commits e tags.
 - `appimage-install`: guarda o AppImage em `~/.local/opt`, cria o link no PATH e o atalho no lançador.
 - `webapp-install`: transforma um site num app com janela própria e ícone no lançador.
 
@@ -139,7 +160,7 @@ Tudo isso mora no meu dotfiles. Ele é privado, então não tem link pro código
 - `niri-keepawake-tasks`: segura a tela acordada enquanto uma tarefa longa roda.
 - `niri-power-autoprofile`: na tomada, perfil de performance; na bateria, economia.
 - `niri-hdmi-automode`: a TV e o monitor dividem o mesmo cabo, e ele aplica a resolução certa pro aparelho conectado.
-- `nocta-hold`: o juiz dos de cima. Conta quantos scripts pediram o "Não perturbe", pra o primeiro que termina não desligar o que outro ainda precisa.
+- `nocta-hold`: o juiz dos de cima. Conta quantos scripts pediram o "Não perturbe", pro primeiro que termina não desligar o que outro ainda precisa.
 
 **Janelas, áudio e modos**
 
