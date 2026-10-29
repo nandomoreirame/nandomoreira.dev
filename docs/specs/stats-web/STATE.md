@@ -49,4 +49,7 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | T8 source | Grok | `source` 4 ok; suíte 141 ok; fmt e clippy ok | 52e15a7 | pendente |
 | T9 host | Grok | `web::host` 3 ok; suíte 144 ok; fmt, clippy e cargo audit ok | be643a6 | pendente |
 | T10 snapshot | Grok | `web::snapshot` 3 ok; suíte 147 ok; fmt e clippy ok | 13d1389 | pendente |
-| T11 display | Grok | `web::display` 7 ok; suíte 154 ok; fmt e clippy ok | pendente | pendente |
+| T11 display | Grok | `web::display` 7 ok; suíte 154 ok; fmt e clippy ok | 22d4b59 | pendente |
+| T12 Hub | Grok | `web::hub` 5 ok; suíte 159 ok; fmt e clippy ok. `wake` fica com `expect(dead_code)` até o poller da T16 | pendente | pendente |
+
+Módulos de teste filhos não herdam os `use` do pai: cada um importa o que usa. Tipos privados que o teste do plano chama ficam `pub(crate)`.

@@ -3,6 +3,7 @@
 
 pub mod display;
 pub mod host;
+pub mod hub;
 pub mod snapshot;
 pub mod store;
 
