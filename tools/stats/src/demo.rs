@@ -276,7 +276,7 @@ impl DemoWorld {
     /// The daily counters, built from the events by the site's rules
     /// (dailyIncrements in src/lib/analytics/event.ts), plus the robots,
     /// which only ever exist as counters.
-    fn dailies(&self) -> BTreeMap<String, Daily> {
+    pub fn dailies(&self) -> BTreeMap<String, Daily> {
         let mut out: BTreeMap<String, Daily> = BTreeMap::new();
         let mut add = |day: &str, group: &str, key: String| {
             let daily = out.entry(day.to_owned()).or_insert_with(|| Daily {
