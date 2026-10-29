@@ -19,3 +19,4 @@ pub mod schedule;
 pub mod theme;
 pub mod totals;
 pub mod ui;
+pub mod view;
