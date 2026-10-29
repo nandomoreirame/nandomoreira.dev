@@ -40,4 +40,5 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | Tarefa | Implementação | Testes | Commit | Revisão |
 |---|---|---|---|---|
 | T1 Range | Grok | `range` 7 ok; suíte 109 ok; fmt e clippy ok | 1817cb9 | pendente |
-| T2 View | Grok | `view` 7 ok; suíte 116 ok; fmt e clippy ok; `cargo audit` limpo depois de subir `rustls-webpki` 0.103.16 e `webpki-root-certs` 1.0.11 (RUSTSEC-2026-0382 e 0383 já estavam no lock) | pendente | pendente |
+| T2 View | Grok | `view` 7 ok; suíte 116 ok; fmt e clippy ok; `cargo audit` limpo depois de subir `rustls-webpki` 0.103.16 e `webpki-root-certs` 1.0.11 (RUSTSEC-2026-0382 e 0383 já estavam no lock) | a15c11a | pendente |
+| T3 scope | Grok | `scope` 2 ok; suíte 118 ok; fmt e clippy ok | pendente | pendente |
