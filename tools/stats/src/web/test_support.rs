@@ -1,12 +1,20 @@
 //! Helpers for the web tests: one request through a router, read back whole.
 
+use super::AppState;
+use super::host::AllowedHosts;
+use super::hub::Hub;
+use crate::cache::{DailyCache, EventCache};
+use crate::demo::DemoWorld;
 use crate::firestore::Document;
+use crate::source::Demo;
+use crate::source::fake::Fake;
 use axum::Router;
 use axum::body::Body;
 use axum::http::{HeaderMap, Request, StatusCode, header};
 use chrono::{DateTime, Utc};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
+use std::sync::Arc;
 use tower::ServiceExt;
 
 pub async fn send(router: Router, request: Request<Body>) -> (StatusCode, HeaderMap, String) {
@@ -28,6 +36,33 @@ pub async fn get(router: Router, uri: &str, host: &str) -> (StatusCode, HeaderMa
         .body(Body::empty())
         .unwrap();
     send(router, request).await
+}
+
+pub async fn fake_state(fake: Fake) -> AppState<Fake> {
+    let hub = Arc::new(Hub::new(
+        fake,
+        EventCache::open(None, ""),
+        DailyCache::open(None),
+    ));
+    hub.refresh(Utc::now()).await;
+    AppState {
+        hub,
+        hosts: AllowedHosts::new(None),
+    }
+}
+
+pub async fn demo_state() -> AppState<Demo> {
+    let demo = Demo::new(DemoWorld::new(Utc::now()));
+    let hub = Arc::new(Hub::new(
+        demo,
+        EventCache::open(None, ""),
+        DailyCache::open(None),
+    ));
+    hub.refresh(Utc::now()).await;
+    AppState {
+        hub,
+        hosts: AllowedHosts::new(None),
+    }
 }
 
 /// A human pageview at `now`, on the São Paulo day of `now`.

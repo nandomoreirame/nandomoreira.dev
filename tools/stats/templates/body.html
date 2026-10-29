@@ -1,0 +1,21 @@
+{% if let Some(error) = d.error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
+{% if let Some(notice) = d.notice %}<p class="notice" role="status">{{ notice }}</p>{% endif %}
+{% if let Some(coverage) = d.coverage %}<p class="notice">{{ coverage }}</p>{% endif %}
+<p class="status">{{ d.status }}</p>
+<section class="panel" aria-labelledby="feed-h">
+  <h2 id="feed-h">Eventos</h2>
+  {% if d.feed.is_empty() %}<p class="muted">nada no período</p>{% else %}
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">dia</th><th scope="col">hora</th><th scope="col">classe</th><th scope="col">visit.</th><th scope="col">página</th><th scope="col">canal</th><th scope="col">local</th><th scope="col">conversão</th></tr></thead>
+    <tbody>
+    {% for e in d.feed %}<tr{% if !e.conversion.is_empty() %} class="conv"{% endif %}>
+      <td>{{ e.day }}</td><td>{{ e.time }}</td><td>{{ e.class }}</td><td>{{ e.visitor }}</td>
+      <td>{% if let Some(href) = e.site %}<a href="{{ href }}" target="_blank" rel="noopener noreferrer">{{ e.path }}<span class="sr-only"> (abre em outra aba)</span></a>{% else %}{{ e.path }}{% endif %}</td>
+      <td><a href="{{ e.channel_filter }}">{{ e.channel }}</a></td>
+      <td>{% if let Some(href) = e.place_filter %}<a href="{{ href }}">{{ e.place }}</a>{% else %}{{ e.place }}{% endif %}</td>
+      <td>{% if let Some(href) = e.lead %}<a href="{{ href }}">{{ e.conversion }}</a>{% else %}{{ e.conversion }}{% endif %}</td>
+    </tr>{% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+</section>

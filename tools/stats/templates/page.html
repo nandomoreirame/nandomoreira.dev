@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ d.title }}{% endblock %}
+{% block content %}
+<header class="top">
+  <p class="brand">nandomoreira.dev <span class="muted">· stats</span></p>
+  <nav aria-label="Abas">
+    <ul class="tabs">
+      {% for t in d.tabs %}<li><a href="{{ t.href }}"{% if t.current %} aria-current="page"{% endif %}>{{ t.label }}</a></li>{% endfor %}
+    </ul>
+  </nav>
+  <nav class="range" aria-label="Período">
+    {% if let Some(href) = d.nav.prev %}<a class="step" href="{{ href }}" aria-label="Período anterior">←</a>{% else %}<span class="step" aria-hidden="true">←</span>{% endif %}
+    <h1>{{ d.nav.label }}</h1>
+    {% if let Some(href) = d.nav.next %}<a class="step" href="{{ href }}" aria-label="Próximo período">→</a>{% else %}<span class="step" aria-hidden="true">→</span>{% endif %}
+    <ul class="spans">
+      {% for s in d.nav.spans %}<li><a href="{{ s.href }}"{% if s.current %} aria-current="page"{% endif %}>{{ s.label }}</a></li>{% endfor %}
+    </ul>
+  </nav>
+  <div class="pickers">
+    <form class="inline" method="get" action="/">
+      <input type="hidden" name="tab" value="{{ d.tab }}">
+      <input type="hidden" name="span" value="{{ d.nav.span }}">
+      {% if let Some(c) = d.channel %}<input type="hidden" name="channel" value="{{ c }}">{% endif %}
+      {% if let Some(c) = d.city %}<input type="hidden" name="city" value="{{ c }}">{% endif %}
+      <label>ir para <input type="date" name="at" value="{{ d.nav.at }}" max="{{ d.nav.max }}" required></label>
+      <button type="submit">Ir</button>
+    </form>
+    <form class="inline" method="get" action="/">
+      <input type="hidden" name="tab" value="{{ d.tab }}">
+      <input type="hidden" name="span" value="custom">
+      {% if let Some(c) = d.channel %}<input type="hidden" name="channel" value="{{ c }}">{% endif %}
+      {% if let Some(c) = d.city %}<input type="hidden" name="city" value="{{ c }}">{% endif %}
+      <label>de <input type="date" name="from" value="{{ d.nav.from }}" max="{{ d.nav.max }}" required></label>
+      <label>até <input type="date" name="to" value="{{ d.nav.to }}" max="{{ d.nav.max }}" required></label>
+      <button type="submit">Aplicar intervalo</button>
+    </form>
+  </div>
+  {% if !d.filters.is_empty() %}
+  <ul class="filters" aria-label="Filtros ativos">
+    {% for f in d.filters %}<li>{{ f.label }} <a href="{{ f.clear }}">limpar<span class="sr-only"> o filtro {{ f.label }}</span></a></li>{% endfor %}
+  </ul>
+  {% endif %}
+</header>
+<main id="main" data-live data-query="{{ d.query }}">
+{% include "body.html" %}
+</main>
+{% endblock %}
