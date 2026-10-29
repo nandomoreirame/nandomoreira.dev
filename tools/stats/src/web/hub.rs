@@ -26,10 +26,8 @@ pub struct Hub<S: Source> {
     dailies: Mutex<DailyCache>,
     last_day: Mutex<Option<String>>,
     saved_at: Mutex<Option<Instant>>,
-    pub(super) tick: broadcast::Sender<()>,
-    /// The poller (REQ-016) waits on this. Nothing reads it until that task.
-    #[expect(dead_code)]
-    pub(super) wake: Notify,
+    pub(crate) tick: broadcast::Sender<()>,
+    pub(crate) wake: Notify,
 }
 
 impl<S: Source> Hub<S> {

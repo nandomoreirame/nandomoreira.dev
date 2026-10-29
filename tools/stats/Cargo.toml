@@ -16,6 +16,7 @@ path = "src/main.rs"
 
 [dev-dependencies]
 http-body-util = "0.1"
+tokio = { version = "1", features = ["test-util"] }
 tower = { version = "0.5", features = ["util"] }
 
 [dependencies]
@@ -33,3 +34,4 @@ ratatui = "0.30"
 reqwest = { version = "0.13", features = ["json"] }
 serde_json = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"] }
+tokio-stream = { version = "0.1", features = ["sync"] }

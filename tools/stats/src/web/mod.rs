@@ -6,6 +6,7 @@ pub mod display;
 pub mod host;
 pub mod hub;
 pub mod lead;
+pub mod live;
 pub mod pages;
 pub mod snapshot;
 pub mod store;
@@ -41,7 +42,10 @@ pub fn app<S: Source>(state: AppState<S>) -> Router {
     let routes = Router::new()
         .route("/", get(pages::page::<S>))
         .route("/lead", get(lead::lead::<S>))
+        .route("/events", get(live::events::<S>))
+        .route("/fast", axum::routing::post(live::fast::<S>))
         .route("/assets/app.css", get(assets::css))
+        .route("/assets/live.js", get(assets::js))
         .route("/healthz", get(|| async { "ok" }))
         .with_state(state);
     host::guarded(routes, hosts).layer(middleware::from_fn(pages::security_headers))

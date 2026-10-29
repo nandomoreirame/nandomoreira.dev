@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ d.title }}{% endblock %}
+{% block head %}<script src="/assets/live.js" defer></script>{% endblock %}
 {% block content %}
 <header class="top">
   <p class="brand">nandomoreira.dev <span class="muted">· stats</span></p>
@@ -35,6 +36,10 @@
       <button type="submit">Aplicar intervalo</button>
     </form>
   </div>
+  <form class="inline" method="post" action="/fast">
+    <input type="hidden" name="back" value="{{ d.query }}">
+    <button type="submit" aria-pressed="{% if d.fast.is_some() %}true{% else %}false{% endif %}">{% if let Some(minutes) = d.fast %}tempo real ligado · desliga em {{ minutes }} min{% else %}ligar tempo real (5 s){% endif %}</button>
+  </form>
   {% if !d.filters.is_empty() %}
   <ul class="filters" aria-label="Filtros ativos">
     {% for f in d.filters %}<li>{{ f.label }} <a href="{{ f.clear }}">limpar<span class="sr-only"> o filtro {{ f.label }}</span></a></li>{% endfor %}
