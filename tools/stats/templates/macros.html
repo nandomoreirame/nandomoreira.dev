@@ -1,0 +1,32 @@
+{% macro cards(list) %}
+<ul class="cards">
+  {% for c in list %}<li class="card{% if c.hot %} hot{% endif %}"><span class="label">{{ c.label }}</span><span class="value">{{ c.value }}</span></li>{% endfor %}
+</ul>
+{% endmacro %}
+
+{% macro stages(id, title, list) %}
+<section class="panel" aria-labelledby="{{ id }}">
+  <h2 id="{{ id }}">{{ title }}</h2>
+  <ol class="stages">
+    {% for s in list %}<li><span class="label">{{ s.label }}</span> <strong>{{ s.count }}</strong> <span class="muted">{{ s.rate }}</span></li>{% endfor %}
+  </ol>
+</section>
+{% endmacro %}
+
+{% macro rank(id, title, rows) %}
+<section class="panel" aria-labelledby="{{ id }}">
+  <h2 id="{{ id }}">{{ title }}</h2>
+  {% if rows.is_empty() %}<p class="muted">nada no período</p>{% else %}
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">{{ title }}</th><th scope="col" class="num">total</th></tr></thead>
+    <tbody>
+    {% for r in rows %}<tr><td>
+      {% if let Some(href) = r.site %}<a href="{{ href }}" target="_blank" rel="noopener noreferrer">{{ r.label }}<span class="sr-only"> (abre em outra aba)</span></a>
+      {% else %}{% if let Some(href) = r.filter %}<a href="{{ href }}">{{ r.label }}<span class="sr-only"> (filtrar)</span></a>{% else %}{{ r.label }}{% endif %}{% endif %}
+      <span class="bar w-{{ r.bucket }}" aria-hidden="true"></span>
+    </td><td class="num">{{ r.count }}</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+</section>
+{% endmacro %}

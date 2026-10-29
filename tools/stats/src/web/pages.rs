@@ -184,4 +184,59 @@ mod tests {
             StatusCode::MISDIRECTED_REQUEST
         );
     }
+
+    async fn tab(query: &str) -> String {
+        let (status, _, body) = get(app(demo_state().await), query, HOST).await;
+        assert_eq!(status, StatusCode::OK, "{query}");
+        body
+    }
+
+    #[tokio::test]
+    async fn the_live_tab_has_cards_and_a_chart_only_for_longer_slices() {
+        let day = tab("/?tab=live").await;
+        assert!(day.contains("Páginas vistas") && day.contains("Cliques no /go"));
+        assert!(!day.contains("<svg"));
+        let month = tab("/?tab=live&span=last30").await;
+        assert!(month.contains(r#"<svg class="chart""#));
+        assert!(month.contains("Tabela da série"));
+    }
+
+    #[tokio::test]
+    async fn the_funnel_tab_lists_stages_channels_and_leads() {
+        let body = tab("/?tab=funnel&span=last30").await;
+        for text in [
+            "Chegou",
+            "Viu evidência",
+            "Agiu",
+            "Virou lead",
+            "Por canal de chegada",
+        ] {
+            assert!(body.contains(text), "{text}");
+        }
+        assert!(body.contains(r#"href="/lead?kind="#));
+        assert!(body.contains("channel="));
+    }
+
+    #[tokio::test]
+    async fn the_traffic_tab_links_pages_to_the_site_in_another_tab() {
+        let body = tab("/?tab=traffic&span=last30").await;
+        assert!(body.contains(r#"href="https://nandomoreira.dev/"#));
+        assert!(body.contains(r#"target="_blank" rel="noopener noreferrer""#));
+        assert!(body.contains("Cidades · pessoas") && body.contains("city="));
+    }
+
+    #[tokio::test]
+    async fn the_mcp_and_sales_tabs_have_their_numbers() {
+        let mcp = tab("/?tab=mcp&span=last30").await;
+        assert!(mcp.contains("Chamadas de tool") && mcp.contains("Métodos"));
+        let sales = tab("/?tab=sales&span=last30").await;
+        assert!(sales.contains("Cliques no WhatsApp") && sales.contains("Funil da landing"));
+    }
+
+    #[tokio::test]
+    async fn a_slice_outside_the_raw_events_says_so() {
+        let old = (chrono::Utc::now() - chrono::Duration::days(60)).format("%Y-%m-%d");
+        let body = tab(&format!("/?tab=funnel&span=day&at={old}")).await;
+        assert!(body.contains("período fora dos 30 dias de eventos brutos"));
+    }
 }

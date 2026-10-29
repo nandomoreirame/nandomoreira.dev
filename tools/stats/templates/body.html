@@ -1,7 +1,24 @@
+{% import "macros.html" as m %}
 {% if let Some(error) = d.error %}<p class="alert" role="alert">{{ error }}</p>{% endif %}
 {% if let Some(notice) = d.notice %}<p class="notice" role="status">{{ notice }}</p>{% endif %}
 {% if let Some(coverage) = d.coverage %}<p class="notice">{{ coverage }}</p>{% endif %}
 <p class="status">{{ d.status }}</p>
+
+{% if d.tab == "live" %}
+{% call m::cards(d.cards) %}{% endcall %}
+{% if !d.chart.is_empty() %}
+<section class="panel" aria-labelledby="series-h">
+  <h2 id="series-h">Série por {{ d.series_unit }}</h2>
+  <ul class="legend"><li><span class="k k-humans"></span>páginas vistas</li><li><span class="k k-agents"></span>agentes</li><li><span class="k k-leads"></span>leads</li></ul>
+  {{ d.chart|safe }}
+  <details id="series-table"><summary>Tabela da série</summary>
+    <div class="scroll"><table>
+      <thead><tr><th scope="col">dia</th><th scope="col" class="num">páginas vistas</th><th scope="col" class="num">agentes</th><th scope="col" class="num">leads</th></tr></thead>
+      <tbody>{% for p in d.series %}<tr><td>{{ p.label }}</td><td class="num">{{ p.humans }}</td><td class="num">{{ p.agents }}</td><td class="num">{{ p.leads }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </details>
+</section>
+{% endif %}
 <section class="panel" aria-labelledby="feed-h">
   <h2 id="feed-h">Eventos</h2>
   {% if d.feed.is_empty() %}<p class="muted">nada no período</p>{% else %}
@@ -19,3 +36,50 @@
   </table></div>
   {% endif %}
 </section>
+
+{% else if d.tab == "funnel" %}
+{% call m::stages("stages-h", "Funil", d.stages) %}{% endcall %}
+<section class="panel" aria-labelledby="by-channel-h">
+  <h2 id="by-channel-h">Por canal de chegada</h2>
+  {% if d.by_channel.is_empty() %}<p class="muted">nada no período</p>{% else %}
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">canal</th>{% for s in d.stages %}<th scope="col" class="num">{{ s.label }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for c in d.by_channel %}<tr><td><a href="{{ c.filter }}">{{ c.channel }}<span class="sr-only"> (filtrar)</span></a></td><td class="num">{{ c.arrived }}</td><td class="num">{{ c.evidence }}</td><td class="num">{{ c.acted }}</td><td class="num">{{ c.lead }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+</section>
+<section class="panel" aria-labelledby="leads-h">
+  <h2 id="leads-h">Leads</h2>
+  {% if d.leads.is_empty() %}<p class="muted">nenhum lead no período: aparece aqui quem baixar o CV ou mandar briefing</p>{% else %}
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">dia</th><th scope="col">hora</th><th scope="col">tipo</th><th scope="col">canal</th><th scope="col"><span class="sr-only">detalhe</span></th></tr></thead>
+    <tbody>{% for l in d.leads %}<tr><td>{{ l.day }}</td><td>{{ l.time }}</td><td>{{ l.kind }}</td><td>{{ l.entry }}</td><td><a href="{{ l.href }}">abrir<span class="sr-only"> o lead de {{ l.day }} às {{ l.time }}</span></a></td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+</section>
+
+{% else if d.tab == "traffic" %}
+<div class="grid">
+  {% call m::rank("pages-h", "Páginas", d.pages) %}{% endcall %}
+  {% call m::rank("channels-h", "Canais", d.channels) %}{% endcall %}
+  {% call m::rank("countries-h", "Países", d.countries) %}{% endcall %}
+  {% call m::rank("cities-h", "Cidades · pessoas", d.cities) %}{% endcall %}
+  {% call m::rank("outbound-h", "Cliques no /go", d.outbound) %}{% endcall %}
+</div>
+
+{% else if d.tab == "mcp" %}
+{% call m::cards(d.mcp_cards) %}{% endcall %}
+<div class="grid">
+  {% call m::rank("tools-h", "Tools", d.tools) %}{% endcall %}
+  {% call m::rank("clients-h", "Clientes", d.clients) %}{% endcall %}
+  {% call m::rank("methods-h", "Métodos", d.methods) %}{% endcall %}
+</div>
+
+{% else %}
+{% call m::cards(d.sales_cards) %}{% endcall %}
+{% call m::stages("sales-stages-h", "Funil da landing", d.sales_stages) %}{% endcall %}
+<div class="grid">
+  {% call m::rank("sales-channels-h", "Canal de chegada", d.sales_channels) %}{% endcall %}
+  {% call m::rank("sales-pages-h", "Páginas", d.sales_pages) %}{% endcall %}
+</div>
+{% endif %}
