@@ -4,8 +4,9 @@
 //! (name, contact, brief) never come here: they stay in memory (REQ-013).
 
 use crate::firestore::Document;
+use crate::model::Daily;
 use serde_json::{Value, json};
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
@@ -140,9 +141,108 @@ impl EventCache {
     }
 }
 
+/// `dailies.json` next to `events.json`: the counters of days that ended.
+pub fn dailies_path(events: &Path) -> PathBuf {
+    events.with_file_name("dailies.json")
+}
+
+fn counters_of(value: &Value) -> BTreeMap<String, i64> {
+    value
+        .as_object()
+        .into_iter()
+        .flatten()
+        .filter_map(|(key, n)| Some((key.clone(), n.as_i64()?)))
+        .collect()
+}
+
+fn decode_dailies(text: &str) -> BTreeMap<String, Daily> {
+    let Ok(root) = serde_json::from_str::<Value>(text) else {
+        return BTreeMap::new();
+    };
+    if root.get("version").and_then(Value::as_u64) != Some(VERSION) {
+        return BTreeMap::new();
+    }
+    root.get("days")
+        .and_then(Value::as_object)
+        .into_iter()
+        .flatten()
+        .map(|(day, groups)| {
+            let groups = groups
+                .as_object()
+                .into_iter()
+                .flatten()
+                .map(|(group, counters)| (group.clone(), counters_of(counters)))
+                .collect();
+            (
+                day.clone(),
+                Daily {
+                    day: day.clone(),
+                    groups,
+                },
+            )
+        })
+        .collect()
+}
+
+/// The daily counters of days that already ended (stats-web REQ-019): they
+/// never change again, so the web panel reads each one from Firestore once.
+#[derive(Debug, Default)]
+pub struct DailyCache {
+    path: Option<PathBuf>,
+    days: BTreeMap<String, Daily>,
+    dirty: bool,
+}
+
+impl DailyCache {
+    pub fn open(path: Option<PathBuf>) -> DailyCache {
+        let days = path
+            .as_deref()
+            .and_then(|path| std::fs::read_to_string(path).ok())
+            .map(|text| decode_dailies(&text))
+            .unwrap_or_default();
+        DailyCache {
+            path,
+            days,
+            dirty: false,
+        }
+    }
+
+    pub fn get(&self, day: &str) -> Option<&Daily> {
+        self.days.get(day)
+    }
+
+    /// Keeps `daily` only when its day is over: today's counters still move.
+    pub fn keep(&mut self, daily: &Daily, today: &str) {
+        if daily.day.as_str() < today && self.days.get(&daily.day) != Some(daily) {
+            self.days.insert(daily.day.clone(), daily.clone());
+            self.dirty = true;
+        }
+    }
+
+    /// Drops the days before `oldest` and writes the file, when something changed.
+    pub fn save(&mut self, oldest: &str) -> std::io::Result<()> {
+        let Some(path) = self.path.as_deref() else {
+            return Ok(());
+        };
+        if !self.dirty {
+            return Ok(());
+        }
+        self.days.retain(|day, _| day.as_str() >= oldest);
+        let days: serde_json::Map<String, Value> = self
+            .days
+            .iter()
+            .map(|(day, daily)| (day.clone(), json!(daily.groups)))
+            .collect();
+        write_private(path, &json!({"version": VERSION, "days": days}).to_string())?;
+        self.dirty = false;
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::Daily;
     use serde_json::json;
     use std::ffi::OsString;
 
@@ -303,5 +403,57 @@ mod tests {
         let mut clean = EventCache::open(Some(scratch.file()), "2026-09-15T03:00:00.000Z");
         clean.save("2026-09-15T03:00:00.000Z").unwrap();
         assert!(!scratch.file().exists());
+    }
+
+    fn daily(day: &str, human: i64) -> Daily {
+        Daily::from_data(day, &json!({"traffic": {"human": human}}))
+    }
+
+    #[test]
+    fn the_daily_file_sits_next_to_the_events_file() {
+        assert_eq!(
+            dailies_path(Path::new("/c/nandomoreira-stats/p/events.json")),
+            PathBuf::from("/c/nandomoreira-stats/p/dailies.json")
+        );
+    }
+
+    #[test]
+    fn keeps_only_days_that_ended_and_reopens_them() {
+        let scratch = Scratch::new("dailies");
+        let path = scratch.0.join("dailies.json");
+        let mut cache = DailyCache::open(Some(path.clone()));
+        cache.keep(&daily("2026-10-27", 4), "2026-10-28");
+        cache.keep(&daily("2026-10-28", 9), "2026-10-28");
+        assert!(cache.get("2026-10-28").is_none());
+        cache.save("2026-01-01").unwrap();
+
+        let reopened = DailyCache::open(Some(path));
+        assert_eq!(
+            reopened.get("2026-10-27").unwrap().get("traffic", "human"),
+            4
+        );
+        assert!(reopened.get("2026-10-28").is_none());
+    }
+
+    #[test]
+    fn drops_days_older_than_the_counters_live_on_save() {
+        let scratch = Scratch::new("dailies-prune");
+        let path = scratch.0.join("dailies.json");
+        let mut cache = DailyCache::open(Some(path.clone()));
+        cache.keep(&daily("2024-09-01", 1), "2026-10-28");
+        cache.keep(&daily("2026-10-01", 1), "2026-10-28");
+        cache.save("2024-10-28").unwrap();
+        let reopened = DailyCache::open(Some(path));
+        assert!(reopened.get("2024-09-01").is_none());
+        assert!(reopened.get("2026-10-01").is_some());
+    }
+
+    #[test]
+    fn a_corrupt_daily_file_starts_empty() {
+        let scratch = Scratch::new("dailies-corrupt");
+        let path = scratch.0.join("dailies.json");
+        std::fs::create_dir_all(&scratch.0).unwrap();
+        std::fs::write(&path, "{nope").unwrap();
+        assert!(DailyCache::open(Some(path)).get("2026-10-01").is_none());
     }
 }
