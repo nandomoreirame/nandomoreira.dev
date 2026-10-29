@@ -17,6 +17,7 @@ pub mod range;
 pub mod sales;
 pub mod schedule;
 pub mod scope;
+pub mod series;
 pub mod theme;
 pub mod totals;
 pub mod ui;
