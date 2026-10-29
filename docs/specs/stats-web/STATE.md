@@ -44,4 +44,5 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | T3 scope | Grok | `scope` 2 ok; suíte 118 ok; fmt e clippy ok | f770088 | pendente |
 | T4 series | Grok | `series` 3 ok; suíte 121 ok; fmt e clippy ok | 864e63a | pendente |
 | T5 svg | Grok | `svg` 4 ok; suíte 125 ok; fmt e clippy ok | 73d848c | pendente |
-| T6 DailyCache | Grok | `cache` 11 ok; suíte 129 ok; fmt e clippy ok | pendente | pendente |
+| T6 DailyCache | Grok | `cache` 11 ok; suíte 129 ok; fmt e clippy ok | add9484 | pendente |
+| T7 token | Grok | `token` 8 ok; suíte 137 ok; fmt, clippy e cargo audit ok | pendente | pendente |

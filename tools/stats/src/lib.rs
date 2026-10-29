@@ -20,6 +20,7 @@ pub mod scope;
 pub mod series;
 pub mod svg;
 pub mod theme;
+pub mod token;
 pub mod totals;
 pub mod ui;
 pub mod view;
