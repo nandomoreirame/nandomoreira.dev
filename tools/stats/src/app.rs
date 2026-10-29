@@ -2,7 +2,7 @@ use crate::firestore::Document;
 use crate::funnel::{Funnel, Lead, funnel};
 use crate::lead::LeadDetail;
 use crate::model::{Daily, Event};
-use crate::period::{Period, today};
+use crate::period::{Period, parse_day, today};
 use crate::sales::{Sales, sales};
 use crate::schedule::Schedule;
 use crate::totals::{Totals, sum};
@@ -36,10 +36,16 @@ pub enum Action {
     Quit,
     Refresh,
     OpenLead(Lead),
+    /// The daily counters of a day older than the 30-day load.
+    LoadDay(String),
 }
 
 /// Shown when ↑, ↓ or Enter are pressed outside the funnel, where they do nothing.
 pub const ELSEWHERE_HINT: &str = "↑ ↓ e Enter escolhem um lead na aba 2 Funil";
+
+/// Shown on a day whose raw events already expired.
+pub const OLD_DAY_NOTICE: &str =
+    "dia com mais de 30 dias: só os contadores diários; funil, vendas e cidades ficam vazios";
 
 /// What one terminal event means to the loop.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -131,7 +137,12 @@ pub struct App {
     pub fast_left_minutes: Option<u64>,
     /// Whole seconds to the next refresh, for the top-right countdown; set by `sync`.
     pub refresh_in_secs: u64,
+    /// The date being typed after `d`, shown in the status bar.
+    pub date_input: Option<String>,
 }
+
+/// Room for `AAAA-MM-DD`.
+const DATE_INPUT_MAX: usize = 10;
 
 impl App {
     /// Brings the clock-derived fields up to date before a draw.
@@ -147,10 +158,18 @@ impl App {
             .div_ceil(1000) as u64;
     }
 
-    /// Distinct people (human visitor codes) seen today. `traffic.human` in
-    /// the daily counter counts page views, not people.
+    /// The day the live tab shows: the picked one, or today for a relative period.
+    pub fn live_day(&self, now: DateTime<Utc>) -> String {
+        match self.period {
+            Period::Day(_) => self.period.days(now).pop().unwrap_or_else(|| today(now)),
+            _ => today(now),
+        }
+    }
+
+    /// Distinct people (human visitor codes) seen on the live day. `traffic.human`
+    /// in the daily counter counts page views, not people.
     pub fn people_today(&self, now: DateTime<Utc>) -> usize {
-        let day = today(now);
+        let day = self.live_day(now);
         self.log
             .events()
             .iter()
@@ -158,6 +177,18 @@ impl App {
             .map(|e| e.visitor.as_str())
             .collect::<HashSet<_>>()
             .len()
+    }
+
+    /// The `n` newest events of the live day, newest first.
+    pub fn live_events(&self, now: DateTime<Utc>, n: usize) -> Vec<&Event> {
+        let day = self.live_day(now);
+        self.log
+            .events()
+            .iter()
+            .rev()
+            .filter(|e| e.day == day)
+            .take(n)
+            .collect()
     }
 
     pub fn funnel(&self, now: DateTime<Utc>) -> Funnel {
@@ -178,8 +209,57 @@ impl App {
         sum(&dailies)
     }
 
+    /// The counters of the live day.
     pub fn today(&self, now: DateTime<Utc>) -> Option<&Daily> {
-        self.dailies.get(&today(now))
+        self.dailies.get(&self.live_day(now))
+    }
+
+    /// Moves to `period`; a day older than the load asks for its counters once.
+    fn pick_period(&mut self, period: Period, wall: DateTime<Utc>) -> Action {
+        self.period = period;
+        self.selected = 0;
+        if period.has_events(wall) {
+            return Action::None;
+        }
+        self.status = Some(OLD_DAY_NOTICE.to_owned());
+        match period.days(wall).pop() {
+            Some(day) if !self.dailies.contains_key(&day) => Action::LoadDay(day),
+            _ => Action::None,
+        }
+    }
+
+    /// A key while the date prompt is open: every character is text, so q
+    /// and the digits do not quit or switch tabs. Ctrl-C still quits.
+    fn on_date_key(&mut self, key: KeyEvent, wall: DateTime<Utc>) -> Action {
+        let Some(input) = self.date_input.as_mut() else {
+            return Action::None;
+        };
+        match key.code {
+            KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => Action::Quit,
+            KeyCode::Char(c) if input.chars().count() < DATE_INPUT_MAX => {
+                input.push(c);
+                Action::None
+            }
+            KeyCode::Backspace => {
+                input.pop();
+                Action::None
+            }
+            KeyCode::Esc => {
+                self.date_input = None;
+                Action::None
+            }
+            KeyCode::Enter => {
+                let typed = self.date_input.take().unwrap_or_default();
+                match parse_day(typed.trim(), wall) {
+                    Ok(period) => self.pick_period(period, wall),
+                    Err(message) => {
+                        self.status = Some(message);
+                        Action::None
+                    }
+                }
+            }
+            _ => Action::None,
+        }
     }
 
     /// One key press. A detail on screen takes the keys first: Esc, Enter or
@@ -196,8 +276,16 @@ impl App {
             return Action::None;
         }
 
+        if self.date_input.is_some() {
+            return self.on_date_key(key, wall);
+        }
+
         match key.code {
             KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => Action::Quit,
+            KeyCode::Char('d') => {
+                self.date_input = Some(String::new());
+                Action::None
+            }
             KeyCode::Char('q') => Action::Quit,
             KeyCode::Char(digit @ '1'..='5') => {
                 self.tab = TABS[digit as usize - '1' as usize];
@@ -235,6 +323,8 @@ impl App {
                 self.selected = 0;
                 Action::None
             }
+            KeyCode::Char(',') => self.pick_period(self.period.earlier(wall), wall),
+            KeyCode::Char('.') => self.pick_period(self.period.later(wall), wall),
             KeyCode::Down | KeyCode::Char('j') if self.tab == Tab::Funnel => {
                 let leads = self.funnel(wall).leads.len();
                 self.selected = (self.selected + 1).min(leads.saturating_sub(1));
@@ -350,6 +440,95 @@ mod tests {
         assert_eq!(app.period, Period::Week);
         app.on_key(key(KeyCode::Char('[')), Instant::now(), now());
         assert_eq!(app.period, Period::Today);
+    }
+
+    #[test]
+    fn steps_through_single_days_with_comma_and_dot() {
+        let mut app = App::default();
+        let day = |iso: &str| Period::Day(iso.parse().unwrap());
+        assert_eq!(
+            app.on_key(key(KeyCode::Char(',')), Instant::now(), now()),
+            Action::None
+        );
+        assert_eq!(app.period, day("2026-10-13"));
+        app.on_key(key(KeyCode::Char(',')), Instant::now(), now());
+        assert_eq!(app.period, day("2026-10-12"));
+        app.on_key(key(KeyCode::Char('.')), Instant::now(), now());
+        app.on_key(key(KeyCode::Char('.')), Instant::now(), now());
+        assert_eq!(app.period, Period::Today);
+    }
+
+    fn type_text(app: &mut App, text: &str) {
+        for c in text.chars() {
+            app.on_key(key(KeyCode::Char(c)), Instant::now(), now());
+        }
+    }
+
+    #[test]
+    fn d_opens_a_date_prompt_that_enter_applies() {
+        let mut app = App::default();
+        app.on_key(key(KeyCode::Char('d')), Instant::now(), now());
+        assert_eq!(app.date_input.as_deref(), Some(""));
+
+        // Inside the prompt, q and digits are text, not quit or tabs.
+        type_text(&mut app, "2026-10-0q");
+        app.on_key(key(KeyCode::Backspace), Instant::now(), now());
+        type_text(&mut app, "2");
+        assert_eq!(app.date_input.as_deref(), Some("2026-10-02"));
+        assert_eq!(app.tab, Tab::Live);
+
+        app.on_key(key(KeyCode::Enter), Instant::now(), now());
+        assert_eq!(app.date_input, None);
+        assert_eq!(app.period, Period::Day("2026-10-02".parse().unwrap()));
+    }
+
+    #[test]
+    fn the_date_prompt_cancels_on_esc_and_reports_a_bad_date() {
+        let mut app = App::default();
+        app.on_key(key(KeyCode::Char('d')), Instant::now(), now());
+        type_text(&mut app, "ontem");
+        app.on_key(key(KeyCode::Esc), Instant::now(), now());
+        assert_eq!(app.date_input, None);
+        assert_eq!(app.period, Period::Today);
+
+        app.on_key(key(KeyCode::Char('d')), Instant::now(), now());
+        type_text(&mut app, "2026-13-01");
+        app.on_key(key(KeyCode::Enter), Instant::now(), now());
+        assert_eq!(app.period, Period::Today);
+        assert!(app.status.as_deref().unwrap().starts_with("data inválida"));
+    }
+
+    #[test]
+    fn the_date_prompt_loads_an_old_day() {
+        let mut app = App::default();
+        app.on_key(key(KeyCode::Char('d')), Instant::now(), now());
+        type_text(&mut app, "2026-08-01");
+        assert_eq!(
+            app.on_key(key(KeyCode::Enter), Instant::now(), now()),
+            Action::LoadDay("2026-08-01".into())
+        );
+    }
+
+    #[test]
+    fn asks_for_the_counters_of_a_day_older_than_the_load() {
+        let mut app = App {
+            period: Period::Day("2026-09-15".parse().unwrap()),
+            ..App::default()
+        };
+        assert_eq!(
+            app.on_key(key(KeyCode::Char(',')), Instant::now(), now()),
+            Action::LoadDay("2026-09-14".into())
+        );
+        assert_eq!(app.status.as_deref(), Some(OLD_DAY_NOTICE));
+
+        app.dailies.insert(
+            "2026-09-13".into(),
+            Daily::from_data("2026-09-13", &json!({})),
+        );
+        assert_eq!(
+            app.on_key(key(KeyCode::Char(',')), Instant::now(), now()),
+            Action::None
+        );
     }
 
     #[test]
@@ -510,6 +689,31 @@ mod tests {
         assert_eq!(app.refresh_in_secs, 4);
         app.sync(start + std::time::Duration::from_secs(9), start);
         assert_eq!(app.refresh_in_secs, 0);
+    }
+
+    #[test]
+    fn the_live_tab_follows_the_picked_day() {
+        let mut app = App::default();
+        let mut yesterday = doc("e/y", "2026-10-13T12:00:00.000Z", None);
+        yesterday.data["day"] = json!("2026-10-13");
+        yesterday.data["visitor"] = json!("w");
+        app.log.merge(vec![
+            yesterday,
+            doc("e/1", "2026-10-14T12:00:00.000Z", None),
+        ]);
+        app.dailies.insert(
+            "2026-10-13".into(),
+            Daily::from_data("2026-10-13", &json!({})),
+        );
+
+        assert_eq!(app.live_day(now()), "2026-10-14");
+        app.on_key(key(KeyCode::Char(',')), Instant::now(), now());
+        assert_eq!(app.live_day(now()), "2026-10-13");
+        assert_eq!(app.today(now()).unwrap().day, "2026-10-13");
+        assert_eq!(app.people_today(now()), 1);
+        let feed = app.live_events(now(), 10);
+        assert_eq!(feed.len(), 1);
+        assert_eq!(feed[0].visitor, "w");
     }
 
     #[test]

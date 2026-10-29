@@ -104,6 +104,7 @@ Nenhum.
 - **30 s por padrão, 5 s sob demanda com desligamento em 30 min:** o modo rápido serve a um momento específico (logo depois de publicar) e é fácil esquecer ligado; o limite segura o custo em cerca de 360 leituras por ativação.
 - **Agentes de IA fora do funil:** o funil é de pessoas; agentes aparecem no feed e na aba MCP.
 - **Dados pessoais só em memória:** o detalhe de lead lê nome, contato e briefing sob demanda e não grava cache.
+- **Cache local dos eventos brutos (2026-10-29):** a carga de 30 dias eram cerca de 9,6 mil eventos em 20 páginas sequenciais, uns 12 s a cada abertura. Como evento não muda depois de gravado e expira em 30 dias, a TUI guarda os já lidos em `$XDG_CACHE_HOME/nandomoreira-stats/<projeto>/events.json` (modo `0600`, descartando o que passa da janela) e na abertura busca só os mais novos que o último do cache. A abertura caiu para cerca de 3,5 s, quase tudo no token do `gcloud`. O cache não contém dado pessoal (o registro do lead continua só em memória); `--no-cache` ignora o arquivo. Os contadores diários ficam fora: são uma leitura só.
 
 ## Constraints
 

@@ -3,6 +3,7 @@
 pub mod app;
 pub mod auth;
 pub mod bignum;
+pub mod cache;
 pub mod client;
 pub mod demo;
 pub mod firestore;

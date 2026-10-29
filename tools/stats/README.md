@@ -11,13 +11,28 @@ Sem token, o `stats` roda `gcloud auth application-default login` no terminal, a
 
 ## Rodar
 
-Instalar a versão deste checkout e abrir, num passo só:
+Abrir o binário já instalado em `~/.cargo/bin`, sem compilar:
 
 ```bash
 scripts/run-stats.sh
 ```
 
+`--build` (ou `--install`) instala antes a versão deste checkout, para quando o código
+mudou: `scripts/run-stats.sh --build`. Sem binário instalado, a primeira execução instala
+sozinha.
+
 Os argumentos vão direto para o `stats` (`scripts/run-stats.sh --project <id>`).
+
+Para abrir num dia só, passe a data (`AAAA-MM-DD`, `hoje` ou `ontem`):
+
+```bash
+scripts/run-stats.sh 2026-10-20     # o mesmo que stats --day 2026-10-20
+scripts/run-stats.sh ontem
+```
+
+Os eventos brutos expiram em 30 dias e os contadores diários em 24 meses. Num dia mais
+antigo que 30 dias, Tráfego e MCP mostram os contadores, e funil, vendas e cidades ficam
+vazios (a barra de status avisa).
 
 ```bash
 cargo run --release --manifest-path tools/stats/Cargo.toml
@@ -48,7 +63,9 @@ cargo test --manifest-path tools/stats/Cargo.toml
 | --- | --- |
 | `1` a `4`, `Tab` | Abas Ao vivo, Funil, Tráfego e MCP |
 | `r` | Alterna o tempo real (5 s) e o intervalo de 30 s |
-| `[` e `]` | Período: hoje, 7 dias, 30 dias |
+| `[` e `]` | Período: hoje, 7 dias, 30 dias. Num dia só, voltam para hoje |
+| `d` | Abre o campo de data na barra de status: `AAAA-MM-DD`, `hoje` ou `ontem`. `Enter` aplica, `Esc` cancela |
+| `,` e `.` | Um dia só: o anterior e o seguinte. Chegar a hoje volta ao período "hoje" |
 | `↑` e `↓` | Seleciona um lead na aba Funil |
 | `Enter` | Abre o detalhe do lead selecionado |
 | `Esc` | Fecha o detalhe |
@@ -67,5 +84,12 @@ Evidência é um case (`/portfolio/<slug>` ou `/lab/<slug>`) ou um post (um segm
 ## Leituras
 
 Na abertura, o programa carrega os contadores diários dos últimos 30 dias e os eventos desde a meia-noite de São Paulo do primeiro desses dias. Dali em diante, a cada 30 segundos, busca só os eventos novos e o documento de hoje. Os dias anteriores não mudam e não são relidos.
+
+Os eventos já lidos ficam em `~/.cache/nandomoreira-stats/<projeto>/events.json` (ou em
+`$XDG_CACHE_HOME`), só legível pelo dono, gravado depois da primeira carga e ao sair. Na
+abertura seguinte o programa mostra o que está no cache e busca no Firestore só os eventos
+mais novos que o último guardado; o que passa de 30 dias sai do arquivo, como sai do
+Firestore. O cache não guarda nome, contato nem briefing de lead. `--no-cache` ignora o
+arquivo e relê os 30 dias; apagar o arquivo tem o mesmo efeito na próxima abertura.
 
 `r` baixa o intervalo para 5 segundos. O modo dura no máximo 30 minutos e se desliga sozinho, com o aviso na barra de status. Ligar de novo recomeça os 30 minutos.

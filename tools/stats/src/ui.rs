@@ -3,7 +3,7 @@ use crate::bignum::{big_number, big_width};
 use crate::funnel::{STAGES, pass_rate};
 use crate::lead::LeadDetail;
 use crate::model::Event;
-use crate::period::clock;
+use crate::period::{Period, clock};
 use crate::theme::Theme;
 use chrono::{DateTime, Utc};
 use ratatui::Frame;
@@ -23,7 +23,7 @@ const HEADLINE: [&str; 7] = [
     "Tools MCP",
 ];
 
-const HELP: &str = "1-5 abas · r tempo real · [ ] período · Enter lead · q sai";
+const HELP: &str = "1-5 abas · r tempo real · [ ] período · d data · , . dia · Enter lead · q sai";
 /// Width of the bar beside a ranked counter.
 const BAR: usize = 16;
 
@@ -126,6 +126,21 @@ fn status_line(app: &App, theme: &Theme) -> Line<'static> {
         format!("  {}  ", app.period.label()),
         Style::new().fg(theme.muted),
     );
+    if let Some(input) = &app.date_input {
+        return Line::from(vec![
+            Span::styled(
+                format!(" data: {input}█ "),
+                Style::new()
+                    .fg(theme.bg)
+                    .bg(theme.accent)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                "  AAAA-MM-DD, hoje ou ontem · Enter aplica · Esc cancela",
+                Style::new().fg(theme.muted),
+            ),
+        ]);
+    }
     let message = match &app.status {
         Some(notice) => Span::styled(notice.clone(), Style::new().fg(theme.accent)),
         None => Span::styled(HELP, Style::new().fg(theme.muted)),
@@ -212,7 +227,15 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
     let count = |group: &str, key: &str| app.today(now).map_or(0, |d| d.get(group, key));
     let leads = count("conversions", "cv") + count("conversions", "hire");
     let headline: [(&str, i64, bool); HEADLINE.len()] = [
-        ("Pessoas hoje", app.people_today(now) as i64, false),
+        (
+            if matches!(app.period, Period::Day(_)) {
+                "Pessoas no dia"
+            } else {
+                "Pessoas hoje"
+            },
+            app.people_today(now) as i64,
+            false,
+        ),
         ("Páginas vistas", count("traffic", "human"), false),
         ("Agentes", count("traffic", "ai_agent"), false),
         (
@@ -240,8 +263,7 @@ fn draw_live(frame: &mut Frame, area: Rect, app: &App, now: DateTime<Utc>, theme
     }
 
     let rows = app
-        .log
-        .recent(feed.height.saturating_sub(5) as usize)
+        .live_events(now, feed.height.saturating_sub(5) as usize)
         .into_iter()
         .map(|e| {
             let style = if e.conversion.is_some() {

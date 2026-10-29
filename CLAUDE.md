@@ -69,7 +69,9 @@ SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-tok
 ```
 
 ```bash
-bash scripts/run-stats.sh                                     # instala o stats e abre a TUI (visitas, funil e leads)
+bash scripts/run-stats.sh                                     # abre a TUI já instalada (visitas, funil e leads)
+bash scripts/run-stats.sh --build                             # reinstala do checkout antes de abrir (depois de mudar tools/stats)
+bash scripts/run-stats.sh 2026-10-20                          # abre num dia só (AAAA-MM-DD, hoje ou ontem); , e . trocam o dia
 cargo run --release --manifest-path tools/stats/Cargo.toml   # stats: visitas, funil e leads (TUI)
 cargo test --manifest-path tools/stats/Cargo.toml            # testes do leitor
 ```
