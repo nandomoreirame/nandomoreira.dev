@@ -1,0 +1,42 @@
+---
+feature: stats-web
+phase: implement
+plan_path: docs/plans/2026-10-29-stats-web.md
+spec_path: docs/specs/stats-web/SPEC.md
+depth: deep
+started_at: 2026-10-29
+---
+
+# Estado: stats-web
+
+Versão web do leitor de analytics em Rust (`tools/stats`, hoje uma TUI ratatui).
+
+Decidido antes da pesquisa (2026-10-29, Fernando):
+
+- Roda em dois lugares: local, o próprio binário servindo em `127.0.0.1` e abrindo no
+  navegador; e no homelab, num container atrás do Caddy, no mesmo esquema de
+  `deploy/staging`.
+- Descartados: Cloud Run com IAP e rota `/admin` no site.
+- A lógica existente da lib (`app`, `funnel`, `sales`, `totals`, `period`, `cache`,
+  `client`, `auth`) é reaproveitada; só `ui.rs` é específico do ratatui.
+
+Spec aprovada em 2026-10-29: 21 requisitos, todos P1, e 10 decisões no Grilling Log. O
+autor aprovou as quatro seções (contexto, requisitos, arquitetura, casos-limite com
+restrições, escopo e testes).
+
+Passos manuais do autor, fora do código: criar a conta de serviço `stats-reader` com
+`roles/datastore.viewer`, gerar a chave e copiá-la para `~/.config/stats/sa.json` no
+homelab; adicionar o split DNS do domínio `home` para `100.97.74.108` no painel do
+Tailscale.
+
+Plano salvo em 2026-10-29 com 21 tarefas em 4 lotes (lib pura, credencial e fonte,
+servidor, verificação e homelab). Desvios da spec registrados no plano: imagem
+`rust:1.96-slim-bookworm`, script de cliente limitado a 2048 B brutos, série na aba Ao
+vivo e dados do `--demo` estáticos no web. A base (filtro por dia e cache de eventos)
+entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
+
+## Ledger
+
+| Tarefa | Implementação | Testes | Commit | Revisão |
+|---|---|---|---|---|
+| T1 Range | Grok | `range` 7 ok; suíte 109 ok; fmt e clippy ok | pendente | pendente |
