@@ -19,6 +19,12 @@ use std::time::{Duration, Instant};
 /// Gcloud access tokens last an hour; renew well before.
 const TOKEN_TTL: Duration = Duration::from_secs(45 * 60);
 
+#[derive(clap::Subcommand)]
+enum Command {
+    /// Painel web no navegador, em http://127.0.0.1:7878 (docs/specs/stats-web).
+    Web(stats::web::serve::WebArgs),
+}
+
 #[derive(Parser)]
 #[command(name = "stats", about = "Visitas, funil e leads do nandomoreira.dev")]
 struct Args {
@@ -37,11 +43,17 @@ struct Args {
     /// Ignora o cache local de eventos e relê os 30 dias do Firestore.
     #[arg(long)]
     no_cache: bool,
+
+    #[command(subcommand)]
+    command: Option<Command>,
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
+    if let Some(Command::Web(web)) = args.command {
+        return stats::web::serve::run(web, &args.project, args.no_cache).await;
+    }
     let palette = theme(std::env::var("COLORTERM").ok().as_deref());
     let period = match args.day.as_deref() {
         Some(day) => parse_day(day, Utc::now()).map_err(anyhow::Error::msg)?,

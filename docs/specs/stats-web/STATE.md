@@ -54,6 +54,7 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | T13 página | Grok | `web::pages` 5 ok; suíte 164 ok; fmt e clippy ok. `cargo audit` sem vulnerabilidade; aviso permitido RUSTSEC-2026-0374 (`basic-toml` sem manutenção, transitivo do askama). Askama 0.16 escapa `&` como `&#38;`; o teste aceita `&amp;` e `&#38;`. O literal `href="#main"` usa `r##` porque `"#` fecha `r#` | d27239a | pendente |
 | T14 abas | Grok | `web::pages` 10 ok; suíte 169 ok; fmt e clippy ok | 19ca9fe | pendente |
 | T15 lead | Grok | `web::lead` 4 ok; suíte 173 ok; fmt e clippy ok. `LeadDetail::pages` é `(hora, caminho)` | fcdd41c | pendente |
-| T16 ao vivo | Grok | `web::live` e `web::assets` 8 ok; suíte 181 ok; fmt e clippy ok. `cargo audit` sem vulnerabilidade nova (aviso permitido do `basic-toml` continua). `tick` e `wake` são `pub(crate)` para o poller no módulo irmão | pendente | pendente |
+| T16 ao vivo | Grok | `web::live` e `web::assets` 8 ok; suíte 181 ok; fmt e clippy ok. `cargo audit` sem vulnerabilidade nova (aviso permitido do `basic-toml` continua). `tick` e `wake` são `pub(crate)` para o poller no módulo irmão | 4502357 | pendente |
+| T17 stats web | Grok | `web::serve` 4 ok; suíte 185 ok; fmt e clippy ok. Binário de debug em `--demo --no-open`: linha `stats web em http://127.0.0.1:7878/`, `/healthz` ok, Host estrangeiro 421, SIGINT encerra com status 0. O navegador não foi aberto | pendente | pendente |
 
 Módulos de teste filhos não herdam os `use` do pai: cada um importa o que usa. Tipos privados que o teste do plano chama ficam `pub(crate)`.

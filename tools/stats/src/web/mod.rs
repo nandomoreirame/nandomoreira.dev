@@ -8,6 +8,7 @@ pub mod hub;
 pub mod lead;
 pub mod live;
 pub mod pages;
+pub mod serve;
 pub mod snapshot;
 pub mod store;
 
