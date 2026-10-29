@@ -52,6 +52,7 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | T11 display | Grok | `web::display` 7 ok; suíte 154 ok; fmt e clippy ok | 22d4b59 | pendente |
 | T12 Hub | Grok | `web::hub` 5 ok; suíte 159 ok; fmt e clippy ok. `wake` fica com `expect(dead_code)` até o poller da T16 | 6168b9c | pendente |
 | T13 página | Grok | `web::pages` 5 ok; suíte 164 ok; fmt e clippy ok. `cargo audit` sem vulnerabilidade; aviso permitido RUSTSEC-2026-0374 (`basic-toml` sem manutenção, transitivo do askama). Askama 0.16 escapa `&` como `&#38;`; o teste aceita `&amp;` e `&#38;`. O literal `href="#main"` usa `r##` porque `"#` fecha `r#` | d27239a | pendente |
-| T14 abas | Grok | `web::pages` 10 ok; suíte 169 ok; fmt e clippy ok | pendente | pendente |
+| T14 abas | Grok | `web::pages` 10 ok; suíte 169 ok; fmt e clippy ok | 19ca9fe | pendente |
+| T15 lead | Grok | `web::lead` 4 ok; suíte 173 ok; fmt e clippy ok. `LeadDetail::pages` é `(hora, caminho)` | pendente | pendente |
 
 Módulos de teste filhos não herdam os `use` do pai: cada um importa o que usa. Tipos privados que o teste do plano chama ficam `pub(crate)`.

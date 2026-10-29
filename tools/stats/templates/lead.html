@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<main id="main" class="lead-page">
+  <p><a href="/?tab=funnel&amp;span=last30">← voltar ao funil</a></p>
+  <h1>{{ title }}</h1>
+  {% if !l.found %}<p class="notice">registro não encontrado (expirou ou foi apagado)</p>{% endif %}
+  <dl class="lead">
+    <dt>tipo</dt><dd>{{ l.kind }}</dd>
+    {% if let Some(v) = l.name %}<dt>nome</dt><dd>{{ v }}</dd>{% endif %}
+    {% if let Some(v) = l.contact %}<dt>contato</dt><dd>{{ v }}</dd>{% endif %}
+    {% if let Some(v) = l.company %}<dt>empresa</dt><dd>{{ v }}</dd>{% endif %}
+    {% if let Some(v) = l.budget %}<dt>orçamento</dt><dd>{{ v }}</dd>{% endif %}
+    {% if let Some(v) = l.brief %}<dt>briefing</dt><dd>{{ v }}</dd>{% endif %}
+    <dt>chegou por</dt><dd>{{ l.entry }}</dd>
+  </dl>
+  <section aria-labelledby="path-h">
+    <h2 id="path-h">Percurso no dia</h2>
+    {% if l.pages.is_empty() %}<p class="muted">sem páginas registradas</p>{% else %}
+    <ol class="path">{% for (time, path) in l.pages %}<li><span class="muted">{{ time }}</span> {{ path }}</li>{% endfor %}</ol>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
