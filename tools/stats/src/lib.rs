@@ -25,3 +25,4 @@ pub mod token;
 pub mod totals;
 pub mod ui;
 pub mod view;
+pub mod web;

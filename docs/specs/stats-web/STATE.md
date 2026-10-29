@@ -46,4 +46,5 @@ entrou em `5bb598d` antes da tarefa 1. A revisão parte desse commit.
 | T5 svg | Grok | `svg` 4 ok; suíte 125 ok; fmt e clippy ok | 73d848c | pendente |
 | T6 DailyCache | Grok | `cache` 11 ok; suíte 129 ok; fmt e clippy ok | add9484 | pendente |
 | T7 token | Grok | `token` 8 ok; suíte 137 ok; fmt, clippy e cargo audit ok | e37d310 | pendente |
-| T8 source | Grok | `source` 4 ok; suíte 141 ok; fmt e clippy ok | pendente | pendente |
+| T8 source | Grok | `source` 4 ok; suíte 141 ok; fmt e clippy ok | 52e15a7 | pendente |
+| T9 host | Grok | `web::host` 3 ok; suíte 144 ok; fmt, clippy e cargo audit ok | pendente | pendente |
