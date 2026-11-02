@@ -80,9 +80,9 @@ describe('sortPosts', () => {
 
   it('lists the newest post first on the real posts page order', async () => {
     const [first, second, third] = await getCurrentPosts();
-    expect(first.slug).toBe('tratando-dotfiles-como-software');
-    expect(second.slug).toBe('seu-sistema-tem-memoria-por-que-manter-um-dotfiles');
-    expect(third.slug).toBe('meus-scripts-de-gitflow-de-31-linhas-a-uma-skill');
+    expect(first.slug).toBe('meu-harness-de-ia-com-rpi');
+    expect(second.slug).toBe('tratando-dotfiles-como-software');
+    expect(third.slug).toBe('seu-sistema-tem-memoria-por-que-manter-um-dotfiles');
   });
 });
 
