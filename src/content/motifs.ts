@@ -30,6 +30,7 @@ export const ART_MOTIFS = [
   'watcher',
   'symlinks',
   'suite',
+  'harness',
 ] as const;
 
 export type ArtMotif = (typeof ART_MOTIFS)[number];

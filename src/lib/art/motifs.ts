@@ -1179,3 +1179,45 @@ export const suite: Motif = (random, { width, height }) => {
   }
   return shapes;
 };
+
+/** harness: the model inside its frame, guides feeding it from the left, sensors on the right, feedback running back underneath. */
+export const harness: Motif = (random, { width, height }) => {
+  const shapes: Shape[] = [];
+  const cx = width / 2;
+  const cy = height / 2;
+  const left = cx - width * 0.15;
+  const right = cx + width * 0.15;
+  const top = height * 0.22;
+  const bottom = height * 0.72;
+  const guideX = width * 0.12;
+  const sensorX = width * 0.88;
+  const feedbackY = height * 0.9;
+
+  // one model at the centre: the only shape at full weight, so the amber always lands on it
+  shapes.push({ kind: 'dot', x: cx, y: cy, r: 3.2, layer: 2, weight: 1 });
+  shapes.push({ kind: 'line', x1: left, y1: top, x2: right, y2: top, layer: 1, weight: 0.4 });
+  shapes.push({ kind: 'line', x1: left, y1: bottom, x2: right, y2: bottom, layer: 1, weight: 0.4 });
+  shapes.push({ kind: 'line', x1: left, y1: top, x2: left, y2: bottom, layer: 1, weight: 0.4 });
+  shapes.push({ kind: 'line', x1: right, y1: top, x2: right, y2: bottom, layer: 1, weight: 0.4 });
+
+  const side = (count: number, draw: (y: number, edgeY: number) => void) => {
+    for (let i = 0; i < count; i += 1) {
+      const y = height * 0.1 + (height * 0.66 * (i + 0.5)) / count + between(random, -1.5, 1.5);
+      draw(y, top + ((bottom - top) * (i + 0.5)) / count);
+    }
+  };
+
+  side(intBetween(random, 3, 5), (y, edgeY) => {
+    shapes.push({ kind: 'line', x1: guideX, y1: y, x2: left, y2: edgeY, layer: 0, weight: 0.1 });
+    shapes.push({ kind: 'line', x1: left, y1: edgeY, x2: cx, y2: cy, layer: 0, weight: 0.05 });
+    shapes.push({ kind: 'dot', x: guideX, y, r: 1.6, layer: 1, weight: 0.2 + random() * 0.3 });
+  });
+  side(intBetween(random, 3, 5), (y, edgeY) => {
+    shapes.push({ kind: 'line', x1: cx, y1: cy, x2: right, y2: edgeY, layer: 0, weight: 0.05 });
+    shapes.push({ kind: 'line', x1: right, y1: edgeY, x2: sensorX, y2: y, layer: 0, weight: 0.1 });
+    shapes.push({ kind: 'ring', x: sensorX, y, r: 2.4, layer: 2, weight: 0.5 + random() * 0.35 });
+  });
+
+  shapes.push({ kind: 'line', x1: sensorX, y1: feedbackY, x2: guideX, y2: feedbackY, layer: 1, weight: 0.3 });
+  return shapes;
+};

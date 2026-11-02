@@ -174,6 +174,44 @@ describe('generateArt', () => {
     }
   });
 
+  it('draws harness as one model inside a frame, guides feeding it from the left, sensors reading it on the right', () => {
+    const frame = { width: 160, height: 90 };
+    const shapes = MOTIF_DRAWERS.harness(createRandom(hashString('harness')), frame);
+    const dots = shapes.filter((shape): shape is Extract<Shape, { kind: 'dot' }> => shape.kind === 'dot');
+    const sensors = shapes.filter((shape): shape is Extract<Shape, { kind: 'ring' }> => shape.kind === 'ring');
+    const lines = shapes.filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line');
+
+    const models = dots.filter(dot => dot.weight === 1);
+    expect(models).toHaveLength(1);
+    const model = models[0]!;
+    expect(model.x).toBeCloseTo(frame.width / 2);
+    expect(model.y).toBeCloseTo(frame.height / 2);
+
+    const vertical = lines.filter(line => line.x1 === line.x2);
+    const horizontal = lines.filter(line => line.y1 === line.y2);
+    const encloses = (line: Extract<Shape, { kind: 'line' }>, axis: 'x' | 'y') =>
+      axis === 'x'
+        ? Math.min(line.y1, line.y2) < model.y && Math.max(line.y1, line.y2) > model.y
+        : Math.min(line.x1, line.x2) < model.x && Math.max(line.x1, line.x2) > model.x;
+    expect(vertical.some(line => line.x1 < model.x && encloses(line, 'x'))).toBe(true);
+    expect(vertical.some(line => line.x1 > model.x && encloses(line, 'x'))).toBe(true);
+    expect(horizontal.some(line => line.y1 < model.y && encloses(line, 'y'))).toBe(true);
+    expect(horizontal.some(line => line.y1 > model.y && encloses(line, 'y'))).toBe(true);
+
+    const guides = dots.filter(dot => dot !== model);
+    expect(guides.length).toBeGreaterThanOrEqual(3);
+    expect(Math.max(...guides.map(dot => dot.x))).toBeLessThan(frame.width * 0.3);
+    expect(sensors.length).toBeGreaterThanOrEqual(3);
+    expect(Math.min(...sensors.map(ring => ring.x))).toBeGreaterThan(frame.width * 0.7);
+
+    // the feedback runs under the frame, from the sensors' side back to the guides'
+    const lowestSide = Math.max(...vertical.filter(line => encloses(line, 'x')).map(line => Math.max(line.y1, line.y2)));
+    const feedback = horizontal.filter(line => line.y1 > lowestSide);
+    expect(feedback).toHaveLength(1);
+    expect(Math.min(feedback[0]!.x1, feedback[0]!.x2)).toBeLessThan(frame.width * 0.3);
+    expect(Math.max(feedback[0]!.x1, feedback[0]!.x2)).toBeGreaterThan(frame.width * 0.7);
+  });
+
   it('draws every motif differently from the others', () => {
     const drawings = ART_MOTIFS.map(art => draw(art, 'card').replace(/data-motif="[a-z]+"/, ''));
     expect(new Set(drawings).size).toBe(ART_MOTIFS.length);

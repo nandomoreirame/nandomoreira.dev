@@ -26,6 +26,7 @@ import {
   watcher,
   symlinks,
   suite,
+  harness,
   type Motif,
   type Shape,
 } from './motifs';
@@ -68,6 +69,7 @@ export const MOTIF_DRAWERS: Record<ArtMotif, Motif> = {
   watcher,
   symlinks,
   suite,
+  harness,
 };
 
 /** Fallback when a case declares no `art`: one motif per block. */
