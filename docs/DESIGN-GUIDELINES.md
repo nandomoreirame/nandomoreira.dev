@@ -307,7 +307,7 @@ arrasta uma biblioteca inteira junto.
 | `PostRow` | Linha do blog e do arquivo por ano | rascunho, `extras` | A linha inteira é o link, sem seta. Meta em mono (chip "Rascunho", data, tempo de leitura), até três marcadores, título em Newsreader 400 que fica âmbar no hover, resumo inteiro. `extras` (uma ou duas linhas) aparece abaixo, a primeira no acento. A home continua com `ListRow` |
 | `UpdatedAt` | Faixa "Atualizada em" | — | Mono, ícone de relógio e fio âmbar à esquerda. Setup, Agora e Privacidade |
 | `SectionRule` | Fio entre seções da home | — | Hairline `border` de ponta a ponta, decorativo (`aria-hidden`), depois do hero |
-| `ClosingCta` | Fecho de Portfólio e Lab | `portfolio`, `lab` | `Card` com eyebrow mono, título em Newsreader e um `Button` primário com seta para `/contato` |
+| `ClosingCta` | Fecho de páginas | `portfolio`, `lab`, `sobre`, `mcp`, `now` | `Card` com eyebrow mono, título em Newsreader e um `Button` primário com seta: `portfolio` e `sobre` dividem o mesmo card, para a página de serviços; os demais vão para `/contato` |
 
 ### Tags globais são estilizadas no CSS, não na marcação
 

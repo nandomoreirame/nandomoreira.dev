@@ -159,11 +159,11 @@ describe('/sobre', () => {
     expect(html).toMatch(/desde 2010/i);
   });
 
-  it('keeps a single primary call to action', async () => {
+  it('has two primary calls to action: contact at the top, services in the closing card', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SobrePage);
 
     // Unconditional class only: the skip link carries focus-visible:bg-primary.
-    expect(html.match(/(?<=["\s])bg-primary\b/g)).toHaveLength(1);
+    expect(html.match(/(?<=["\s])bg-primary\b/g)).toHaveLength(2);
   });
 });

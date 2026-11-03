@@ -2,14 +2,13 @@
 import Button from '../ui/Button.astro';
 import Card from '../ui/Card.astro';
 import { CLOSING_CTA, type ClosingCtaPage } from '../../lib/catalog/closing-cta';
+import { salesLink } from '../../lib/sales/host';
 
 interface Props {
   page: ClosingCtaPage;
-  /** A secondary button, for a page that already has its one primary CTA (/sobre). */
-  quiet?: boolean;
 }
 
-const { page, quiet = false } = Astro.props;
+const { page } = Astro.props;
 const copy = CLOSING_CTA[page];
 ---
 
@@ -19,5 +18,5 @@ const copy = CLOSING_CTA[page];
     <h2 class="font-serif text-h1 font-normal tracking-tight text-pretty text-foreground">{copy.title}</h2>
     <p class="max-w-[60ch] text-body text-muted-foreground">{copy.text}</p>
   </div>
-  <Button href="/contato" variant={quiet ? 'secondary' : 'primary'} arrow>{copy.button}</Button>
+  <Button href={copy.toServices ? salesLink(Astro.url) : '/contato'} variant="primary" arrow>{copy.button}</Button>
 </Card>
