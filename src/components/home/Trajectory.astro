@@ -18,7 +18,7 @@ const { stats, narrative } = Astro.props;
 
   <ul class="grid grid-cols-1 gap-lg md:grid-cols-2 lg:grid-cols-3">
     {stats.map((stat) => (
-      <Card as="li">
+      <Card as="li" interactive>
         <StatItem value={stat.value} label={stat.label} context={stat.context} />
       </Card>
     ))}

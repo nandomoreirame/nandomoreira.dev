@@ -35,6 +35,13 @@ describe('Trajectory', () => {
     expect(html).toContain('A maior tração vem de 2018.');
   });
 
+  it('lifts each card border on hover, like the services cards', async () => {
+    const html = await render({ stats, narrative: 'n' });
+    const cards = html.match(/<li[^>]*>/g) ?? [];
+    expect(cards).toHaveLength(stats.length);
+    for (const card of cards) expect(card).toContain('hover:border-border-strong');
+  });
+
   it('adds no second primary call to action', async () => {
     const html = await render({ stats, narrative: 'n' });
     expect(html).not.toContain('bg-primary');
