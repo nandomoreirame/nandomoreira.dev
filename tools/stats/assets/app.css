@@ -65,7 +65,7 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
 .panel { background: var(--surface); border: 1px solid var(--line); padding: 12px; margin: 0 0 16px; min-width: 0; }
 .panel h2 { margin: 0 0 8px; font-size: 1rem; }
-.scroll { overflow-x: auto; }
+.scroll { position: relative; overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 th { color: var(--muted); font-weight: 400; }
