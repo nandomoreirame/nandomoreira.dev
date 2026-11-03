@@ -21,9 +21,9 @@ describe('AvailabilityCard', () => {
     expect(await render('closed')).toContain('Indisponível no momento');
   });
 
-  it('links the whole card to /servicos while open, with the invitation underneath', async () => {
+  it('links the whole card to /contato while open, with the invitation underneath', async () => {
     const html = await render('open');
-    expect(html).toMatch(/<a[^>]*href="\/servicos"[^>]*data-availability-card/);
+    expect(html).toMatch(/<a[^>]*href="\/contato"[^>]*data-availability-card/);
     expect(html).toContain('Veja o que posso fazer por você');
     expect(html).toContain('lucide:arrow-right');
     expect(html).toMatch(/focus-visible:outline-primary/);
@@ -48,7 +48,7 @@ describe('AvailabilityCard', () => {
 
   it('stays a plain box when closed: no invitation to hire', async () => {
     const html = await render('closed');
-    expect(html).not.toContain('href="/servicos"');
+    expect(html).not.toContain('href="/contato"');
     expect(html).not.toContain('Veja o que posso fazer por você');
   });
 

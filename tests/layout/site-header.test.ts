@@ -54,9 +54,9 @@ describe('SiteHeader', () => {
     expect(link).not.toContain('font-serif');
   });
 
-  it('shows the availability pill, linked to /servicos, on the right at every width', async () => {
+  it('shows the availability pill, linked to /contato, on the right at every width', async () => {
     const html = await render({ availability: { status: 'open' } });
-    const pill = html.match(/<a[^>]*href="\/servicos"[^>]*data-header-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    const pill = html.match(/<a[^>]*href="\/contato"[^>]*data-header-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
     const tag = pill.match(/<a[^>]*>/)?.[0] ?? '';
 
     expect(pill).toContain('data-status-dot');
@@ -146,7 +146,7 @@ describe('SiteHeader mobile menu', () => {
     const pill = row.match(/<a[^>]*data-menu-availability[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
 
     expect(row.indexOf('href="/"')).toBeLessThan(row.indexOf('data-menu-availability'));
-    expect(pill).toMatch(/href="\/servicos"/);
+    expect(pill).toMatch(/href="\/contato"/);
     // An internal page: the arrow points ahead, not out.
     expect(pill).toContain('→');
     expect(pill).not.toContain('↗');

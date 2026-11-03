@@ -5,7 +5,7 @@ import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
 import StatusDot from './StatusDot.astro';
 
 /** The availability box shared by /contato and /now: status eyebrow, then the detail.
-    While I take work, the whole box links to /servicos with an invitation headline. */
+    While I take work, the whole box links to /contato with an invitation headline. */
 interface Props {
   status: Availability['status'];
   detail: string;
@@ -25,7 +25,7 @@ const interactive =
 ---
 
 <Tag
-  {...(linked ? { href: '/servicos' } : {})}
+  {...(linked ? { href: '/contato' } : {})}
   data-availability-card
   {...extra}
   class={`not-prose flex items-center justify-between gap-lg rounded-md border bg-surface p-lg ${linked ? interactive : 'border-border'}`}
