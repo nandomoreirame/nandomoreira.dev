@@ -1,6 +1,6 @@
 # stats
 
-TUI local que lê as visitas, o funil e os leads do nandomoreira.dev. Os dados vêm do Firestore do lead-analytics (`analytics_events`, `analytics_daily` e, no detalhe de um lead, `hire_requests` ou `cv_downloads`). O programa só lê: `runQuery`, `batchGet` e `GET`.
+Para o autor acompanhar visitas, funil e leads do nandomoreira.dev sem consultar documentos do Firestore um a um, o `stats` reúne os números em uma TUI local e em um painel web que também abre no celular. A TUI atende ao uso no terminal; o painel permite consultar os mesmos dados pelo navegador. Os dados vêm do Firestore do lead-analytics (`analytics_events`, `analytics_daily` e, no detalhe de um lead, `hire_requests` ou `cv_downloads`). O programa só lê: `runQuery`, `batchGet` e `GET`.
 
 ## Pré-requisitos
 
@@ -56,6 +56,58 @@ Testes, sem rede e sem Firestore:
 ```bash
 cargo test --manifest-path tools/stats/Cargo.toml
 ```
+
+## Painel web
+
+`stats web` (ou `scripts/run-stats.sh web`) serve em `http://127.0.0.1:7878` e abre o navegador. `--port` muda a porta, `--no-open` impede a abertura e `--demo` usa dados fictícios estáticos, sem credencial nem Firestore. `--bind` muda a interface de escuta e `--host-name` acrescenta um nome permitido ao cabeçalho `Host`. Para ignorar o cache, a opção vem antes do subcomando: `stats --no-cache web`.
+
+As abas são Ao vivo, Funil, Tráfego, MCP e Vendas. Os recortes incluem dia, semana (segunda a domingo), mês, últimos 7 ou 30 dias e intervalo livre, no fuso de São Paulo. A URL guarda o recorte e os filtros. Fora dos 30 dias de eventos brutos, Funil, Vendas, cidades e feed avisam que cobrem só a parte disponível; os contadores diários e a série alcançam até 24 meses.
+
+O servidor busca atualizações a cada 30 segundos enquanto houver página conectada por SSE. O tempo real reduz o intervalo para 5 segundos por até 30 minutos. Sem página conectada, a leitura para.
+
+### Segurança
+
+O servidor só é iniciado por comando explícito e escuta em loopback por padrão. Não há login no app. O cabeçalho `Host` é conferido antes das rotas: nomes fora de `localhost`, `127.0.0.1`, `[::1]` e o nome configurado recebem 421. `POST /fast` recusa uma origem fora dos nomes permitidos; requisições sem `Origin` são aceitas. A CSP permite scripts e estilos do próprio servidor, sem scripts nem estilos inline.
+
+O painel permite consultar os números e abrir nome, contato, briefing e percurso de leads. O detalhe recebe `Cache-Control: no-store`, fica só em memória e nunca entra no cache em disco. O cache de eventos e contadores fica em `$XDG_CACHE_HOME/nandomoreira-stats/<projeto>` (por padrão, `~/.cache/nandomoreira-stats/<projeto>`). A conta de serviço do homelab tem apenas leitura no Firestore.
+
+No homelab, o processo escuta em `0.0.0.0:8080` dentro do container, publicado somente em `127.0.0.1:7879` no host. O Caddy serve `http://stats.home` e responde 403 fora de `100.64.0.0/10` e `fd7a:115c:a1e0::/48`. A barreira de acesso é a rede: qualquer aparelho autorizado no tailnet pode ver os leads. Não há HTTPS no app; o túnel do Tailscale cifra o tráfego entre os aparelhos. Mudar `--bind` para uma interface pública sem essa barreira expõe o painel.
+
+Para relatar uma vulnerabilidade, entre em contato com o mantenedor pela [página de contato](https://nandomoreira.dev/contato), sem publicar credenciais ou dados de leads em issues.
+
+### Homelab, uma vez
+
+Crie a conta de serviço e copie a chave para o homelab. Estes comandos são passos manuais do autor; nunca acrescente a chave ao repositório:
+
+```bash
+gcloud iam service-accounts create stats-reader --project nandomoreira-dev \
+  --display-name "stats web (homelab, só leitura)"
+gcloud projects add-iam-policy-binding nandomoreira-dev \
+  --member "serviceAccount:stats-reader@nandomoreira-dev.iam.gserviceaccount.com" \
+  --role roles/datastore.viewer
+(umask 077 && gcloud iam service-accounts keys create /tmp/stats-sa.json \
+  --iam-account stats-reader@nandomoreira-dev.iam.gserviceaccount.com)
+ssh homelab 'mkdir -p ~/.config/stats && chmod 700 ~/.config/stats'
+scp /tmp/stats-sa.json homelab:.config/stats/sa.json
+ssh homelab 'chmod 600 ~/.config/stats/sa.json'
+shred -u /tmp/stats-sa.json
+```
+
+No painel do Tailscale, abra DNS, Nameservers, Add nameserver, Custom. Informe `100.97.74.108` e habilite "Restrict to domain" para `home` (split DNS).
+
+### Publicar e rotacionar a chave
+
+Em casa, com o Tailscale ligado, execute da raiz do repositório:
+
+```bash
+bash scripts/deploy-stats.sh
+```
+
+O script copia apenas `tools/stats` e `deploy/stats`, exige a chave com modo `600`, configura Caddy e Pi-hole e prova HTTP 200 pelo Tailscale e 403 pela rede da casa. A evidência de sucesso é a última linha `STATS DEPLOY PASSED`. `STATS_HOST` muda o host SSH (padrão `homelab`) e `STATS_PORT` muda a porta publicada (padrão `7879`).
+
+Rotacione a chave a cada 90 dias: gere outra com `gcloud iam service-accounts keys create`, copie para o mesmo caminho com modo `600`, execute `docker restart stats-web` no homelab e confirme a leitura. Só depois remova a anterior com `gcloud iam service-accounts keys delete <id-antigo>`. Apague com segurança a cópia temporária local da nova chave.
+
+Este leitor fica no repositório do site porque compartilha o contrato das coleções de analytics e acompanha suas mudanças. A TUI continua disponível; o painel web aguarda revisão independente e validação do deploy no homelab. As instruções de agentes na raiz orientam a manutenção; humanos começam por este README e pelo README da raiz.
 
 ## Teclas
 

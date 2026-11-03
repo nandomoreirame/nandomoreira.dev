@@ -71,6 +71,8 @@ SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=... node scripts/spotify-refresh-tok
 ```bash
 bash scripts/run-stats.sh                                     # abre a TUI já instalada (visitas, funil e leads)
 bash scripts/run-stats.sh --build                             # reinstala do checkout antes de abrir (depois de mudar tools/stats)
+bash scripts/run-stats.sh web                                 # painel web em http://127.0.0.1:7878 (--demo, --port, --no-open)
+bash scripts/deploy-stats.sh                                  # publica em http://stats.home, só pelo Tailscale (STATS DEPLOY PASSED)
 bash scripts/run-stats.sh 2026-10-20                          # abre num dia só (AAAA-MM-DD, hoje ou ontem); , e . trocam o dia
 cargo run --release --manifest-path tools/stats/Cargo.toml   # stats: visitas, funil e leads (TUI)
 cargo test --manifest-path tools/stats/Cargo.toml            # testes do leitor
@@ -296,6 +298,8 @@ Produção não muda: continua sendo push em `main`.
 - Nenhum segredo vai para lá, então `/api/hire` responde erro na homologação e nunca notifica.
 - O SSH do homelab passa pelo Tailscale SSH, que às vezes pede uma verificação no navegador antes de conectar.
 - A evidência é a linha `STAGING DEPLOY PASSED`.
+
+O painel `http://stats.home` usa outro container (`deploy/stats`), com a chave da conta de serviço `stats-reader` montada somente para leitura. A porta no host fica em loopback e o Caddy só aceita acesso pelo Tailscale. O preparo da conta, a chave no homelab e o split DNS estão em `tools/stats/README.md`, seção "Painel web". A publicação ocorre por `bash scripts/deploy-stats.sh`, com a marca `STATS DEPLOY PASSED`.
 
 ## Importar config de outros agentes
 
