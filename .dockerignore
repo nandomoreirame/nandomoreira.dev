@@ -5,3 +5,4 @@ dist
 .firebase
 .env*
 *.log
+tools/stats/target

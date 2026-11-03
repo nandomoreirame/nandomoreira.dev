@@ -1,0 +1,24 @@
+# Homelab panel (http://stats.home). Caddy, on the host network, proxies to
+# the loopback port below and answers 403 to anything outside the tailnet.
+# The service account key lives at ~/.config/stats/sa.json (mode 600) on the
+# homelab and is mounted read-only; it never enters the image or the repo.
+name: stats-web
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/stats/Dockerfile
+      args:
+        UID: ${STATS_UID:-1000}
+    image: stats-web:latest
+    container_name: stats-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${STATS_PORT:-7879}:8080"
+    volumes:
+      - stats-cache:/cache
+      - ${HOME}/.config/stats/sa.json:/run/secrets/stats-sa.json:ro
+
+volumes:
+  stats-cache:
