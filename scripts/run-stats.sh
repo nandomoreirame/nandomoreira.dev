@@ -28,7 +28,8 @@ if [ "$build" = true ] || [ ! -x "$BIN" ]; then
   cargo install --quiet --locked --path "$ROOT/tools/stats"
 fi
 
-if [ -n "$1" ] && [ "${1#-}" = "$1" ]; then
-  set -- --day "$@"
-fi
+# Only a date becomes --day; anything else (the `web` subcommand) passes through.
+case "$1" in
+  [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] | hoje | ontem) set -- --day "$@" ;;
+esac
 exec "$BIN" "$@"
