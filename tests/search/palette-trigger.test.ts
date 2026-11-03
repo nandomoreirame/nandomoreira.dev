@@ -55,6 +55,11 @@ describe('palette trigger', () => {
     expect(switcher).toBeGreaterThan(trigger);
   });
 
+  it('leaves phones: the whole corner stack is gone below md', async () => {
+    const group = corner(await renderLayout());
+    expect(group.match(/^<div[^>]*>/)?.[0]).toMatch(/\bmax-md:hidden\b/);
+  });
+
   it('keeps the trigger on a page without the switcher', async () => {
     const html = await renderLayout({ noindex: true });
     expect(html).not.toContain('aria-label="Visão da página"');

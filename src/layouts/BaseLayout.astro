@@ -176,8 +176,8 @@ const switcherView = view ?? 'human';
     </div>
 
     <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} />
-    {/* Bottom-right corner stack: the palette trigger above the AI switcher. */}
-    <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm">
+    {/* Bottom-right corner stack: the palette trigger above the AI switcher. Not on phones. */}
+    <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm max-md:hidden">
       <PaletteTrigger />
       {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />}
     </div>
