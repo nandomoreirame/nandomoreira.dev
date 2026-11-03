@@ -4,7 +4,7 @@
 #
 # The agent itself never deploys or notifies (its hard limits), so this wrapper
 # owns those steps and checks the agent's work before trusting it:
-#   1. run `claude -p --agent post-autowriter` headless;
+#   1. run `opencode run --agent post-autowriter --auto` headless;
 #   2. require exactly one new post file, still `draft: true`;
 #   3. deploy with scripts/deploy-staging.sh (evidence: STAGING DEPLOY PASSED);
 #   4. require the draft URL to answer 200 on staging;
@@ -19,7 +19,7 @@
 #         AUTOWRITER_STAGING_URL (default: http://nandomoreira.home)
 # Evidence: the last line is AUTOWRITER RUN PASSED.
 #
-# No "set -u": the Claude Code shell snapshot references unset variables.
+# No "set -u": DISCORD_WEBHOOK_URL may be unset (messages go to stdout only).
 set -eo pipefail
 
 ENV_FILE="${AUTOWRITER_ENV:-$HOME/.config/post-autowriter/env}"
@@ -70,12 +70,11 @@ before="$(list_posts)"
 
 echo "==> post-autowriter ($STAMP)"
 PROMPT='Escreva um rascunho de post para eu revisar. Execução agendada, sem ninguém para responder: não faça perguntas. Pule a sua seção 4 (não pare nem suba o dev server, não rode testes): o script que te chamou faz o build e a verificação. No fim, entregue o relatório da sua seção 6.'
-# Deny rules hold even with permissions bypassed: the agent's prompt already
-# forbids git writes and the deploy, and these make it mechanical.
-claude -p --agent post-autowriter --dangerously-skip-permissions \
-  --disallowedTools 'Bash(git commit:*)' 'Bash(git push:*)' 'Bash(git add:*)' \
-  'Bash(git stash:*)' 'Bash(git reset:*)' 'Bash(git checkout:*)' 'Bash(*deploy-staging*)' \
-  -- "$PROMPT" >"$REPORT" 2>&1 || fail "o agente terminou com erro"
+# Deny rules hold even with --auto: the agent's prompt already forbids git
+# writes and the deploy, and the deny permissions in
+# ~/.config/opencode/agents/post-autowriter.md make it mechanical.
+opencode run --agent post-autowriter --auto "$PROMPT" \
+  >"$REPORT" 2>&1 || fail "o agente terminou com erro"
 
 new="$(comm -13 <(echo "$before") <(list_posts))"
 count="$(printf '%s' "$new" | grep -c . || true)"
