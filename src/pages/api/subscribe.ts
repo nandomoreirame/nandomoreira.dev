@@ -3,7 +3,7 @@ import { readHireConfig } from '../../lib/hire/config';
 import { createLimiter } from '../../lib/hire/rate-limit';
 import { resendThankYou } from '../../lib/mail/thank-you';
 import { handleSubscribe } from '../../lib/newsletter/handler';
-import { resendSubscriberNotifier } from '../../lib/newsletter/mail';
+import { resendConfirmationSender, resendSubscriberNotifier } from '../../lib/newsletter/mail';
 import { firestoreSubscriberStore } from '../../lib/newsletter/store';
 
 export const prerender = false;
@@ -20,6 +20,7 @@ const dependencies = {
   now: () => new Date(),
   notify: resendSubscriberNotifier(config),
   thankYou: resendThankYou(config),
+  sendConfirmation: resendConfirmationSender(config),
 };
 
 export const ALL: APIRoute = ({ request }) => handleSubscribe(request, dependencies);

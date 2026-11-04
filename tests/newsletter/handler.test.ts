@@ -10,7 +10,7 @@ const form = (fields: Record<string, string>) =>
   });
 
 const deps = (overrides = {}) => ({
-  store: { save: vi.fn().mockResolvedValue(undefined) },
+  store: { save: vi.fn().mockResolvedValue({ isNew: true, token: 'token' }) },
   limiter: { check: vi.fn().mockReturnValue(true) },
   now: () => new Date('2026-10-17T12:00:00Z'),
   ...overrides,
@@ -105,20 +105,21 @@ describe('handleSubscribe e-mails', () => {
   const mailDeps = (saved: boolean | Error = true) => {
     const notify = vi.fn().mockResolvedValue(undefined);
     const thankYou = vi.fn().mockResolvedValue(undefined);
-    const save = saved instanceof Error ? vi.fn().mockRejectedValue(saved) : vi.fn().mockResolvedValue(saved);
+    const save =
+      saved instanceof Error
+        ? vi.fn().mockRejectedValue(saved)
+        : vi.fn().mockResolvedValue(saved ? { isNew: true, token: 'token' } : { isNew: false, token: null });
     return { notify, thankYou, d: deps({ store: { save }, notify, thankYou }) };
   };
 
-  it('tells me and thanks the subscriber when the address is new', async () => {
+  it('sends a confirmation link and neither a notice nor a thank-you when the address is new', async () => {
+    const sendConfirmation = vi.fn().mockResolvedValue(undefined);
     const { notify, thankYou, d } = mailDeps(true);
-    const response = await handleSubscribe(form({ email: ' Fulano@Exemplo.com ' }), d);
+    const response = await handleSubscribe(form({ email: ' Fulano@Exemplo.com ' }), { ...d, sendConfirmation });
     expect(location(response)).toBe('/posts?assinatura=ok#novidades');
-    expect(notify).toHaveBeenCalledTimes(1);
-    expect(notify.mock.calls[0]![0]).toMatchObject({ subject: expect.stringContaining('fulano@exemplo.com') });
-    expect(thankYou).toHaveBeenCalledWith(
-      'fulano@exemplo.com',
-      expect.objectContaining({ subject: 'Assinatura confirmada' }),
-    );
+    expect(sendConfirmation).toHaveBeenCalledWith('fulano@exemplo.com', 'token');
+    expect(notify).not.toHaveBeenCalled();
+    expect(thankYou).not.toHaveBeenCalled();
   });
 
   it('sends nothing for an address already on the list, so a repeat cannot flood an inbox', async () => {
@@ -149,12 +150,12 @@ describe('handleSubscribe e-mails', () => {
     expect(limited.thankYou).not.toHaveBeenCalled();
   });
 
-  it('keeps answering ok when either e-mail fails', async () => {
-    const notify = vi.fn().mockRejectedValue(new Error('resend down'));
-    const thankYou = vi.fn().mockRejectedValue(new Error('resend down'));
-    const d = deps({ store: { save: vi.fn().mockResolvedValue(true) }, notify, thankYou });
-    const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), d);
+  it('keeps answering ok when the confirmation e-mail fails', async () => {
+    const sendConfirmation = vi.fn().mockRejectedValue(new Error('resend down'));
+    const { notify, thankYou, d } = mailDeps(true);
+    const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), { ...d, sendConfirmation });
     expect(location(response)).toBe('/posts?assinatura=ok#novidades');
-    expect(thankYou).toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalled();
+    expect(thankYou).not.toHaveBeenCalled();
   });
 });

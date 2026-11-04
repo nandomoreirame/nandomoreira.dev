@@ -6,18 +6,23 @@ import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
 import type { SubscriberNotifier } from './mail';
 import { subscriberMail } from './mail';
-import type { SubscriberStore } from './store';
+import type { SubscriberStore, SubscriptionSave } from './store';
 
 export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
+
+/** Sends the one-time confirmation link. The notice and the thank-you wait for the click. */
+export type ConfirmationSender = (email: string, token: string) => Promise<void>;
 
 export interface SubscribeDependencies {
   store: SubscriberStore;
   limiter: Pick<Limiter, 'check'>;
   now: () => Date;
-  /** Optional: tells me about a new subscriber. */
+  /** Optional: tells me about a subscriber who just confirmed. */
   notify?: SubscriberNotifier;
-  /** Optional: confirmation to the new subscriber. */
+  /** Optional: thank-you to a subscriber who just confirmed. */
   thankYou?: ThankYouSender;
+  /** Optional: confirmation link for an address that is not on the list yet. */
+  sendConfirmation?: ConfirmationSender;
 }
 
 /**
@@ -44,9 +49,27 @@ const backTo =
 const isForm = (request: Request): boolean =>
   (request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded');
 
+/** One notice and one thank-you per address, even if the link is opened twice in this process. */
+const welcomed = new Set<string>();
+
+export const confirmedBy = async ({
+  email,
+  notify,
+  thankYou,
+}: {
+  email: string;
+  notify: SubscriberNotifier;
+  thankYou: ThankYouSender;
+}) => {
+  if (welcomed.has(email)) return;
+  welcomed.add(email);
+  await notify(await subscriberMail({ email, origin: '/posts', at: new Date().toISOString() }));
+  await thankYou(email, await thankYouMail({ name: null, kind: 'newsletter' }));
+};
+
 export const handleSubscribe = async (
   request: Request,
-  { store, limiter, now, notify, thankYou }: SubscribeDependencies,
+  { store, limiter, now, sendConfirmation }: SubscribeDependencies,
 ): Promise<Response> => {
   const origin = originOf(request);
   const back = backTo(origin);
@@ -67,31 +90,21 @@ export const handleSubscribe = async (
   if (!result.success) return back('invalido');
 
   const at = now();
-  let isNew: boolean;
+  let saved: SubscriptionSave;
   try {
-    isNew = await store.save(result.data.email, at);
+    saved = await store.save(result.data.email, at);
   } catch {
     return back('erro');
   }
 
-  // Only a new address gets mail: a repeated signup of someone else's address
-  // must not become a way to flood their inbox. A failed send never changes
-  // the answer, since the address is already stored.
-  if (isNew) {
-    const { email } = result.data;
-    if (notify) {
-      try {
-        await notify(await subscriberMail({ email, origin, at: at.toISOString() }));
-      } catch {
-        console.warn('newsletter: notification could not be sent');
-      }
-    }
-    if (thankYou) {
-      try {
-        await thankYou(email, await thankYouMail({ name: null, kind: 'newsletter' }));
-      } catch {
-        console.warn('newsletter: thank-you could not be sent');
-      }
+  // A new address only gets the confirmation link. The notice and the thank-you
+  // wait until the link is opened, so a bot cannot mail a stranger or the author.
+  // A failed send never changes the answer, since the address is already stored.
+  if (saved.isNew && saved.token && sendConfirmation) {
+    try {
+      await sendConfirmation(result.data.email, saved.token);
+    } catch {
+      console.warn('newsletter: confirmation could not be sent');
     }
   }
 
