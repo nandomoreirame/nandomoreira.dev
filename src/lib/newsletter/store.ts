@@ -12,7 +12,7 @@ const normalise = (email: string): string => email.trim().toLowerCase();
 export const subscriberId = (email: string): string => createHash('sha256').update(normalise(email)).digest('hex');
 
 /** Documents written before double opt-in have no status and stay on the list (REQ-009). */
-export const statusOf = (doc: { status?: unknown }): 'pending' | 'confirmed' =>
+export const statusOf = (doc: { status?: unknown; [key: string]: unknown }): 'pending' | 'confirmed' =>
   doc.status === 'pending' ? 'pending' : 'confirmed';
 
 /** Plaintext token stays in the confirmation mail. Only its hash is stored. */

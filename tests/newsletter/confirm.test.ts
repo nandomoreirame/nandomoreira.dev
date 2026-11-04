@@ -4,14 +4,20 @@ import { newConfirmation } from '../../src/lib/newsletter/store';
 
 const memory = (doc: Record<string, unknown>) => ({
   find: async () => doc,
-  update: async (patch: Record<string, unknown>) => Object.assign(doc, patch),
+  update: async (patch: Record<string, unknown>) => {
+    Object.assign(doc, patch);
+  },
 });
 
 describe('confirmação', () => {
   it('confirma token válido uma única vez', async () => {
     const now = new Date('2026-11-03T12:00:00Z');
     const c = newConfirmation(now);
-    const doc: Record<string, unknown> = { status: 'pending', confirmTokenHash: c.tokenHash, confirmExpiresAt: c.expiresAt };
+    const doc: Record<string, unknown> = {
+      status: 'pending',
+      confirmTokenHash: c.tokenHash,
+      confirmExpiresAt: c.expiresAt,
+    };
     const first = await confirmSubscription(c.token, now, memory(doc));
     const second = await confirmSubscription(c.token, now, memory(doc));
     expect(first).toBe('confirmed');

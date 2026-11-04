@@ -3,7 +3,7 @@ import { handleSubscribe } from '../../src/lib/newsletter/handler';
 
 describe('portão de captcha', () => {
   it('form sem captcha responde captcha e não grava', async () => {
-    const save = vi.fn(async () => true);
+    const save = vi.fn(async () => ({ isNew: true, token: 't' }));
     const request = new Request('https://nandomoreira.dev/api/subscribe', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
