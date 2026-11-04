@@ -12,6 +12,10 @@ const OUTCOMES: Record<string, OutcomeMessage> = {
   },
   limite: { role: 'alert', text: 'Muitas tentativas seguidas. Espere alguns minutos ou me chame no WhatsApp.' },
   erro: { role: 'alert', text: 'Não consegui registrar a mensagem agora. Me chame no WhatsApp.' },
+  captcha: {
+    role: 'alert',
+    text: 'Não consegui confirmar que o envio é humano. Recarregue a página e tente de novo, ou me chame no WhatsApp.',
+  },
 };
 
 export const salesOutcomeMessage = (value: string | null): OutcomeMessage | undefined =>

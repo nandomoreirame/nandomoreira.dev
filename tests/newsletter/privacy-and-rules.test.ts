@@ -6,6 +6,7 @@ describe('newsletter privacy and rules', () => {
   it('denies every client path to newsletter_subscribers explicitly', () => {
     const rules = readFileSync('firestore.rules', 'utf8');
     expect(rules).toMatch(/match \/newsletter_subscribers\/\{doc\}\s*\{\s*allow read, write: if false;/);
+    expect(rules).toMatch(/match \/request_hourly_limits\/\{doc\}\s*\{\s*allow read, write: if false;/);
   });
 
   it('documents the newsletter in the privacy policy, with consent, storage and how to leave', () => {

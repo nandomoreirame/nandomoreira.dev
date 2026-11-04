@@ -54,6 +54,10 @@ const OUTCOMES: Record<string, OutcomeMessage> = {
     role: 'alert',
     text: 'Não consegui registrar a mensagem agora. Escreva direto para o e-mail abaixo.',
   },
+  captcha: {
+    role: 'alert',
+    text: 'Não consegui confirmar que o envio é humano. Recarregue a página e tente de novo.',
+  },
 };
 
 /** Reads the `envio` query value; anything unknown shows nothing. */

@@ -21,7 +21,10 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 | 3 mail after confirm | done | green | 8dd64b1 | pending |
 | 4 resend window | done | green | 31c196f | pending |
 | 5 legacy status | done | green | c5871f3 | pending |
-| 6 turnstile verify | done | green | | pending |
+| 6 turnstile verify | done | green | 487d344 | pending |
+| 7 origin allowlist | done | green | 4561c33 | pending |
+| 8 hourly limit | done | green | 046b964 | pending |
+| 9 captcha gate | done | green | | pending |
 | 3 mail after confirm | | | | |
 | 4 resend window | | | | |
 | 5 legacy status | | | | |

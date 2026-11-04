@@ -9,6 +9,7 @@ import type { Notifier } from './notify';
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from './read-body';
 import { type Limiter, clientIpOf } from './rate-limit';
 import { hireSchema, isHoneypotFilled } from './schema';
+import { originAllowed } from '../security/origin';
 import { type BriefingStore, toStoredBriefing } from './store';
 
 export interface Dependencies {
@@ -22,6 +23,12 @@ export interface Dependencies {
   analytics?: Pick<Recorder, 'record' | 'journey'>;
   /** Optional: confirmation to the visitor after a form briefing with an e-mail. */
   thankYou?: ThankYouSender;
+  /** Form posts only. JSON briefings from agents never solve a captcha. */
+  captcha?: { required: boolean; verify: (token: string, remoteIp: string) => Promise<boolean> };
+  /** When set, a present Origin header must be one of these. Absent is allowed. */
+  origins?: readonly string[];
+  /** Shared hourly window across instances. A store failure is an error, not a pass. */
+  hourly?: { allow: (ip: string, now: Date) => Promise<boolean> };
 }
 
 /**
@@ -71,7 +78,7 @@ const syntheticId = (): string =>
 
 export const handleHire = async (
   request: Request,
-  { store, notifier, limiter, now, readTimeoutMs, analytics, thankYou }: Dependencies,
+  { store, notifier, limiter, now, readTimeoutMs, analytics, thankYou, captcha, origins, hourly }: Dependencies,
 ): Promise<Response> => {
   const fromForm = isForm(request);
 
@@ -94,6 +101,16 @@ export const handleHire = async (
   const sourceIp = clientIpOf(request.headers);
 
   if (!limiter.check(sourceIp)) return fail('rateLimited');
+  if (origins && !originAllowed(request.headers.get('origin'), origins)) {
+    return fromForm ? formRedirect('erro', salesBase) : json(403, { error: 'Request origin is not allowed.' });
+  }
+  if (hourly) {
+    try {
+      if (!(await hourly.allow(sourceIp, now()))) return fail('rateLimited');
+    } catch {
+      return fail('unavailable');
+    }
+  }
 
   let raw: string;
   try {
@@ -106,11 +123,21 @@ export const handleHire = async (
   }
 
   let parsed: unknown;
+  let turnstileToken = '';
   try {
     const params = fromForm ? new URLSearchParams(raw) : undefined;
+    if (params) turnstileToken = params.get('cf-turnstile-response') ?? '';
     parsed = params ? (salesBase ? salesFormToPayload(params) : formToPayload(params)) : JSON.parse(raw);
   } catch {
     return fail('malformed');
+  }
+
+  if (fromForm && captcha?.required) {
+    try {
+      if (!(await captcha.verify(turnstileToken, sourceIp))) return formRedirect('captcha', salesBase);
+    } catch {
+      return formRedirect('erro', salesBase);
+    }
   }
 
   const result = hireSchema.safeParse(parsed);

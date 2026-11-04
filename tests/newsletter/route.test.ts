@@ -18,4 +18,10 @@ describe('/api/subscribe route', () => {
   it('limits to five per IP every ten minutes', () => {
     expect(source).toMatch(/createLimiter\(\{\s*max:\s*5,\s*windowMs:\s*10 \* 60 \* 1000\s*\}\)/);
   });
+
+  it('turns Turnstile off when TURNSTILE_SECRET_KEY is empty', () => {
+    expect(source).toContain('turnstileSecretOf(process.env)');
+    expect(source).toContain('required: turnstileSecret !== \'\'');
+    expect(source).toContain('originsFromEnv(process.env)');
+  });
 });

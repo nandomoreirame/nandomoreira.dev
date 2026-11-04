@@ -32,7 +32,7 @@ export const formToPayload = (params: URLSearchParams): Record<string, unknown> 
   const payload: Record<string, unknown> = {};
 
   for (const [key, value] of params) {
-    if (key === 'interesse') continue;
+    if (key === 'interesse' || key === 'cf-turnstile-response') continue;
     const target = FIELD_MAP[key] ?? key;
     if (OPTIONAL.has(target) && value.trim() === '') continue;
     payload[target] = value;
@@ -47,7 +47,7 @@ export const formToPayload = (params: URLSearchParams): Record<string, unknown> 
 };
 
 /** Where the form lands after a submission; the page reads `envio`. */
-export type FormOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
+export type FormOutcome = 'ok' | 'invalido' | 'limite' | 'erro' | 'captcha';
 
 /**
  * Where the form lands after a submission; the page reads `envio`. `base` is

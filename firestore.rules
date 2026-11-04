@@ -15,6 +15,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Hourly counters store a hash of the IP, never the address. Admin SDK only.
+    match /request_hourly_limits/{doc} {
+      allow read, write: if false;
+    }
+
     // Anything not matched above is denied too, but saying it explicitly means
     // a new collection cannot become world-readable by being forgotten here.
     match /{document=**} {

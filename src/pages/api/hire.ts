@@ -6,6 +6,9 @@ import { resendNotifier } from '../../lib/hire/notify';
 import { createLimiter } from '../../lib/hire/rate-limit';
 import { firestoreStore } from '../../lib/hire/store';
 import { resendThankYou } from '../../lib/mail/thank-you';
+import { allowHourly, firestoreHourlyStore } from '../../lib/security/hourly-limit';
+import { originsFromEnv } from '../../lib/security/origin';
+import { turnstileSecretOf, verifyTurnstile } from '../../lib/security/turnstile';
 
 export const prerender = false;
 
@@ -18,6 +21,10 @@ const limiter = createLimiter({ max: 5, windowMs: 10 * 60 * 1000 });
  */
 const config = readHireConfig(process.env);
 
+/** Absent secret leaves the check off, same as /api/subscribe. */
+const turnstileSecret = turnstileSecretOf(process.env);
+const hourlyStore = firestoreHourlyStore();
+
 const dependencies = {
   store: firestoreStore(),
   notifier: resendNotifier(config),
@@ -25,6 +32,15 @@ const dependencies = {
   limiter,
   now: () => new Date(),
   analytics: recorder,
+  captcha: {
+    required: turnstileSecret !== '',
+    verify: (token: string, remoteIp: string) =>
+      verifyTurnstile(token, { secret: turnstileSecret, fetch: globalThis.fetch, remoteIp }),
+  },
+  origins: originsFromEnv(process.env),
+  hourly: {
+    allow: (ip: string, now: Date) => allowHourly(ip, now, { store: hourlyStore, max: 10 }),
+  },
 };
 
 export const ALL: APIRoute = ({ request }) => handleHire(request, dependencies);

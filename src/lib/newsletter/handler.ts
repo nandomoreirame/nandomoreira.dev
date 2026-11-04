@@ -1,6 +1,7 @@
 import { FORM_HONEYPOT } from '../hire/form';
 import { readLimitedText } from '../hire/read-body';
 import { type Limiter, clientIpOf } from '../hire/rate-limit';
+import { originAllowed } from '../security/origin';
 import { subscribeSchema } from './schema';
 import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
@@ -8,7 +9,7 @@ import type { SubscriberNotifier } from './mail';
 import { subscriberMail } from './mail';
 import { type SubscriberStore, type SubscriptionSave, statusOf } from './store';
 
-export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
+export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro' | 'captcha';
 
 /** Sends the one-time confirmation link. The notice and the thank-you wait for the click. */
 export type ConfirmationSender = (email: string, token: string) => Promise<void>;
@@ -23,6 +24,12 @@ export interface SubscribeDependencies {
   thankYou?: ThankYouSender;
   /** Optional: confirmation link for an address that is not on the list yet. */
   sendConfirmation?: ConfirmationSender;
+  /** When required, a form post without a valid Turnstile token is refused. */
+  captcha?: { required: boolean; verify: (token: string, remoteIp: string) => Promise<boolean> };
+  /** When set, a present Origin header must be one of these. Absent is allowed. */
+  origins?: readonly string[];
+  /** Shared hourly window. A store failure is an error, not a pass. */
+  hourly?: { allow: (ip: string, now: Date) => Promise<boolean> };
 }
 
 /**
@@ -75,18 +82,35 @@ export const confirmedBy = async ({
 
 export const handleSubscribe = async (
   request: Request,
-  { store, limiter, now, sendConfirmation }: SubscribeDependencies,
+  { store, limiter, now, sendConfirmation, captcha, origins, hourly }: SubscribeDependencies,
 ): Promise<Response> => {
   const origin = originOf(request);
   const back = backTo(origin);
   if (request.method !== 'POST' || !isForm(request)) return back('erro');
-  if (!limiter.check(clientIpOf(request.headers))) return back('limite');
+  const remoteIp = clientIpOf(request.headers);
+  if (!limiter.check(remoteIp)) return back('limite');
+  if (origins && !originAllowed(request.headers.get('origin'), origins)) return back('erro');
+  if (hourly) {
+    try {
+      if (!(await hourly.allow(remoteIp, now()))) return back('limite');
+    } catch {
+      return back('erro');
+    }
+  }
 
   let params: URLSearchParams;
   try {
     params = new URLSearchParams(await readLimitedText(request));
   } catch {
     return back('erro');
+  }
+
+  if (captcha?.required) {
+    try {
+      if (!(await captcha.verify(params.get('cf-turnstile-response') ?? '', remoteIp))) return back('captcha');
+    } catch {
+      return back('erro');
+    }
   }
 
   // A filled trap is answered as a success, so the bot never learns which field it is.

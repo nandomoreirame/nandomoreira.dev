@@ -10,10 +10,14 @@ export const NEWSLETTER_COPY = {
 } as const;
 
 export const NEWSLETTER_OUTCOMES: Record<SubscribeOutcome, { role: 'status' | 'alert'; text: string }> = {
-  ok: { role: 'status', text: 'Pronto. Os próximos artigos chegam neste e-mail.' },
+  ok: {
+    role: 'status',
+    text: 'Se o endereço for novo, enviei um link de confirmação. Os artigos só começam depois desse clique.',
+  },
   invalido: { role: 'alert', text: 'Esse e-mail não parece válido. Confira e tente de novo.' },
   limite: { role: 'alert', text: 'Muitas tentativas seguidas. Tente de novo em alguns minutos.' },
   erro: { role: 'alert', text: 'Não consegui registrar agora. Tente de novo mais tarde.' },
+  captcha: { role: 'alert', text: 'Não consegui confirmar que o envio é humano. Recarregue a página e tente de novo.' },
 };
 
 export const outcomeOf = (value: string | null): SubscribeOutcome | undefined =>
