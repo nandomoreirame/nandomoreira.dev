@@ -104,11 +104,11 @@ export const handleHire = async (
   if (origins && !originAllowed(request.headers.get('origin'), origins)) {
     return fromForm ? formRedirect('erro', salesBase) : json(403, { error: 'Request origin is not allowed.' });
   }
-  if (hourly) {
+  if (hourly && fromForm) {
     try {
-      if (!(await hourly.allow(sourceIp, now()))) return fail('rateLimited');
+      if (!(await hourly.allow(sourceIp, now()))) return formRedirect('limite', salesBase);
     } catch {
-      return fail('unavailable');
+      return formRedirect('erro', salesBase);
     }
   }
 

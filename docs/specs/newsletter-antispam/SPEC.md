@@ -72,8 +72,9 @@ canal de agente, porque captcha contradiz um endpoint feito para máquina.
   (agente) não exige. Verificação fica em um único módulo, `src/lib/security/turnstile.ts`.
 - **D3 (Origin):** se o cabeçalho `Origin` vier, precisa estar na allowlist. Ausente é
   aceito, porque agentes e `curl` não o enviam. É uma barreira parcial, declarada assim.
-- **D4 (contador no Firestore):** limite de 10 requisições por hora por IP, com contador
-  no Firestore para compartilhar a janela entre instâncias. O IP é guardado só como hash
+- **D4 (contador no Firestore):** limite de 10 POSTs de formulário por hora por IP, com
+  contador no Firestore para compartilhar a janela entre instâncias. JSON de agente não
+  consome esse limite. O IP é guardado só como hash
   SHA-256, com `expiresAt` de 30 dias.
 - **D5 (exceção de JS):** o widget do Turnstile é carregado só em `/contato` e no card da
   newsletter, por `data-` marcado e sob demanda. A exceção é registrada no `CLAUDE.md`.
@@ -96,7 +97,7 @@ canal de agente, porque captcha contradiz um endpoint feito para máquina.
    contar a requisição como inscrição.
 5. **[REQ-005]** QUANDO um POST chega com `Origin` fora da allowlist ENTÃO o sistema DEVE
    recusar com `erro` antes de ler o corpo.
-6. **[REQ-006]** QUANDO o mesmo IP excede 10 requisições por hora ENTÃO o sistema DEVE
+6. **[REQ-006]** QUANDO o mesmo IP envia mais de 10 POSTs de formulário por hora ENTÃO o sistema DEVE
    responder `limite`, com o contador persistido no Firestore, de modo que todas as
    instâncias compartilhem a janela. O limite em memória continua valendo.
 7. **[REQ-007]** QUANDO um endereço já `confirmed` se inscreve de novo ENTÃO o sistema DEVE
