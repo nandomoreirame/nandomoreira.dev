@@ -86,9 +86,11 @@ canal de agente, porque captcha contradiz um endpoint feito para máquina.
 1. **[REQ-001]** QUANDO um endereço novo se inscreve ENTÃO o sistema DEVE gravar com
    status `pending`, enviar e-mail de confirmação com link de uso único e NÃO PODE enviar
    aviso ao autor nem boas-vindas.
-2. **[REQ-002]** QUANDO o link de confirmação é aberto com token válido e não expirado
-   (7 dias) ENTÃO o sistema DEVE marcar o endereço como `confirmed`, enviar aviso e
-   boas-vindas uma única vez e redirecionar para a página de origem com `assinatura=ok`.
+2. **[REQ-002]** QUANDO o link de confirmação é aberto ENTÃO o sistema DEVE mostrar uma
+   página com um botão, sem alterar nada, para que leitores de link não consumam o token.
+   QUANDO o botão é pressionado com token válido e não expirado (7 dias) ENTÃO o sistema
+   DEVE marcar o endereço como `confirmed` de forma atômica, enviar aviso e boas-vindas
+   uma única vez e redirecionar para a página de origem com `assinatura=ok`.
 3. **[REQ-003]** QUANDO o token é inválido, expirado ou malformado ENTÃO o sistema DEVE
    responder de forma idêntica à de token válido para endereço inexistente, sem revelar
    qual dos casos ocorreu, e NÃO PODE alterar o status de nenhum endereço.
