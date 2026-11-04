@@ -71,6 +71,18 @@ env:
     availability:
       - RUNTIME
 
+  # Cloudflare Turnstile on the human forms. Both keys or neither: the routes
+  # refuse to boot with only one of them.
+  - variable: TURNSTILE_SECRET_KEY
+    secret: turnstile-secret-key
+    availability:
+      - RUNTIME
+
+  - variable: TURNSTILE_SITE_KEY
+    secret: turnstile-site-key
+    availability:
+      - RUNTIME
+
 scripts:
   buildCommand: npm run build
   runCommand: node ./dist/server/entry.mjs
