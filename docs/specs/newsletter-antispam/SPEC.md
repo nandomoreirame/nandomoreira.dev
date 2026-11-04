@@ -140,3 +140,10 @@ canal de agente, porque captcha contradiz um endpoint feito para máquina.
 2. Criar a chave do Turnstile no painel da Cloudflare e gravar `TURNSTILE_SECRET_KEY` no
    Secret Manager, com `firebase apphosting:secrets:set`.
 3. Conferir no Resend o volume de envios e a taxa de bounce dos últimos 30 dias.
+4. Ligar a TTL da coleção `request_hourly_limits` pelo campo `expiresAt`. Sem ela, cada
+   hash de IP por hora fica no banco para sempre:
+
+   ```bash
+   gcloud firestore fields ttls update expiresAt --collection-group=request_hourly_limits \
+     --enable-ttl --project=nandomoreira-dev
+   ```
