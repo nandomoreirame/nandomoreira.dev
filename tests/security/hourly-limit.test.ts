@@ -12,9 +12,10 @@ describe('limite por hora', () => {
       },
     };
     const now = new Date('2026-11-03T12:10:00Z');
-    let last = true;
-    for (let i = 0; i < 11; i++) last = await allowHourly('203.0.113.7', now, { store, max: 10 });
-    expect(last).toBe(false);
+    const results: boolean[] = [];
+    for (let i = 0; i < 11; i++) results.push(await allowHourly('203.0.113.7', now, { store, max: 10 }));
+    expect(results.slice(0, 10)).toEqual(Array(10).fill(true));
+    expect(results[10]).toBe(false);
   });
 
   it('IP guardado só como hash', () => {
