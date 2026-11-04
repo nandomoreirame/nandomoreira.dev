@@ -6,6 +6,7 @@ import { THEME_BOOT_MARKER } from '../../src/lib/theme/boot';
 import {
   GISCUS_MARKER,
   NOW_PREVIEW_MARKER,
+  TURNSTILE_MARKER,
   PALETTE_MARKER,
   POINTER_MARKER,
   executableScripts,
@@ -140,7 +141,8 @@ describe('client JavaScript', () => {
         body.includes(POINTER_MARKER) ||
           body.includes(NOW_PREVIEW_MARKER) ||
           body.includes(PALETTE_MARKER) ||
-          body.includes(GISCUS_MARKER),
+          body.includes(GISCUS_MARKER) ||
+          body.includes(TURNSTILE_MARKER),
         file,
       ).toBe(true);
     }

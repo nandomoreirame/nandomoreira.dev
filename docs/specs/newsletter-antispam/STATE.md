@@ -25,13 +25,5 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 | 7 origin allowlist | done | green | 4561c33 | pending |
 | 8 hourly limit | done | green | 046b964 | pending |
 | 9 captcha gate | done | green | 7c35cc0 | pending |
-| 10 widget | done | green | | pending |
-| 3 mail after confirm | | | | |
-| 4 resend window | | | | |
-| 5 legacy status | | | | |
-| 6 turnstile verify | | | | |
-| 7 origin allowlist | | | | |
-| 8 hourly limit | | | | |
-| 9 captcha gate | | | | |
-| 10 widget | | | | |
-| 11 privacy and JS exception | | | | |
+| 10 widget | done | green | b6f5d36 | pending |
+| 11 privacy and JS exception | done | | | pending |

@@ -40,6 +40,15 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
         ))
       }
 
+      <section aria-labelledby="turnstile">
+        <h2 id="turnstile">Verificação anti-robô</h2>
+        <p>
+          Os formulários de contato e de novidades usam o Cloudflare Turnstile para distinguir uma pessoa de um
+          robô. O endereço IP desse envio não fica em claro: guardo só o hash SHA-256, por 30 dias, para limitar
+          tentativas repetidas. A newsletter envia um e-mail de confirmação antes de incluir o endereço na lista.
+        </p>
+      </section>
+
       <section aria-labelledby="contato-privacidade">
         <h2 id="contato-privacidade">Contato</h2>
         <p>Para qualquer pedido sobre seus dados, escreva para mim.</p>

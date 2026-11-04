@@ -4,6 +4,7 @@ import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_SCRIPT } from '../../src/lib/theme/
 import {
   GISCUS_BUDGET_BYTES,
   GISCUS_MARKER,
+  TURNSTILE_MARKER,
   PALETTE_BUDGET_BYTES,
   PALETTE_MARKER,
   executableScripts,
@@ -90,6 +91,18 @@ describe('scriptViolations', () => {
     const bloated = `${GISCUS};${randomBytes(GISCUS_BUDGET_BYTES * 2).toString('base64')}`;
     const [violation] = scriptViolations([{ route: '/um-post', scripts: [bloated] }]);
     expect(violation).toMatch(new RegExp(`^/um-post: giscus loader is \\d+ B gzip, budget ${GISCUS_BUDGET_BYTES}$`));
+  });
+
+  it('accepts the Turnstile loader only from Cloudflare and within budget', () => {
+    const tag = `src="https://challenges.cloudflare.com/turnstile/v0/api.js" ${TURNSTILE_MARKER}`;
+    expect(scriptViolations([{ route: '/contato', scripts: [tag] }])).toEqual([]);
+    expect(scriptViolations([{ route: '/posts', scripts: [tag] }])).toEqual([]);
+    expect(
+      scriptViolations([{ route: '/contato', scripts: [`src="https://evil.example/api.js" ${TURNSTILE_MARKER}`] }]),
+    ).toEqual(['/contato: turnstile loader from an unexpected host']);
+    const bloated = `${tag}${randomBytes(2000).toString('hex')}`;
+    const [violation] = scriptViolations([{ route: '/contato', scripts: [bloated] }]);
+    expect(violation).toMatch(/^\/contato: turnstile loader is \d+ B gzip, budget 512$/);
   });
 
   it('still rejects an unnamed script beside the giscus loader', () => {

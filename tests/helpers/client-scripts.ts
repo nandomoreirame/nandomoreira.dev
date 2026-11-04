@@ -21,6 +21,8 @@ export const executableScripts = (html: string, readSrc?: (src: string) => strin
   [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
     .filter(([, attrs]) => !/type\s*=\s*["']application\/ld\+json["']/i.test(attrs))
     .map(([, attrs, body]) => {
+      // Remote on purpose. Reading it as a file under dist/client would throw.
+      if (attrs.includes('data-turnstile-loader')) return attrs;
       const src = attrs.match(/\bsrc\s*=\s*["']([^"']+)["']/i)?.[1];
       return src && readSrc ? readSrc(src) : body.trim();
     });
@@ -47,6 +49,13 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
           ? [`${route}: giscus loader is ${size} B gzip, budget ${GISCUS_BUDGET_BYTES}`]
           : [];
       }
+      if (script.includes(TURNSTILE_MARKER)) {
+        if (!script.includes(TURNSTILE_SRC)) return [`${route}: turnstile loader from an unexpected host`];
+        const size = gzipSync(script).length;
+        return size > TURNSTILE_BUDGET_BYTES
+          ? [`${route}: turnstile loader is ${size} B gzip, budget ${TURNSTILE_BUDGET_BYTES}`]
+          : [];
+      }
       if (script.includes(NOW_PREVIEW_MARKER)) {
         if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
@@ -68,6 +77,11 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
 /** Fifth named exception (docs/specs/giscus-comments, REQ-004): the loader, within budget. The external widget is not part of the page. */
 export const GISCUS_MARKER = GISCUS_LOADER_MARKER;
 export const GISCUS_BUDGET_BYTES = 2048;
+
+/** Sixth named exception (newsletter-antispam, D5, 2026-11-03): the Turnstile loader, only from Cloudflare. */
+export const TURNSTILE_MARKER = 'data-turnstile-loader';
+export const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+export const TURNSTILE_BUDGET_BYTES = 512;
 
 /** Third named exception (docs/specs/command-palette, D1): an on-demand chunk, never a page script. */
 export const PALETTE_MARKER = 'data-command-palette';

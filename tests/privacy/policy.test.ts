@@ -58,8 +58,8 @@ describe('privacy policy content', () => {
   it('says the newsletter signup sends a confirmation and tells me', () => {
     const section = privacySections.find(candidate => candidate.id === 'novidades');
     const text = (section?.paragraphs ?? []).join('\n');
-    expect(text).toMatch(/confirmação automática/);
-    expect(text).toMatch(/aviso/);
+    expect(text).toMatch(/pedido de confirmação/);
+    expect(text).toMatch(/avisado/);
   });
 
   it('states the retention the code enforces', () => {
@@ -83,7 +83,7 @@ describe('privacy policy content', () => {
   });
 
   it('carries a last-updated date', () => {
-    expect(POLICY_UPDATED_AT).toBe('2026-10-22');
+    expect(POLICY_UPDATED_AT).toBe('2026-11-04');
   });
 
   it('describes the visit measurement honestly', () => {
@@ -165,7 +165,7 @@ describe('/privacidade', () => {
   });
 
   it('shows the update date in pt-BR', async () => {
-    expect(await render()).toContain('22 de outubro de 2026');
+    expect(await render()).toContain('4 de novembro de 2026');
   });
 
   it('renders the GitHub privacy statement as a link', async () => {

@@ -14,7 +14,8 @@ describe('newsletter privacy and rules', () => {
     expect(section?.title).toBe('Novidades por e-mail');
     const text = section?.paragraphs.join(' ') ?? '';
     expect(text).toContain('art. 7º, I');
-    expect(text).toContain('não guardo o IP');
+    expect(text).toContain('IP em claro não entra');
+    expect(text).toContain('pedido de confirmação');
     expect(text).toContain('pedir para sair');
   });
 });
