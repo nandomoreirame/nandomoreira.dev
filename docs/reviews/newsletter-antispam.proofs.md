@@ -1,6 +1,6 @@
 # Proofs: newsletter-antispam
 
-- **Commit:** a740591aca963c2cfadd8e7c24a509540923ce6d
+- **Commit:** 20cee1e78b5914b61d0175e553ea9288d16ba443
 - **Tree:** clean
 - **Result:** PASS
 
@@ -21,42 +21,42 @@
 ### run unit (exit 0)
 
 ```text
- ✓ tests/security/turnstile.test.ts > turnstile > token rejeitado pela API é recusado 8ms
- ✓ tests/security/turnstile.test.ts > turnstile > token aceito pela API passa 2ms
- ✓ tests/security/hourly-limit.test.ts > limite por hora > bloqueia a 11ª requisição na mesma hora 5ms
- ✓ tests/security/hourly-limit.test.ts > limite por hora > IP guardado só como hash 1ms
- ✓ tests/newsletter/store.test.ts > newsletter store > ids a subscriber by the SHA-256 of the normalised email, so a repeat lands on the same document 2ms
+ ✓ tests/newsletter/store.test.ts > newsletter store > ids a subscriber by the SHA-256 of the normalised email, so a repeat lands on the same document 3ms
  ✓ tests/newsletter/store.test.ts > newsletter store > stores the email, the date and the source, never the network 3ms
- ✓ tests/newsletter/store.test.ts > firestoreSubscriberStore contract > tells the caller whether the address is new 11ms
- ✓ tests/newsletter/captcha-gate.test.ts > portão de captcha > form sem captcha responde captcha e não grava 20ms
+ ✓ tests/newsletter/store.test.ts > firestoreSubscriberStore contract > tells the caller whether the address is new 2ms
+ ✓ tests/newsletter/confirm.test.ts > confirmação > confirma token válido uma única vez 5ms
+ ✓ tests/newsletter/confirm.test.ts > confirmação > token inválido responde igual a inexistente 1ms
+ ✓ tests/newsletter/confirm.test.ts > confirmação > token expirado não confirma 1ms
+ ✓ tests/newsletter/confirm.test.ts > confirmação > token antigo não confirma depois de reenviado 1ms
+ ✓ tests/security/form-gate.test.ts > portão do formulário de contato > form sem captcha válido não grava 16ms
+ ✓ tests/security/form-gate.test.ts > portão do formulário de contato > JSON de agente não exige captcha 5ms
+ ✓ tests/security/form-gate.test.ts > portão do formulário de contato > JSON de agente não consome o limite por hora 2ms
+ ✓ tests/security/form-gate.test.ts > portão do formulário de contato > form acima do limite por hora responde limite 1ms
+ ✓ tests/security/form-gate.test.ts > portão do formulário de contato > o token do widget não entra no payload estrito 1ms
+ ✓ tests/newsletter/resend-window.test.ts > reenvio > pending reenvia confirmação só após 24 horas 2ms
+ ✓ tests/newsletter/resend-window.test.ts > reenvio > confirmed não reenvia nada 0ms
+ ✓ tests/newsletter/resend-window.test.ts > reenvio > pending no handler reenvia só depois da janela 12ms
+ ✓ tests/newsletter/pending.test.ts > inscrição > grava endereço novo como pending 5ms
+ ✓ tests/newsletter/legacy.test.ts > legado > registro sem status é tratado como confirmed 1ms
+ ✓ tests/privacy/turnstile-disclosure.test.ts > privacidade > privacidade cita o Cloudflare Turnstile 1ms
+ ✓ tests/security/hourly-limit.test.ts > limite por hora > bloqueia a 11ª requisição na mesma hora 3ms
+ ✓ tests/security/hourly-limit.test.ts > limite por hora > IP guardado só como hash 1ms
+ ✓ tests/newsletter/captcha-gate.test.ts > portão de captcha > form sem captcha responde captcha e não grava 14ms
  ✓ tests/newsletter/captcha-gate.test.ts > portão de captcha > Origin fora da allowlist responde erro sem ler a gravação 2ms
  ✓ tests/newsletter/captcha-gate.test.ts > portão de captcha > a 11ª hora bloqueada responde limite e não grava 2ms
- ✓ tests/newsletter/pending.test.ts > inscrição > grava endereço novo como pending 4ms
- ✓ tests/newsletter/route.test.ts > /api/subscribe route > is a server route wired to the newsletter handler and the Firestore store 5ms
- ✓ tests/newsletter/route.test.ts > /api/subscribe route > wires the e-mail to me and the thank-you to the subscriber 1ms
- ✓ tests/newsletter/route.test.ts > /api/subscribe route > limits to five per IP every ten minutes 1ms
- ✓ tests/newsletter/route.test.ts > /api/subscribe route > turns Turnstile off when TURNSTILE_SECRET_KEY is empty 1ms
- ✓ tests/newsletter/privacy-and-rules.test.ts > newsletter privacy and rules > denies every client path to newsletter_subscribers explicitly 4ms
- ✓ tests/newsletter/privacy-and-rules.test.ts > newsletter privacy and rules > documents the newsletter in the privacy policy, with consent, storage and how to leave 2ms
- ✓ tests/privacy/sales-fields.test.ts > privacy policy and the sales form > names the service field 3ms
- ✓ tests/privacy/sales-fields.test.ts > privacy policy and the sales form > says the form asks for an e-mail, since WhatsApp is a link and not a form field any more 1ms
- ✓ tests/security/form-gate.test.ts > portão do formulário de contato > form sem captcha válido não grava 18ms
- ✓ tests/security/form-gate.test.ts > portão do formulário de contato > JSON de agente não exige captcha 6ms
- ✓ tests/security/form-gate.test.ts > portão do formulário de contato > o token do widget não entra no payload estrito 2ms
- ✓ tests/privacy/turnstile-disclosure.test.ts > privacidade > privacidade cita o Cloudflare Turnstile 3ms
- ✓ tests/newsletter/resend-window.test.ts > reenvio > pending reenvia confirmação só após 24 horas 3ms
- ✓ tests/newsletter/resend-window.test.ts > reenvio > confirmed não reenvia nada 0ms
- ✓ tests/newsletter/resend-window.test.ts > reenvio > pending no handler reenvia só depois da janela 22ms
- ✓ tests/newsletter/confirm.test.ts > confirmação > confirma token válido uma única vez 6ms
- ✓ tests/newsletter/confirm.test.ts > confirmação > token inválido responde igual a inexistente 1ms
- ✓ tests/newsletter/legacy.test.ts > legado > registro sem status é tratado como confirmed 1ms
  ✓ tests/security/origin.test.ts > origin > Origin fora da allowlist é recusado 1ms
  ✓ tests/security/origin.test.ts > origin > Origin ausente é aceito 0ms
+ ✓ tests/newsletter/route.test.ts > /api/subscribe route > is a server route wired to the newsletter handler and the Firestore store 2ms
+ ✓ tests/newsletter/route.test.ts > /api/subscribe route > wires the e-mail to me and the thank-you to the subscriber 1ms
+ ✓ tests/newsletter/route.test.ts > /api/subscribe route > limits to five per IP every ten minutes 1ms
+ ✓ tests/newsletter/route.test.ts > /api/subscribe route > turns Turnstile off when TURNSTILE_SECRET_KEY is empty 0ms
+ ✓ tests/privacy/sales-fields.test.ts > privacy policy and the sales form > names the service field 1ms
+ ✓ tests/privacy/sales-fields.test.ts > privacy policy and the sales form > says the form asks for an e-mail, since WhatsApp is a link and not a form field any more 0ms
 
- Test Files  35 passed (35)
-      Tests  211 passed (211)
-   Start at  08:37:23
-   Duration  25.22s (transform 21.80s, setup 0ms, collect 105.16s, tests 4.64s, environment 16ms, prepare 7.48s)
+ Test Files  36 passed (36)
+      Tests  221 passed (221)
+   Start at  09:18:08
+   Duration  9.05s (transform 5.17s, setup 0ms, collect 35.55s, tests 2.14s, environment 13ms, prepare 4.28s)
 
 stderr | tests/newsletter/handler.test.ts > handleSubscribe e-mails > keeps answering ok when the confirmation e-mail fails
 newsletter: confirmation could not be sent
