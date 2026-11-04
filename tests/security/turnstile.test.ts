@@ -1,5 +1,25 @@
 import { describe, expect, it, vi } from 'vitest';
-import { requiresCaptcha, verifyTurnstile } from '../../src/lib/security/turnstile';
+import { requiresCaptcha, turnstileConfigOf, verifyTurnstile } from '../../src/lib/security/turnstile';
+
+describe('turnstileConfigOf', () => {
+  it('falha no boot quando só uma das duas chaves está definida', () => {
+    expect(() => turnstileConfigOf({ TURNSTILE_SECRET_KEY: 's' })).toThrow('TURNSTILE_SITE_KEY');
+    expect(() => turnstileConfigOf({ TURNSTILE_SITE_KEY: 'k' })).toThrow('TURNSTILE_SECRET_KEY');
+  });
+
+  it('aceita as duas chaves ou nenhuma, sem expor o segredo no erro', () => {
+    expect(turnstileConfigOf({})).toEqual({ secret: '', siteKey: '' });
+    expect(turnstileConfigOf({ TURNSTILE_SECRET_KEY: 's', TURNSTILE_SITE_KEY: 'k' })).toEqual({
+      secret: 's',
+      siteKey: 'k',
+    });
+    try {
+      turnstileConfigOf({ TURNSTILE_SECRET_KEY: 'segredo-real' });
+    } catch (error) {
+      expect(String(error)).not.toContain('segredo-real');
+    }
+  });
+});
 
 const form = new Request('https://nandomoreira.dev/api/hire', {
   method: 'POST',

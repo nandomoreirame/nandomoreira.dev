@@ -7,7 +7,7 @@ import { resendConfirmationSender, resendSubscriberNotifier } from '../../lib/ne
 import { firestoreSubscriberStore } from '../../lib/newsletter/store';
 import { allowHourly, firestoreHourlyStore } from '../../lib/security/hourly-limit';
 import { originsFromEnv } from '../../lib/security/origin';
-import { turnstileSecretOf, verifyTurnstile } from '../../lib/security/turnstile';
+import { turnstileConfigOf, verifyTurnstile } from '../../lib/security/turnstile';
 
 export const prerender = false;
 
@@ -17,8 +17,9 @@ const limiter = createLimiter({ max: 5, windowMs: 10 * 60 * 1000 });
 /** Read at module load so a missing secret fails at boot, like /api/hire and /api/cv. */
 const config = readHireConfig(process.env);
 
-/** Absent secret leaves the check off. The route test records that, so it cannot ship silent. */
-const turnstileSecret = turnstileSecretOf(process.env);
+/** Both keys or neither, checked at boot. Neither leaves the captcha off, which the route test records. */
+const turnstile = turnstileConfigOf(process.env);
+const turnstileSecret = turnstile.secret;
 const hourlyStore = firestoreHourlyStore();
 
 const dependencies = {

@@ -20,7 +20,7 @@ describe('/api/subscribe route', () => {
   });
 
   it('turns Turnstile off when TURNSTILE_SECRET_KEY is empty', () => {
-    expect(source).toContain('turnstileSecretOf(process.env)');
+    expect(source).toContain('turnstileConfigOf(process.env)');
     expect(source).toContain("required: turnstileSecret !== ''");
     expect(source).toContain('originsFromEnv(process.env)');
   });

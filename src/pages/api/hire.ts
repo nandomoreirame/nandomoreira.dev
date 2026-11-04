@@ -8,7 +8,7 @@ import { firestoreStore } from '../../lib/hire/store';
 import { resendThankYou } from '../../lib/mail/thank-you';
 import { allowHourly, firestoreHourlyStore } from '../../lib/security/hourly-limit';
 import { originsFromEnv } from '../../lib/security/origin';
-import { turnstileSecretOf, verifyTurnstile } from '../../lib/security/turnstile';
+import { turnstileConfigOf, verifyTurnstile } from '../../lib/security/turnstile';
 
 export const prerender = false;
 
@@ -21,8 +21,8 @@ const limiter = createLimiter({ max: 5, windowMs: 10 * 60 * 1000 });
  */
 const config = readHireConfig(process.env);
 
-/** Absent secret leaves the check off, same as /api/subscribe. */
-const turnstileSecret = turnstileSecretOf(process.env);
+/** Both keys or neither, checked at boot, same as /api/subscribe. */
+const turnstileSecret = turnstileConfigOf(process.env).secret;
 const hourlyStore = firestoreHourlyStore();
 
 const dependencies = {
