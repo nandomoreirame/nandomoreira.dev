@@ -7,13 +7,17 @@ describe('newsletter store', () => {
     expect(subscriberId('fulano@exemplo.com')).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it('stores only the email, the date and the source, never the network', () => {
+  it('stores the email, the date and the source, never the network', () => {
     const now = new Date('2026-10-17T12:00:00Z');
-    expect(toSubscriber(' Fulano@Exemplo.com ', now)).toEqual({
+    const doc = toSubscriber(' Fulano@Exemplo.com ', now);
+    expect(doc).toMatchObject({
       email: 'fulano@exemplo.com',
+      status: 'pending',
       subscribedAt: '2026-10-17T12:00:00.000Z',
       source: 'posts',
     });
+    expect(doc.confirmTokenHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(Object.keys(doc)).not.toEqual(expect.arrayContaining(['ip', 'userAgent', 'sourceIp']));
   });
 });
 
