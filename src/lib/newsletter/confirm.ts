@@ -16,6 +16,11 @@ export const confirmSubscription = async (
   const doc = await store.find(tokenHash);
   if (!doc || doc.status !== 'pending') return 'invalid';
   if (String(doc.confirmExpiresAt) < now.toISOString()) return 'invalid';
-  await store.update({ status: 'confirmed', confirmedAt: now.toISOString(), confirmTokenHash: null });
+  await store.update({
+    status: 'confirmed',
+    confirmedAt: now.toISOString(),
+    confirmTokenHash: null,
+    confirmSentAt: null,
+  });
   return 'confirmed';
 };

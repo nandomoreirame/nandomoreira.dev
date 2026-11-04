@@ -43,6 +43,10 @@ export interface SubscriptionSave {
 export interface SubscriberStore {
   /** Whether the address is new, plus the confirmation token when it is. */
   save: (email: string, now: Date) => Promise<SubscriptionSave>;
+  /** The stored document, when the address is already on the list. */
+  lookup?: (email: string) => Promise<Record<string, unknown> | null>;
+  /** Replaces the confirmation token of a pending address and returns the plaintext token. */
+  reissue?: (email: string, now: Date) => Promise<string>;
 }
 
 /** gRPC ALREADY_EXISTS: the address is on the list already, which is a success. */
@@ -55,12 +59,25 @@ export const firestoreSubscriberStore = (): SubscriberStore => ({
       await getFirestoreClient()
         .collection(NEWSLETTER_COLLECTION)
         .doc(subscriberId(email))
-        .create(toSubscriber(email, now, confirmation));
+        .create({ ...toSubscriber(email, now, confirmation), confirmSentAt: now.toISOString() });
       return { isNew: true, token: confirmation.token };
     } catch (error) {
       if ((error as { code?: number }).code === ALREADY_EXISTS) return { isNew: false, token: null };
       throw error;
     }
+  },
+  lookup: async email => {
+    const snap = await getFirestoreClient().collection(NEWSLETTER_COLLECTION).doc(subscriberId(email)).get();
+    return snap.exists ? (snap.data() ?? null) : null;
+  },
+  reissue: async (email, now) => {
+    const confirmation = newConfirmation(now);
+    await getFirestoreClient().collection(NEWSLETTER_COLLECTION).doc(subscriberId(email)).update({
+      confirmTokenHash: confirmation.tokenHash,
+      confirmExpiresAt: confirmation.expiresAt,
+      confirmSentAt: now.toISOString(),
+    });
+    return confirmation.token;
   },
 });
 

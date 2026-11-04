@@ -18,7 +18,8 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 |---|---|---|---|---|
 | 1 pending subscriber | done | green | d0911e6 | pending |
 | 2 confirm token | done | green | 1d420c7 | pending |
-| 3 mail after confirm | done | green | | pending |
+| 3 mail after confirm | done | green | 8dd64b1 | pending |
+| 4 resend window | done | green | | pending |
 | 3 mail after confirm | | | | |
 | 4 resend window | | | | |
 | 5 legacy status | | | | |

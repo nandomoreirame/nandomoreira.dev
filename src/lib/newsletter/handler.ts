@@ -49,6 +49,12 @@ const backTo =
 const isForm = (request: Request): boolean =>
   (request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded');
 
+const RESEND_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+/** A pending address may get another confirmation link after a day. Confirmed passes null and never does. */
+export const mayResendConfirmation = (lastSentAt: Date | null, now: Date): boolean =>
+  lastSentAt !== null && now.getTime() - lastSentAt.getTime() >= RESEND_WINDOW_MS;
+
 /** One notice and one thank-you per address, even if the link is opened twice in this process. */
 const welcomed = new Set<string>();
 
@@ -103,6 +109,18 @@ export const handleSubscribe = async (
   if (saved.isNew && saved.token && sendConfirmation) {
     try {
       await sendConfirmation(result.data.email, saved.token);
+    } catch {
+      console.warn('newsletter: confirmation could not be sent');
+    }
+  } else if (!saved.isNew && sendConfirmation && store.lookup && store.reissue) {
+    try {
+      const existing = await store.lookup(result.data.email);
+      const pending = existing?.status === 'pending';
+      const sentAt = pending && typeof existing?.confirmSentAt === 'string' ? new Date(existing.confirmSentAt) : null;
+      if (pending && (sentAt === null || mayResendConfirmation(sentAt, at))) {
+        const token = await store.reissue(result.data.email, at);
+        await sendConfirmation(result.data.email, token);
+      }
     } catch {
       console.warn('newsletter: confirmation could not be sent');
     }
