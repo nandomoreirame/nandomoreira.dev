@@ -8,11 +8,7 @@ export interface ConfirmStore {
   update: (patch: Record<string, unknown>) => Promise<void>;
 }
 
-export const confirmSubscription = async (
-  token: string,
-  now: Date,
-  store: ConfirmStore,
-): Promise<ConfirmOutcome> => {
+export const confirmSubscription = async (token: string, now: Date, store: ConfirmStore): Promise<ConfirmOutcome> => {
   const tokenHash = createHash('sha256').update(token).digest('hex');
   const doc = await store.find(tokenHash);
   if (!doc || statusOf(doc) !== 'pending') return 'invalid';

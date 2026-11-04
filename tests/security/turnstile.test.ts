@@ -1,8 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 import { requiresCaptcha, verifyTurnstile } from '../../src/lib/security/turnstile';
 
-const form = new Request('https://nandomoreira.dev/api/hire', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' } });
-const json = new Request('https://nandomoreira.dev/api/hire', { method: 'POST', headers: { 'content-type': 'application/json' } });
+const form = new Request('https://nandomoreira.dev/api/hire', {
+  method: 'POST',
+  headers: { 'content-type': 'application/x-www-form-urlencoded' },
+});
+const json = new Request('https://nandomoreira.dev/api/hire', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+});
 
 describe('turnstile', () => {
   it('form sem token Turnstile é recusado', async () => {

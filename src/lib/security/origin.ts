@@ -12,5 +12,8 @@ const DEFAULT_ORIGINS = [
 export const originsFromEnv = (env: Record<string, string | undefined>): readonly string[] => {
   const raw = env.ALLOWED_ORIGINS?.trim();
   if (!raw) return DEFAULT_ORIGINS;
-  return raw.split(',').map(item => item.trim()).filter(item => item.length > 0);
+  return raw
+    .split(',')
+    .map(item => item.trim())
+    .filter(item => item.length > 0);
 };
