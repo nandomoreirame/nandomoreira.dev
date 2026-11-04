@@ -1,6 +1,7 @@
 ---
 import { TITLE_SEPARATOR } from '../lib/seo/meta';
 import { Icon } from 'astro-icon/components';
+import TurnstileWidget from '../components/security/TurnstileWidget.astro';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
 import CopyButton from '../components/ui/CopyButton.astro';
@@ -24,6 +25,7 @@ const profile = await getProfile();
 const email = profile.contacts.find((contact) => contact.kind === 'email');
 
 const outcome = outcomeMessage(Astro.url.searchParams.get('envio'));
+const turnstileSiteKey = (process.env.TURNSTILE_SITE_KEY ?? '').trim();
 // The sales pages have no form of their own: they send the visitor here with
 // ?origem and ?servico. That visit gets a leaner page, without what is meant
 // for agents and developers, and the chosen service goes along with the form.
@@ -223,6 +225,8 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
             maxlength="200"
           />
         </div>
+
+        <TurnstileWidget siteKey={turnstileSiteKey} />
 
         <div class="flex flex-wrap items-center gap-md">
           <Button type="submit">Enviar mensagem</Button>
