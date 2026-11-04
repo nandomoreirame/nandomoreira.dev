@@ -20,7 +20,8 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 | 2 confirm token | done | green | 1d420c7 | pending |
 | 3 mail after confirm | done | green | 8dd64b1 | pending |
 | 4 resend window | done | green | 31c196f | pending |
-| 5 legacy status | done | green | | pending |
+| 5 legacy status | done | green | c5871f3 | pending |
+| 6 turnstile verify | done | green | | pending |
 | 3 mail after confirm | | | | |
 | 4 resend window | | | | |
 | 5 legacy status | | | | |
