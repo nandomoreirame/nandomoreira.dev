@@ -15,6 +15,12 @@ export const subscriberId = (email: string): string => createHash('sha256').upda
 export const statusOf = (doc: { status?: unknown; [key: string]: unknown }): 'pending' | 'confirmed' =>
   doc.status === 'pending' ? 'pending' : 'confirmed';
 
+/** Only the document holding this exact, unexpired, pending token can be confirmed. */
+export const canConfirm = (doc: Record<string, unknown>, tokenHash: string, now: Date): boolean =>
+  statusOf(doc) === 'pending' &&
+  doc.confirmTokenHash === tokenHash &&
+  String(doc.confirmExpiresAt) >= now.toISOString();
+
 /** Plaintext token stays in the confirmation mail. Only its hash is stored. */
 export const newConfirmation = (now: Date) => {
   const token = randomBytes(32).toString('base64url');
@@ -85,27 +91,26 @@ export const firestoreSubscriberStore = (): SubscriberStore => ({
   },
 });
 
-/** Finds a pending document by the hash of its confirmation token and patches that same document. */
-export const firestoreConfirmStore = (): ConfirmStore => {
-  let ref: { update: (patch: Record<string, unknown>) => Promise<unknown> } | null = null;
-  return {
-    find: async tokenHash => {
-      const snap = await getFirestoreClient()
-        .collection(NEWSLETTER_COLLECTION)
-        .where('confirmTokenHash', '==', tokenHash)
-        .limit(1)
-        .get();
-      const found = snap.docs[0];
-      if (!found) {
-        ref = null;
-        return null;
-      }
-      ref = found.ref;
-      return found.data();
-    },
-    update: async patch => {
-      if (!ref) return;
-      await ref.update(patch);
-    },
-  };
-};
+/**
+ * Finds the document by its token hash, then re-checks canConfirm inside a transaction
+ * before it writes, so two clicks on the same link cannot both confirm.
+ */
+export const firestoreConfirmStore = (): ConfirmStore => ({
+  claim: async (tokenHash, now) => {
+    const db = getFirestoreClient();
+    const found = await db.collection(NEWSLETTER_COLLECTION).where('confirmTokenHash', '==', tokenHash).limit(1).get();
+    const ref = found.docs[0]?.ref;
+    if (!ref) return null;
+    return db.runTransaction(async transaction => {
+      const doc = (await transaction.get(ref)).data();
+      if (!doc || !canConfirm(doc, tokenHash, now)) return null;
+      transaction.update(ref, {
+        status: 'confirmed',
+        confirmedAt: now.toISOString(),
+        confirmTokenHash: null,
+        confirmSentAt: null,
+      });
+      return typeof doc.email === 'string' ? doc.email : null;
+    });
+  },
+});

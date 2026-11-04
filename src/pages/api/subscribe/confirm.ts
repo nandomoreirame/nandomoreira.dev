@@ -21,19 +21,10 @@ const REDIRECT = '/posts?assinatura=ok#novidades';
  */
 export const GET: APIRoute = async ({ url }) => {
   const token = url.searchParams.get('token') ?? '';
-  const store = firestoreConfirmStore();
-  let email: string | null = null;
 
   try {
-    const outcome = await confirmSubscription(token, new Date(), {
-      find: async tokenHash => {
-        const doc = await store.find(tokenHash);
-        if (doc && typeof doc.email === 'string') email = doc.email;
-        return doc;
-      },
-      update: patch => store.update(patch),
-    });
-    if (outcome === 'confirmed' && email) {
+    const email = await confirmSubscription(token, new Date(), firestoreConfirmStore());
+    if (email) {
       try {
         await confirmedBy({ email, notify, thankYou });
       } catch {

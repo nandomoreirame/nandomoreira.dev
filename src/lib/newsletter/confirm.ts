@@ -1,23 +1,12 @@
 import { createHash } from 'node:crypto';
-import { statusOf } from './store';
-
-export type ConfirmOutcome = 'confirmed' | 'invalid';
 
 export interface ConfirmStore {
-  find: (tokenHash: string) => Promise<Record<string, unknown> | null>;
-  update: (patch: Record<string, unknown>) => Promise<void>;
+  /**
+   * Confirms the document when canConfirm holds at write time, in one atomic step.
+   * Returns the email only to the single call that performed the confirmation.
+   */
+  claim: (tokenHash: string, now: Date) => Promise<string | null>;
 }
 
-export const confirmSubscription = async (token: string, now: Date, store: ConfirmStore): Promise<ConfirmOutcome> => {
-  const tokenHash = createHash('sha256').update(token).digest('hex');
-  const doc = await store.find(tokenHash);
-  if (!doc || statusOf(doc) !== 'pending') return 'invalid';
-  if (String(doc.confirmExpiresAt) < now.toISOString()) return 'invalid';
-  await store.update({
-    status: 'confirmed',
-    confirmedAt: now.toISOString(),
-    confirmTokenHash: null,
-    confirmSentAt: null,
-  });
-  return 'confirmed';
-};
+export const confirmSubscription = (token: string, now: Date, store: ConfirmStore): Promise<string | null> =>
+  store.claim(createHash('sha256').update(token).digest('hex'), now);
