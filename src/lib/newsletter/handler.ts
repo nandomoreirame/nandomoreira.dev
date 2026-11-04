@@ -6,7 +6,7 @@ import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
 import type { SubscriberNotifier } from './mail';
 import { subscriberMail } from './mail';
-import type { SubscriberStore, SubscriptionSave } from './store';
+import { type SubscriberStore, type SubscriptionSave, statusOf } from './store';
 
 export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro';
 
@@ -115,7 +115,7 @@ export const handleSubscribe = async (
   } else if (!saved.isNew && sendConfirmation && store.lookup && store.reissue) {
     try {
       const existing = await store.lookup(result.data.email);
-      const pending = existing?.status === 'pending';
+      const pending = existing !== null && statusOf(existing) === 'pending';
       const sentAt = pending && typeof existing?.confirmSentAt === 'string' ? new Date(existing.confirmSentAt) : null;
       if (pending && (sentAt === null || mayResendConfirmation(sentAt, at))) {
         const token = await store.reissue(result.data.email, at);

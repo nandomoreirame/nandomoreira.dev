@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { statusOf } from './store';
 
 export type ConfirmOutcome = 'confirmed' | 'invalid';
 
@@ -14,7 +15,7 @@ export const confirmSubscription = async (
 ): Promise<ConfirmOutcome> => {
   const tokenHash = createHash('sha256').update(token).digest('hex');
   const doc = await store.find(tokenHash);
-  if (!doc || doc.status !== 'pending') return 'invalid';
+  if (!doc || statusOf(doc) !== 'pending') return 'invalid';
   if (String(doc.confirmExpiresAt) < now.toISOString()) return 'invalid';
   await store.update({
     status: 'confirmed',
