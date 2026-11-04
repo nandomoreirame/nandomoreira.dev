@@ -26,4 +26,4 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 | 8 hourly limit | done | green | 046b964 | pending |
 | 9 captcha gate | done | green | 7c35cc0 | pending |
 | 10 widget | done | green | b6f5d36 | pending |
-| 11 privacy and JS exception | done | | | pending |
+| 11 privacy and JS exception | done | green | 56c5c91 | pending |
