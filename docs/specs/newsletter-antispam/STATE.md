@@ -27,3 +27,9 @@ script exception) and for the recorded no-JavaScript tradeoff in SPEC.md.
 | 9 captcha gate | done | green | 7c35cc0 | pending |
 | 10 widget | done | green | b6f5d36 | pending |
 | 11 privacy and JS exception | done | green | 56c5c91 | pending |
+
+## Review
+
+Round 1 on 2026-11-04 is a self-assessment. opencode timed out (exit 3). agy and
+codex are disabled in the agent registry. Independent review stays pending.
+`validate_verification.py` exits 1, so `phase` stays `implement`.
