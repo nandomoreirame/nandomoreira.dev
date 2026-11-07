@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CAREER_START_YEAR, RESUME, careerYears } from '../../src/lib/cv/resume';
+import { CAREER_START_YEAR, RESUME, careerYears, summaryOf } from '../../src/lib/cv/resume';
 
 describe('careerYears', () => {
   it('counts from 2011 and moves with the clock, never a typed number', () => {
@@ -23,5 +23,45 @@ describe('RESUME', () => {
 
   it('never uses em or en dashes in prose', () => {
     expect(JSON.stringify(RESUME)).not.toMatch(/[—–]/);
+  });
+});
+
+/** Held to the PDF offered for download (the AI Engineer variant of the CV). */
+describe('RESUME parity with the PDF', () => {
+  it('keeps every bullet of every job, not a digest', () => {
+    const counts = Object.fromEntries(RESUME.experience.map(job => [job.company, job.highlights.length]));
+
+    expect(counts).toEqual({
+      'Liquid AI': 11,
+      'Norte Marketing': 5,
+      'Skyone Solutions': 4,
+      'Itaú Unibanco': 4,
+      'Risknow.ai': 3,
+    });
+    expect(RESUME.earlier).toHaveLength(5);
+    expect(RESUME.projects).toHaveLength(4);
+  });
+
+  it('keeps the bullets a digest used to drop', () => {
+    const liquid = RESUME.experience[0]?.highlights.join('\n') ?? '';
+
+    for (const phrase of [
+      'Levei a automação para dentro do produto',
+      'Conduzi a virada da operação',
+      'Blindei esse fluxo',
+      'Orquestrei três CLIs de IA',
+    ]) {
+      expect(liquid).toContain(phrase);
+    }
+    expect(RESUME.experience[1]?.highlights.join('\n')).toContain('Scrum adaptado');
+    expect(JSON.stringify(RESUME.projects)).toContain('11 estrelas');
+  });
+
+  it('opens with the summary, whose career count comes from the clock', () => {
+    const summary = summaryOf(15);
+
+    expect(summary).toMatch(/^Engenheiro de software com 15 anos de carreira, atuando de dados a interface\./);
+    expect(summary).toContain('Mantenedor open source desde 2012.');
+    expect(summaryOf(16)).toContain('com 16 anos de carreira');
   });
 });

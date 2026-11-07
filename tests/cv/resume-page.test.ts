@@ -34,8 +34,22 @@ describe('/curriculo', () => {
     expect(html).toContain('lang="pt-BR"');
   });
 
-  it('renders the career years from the clock, as +N anos', async () => {
-    expect(await render()).toMatch(/\+\d{2} anos/);
+  it('opens with the summary section, with the career years from the clock', async () => {
+    const html = await render();
+    const resumo = html.indexOf('id="resumo"');
+
+    expect(resumo).toBeGreaterThan(-1);
+    expect(resumo).toBeLessThan(html.indexOf('id="stack"'));
+    expect(html).toMatch(/Engenheiro de software com \d{2} anos de carreira/);
+    expect(html).not.toMatch(/\+\d{2} anos/);
+  });
+
+  it('shows every bullet of the PDF, the long ones included', async () => {
+    const html = await render();
+
+    expect(html.match(/<li>/g)?.length).toBeGreaterThanOrEqual(30);
+    expect(html).toContain('Orquestrei três CLIs de IA com papéis separados');
+    expect(html).toContain('Implantei cultura ágil com Scrum adaptado');
   });
 
   it('is the address the form and the /sobre button use', async () => {

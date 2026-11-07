@@ -5,7 +5,7 @@ import EmptyState from '../components/ui/EmptyState.astro';
 import ResumeLayout from '../layouts/ResumeLayout.astro';
 import { CV_GO_PATH } from '../lib/analytics/outbound';
 import { cvFileName } from '../lib/cv/download';
-import { RESUME, careerYears } from '../lib/cv/resume';
+import { RESUME, careerYears, summaryOf } from '../lib/cv/resume';
 import { FORM_HONEYPOT } from '../lib/hire/form';
 import { TITLE_SEPARATOR } from '../lib/seo/meta';
 
@@ -38,14 +38,13 @@ const heading = 'mb-md border-b border-border-strong pb-xs font-mono text-captio
 
 <ResumeLayout
   title={`Currículo${TITLE_SEPARATOR}${RESUME.name}`}
-  description={`${RESUME.name}, ${RESUME.title}. +${years} anos de carreira, de dados a interface.`}
+  description={`${RESUME.name}, ${RESUME.title}. ${years} anos de carreira, de dados a interface.`}
 >
   <main id="main" class="mx-auto w-full max-w-container-narrow px-sm pt-sm pb-3xl sm:px-lg sm:pt-lg print:max-w-none print:p-0">
     <article class="rounded-lg border border-border bg-background p-md text-foreground sm:p-xl print:rounded-none print:border-0 print:p-0">
       <header class="mb-xl border-b border-border-strong pb-lg">
         <h1 class="font-serif text-h1 font-normal tracking-tight text-balance sm:text-display">{RESUME.name}</h1>
         <p class="mt-xs text-h3 text-primary">{RESUME.title}</p>
-        <p class="mt-sm text-small text-muted-foreground">+{years} anos de carreira, de dados a interface</p>
         <ul class="mt-md flex flex-wrap gap-x-lg gap-y-xs text-small">
           <li>{RESUME.place}</li>
           {
@@ -57,6 +56,11 @@ const heading = 'mb-md border-b border-border-strong pb-xs font-mono text-captio
           }
         </ul>
       </header>
+
+      <section class={section} aria-labelledby="resumo">
+        <h2 id="resumo" class={heading}>Resumo</h2>
+        <p class="text-small text-pretty">{summaryOf(years)}</p>
+      </section>
 
       <section class={section} aria-labelledby="stack">
         <h2 id="stack" class={heading}>Stack técnica</h2>
@@ -114,7 +118,8 @@ const heading = 'mb-md border-b border-border-strong pb-xs font-mono text-captio
           {
             RESUME.projects.map(project => (
               <li>
-                <span class="font-semibold">{project.name}</span>: {project.text}
+                {project.lead && <span class="font-semibold">{project.lead}: </span>}
+                {project.text}
               </li>
             ))
           }
