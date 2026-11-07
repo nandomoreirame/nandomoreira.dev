@@ -23,7 +23,7 @@ describe('ogPages', () => {
       .filter(path => !path.startsWith('/api/'));
     const keys = new Set((await ogPages()).map(page => page.key));
 
-    for (const path of [...sitemapPaths, '/curriculo']) expect(keys, path).toContain(ogKey(path));
+    for (const path of sitemapPaths) expect(keys, path).toContain(ogKey(path));
   });
 
   it('gives every page a title and an eyebrow', async () => {

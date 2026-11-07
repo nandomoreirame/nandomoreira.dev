@@ -53,7 +53,6 @@ export const ogPages = async (): Promise<OgPage[]> => {
     staticPage('/releases', 'As versões deste site desde 2015', 'Versões', 'gantt'),
     staticPage('/releases/17', 'O que entrou em cada dia da versão 17', 'Lançamentos', 'timeline'),
     staticPage('/privacidade', 'Política de privacidade', 'Privacidade', 'panels'),
-    staticPage('/curriculo', profile.headline, 'Currículo', 'ascent'),
     staticPage(
       '/servicos',
       'Seu site, sua loja ou seu sistema, do primeiro papo até estar no ar',

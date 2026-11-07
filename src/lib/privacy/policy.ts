@@ -102,7 +102,7 @@ export const privacySections: PolicySection[] = [
     id: 'curriculo',
     title: 'Nome, empresa e e-mail antes de baixar o currículo',
     paragraphs: [
-      'Antes de baixar o currículo, a página /curriculo pede nome, empresa e e-mail, todos opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
+      'Antes de baixar o currículo, a página /curriculo abre uma janela que pede nome, empresa e e-mail, todos opcionais. Eles servem só para eu saber quem baixou e poder retornar o contato, caso faça sentido (legítimo interesse, art. 7º, IX da LGPD). Não entra em lista nenhuma e não recebe newsletter.',
       'Todo download, com ou sem esses dados, passa por /go/curriculo e entra na contagem de visitas descrita acima como um download, ligado ao código daquele dia, sem nome nem e-mail. Se você pular, é só isso que fica.',
       'Se você deixar nome, empresa ou e-mail, eles ficam no Firestore, junto com a data, e uma cópia chega ao meu e-mail pelo Resend. Não guardo o IP nem o user agent desse envio. O registro é apagado automaticamente 12 meses depois, e a cópia no meu e-mail segue o mesmo prazo.',
       'Se você deixar um e-mail, ele recebe uma confirmação automática pelo Resend, agradecendo o download. Ela não repete nada do que você digitou além do primeiro nome, e o e-mail não entra em nenhuma lista.',
