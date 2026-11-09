@@ -17,7 +17,7 @@ export interface PersonLd {
   sameAs: string[];
 }
 
-const PUBLIC_PROFILE_KINDS = new Set(['github', 'linkedin', 'site']);
+const PUBLIC_PROFILE_KINDS = new Set(['github', 'linkedin', 'site', 'youtube', 'twitch', 'instagram', 'x']);
 
 /**
  * The public profile URLs: sameAs in the JSON-LD and rel=me in the head. The

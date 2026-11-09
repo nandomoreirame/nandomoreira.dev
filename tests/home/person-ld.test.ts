@@ -58,6 +58,25 @@ describe('personLd identity', () => {
   });
 });
 
+describe('social profiles', () => {
+  it('adds YouTube, Twitch, Instagram and X to the public profile URLs', () => {
+    const urls = profileUrls([
+      { kind: 'youtube', value: 'https://www.youtube.com/@nandomoreiradev' },
+      { kind: 'twitch', value: 'https://www.twitch.tv/baratotonto' },
+      { kind: 'instagram', value: 'https://www.instagram.com/nandomoreira.dev' },
+      { kind: 'x', value: 'https://x.com/oseunando' },
+      { kind: 'whatsapp', value: 'https://wa.me/5511900000000' },
+    ]);
+
+    expect(urls).toEqual([
+      'https://www.youtube.com/@nandomoreiradev',
+      'https://www.twitch.tv/baratotonto',
+      'https://www.instagram.com/nandomoreira.dev',
+      'https://x.com/oseunando',
+    ]);
+  });
+});
+
 describe('rel=me identity links', () => {
   it('lists the public profile URLs, never the e-mail', () => {
     expect(profileUrls((profile as { contacts: Parameters<typeof profileUrls>[0] }).contacts)).toEqual([

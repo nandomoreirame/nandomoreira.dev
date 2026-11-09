@@ -122,6 +122,14 @@ contacts:
     value: https://github.com/nandomoreirame
   - kind: linkedin
     value: https://www.linkedin.com/in/nandomoreirame/
+  - kind: youtube
+    value: https://www.youtube.com/@nandomoreiradev
+  - kind: twitch
+    value: https://www.twitch.tv/baratotonto
+  - kind: instagram
+    value: https://www.instagram.com/nandomoreira.dev
+  - kind: x
+    value: https://x.com/oseunando
   - kind: whatsapp
     value: https://wa.me/5511917493331?text=Ol%C3%A1%2C%20Fernando!%20Vim%20pela%20sua%20p%C3%A1gina%20de%20servi%C3%A7os.
 work:

@@ -21,7 +21,7 @@ const availabilitySchema = z.object({
 });
 
 const contactSchema = z.object({
-  kind: z.enum(['email', 'github', 'linkedin', 'site', 'whatsapp']),
+  kind: z.enum(['email', 'github', 'linkedin', 'site', 'whatsapp', 'youtube', 'twitch', 'instagram', 'x']),
   value: z.string().min(1),
 });
 

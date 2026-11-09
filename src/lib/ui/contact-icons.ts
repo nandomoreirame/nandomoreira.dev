@@ -5,6 +5,10 @@ const CONTACT_ICONS: Record<string, string> = {
   linkedin: 'simple-icons:linkedin',
   site: 'lucide:globe',
   whatsapp: 'simple-icons:whatsapp',
+  youtube: 'simple-icons:youtube',
+  twitch: 'simple-icons:twitch',
+  instagram: 'simple-icons:instagram',
+  x: 'simple-icons:x',
 };
 
 export const contactIconFor = (kind: string): string | undefined => CONTACT_ICONS[kind];

@@ -34,6 +34,14 @@ describe('profileSchema', () => {
     expect(profileSchema.safeParse(valid).success).toBe(true);
   });
 
+  it('accepts the social channels as contacts', () => {
+    const contacts = ['youtube', 'twitch', 'instagram', 'x'].map((kind) => ({
+      kind,
+      value: `https://example.com/${kind}`,
+    }));
+    expect(profileSchema.safeParse({ ...valid, contacts: [...valid.contacts, ...contacts] }).success).toBe(true);
+  });
+
   it('requires availability to carry the date it was last updated', () => {
     const { updatedAt: _dropped, ...availability } = valid.availability;
     expect(profileSchema.safeParse({ ...valid, availability }).success).toBe(false);
