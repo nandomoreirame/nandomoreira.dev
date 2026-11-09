@@ -1,0 +1,47 @@
+---
+import { contactGoPath } from '../../lib/analytics/outbound';
+
+// Through /go, like the footer channels, so the click is measured.
+const channels = [
+  { kind: 'youtube', name: 'YouTube' },
+  { kind: 'twitch', name: 'Twitch' },
+];
+const schedule = 'Live todos os dias, das 9h00 às 12h00, a partir de hoje (9/11)';
+const item =
+  'group inline-flex min-h-10 items-center gap-md whitespace-nowrap text-caption text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary';
+---
+
+{/* Announcement strip above the header. It scrolls away with the page, so the
+    sticky header stays the only fixed bar. The track holds the channels twice
+    and slides one copy to the left in a loop (global.css); the copy is hidden
+    from screen readers and the tab order. With reduced motion it stops and
+    shows the first copy only. The rule sits on the wrapper to span the viewport. */}
+<div data-live-bar data-reader-hide class="overflow-hidden border-b border-border">
+  <div class="live-bar-track flex w-max">
+    {
+      [false, true].map((copy) => (
+        <div
+          class="live-bar-group flex min-w-screen shrink-0 items-center justify-around gap-xl px-lg"
+          aria-hidden={copy ? 'true' : undefined}
+        >
+          {channels.map((channel) => (
+            <a
+              href={contactGoPath(channel.kind)}
+              target="_blank"
+              rel="noopener"
+              tabindex={copy ? -1 : undefined}
+              aria-label={copy ? undefined : `${schedule}, no ${channel.name}. Abre em nova aba`}
+              class={item}
+            >
+              <span aria-hidden="true" class="contents">
+                <span class="rounded-sm border border-primary/50 px-sm font-mono text-caption tracking-wide text-primary uppercase">Ao vivo</span>
+                <span class="underline-offset-4 group-hover:underline group-focus-visible:underline">{schedule}, no {channel.name}.</span>
+                <span>→</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>

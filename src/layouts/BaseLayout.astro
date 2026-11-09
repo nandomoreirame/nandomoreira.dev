@@ -8,6 +8,7 @@ import BackToTop from '../components/layout/BackToTop.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import { loadSiteCommits } from '../lib/history/commits';
 import { siteVersionTag } from '../lib/history/history';
+import LiveBar from '../components/layout/LiveBar.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import { serialiseJsonLd } from '../lib/aeo/json-ld';
 import { absoluteUrl, canonicalUrl, pagePath, requireSite } from '../lib/aeo/urls';
@@ -161,14 +162,17 @@ const switcherView = view ?? 'human';
       view === 'ai' ? (
         <slot name="top" />
       ) : (
-        <SiteHeader
-          name={profile.wordmark ?? profile.name}
-          accent="moreira"
-          current={current}
-          section={section}
-          hasPosts={hasPosts}
-          availability={profile.availability}
-        />
+        <>
+          <LiveBar />
+          <SiteHeader
+            name={profile.wordmark ?? profile.name}
+            accent="moreira"
+            current={current}
+            section={section}
+            hasPosts={hasPosts}
+            availability={profile.availability}
+          />
+        </>
       )
     }
 

@@ -1629,3 +1629,32 @@
     transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin));
   }
 }
+
+/* The live strip above the header: two copies of the channels, the track
+   slides one copy to the left and loops. Hover or focus pauses it. */
+@keyframes live-bar-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.live-bar-track {
+  animation: live-bar-slide 40s linear infinite;
+}
+
+.live-bar-track:hover,
+.live-bar-track:focus-within {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-bar-track {
+    animation: none;
+    width: 100%;
+  }
+
+  /* The second copy stays out of sight, clipped past the right edge. */
+  .live-bar-group {
+    flex-wrap: wrap;
+  }
+}
