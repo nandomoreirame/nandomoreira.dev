@@ -60,9 +60,6 @@ export default defineConfig({
     '/apps-que-uso': '/setup',
     // Portuguese alias of /now, the canonical address of the directory.
     '/agora': '/now',
-    // Browsers and crawlers ask for /favicon.ico by default; without this the
-    // post route [slug] answers it.
-    '/favicon.ico': '/favicon.svg',
     // The MCP page moved on 2026-10-08; old links keep working.
     '/conectar': '/mcp',
     // The previous site's only extra route. Nothing replaced it.

@@ -83,7 +83,9 @@ const switcherView = view ?? 'human';
     {/* Theme boot (theme-modes): blocking on purpose, so the stored theme is
         on <html> before the first paint, on pre-rendered routes too. */}
     <script is:inline set:html={THEME_BOOT_SCRIPT} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>{title}</title>
