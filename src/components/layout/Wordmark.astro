@@ -1,17 +1,13 @@
 ---
-import StatusDot from '../ui/StatusDot.astro';
-import type { Availability } from '../../lib/content';
 import { splitWordmark } from '../../lib/layout/wordmark';
 
 interface Props {
   name: string;
   /** Part of the brand painted in the primary colour. */
   accent?: string;
-  /** Tones the dot before the name; it pulses while open for hire. */
-  status?: Availability['status'];
 }
 
-const { name, accent, status } = Astro.props;
+const { name, accent } = Astro.props;
 const brand = splitWordmark(name, accent);
 ---
 
@@ -19,7 +15,7 @@ const brand = splitWordmark(name, accent);
   href="/"
   class="inline-flex shrink-0 items-center gap-sm font-mono text-small font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
-  <StatusDot status={status} />
+  <img src="/brand-mark.png" alt="" width="40" height="40" class="size-10 shrink-0" />
   {/* One line on purpose: any whitespace between the parts would split the
       brand into words, on screen and for screen readers. The outer span keeps
       the parts as one flex item beside the mark. */}

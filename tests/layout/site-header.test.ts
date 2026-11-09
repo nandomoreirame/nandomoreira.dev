@@ -32,17 +32,16 @@ describe('SiteHeader', () => {
     expect(link.replace(/<[^>]+>/g, '').replace(/\s+/g, '')).toBe('nandomoreira.dev');
   });
 
-  it('opens the wordmark with the availability dot, hidden from screen readers', async () => {
+  it('opens the wordmark with the brand mark, hidden from screen readers and without the availability dot', async () => {
     const html = await render({ name: 'nandomoreira.dev', accent: 'moreira', availability: { status: 'open' } });
     const links = html.match(/<a[^>]*href="\/"[^>]*>[\s\S]*?<\/a>/g) ?? [];
 
     // Desktop wordmark and the copy inside the mobile menu.
     expect(links.length).toBe(2);
     for (const link of links) {
-      expect(link).toMatch(/<span[^>]*aria-hidden="true"[^>]*data-status-dot/);
-      expect(link).toContain('text-success');
-      expect(link).toContain('data-pulse');
-      expect(link.indexOf('data-status-dot')).toBeLessThan(link.indexOf('nando'));
+      expect(link).toMatch(/<img[^>]*src="\/brand-mark\.png"[^>]*alt=""/);
+      expect(link).not.toContain('data-status-dot');
+      expect(link.indexOf('brand-mark')).toBeLessThan(link.indexOf('nando'));
     }
   });
 

@@ -37,10 +37,10 @@ const {
   class="sticky top-0 z-40 border-b border-border transition-[background-color] duration-(--duration-base) ease-out data-scrolled:bg-background/40 data-scrolled:backdrop-blur-lg"
 >
   <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm xl:gap-xl">
-    <Wordmark name={name} accent={accent} status={availability?.status} />
+    <Wordmark name={name} accent={accent} />
 
     <SiteNav current={current} section={section} hasPosts={hasPosts}>
-      <Wordmark slot="wordmark" name={name} accent={accent} status={availability?.status} />
+      <Wordmark slot="wordmark" name={name} accent={accent} />
       {availability && <AvailabilityPill slot="availability" status={availability.status} data-menu-availability class="ml-auto" />}
     </SiteNav>
 
