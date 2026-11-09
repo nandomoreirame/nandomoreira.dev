@@ -27,12 +27,30 @@ describe('SiteFooter', () => {
     expect(await render()).not.toContain('BracoZS');
   });
 
-  it('never links to X', async () => {
-    const html = await render();
+  it('lists YouTube, Twitch, Instagram and X, each through /go', async () => {
+    const html = await render({
+      contacts: [
+        ...contacts,
+        { kind: 'youtube', value: 'https://www.youtube.com/@nandomoreiradev' },
+        { kind: 'twitch', value: 'https://www.twitch.tv/baratotonto' },
+        { kind: 'instagram', value: 'https://www.instagram.com/nandomoreira.dev' },
+        { kind: 'x', value: 'https://x.com/oseunando' },
+      ],
+    });
 
-    expect(html).not.toMatch(/>\s*X\s*</);
+    for (const [kind, label] of [
+      ['youtube', 'YouTube'],
+      ['twitch', 'Twitch'],
+      ['instagram', 'Instagram'],
+      ['x', 'X'],
+    ]) {
+      const link = html.match(new RegExp(`<a[^>]*href="/go/contato/${kind}"[\\s\\S]*?</a>`))?.[0] ?? '';
+      expect(link).toContain(`data-icon="simple-icons:${kind}"`);
+      expect(link).toContain(`aria-label="${label}, abre em nova aba"`);
+      expect(link).toMatch(new RegExp(`<span[^>]*aria-hidden="true"[^>]*>\\s*${label}\\s*</span>`));
+    }
     expect(html).not.toContain('x.com');
-    expect(html).not.toContain('twitter.com');
+    expect(html).not.toContain('youtube.com');
   });
 
   it('lists the profile social channels', async () => {
@@ -47,8 +65,13 @@ describe('SiteFooter', () => {
     expect(await render()).not.toContain('@nandomoreira.dev');
   });
 
-  it('offers a link back to the top', async () => {
-    expect(await render()).toContain('href="#main"');
+  // Both moved on 2026-11-08: the way back to the top is a fixed corner button
+  // (BackToTop) and the theme switch sits in the header.
+  it('no longer carries the back-to-top link or the theme switch', async () => {
+    const html = await render();
+    expect(html).not.toContain('href="#main"');
+    expect(html).not.toContain('Topo');
+    expect(html).not.toContain('data-theme-toggle');
   });
 
   it('receives the year rather than reading the clock, so the build is reproducible', async () => {
@@ -66,6 +89,15 @@ describe('SiteFooter', () => {
     }
   });
 
+  it('puts RSS and AGENTS.md before the social icons, which close the row on the right', async () => {
+    const html = await render();
+    const agents = html.indexOf('href="/AGENTS.md"');
+
+    expect(html.indexOf('href="/rss.xml"')).toBeGreaterThan(-1);
+    expect(html.indexOf('href="/rss.xml"')).toBeLessThan(agents);
+    expect(agents).toBeLessThan(html.indexOf('href="/go/contato/github"'));
+  });
+
   it('links the machine-readable entry points: RSS and AGENTS.md', async () => {
     const html = await render();
 
@@ -73,13 +105,16 @@ describe('SiteFooter', () => {
     expect(html).toMatch(/<a[^>]*href="\/AGENTS\.md"[^>]*>\s*AGENTS\.md\s*<\/a>/);
   });
 
-  // Text only, except the theme switch's sun and moon (Fernando, 2026-10-20).
-  it('reads as one line of mono text, with no icon but the theme switch', async () => {
+  // Social channels are icons with a hover tooltip (Fernando, 2026-11-08); the
+  // rest of the row stays mono text.
+  it('draws each social channel as an icon named by a tooltip, keeping the rest as mono text', async () => {
     const html = await render();
-    const toggle = html.match(/<button[^>]*data-theme-toggle[\s\S]*?<\/button>/)?.[0] ?? '';
+    const github = html.match(/<a[^>]*href="\/go\/contato\/github"[\s\S]*?<\/a>/)?.[0] ?? '';
 
-    expect(toggle.match(/<svg/g) ?? []).toHaveLength(2);
-    expect(html.replace(toggle, '')).not.toContain('<svg');
+    expect(github).toContain('data-icon="simple-icons:github"');
+    expect(github).toContain('aria-label="GitHub, abre em nova aba"');
+    expect(github).toMatch(/<span[^>]*aria-hidden="true"[^>]*>\s*GitHub\s*<\/span>/);
+    expect(github).toMatch(/group-hover\/social:opacity-100/);
     expect(html).toContain('font-mono');
   });
 
@@ -92,18 +127,5 @@ describe('SiteFooter', () => {
 
   it('caps its inner row at the frame token, like the header', async () => {
     expect(await render()).toMatch(/<footer[^>]*>\s*<div[^>]*max-w-frame/);
-  });
-
-  // The theme switch lives here, right after the way back to the top
-  // (Fernando, 2026-10-20), not in the header bar.
-  it('carries the one theme switch right after the back-to-top link (theme-modes, REQ-004)', async () => {
-    const html = await render();
-    const toggles = html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? [];
-    expect(toggles).toHaveLength(1);
-    const top = html.indexOf('href="#main"');
-    const toggle = html.search(/<button[^>]*data-theme-toggle/);
-    expect(top).toBeGreaterThan(-1);
-    expect(toggle).toBeGreaterThan(top);
-    expect(html.slice(top, toggle)).not.toMatch(/<a\b/);
   });
 });

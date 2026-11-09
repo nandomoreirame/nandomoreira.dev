@@ -29,6 +29,10 @@ describe('contactIconFor', () => {
     expect(contactIconFor('linkedin')).toBe('simple-icons:linkedin');
     expect(contactIconFor('email')).toBe('lucide:mail');
     expect(contactIconFor('site')).toBe('lucide:globe');
+    expect(contactIconFor('youtube')).toBe('simple-icons:youtube');
+    expect(contactIconFor('twitch')).toBe('simple-icons:twitch');
+    expect(contactIconFor('instagram')).toBe('simple-icons:instagram');
+    expect(contactIconFor('x')).toBe('simple-icons:x');
     expect(contactIconFor('fax')).toBeUndefined();
   });
 });
@@ -50,12 +54,12 @@ describe('contextual icons', () => {
     expect(anchor(html, 'https://y.app')).toContain('data-icon="lucide:arrow-up-right"');
   });
 
-  // Terminal Noir (2026-10-16): the footer is one line of mono text, as in
-  // the Stitch file; the logos stay on the home contact channels.
-  it('keeps the footer channels as text, without logos', async () => {
+  // The footer channels were text (Terminal Noir, 2026-10-16); with six social
+  // networks the row broke, so they are logos with a tooltip (2026-11-08).
+  it('draws the footer channels as logos', async () => {
     const html = await render(SiteFooter, { name: 'N', year: 2026, contacts, version: 'v17.1' });
-    expect(anchor(html, '/go/contato/github')).not.toContain('data-icon');
-    expect(anchor(html, '/go/contato/linkedin')).not.toContain('data-icon');
+    expect(anchor(html, '/go/contato/github')).toContain('data-icon="simple-icons:github"');
+    expect(anchor(html, '/go/contato/linkedin')).toContain('data-icon="simple-icons:linkedin"');
   });
 
   it('shows an icon on every home contact channel', async () => {

@@ -9,7 +9,7 @@ const renderLayout = async (props: { noindex?: boolean } = {}) =>
     slots: { default: '<p>conteúdo</p>' },
   });
 
-const corner = (html: string) => html.match(/<div[^>]*data-corner-actions[^>]*>[\s\S]*?<\/nav>\s*<\/div>/)?.[0] ?? '';
+const corner = (html: string) => html.match(/<div[^>]*data-corner-actions[^>]*>[\s\S]*?data-back-to-top[\s\S]*?<\/a>\s*<\/div>/)?.[0] ?? '';
 
 describe('palette trigger', () => {
   it('is hidden until the script shows it, with an accessible name', async () => {
@@ -53,6 +53,19 @@ describe('palette trigger', () => {
     const switcher = group.indexOf('aria-label="Visão da página"');
     expect(trigger).toBeGreaterThan(-1);
     expect(switcher).toBeGreaterThan(trigger);
+  });
+
+  it('ends the stack with the back-to-top button, an arrow that opens "Topo" on hover or focus', async () => {
+    const group = corner(await renderLayout());
+    const link = group.match(/<a[^>]*data-back-to-top[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('href="#main"');
+    expect(link).toContain('aria-label="Voltar ao topo"');
+    expect(link).toContain('data-icon="lucide:arrow-up"');
+    expect(group.indexOf('data-back-to-top')).toBeGreaterThan(group.indexOf('data-palette-trigger'));
+    const label = link.match(/<span[^>]*>\s*Topo\s*<\/span>/)?.[0] ?? '';
+    expect(label).toMatch(/max-w-0/);
+    expect(label).toMatch(/group-hover\/top:max-w-20/);
+    expect(label).toMatch(/group-focus-visible\/top:max-w-20/);
   });
 
   it('leaves phones: the whole corner stack is gone below md', async () => {

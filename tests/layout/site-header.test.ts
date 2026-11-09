@@ -117,10 +117,19 @@ describe('SiteHeader', () => {
     expect(html).toContain('max-w-frame');
   });
 
-  // Since 2026-10-20 the switch is in the footer, beside "Topo" (Fernando).
-  it('leaves the theme switch out of the bar and the menu (theme-modes, REQ-004)', async () => {
+  // Since 2026-11-08 the switch is in the bar, right of the availability pill.
+  it('carries the one theme switch right of the availability pill (theme-modes, REQ-004)', async () => {
     const html = await render({ availability: { status: 'open' } });
-    expect(html).not.toContain('data-theme-toggle');
+    expect(html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? []).toHaveLength(1);
+    const pill = html.indexOf('data-header-availability');
+    const toggle = html.search(/<button[^>]*data-theme-toggle/);
+    expect(pill).toBeGreaterThan(-1);
+    expect(toggle).toBeGreaterThan(pill);
+  });
+
+  it('keeps the theme switch in the bar when there is no availability pill', async () => {
+    const html = await render();
+    expect(html.match(/<button[^>]*data-theme-toggle[^>]*>/g) ?? []).toHaveLength(1);
   });
 
   it('forwards the posts flag and the current route to the navigation', async () => {

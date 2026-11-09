@@ -4,6 +4,7 @@ import PointerField from '../components/art/PointerField.astro';
 import CommandPalette from '../components/search/CommandPalette.astro';
 import { aiPathFor, mdPathFor } from '../lib/ai-view/paths';
 import PaletteTrigger from '../components/search/PaletteTrigger.astro';
+import BackToTop from '../components/layout/BackToTop.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import { loadSiteCommits } from '../lib/history/commits';
 import { siteVersionTag } from '../lib/history/history';
@@ -176,10 +177,11 @@ const switcherView = view ?? 'human';
     </div>
 
     <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} />
-    {/* Bottom-right corner stack: the palette trigger above the AI switcher. Not on phones. */}
+    {/* Bottom-right corner stack: the palette trigger, the AI switcher and the way back to the top. Not on phones. */}
     <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm max-md:hidden">
       <PaletteTrigger />
       {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />}
+      <BackToTop />
     </div>
     <CommandPalette
       mdPath={showSwitcher ? mdPathFor(switcherHumanPath) : undefined}

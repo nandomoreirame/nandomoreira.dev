@@ -3,6 +3,7 @@ import SiteNav from './SiteNav.astro';
 import Wordmark from './Wordmark.astro';
 import type { Availability } from '../../lib/content';
 import AvailabilityPill from './AvailabilityPill.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   name: string;
@@ -44,5 +45,8 @@ const {
     </SiteNav>
 
     {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
+
+    {/* The theme switch (theme-modes, REQ-004), right of the pill. */}
+    <ThemeToggle class={availability ? '-ml-sm' : 'max-md:ml-auto'} />
   </div>
 </header>

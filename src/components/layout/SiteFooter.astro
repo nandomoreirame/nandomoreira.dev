@@ -1,7 +1,8 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
+import { contactIconFor } from '../../lib/ui/contact-icons';
 import { RELEASES_PATH } from '../../lib/releases/releases';
-import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   name: string;
@@ -17,10 +18,17 @@ const LABELS: Record<string, string> = {
   github: 'GitHub',
   linkedin: 'LinkedIn',
   site: 'Site',
+  youtube: 'YouTube',
+  twitch: 'Twitch',
+  instagram: 'Instagram',
+  x: 'X',
 };
 
 // Email is deliberately absent: the footer is on every page and gets scraped.
 const social = contacts.filter((contact) => contact.kind in LABELS);
+
+const socialLink =
+  'group/social relative inline-flex size-9 items-center justify-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 
 const link =
   'inline-flex min-h-11 items-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -43,16 +51,28 @@ const link =
     </p>
 
     <nav class="flex flex-wrap items-center gap-x-lg" aria-label="Canais">
-      {social.map((contact) => (
-        <a href={contactGoPath(contact.kind)} target="_blank" rel="noopener" class={link}>
-          {LABELS[contact.kind]}
-        </a>
-      ))}
       <a href="/rss.xml" class={link}>RSS</a>
       <a href="/AGENTS.md" class={link}>AGENTS.md</a>
-      <a href="#main" class={link}>Topo ↑</a>
-      {/* The theme switch (theme-modes, REQ-004), beside the way back to the top. */}
-      <ThemeToggle />
+      <span class="flex items-center">
+        {social.map((contact) => (
+          <a
+            href={contactGoPath(contact.kind)}
+            target="_blank"
+            rel="noopener"
+            aria-label={`${LABELS[contact.kind]}, abre em nova aba`}
+            class={socialLink}
+          >
+            <Icon name={contactIconFor(contact.kind)!} class="size-4" aria-hidden="true" />
+            {/* The name as a tooltip, above the icon: the footer is the last thing on the page. */}
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-xs -translate-x-1/2 whitespace-nowrap rounded-md border border-border-strong bg-surface-elevated px-sm py-xs font-mono text-caption text-foreground opacity-0 transition-opacity duration-(--duration-fast) ease-out group-hover/social:opacity-100 group-focus-visible/social:opacity-100"
+            >
+              {LABELS[contact.kind]}
+            </span>
+          </a>
+        ))}
+      </span>
     </nav>
   </div>
 </footer>
