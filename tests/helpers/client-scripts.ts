@@ -56,6 +56,12 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
           ? [`${route}: turnstile loader is ${size} B gzip, budget ${TURNSTILE_BUDGET_BYTES}`]
           : [];
       }
+      if (script.includes(LIVE_BAR_MARKER)) {
+        const size = gzipSync(script).length;
+        return size > LIVE_BAR_BUDGET_BYTES
+          ? [`${route}: live bar sync is ${size} B gzip, budget ${LIVE_BAR_BUDGET_BYTES}`]
+          : [];
+      }
       if (script.includes(NOW_PREVIEW_MARKER)) {
         if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
@@ -73,6 +79,10 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
       return problems;
     }),
   );
+
+/** Seventh named exception (2026-11-11): the announcement bar fetches its text from /api/live-bar, on any page. */
+export const LIVE_BAR_MARKER = 'data-live-bar-sync';
+export const LIVE_BAR_BUDGET_BYTES = 768;
 
 /** Fifth named exception (docs/specs/giscus-comments, REQ-004): the loader, within budget. The external widget is not part of the page. */
 export const GISCUS_MARKER = GISCUS_LOADER_MARKER;

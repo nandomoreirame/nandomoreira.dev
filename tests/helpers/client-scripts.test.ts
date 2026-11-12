@@ -4,6 +4,7 @@ import { THEME_BOOT_BUDGET_BYTES, THEME_BOOT_SCRIPT } from '../../src/lib/theme/
 import {
   GISCUS_BUDGET_BYTES,
   GISCUS_MARKER,
+  LIVE_BAR_MARKER,
   TURNSTILE_MARKER,
   PALETTE_BUDGET_BYTES,
   PALETTE_MARKER,
@@ -14,6 +15,7 @@ import {
 
 const POINTER = "document.querySelectorAll('[data-pointer-field]')";
 const PREVIEW = "document.querySelectorAll('[data-now-preview]')";
+const LIVE_BAR = `document.querySelector('[${LIVE_BAR_MARKER}]')`;
 const GISCUS = `document.querySelector('[${GISCUS_MARKER}]')`;
 
 describe('executableScripts', () => {
@@ -84,6 +86,13 @@ describe('scriptViolations', () => {
     const bloated = `${PREVIEW};${randomBytes(3000).toString('hex')}`;
     const [violation] = scriptViolations([{ route: '/now', scripts: [bloated] }]);
     expect(violation).toMatch(/^\/now: audio preview is \d+ B gzip, budget 1024$/);
+  });
+
+  it('accepts the live bar sync on any page and rejects it above 768 B gzip', () => {
+    expect(scriptViolations([{ route: '/sobre', scripts: [POINTER, LIVE_BAR] }])).toEqual([]);
+    const bloated = `${LIVE_BAR};${randomBytes(3000).toString('hex')}`;
+    const [violation] = scriptViolations([{ route: '/sobre', scripts: [bloated] }]);
+    expect(violation).toMatch(/^\/sobre: live bar sync is \d+ B gzip, budget 768$/);
   });
 
   it('accepts the giscus loader within budget and rejects a larger one', () => {
