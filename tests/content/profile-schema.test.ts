@@ -35,7 +35,7 @@ describe('profileSchema', () => {
   });
 
   it('accepts the social channels as contacts', () => {
-    const contacts = ['youtube', 'twitch', 'instagram', 'x'].map((kind) => ({
+    const contacts = ['youtube', 'twitch', 'instagram', 'x', 'devnull'].map((kind) => ({
       kind,
       value: `https://example.com/${kind}`,
     }));

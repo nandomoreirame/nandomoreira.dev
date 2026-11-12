@@ -33,6 +33,7 @@ describe('contactIconFor', () => {
     expect(contactIconFor('twitch')).toBe('simple-icons:twitch');
     expect(contactIconFor('instagram')).toBe('simple-icons:instagram');
     expect(contactIconFor('x')).toBe('simple-icons:x');
+    expect(contactIconFor('devnull')).toBe('devnull');
     expect(contactIconFor('fax')).toBeUndefined();
   });
 });

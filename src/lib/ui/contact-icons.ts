@@ -9,6 +9,7 @@ const CONTACT_ICONS: Record<string, string> = {
   twitch: 'simple-icons:twitch',
   instagram: 'simple-icons:instagram',
   x: 'simple-icons:x',
+  devnull: 'devnull',
 };
 
 export const contactIconFor = (kind: string): string | undefined => CONTACT_ICONS[kind];

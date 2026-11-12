@@ -35,6 +35,7 @@ describe('SiteFooter', () => {
         { kind: 'twitch', value: 'https://www.twitch.tv/baratotonto' },
         { kind: 'instagram', value: 'https://www.instagram.com/nandomoreira.dev' },
         { kind: 'x', value: 'https://x.com/oseunando' },
+        { kind: 'devnull', value: 'https://dev-null.sh/@nandomoreirame' },
       ],
     });
 
@@ -43,9 +44,10 @@ describe('SiteFooter', () => {
       ['twitch', 'Twitch'],
       ['instagram', 'Instagram'],
       ['x', 'X'],
+      ['devnull', '/dev/null'],
     ]) {
       const link = html.match(new RegExp(`<a[^>]*href="/go/contato/${kind}"[\\s\\S]*?</a>`))?.[0] ?? '';
-      expect(link).toContain(`data-icon="simple-icons:${kind}"`);
+      expect(link).toContain(`data-icon="${kind === 'devnull' ? 'devnull' : `simple-icons:${kind}`}"`);
       expect(link).toContain(`aria-label="${label}, abre em nova aba"`);
       expect(link).toMatch(new RegExp(`<span[^>]*aria-hidden="true"[^>]*>\\s*${label}\\s*</span>`));
     }

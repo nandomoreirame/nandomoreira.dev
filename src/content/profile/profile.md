@@ -120,6 +120,8 @@ contacts:
     value: oi@nandomoreira.dev
   - kind: github
     value: https://github.com/nandomoreirame
+  - kind: devnull
+    value: https://dev-null.sh/@nandomoreirame
   - kind: linkedin
     value: https://www.linkedin.com/in/nandomoreirame/
   - kind: youtube

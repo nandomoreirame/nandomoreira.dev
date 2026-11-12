@@ -65,6 +65,7 @@ describe('social profiles', () => {
       { kind: 'twitch', value: 'https://www.twitch.tv/baratotonto' },
       { kind: 'instagram', value: 'https://www.instagram.com/nandomoreira.dev' },
       { kind: 'x', value: 'https://x.com/oseunando' },
+      { kind: 'devnull', value: 'https://dev-null.sh/@nandomoreirame' },
       { kind: 'whatsapp', value: 'https://wa.me/5511900000000' },
     ]);
 
@@ -73,6 +74,7 @@ describe('social profiles', () => {
       'https://www.twitch.tv/baratotonto',
       'https://www.instagram.com/nandomoreira.dev',
       'https://x.com/oseunando',
+      'https://dev-null.sh/@nandomoreirame',
     ]);
   });
 });
