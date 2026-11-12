@@ -100,6 +100,15 @@ describe('SiteFooter', () => {
     expect(agents).toBeLessThan(html.indexOf('href="/go/contato/github"'));
   });
 
+  it('opens the links page in a new tab, before RSS', async () => {
+    const html = await render();
+    const link = html.match(/<a[^>]*href="https:\/\/links\.nandomoreira\.dev\/?"[^>]*>\s*Links\s*<\/a>/)?.[0] ?? '';
+
+    expect(link).toContain('target="_blank"');
+    expect(link).toContain('rel="noopener"');
+    expect(html.indexOf('href="https://links.nandomoreira.dev')).toBeLessThan(html.indexOf('href="/rss.xml"'));
+  });
+
   it('links the machine-readable entry points: RSS and AGENTS.md', async () => {
     const html = await render();
 
