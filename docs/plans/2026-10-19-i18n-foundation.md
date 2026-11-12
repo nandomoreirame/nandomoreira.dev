@@ -5,10 +5,21 @@
 **Objetivo:** versão inglesa do site sob `/en`, com slugs traduzidos, `hreflang`, dicionário de UI tipado, seletor e sugestão de idioma, SEO e visão IA em inglês, e o perfil traduzido. Tudo atrás da bandeira `EN_LIVE`.
 **Arquitetura:** funções puras em `src/lib/i18n/` (idioma pelo caminho, mapa de rotas, alternados, bandeira, dicionário). As páginas humanas viram componentes em `src/components/pages/` que recebem `locale`, e as rotas pt-BR e en são cascas. A camada de acesso ganha o parâmetro `locale`. Posts e cases ingleses ainda devolvem vazio, porque o modelo de sobreposição chega na `i18n-content`.
 **Stack:** Astro 7.2 SSR, Zod 4, Tailwind 4, Vitest com `experimental_AstroContainer`.
-**Total de tarefas:** 35, em 6 lotes (a 14b entrou na revisão de 2026-10-23).
+**Total de tarefas:** 37, em 6 lotes (a 14b entrou na revisão de 2026-10-23; a 14c e a 27b, na de 2026-11-12).
 **Complexidade estimada:** large.
 **Depende de:** nada.
 **Features irmãs:** `i18n-content` (depende desta) e `i18n-sales` (depende desta).
+
+## Revisão de 2026-11-12
+
+Entre 2026-10-23 e 2026-11-12 entraram 87 commits. As tarefas 1 a 10 e 28 a 34 seguem como estão. O que mudou:
+
+- **Faixa de anúncios (`LiveBar`) e `BackToTop`** entraram no `BaseLayout` e têm texto fixo em português. A faixa lê os itens do Firestore (`site_config/live_bar`) por `/api/live-bar`, então traduzir o padrão não basta: o script a troca por itens em pt-BR no cliente. Nova tarefa **14c**.
+- **Confirmação da newsletter** ganhou uma página própria (`confirm-page.ts`, `/api/subscribe/confirm`) e um e-mail (`newsletter-confirm.tsx`), ambos em pt-BR. A tarefa 27 só cobria o card e o handler. Nova tarefa **27b**.
+- **`/curriculo`** foi refeito (folha com diálogo de download, `ResumeLayout`, `cv/resume.ts`). A tarefa 20 precisa partir da página atual.
+- **Rodapé** ganhou o link "Links" (`https://links.nandomoreira.dev`) e o canal `devnull` (`/dev/null`, ícone local `devnull`). O perfil inglês da tarefa 8 já nasce com o contato `devnull` (paridade, REQ-021), e a tarefa 13 aponta o link "Links" para `/en/` no idioma inglês, porque o site de links já tem versão em inglês.
+- `BaseLayout`, `SiteHeader` e `SiteFooter` mudaram: releia as tarefas 11 a 13 contra o arquivo atual antes de implementar. O teto de 2304 B do script continua em `tests/helpers/client-scripts.ts`; a medição real é a do build, na tarefa 14.
+- `TurnstileWidget` (captcha dos formulários) não tem texto visível; só confirme na tarefa 19 que o `language` do widget segue o idioma da página.
 
 ## Revisão de 2026-10-23
 
@@ -39,8 +50,8 @@ O plano de 2026-10-19 vale. Esta revisão cobre o que o código ganhou depois, p
 |---|---|---|
 | A. Núcleo i18n | 1 a 7 | — |
 | B. Conteúdo | 8 a 10 | A |
-| C. Layout e navegação | 11 a 14b | A, B |
-| D. Páginas | 15 a 27 | C |
+| C. Layout e navegação | 11 a 14c | A, B |
+| D. Páginas | 15 a 27b | C |
 | E. SEO e máquina | 28 a 32 | D |
 | F. Documentação e verificação | 33 e 34 | E |
 
@@ -1514,6 +1525,27 @@ Confira as teclas reais de `GO_TARGETS` em `src/lib/search/copy.ts` e use essa l
 
 ---
 
+### Tarefa 14c: faixa de anúncios e voltar ao topo em inglês
+
+**Requisito:** REQ-003, REQ-008
+**Arquivos:**
+- Modificar: `src/components/layout/LiveBar.astro`, `src/components/layout/BackToTop.astro`, `src/lib/live-bar/config.ts`, `src/lib/live-bar/render.ts`, `src/pages/api/live-bar.ts`, `src/layouts/BaseLayout.astro`, `scripts/set-live-bar.*`, `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
+- Teste: `tests/i18n/live-bar-en.test.ts`
+
+**Decisão pendente (Fernando), antes de começar.** A faixa sai do Firestore, e o item é um texto só. Recomendação: o item ganha `textEn` e `badgeEn` opcionais, `/api/live-bar?locale=en` devolve só os itens que têm `textEn` (e `enabled: false` se nenhum tiver), e o padrão de `DEFAULT_LIVE_BAR` tem as duas versões. Alternativas: (a) esconder a faixa em `/en`, que é o mais simples, mas some o anúncio das lives; (b) manter pt-BR na faixa, o que viola REQ-008. O `set-live-bar` precisa aceitar `--text-en`.
+
+**Passo 1: teste que falha.** (1) `liveBarHtml(items, 'en')` usa `textEn`/`badgeEn` e descarta item sem tradução; (2) `DEFAULT_LIVE_BAR` em inglês diz "Live every day, 9:00 AM to 12:00 PM (Brasília time), on YouTube." com o selo "Live", e o `aria-label` do selo e dos grupos duplicados segue o idioma; (3) o `LiveBar` em `locale: 'en'` renderiza o padrão inglês e o script pede `/api/live-bar?locale=en`; (4) `BackToTop` em inglês tem `aria-label="Back to top"`; (5) sem `textEn` em nenhum item, a faixa inglesa fica `hidden`.
+
+**Passo 2:** `npx vitest run tests/i18n/live-bar-en.test.ts tests/layout/live-bar.test.ts tests/live-bar`. Esperado: FAIL só nos testes novos.
+
+**Passo 3: implementação.** Padrão do lote: `locale` como prop de `LiveBar` e `BackToTop`, rótulos no dicionário (seção `chrome`), o `BaseLayout` repassa o `locale`. O script da faixa continua inline no componente e não ganha `<script>` novo. Confira o portão de JS.
+
+**Passo 4:** `npx vitest run tests/i18n tests/layout tests/live-bar tests/security`. Esperado: PASS, e `npm run check` limpo.
+
+**Passo 5:** `/git commit`.
+
+---
+
 ## Lote D: páginas
 
 Padrão de todas as tarefas deste lote (D7):
@@ -1773,6 +1805,8 @@ export const contactOriginOf = (url: URL): string =>
 ---
 
 ### Tarefa 20: Currículo (`/curriculo` ↔ `/en/resume`)
+
+> **Revisão de 2026-11-12.** Parta da página atual: folha do currículo, `ResumeLayout`, `cv/resume.ts` e o diálogo de download (`data-download-bar`). O `ResumeLayout` tem `<html lang="pt-BR">` fixo e precisa receber `locale`. `tests/cv/resume-page.test.ts` e `resume-data.test.ts` mudaram depois do plano: a versão pt-BR continua verde sem edição.
 
 **Requisito:** REQ-002, REQ-003
 **Arquivos:**
@@ -2100,6 +2134,25 @@ Confira as props reais do `NewsletterCard` (abra o componente) e ajuste os nomes
 **Passo 3: implementação.** No handler, `ORIGINS` passa a `new Set(['/', '/posts', '/en', '/en/posts'])` e o `originOf` é exportado como `subscribeOriginOf`. O `copy.ts` ganha `newsletterCopy(locale)` e `newsletterOutcomes(locale)`, mantendo as constantes antigas. Remova o `it.todo` deixado na tarefa 17.
 
 **Passo 4:** `npx vitest run tests/i18n tests/newsletter tests/posts/newsletter-card.test.ts`. Esperado: PASS.
+
+**Passo 5:** `/git commit`.
+
+---
+
+### Tarefa 27b: confirmação da newsletter em inglês
+
+**Requisito:** REQ-003, REQ-008
+**Arquivos:**
+- Modificar: `src/lib/newsletter/confirm-page.ts`, `src/lib/newsletter/confirm.ts`, `src/pages/api/subscribe/confirm.ts`, `src/emails/newsletter-confirm.tsx`, `src/lib/newsletter/copy.ts`, `src/lib/newsletter/store.ts` (o idioma da inscrição), `src/lib/i18n/messages/pt-BR.ts`, `src/lib/i18n/messages/en.ts`
+- Teste: `tests/i18n/newsletter-confirm-en.test.ts`
+
+**Passo 1: teste que falha.** (1) `confirmPage(token, 'en')` tem `<html lang="en">`, título e botão em inglês, e a versão pt-BR continua byte a byte igual; (2) o e-mail de confirmação renderiza em inglês quando a inscrição veio de `/en` e em pt-BR quando veio da raiz; (3) depois da confirmação, o redirect volta para `/en/posts?assinatura=ok#novidades` quando a inscrição foi em inglês, e para `/posts?...` caso contrário; (4) o idioma gravado com o assinante não vaza para a resposta pública (só escolhe a cópia).
+
+**Passo 2:** `npx vitest run tests/i18n/newsletter-confirm-en.test.ts tests/newsletter`. Esperado: FAIL só no arquivo novo.
+
+**Passo 3: implementação.** O formulário da tarefa 27 já sabe o idioma pela origem; grave-o como um campo opcional do assinante pendente (sem campo, pt-BR) e leia-o na confirmação, no e-mail e no redirect. Não amplie o dado pessoal guardado além disso: é um código de idioma, não um dado do visitante (confira `src/lib/privacy/policy.ts` e a spec de privacidade).
+
+**Passo 4:** `npx vitest run tests/i18n tests/newsletter tests/security`. Esperado: PASS.
 
 **Passo 5:** `/git commit`.
 
