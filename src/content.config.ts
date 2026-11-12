@@ -65,4 +65,9 @@ const profile = defineCollection({
   schema: profileSchema,
 });
 
-export const collections = { projects, posts, profile };
+const profileEn = defineCollection({
+  loader: glob({ base: './src/content/profile-en', pattern: '**/*.md' }),
+  schema: profileSchema,
+});
+
+export const collections = { projects, posts, profile, profileEn };
