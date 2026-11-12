@@ -15,4 +15,7 @@ export const ptBR = {
     suggestionLink: 'Ler em português',
     dismiss: 'Dispensar',
   },
+  posts: {
+    readingTime: (minutes: number) => `${minutes} min de leitura`,
+  },
 } as const;

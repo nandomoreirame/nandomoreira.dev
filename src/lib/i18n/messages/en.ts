@@ -12,4 +12,7 @@ export const en: Messages = {
     suggestionLink: 'Read in English',
     dismiss: 'Dismiss',
   },
+  posts: {
+    readingTime: (minutes: number) => `${minutes} min read`,
+  },
 };
