@@ -56,3 +56,20 @@ describe('reserved slug ia', () => {
     expect(post.safeParse({ ...postBase, slug: 'iaas' }).success).toBe(true);
   });
 });
+
+describe('the en slug', () => {
+  it('is reserved for posts', () => {
+    const result = post.safeParse({ ...postBase, slug: 'en' });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error?.issues)).toMatch(/reserved/);
+  });
+
+  it('is reserved for cases', () => {
+    const result = projectSchema.safeParse({ ...projectBase, slug: 'en' });
+    expect(result.success).toBe(false);
+  });
+
+  it('still accepts a slug that merely starts with en', () => {
+    expect(post.safeParse({ ...postBase, slug: 'enxame' }).success).toBe(true);
+  });
+});

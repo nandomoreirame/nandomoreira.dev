@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { BLOCKS } from '../blocks';
 import { ART_MOTIFS } from '../motifs';
 
+const RESERVED_SLUGS = ['ia', 'en'];
+
 const imageSchema = z.object({
   src: z.string().min(1),
   alt: z.string().min(1, 'A case image is content, never decoration: alt is required'),
@@ -84,8 +86,9 @@ export const projectSchema = z
       path: ['slug'],
     },
   )
-  .refine(project => project.slug !== 'ia', {
-    message: 'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a case cannot claim that segment',
+  .refine(project => !RESERVED_SLUGS.includes(project.slug), {
+    message:
+      'slug is reserved: "ia" is the AI view of a page and "en" is the English site root, so a case cannot claim either',
     path: ['slug'],
   });
 

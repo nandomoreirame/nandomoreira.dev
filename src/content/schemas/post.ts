@@ -2,6 +2,8 @@ import type { SchemaContext } from 'astro:content';
 import { z } from 'zod';
 import { ART_MOTIFS } from '../motifs';
 
+const RESERVED_SLUGS = ['ia', 'en'];
+
 /**
  * Schema factory for the posts collection. Declared as a function so Astro
  * can inject `image()`, which wires cover paths into the asset pipeline.
@@ -79,8 +81,9 @@ export const postSchema = ({ image }: SchemaContext) =>
       message: 'publishedAt must fall on the post date',
       path: ['publishedAt'],
     })
-    .refine(post => post.slug !== 'ia', {
-      message: 'slug "ia" is reserved: /<x>/ia is the AI view of a page, so a post cannot claim that segment',
+    .refine(post => !RESERVED_SLUGS.includes(post.slug), {
+      message:
+        'slug is reserved: "ia" is the AI view of a page and "en" is the English site root, so a post cannot claim either',
       path: ['slug'],
     });
 
