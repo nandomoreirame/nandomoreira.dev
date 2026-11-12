@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/locale';
+
 const ISO_DATE = /^(\d{4})-(\d{2})-\d{2}$/;
 
 /**
@@ -22,7 +24,7 @@ const FULL_ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
  * "11 de outubro de 2026". Built from the parts in UTC and formatted in UTC,
  * so no local offset can move the day.
  */
-export const toLongDate = (iso: string): string => {
+export const toLongDate = (iso: string, locale: Locale = 'pt-BR'): string => {
   const match = FULL_ISO_DATE.exec(iso);
 
   if (!match) {
@@ -31,7 +33,7 @@ export const toLongDate = (iso: string): string => {
 
   const [, year, month, day] = match.map(Number);
 
-  return new Intl.DateTimeFormat('pt-BR', {
+  return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -40,13 +42,14 @@ export const toLongDate = (iso: string): string => {
 };
 
 const SHORT_MONTHS = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
+const SHORT_MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /**
  * "16 out. 2026", the post listings' stamp (2026-10-16). The day is padded so
  * every stamp has the same width in mono. A fixed table, not Intl, whose
  * pt-BR short month has no stable punctuation.
  */
-export const toShortDate = (iso: string): string => {
+export const toShortDate = (iso: string, locale: Locale = 'pt-BR'): string => {
   const match = FULL_ISO_DATE.exec(iso);
 
   if (!match) {
@@ -54,6 +57,7 @@ export const toShortDate = (iso: string): string => {
   }
 
   const [, year, month, day] = match;
+  const months = locale === 'en' ? SHORT_MONTHS_EN : SHORT_MONTHS;
 
-  return `${day} ${SHORT_MONTHS[Number(month) - 1]} ${year}`;
+  return `${day} ${months[Number(month) - 1]} ${year}`;
 };
