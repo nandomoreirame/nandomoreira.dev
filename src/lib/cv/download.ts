@@ -91,11 +91,17 @@ type Outcome = 'ok' | 'invalido' | 'limite';
 /** Which field the page should point the visitor back to. */
 type Field = 'nome' | 'empresa' | 'email';
 
+/** Return pages of the CV form, by its ?origem; anything else is /curriculo (never an open redirect). */
+const RESUME_ORIGINS: Record<string, string> = { 'resume-en': '/en/resume' };
+
+export const resumeOriginOf = (url: URL): string =>
+  RESUME_ORIGINS[url.searchParams.get('origem') ?? ''] ?? CV_PAGE;
+
 const redirect = (location: string): Response =>
   new Response(null, { status: 303, headers: { location, 'cache-control': 'no-store' } });
 
-const outcome = (kind: Outcome, field: Field = 'email'): Response =>
-  redirect(kind === 'ok' ? `${CV_PAGE}?envio=ok#baixar` : `${CV_PAGE}?envio=${kind}#${field}`);
+const outcome = (kind: Outcome, base: string, field: Field = 'email'): Response =>
+  redirect(kind === 'ok' ? `${base}?envio=ok#baixar` : `${base}?envio=${kind}#${field}`);
 
 export const toCvDownload = (
   { name, company, email }: { name: string | null; company: string | null; email: string | null },
@@ -116,31 +122,32 @@ export const handleCvDownload = async (
   request: Request,
   { store, notifier, limiter, now, analytics, thankYou }: CvDependencies,
 ): Promise<Response> => {
-  if (request.method !== 'POST') return redirect(CV_PAGE);
+  const base = resumeOriginOf(new URL(request.url));
+  if (request.method !== 'POST') return redirect(base);
 
-  if (!limiter.check(clientIpOf(request.headers))) return outcome('limite');
+  if (!limiter.check(clientIpOf(request.headers))) return outcome('limite', base);
 
   let fields: URLSearchParams;
   try {
     fields = new URLSearchParams(await readLimitedText(request));
   } catch {
-    return outcome('invalido');
+    return outcome('invalido', base);
   }
 
   // A filled honeypot gets the same answer as a real visitor, so the trap is
   // not revealed; nothing is stored and nothing is sent.
-  if ((fields.get(FORM_HONEYPOT) ?? '').trim() !== '') return outcome('ok');
+  if ((fields.get(FORM_HONEYPOT) ?? '').trim() !== '') return outcome('ok', base);
 
   const name = (fields.get('nome') ?? '').trim();
   const company = (fields.get('empresa') ?? '').trim();
   const email = (fields.get('email') ?? '').trim();
 
   // Nothing typed, nothing stored here (the download itself counts in /go).
-  if (name === '' && company === '' && email === '') return outcome('ok');
+  if (name === '' && company === '' && email === '') return outcome('ok', base);
 
-  if (name.length > MAX_NAME) return outcome('invalido', 'nome');
-  if (company.length > MAX_COMPANY) return outcome('invalido', 'empresa');
-  if (email !== '' && !emailSchema.safeParse(email).success) return outcome('invalido', 'email');
+  if (name.length > MAX_NAME) return outcome('invalido', base, 'nome');
+  if (company.length > MAX_COMPANY) return outcome('invalido', base, 'empresa');
+  if (email !== '' && !emailSchema.safeParse(email).success) return outcome('invalido', base, 'email');
 
   const download = toCvDownload({ name: name || null, company: company || null, email: email || null }, now());
 
@@ -149,7 +156,7 @@ export const handleCvDownload = async (
     id = await store.save(download);
   } catch {
     console.warn('cv: could not store a download record');
-    return outcome('ok');
+    return outcome('ok', base);
   }
 
   let journey: JourneyData | undefined;
@@ -186,7 +193,7 @@ export const handleCvDownload = async (
     }
   }
 
-  return outcome('ok');
+  return outcome('ok', base);
 };
 
 export const firestoreCvStore = (): CvStore => ({

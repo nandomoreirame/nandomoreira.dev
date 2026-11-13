@@ -1,0 +1,10 @@
+---
+import ResumePage from '../../components/pages/ResumePage.astro';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+
+export const prerender = false;
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+---
+
+<ResumePage locale="en" />

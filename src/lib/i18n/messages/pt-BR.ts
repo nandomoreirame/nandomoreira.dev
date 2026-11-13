@@ -177,4 +177,37 @@ export const ptBR = {
     /** Aria-label of a live-bar link that opens in a new tab. */
     opensInNewTab: (label: string) => `${label}. Abre em nova aba`,
   },
+  resume: {
+    title: 'Currículo',
+    description: (name: string, role: string, years: number) =>
+      `${name}, ${role}. ${years} anos de carreira, de dados a interface.`,
+    summary: 'Resumo',
+    stack: 'Stack técnica',
+    experience: 'Experiência profissional',
+    earlier: 'Experiência anterior',
+    projects: 'Projetos e open source',
+    education: 'Formação e idiomas',
+    languages: 'Idiomas',
+    downloadHint: 'Prefere levar o currículo? Baixe a versão em PDF.',
+    downloadCta: 'Baixar currículo (PDF)',
+    close: 'Fechar',
+    sentTitle: 'Pronto, é só baixar',
+    sentDescription: 'Obrigado. O que você deixou chegou até mim.',
+    dialogTitle: 'Antes de baixar',
+    dialogLead:
+      'Se quiser, deixe seu nome, empresa e e-mail. É só para eu saber quem está baixando meu currículo e poder retornar o contato, caso faça sentido. Todos são opcionais: dá para pular e baixar direto.',
+    alertInvalid:
+      'Algo no que você digitou não passou: confira o e-mail (e o nome ou a empresa, se estiverem muito longos), ou pule e baixe direto.',
+    alertLimit: 'Muitas tentativas seguidas. Espere alguns minutos, ou pule e baixe direto.',
+    name: 'Nome',
+    company: 'Empresa',
+    email: 'E-mail',
+    emailPlaceholder: 'voce@empresa.com',
+    honeypot: 'Não preencha este campo',
+    submit: 'Enviar e baixar',
+    skip: 'Pular e baixar',
+    privacyBefore: 'O que você deixar fica guardado por 12 meses e não vai para nenhuma lista. Os detalhes estão na ',
+    privacyLink: 'política de privacidade',
+    privacyAfter: '.',
+  },
 } as const;
