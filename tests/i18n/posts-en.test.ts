@@ -7,6 +7,8 @@ const TRANSLATED: [string, string][] = [
   ['o-falso-verde', 'the-false-green'],
   ['o-fone-mudo-e-o-jack-p2-no-pipewire', 'mute-headphones-for-78-days'],
   ['memoria-para-agentes-em-4-camadas', 'four-layer-memory-for-agents'],
+  ['como-construi-meu-site-que-conversa-com-ia-via-mcp', 'site-that-talks-to-ai-via-mcp'],
+  ['fluxo-rpi-claude-code-grok-codex', 'rpi-flow-with-three-agents'],
 ];
 
 describe('translated posts', () => {
