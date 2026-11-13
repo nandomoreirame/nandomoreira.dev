@@ -1,10 +1,10 @@
 ---
 slug: i18n-foundation
-phase: implement
+phase: implemented
 spec_path: docs/specs/i18n-foundation/SPEC.md
 plan_path: docs/plans/2026-10-19-i18n-foundation.md
 depends_on: []
-updated: 2026-11-12
+updated: 2026-11-13
 ---
 
 # STATE: i18n-foundation
@@ -18,3 +18,11 @@ Revisão de 2026-11-12: `LiveBar` e `BackToTop` (14c), página e e-mail de confi
 ## Run rule (2026-11-13, Fernando)
 
 Unattended run: do NOT create git commits. Commit signing goes through 1Password and needs his approval, and he is away. Each finished task is recorded as a tree object under `refs/rpi/NNN-<task>` plus a line in `.git/rpi-ledger.txt` (id, tree, files, commit message). When he is back, turn the snapshots into one signed commit per task (`git commit-tree` per ref, in order), then run the review. Never push.
+
+## Evidências (tarefa 34, 2026-11-13)
+
+- `bash scripts/verify-i18n-routes.sh` → `I18N ROUTES PASSED`
+- Prova de vermelho: `/en/about` trocado por `/en/aboutx` → `FAIL: /en/aboutx answered 404, expected 200` (desfeito)
+- `PORT=8090 bash scripts/verify-local-server.sh` → `ALL LOCAL CHECKS PASSED` (8080 ocupada por processo alheio)
+- `npm run check` → 0 errors
+- `npm run verify` bloqueado por 9 falhas pré-existentes fora do escopo i18n (`tests/art/confetti.test.ts`, `tests/design-system/code-contrast.test.ts`, `tests/scripts/autowriter-run.test.ts`); 3521 testes passaram
