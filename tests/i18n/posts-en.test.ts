@@ -16,6 +16,9 @@ const TRANSLATED: [string, string][] = [
   ['job-radar-radar-de-vagas-em-python-puro', 'job-radar-pure-python'],
   ['de-cinco-dias-para-trinta-minutos', 'five-days-to-thirty-minutes'],
   ['scratchpad-no-niri-janelas-que-somem-com-um-atalho', 'niri-scratchpad-windows-vanish'],
+  ['espanso-substituicao-de-texto-no-linux', 'espanso-text-replacement-on-linux'],
+  ['game-mode-congelando-o-trabalho-com-o-cgroup-freezer', 'game-mode-freezing-work-with-cgroup'],
+  ['revisao-cruzada-entre-modelos', 'cross-model-review'],
 ];
 
 describe('translated posts', () => {
