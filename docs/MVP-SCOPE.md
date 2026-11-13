@@ -121,6 +121,7 @@ case e contato; um agente percorre descoberta, consulta estruturada e contato.
 - **Decisão:** camada humana em português, camada de máquina em inglês
 - **Descartado:** bilíngue completo, e português em tudo
 - **Consequência aceita:** perda de alcance em consultas humanas em inglês
+- **Revisto em 2026-10-19:** bilíngue completo adotado; ver docs/specs/i18n-foundation/SPEC.md
 
 ### Protocolo MCP
 

@@ -87,7 +87,9 @@ Permanecem no PRD e entram depois do lançamento, sem sprint alocada neste roadm
 | `dynamic-og-images` | F10 | P1 | v1.1 |
 | `analytics` | F12 | P1 | v1.1 (necessária para fechar H3) |
 | `catalog-filter` | F11 | P1 | v1.2 (primeira ilha interativa) |
-| `english-pages` | F15 | P2 | v1.2, se H3 se confirmar |
+| `i18n-foundation` | F15 | P1 | 2026-10 |
+| `i18n-content` | F15 | P1 | 2026-10 |
+| `i18n-sales` | F15 | P1 | 2026-10 |
 | `interactive-demos` | F13 | P2 | v2.0 |
 
 ## Riscos que atravessam o roadmap
@@ -162,6 +164,7 @@ Ordem sugerida da sprint 2, por dependência: `design-system-foundation` e
 
 ## Decision Log
 
+- 2026-10-19: versão inglesa completa (`i18n-foundation`/`i18n-content`/`i18n-sales`) substitui a F15 `english-pages` e reverte "bilíngue completo descartado" do MVP-SCOPE; pedido do Fernando, sem esperar a H3.
 - 2026-10-08: `ai-view` adiciona a visão IA de toda página (`<página>/ia`, `<página>.md`) e o switcher Humano | IA. Renderização no servidor com `marked` 18.1.0, abas só com CSS; o botão Copiar entra no script único do `PointerField`, que deixa de ser "só o efeito de ponteiro" e passa a ser o script do site, sob o mesmo orçamento de 1,5 KB.
 - 2026-10-07: generative-case-art revoga duas decisões, por escolha do autor. Grid de
   cards volta a /portfolio e /lab (contra o theme-restyle), justificado pela arte gerada
