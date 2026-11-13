@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/locale';
+
 interface OutcomeMessage {
   role: 'status' | 'alert';
   text: string;
@@ -18,5 +20,20 @@ const OUTCOMES: Record<string, OutcomeMessage> = {
   },
 };
 
-export const salesOutcomeMessage = (value: string | null): OutcomeMessage | undefined =>
-  value !== null && Object.hasOwn(OUTCOMES, value) ? OUTCOMES[value] : undefined;
+const OUTCOMES_EN: Record<string, OutcomeMessage> = {
+  ok: { role: 'status', text: 'I received your message. I will reply personally through the channel you left.' },
+  invalido: {
+    role: 'alert',
+    text: 'Your name is missing or the contact is not a valid email or WhatsApp number. Check it and send again.',
+  },
+  limite: { role: 'alert', text: 'Too many attempts. Wait a few minutes or contact me on WhatsApp.' },
+  erro: { role: 'alert', text: 'I could not save your message right now. Contact me on WhatsApp.' },
+  captcha: {
+    role: 'alert',
+    text: 'I could not confirm this was a human submission. Reload and try again, or contact me on WhatsApp.',
+  },
+};
+export const salesOutcomeMessage = (value: string | null, locale: Locale = 'pt-BR'): OutcomeMessage | undefined => {
+  const outcomes = locale === 'en' ? OUTCOMES_EN : OUTCOMES;
+  return value !== null && Object.hasOwn(outcomes, value) ? outcomes[value] : undefined;
+};

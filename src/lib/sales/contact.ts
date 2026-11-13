@@ -1,3 +1,4 @@
+import type { Locale } from '../i18n/locale';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_CHARS = /^[\d\s()+-]+$/;
 
@@ -17,3 +18,15 @@ export const isReachableContact = (value: string): boolean => {
   const digits = trimmed.replace(/\D/g, '').length;
   return digits >= 10 && digits <= 13;
 };
+
+/** Only copy changes; the destination remains the profile-owned address. */
+export const whatsappDestination = (destination: string, locale: Locale): string => {
+  if (locale !== 'en') return destination;
+  const url = new URL(destination);
+  if (url.protocol !== 'https:' || url.hostname !== 'wa.me') return destination;
+  url.searchParams.set('text', 'Hi, Fernando! I came from your services page.');
+  return url.toString();
+};
+
+export const salesWhatsappPath = (locale: Locale = 'pt-BR'): string =>
+  `/go/contato/whatsapp${locale === 'en' ? '?locale=en' : ''}`;

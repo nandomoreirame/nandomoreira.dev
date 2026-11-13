@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/locale';
+
 /**
  * Social proof carried over from the previous sales page
  * (svelte-nandomoreira.dev, /sites-profissionais-lojas-virtuais-blogs-aplicativos-web).
@@ -93,3 +95,55 @@ export const SERVICES_QUOTE = {
   name: TESTIMONIALS[0]!.name,
   company: TESTIMONIALS[0]!.company,
 } as const;
+
+const TESTIMONIALS_EN: readonly Testimonial[] = [
+  {
+    name: 'Yara Santiago (translated from Portuguese)',
+    company: 'Ateliê éh Pique',
+    text: 'My digital file store turned out beautiful! Fernando nailed the design! Modern and functional, it made navigation easier for customers and increased sales conversions! Delivery was very fast, a well-structured and functional project!',
+  },
+  {
+    name: 'Edson Luiz (translated from Portuguese)',
+    company: 'Accountant',
+    text: 'I have worked with Fernando for at least 15 years. In that time, he has developed several projects for me and my companies, always delivering quality above expectations.',
+  },
+];
+
+export const testimonialsFor = (locale: Locale = 'pt-BR'): readonly Testimonial[] =>
+  locale === 'en' ? TESTIMONIALS_EN : TESTIMONIALS;
+
+const MORE_WORK_EN: readonly PastWork[] = MORE_WORK.map((work, index) => ({
+  ...work,
+  kind: [
+    'Online store',
+    'Website',
+    'Educational product website',
+    'Website',
+    'Portal',
+    'Community portal',
+    'Agency website',
+    'Studio website',
+    'Online catalog',
+  ][index]!,
+  alt: [
+    'Ateliê éh Pique online store home page, with digital art for cutting machines',
+    'Home page of Coletivo Inclusão, a social organization',
+    'Canto das Emoções page, an early childhood education resource',
+    'Puruna Investimentos home page',
+    'Agenda Rio 2030 portal, by Casa Fluminense',
+    'PHP PR community portal, with articles and notices',
+    'OGG Digital agency home page',
+    'OneDev studio home page, with hosting plans and services',
+    'Digital marketing tools catalog, organized by category',
+  ][index]!,
+}));
+export const moreWorkFor = (locale: Locale = 'pt-BR'): readonly PastWork[] =>
+  locale === 'en' ? MORE_WORK_EN : MORE_WORK;
+export const servicesQuoteFor = (locale: Locale = 'pt-BR') =>
+  locale === 'en'
+    ? {
+        excerpt: 'Modern and functional, it made navigation easier for customers and increased sales conversions!',
+        name: TESTIMONIALS_EN[0]!.name,
+        company: TESTIMONIALS_EN[0]!.company,
+      }
+    : SERVICES_QUOTE;

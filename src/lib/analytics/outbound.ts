@@ -1,3 +1,4 @@
+import { whatsappDestination } from '../sales/contact';
 import type { Project } from '../../content/schemas/project';
 import { CV_PDF_PATH } from '../cv/paths';
 import { collectionOfBlock } from '../catalog/groups';
@@ -63,7 +64,10 @@ export const handleOutbound = async (
 
   const path = new URL(request.url).pathname.replace(/\/+$/, '');
   const cv = path === CV_GO_PATH;
-  const destination = cv ? CV_PDF_PATH : (await table()).get(path);
+  let destination = cv ? CV_PDF_PATH : (await table()).get(path);
+  if (destination && path === contactGoPath('whatsapp') && new URL(request.url).searchParams.get('locale') === 'en') {
+    destination = whatsappDestination(destination, 'en');
+  }
   if (!destination) return notFound();
 
   if (request.method === 'GET') {

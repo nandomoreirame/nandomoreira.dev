@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/locale';
+import { SALES_COPY_EN } from './copy-en';
 import { PAYMENT_ANSWER } from './payment';
 
 /** One step of the work, with an optional text label for the approval steps. */
@@ -301,3 +303,12 @@ export const SALES_COPY = {
     whatsapp: 'Prefiro conversar pelo WhatsApp',
   },
 } as const;
+
+/** Widen source literals while retaining the complete nested copy structure. */
+type CopyShape<T> = T extends string
+  ? string
+  : T extends readonly (infer V)[]
+    ? readonly CopyShape<V>[]
+    : { [K in keyof T]: CopyShape<T[K]> };
+export type SalesCopy = CopyShape<typeof SALES_COPY>;
+export const salesCopy = (locale: Locale = 'pt-BR'): SalesCopy => (locale === 'en' ? SALES_COPY_EN : SALES_COPY);

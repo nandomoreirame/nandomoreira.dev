@@ -24,4 +24,5 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 | Tarefa | Estado | Evidência | Commit |
 |---|---|---|---|
 | 1. Slugs e pares | validada | 846 testes sales/i18n; check sem erros; vermelho registrado | d6f32a3 |
-| 2. Catálogo inglês | validada | 849 testes sales/i18n; check sem erros; schema compartilhado extraído para evitar ciclo de imports | neste commit |
+| 2. Catálogo inglês | validada | 849 testes sales/i18n; check sem erros; schema compartilhado extraído para evitar ciclo de imports | b1e6bae |
+| 3. Copy e mensagens | validada | 862 testes sales/i18n/outbound; check sem erros; WhatsApp conserva destino e tracking | neste commit |
