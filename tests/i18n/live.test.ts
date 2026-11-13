@@ -16,7 +16,7 @@ describe('enLive', () => {
     expect(enLive({ DEV: false, MODE: 'test' }, false)).toBe(false);
   });
 
-  it('ships off: i18n-content flips it (C7)', () => {
-    expect(EN_LIVE).toBe(false);
+  it('is live since i18n-content (C7)', () => {
+    expect(EN_LIVE).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Acceptance criteria of i18n-foundation against the real build.
+# Acceptance criteria of i18n-foundation / i18n-content against the real build.
 # No `set -u`: the Bash tool's shell snapshot references unbound vars
 # and would abort the script.
 set -eo pipefail
@@ -87,31 +87,72 @@ expect_content_type() {
   echo "OK ${path} (${ctype})"
 }
 
-# --- production build: EN_LIVE=false, /en must 404 ---
-echo "== production build (EN_LIVE=false) =="
+# Count href="/en/portfolio/<slug>" and href="/en/lab/<slug>" across both listing
+# pages. The AI-view corner link (/ia) is not a case.
+count_en_case_links() {
+  local portfolio_body lab_body
+  portfolio_body=$(curl -sf "${BASE}/en/portfolio") || fail "/en/portfolio did not answer 200"
+  lab_body=$(curl -sf "${BASE}/en/lab") || fail "/en/lab did not answer 200"
+  local count
+  count=$(printf '%s\n%s\n' "$portfolio_body" "$lab_body" \
+    | grep -oE 'href="/en/(portfolio|lab)/[a-z0-9-]+"' \
+    | grep -vE '/ia"' \
+    | sort -u \
+    | wc -l)
+  count=$(echo "$count" | tr -d ' ')
+  if [ "$count" != "28" ]; then
+    fail "/en/portfolio + /en/lab have ${count} case links, expected 28"
+  fi
+  echo "OK /en/portfolio + /en/lab → ${count} case links"
+}
+
+# Draft English slugs must not appear as navigable hrefs on /en/posts (production).
+assert_en_posts_omit_draft_hrefs() {
+  expect_status /en/posts 200
+  local draft
+  for draft in \
+    aeo-vs-seo-is-seo-dead \
+    automate-your-own-problems \
+    noctalia-v4-to-v5-both-shells \
+    blog-comments-without-page-weight \
+    seven-review-rounds-when-to-stop \
+    agent-session-that-came-back-empty \
+    skills-repo-for-four-agents \
+    screen-recording-to-gif-shortcut \
+    ai-designer-put-rules-in-copy \
+    site-is-on-version-17
+  do
+    expect_absent /en/posts "href=\"/en/${draft}\""
+  done
+  echo "OK /en/posts omits draft hrefs"
+}
+
+check_en_published() {
+  for path in /en /en/about /en/contact /en/resume /en/mcp /en/setup /en/now /en/privacy /en/posts /en/portfolio /en/lab; do
+    expect_body "$path" '<html lang="en"'
+  done
+
+  expect_body /sobre 'hreflang="en"'
+  expect_body /en/rss.xml '<language>en</language>'
+  expect_content_type /en/about.md 'text/markdown' 'title:'
+}
+
+# --- production build: EN_LIVE=true, /en must serve ---
+echo "== production build (EN_LIVE=true) =="
 npm run build
 start_server
 
-for path in /en /en/about /en/the-anything; do
-  expect_status "$path" 404
-done
+check_en_published
+count_en_case_links
+assert_en_posts_omit_draft_hrefs
+expect_body /sitemap.xml 'xmlns:xhtml'
 
-expect_status /sobre 200
-expect_absent /sobre 'hreflang'
-expect_absent /sobre 'data-language-switch'
-
-# --- staging build: /en is live ---
+# --- staging build: /en stays live (same surface as production now) ---
 echo "== staging build (EN published) =="
 stop_server
 npm run build -- --mode staging
 start_server
 
-for path in /en /en/about /en/contact /en/resume /en/mcp /en/setup /en/now /en/privacy /en/posts /en/portfolio /en/lab; do
-  expect_body "$path" '<html lang="en"'
-done
-
-expect_body /sobre 'hreflang="en"'
-expect_body /en/rss.xml '<language>en</language>'
-expect_content_type /en/about.md 'text/markdown' 'title:'
+check_en_published
 
 echo "I18N ROUTES PASSED"

@@ -14,11 +14,15 @@ const render = async (url: string, props: Record<string, unknown> = {}) => {
 const pair = { 'pt-BR': '/sobre', en: '/en/about' };
 
 describe('BaseLayout language', () => {
-  it('stays pt-BR at the root, with no hreflang when there is no pair', async () => {
-    const html = await render('https://nandomoreira.dev/sobre');
+  it('stays pt-BR at the root, with no reciprocal hreflang when there is no pair', async () => {
+    // /releases has no English counterpart (D14). The switch still appears
+    // (EN_LIVE) with a fallback href, but the head has no reciprocal pair.
+    const html = await render('https://nandomoreira.dev/releases');
     expect(html).toContain('<html lang="pt-BR"');
     expect(html).toContain('content="pt_BR"');
-    expect(html).not.toContain('hreflang');
+    expect(html).not.toContain('rel="alternate" hreflang=');
+    expect(html).not.toContain('og:locale:alternate');
+    expect(html).toContain('data-language-switch');
     expect(html).toContain('Pular para o conteúdo');
     expect(html).toContain('"inLanguage":"pt-BR"');
   });
