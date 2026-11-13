@@ -22,6 +22,10 @@ const TRANSLATED: [string, string][] = [
   ['revisao-cruzada-entre-modelos', 'cross-model-review'],
   ['meu-homelab-num-mac-mini-de-2018', 'homelab-on-a-2018-mac-mini'],
   ['sessao-de-agente-que-voltava-zerada', 'agent-session-that-came-back-empty'],
+  ['tratando-dotfiles-como-software', 'treating-dotfiles-as-software'],
+  ['meus-scripts-de-gitflow-de-31-linhas-a-uma-skill', 'gitflow-scripts-to-a-skill'],
+  ['seu-sistema-tem-memoria-por-que-manter-um-dotfiles', 'dotfiles-from-symlink-to-reinstall'],
+  ['scripts-que-automatizam-meu-linux', 'automate-your-own-problems'],
 ];
 
 const bodiesBySlug = new Map(
