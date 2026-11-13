@@ -61,7 +61,7 @@ describe('AgentBrief', () => {
 });
 
 describe('AgentBrief placement', () => {
-  it.each(['src/pages/index.astro', 'src/pages/contato.astro'])(
+  it.each(['src/components/pages/HomePage.astro', 'src/pages/contato.astro'])(
     '%s renders the brief from buildHireBrief',
     async file => {
       const { readFileSync } = await import('node:fs');

@@ -1,0 +1,73 @@
+---
+import AgentBrief from '../contact/AgentBrief.astro';
+import { buildHireBrief } from '../../lib/aeo/hire-brief';
+import { requireSite } from '../../lib/aeo/urls';
+import Hero from '../home/Hero.astro';
+import NewsletterCard from '../posts/NewsletterCard.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import LatestPosts from '../home/LatestPosts.astro';
+import Services from '../home/Services.astro';
+import Trajectory from '../home/Trajectory.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { serialiseJsonLd } from '../../lib/aeo/json-ld';
+import { getAllPosts, getAllProjects, getProfile } from '../../lib/content';
+import { homeMeta } from '../../lib/home/meta';
+import { organizationLd } from '../../lib/home/organization-ld';
+import { personLd } from '../../lib/home/person-ld';
+import type { Locale } from '../../lib/i18n/locale';
+import { latestPosts } from '../../lib/posts/latest';
+import { outcomeOf } from '../../lib/newsletter/copy';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+
+// Projects stay on the pt-BR catalog until i18n-content overlays English cases;
+// getAllProjects('en') is still an empty stub, and service case slugs match.
+const [profile, allProjects, allPosts] = await Promise.all([
+  getProfile(locale),
+  getAllProjects(),
+  getAllPosts(locale),
+]);
+
+const serviceProjects = allProjects.map((project) => ({
+  slug: project.slug,
+  block: project.block,
+}));
+
+const recentPosts = latestPosts(allPosts, 3);
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
+
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = serialiseJsonLd(personLd(profile, site));
+const organizationJsonLd = serialiseJsonLd(
+  organizationLd(profile, requireSite(Astro.site ?? new URL('https://nandomoreira.dev'))),
+);
+const meta = homeMeta(profile);
+const hireBrief = buildHireBrief({
+  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  profile,
+});
+---
+
+<BaseLayout title={meta.title} description={meta.description} locale={locale}>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+  <script type="application/ld+json" is:inline set:html={organizationJsonLd} />
+
+  <Hero
+    name={displayNameOf(profile)}
+    headline={profile.headline}
+    positioning={profile.positioning}
+    locale={locale}
+  />
+  <LatestPosts posts={recentPosts} site={site} locale={locale} />
+  {/* Quiet submit: the hero keeps the home's one primary CTA. */}
+  <div class="pt-2xl lg:pt-3xl">
+    <NewsletterCard outcome={outcome} quiet returnTo="/" locale={locale} />
+  </div>
+  <Trajectory stats={profile.trajectory} narrative={profile.positioning} locale={locale} />
+  <Services services={profile.services} projects={serviceProjects} locale={locale} />
+  <AgentBrief brief={hireBrief} locale={locale} />
+</BaseLayout>

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 // blocks: the blocks before the last pad only their top, so two neighbours no
 // longer add their paddings up. AgentBrief, last, keeps both sides.
 describe('home section spacing', () => {
-  const page = readFileSync('src/pages/index.astro', 'utf8');
+  const page = readFileSync('src/components/pages/HomePage.astro', 'utf8');
 
   it('draws no SectionRule between the home blocks', () => {
     expect(page).not.toContain('SectionRule');

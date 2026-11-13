@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import TurnstileWidget from '../security/TurnstileWidget.astro';
 import Card from '../ui/Card.astro';
 import { FORM_HONEYPOT } from '../../lib/hire/form';
+import type { Locale } from '../../lib/i18n/locale';
 import type { SubscribeOutcome } from '../../lib/newsletter/handler';
 import { NEWSLETTER_COPY, NEWSLETTER_OUTCOMES } from '../../lib/newsletter/copy';
 
@@ -12,6 +13,8 @@ interface Props {
   quiet?: boolean;
   /** Page the answer comes back to; /posts when absent. */
   returnTo?: '/' | '/posts' | '/setup';
+  /** Accepted now; copy switches in task 27. */
+  locale?: Locale;
 }
 
 const { outcome, quiet = false, returnTo } = Astro.props;

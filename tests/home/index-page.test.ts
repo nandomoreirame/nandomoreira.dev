@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const page = readFileSync('src/pages/index.astro', 'utf8');
+const page = readFileSync('src/components/pages/HomePage.astro', 'utf8');
 
 describe('home page assembly', () => {
   it('reads through the access layer, never through getCollection', () => {
@@ -20,7 +20,7 @@ describe('home page assembly', () => {
   });
 
   it('puts a quiet newsletter card under the recent posts, posting back to the home', () => {
-    expect(page).toMatch(/<NewsletterCard outcome=\{outcome\} quiet returnTo="\/" \/>/);
+    expect(page).toMatch(/<NewsletterCard outcome=\{outcome\} quiet returnTo="\/" locale=\{locale\} \/>/);
     expect(page).toContain("outcomeOf(Astro.url.searchParams.get('assinatura'))");
   });
 
@@ -44,7 +44,7 @@ describe('home page assembly', () => {
 
   it('feeds LatestPosts the three newest posts and the site origin', () => {
     expect(page).toContain('const recentPosts = latestPosts(allPosts, 3);');
-    expect(page).toContain('<LatestPosts posts={recentPosts} site={site} />');
+    expect(page).toContain('<LatestPosts posts={recentPosts} site={site} locale={locale} />');
     expect(page).not.toContain('latestPosts(allPosts, 4)');
   });
 });
