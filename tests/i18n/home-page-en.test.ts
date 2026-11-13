@@ -23,10 +23,6 @@ describe('HomePage', () => {
     // Chrome still ships AvailabilityPill and the language suggestion in the
     // other language; this task owns the home body inside <main>.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
-    // NewsletterCard copy stays pt-BR until task 27.
-    const withoutCard = main.replace(/<section\b[^>]*\bid="novidades"[^>]*>[\s\S]*?<\/section>/i, '');
-    expect(ptLeftovers(withoutCard)).toEqual([]);
+    expect(ptLeftovers(main)).toEqual([]);
   });
-
-  it.todo('NewsletterCard on the English home has no Portuguese leftovers');
 });

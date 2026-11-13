@@ -147,7 +147,7 @@ describe('/setup page', () => {
     const html = await render();
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
     expect(main).toContain('id="novidades"');
-    expect(main).toContain('action="/api/subscribe?origem=/setup"');
+    expect(main).toContain('action="/api/subscribe?origem=%2Fsetup"');
     expect(main.indexOf('id="novidades"')).toBeGreaterThan(main.indexOf('id="deixei-de-lado"'));
   });
 

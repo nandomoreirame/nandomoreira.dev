@@ -22,8 +22,7 @@ const mainOf = (html: string): string => html.slice(html.indexOf('<main'), html.
 /**
  * Drop Portuguese content that stays until i18n-content: the article body
  * (`data-prose` through the author box), title, lead, TOC entries, snapshot
- * values, related cards, and the newsletter card (task 27). Chrome labels
- * stay for ptLeftovers.
+ * values and related cards. Chrome labels stay for ptLeftovers.
  */
 const withoutPortugueseContent = (html: string): string =>
   mainOf(html)
@@ -32,14 +31,12 @@ const withoutPortugueseContent = (html: string): string =>
     .replace(/<p\b[^>]*data-post-lead\b[^>]*>[\s\S]*?<\/p>/i, '')
     .replace(/<nav\b[^>]*data-toc\b[^>]*>[\s\S]*?<\/nav>/i, '')
     .replace(/<section\b[^>]*data-post-snapshot\b[^>]*>[\s\S]*?<\/section>/i, '')
-    .replace(/<article\b[^>]*data-related-post\b[^>]*>[\s\S]*?<\/article>/gi, '')
-    .replace(/<section\b[^>]*\bid="novidades"[^>]*>[\s\S]*?<\/section>/i, '');
+    .replace(/<article\b[^>]*data-related-post\b[^>]*>[\s\S]*?<\/article>/gi, '');
 
 describe('English blog', () => {
   it('listing renders in English, empty until i18n-content', async () => {
     const html = await renderListing('en');
     expect(html).toContain('<html lang="en"');
-    // NewsletterCard copy stays pt-BR until task 27 (same carve-out as home-page-en).
     expect(ptLeftovers(withoutPortugueseContent(html))).toEqual([]);
   });
 

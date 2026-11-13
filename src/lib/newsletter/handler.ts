@@ -36,11 +36,12 @@ export interface SubscribeDependencies {
  * Pages that carry the card and read `assinatura`. The form names its page in
  * ?origem on the action, so the answer comes back even before the body is read
  * (the rate limit); anything off this list falls back to /posts, so the field
- * is never an open redirect.
+ * is never an open redirect. /setup stayed when English origins landed; /en/setup
+ * matches the English setup page that localises returnTo.
  */
-const ORIGINS = new Set(['/', '/posts', '/setup']);
+const ORIGINS = new Set(['/', '/posts', '/setup', '/en', '/en/posts', '/en/setup']);
 
-const originOf = (request: Request): string => {
+export const subscribeOriginOf = (request: Request): string => {
   const origem = new URL(request.url).searchParams.get('origem') ?? '';
   return ORIGINS.has(origem) ? origem : '/posts';
 };
@@ -84,7 +85,7 @@ export const handleSubscribe = async (
   request: Request,
   { store, limiter, now, sendConfirmation, captcha, origins, hourly }: SubscribeDependencies,
 ): Promise<Response> => {
-  const origin = originOf(request);
+  const origin = subscribeOriginOf(request);
   const back = backTo(origin);
   if (request.method !== 'POST' || !isForm(request)) return back('erro');
   const remoteIp = clientIpOf(request.headers);

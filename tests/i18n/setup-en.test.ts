@@ -47,11 +47,9 @@ describe('SetupPage', () => {
     expect(html).toContain('"inLanguage":"en"');
     // Chrome still ships AvailabilityPill and the language suggestion in the
     // other language; this task owns the setup body inside <main>.
-    // NewsletterCard stays pt-BR until task 27; UpdatedAt date copy is still pt-BR.
+    // UpdatedAt date copy is still pt-BR.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
-    const withoutChrome = main
-      .replace(/<section\b[^>]*\bid="novidades"[^>]*>[\s\S]*?<\/section>/i, '')
-      .replace(/<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i, '');
+    const withoutChrome = main.replace(/<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i, '');
     // Product names keep Portuguese particles by design (shape parity with pt-BR).
     const cleaned = withoutChrome
       .replace(/Mesa ErgoDesk com regulagem de altura/g, ' ')
