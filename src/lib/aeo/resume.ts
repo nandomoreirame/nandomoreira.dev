@@ -1,13 +1,16 @@
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
-import { collectionOfBlock } from '../catalog/groups';
 import { redactConfidential } from '../content/confidential';
+import type { Locale } from '../i18n/locale';
+import { casePath } from '../i18n/paths';
 import { absoluteUrl } from './urls';
+
+type LocalizedProject = Project & { locale?: Locale };
 
 interface Input {
   site: URL;
   profile: Profile;
-  projects: readonly Project[];
+  projects: readonly LocalizedProject[];
 }
 
 interface ResumeProfile {
@@ -63,6 +66,7 @@ interface ResumeMeta {
   canonical: string;
   version: string;
   lastModified: string;
+  language: 'en';
 }
 
 /**
@@ -121,12 +125,18 @@ const toProfiles = (profile: Profile): ResumeProfile[] =>
  * link first keeps the strongest evidence at the top without hiding the rest
  * (REQ-010).
  */
-const evidenceRank = (project: Project): number => (project.liveUrl ? 0 : project.repoUrl ? 1 : 2);
+const evidenceRank = (project: LocalizedProject): number =>
+  project.liveUrl ? 0 : project.repoUrl ? 1 : 2;
 
-const projectUrl = (site: URL, project: Project): string =>
-  project.liveUrl ?? project.repoUrl ?? absoluteUrl(site, `/${collectionOfBlock(project.block)}/${project.slug}`);
+const projectUrl = (site: URL, project: LocalizedProject): string =>
+  project.liveUrl ??
+  project.repoUrl ??
+  absoluteUrl(
+    site,
+    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
+  );
 
-const toProject = (site: URL, project: Project): ResumeProject => ({
+const toProject = (site: URL, project: LocalizedProject): ResumeProject => ({
   name: project.title,
   description: project.summary,
   keywords: [...project.tech],
@@ -175,6 +185,7 @@ export const buildResume = ({ site, profile, projects }: Input): Resume => {
       canonical: absoluteUrl(site, '/api/resume.json'),
       version: 'v1.0.0',
       lastModified: profile.availability.updatedAt,
+      language: 'en',
     },
     x_agent: {
       positioning: profile.positioning,

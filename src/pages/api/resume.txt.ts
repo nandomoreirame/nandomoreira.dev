@@ -2,12 +2,12 @@ import type { APIRoute } from 'astro';
 import { buildResume } from '../../lib/aeo/resume';
 import { renderResumeText } from '../../lib/aeo/resume-txt';
 import { requireSite } from '../../lib/aeo/urls';
-import { getAllProjects, getProfile } from '../../lib/content';
+import { getMachineProjects, getProfile } from '../../lib/content';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
+  const [profile, projects] = await Promise.all([getProfile('en'), getMachineProjects()]);
 
   const resume = buildResume({ site: requireSite(site), profile, projects });
 
