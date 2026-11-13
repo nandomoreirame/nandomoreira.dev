@@ -161,7 +161,11 @@ describe('/contato', () => {
     // exceptions; anything else is an island.
     for (const [, tag, body] of scripts) {
       if (body === THEME_BOOT_SCRIPT) continue;
-      expect(tag, `executable script on the page: ${tag}`).toMatch(/application\/ld\+json|PointerField\.astro/);
+      // LiveBar ships a small fetch script (layout i18n); the real gate is
+      // tests/design-system/no-client-js.build-test.ts.
+      expect(tag, `executable script on the page: ${tag}`).toMatch(
+        /application\/ld\+json|PointerField\.astro|LiveBar\.astro/,
+      );
     }
 
     expect(html).not.toContain('client:');

@@ -4,7 +4,7 @@ import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
 import { isEmailContact, isReachableContact } from '../sales/contact';
 import { salesFormToPayload, salesOriginOf } from '../sales/form';
-import { type FormOutcome, formRedirect, formToPayload } from './form';
+import { contactOriginOf, type FormOutcome, formRedirect, formToPayload } from './form';
 import type { Notifier } from './notify';
 import { BodyTimeoutError, BodyTooLargeError, readLimitedText } from './read-body';
 import { type Limiter, clientIpOf } from './rate-limit';
@@ -82,11 +82,14 @@ export const handleHire = async (
 ): Promise<Response> => {
   const fromForm = isForm(request);
 
-  // A sales page posts with ?origem=; it gets its own redirect and contact rule.
-  const salesBase = fromForm ? salesOriginOf(new URL(request.url)) : undefined;
+  // Sales pages and the English contact form post with ?origem=; salesBase
+  // picks the schema, returnBase picks the redirect (never an open redirect).
+  const url = new URL(request.url);
+  const salesBase = fromForm ? salesOriginOf(url) : undefined;
+  const returnBase = fromForm ? (salesBase ?? contactOriginOf(url)) : undefined;
 
   const fail = (kind: keyof typeof RESPONSES): Response => {
-    if (fromForm) return formRedirect(FORM_OUTCOMES[kind], salesBase);
+    if (fromForm) return formRedirect(FORM_OUTCOMES[kind], returnBase);
     const [status, message] = RESPONSES[kind];
 
     return json(status, { error: message });
@@ -94,7 +97,7 @@ export const handleHire = async (
 
   // 202: received and stored. Delivery of the notification is not the caller's problem.
   const accepted = (id: string): Response =>
-    fromForm ? formRedirect('ok', salesBase) : json(202, { status: 'accepted', id, message: 'Briefing received.' });
+    fromForm ? formRedirect('ok', returnBase) : json(202, { status: 'accepted', id, message: 'Briefing received.' });
 
   if (request.method !== 'POST') return fail('methodNotAllowed');
 
@@ -102,13 +105,13 @@ export const handleHire = async (
 
   if (!limiter.check(sourceIp)) return fail('rateLimited');
   if (origins && !originAllowed(request.headers.get('origin'), origins)) {
-    return fromForm ? formRedirect('erro', salesBase) : json(403, { error: 'Request origin is not allowed.' });
+    return fromForm ? formRedirect('erro', returnBase) : json(403, { error: 'Request origin is not allowed.' });
   }
   if (hourly && fromForm) {
     try {
-      if (!(await hourly.allow(sourceIp, now()))) return formRedirect('limite', salesBase);
+      if (!(await hourly.allow(sourceIp, now()))) return formRedirect('limite', returnBase);
     } catch {
-      return formRedirect('erro', salesBase);
+      return formRedirect('erro', returnBase);
     }
   }
 
@@ -134,9 +137,9 @@ export const handleHire = async (
 
   if (fromForm && captcha?.required) {
     try {
-      if (!(await captcha.verify(turnstileToken, sourceIp))) return formRedirect('captcha', salesBase);
+      if (!(await captcha.verify(turnstileToken, sourceIp))) return formRedirect('captcha', returnBase);
     } catch {
-      return formRedirect('erro', salesBase);
+      return formRedirect('erro', returnBase);
     }
   }
 

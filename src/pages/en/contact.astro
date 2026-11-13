@@ -1,0 +1,8 @@
+---
+import ContactPage from '../../components/pages/ContactPage.astro';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+---
+
+<ContactPage locale="en" />

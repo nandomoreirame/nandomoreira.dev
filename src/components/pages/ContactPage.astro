@@ -1,0 +1,297 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import { Icon } from 'astro-icon/components';
+import TurnstileWidget from '../security/TurnstileWidget.astro';
+import Button from '../ui/Button.astro';
+import Card from '../ui/Card.astro';
+import CopyButton from '../ui/CopyButton.astro';
+import AvailabilityCard from '../ui/AvailabilityCard.astro';
+import EmptyState from '../ui/EmptyState.astro';
+import AgentBrief from '../contact/AgentBrief.astro';
+import { buildHireBrief } from '../../lib/aeo/hire-brief';
+import { contactGoPath } from '../../lib/analytics/outbound';
+import { absoluteUrl, requireSite } from '../../lib/aeo/urls';
+import PageHeader from '../ui/PageHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
+import {
+  budgetOptions,
+  interestOptions,
+  outcomeMessage,
+} from '../../lib/contact/form-options';
+import { FORM_HONEYPOT } from '../../lib/hire/form';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
+import { salesVisitOf } from '../../lib/sales/form';
+import { salesLink } from '../../lib/sales/host';
+import { SERVICE_LABELS } from '../../lib/sales/service-labels';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).contactPage;
+const profile = await getProfile(locale);
+const email = profile.contacts.find((contact) => contact.kind === 'email');
+
+const outcome = outcomeMessage(Astro.url.searchParams.get('envio'), locale);
+const turnstileSiteKey = (process.env.TURNSTILE_SITE_KEY ?? '').trim();
+// The sales pages have no form of their own: they send the visitor here with
+// ?origem and ?servico. That visit gets a leaner page, without what is meant
+// for agents and developers, and the chosen service goes along with the form.
+const visit = salesVisitOf(Astro.url.searchParams);
+const fromSales = visit !== undefined;
+const serviceLabel = visit?.service ? SERVICE_LABELS[visit.service] : undefined;
+// Success replaces the form; a failure keeps it, with the alert above it.
+const sent = outcome?.role === 'status';
+
+const budgets = budgetOptions(locale);
+const interests = interestOptions(locale);
+const formAction = locale === 'en' ? '/api/hire?origem=contact-en' : '/api/hire';
+const contactPath = routeFor('/contato', locale);
+
+const field =
+  'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground transition-[border-color] duration-(--duration-fast) ease-out placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const labelClass = 'mb-sm block font-mono text-small uppercase tracking-wide text-muted-foreground';
+const site = requireSite(Astro.site ?? new URL('https://nandomoreira.dev'));
+const hireBrief = buildHireBrief({
+  site,
+  profile,
+});
+const mcpUrl = absoluteUrl(site, '/api/mcp');
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${displayNameOf(profile)}`}
+  description={t.description}
+  locale={locale}
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader
+      title={t.heading}
+      description={t.lead}
+    />
+
+    {
+      !fromSales && (
+        <p class="text-small text-muted-foreground">
+          {t.salesLead}{' '}
+          <a href={salesLink(Astro.url)} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.salesLink}</a>
+        </p>
+      )
+    }
+
+    {/* Posts natively to the same endpoint agents use, so the form works with
+        no JavaScript; the handler answers a form post with a redirect back here
+        carrying `envio`, read above. */}
+    <div class={fromSales ? 'flex' : 'grid grid-cols-1 gap-xl lg:grid-cols-5'}>
+    <Card
+      as="section"
+      class={`flex flex-col gap-lg ${fromSales ? 'mx-auto w-full max-w-[60ch]' : 'lg:col-span-2'}`}
+      aria-labelledby={sent ? undefined : 'form-heading'}
+      aria-label={sent ? t.sentAriaLabel : undefined}
+    >
+      {
+        sent && outcome ? (
+          <EmptyState
+            id="envio"
+            role="status"
+            icon="lucide:mail-check"
+            title={t.sentTitle}
+            description={outcome.text}
+          >
+            <Button href={contactPath} variant="secondary">
+              {t.sendAnother}
+            </Button>
+          </EmptyState>
+        ) : (
+      <>
+      <div class="flex flex-col gap-xs">
+        <h2
+          id="form-heading"
+          class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground"
+        >
+          {t.formHeading}
+        </h2>
+        <p class="font-mono text-micro text-muted-foreground">
+          {t.requiredHint}
+        </p>
+      </div>
+
+      {
+        outcome && (
+          <p
+            id="envio"
+            role={outcome.role}
+            class={`rounded-md border px-md py-sm text-body ${outcome.role === 'status' ? 'border-success/40 text-success' : 'border-primary text-foreground'}`}
+          >
+            {outcome.text}
+          </p>
+        )
+      }
+
+      <form action={formAction} method="post" class="flex flex-1 flex-col gap-lg">
+        {
+          visit?.service && serviceLabel && (
+            <p class="rounded-md border border-border bg-background px-md py-sm font-mono text-small text-muted-foreground">
+              {t.aboutService} <span class="text-foreground">{serviceLabel}</span>
+              <input type="hidden" name="servico" value={visit.service} />
+            </p>
+          )
+        }
+        <div class="grid grid-cols-1 gap-lg">
+          <div>
+            <label for="contato-nome" class={labelClass}>{t.name} <span aria-hidden="true">*</span></label>
+            <input
+              id="contato-nome"
+              name="nome"
+              type="text"
+              autocomplete="name"
+              maxlength="200"
+              required
+              class={field}
+            />
+          </div>
+
+          <div>
+            <label for="contato-email" class={labelClass}>{t.email} <span aria-hidden="true">*</span></label>
+            <input
+              id="contato-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="320"
+              required
+              class={field}
+            />
+          </div>
+
+          <div>
+            <label for="contato-empresa" class={labelClass}>{t.company}</label>
+            <input
+              id="contato-empresa"
+              name="empresa"
+              type="text"
+              autocomplete="organization"
+              maxlength="200"
+              class={field}
+            />
+          </div>
+
+          <div>
+            <label for="contato-orcamento" class={labelClass}>{t.budget}</label>
+            <select id="contato-orcamento" name="orcamento" class={field}>
+              <option value="">{t.budgetPreferNot}</option>
+              {budgets.map((option) => (
+                <option value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend id="contato-interesse-legenda" class={labelClass}>{t.interestLegend}</legend>
+          {/* Custom checkboxes: the native input stays (sr-only) for the form
+              post, the keyboard and screen readers; the box beside it is
+              decoration painted from global.css. One list for every screen. */}
+          <div class="flex flex-col gap-xs">
+            {interests.map((option) => (
+              <label for={`contato-interesse-${option.value}`} class="flex min-h-11 cursor-pointer items-center gap-sm text-body text-foreground">
+                <input
+                  type="checkbox"
+                  id={`contato-interesse-${option.value}`}
+                  name="interesse"
+                  value={option.value}
+                  checked={fromSales && option.value === 'freelance'}
+                  class="check-input sr-only"
+                />
+                <span aria-hidden="true" class="check-box inline-flex size-5 shrink-0 items-center justify-center rounded-sm border transition-[border-color,background-color,color] duration-(--duration-fast) ease-out">
+                  <Icon name="lucide:check" class="size-4" />
+                </span>
+                {option.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* The message grows into the room the taller side column leaves on desktop. */}
+        <div class="flex flex-1 flex-col">
+          <label for="contato-mensagem" class={labelClass}>{t.message} <span aria-hidden="true">*</span></label>
+          <textarea
+            id="contato-mensagem"
+            name="mensagem"
+            rows="4"
+            maxlength="8000"
+            required
+            placeholder={t.messagePlaceholder}
+            class={`${field} flex-1`}></textarea>
+        </div>
+
+        {/* Honeypot: display:none, so people, screen readers and password
+            managers skip it, while bots reading the HTML still fill it. The
+            name is meaningless on purpose (see FORM_HONEYPOT). */}
+        <div hidden aria-hidden="true">
+          <label for="contato-hp">{t.honeypot}</label>
+          <input
+            id="contato-hp"
+            name={FORM_HONEYPOT}
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            maxlength="200"
+          />
+        </div>
+
+        <TurnstileWidget siteKey={turnstileSiteKey} locale={locale} />
+
+        <div class="flex flex-wrap items-center gap-md">
+          <Button type="submit">{t.submit}</Button>
+          {
+            email && (
+              <Button href={contactGoPath('email')} variant="secondary">
+                {t.preferEmail}
+              </Button>
+            )
+          }
+        </div>
+      </form>
+
+      {/* WhatsApp lives in the form card: one place to start a conversation. */}
+      <div class="flex flex-wrap items-center justify-between gap-md border-t border-border pt-lg">
+        <p class="text-small text-muted-foreground">{t.preferChat}</p>
+        <div class="shrink-0 whitespace-nowrap">
+          <Button href={contactGoPath('whatsapp')} variant="secondary" target="_blank" rel="noopener">
+            <Icon name="simple-icons:whatsapp" class="size-4 shrink-0" aria-hidden="true" />
+            {t.whatsapp}
+          </Button>
+        </div>
+      </div>
+      </>
+        )
+      }
+    </Card>
+
+    {
+      !fromSales && (
+    <div class="flex flex-col gap-lg lg:col-span-3">
+      <AgentBrief brief={hireBrief} variant="panel" locale={locale} />
+      <Card class="flex flex-col gap-sm">
+        <h2 class="font-mono text-small uppercase tracking-eyebrow text-foreground">{t.mcpHeading}</h2>
+        <p class="text-small text-muted-foreground">{t.mcpBody}</p>
+        <div class="flex items-center justify-between gap-sm rounded-md border border-border bg-background px-md py-sm">
+          <code id="mcp-url" class="min-w-0 truncate font-mono text-small text-foreground">{mcpUrl}</code>
+          <CopyButton target="mcp-url" label={t.mcpCopyLabel} iconOnly />
+        </div>
+        <a href={routeFor('/mcp', locale)} class="font-mono text-small text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.mcpHowTo}</a>
+      </Card>
+      {/* Availability closes the machine-contact column, below the MCP card (moved on 2026-10-19). */}
+      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" compact />
+    </div>
+      )
+    }
+    </div>
+  </article>
+</BaseLayout>

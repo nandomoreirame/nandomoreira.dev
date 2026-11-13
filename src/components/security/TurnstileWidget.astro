@@ -1,17 +1,20 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+
 interface Props {
   /** Public site key. Empty hides the widget and skips the Cloudflare script. */
   siteKey: string;
+  locale?: Locale;
 }
 
-const { siteKey } = Astro.props;
+const { siteKey, locale = 'pt-BR' } = Astro.props;
 const enabled = siteKey.trim() !== '';
 ---
 
 {
   enabled && (
     <>
-      <div class="cf-turnstile" data-sitekey={siteKey} data-turnstile-widget />
+      <div class="cf-turnstile" data-sitekey={siteKey} data-language={locale === 'en' ? 'en' : 'pt-br'} data-turnstile-widget />
       <script
         is:inline
         async

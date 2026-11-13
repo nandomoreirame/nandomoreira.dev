@@ -24,12 +24,22 @@ describe('archiveYearDescription', () => {
 });
 
 describe('static meta descriptions', () => {
-  it.each([['src/pages/contato.astro'], ['src/pages/posts/arquivo/index.astro']])(
-    '%s describes the page in at least 70 characters',
-    file => {
-      const meta = readFileSync(file, 'utf8').match(/<BaseLayout[\s\S]*?description="([^"]*)"/)?.[1] ?? '';
-      expect(meta.length).toBeGreaterThanOrEqual(70);
-      expect(meta.length).toBeLessThanOrEqual(160);
-    },
-  );
+  it('src/pages/posts/arquivo/index.astro describes the page in at least 70 characters', () => {
+    const meta =
+      readFileSync('src/pages/posts/arquivo/index.astro', 'utf8').match(
+        /<BaseLayout[\s\S]*?description="([^"]*)"/,
+      )?.[1] ?? '';
+    expect(meta.length).toBeGreaterThanOrEqual(70);
+    expect(meta.length).toBeLessThanOrEqual(160);
+  });
+
+  // Contact meta moved into the dictionary when the page became ContactPage (i18n-foundation T19).
+  it('contact page description in the dictionary stays within the meta length window', async () => {
+    const { messagesFor } = await import('../../src/lib/i18n/messages');
+    for (const locale of ['pt-BR', 'en'] as const) {
+      const meta = messagesFor(locale).contactPage.description;
+      expect(meta.length, locale).toBeGreaterThanOrEqual(70);
+      expect(meta.length, locale).toBeLessThanOrEqual(160);
+    }
+  });
 });
