@@ -2,13 +2,17 @@ import type { Post } from '../../content/schemas/post';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock, type CatalogCollection } from '../catalog/groups';
+import { casePath, postPath } from '../i18n/paths';
+import type { Locale } from '../i18n/locale';
 import { absoluteUrl } from './urls';
 
+type LocalizedProject = Project & { locale?: Locale };
+type LocalizedPost = Post & { locale?: Locale };
 interface Input {
   site: URL;
   profile: Profile;
-  projects: readonly Project[];
-  posts?: readonly Post[];
+  projects: readonly LocalizedProject[];
+  posts?: readonly LocalizedPost[];
 }
 
 interface PageEntry {
@@ -88,7 +92,10 @@ export const buildAiIndex = ({ site, profile, projects, posts = [] }: Input): Ai
     })),
     ...projects.map((project): CaseEntry => {
       const collection = collectionOfBlock(project.block);
-      const path = `/${collection}/${project.slug}`;
+      const locale = project.locale ?? 'pt-BR';
+      const path = casePath({ slug: project.slug, block: project.block, locale });
+      // Machine markdown mirrors stay at the unprefixed collection path.
+      const markdownPath = `/${collection}/${project.slug}.md`;
 
       return {
         type: 'case',
@@ -97,12 +104,12 @@ export const buildAiIndex = ({ site, profile, projects, posts = [] }: Input): Ai
         summary: project.summary,
         collection,
         tech: [...project.tech],
-        markdown: absoluteUrl(site, `${path}.md`),
+        markdown: absoluteUrl(site, markdownPath),
       };
     }),
     ...posts.map((post): PostEntry => ({
       type: 'post',
-      url: absoluteUrl(site, `/${post.slug}`),
+      url: absoluteUrl(site, postPath({ slug: post.slug, locale: post.locale ?? 'pt-BR' })),
       title: post.title,
       summary: post.summary,
       date: post.date,

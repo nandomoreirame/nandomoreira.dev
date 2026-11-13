@@ -22,7 +22,16 @@ const profile = {
   contacts: [{ kind: 'email', value: 'oi@nandomoreira.dev' }],
 } as never;
 
-const output = () => buildAgentsMd({ site, profile });
+const projects = [
+  {
+    slug: 'forja',
+    title: 'Forja',
+    block: 'ai-tooling',
+    locale: 'en' as const,
+  },
+] as never[];
+
+const output = () => buildAgentsMd({ site, profile, projects });
 
 describe('buildAgentsMd', () => {
   it('states the services on offer', () => {
@@ -30,7 +39,7 @@ describe('buildAgentsMd', () => {
   });
 
   it('links each service to the case that proves it', () => {
-    expect(output()).toContain('/projetos/forja');
+    expect(output()).toContain('/en/lab/forja');
   });
 
   it('reports availability together with the date it was last updated', () => {

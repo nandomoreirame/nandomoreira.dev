@@ -1,14 +1,19 @@
 import type { Profile } from '../../content/schemas/profile';
+import type { Project } from '../../content/schemas/project';
 import { BUDGETS, INTERESTS, SERVICES } from '../hire/schema';
+import type { Locale } from '../i18n/locale';
+import { casePath } from '../i18n/paths';
 import { MCP_TOOLS } from '../mcp/catalog';
 import { absoluteUrl } from './urls';
 
+type LocalizedProject = Project & { locale?: Locale };
 interface Input {
   site: URL;
   profile: Profile;
+  projects?: readonly LocalizedProject[];
 }
 
-export const buildAgentsMd = ({ site, profile }: Input): string => {
+export const buildAgentsMd = ({ site, profile, projects = [] }: Input): string => {
   const lines: string[] = [
     `# Hiring brief: ${profile.name}`,
     '',
@@ -25,8 +30,12 @@ export const buildAgentsMd = ({ site, profile }: Input): string => {
   ];
 
   for (const service of profile.services) {
+    const proof = projects.find(project => project.slug === service.caseSlug);
+    const proofPath = proof
+      ? casePath({ slug: proof.slug, block: proof.block, locale: proof.locale ?? 'pt-BR' })
+      : `/portfolio/${service.caseSlug}`;
     lines.push(
-      `- **${service.title}** — ${service.description} Proof: ${absoluteUrl(site, `/projetos/${service.caseSlug}`)}`,
+      `- **${service.title}** — ${service.description} Proof: ${absoluteUrl(site, proofPath)}`,
     );
   }
 

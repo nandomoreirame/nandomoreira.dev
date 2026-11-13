@@ -2,22 +2,35 @@ import type { Post } from '../../content/schemas/post';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { collectionOfBlock } from '../catalog/groups';
+import { casePath, postPath } from '../i18n/paths';
+import type { Locale } from '../i18n/locale';
 import { formatMachineRoute, MACHINE_ROUTES } from './llms-txt';
 import { absoluteUrl } from './urls';
 
+type LocalizedProject = Project & { locale?: Locale };
+type LocalizedPost = Post & { locale?: Locale };
 interface Input {
   site: URL;
   profile: Profile;
-  projects: readonly Project[];
-  posts?: readonly Post[];
+  projects: readonly LocalizedProject[];
+  posts?: readonly LocalizedPost[];
 }
 
 const singleLine = (value: string): string => value.replace(/\s+/g, ' ').trim();
 
 const period = (startDate: string, endDate?: string): string => `${startDate} – ${endDate ?? 'present'}`;
 
-const projectBySlug = (projects: readonly Project[], slug: string): Project | undefined =>
+const projectBySlug = (projects: readonly LocalizedProject[], slug: string): LocalizedProject | undefined =>
   projects.find(project => project.slug === slug);
+
+const projectUrl = (site: URL, project: LocalizedProject): string =>
+  absoluteUrl(
+    site,
+    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
+  );
+
+const itemPostUrl = (site: URL, post: LocalizedPost): string =>
+  absoluteUrl(site, postPath({ slug: post.slug, locale: post.locale ?? 'pt-BR' }));
 
 const appendMachineRoutesAndLanguage = (lines: string[], site: URL): void => {
   lines.push('', '## Machine routes', '');
@@ -60,8 +73,9 @@ export const buildLlmsFullTxt = ({ site, profile, projects, posts = [] }: Input)
 
   for (const service of profile.services) {
     const proof = projectBySlug(projects, service.caseSlug);
-    const collection = proof ? collectionOfBlock(proof.block) : 'portfolio';
-    const caseUrl = absoluteUrl(site, `/${collection}/${service.caseSlug}`);
+    const caseUrl = proof
+      ? projectUrl(site, proof)
+      : absoluteUrl(site, `/portfolio/${service.caseSlug}`);
     lines.push(`- **${service.title}**: ${singleLine(service.description)}`);
     lines.push(`  Proof: ${caseUrl}`);
   }
@@ -93,7 +107,7 @@ export const buildLlmsFullTxt = ({ site, profile, projects, posts = [] }: Input)
     if (project.discontinued) statusBits.push('discontinued');
 
     lines.push(`### ${project.title}`, '');
-    lines.push(`- URL: ${absoluteUrl(site, `/${collection}/${project.slug}`)}`);
+    lines.push(`- URL: ${projectUrl(site, project)}`);
     lines.push(`- collection: ${collection}`);
     lines.push(`- tech: ${project.tech.join(', ')}`);
     if (statusBits.length > 0) {
@@ -113,7 +127,7 @@ export const buildLlmsFullTxt = ({ site, profile, projects, posts = [] }: Input)
   if (posts.length > 0) {
     lines.push('## Posts', '');
     for (const post of posts) {
-      lines.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
+      lines.push(`- [${post.title}](${itemPostUrl(site, post)}): ${post.summary}`);
     }
   }
 

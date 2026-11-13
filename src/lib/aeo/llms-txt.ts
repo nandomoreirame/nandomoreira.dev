@@ -1,14 +1,17 @@
 import type { Post } from '../../content/schemas/post';
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
-import { collectionOfBlock } from '../catalog/groups';
+import { casePath, postPath } from '../i18n/paths';
+import type { Locale } from '../i18n/locale';
 import { absoluteUrl } from './urls';
 
+type LocalizedProject = Project & { locale?: Locale };
+type LocalizedPost = Post & { locale?: Locale };
 interface Input {
   site: URL;
   profile: Profile;
-  projects: readonly Project[];
-  posts?: readonly Post[];
+  projects: readonly LocalizedProject[];
+  posts?: readonly LocalizedPost[];
 }
 
 export const MACHINE_ROUTES = [
@@ -32,13 +35,21 @@ export const formatMachineRoute = (site: URL, route: string, description: string
   return `- [${route}](${absoluteUrl(site, route)}): ${description}`;
 };
 
+const projectUrl = (site: URL, project: LocalizedProject): string =>
+  absoluteUrl(
+    site,
+    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
+  );
+
+const itemPostUrl = (site: URL, post: LocalizedPost): string =>
+  absoluteUrl(site, postPath({ slug: post.slug, locale: post.locale ?? 'pt-BR' }));
+
 /** Format follows the llms.txt convention: H1, blockquote summary, H2 sections. */
 export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): string => {
   const lines: string[] = [`# ${profile.name}`, '', `> ${profile.headline}. ${profile.bio}`, '', '## Projects', ''];
 
   for (const project of projects) {
-    const collection = collectionOfBlock(project.block);
-    lines.push(`- [${project.title}](${absoluteUrl(site, `/${collection}/${project.slug}`)}): ${project.summary}`);
+    lines.push(`- [${project.title}](${projectUrl(site, project)}): ${project.summary}`);
   }
 
   if (projects.length === 0) {
@@ -48,7 +59,7 @@ export const buildLlmsTxt = ({ site, profile, projects, posts = [] }: Input): st
   if (posts.length > 0) {
     lines.push('', '## Posts', '');
     for (const post of posts) {
-      lines.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
+      lines.push(`- [${post.title}](${itemPostUrl(site, post)}): ${post.summary}`);
     }
   }
 
