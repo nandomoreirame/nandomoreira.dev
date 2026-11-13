@@ -36,7 +36,7 @@ describe('highlighted code meets AA in both themes', () => {
   });
 
   it.each(VARIANTS)('renders the %s variant as CSS variables, with no fixed inline colour', async variant => {
-    const [first] = (await withCode()).filter(entry => /```[a-z]/.test(entry.body ?? ''));
+    const [first] = (await withCode()).filter(entry => /```(?:ts|typescript|js|javascript)\b/.test(entry.body ?? ''));
     const html = await render(first!);
     expect(blockBackground(html, variant), 'no <pre> background: the selector drifted').toBeDefined();
     expect(tokenColours(html, variant).length).toBeGreaterThan(1);

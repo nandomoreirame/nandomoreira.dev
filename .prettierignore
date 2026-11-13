@@ -11,3 +11,6 @@ package-lock.json
 src/lib/code/themes/*.json
 # Rendered HTML fixtures (i18n): the pt-BR pages must stay byte for byte, so they are never reformatted.
 tests/__snapshots__/
+
+# Askama templates contain Rust control flow, not standalone HTML.
+tools/stats/templates/

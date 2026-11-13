@@ -25,7 +25,7 @@ describe('closing CTA', () => {
     expect(html).toMatch(/<a[^>]*href="\/contato"[^>]*>[\s\S]*?lucide:arrow-right/);
   });
 
-  it.each(['portfolio', 'sobre'] as const)('sends /%s to the services page', async (page) => {
+  it.each(['portfolio', 'sobre'] as const)('sends /%s to the services page', async page => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(ClosingCta, {
       props: { page },

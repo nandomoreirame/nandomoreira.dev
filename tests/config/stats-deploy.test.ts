@@ -46,9 +46,7 @@ describe('stats web compose', () => {
   });
 
   it('mounts the key read-only from outside the repository', () => {
-    expect(read('deploy/stats/compose.yml')).toContain(
-      '${HOME}/.config/stats/sa.json:/run/secrets/stats-sa.json:ro',
-    );
+    expect(read('deploy/stats/compose.yml')).toContain('${HOME}/.config/stats/sa.json:/run/secrets/stats-sa.json:ro');
   });
 
   it('runs with the homelab user id, so it can read a key in mode 600', () => {
@@ -83,7 +81,7 @@ describe('deploy-stats.sh', () => {
   });
 
   it('takes the home network IP from the default route, since every .home name points at Tailscale', () => {
-    expect(script()).toContain("LAN_IP=\"$(ip -4 route get 1.1.1.1 | sed -n 's/.* src \\([0-9.]*\\).*/\\1/p')\"");
+    expect(script()).toContain('LAN_IP="$(ip -4 route get 1.1.1.1 | sed -n \'s/.* src \\([0-9.]*\\).*/\\1/p\')"');
     expect(script()).not.toMatch(/LAN_IP=.*dns\.hosts|LAN_IP="\$\(printf '%s' "\$CURRENT"/);
   });
 

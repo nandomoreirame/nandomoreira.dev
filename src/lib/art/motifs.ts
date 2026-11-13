@@ -1174,7 +1174,15 @@ export const suite: Motif = (random, { width, height }) => {
     for (let c = 0; c < cases; c += 1) {
       // position in the row, not a dice roll: the last case written weighs the most
       const age = (c + 1) / cases;
-      shapes.push({ kind: 'bar', x: x0 + c * pitch, y, w: size, h: size, layer: age > 0.8 ? 2 : 1, weight: 0.05 + age * 0.95 });
+      shapes.push({
+        kind: 'bar',
+        x: x0 + c * pitch,
+        y,
+        w: size,
+        h: size,
+        layer: age > 0.8 ? 2 : 1,
+        weight: 0.05 + age * 0.95,
+      });
     }
   }
   return shapes;

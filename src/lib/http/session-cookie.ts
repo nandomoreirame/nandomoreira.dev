@@ -52,10 +52,7 @@ export const serializeSession = (state: SessionState): string | null => {
 export const cookieDomainFor = (hostname: string): string | undefined =>
   hostname === SITE_DOMAIN || hostname.endsWith(`.${SITE_DOMAIN}`) ? SITE_DOMAIN : undefined;
 
-export const sessionSetCookie = (
-  value: string | null,
-  options: { secure: boolean; domain?: string },
-): string => {
+export const sessionSetCookie = (value: string | null, options: { secure: boolean; domain?: string }): string => {
   const parts = [
     `${SESSION_COOKIE}=${value ?? ''}`,
     'Path=/',

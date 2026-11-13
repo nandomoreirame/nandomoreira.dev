@@ -84,9 +84,7 @@ describe('handleListingView', () => {
   });
 
   it('keeps the author excluded when he switches this browser to the grid', async () => {
-    const response = await handleListingView(
-      post('visao=grade', 'https://nandomoreira.dev/posts', '__session=self'),
-    );
+    const response = await handleListingView(post('visao=grade', 'https://nandomoreira.dev/posts', '__session=self'));
     expect(response.headers.get('set-cookie')?.split('; ')[0]).toBe('__session=self.grid');
     expect(response.headers.get('set-cookie')).toContain('Domain=nandomoreira.dev');
   });

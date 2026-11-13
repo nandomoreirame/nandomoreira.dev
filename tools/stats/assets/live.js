@@ -8,10 +8,10 @@
 
   const apply = () => {
     if (pending === null) return;
-    const open = [...root.querySelectorAll('details[open]')].map((d) => d.id);
+    const open = [...root.querySelectorAll('details[open]')].map(d => d.id);
     root.innerHTML = pending;
     pending = null;
-    open.forEach((id) => document.getElementById(id)?.setAttribute('open', ''));
+    open.forEach(id => document.getElementById(id)?.setAttribute('open', ''));
   };
 
   root.addEventListener('focusout', () => {
@@ -21,7 +21,7 @@
   });
 
   const source = new EventSource('/events?' + root.dataset.query);
-  source.addEventListener('view', (event) => {
+  source.addEventListener('view', event => {
     pending = event.data;
     if (!root.contains(document.activeElement)) apply();
   });

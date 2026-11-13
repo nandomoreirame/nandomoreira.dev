@@ -55,7 +55,8 @@ describe('Confetti', () => {
 
   it('only moves for people who did not ask for less motion, and plays once', () => {
     const css = readFileSync('src/styles/global.css', 'utf8');
-    const block = css.slice(css.indexOf('/* Confetti'));
+    const start = css.indexOf('/* Confetti');
+    const block = css.slice(start, css.indexOf('/* The live strip', start));
 
     expect(block).toMatch(/\[data-confetti\][^{]*\{[^}]*display:\s*none/);
     expect(block).toMatch(

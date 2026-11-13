@@ -18,7 +18,7 @@ interface Options {
 }
 
 // Fake binaries come first in PATH, and `env -i` keeps ~/.bashrc (BASH_ENV) from
-// putting the real claude back in front of them.
+// putting the real opencode back in front of them.
 const run = ({
   writes = { slug: 'post-novo', draft: true },
   agentExit = 0,
@@ -36,7 +36,7 @@ const run = ({
     ? `cat > "$AUTOWRITER_ROOT/src/content/posts/${writes.slug}.md" <<'EOF'\n${POST(writes.slug, writes.draft)}EOF\n`
     : '';
   const fakes: Record<string, string> = {
-    claude: `#!/bin/bash\nprintf '%s\\n' "$@" > "${dir}/claude-args"\n${write}echo "relatório do agente"\nexit ${agentExit}\n`,
+    opencode: `#!/bin/bash\nprintf '%s\\n' "$@" > "${dir}/opencode-args"\n${write}echo "relatório do agente"\nexit ${agentExit}\n`,
     curl: `#!/bin/bash\nprintf '%s' "${httpCode}"\n`,
     deploy: `#!/bin/bash\necho "${deployOutput}"\n`,
   };
@@ -62,7 +62,7 @@ const run = ({
   );
   const args = (() => {
     try {
-      return readFileSync(join(dir, 'claude-args'), 'utf8');
+      return readFileSync(join(dir, 'opencode-args'), 'utf8');
     } catch {
       return '';
     }
@@ -79,12 +79,10 @@ describe('scripts/autowriter-run.sh', () => {
     expect(status).toBe(0);
   });
 
-  it('runs the post-autowriter agent headless with git writes and the deploy denied', () => {
+  it('calls the configured post-autowriter agent headlessly', () => {
     const { args } = run();
-    expect(args).toMatch(/^--agent\npost-autowriter$/m);
-    for (const denied of ['Bash(git commit:*)', 'Bash(git push:*)', 'Bash(*deploy-staging*)']) {
-      expect(args).toContain(denied);
-    }
+    expect(args).toMatch(/^run\n--agent\npost-autowriter\n--auto\n/m);
+    expect(args).toContain('não faça perguntas');
   });
 
   it.each<[string, Options, string]>([

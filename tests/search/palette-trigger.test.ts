@@ -9,7 +9,8 @@ const renderLayout = async (props: { noindex?: boolean } = {}) =>
     slots: { default: '<p>conteúdo</p>' },
   });
 
-const corner = (html: string) => html.match(/<div[^>]*data-corner-actions[^>]*>[\s\S]*?data-back-to-top[\s\S]*?<\/a>\s*<\/div>/)?.[0] ?? '';
+const corner = (html: string) =>
+  html.match(/<div[^>]*data-corner-actions[^>]*>[\s\S]*?data-back-to-top[\s\S]*?<\/a>\s*<\/div>/)?.[0] ?? '';
 
 describe('palette trigger', () => {
   it('is hidden until the script shows it, with an accessible name', async () => {

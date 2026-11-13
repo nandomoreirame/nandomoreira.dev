@@ -128,7 +128,9 @@ describe('generateArt', () => {
   it('draws symlinks as repo files on the left, each linked to exactly one home target on the right', () => {
     const frame = { width: 160, height: 90 };
     const shapes = MOTIF_DRAWERS.symlinks(createRandom(hashString('symlinks')), frame);
-    const sources = shapes.filter((shape): shape is Extract<Shape, { kind: 'dot' }> => shape.kind === 'dot' && shape.layer === 1);
+    const sources = shapes.filter(
+      (shape): shape is Extract<Shape, { kind: 'dot' }> => shape.kind === 'dot' && shape.layer === 1,
+    );
     const targets = shapes.filter((shape): shape is Extract<Shape, { kind: 'ring' }> => shape.kind === 'ring');
     const links = shapes.filter((shape): shape is Extract<Shape, { kind: 'line' }> => shape.kind === 'line');
 
@@ -162,7 +164,11 @@ describe('generateArt', () => {
     // every row starts at the same column and its cases sit on a fixed pitch
     const starts = [...rows].map(y => Math.min(...cases.filter(bar => bar.y === y).map(bar => bar.x)));
     expect(new Set(starts.map(x => Math.round(x * 1000))).size).toBe(1);
-    const pitch = (cases.filter(bar => bar.y === [...rows][0]).map(bar => bar.x).sort((a, b) => a - b)[1] ?? 0) - starts[0]!;
+    const pitch =
+      (cases
+        .filter(bar => bar.y === [...rows][0])
+        .map(bar => bar.x)
+        .sort((a, b) => a - b)[1] ?? 0) - starts[0]!;
     for (const bar of cases) {
       const steps = (bar.x - starts[0]!) / pitch;
       expect(Math.abs(steps - Math.round(steps))).toBeLessThan(1e-6);
@@ -205,7 +211,9 @@ describe('generateArt', () => {
     expect(Math.min(...sensors.map(ring => ring.x))).toBeGreaterThan(frame.width * 0.7);
 
     // the feedback runs under the frame, from the sensors' side back to the guides'
-    const lowestSide = Math.max(...vertical.filter(line => encloses(line, 'x')).map(line => Math.max(line.y1, line.y2)));
+    const lowestSide = Math.max(
+      ...vertical.filter(line => encloses(line, 'x')).map(line => Math.max(line.y1, line.y2)),
+    );
     const feedback = horizontal.filter(line => line.y1 > lowestSide);
     expect(feedback).toHaveLength(1);
     expect(Math.min(feedback[0]!.x1, feedback[0]!.x2)).toBeLessThan(frame.width * 0.3);
