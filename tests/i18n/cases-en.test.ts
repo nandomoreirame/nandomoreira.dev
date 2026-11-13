@@ -30,6 +30,12 @@ const BATCHES: string[] = [
   'grab-sh',
   'hypr-switcher',
   'job-radar',
+  'noctalia-aibar',
+  'noctalia-daybar',
+  'noctalia-desktop-sticky-notes',
+  'noctalia-gistbar',
+  'rdo-solo',
+  'tumodori',
 ];
 
 /** Professional-batch cases with confidential: true (REQ-017). */
