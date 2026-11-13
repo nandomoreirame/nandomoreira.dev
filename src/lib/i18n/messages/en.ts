@@ -366,4 +366,18 @@ export const en: Messages = {
       professional: 'Professional and client work',
     },
   },
+  newsletterConfirm: {
+    pageTitle: 'Confirm subscription',
+    heading: 'Confirm your newsletter subscription',
+    body: 'Click the button to confirm this e-mail is yours.',
+    button: 'Confirm subscription',
+    emailSubject: 'Confirm your subscription',
+    emailPreview: 'Confirm your e-mail to get the updates',
+    emailEyebrow: 'confirm your e-mail',
+    emailTitle: 'One click left to subscribe',
+    emailBeforeLink: (email: string) => `To get the next articles at ${email}, open the `,
+    emailLinkLabel: 'confirmation link',
+    emailAfterLink: '. It is valid for 7 days and works only once.',
+    emailFooter: (email: string) => `Request from ${email} via /api/subscribe`,
+  },
 };

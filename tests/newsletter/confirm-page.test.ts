@@ -13,11 +13,16 @@ const postRequest = (token: string) =>
     body: new URLSearchParams({ token }).toString(),
   });
 
+const storeOf = (claim: ReturnType<typeof vi.fn>, localeOf = vi.fn(async () => 'pt-BR' as const)) => ({
+  claim,
+  localeOf,
+});
+
 describe('confirmação em duas etapas', () => {
   it('GET mostra a página sem confirmar, para leitor de link não consumir o token', async () => {
-    const claim = vi.fn(async () => 'ana@example.com');
+    const claim = vi.fn(async () => ({ email: 'ana@example.com', locale: 'pt-BR' as const }));
     const response = await handleConfirm(getRequest('tok-1'), {
-      store: { claim },
+      store: storeOf(claim),
       now: () => NOW,
       onConfirmed: vi.fn(),
     });
@@ -31,7 +36,7 @@ describe('confirmação em duas etapas', () => {
 
   it('o token é escapado na página', async () => {
     const response = await handleConfirm(getRequest('"><script>x</script>'), {
-      store: { claim: vi.fn(async () => null) },
+      store: storeOf(vi.fn(async () => null)),
       now: () => NOW,
       onConfirmed: vi.fn(),
     });
@@ -42,7 +47,7 @@ describe('confirmação em duas etapas', () => {
   it('POST confirma e avisa uma única vez', async () => {
     const onConfirmed = vi.fn(async () => {});
     const response = await handleConfirm(postRequest('tok-1'), {
-      store: { claim: vi.fn(async () => 'ana@example.com') },
+      store: storeOf(vi.fn(async () => ({ email: 'ana@example.com', locale: 'pt-BR' as const }))),
       now: () => NOW,
       onConfirmed,
     });
@@ -54,7 +59,7 @@ describe('confirmação em duas etapas', () => {
   it('POST com token inválido responde igual e não avisa', async () => {
     const onConfirmed = vi.fn(async () => {});
     const response = await handleConfirm(postRequest('errado'), {
-      store: { claim: vi.fn(async () => null) },
+      store: storeOf(vi.fn(async () => null)),
       now: () => NOW,
       onConfirmed,
     });

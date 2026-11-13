@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { getFirestoreClient } from '../hire/firestore';
-import type { ConfirmStore } from './confirm';
+import type { Locale } from '../i18n/locale';
+import type { ConfirmClaim, ConfirmStore } from './confirm';
 
 export const NEWSLETTER_COLLECTION = 'newsletter_subscribers';
 
@@ -21,6 +22,10 @@ export const canConfirm = (doc: Record<string, unknown>, tokenHash: string, now:
   doc.confirmTokenHash === tokenHash &&
   String(doc.confirmExpiresAt) >= now.toISOString();
 
+/** Optional locale on the pending document; absent means pt-BR. */
+export const localeOfDoc = (doc: Record<string, unknown> | null | undefined): Locale =>
+  doc?.locale === 'en' ? 'en' : 'pt-BR';
+
 /** Plaintext token stays in the confirmation mail. Only its hash is stored. */
 export const newConfirmation = (now: Date) => {
   const token = randomBytes(32).toString('base64url');
@@ -34,14 +39,21 @@ export const newConfirmation = (now: Date) => {
 /**
  * No IP and no user agent: the limiter uses the IP in memory and forgets it.
  * A new address stays pending until the confirmation link is opened (REQ-001).
+ * Locale is optional and omitted for pt-BR (a language code, not visitor PII).
  */
-export const toSubscriber = (email: string, now: Date, confirmation = newConfirmation(now)) => ({
+export const toSubscriber = (
+  email: string,
+  now: Date,
+  confirmation = newConfirmation(now),
+  locale?: Locale,
+) => ({
   email: normalise(email),
   status: 'pending' as const,
   subscribedAt: now.toISOString(),
   source: 'posts' as const,
   confirmTokenHash: confirmation.tokenHash,
   confirmExpiresAt: confirmation.expiresAt,
+  ...(locale === 'en' ? { locale: 'en' as const } : {}),
 });
 
 /** `token` is the plaintext confirmation secret, present only when the address was just created. */
@@ -52,7 +64,7 @@ export interface SubscriptionSave {
 
 export interface SubscriberStore {
   /** Whether the address is new, plus the confirmation token when it is. */
-  save: (email: string, now: Date) => Promise<SubscriptionSave>;
+  save: (email: string, now: Date, locale?: Locale) => Promise<SubscriptionSave>;
   /** The stored document, when the address is already on the list. */
   lookup?: (email: string) => Promise<Record<string, unknown> | null>;
   /** Replaces the confirmation token of a pending address and returns the plaintext token. */
@@ -63,13 +75,13 @@ export interface SubscriberStore {
 const ALREADY_EXISTS = 6;
 
 export const firestoreSubscriberStore = (): SubscriberStore => ({
-  save: async (email, now) => {
+  save: async (email, now, locale) => {
     const confirmation = newConfirmation(now);
     try {
       await getFirestoreClient()
         .collection(NEWSLETTER_COLLECTION)
         .doc(subscriberId(email))
-        .create({ ...toSubscriber(email, now, confirmation), confirmSentAt: now.toISOString() });
+        .create({ ...toSubscriber(email, now, confirmation, locale), confirmSentAt: now.toISOString() });
       return { isNew: true, token: confirmation.token };
     } catch (error) {
       if ((error as { code?: number }).code === ALREADY_EXISTS) return { isNew: false, token: null };
@@ -110,7 +122,16 @@ export const firestoreConfirmStore = (): ConfirmStore => ({
         confirmTokenHash: null,
         confirmSentAt: null,
       });
-      return typeof doc.email === 'string' ? doc.email : null;
+      if (typeof doc.email !== 'string') return null;
+      return { email: doc.email, locale: localeOfDoc(doc) } satisfies ConfirmClaim;
     });
+  },
+  localeOf: async tokenHash => {
+    const found = await getFirestoreClient()
+      .collection(NEWSLETTER_COLLECTION)
+      .where('confirmTokenHash', '==', tokenHash)
+      .limit(1)
+      .get();
+    return localeOfDoc(found.docs[0]?.data());
   },
 });

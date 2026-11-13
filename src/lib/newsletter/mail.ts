@@ -4,7 +4,9 @@ import { Resend } from 'resend';
 import NewsletterConfirm from '../../emails/newsletter-confirm';
 import NewsletterNotification from '../../emails/newsletter-notification';
 import type { HireConfig } from '../hire/config';
+import type { Locale } from '../i18n/locale';
 import type { OutgoingMail } from '../mail/outgoing';
+import { newsletterConfirmCopy } from './copy';
 
 /** The mail that tells me someone new joined the list. */
 export const subscriberMail = async ({
@@ -23,19 +25,27 @@ export const subscriberMail = async ({
 export type SubscriberNotifier = (mail: OutgoingMail) => Promise<void>;
 
 /** The mail that carries the one-time confirmation link. */
-export const confirmationMail = async ({ email, token }: { email: string; token: string }): Promise<OutgoingMail> => {
-  const html = await render(h(NewsletterConfirm, { email, token }));
-  return { subject: 'Confirme sua assinatura', html, text: toPlainText(html) };
+export const confirmationMail = async ({
+  email,
+  token,
+  locale = 'pt-BR',
+}: {
+  email: string;
+  token: string;
+  locale?: Locale;
+}): Promise<OutgoingMail> => {
+  const html = await render(h(NewsletterConfirm, { email, token, locale }));
+  return { subject: newsletterConfirmCopy(locale).emailSubject, html, text: toPlainText(html) };
 };
 
-export type ConfirmationSender = (email: string, token: string) => Promise<void>;
+export type ConfirmationSender = (email: string, token: string, locale?: Locale) => Promise<void>;
 
 /** Same Resend account as the other newsletter mail. The subscriber is the recipient. */
 export const resendConfirmationSender = (config: HireConfig): ConfirmationSender => {
   const client = new Resend(config.apiKey);
 
-  return async (email, token) => {
-    const mail = await confirmationMail({ email, token });
+  return async (email, token, locale = 'pt-BR') => {
+    const mail = await confirmationMail({ email, token, locale });
     const { error } = await client.emails.send({
       from: config.notifyFrom,
       to: email,

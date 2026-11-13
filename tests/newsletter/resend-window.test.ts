@@ -37,7 +37,7 @@ describe('reenvio', () => {
 
     await handleSubscribe(request(), pending('2026-11-03T12:00:00.000Z'));
     expect(sendConfirmation).toHaveBeenCalledTimes(1);
-    expect(sendConfirmation).toHaveBeenCalledWith('ana@example.com', 'novo-token');
+    expect(sendConfirmation).toHaveBeenCalledWith('ana@example.com', 'novo-token', 'pt-BR');
 
     sendConfirmation.mockClear();
     await handleSubscribe(request(), {

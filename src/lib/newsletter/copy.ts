@@ -1,4 +1,5 @@
 import type { Locale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
 import type { SubscribeOutcome } from './handler';
 
 type NewsletterCopy = {
@@ -11,6 +12,10 @@ type NewsletterCopy = {
   privacyLink: string;
   emailLabel: string;
 };
+
+/** Confirm-page and confirmation-mail copy from the dictionary (REQ-008). */
+export const newsletterConfirmCopy = (locale: Locale = 'pt-BR') =>
+  messagesFor(locale).newsletterConfirm;
 
 type NewsletterOutcome = { role: 'status' | 'alert'; text: string };
 

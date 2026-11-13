@@ -1,6 +1,7 @@
 import { FORM_HONEYPOT } from '../hire/form';
 import { readLimitedText } from '../hire/read-body';
 import { type Limiter, clientIpOf } from '../hire/rate-limit';
+import { localeOfPath, type Locale } from '../i18n/locale';
 import { originAllowed } from '../security/origin';
 import { subscribeSchema } from './schema';
 import type { ThankYouSender } from '../mail/thank-you';
@@ -12,7 +13,7 @@ import { type SubscriberStore, type SubscriptionSave, statusOf } from './store';
 export type SubscribeOutcome = 'ok' | 'invalido' | 'limite' | 'erro' | 'captcha';
 
 /** Sends the one-time confirmation link. The notice and the thank-you wait for the click. */
-export type ConfirmationSender = (email: string, token: string) => Promise<void>;
+export type ConfirmationSender = (email: string, token: string, locale?: Locale) => Promise<void>;
 
 export interface SubscribeDependencies {
   store: SubscriberStore;
@@ -121,9 +122,10 @@ export const handleSubscribe = async (
   if (!result.success) return back('invalido');
 
   const at = now();
+  const locale = localeOfPath(origin);
   let saved: SubscriptionSave;
   try {
-    saved = await store.save(result.data.email, at);
+    saved = await store.save(result.data.email, at, locale);
   } catch {
     return back('erro');
   }
@@ -133,7 +135,7 @@ export const handleSubscribe = async (
   // A failed send never changes the answer, since the address is already stored.
   if (saved.isNew && saved.token && sendConfirmation) {
     try {
-      await sendConfirmation(result.data.email, saved.token);
+      await sendConfirmation(result.data.email, saved.token, locale);
     } catch {
       console.warn('newsletter: confirmation could not be sent');
     }
@@ -144,7 +146,7 @@ export const handleSubscribe = async (
       const sentAt = pending && typeof existing?.confirmSentAt === 'string' ? new Date(existing.confirmSentAt) : null;
       if (pending && (sentAt === null || mayResendConfirmation(sentAt, at))) {
         const token = await store.reissue(result.data.email, at);
-        await sendConfirmation(result.data.email, token);
+        await sendConfirmation(result.data.email, token, locale);
       }
     } catch {
       console.warn('newsletter: confirmation could not be sent');

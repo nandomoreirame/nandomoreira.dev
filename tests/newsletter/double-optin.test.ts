@@ -18,7 +18,7 @@ describe('double opt-in', () => {
     expect(notify).not.toHaveBeenCalled();
     expect(thankYou).not.toHaveBeenCalled();
     expect(sendConfirmation).toHaveBeenCalledTimes(1);
-    expect(sendConfirmation).toHaveBeenCalledWith('ana@example.com', 'plain-token');
+    expect(sendConfirmation).toHaveBeenCalledWith('ana@example.com', 'plain-token', 'pt-BR');
   });
 
   it('confirmação dispara aviso e boas-vindas uma vez', async () => {

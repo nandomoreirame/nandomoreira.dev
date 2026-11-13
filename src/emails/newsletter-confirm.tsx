@@ -2,28 +2,34 @@
 /** @jsxImportSource react */
 import { InlineLink, Paragraph } from './_shared/blocks';
 import { EmailLayout } from './_shared/layout';
+import type { Locale } from '../lib/i18n/locale';
+import { newsletterConfirmCopy } from '../lib/newsletter/copy';
 
 interface Props {
   email: string;
   /** Plaintext one-time token. Only the hash is stored. */
   token: string;
+  locale?: Locale;
 }
 
 const SITE = 'https://nandomoreira.dev';
 
 /** Asks the subscriber to prove they own the address before anything else is sent. */
-const NewsletterConfirm = ({ email, token }: Props) => {
+const NewsletterConfirm = ({ email, token, locale = 'pt-BR' }: Props) => {
+  const copy = newsletterConfirmCopy(locale);
   const href = `${SITE}/api/subscribe/confirm?token=${encodeURIComponent(token)}`;
   return (
     <EmailLayout
-      preview="Confirme seu e-mail para receber as novidades"
-      eyebrow="confirme seu e-mail"
-      title="Falta um clique para assinar"
-      footer={`Pedido de ${email} via /api/subscribe`}
+      lang={locale}
+      preview={copy.emailPreview}
+      eyebrow={copy.emailEyebrow}
+      title={copy.emailTitle}
+      footer={copy.emailFooter(email)}
     >
       <Paragraph>
-        Para receber os próximos artigos em {email}, abra o <InlineLink href={href}>link de confirmação</InlineLink>.
-        Ele vale por 7 dias e só funciona uma vez.
+        {copy.emailBeforeLink(email)}
+        <InlineLink href={href}>{copy.emailLinkLabel}</InlineLink>
+        {copy.emailAfterLink}
       </Paragraph>
     </EmailLayout>
   );

@@ -25,6 +25,8 @@ describe('firestoreSubscriberStore contract', () => {
   it('tells the caller whether the address is new', async () => {
     const { readFileSync } = await import('node:fs');
     const source = readFileSync('src/lib/newsletter/store.ts', 'utf8');
-    expect(source).toMatch(/save: \(email: string, now: Date\) => Promise<SubscriptionSave>/);
+    expect(source).toMatch(
+      /save: \(email: string, now: Date, locale\?: Locale\) => Promise<SubscriptionSave>/,
+    );
   });
 });

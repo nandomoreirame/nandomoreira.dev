@@ -12,6 +12,8 @@ interface Props {
   title: string;
   /** Small mono line under the panel: where this came from and its record id. */
   footer: string;
+  /** Document language. Defaults to pt-BR so existing templates stay unchanged. */
+  lang?: string;
   children: ReactNode;
 }
 
@@ -20,8 +22,8 @@ interface Props {
  * column, the wordmark on top, a bordered panel for the content (elevation 1:
  * surface with a hairline, no shadow) and a mono footer.
  */
-export const EmailLayout = ({ preview, eyebrow, title, footer, children }: Props) => (
-  <Html lang="pt-BR">
+export const EmailLayout = ({ preview, eyebrow, title, footer, lang = 'pt-BR', children }: Props) => (
+  <Html lang={lang}>
     <Head>
       {/* Clients that honour it keep the dark palette instead of inverting it. */}
       <meta name="color-scheme" content="dark" />

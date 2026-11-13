@@ -371,4 +371,18 @@ export const ptBR = {
       professional: 'Trabalho profissional e de cliente',
     },
   },
+  newsletterConfirm: {
+    pageTitle: 'Confirmar inscrição',
+    heading: 'Confirmar inscrição na newsletter',
+    body: 'Clique no botão para confirmar que este e-mail é seu.',
+    button: 'Confirmar inscrição',
+    emailSubject: 'Confirme sua assinatura',
+    emailPreview: 'Confirme seu e-mail para receber as novidades',
+    emailEyebrow: 'confirme seu e-mail',
+    emailTitle: 'Falta um clique para assinar',
+    emailBeforeLink: (email: string) => `Para receber os próximos artigos em ${email}, abra o `,
+    emailLinkLabel: 'link de confirmação',
+    emailAfterLink: '. Ele vale por 7 dias e só funciona uma vez.',
+    emailFooter: (email: string) => `Pedido de ${email} via /api/subscribe`,
+  },
 } as const;

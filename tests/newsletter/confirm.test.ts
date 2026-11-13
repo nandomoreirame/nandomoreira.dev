@@ -1,14 +1,15 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { confirmSubscription } from '../../src/lib/newsletter/confirm';
-import { canConfirm, newConfirmation } from '../../src/lib/newsletter/store';
+import { canConfirm, localeOfDoc, newConfirmation } from '../../src/lib/newsletter/store';
 
 const memory = (doc: Record<string, unknown>) => ({
   claim: async (tokenHash: string, now: Date) => {
     if (!canConfirm(doc, tokenHash, now)) return null;
     Object.assign(doc, { status: 'confirmed', confirmTokenHash: null });
-    return String(doc.email);
+    return { email: String(doc.email), locale: localeOfDoc(doc) };
   },
+  localeOf: async () => localeOfDoc(doc),
 });
 
 const pendingDoc = (now: Date) => {
@@ -28,7 +29,7 @@ describe('confirmação', () => {
     const { c, doc } = pendingDoc(now);
     const first = await confirmSubscription(c.token, now, memory(doc));
     const second = await confirmSubscription(c.token, now, memory(doc));
-    expect(first).toBe('ana@example.com');
+    expect(first).toEqual({ email: 'ana@example.com', locale: 'pt-BR' });
     expect(second).toBeNull();
     expect(doc.status).toBe('confirmed');
   });
@@ -37,7 +38,10 @@ describe('confirmação', () => {
     const now = new Date('2026-11-03T12:00:00Z');
     const { doc } = pendingDoc(now);
     const wrong = await confirmSubscription('qualquer', now, memory(doc));
-    const missing = await confirmSubscription('outro', now, { claim: async () => null });
+    const missing = await confirmSubscription('outro', now, {
+      claim: async () => null,
+      localeOf: async () => 'pt-BR',
+    });
     expect(wrong).toBe(missing);
     expect(doc.status).toBe('pending');
   });
