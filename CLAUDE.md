@@ -4,10 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado atual
 
-**Sprint 1 concluída.** O spike de infraestrutura fechou em 2026-08-08 com o plano A
-confirmado: Astro 7 SSR com `@astrojs/node` standalone está no ar no App Hosting
-(`docs/adr/001-hosting-platform.md`). A sprint 2 está liberada e nada dela foi
-implementado ainda.
+As sprints 1 a 4 e as features listadas em `docs/specs/` estão implementadas. A i18n
+está em andamento (`docs/specs/i18n-foundation`).
 
 Antes de escrever qualquer coisa, leia a spec e o plano da feature em que vai mexer. As
 decisões já foram tomadas e estão registradas; reabri-las sem motivo custa mais do que
@@ -18,7 +16,8 @@ do projeto e sobrepõe a regra global de não usar emoji.
 
 ## Idioma
 
-- **Camada humana em pt-BR, camada de máquina em inglês.** Páginas, copy, cases e conteúdo visível: português. `llms.txt`, `AGENTS.md`, `robots.txt`, `resume.json`, `resume.txt` e as respostas do MCP: inglês. Sem exceção, nos dois sentidos.
+- **Camada humana em pt-BR e em inglês (`/en`, ver `docs/specs/i18n-foundation`); camada de máquina em inglês.** Páginas, copy, cases e conteúdo visível: português e inglês. `llms.txt`, `AGENTS.md`, `robots.txt`, `resume.json`, `resume.txt` e as respostas do MCP: inglês. Sem exceção, nos dois sentidos.
+- **Toda string de interface sai de `src/lib/i18n/messages/`; chave nova vai nos dois arquivos.**
 - **Documentos gerados (`docs/`) em pt-BR**, com requisitos no formato `QUANDO [evento] ENTÃO o sistema DEVE [resposta]`. Isso é um override deliberado do padrão do framework (inglês). Está registrado no Decision Log de `docs/specs/00-roadmap.md`.
 - **Identificadores sempre em inglês**: slugs, nomes de arquivo, símbolos de código, chaves de frontmatter, REQ-IDs, comentários no código.
 
@@ -144,6 +143,20 @@ entra no registro. O slug `ia` é reservado nos schemas. Rótulos em `src/lib/ai
 
 No `astro dev`, a Dev Toolbar tem o app "Revisar texto": grife um trecho de um post (ou selecione com Shift+setas e aperte Alt+R), escreva o pedido ou o texto novo e clique "Salvar revisão". O arquivo vai para `docs/post-reviews/<slug>.md` (gitignored). Para aplicar, peça "aplica a revisão do post <slug>": leia esse arquivo, edite só os trechos anotados em `src/content/posts/<slug>.md` e, no fim, apague a revisão aplicada. O app só existe no dev; o portão "Revisor fora do build" prova que nada dele chega ao `dist/`.
 
+### Idiomas (`docs/specs/i18n-foundation`, `docs/specs/i18n-content`)
+
+pt-BR na raiz e inglês em `/en`. Mapa de rotas em `src/lib/i18n/routes.ts`; pares
+`hreflang` em `alternates.ts`. Corpo das páginas em `src/components/pages/`, com cascas
+em `src/pages/` e `src/pages/en/`. A bandeira `EN_LIVE` vive em `src/lib/i18n/live.ts`.
+O slug `en` é reservado nos schemas.
+
+Conteúdo traduzido entra por **sobreposição**: coleções `posts-en/` e `projects-en/`
+(`src/content/posts-en/`, `src/content/projects-en/`), cada arquivo com `translationOf`
+e só os campos traduzíveis. A camada de acesso (`src/lib/content/translations.ts`)
+mescla com a fonte pt-BR. Post novo pode sair só em pt-BR; para traduzir, siga
+`docs/specs/i18n-content/TRANSLATION-GUIDE.md`. As rotas de máquina servem o inglês
+por item, com fallback para o pt-BR quando o item não tem tradução.
+
 ### JSON-LD, dividido de propósito
 
 - `Person` — `src/lib/home/person-ld.ts`, derivado do perfil.
@@ -156,7 +169,7 @@ regra mudar, e o teste reprova isso.
 
 ## Portões automatizados
 
-Oito testes transformam em falha regras que os documentos declaram mas que nada
+Onze testes transformam em falha regras que os documentos declaram mas que nada
 impediria de violar. **Nunca relaxe um deles para fazer a suíte passar: corrija o
 código.**
 
@@ -170,13 +183,16 @@ código.**
 | CTA primário único | `tests/home/single-primary-cta.test.ts` | Botão primary fora do hero, ou mais de um nele (zero é aceito desde 2026-10-19, quando o hero perdeu os botões por decisão do Fernando) |
 | Vazamento nas rotas de máquina | `tests/aeo/no-leak.test.ts` | E-mail, chave, caminho absoluto, IP privado |
 | Revisor fora do build | `tests/post-review/no-reviewer-in-dist.build-test.ts` | Qualquer arquivo de `dist/` com `post-review:` ou "Revisar texto" |
+| Paridade do dicionário | `tests/i18n/messages.test.ts` | Chave de interface presente em um idioma e ausente no outro |
+| Nenhum pt-BR nas páginas inglesas | `tests/i18n/no-pt-in-en.test.ts` | String em português vazando em rota `/en` |
+| Paridade da tradução | `tests/i18n/translation-parity.test.ts` | Corpo inglês com travessão, marcadores pt-BR demais, headings/blocos/imagens/links externos fora de paridade, ou link interno apontando para o pt-BR quando há par |
 
 Ao criar um portão novo, prove que ele fica vermelho antes de considerá-lo pronto. Um
 portão que nunca falhou não é portão.
 
 ## Restrições que não são preferência
 
-- **JavaScript de cliente só por exceção nomeada.** Existem dois scripts em todas as páginas, o do `PointerField` e o boot de tema: o efeito de ponteiro (generative-case-art, 2026-10-07), o botão Copiar da visão IA (ai-view, 2026-10-08), a memória das escolhas do modo leitura mais o Esc (2026-10-16) e o carregador da paleta de comandos (command-palette, 2026-10-19), juntos em até 2304 B gzip. O orçamento era 1536 B; subiu em 2026-10-19 por decisão do Fernando porque o Vite envolve todo `import()` de cliente no auxiliar `__vitePreload` (cerca de 717 B gzip). Funcionalidade nova entra nesse script ou exige decisão registrada. As outras exceções: a prévia de áudio de `/now` (now-page, REQ-027, 2026-10-11), um segundo script só nessa rota, em até 1 KB gzip, marcado por `data-now-preview`; e o módulo da paleta (command-palette, D1, 2026-10-19), em `src/scripts/palette.ts`, marcado por `data-command-palette`, baixado sob demanda pelo carregador do `PointerField`, em até 4 KB gzip e nunca como `<script>` da página. E o boot de tema (theme-modes, REQ-010, 2026-10-20), inline no `<head>` de todas as páginas, marcado por `data-theme-boot`, em até 512 B gzip, dono também do clique do botão de tema. E o carregador do Giscus (giscus-comments, REQ-004, 2026-10-22), só nos posts atuais, marcado por `data-giscus-loader`, em até 2048 B gzip; o script e o iframe de `giscus.app` só entram depois que a seção se aproxima da tela. E o widget do Cloudflare Turnstile (newsletter-antispam, D5, 2026-11-03), só em `/contato` e no card da newsletter, e só quando `TURNSTILE_SITE_KEY` está configurada. O script é `https://challenges.cloudflare.com/turnstile/v0/api.js`, marcado por `data-turnstile-loader`, em até 512 B gzip. Sem a chave, o widget não entra na página e o envio sem JavaScript continua possível, mas o servidor responde `captcha` quando o segredo está ligado. O portão reprova qualquer outro script. Nenhuma diretiva `client:*`.
+- **JavaScript de cliente só por exceção nomeada.** Existem dois scripts em todas as páginas, o do `PointerField` e o boot de tema: o efeito de ponteiro (generative-case-art, 2026-10-07), o botão Copiar da visão IA (ai-view, 2026-10-08), a memória das escolhas do modo leitura mais o Esc (2026-10-16), o carregador da paleta de comandos (command-palette, 2026-10-19) e a sugestão de idioma (i18n-foundation, 2026-10-19), juntos em até 2304 B gzip. O orçamento era 1536 B; subiu em 2026-10-19 por decisão do Fernando porque o Vite envolve todo `import()` de cliente no auxiliar `__vitePreload` (cerca de 717 B gzip). Funcionalidade nova entra nesse script ou exige decisão registrada. As outras exceções: a prévia de áudio de `/now` (now-page, REQ-027, 2026-10-11), um segundo script só nessa rota, em até 1 KB gzip, marcado por `data-now-preview`; e o módulo da paleta (command-palette, D1, 2026-10-19), em `src/scripts/palette.ts`, marcado por `data-command-palette`, baixado sob demanda pelo carregador do `PointerField`, em até 4 KB gzip e nunca como `<script>` da página. E o boot de tema (theme-modes, REQ-010, 2026-10-20), inline no `<head>` de todas as páginas, marcado por `data-theme-boot`, em até 512 B gzip, dono também do clique do botão de tema. E o carregador do Giscus (giscus-comments, REQ-004, 2026-10-22), só nos posts atuais, marcado por `data-giscus-loader`, em até 2048 B gzip; o script e o iframe de `giscus.app` só entram depois que a seção se aproxima da tela. E o widget do Cloudflare Turnstile (newsletter-antispam, D5, 2026-11-03), só em `/contato` e no card da newsletter, e só quando `TURNSTILE_SITE_KEY` está configurada. O script é `https://challenges.cloudflare.com/turnstile/v0/api.js`, marcado por `data-turnstile-loader`, em até 512 B gzip. Sem a chave, o widget não entra na página e o envio sem JavaScript continua possível, mas o servidor responde `captcha` quando o segredo está ligado. O portão reprova qualquer outro script. Nenhuma diretiva `client:*`.
 - **A medição de visitas é server-side** (middleware, `/v.gif` e `/go`). O pixel é um `<img>`, não um script, e não entra na exceção de JavaScript de cliente.
 - **O token `border` (`#222226`) reprova WCAG AA**, com 1,24:1 sobre o fundo. Serve como separador decorativo e **nunca** como único delimitador de alvo interativo ou meio de transmitir informação. Contorno que precisa ser percebido usa `border-strong` ou `primary`.
 - **Nenhum número sem narrativa.** `StatItem` lança se receber `value` sem `context`. Cerca de 700 das 964 estrelas do GitHub vêm de temas Jekyll de 2018, e exibir o agregado sem contexto seria enganoso (RISK-004).
