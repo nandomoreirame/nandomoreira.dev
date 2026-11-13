@@ -221,11 +221,12 @@ const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
     <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} locale={locale} />
     {/* Bottom-right corner stack: the palette trigger, the AI switcher and the way back to the top. Not on phones. */}
     <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm max-md:hidden">
-      <PaletteTrigger />
+      <PaletteTrigger locale={locale} />
       {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} locale={locale} />}
       <BackToTop />
     </div>
     <CommandPalette
+      locale={locale}
       mdPath={showSwitcher ? mdPathFor(switcherHumanPath) : undefined}
       aiPath={showSwitcher && switcherView === 'human' ? aiPathFor(switcherHumanPath) : undefined}
       humanPath={showSwitcher && switcherView === 'ai' ? switcherHumanPath : undefined}

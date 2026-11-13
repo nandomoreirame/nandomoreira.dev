@@ -1,5 +1,6 @@
 import { collectionOfBlock } from '../catalog/groups';
-import { PALETTE_PAGES } from './copy';
+import type { Locale } from '../i18n/locale';
+import { palettePages } from './copy';
 
 export type SearchKind = 'page' | 'post' | 'archive' | 'case' | 'service';
 
@@ -31,6 +32,7 @@ interface Input {
   }>;
   services: ReadonlyArray<{ title: string; summary: string; url: string }>;
   landingUrl: string;
+  locale?: Locale;
 }
 
 const postItem =
@@ -44,8 +46,15 @@ const postItem =
   });
 
 /** The /search.json body (REQ-005). Drafts never enter, even on dev. */
-export const buildSearchIndex = ({ current, archived, projects, services, landingUrl }: Input): SearchItem[] => [
-  ...PALETTE_PAGES.map(page => ({ kind: 'page' as const, title: page.title, path: page.path })),
+export const buildSearchIndex = ({
+  current,
+  archived,
+  projects,
+  services,
+  landingUrl,
+  locale = 'pt-BR',
+}: Input): SearchItem[] => [
+  ...palettePages(locale).map(page => ({ kind: 'page' as const, title: page.title, path: page.path })),
   ...current.filter(post => !post.draft).map(postItem('post')),
   ...projects.map(project => ({
     kind: 'case' as const,

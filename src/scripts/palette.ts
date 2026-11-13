@@ -3,18 +3,23 @@
  * loader in PointerField.astro. Third named JS exception: this file must stay
  * under 4 KB gzip (tests/helpers/client-scripts.ts). Text only, never innerHTML.
  */
+import type { Locale } from '../lib/i18n/locale';
 import type { SearchItem } from '../lib/search/build-index';
 import { move, viewFor, type PaletteOption } from '../lib/search/controller';
-import { PALETTE_COPY } from '../lib/search/copy';
+import { paletteCopy } from '../lib/search/copy';
 import { GO_WINDOW_MS, goPathFor } from '../lib/search/go-sequence';
 
 const dialog = document.querySelector<HTMLDialogElement>('[data-command-palette]')!;
 const input = dialog.querySelector('input')!;
 const list = dialog.querySelector<HTMLUListElement>('[role="listbox"]')!;
 const status = dialog.querySelector<HTMLElement>('[data-palette-status]')!;
-// Outside the dialog, so "Link copiado" is still announced after it closes.
+// Outside the dialog, so the copied label is still announced after it closes.
 const announce = document.querySelector<HTMLElement>('[data-palette-announce]');
 const toast = document.querySelector<HTMLElement>('[data-palette-toast]');
+
+const locale: Locale = document.documentElement.lang === 'en' ? 'en' : 'pt-BR';
+const copy = paletteCopy(locale);
+const indexUrl = locale === 'en' ? '/en/search.json' : '/search.json';
 
 /** How long the copy toast stays up. */
 export const TOAST_MS = 4000;
@@ -57,7 +62,7 @@ const valid = (item: unknown): item is SearchItem =>
   /^(\/|https:\/\/)/.test((item as SearchItem).path);
 
 const loadIndex = () =>
-  (loading ??= fetch('/search.json')
+  (loading ??= fetch(indexUrl)
     .then(response => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
     .then((items: unknown) => {
       index = Array.isArray(items) ? items.filter(valid) : [];
@@ -75,7 +80,7 @@ const kbd = (key: string) => {
 };
 
 const paint = () => {
-  const groups = viewFor(index, input.value, pageViews());
+  const groups = viewFor(index, input.value, pageViews(), locale);
   options = groups.flatMap(group => group.options);
   list.replaceChildren(
     ...groups.flatMap(group => {
@@ -109,11 +114,11 @@ const paint = () => {
   );
   status.textContent = !input.value.trim()
     ? unavailable
-      ? PALETTE_COPY.unavailable
+      ? copy.unavailable
       : ''
     : groups[0]?.empty
-      ? PALETTE_COPY.empty
-      : PALETTE_COPY.results(options.length);
+      ? copy.empty
+      : copy.results(options.length);
   setActive(options.length ? 0 : -1);
 };
 
@@ -145,7 +150,7 @@ const choose = (option: PaletteOption) => {
       () => {
         // Visible first: a live region inside a hidden toast is not announced.
         toast?.setAttribute('data-open', '');
-        if (announce) announce.textContent = PALETTE_COPY.copied;
+        if (announce) announce.textContent = copy.copied;
         clearTimeout(toastTimer);
         toastTimer = setTimeout(hideToast, TOAST_MS);
       },
@@ -210,7 +215,7 @@ export const press = (key: string, at: number) => {
     return;
   }
   if (armed) return;
-  const shortcut = viewFor(undefined, '', pageViews())[0]?.options.find(
+  const shortcut = viewFor(undefined, '', pageViews(), locale)[0]?.options.find(
     option => option.keys?.[0]?.toLowerCase() === letter,
   );
   if (shortcut) choose(shortcut);

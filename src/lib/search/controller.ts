@@ -1,5 +1,6 @@
+import type { Locale } from '../i18n/locale';
 import type { SearchItem, SearchKind } from './build-index';
-import { GO_TARGETS, PALETTE_COPY, SOURCE_URL } from './copy';
+import { goTargets, paletteCopy, SOURCE_URL } from './copy';
 import { scoreOf } from './match';
 
 export interface PaletteOption {
@@ -30,33 +31,37 @@ export interface PageViews {
   theme?: 'noir' | 'paper';
 }
 
-const general = ({ mdPath, aiPath, humanPath, theme }: PageViews): PaletteOption[] => [
+const general = ({ mdPath, aiPath, humanPath, theme }: PageViews, locale: Locale): PaletteOption[] => {
+  const copy = paletteCopy(locale);
   // One letter each, pressed alone outside a field (Fernando, 2026-10-19).
-  { id: 'opt-copy-link', label: PALETTE_COPY.actions.copyLink, action: 'copy-link', keys: ['L'] },
-  { id: 'opt-email', label: PALETTE_COPY.actions.email, href: '/contato', keys: ['E'] },
-  // Alone, S opens the source; G then S is still Sobre.
-  { id: 'opt-source', label: PALETTE_COPY.actions.source, href: SOURCE_URL, newTab: true, keys: ['S'] },
-  ...(mdPath ? [{ id: 'opt-markdown', label: PALETTE_COPY.actions.markdown, href: mdPath, keys: ['M'] }] : []),
-  ...(aiPath ? [{ id: 'opt-ai', label: PALETTE_COPY.actions.ai, href: aiPath, keys: ['I'] }] : []),
-  ...(humanPath ? [{ id: 'opt-human', label: PALETTE_COPY.actions.human, href: humanPath, keys: ['I'] }] : []),
-  ...(theme
-    ? [
-        {
-          id: 'opt-theme',
-          label: theme === 'paper' ? PALETTE_COPY.actions.themeNoir : PALETTE_COPY.actions.themePaper,
-          action: 'toggle-theme' as const,
-          keys: ['T'],
-        },
-      ]
-    : []),
-];
+  return [
+    { id: 'opt-copy-link', label: copy.actions.copyLink, action: 'copy-link', keys: ['L'] },
+    { id: 'opt-email', label: copy.actions.email, href: '/contato', keys: ['E'] },
+    // Alone, S opens the source; G then S is still Sobre.
+    { id: 'opt-source', label: copy.actions.source, href: SOURCE_URL, newTab: true, keys: ['S'] },
+    ...(mdPath ? [{ id: 'opt-markdown', label: copy.actions.markdown, href: mdPath, keys: ['M'] }] : []),
+    ...(aiPath ? [{ id: 'opt-ai', label: copy.actions.ai, href: aiPath, keys: ['I'] }] : []),
+    ...(humanPath ? [{ id: 'opt-human', label: copy.actions.human, href: humanPath, keys: ['I'] }] : []),
+    ...(theme
+      ? [
+          {
+            id: 'opt-theme',
+            label: theme === 'paper' ? copy.actions.themeNoir : copy.actions.themePaper,
+            action: 'toggle-theme' as const,
+            keys: ['T'],
+          },
+        ]
+      : []),
+  ];
+};
 
-const GO: PaletteOption[] = GO_TARGETS.map(target => ({
-  id: `opt-go-${target.key}`,
-  label: target.label,
-  href: target.path,
-  keys: ['G', target.key.toUpperCase()],
-}));
+const goOptions = (locale: Locale): PaletteOption[] =>
+  goTargets(locale).map(target => ({
+    id: `opt-go-${target.key}`,
+    label: target.label,
+    href: target.path,
+    keys: ['G', target.key.toUpperCase()],
+  }));
 
 const ORDER: SearchKind[] = ['post', 'case', 'page', 'service', 'archive'];
 
@@ -68,19 +73,22 @@ export const viewFor = (
   index: readonly SearchItem[] | undefined,
   query: string,
   views: PageViews = {},
+  locale: Locale = 'pt-BR',
 ): PaletteGroup[] => {
-  const GENERAL = general(views);
+  const copy = paletteCopy(locale);
+  const GENERAL = general(views, locale);
+  const GO = goOptions(locale);
   if (query.trim() === '') {
     return [
-      { label: PALETTE_COPY.groups.general, options: GENERAL },
-      { label: PALETTE_COPY.groups.go, options: GO },
+      { label: copy.groups.general, options: GENERAL },
+      { label: copy.groups.go, options: GO },
     ];
   }
   const groups: PaletteGroup[] = [
-    { label: PALETTE_COPY.groups.general, options: filter(GENERAL, query) },
-    { label: PALETTE_COPY.groups.go, options: filter(GO, query) },
+    { label: copy.groups.general, options: filter(GENERAL, query) },
+    { label: copy.groups.go, options: filter(GO, query) },
     ...ORDER.map(kind => ({
-      label: PALETTE_COPY.groups[kind],
+      label: copy.groups[kind],
       options: (index ?? [])
         .filter(item => item.kind === kind)
         .map(item => ({ item, score: scoreOf(item, query) }))
@@ -92,9 +100,9 @@ export const viewFor = (
   if (groups.length > 0) return groups;
   return [
     {
-      label: PALETTE_COPY.empty,
+      label: copy.empty,
       empty: true,
-      options: [{ id: 'opt-contact', label: PALETTE_COPY.actions.contact, href: '/contato' }],
+      options: [{ id: 'opt-contact', label: copy.actions.contact, href: '/contato' }],
     },
   ];
 };

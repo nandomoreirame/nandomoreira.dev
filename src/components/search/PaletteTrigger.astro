@@ -1,6 +1,14 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { PALETTE_COPY } from '../../lib/search/copy';
+import type { Locale } from '../../lib/i18n/locale';
+import { paletteCopy } from '../../lib/search/copy';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const copy = paletteCopy(locale);
 ---
 
 {/* Ships hidden: only the palette loader shows it (REQ-004). */}
@@ -8,7 +16,7 @@ import { PALETTE_COPY } from '../../lib/search/copy';
   type="button"
   hidden
   data-palette-trigger
-  aria-label={PALETTE_COPY.trigger}
+  aria-label={copy.trigger}
   aria-haspopup="dialog"
   aria-keyshortcuts="Control+K Meta+K"
   class="group/palette box-content inline-flex min-h-11 shrink-0 items-center justify-center rounded-md border border-border-strong bg-surface/90 px-md font-mono text-micro uppercase tracking-wide text-muted-foreground backdrop-blur-md transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

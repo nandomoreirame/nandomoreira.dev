@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { PALETTE_COPY } from '../../lib/search/copy';
+import type { Locale } from '../../lib/i18n/locale';
+import { paletteCopy } from '../../lib/search/copy';
 
 interface Props {
   /** The page's markdown and AI view, offered under General (docs/specs/ai-view). */
@@ -8,45 +9,47 @@ interface Props {
   aiPath?: string;
   /** On the AI view, the page it describes (replaces aiPath). */
   humanPath?: string;
+  locale?: Locale;
 }
 
-const { mdPath, aiPath, humanPath } = Astro.props;
+const { mdPath, aiPath, humanPath, locale = 'pt-BR' } = Astro.props;
+const copy = paletteCopy(locale);
 ---
 
 {/* Filled and opened by src/scripts/palette.ts, loaded on demand
     (docs/specs/command-palette, D1). Without JS it is never shown. */}
-<dialog data-command-palette data-palette-md={mdPath} data-palette-ai={aiPath} data-palette-human={humanPath} aria-label={PALETTE_COPY.label} class="palette">
+<dialog data-command-palette data-palette-md={mdPath} data-palette-ai={aiPath} data-palette-human={humanPath} aria-label={copy.label} class="palette">
   <div class="flex flex-col">
     <input
       type="text"
       role="combobox"
-      aria-label={PALETTE_COPY.label}
+      aria-label={copy.label}
       aria-controls="palette-list"
       aria-expanded="true"
       aria-autocomplete="list"
       autocomplete="off"
       maxlength="100"
       spellcheck="false"
-      placeholder={PALETTE_COPY.placeholder}
+      placeholder={copy.placeholder}
       class="w-full border-b bg-transparent px-lg py-md text-body text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
     />
-    <ul id="palette-list" role="listbox" aria-label={PALETTE_COPY.label} class="palette-list flex flex-col overflow-y-auto py-sm"></ul>
+    <ul id="palette-list" role="listbox" aria-label={copy.label} class="palette-list flex flex-col overflow-y-auto py-sm"></ul>
     <p aria-live="polite" class="sr-only" data-palette-status></p>
   </div>
 </dialog>
-{/* Copy notice (toast). Outside the dialog: "Link copiado" is set after it
+{/* Copy notice (toast). Outside the dialog: the copied label is set after it
     closes and must stay announced. Shown by data-open, hidden by global.css. */}
 <div data-palette-toast class="palette-toast">
   <div class="flex items-start gap-sm rounded-md border border-border-strong bg-surface py-sm pl-md shadow-window">
     <Icon name="lucide:circle-check" class="mt-md size-4 shrink-0 text-success" aria-hidden="true" />
     <div class="flex flex-col gap-xs py-sm">
       <p aria-live="polite" class="text-body text-foreground" data-palette-announce></p>
-      <p class="text-small text-muted-foreground">{PALETTE_COPY.copiedDetail}</p>
+      <p class="text-small text-muted-foreground">{copy.copiedDetail}</p>
     </div>
     <button
       type="button"
       data-palette-toast-close
-      aria-label={PALETTE_COPY.closeToast}
+      aria-label={copy.closeToast}
       class="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       <Icon name="lucide:x" class="size-4" aria-hidden="true" />

@@ -1,5 +1,6 @@
 ---
-import { PALETTE_COPY } from '../../lib/search/copy';
+import type { Locale } from '../../lib/i18n/locale';
+import { paletteCopy } from '../../lib/search/copy';
 import Button from '../ui/Button.astro';
 import Portrait from '../ui/Portrait.astro';
 
@@ -8,9 +9,11 @@ interface Props {
   name: string;
   headline: string;
   positioning: string;
+  locale?: Locale;
 }
 
-const { name, headline, positioning } = Astro.props;
+const { name, headline, positioning, locale = 'pt-BR' } = Astro.props;
+const copy = paletteCopy(locale);
 ---
 
 <section id="inicio" class="relative isolate py-2xl lg:pt-hero-top lg:pb-hero-bottom">
@@ -30,13 +33,13 @@ const { name, headline, positioning } = Astro.props;
       data-palette-hint
       aria-haspopup="dialog"
       aria-keyshortcuts="Control+K Meta+K"
-      aria-label={`${PALETTE_COPY.trigger} (${PALETTE_COPY.hint.before} Ctrl K ${PALETTE_COPY.hint.after})`}
+      aria-label={`${copy.trigger} (${copy.hint.before} Ctrl K ${copy.hint.after})`}
       class="min-h-11 w-fit items-center gap-xs text-body text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
-      {PALETTE_COPY.hint.before}
+      {copy.hint.before}
       <kbd data-palette-mod class="rounded-md border border-border-strong bg-surface px-xs font-mono text-small">Ctrl</kbd>
       <kbd class="rounded-md border border-border-strong bg-surface px-xs font-mono text-small">K</kbd>
-      {PALETTE_COPY.hint.after} <span aria-hidden="true">→</span>
+      {copy.hint.after} <span aria-hidden="true">→</span>
     </button>
 
     {/* Touch screens get no keyboard hint, so this takes its place. The
