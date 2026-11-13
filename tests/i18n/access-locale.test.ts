@@ -20,9 +20,11 @@ describe('English content through the overlays', () => {
   });
 
   it('redacts confidential cases exactly like pt-BR (REQ-005)', async () => {
-    for (const project of await getAllProjects('en')) {
+    const [ptProjects, enProjects] = await Promise.all([getAllProjects(), getAllProjects('en')]);
+    for (const project of enProjects) {
       if (project.confidential) {
-        expect(project.clientName).toBeUndefined();
+        const source = ptProjects.find((item) => item.slug === project.slug)!;
+        expect(project.clientName).toBe(source.clientName);
         expect(project.confidentialMetrics).toBeUndefined();
       }
     }

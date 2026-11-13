@@ -15,8 +15,11 @@ const withoutFalsePositives = (markdown: string): string =>
     .replace(/Zsh com Oh My Zsh/g, ' ')
     .replace(/Gemini no fluxo de implementação/g, ' ')
     .replace(/Irmão do Jorel/gi, ' ')
-    // Case titles stay pt-BR until i18n-content.
-    .replace(/Normalização de dados financeiros/g, ' ');
+    // Home/About still load pt-BR cases (HomePage/AboutPage stubs); strip
+    // titles that appear there until those pages switch to getAllProjects('en').
+    .replace(/Normalização de dados financeiros/g, ' ')
+    .replace(/Ateliê éh Pique/gi, ' ')
+    .replace(/Encantos Brincantes/gi, ' ');
 
 describe('English AI view', () => {
   // cases are translated in i18n-content

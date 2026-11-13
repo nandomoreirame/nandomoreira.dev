@@ -46,9 +46,11 @@ const ALLOWED = [
   /São Paulo/g,
   /Fernando Moreira Costa/g,
   /Embu das Artes/g,
-  /Ateliê Eh Pique/gi,
+  /Ateliê [EeÉé]h Pique/gi,
   /Encantos Brincantes/gi,
   /Seu Ateliê Aqui/gi,
+  // Product slug keeps "seu"; the English title is "Your Atelier Here".
+  /seu-atelie-aqui/gi,
   /Irmão do Jorel/gi,
   /sextafeirachegou\.com\.br/gi,
   // School name in the English about/resume education line.

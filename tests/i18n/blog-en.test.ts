@@ -122,7 +122,10 @@ describe('PostPage', () => {
         props: { entry, locale: 'pt-BR' },
         request: new Request(`https://nandomoreira.dev/${entry!.data.slug}`),
       })
-    ).replaceAll(process.cwd(), '<root>');
+    )
+      .replaceAll(process.cwd(), '<root>')
+      // The code block ids come from a counter shared by every render in the worker.
+      .replace(/code-\d+/g, 'code-N');
     await expect(html).toMatchFileSnapshot('../__snapshots__/post-fluxo-rpi.pt.html');
   });
 });
