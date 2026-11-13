@@ -22,6 +22,12 @@ describe('English chrome', () => {
     expect(ptLeftovers(html)).toEqual([]);
   });
 
+  it('footer links to the links page in the same language', async () => {
+    const props = { name: 'Fernando Moreira', year: 2026, contacts: [], version: 'v17.1' };
+    expect(await render(SiteFooter, { ...props, locale: 'en' })).toContain('href="https://links.nandomoreira.dev/en/"');
+    expect(await render(SiteFooter, props)).toContain('href="https://links.nandomoreira.dev"');
+  });
+
   it('AI switcher', async () => {
     const html = await render(AiSwitcher, { locale: 'en', humanPath: '/en/about', view: 'human' });
     // On a human page the control names the AI view (plan said "Human"; that was the other side).
