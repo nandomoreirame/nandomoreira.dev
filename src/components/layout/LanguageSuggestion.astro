@@ -1,0 +1,41 @@
+---
+import type { TranslationPair } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+
+interface Props {
+  locale: Locale;
+  alternates?: TranslationPair;
+}
+
+const { locale, alternates } = Astro.props;
+const target: Locale = locale === 'en' ? 'pt-BR' : 'en';
+// Written in the visitor's language, which is the target (D9).
+const t = messagesFor(target).language;
+// The script compares this with navigator.languages: "pt" or "en".
+const code = target === 'en' ? 'en' : 'pt';
+---
+
+{
+  alternates && (
+    <aside
+      hidden
+      data-lang-suggest={code}
+      lang={target}
+      aria-label={t.names[target]}
+      class="mx-auto mt-md flex w-full max-w-frame flex-wrap items-center justify-between gap-sm rounded-md border border-border-strong bg-surface px-lg py-sm text-small text-foreground"
+    >
+      <p class="m-0">
+        {t.suggestion}{' '}
+        <a href={alternates[target]} hreflang={target} class="text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.suggestionLink}</a>
+      </p>
+      <button
+        type="button"
+        data-lang-dismiss
+        class="inline-flex min-h-11 items-center px-sm font-mono text-micro uppercase tracking-wide text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        {t.dismiss}
+      </button>
+    </aside>
+  )
+}

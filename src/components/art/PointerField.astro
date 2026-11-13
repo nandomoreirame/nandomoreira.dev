@@ -137,6 +137,25 @@
   }
   // End command palette loader
 
+  // Language suggestion (i18n-foundation, D9). The banner ships hidden in the
+  // HTML; it shows only when the visitor's first pt/en language differs from
+  // the page's, and never redirects. Storage can throw (private window).
+  const suggest = document.querySelector<HTMLElement>('[data-lang-suggest]');
+  if (suggest) {
+    const wanted = navigator.languages.map((tag) => tag.slice(0, 2)).find((tag) => tag === 'pt' || tag === 'en');
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem('lang-suggest') === 'off';
+    } catch {}
+    if (wanted === suggest.dataset.langSuggest && !dismissed) suggest.hidden = false;
+    suggest.querySelector('[data-lang-dismiss]')?.addEventListener('click', () => {
+      suggest.hidden = true;
+      try {
+        localStorage.setItem('lang-suggest', 'off');
+      } catch {}
+    });
+  }
+
   const fine = window.matchMedia('(pointer: fine)').matches;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

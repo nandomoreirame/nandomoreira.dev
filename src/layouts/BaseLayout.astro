@@ -5,6 +5,7 @@ import CommandPalette from '../components/search/CommandPalette.astro';
 import { aiPathFor, mdPathFor } from '../lib/ai-view/paths';
 import PaletteTrigger from '../components/search/PaletteTrigger.astro';
 import BackToTop from '../components/layout/BackToTop.astro';
+import LanguageSuggestion from '../components/layout/LanguageSuggestion.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import { loadSiteCommits } from '../lib/history/commits';
 import { siteVersionTag } from '../lib/history/history';
@@ -206,6 +207,7 @@ const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
             locale={locale}
             alternates={alternates}
           />
+          <LanguageSuggestion locale={locale} alternates={alternates} />
         </>
       )
     }
