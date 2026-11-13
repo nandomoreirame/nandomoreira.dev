@@ -1,11 +1,10 @@
 import { buildCaseMarkdown } from '../aeo/case-markdown';
 import { OPEN_SOURCE_REPOS } from '../catalog/open-source';
-import { COLLECTION_COPY } from '../catalog/collection-copy';
+import { collectionCopy } from '../catalog/collection-copy';
 import { privacyMarkdown } from '../privacy/policy';
 import { loadNow } from '../now/load';
 import { nowMarkdown } from '../now/markdown';
-import { NOW_PATH } from '../now/now';
-import { SETUP_PATH, setupMarkdown } from '../setup/setup';
+import { setupMarkdown } from '../setup/setup';
 import { HISTORY_PATH, historyMarkdown, siteVersionTag } from '../history/history';
 import { loadSiteCommits } from '../history/commits';
 import { RELEASES_PATH, liveReleases, releasesMarkdown } from '../releases/releases';
@@ -18,6 +17,7 @@ import {
   getCurrentPosts,
   getPostEntry,
   getProfile,
+  getProject,
 } from '../content';
 import {
   aboutMarkdown,
@@ -29,6 +29,10 @@ import {
   homeMarkdown,
   postsMarkdown,
 } from './pages';
+import { EN_PUBLISHED } from '../i18n/live';
+import { localeOfPath, type Locale } from '../i18n/locale';
+import { staticCounterpart } from '../i18n/routes';
+import { messagesFor } from '../i18n/messages';
 
 export type AiPage = {
   title: string;
@@ -56,27 +60,104 @@ const titleFromFrontmatter = (markdown: string, fallback: string): string => {
   return match?.[1]?.trim() || fallback;
 };
 
-export const markdownForPath = async (site: URL, path: string): Promise<AiPage | undefined> => {
-  const key = normalise(path);
+/** Human and .md paths for a registry key in the given locale. */
+const pathsFor = (
+  key: string,
+  locale: Locale,
+): { lookupKey: string; humanPath: string; mdPath: string } | undefined => {
+  if (locale === 'pt-BR') {
+    const humanPath = key === '' ? '/' : `/${key}`;
+    return {
+      lookupKey: key,
+      humanPath,
+      mdPath: key === '' ? '/index.md' : `/${key}.md`,
+    };
+  }
 
-  if (key === '') {
-    const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
+  const absolute = key === '' ? '/en' : `/${key}`;
+  const pair = staticCounterpart(absolute);
+  if (pair) {
+    const ptPath = pair['pt-BR'];
+    return {
+      lookupKey: ptPath === '/' ? '' : ptPath.slice(1),
+      humanPath: pair.en,
+      mdPath: pair.en === '/en' ? '/en/index.md' : `${pair.en}.md`,
+    };
+  }
+
+  // English case: /en/portfolio/<slug> or /en/lab/<slug>
+  const caseMatch = key.match(/^en\/(portfolio|lab)\/([^/]+)$/);
+  if (caseMatch) {
+    const collection = caseMatch[1];
+    const slug = caseMatch[2];
+    return {
+      lookupKey: `${collection}/${slug}`,
+      humanPath: `/${key}`,
+      mdPath: `/${key}.md`,
+    };
+  }
+
+  // English post at /en/<slug>
+  if (key.startsWith('en/') && !key.slice(3).includes('/')) {
+    const slug = key.slice(3);
+    return {
+      lookupKey: slug,
+      humanPath: `/${key}`,
+      mdPath: `/${key}.md`,
+    };
+  }
+
+  return undefined;
+};
+
+export const markdownForPathIn = async (
+  site: URL,
+  path: string,
+  live: boolean,
+): Promise<AiPage | undefined> => {
+  const key = normalise(path);
+  const locale = localeOfPath(key === '' ? '/' : `/${key}`);
+
+  if (locale === 'en' && !live) return undefined;
+
+  const paths = pathsFor(key, locale);
+  if (!paths) return undefined;
+
+  const { lookupKey, humanPath, mdPath } = paths;
+
+  if (lookupKey === '') {
+    // Home: English profile, Portuguese cases until i18n-content (same as HomePage).
+    const [profile, projects] = await Promise.all([
+      getProfile(locale),
+      getAllProjects(locale === 'en' ? 'pt-BR' : locale),
+    ]);
     const portfolio = projects.filter(project => collectionOfBlock(project.block) === 'portfolio');
     const lab = projects.filter(project => collectionOfBlock(project.block) === 'lab');
-    const markdown = homeMarkdown({ site, profile, portfolio, lab });
-    return page(titleFromFrontmatter(markdown, profile.headline), '/', '/index.md', markdown);
+    const markdown = homeMarkdown({ site, profile, portfolio, lab, locale });
+    return page(titleFromFrontmatter(markdown, profile.headline), humanPath, mdPath, markdown);
   }
 
-  if (key === 'sobre') {
-    const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
-    const markdown = aboutMarkdown({ site, profile, projects });
-    return page(titleFromFrontmatter(markdown, `Sobre | ${profile.name}`), '/sobre', '/sobre.md', markdown);
+  if (lookupKey === 'sobre') {
+    const [profile, projects] = await Promise.all([
+      getProfile(locale),
+      // Cases stay pt-BR until i18n-content; service caseSlug matches.
+      getAllProjects(locale === 'en' ? 'pt-BR' : locale),
+    ]);
+    const markdown = aboutMarkdown({ site, profile, projects, locale });
+    return page(
+      titleFromFrontmatter(markdown, `${messagesFor(locale).about.title} | ${profile.name}`),
+      humanPath,
+      mdPath,
+      markdown,
+    );
   }
 
-  if (key === 'portfolio' || key === 'lab') {
-    const collection = key as CatalogCollection;
-    const projects = (await getAllProjects()).filter(project => collectionOfBlock(project.block) === collection);
-    const copy = COLLECTION_COPY[collection];
+  if (lookupKey === 'portfolio' || lookupKey === 'lab') {
+    const collection = lookupKey as CatalogCollection;
+    const projects = (await getAllProjects(locale)).filter(
+      project => collectionOfBlock(project.block) === collection,
+    );
+    const copy = collectionCopy(collection, locale);
     const markdown = collectionMarkdown({
       site,
       collection,
@@ -84,58 +165,70 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
       description: copy.description,
       projects,
       openSource: collection === 'lab' ? OPEN_SOURCE_REPOS : [],
+      locale,
     });
-    return page(copy.title, `/${collection}`, `/${collection}.md`, markdown);
+    return page(copy.title, humanPath, mdPath, markdown);
   }
 
-  const caseMatch = key.match(/^(portfolio|lab)\/([^/]+)$/);
+  const caseMatch = lookupKey.match(/^(portfolio|lab)\/([^/]+)$/);
   if (caseMatch) {
     const collection = caseMatch[1] as CatalogCollection;
     const slug = caseMatch[2];
-    const project = (await getAllProjects()).find(entry => entry.slug === slug);
+    const project = await getProject(slug, locale);
     if (!project || collectionOfBlock(project.block) !== collection) {
       return undefined;
     }
     const markdown = buildCaseMarkdown({ site, project });
-    return page(project.title, `/${collection}/${slug}`, `/${collection}/${slug}.md`, markdown);
+    return page(project.title, humanPath, mdPath, markdown);
   }
 
-  if (key === 'posts') {
-    const posts = await getCurrentPosts();
-    const markdown = postsMarkdown({ site, posts });
-    return page('Posts', '/posts', '/posts.md', markdown);
+  if (lookupKey === 'posts') {
+    const posts = await getCurrentPosts(locale);
+    const markdown = postsMarkdown({ site, posts, locale });
+    return page(messagesFor(locale).aiView.postsTitle, humanPath, mdPath, markdown);
   }
 
-  if (key === 'posts/arquivo') {
+  // Archive has no English side (D12).
+  if (lookupKey === 'posts/arquivo') {
+    if (locale === 'en') return undefined;
     const years = await getArchiveYears();
-    const markdown = archiveMarkdown({ site, years });
-    return page('Arquivo', '/posts/arquivo', '/posts/arquivo.md', markdown);
+    const markdown = archiveMarkdown({ site, years, locale });
+    return page(messagesFor(locale).aiView.archiveTitle, humanPath, mdPath, markdown);
   }
 
-  const yearMatch = key.match(/^posts\/arquivo\/(\d{4})$/);
+  const yearMatch = lookupKey.match(/^posts\/arquivo\/(\d{4})$/);
   if (yearMatch) {
+    if (locale === 'en') return undefined;
     const year = yearMatch[1];
     const posts = await getArchivedPostsByYear(year);
     if (posts.length === 0) return undefined;
-    const markdown = archiveYearMarkdown({ site, year, posts });
-    return page(`Arquivo ${year}`, `/posts/arquivo/${year}`, `/posts/arquivo/${year}.md`, markdown);
+    const markdown = archiveYearMarkdown({ site, year, posts, locale });
+    return page(
+      `${messagesFor(locale).aiView.archiveTitle} ${year}`,
+      humanPath,
+      mdPath,
+      markdown,
+    );
   }
 
-  if (key === 'contato') {
-    const profile = await getProfile();
-    const markdown = contactMarkdown({ site, profile });
-    return page('Contato', '/contato', '/contato.md', markdown);
+  if (lookupKey === 'contato') {
+    const profile = await getProfile(locale);
+    const markdown = contactMarkdown({ site, profile, locale });
+    return page(messagesFor(locale).contactPage.title, humanPath, mdPath, markdown);
   }
 
-  if (key === 'privacidade') {
-    return page('Política de privacidade', '/privacidade', '/privacidade.md', privacyMarkdown({ site }));
+  if (lookupKey === 'privacidade') {
+    const markdown = privacyMarkdown({ site, locale });
+    return page(messagesFor(locale).privacyPage.title, humanPath, mdPath, markdown);
   }
 
-  if (key === 'setup') {
-    return page('Setup', SETUP_PATH, `${SETUP_PATH}.md`, setupMarkdown({ site }));
+  if (lookupKey === 'setup') {
+    const markdown = setupMarkdown({ site, locale });
+    return page(messagesFor(locale).setupPage.title, humanPath, mdPath, markdown);
   }
 
-  if (key === 'releases') {
+  if (lookupKey === 'releases') {
+    if (locale === 'en') return undefined;
     return page(
       'Versões do site',
       HISTORY_PATH,
@@ -144,28 +237,30 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
     );
   }
 
-  if (key === 'releases/17') {
+  if (lookupKey === 'releases/17') {
+    if (locale === 'en') return undefined;
     const releases = liveReleases(siteVersionTag(await loadSiteCommits()));
     return page('Lançamentos', RELEASES_PATH, `${RELEASES_PATH}.md`, releasesMarkdown({ site, releases }));
   }
 
-  if (key === 'now') {
+  if (lookupKey === 'now') {
     const data = await loadNow();
-    const markdown = nowMarkdown({ site, data });
-    return page('Agora', NOW_PATH, '/now.md', markdown);
+    const markdown = nowMarkdown({ site, data, locale });
+    return page(messagesFor(locale).nowPage.title, humanPath, mdPath, markdown);
   }
 
-  if (key === 'mcp') {
-    const markdown = connectMarkdown({ site });
-    return page('Conectar via MCP', '/mcp', '/mcp.md', markdown);
+  if (lookupKey === 'mcp') {
+    const markdown = connectMarkdown({ site, locale });
+    return page(messagesFor(locale).mcpPage.title, humanPath, mdPath, markdown);
   }
 
-  // Post at the site root: /<slug>
-  if (!key.includes('/')) {
-    const entry = await getPostEntry(key);
+  // Post at the site root (pt-BR) or under /en/<slug>
+  if (!lookupKey.includes('/')) {
+    const entry = await getPostEntry(lookupKey, locale);
     if (!entry) return undefined;
 
-    const url = absoluteUrl(site, `/${entry.data.slug}`);
+    const postPath = locale === 'en' ? `/en/${entry.data.slug}` : `/${entry.data.slug}`;
+    const url = absoluteUrl(site, postPath);
     const markdown = [
       '---',
       `title: ${entry.data.title}`,
@@ -176,8 +271,11 @@ export const markdownForPath = async (site: URL, path: string): Promise<AiPage |
       entry.body ?? '',
     ].join('\n');
 
-    return page(entry.data.title, `/${entry.data.slug}`, `/${entry.data.slug}.md`, markdown);
+    return page(entry.data.title, humanPath, mdPath, markdown);
   }
 
   return undefined;
 };
+
+export const markdownForPath = async (site: URL, path: string): Promise<AiPage | undefined> =>
+  markdownForPathIn(site, path, EN_PUBLISHED);

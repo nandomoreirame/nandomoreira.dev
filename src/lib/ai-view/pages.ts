@@ -3,62 +3,75 @@ import { GITHUB_REPOSITORIES_URL, type OpenSourceRepo } from '../catalog/open-so
 import type { Profile } from '../../content/schemas/profile';
 import type { Project } from '../../content/schemas/project';
 import { formatPeriod } from '../about/period';
-import { COLLECTION_LABELS, collectionOfBlock, type CatalogCollection } from '../catalog/groups';
+import { collectionOfBlock, type CatalogCollection } from '../catalog/groups';
 import type { ArchiveYear } from '../content';
-import { COLOPHON } from '../about/colophon';
+import { colophon } from '../about/colophon';
 import { absoluteUrl } from '../aeo/urls';
 import { MCP_TOOLS } from '../mcp/catalog';
-import { AVAILABILITY_LABEL } from '../layout/availability';
+import { mcpClients } from '../mcp/clients';
+import type { Locale } from '../i18n/locale';
+import { withLocale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
+import { routeFor } from '../i18n/routes';
 
 const frontmatter = (title: string, url: string): string[] => ['---', `title: ${title}`, `url: ${url}`, '---', ''];
 
-const situationOf = (project: Project): string[] => [
-  ...(project.discontinued ? ['Descontinuado'] : []),
-  ...(project.confidential ? ['Confidencial'] : []),
-];
+const situationOf = (project: Project, locale: Locale): string[] => {
+  const t = messagesFor(locale).catalog;
+  return [
+    ...(project.discontinued ? [t.discontinued] : []),
+    ...(project.confidential ? [t.confidential] : []),
+  ];
+};
 
-const caseHref = (project: Project): string => `/${collectionOfBlock(project.block)}/${project.slug}`;
+const caseHref = (project: Project, locale: Locale): string =>
+  withLocale(`/${collectionOfBlock(project.block)}/${project.slug}`, locale);
 
 export const homeMarkdown = ({
   site,
   profile,
   portfolio,
   lab,
+  locale = 'pt-BR',
 }: {
   site: URL;
   profile: Profile;
   portfolio: readonly Project[];
   lab: readonly Project[];
+  locale?: Locale;
 }): string => {
+  const t = messagesFor(locale);
+  const homePath = routeFor('/', locale);
   const lines: string[] = [
-    ...frontmatter(profile.headline, absoluteUrl(site, '/')),
+    ...frontmatter(profile.headline, absoluteUrl(site, homePath)),
     `# ${profile.headline}`,
     '',
     profile.positioning.trim(),
     '',
-    `**${AVAILABILITY_LABEL[profile.availability.status]}**`,
+    `**${t.aiView.availability[profile.availability.status]}**`,
     '',
   ];
 
   const collections: Array<{ label: string; path: CatalogCollection; items: readonly Project[] }> = [
-    { label: COLLECTION_LABELS.portfolio, path: 'portfolio', items: portfolio },
-    { label: COLLECTION_LABELS.lab, path: 'lab', items: lab },
+    { label: t.home.collection.portfolio.title, path: 'portfolio', items: portfolio },
+    { label: t.home.collection.lab.title, path: 'lab', items: lab },
   ];
 
   for (const { label, path, items } of collections) {
     lines.push(`## ${label}`, '');
     const shown = items.slice(0, 5);
     if (shown.length === 0) {
-      lines.push('- Nenhum case publicado nesta coleção ainda.', '');
+      lines.push(`- ${t.catalog.empty}`, '');
       continue;
     }
     for (const project of shown) {
-      lines.push(`- [${project.title}](${absoluteUrl(site, `/${path}/${project.slug}`)}): ${project.summary}`);
+      const href = withLocale(`/${path}/${project.slug}`, locale);
+      lines.push(`- [${project.title}](${absoluteUrl(site, href)}): ${project.summary}`);
     }
     lines.push('');
   }
 
-  lines.push('## Serviços', '');
+  lines.push(`## ${t.aiView.services}`, '');
   for (const service of profile.services) {
     lines.push(`### ${service.title}`, '', service.description.trim(), '');
   }
@@ -70,21 +83,26 @@ export const aboutMarkdown = ({
   site,
   profile,
   projects,
+  locale = 'pt-BR',
 }: {
   site: URL;
   profile: Profile;
   projects: readonly Project[];
+  locale?: Locale;
 }): string => {
+  const t = messagesFor(locale);
+  const aboutPath = routeFor('/sobre', locale);
   const bySlug = new Map(projects.map(project => [project.slug, project]));
+  const siteColophon = colophon(locale);
   const lines: string[] = [
-    ...frontmatter(`Sobre | ${profile.name}`, absoluteUrl(site, '/sobre')),
+    ...frontmatter(`${t.about.title} | ${profile.name}`, absoluteUrl(site, aboutPath)),
     `# ${profile.headline}`,
     '',
     profile.bio.trim(),
     '',
     profile.positioning.trim(),
     '',
-    '## Resultados',
+    `## ${t.about.results.title}`,
     '',
   ];
 
@@ -92,20 +110,27 @@ export const aboutMarkdown = ({
     lines.push(`- **${stat.value}** (${stat.label}): ${stat.context.trim()}`);
   }
 
-  lines.push('', '## Como posso ajudar', '');
+  lines.push('', `## ${t.about.help.title}`, '');
   for (const service of profile.services) {
     lines.push(`### ${service.title}`, '', service.description.trim());
     const project = bySlug.get(service.caseSlug);
     if (project) {
-      lines.push('', `- Case: [${project.title}](${absoluteUrl(site, caseHref(project))})`);
+      lines.push(
+        '',
+        `- ${t.aiView.caseLabel}: [${project.title}](${absoluteUrl(site, caseHref(project, locale))})`,
+      );
     }
     lines.push('');
   }
 
   if (profile.work && profile.work.length > 0) {
-    lines.push('## Experiência', '');
+    lines.push(`## ${t.about.experience.title}`, '');
     for (const job of profile.work) {
-      lines.push(`### ${job.position}`, '', `- ${formatPeriod(job.startDate, job.endDate)} · ${job.name}`);
+      lines.push(
+        `### ${job.position}`,
+        '',
+        `- ${formatPeriod(job.startDate, job.endDate, locale)} · ${job.name}`,
+      );
       if (job.summary) lines.push(`- ${job.summary}`);
       if (job.highlights) {
         for (const highlight of job.highlights) {
@@ -117,23 +142,23 @@ export const aboutMarkdown = ({
   }
 
   if (profile.education && profile.education.length > 0) {
-    lines.push('## Formação', '');
+    lines.push(`## ${t.about.education.title}`, '');
     for (const entry of profile.education) {
       lines.push(
-        `- ${formatPeriod(entry.startDate, entry.endDate)}: ${entry.studyType} em ${entry.area}, ${entry.institution}`,
+        `- ${formatPeriod(entry.startDate, entry.endDate, locale)}: ${t.about.education.line(entry.studyType, entry.area, entry.institution)}`,
       );
     }
     lines.push('');
   }
 
-  lines.push('## Stack', '');
+  lines.push(`## ${t.about.stack}`, '');
   for (const item of profile.stack) {
     lines.push(`- ${item}`);
   }
   lines.push('');
 
-  lines.push(`## ${COLOPHON.title}`, '', COLOPHON.intro, '');
-  for (const item of COLOPHON.items) {
+  lines.push(`## ${siteColophon.title}`, '', siteColophon.intro, '');
+  for (const item of siteColophon.items) {
     const link = item.link ? ` [${item.link.label}](${absoluteUrl(site, item.link.href)})` : '';
     lines.push(`- **${item.label}:** ${item.text}${link}`);
   }
@@ -149,6 +174,7 @@ export const collectionMarkdown = ({
   description,
   projects,
   openSource = [],
+  locale = 'pt-BR',
 }: {
   site: URL;
   collection: CatalogCollection;
@@ -157,9 +183,12 @@ export const collectionMarkdown = ({
   projects: readonly Project[];
   /** The lab closes with the open repositories that have no case. */
   openSource?: readonly OpenSourceRepo[];
+  locale?: Locale;
 }): string => {
+  const t = messagesFor(locale);
+  const collectionPath = routeFor(`/${collection}`, locale);
   const lines: string[] = [
-    ...frontmatter(title, absoluteUrl(site, `/${collection}`)),
+    ...frontmatter(title, absoluteUrl(site, collectionPath)),
     `# ${title}`,
     '',
     description.trim(),
@@ -168,51 +197,81 @@ export const collectionMarkdown = ({
 
   for (const project of projects) {
     const path = collectionOfBlock(project.block);
-    const situation = situationOf(project);
+    const situation = situationOf(project, locale);
+    const mdHref = withLocale(`/${path}/${project.slug}.md`, locale);
     lines.push(`## ${project.title}`, '', project.summary, '');
-    lines.push(`- Stack: ${project.tech.join(', ')}`);
+    lines.push(`- ${t.aiView.stackLabel}: ${project.tech.join(', ')}`);
     if (situation.length > 0) {
-      lines.push(`- Situação: ${situation.join(', ')}`);
+      lines.push(`- ${t.aiView.situationLabel}: ${situation.join(', ')}`);
     }
-    lines.push(`- Markdown: [${project.slug}.md](${absoluteUrl(site, `/${path}/${project.slug}.md`)})`, '');
+    lines.push(
+      `- ${t.aiView.markdownLabel}: [${project.slug}.md](${absoluteUrl(site, mdHref)})`,
+      '',
+    );
   }
 
   if (openSource.length > 0) {
-    lines.push('## Outros projetos abertos', '');
+    lines.push(`## ${t.catalog.openSourceHeading}`, '');
     for (const repo of openSource) {
-      lines.push(`- [${repo.name}](${repo.url}): ${repo.description} (${repo.language}, ${repo.year})`);
+      const descriptionText = locale === 'en' ? repo.descriptionEn : repo.description;
+      lines.push(`- [${repo.name}](${repo.url}): ${descriptionText} (${repo.language}, ${repo.year})`);
     }
-    lines.push('', `Todos os repositórios: ${GITHUB_REPOSITORIES_URL}`, '');
+    lines.push('', `${t.aiView.allRepos}: ${GITHUB_REPOSITORIES_URL}`, '');
   }
 
   return lines.join('\n');
 };
 
-const postListLines = (site: URL, posts: readonly Post[]): string[] => {
+const postListLines = (site: URL, posts: readonly Post[], locale: Locale): string[] => {
   const lines: string[] = [];
   for (const post of posts) {
-    lines.push(`- ${post.date}: [${post.title}](${absoluteUrl(site, `/${post.slug}`)}): ${post.summary}`);
+    const href = withLocale(`/${post.slug}`, locale);
+    lines.push(`- ${post.date}: [${post.title}](${absoluteUrl(site, href)}): ${post.summary}`);
   }
   return lines;
 };
 
-export const postsMarkdown = ({ site, posts }: { site: URL; posts: readonly Post[] }): string => {
+export const postsMarkdown = ({
+  site,
+  posts,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  posts: readonly Post[];
+  locale?: Locale;
+}): string => {
+  const t = messagesFor(locale).aiView;
+  const postsPath = routeFor('/posts', locale);
   const lines: string[] = [
-    ...frontmatter('Posts', absoluteUrl(site, '/posts')),
-    '# Posts',
+    ...frontmatter(t.postsTitle, absoluteUrl(site, postsPath)),
+    `# ${t.postsTitle}`,
     '',
-    ...postListLines(site, posts),
+    ...postListLines(site, posts, locale),
     '',
   ];
   return lines.join('\n');
 };
 
-export const archiveMarkdown = ({ site, years }: { site: URL; years: readonly ArchiveYear[] }): string => {
-  const lines: string[] = [...frontmatter('Arquivo', absoluteUrl(site, '/posts/arquivo')), '# Arquivo', ''];
+export const archiveMarkdown = ({
+  site,
+  years,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  years: readonly ArchiveYear[];
+  locale?: Locale;
+}): string => {
+  const t = messagesFor(locale).aiView;
+  const lines: string[] = [
+    ...frontmatter(t.archiveTitle, absoluteUrl(site, '/posts/arquivo')),
+    `# ${t.archiveTitle}`,
+    '',
+  ];
 
   for (const entry of years) {
-    const label = entry.count === 1 ? '1 texto' : `${entry.count} textos`;
-    lines.push(`- [${entry.year}](${absoluteUrl(site, `/posts/arquivo/${entry.year}`)}): ${label}`);
+    lines.push(
+      `- [${entry.year}](${absoluteUrl(site, `/posts/arquivo/${entry.year}`)}): ${t.archiveCount(entry.count)}`,
+    );
   }
   lines.push('');
   return lines.join('\n');
@@ -222,32 +281,46 @@ export const archiveYearMarkdown = ({
   site,
   year,
   posts,
+  locale = 'pt-BR',
 }: {
   site: URL;
   year: string;
   posts: readonly Post[];
+  locale?: Locale;
 }): string => {
+  const t = messagesFor(locale).aiView;
   const lines: string[] = [
-    ...frontmatter(`Arquivo ${year}`, absoluteUrl(site, `/posts/arquivo/${year}`)),
-    `# Arquivo ${year}`,
+    ...frontmatter(`${t.archiveTitle} ${year}`, absoluteUrl(site, `/posts/arquivo/${year}`)),
+    `# ${t.archiveTitle} ${year}`,
     '',
-    ...postListLines(site, posts),
+    ...postListLines(site, posts, locale),
     '',
   ];
   return lines.join('\n');
 };
 
-export const contactMarkdown = ({ site, profile }: { site: URL; profile: Profile }): string => {
+export const contactMarkdown = ({
+  site,
+  profile,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  profile: Profile;
+  locale?: Locale;
+}): string => {
+  const t = messagesFor(locale);
+  const contactPath = routeFor('/contato', locale);
+  const mcpPath = routeFor('/mcp', locale);
   const github = profile.contacts.find(contact => contact.kind === 'github');
   const linkedin = profile.contacts.find(contact => contact.kind === 'linkedin');
 
   const lines: string[] = [
-    ...frontmatter('Contato', absoluteUrl(site, '/contato')),
-    '# Contato',
+    ...frontmatter(t.contactPage.title, absoluteUrl(site, contactPath)),
+    `# ${t.contactPage.title}`,
     '',
-    'Canal direto para humanos e agentes. O e-mail fica na página humana; aqui o caminho é público e sem vazamento.',
+    t.aiView.contactLead,
     '',
-    '## Perfis',
+    `## ${t.aiView.contactProfiles}`,
     '',
   ];
 
@@ -256,77 +329,60 @@ export const contactMarkdown = ({ site, profile }: { site: URL; profile: Profile
 
   lines.push(
     '',
-    '## Para agentes',
+    `## ${t.aiView.contactAgents}`,
     '',
-    `- \`POST /api/hire\`: envie um briefing de projeto.`,
-    `- [/mcp](${absoluteUrl(site, '/mcp')}): como plugar este site via MCP.`,
+    `- \`POST /api/hire\`: ${t.aiView.contactHire}`,
+    `- [${mcpPath}](${absoluteUrl(site, mcpPath)}): ${t.aiView.contactMcpLink}`,
     '',
   );
 
   return lines.join('\n');
 };
 
-const MCP_CLIENTS = [
-  {
-    name: 'Claude Code',
-    steps: ['No terminal, adicione o servidor:'],
-    code: (endpoint: string) => `claude mcp add --transport http nandomoreira ${endpoint}`,
-    after: 'Depois pergunte: o que o Fernando já colocou em produção?',
-  },
-  {
-    name: 'Claude',
-    steps: ['Em Configurações, Conectores, adicione um conector personalizado e cole o endereço:'],
-    code: (endpoint: string) => endpoint,
-    after: 'Conecte e peça para ele avaliar os cases.',
-  },
-  {
-    name: 'ChatGPT',
-    steps: ['Em Configurações, Apps e conectores, ative o modo desenvolvedor e crie um conector com o endereço:'],
-    code: (endpoint: string) => endpoint,
-    after: 'Peça para ele chamar get_resume ou check_availability.',
-  },
-  {
-    name: 'Qualquer cliente MCP',
-    steps: ['Cadastre um servidor Streamable HTTP com o endereço:'],
-    code: (endpoint: string) => endpoint,
-    after: `Rode tools/list para ver as ${MCP_TOOLS.length} tools.`,
-  },
-] as const;
-
-export const connectMarkdown = ({ site }: { site: URL }): string => {
+export const connectMarkdown = ({
+  site,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  locale?: Locale;
+}): string => {
+  const t = messagesFor(locale).mcpPage;
+  const ai = messagesFor(locale).aiView;
+  const mcpPath = routeFor('/mcp', locale);
   const endpoint = absoluteUrl(site, '/api/mcp');
+  const clients = mcpClients(endpoint, locale);
   const lines: string[] = [
-    ...frontmatter('Conectar via MCP', absoluteUrl(site, '/mcp')),
-    '# Este site fala com Agentes de IA',
+    ...frontmatter(t.title, absoluteUrl(site, mcpPath)),
+    `# ${t.heading}`,
     '',
-    'Adicione este portfólio como conector e o seu agente lê o perfil, os cases e o currículo, e confere a disponibilidade. Sem conta, sem chave e sem cadastro.',
+    t.lead,
     '',
-    '## Endpoint MCP',
+    `## ${t.endpointHeading}`,
     '',
     `\`${endpoint}\``,
     '',
-    'Streamable HTTP, protocolo 2025-11-25, só leitura.',
+    t.endpointHint,
     '',
-    '## Como conectar',
+    `## ${t.connectHeading}`,
     '',
   ];
 
-  for (const client of MCP_CLIENTS) {
+  for (const client of clients) {
     lines.push(`### ${client.name}`, '');
     for (const step of client.steps) lines.push(step, '');
-    lines.push('```', client.code(endpoint), '```', '', client.after, '');
+    lines.push('```', client.code, '```', '', client.after, '');
   }
 
-  lines.push('## Tools', '');
+  lines.push(`## ${ai.toolsHeading}`, '');
   for (const tool of MCP_TOOLS) {
-    lines.push(`- \`${tool.name}\`: ${tool.description}`);
+    lines.push(`- \`${tool.name}\`: ${t.tools[tool.name]}`);
   }
 
   lines.push(
     '',
-    '## Para propor um projeto',
+    `## ${t.briefingHeading}`,
     '',
-    'As tools são só de leitura. Para mandar um briefing, o agente faz um `POST /api/hire`.',
+    `${t.briefingBeforeCode} \`POST /api/hire\`.`,
     '',
   );
 

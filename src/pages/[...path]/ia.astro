@@ -7,11 +7,14 @@ import { absoluteUrl, requireSite } from '../../lib/aeo/urls';
 import { markdownForPath } from '../../lib/ai-view/registry';
 import { displayNameOf } from '../../lib/content/display-name';
 import { getProfile } from '../../lib/content';
+import { localeOfPath } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 export const prerender = false;
 
 const site = requireSite(Astro.site ?? new URL('https://nandomoreira.dev'));
-const page = await markdownForPath(site, Astro.params.path ?? '');
+const pathKey = Astro.params.path ?? '';
+const page = await markdownForPath(site, pathKey);
 
 // The catch-all would answer 200 for any path; the registry is the source of
 // truth for which pages have an AI view.
@@ -19,7 +22,9 @@ if (!page) {
   Astro.response.status = 404;
 }
 
-const authorName = displayNameOf(await getProfile());
+const locale = localeOfPath(page?.humanPath ?? (pathKey === '' ? '/' : `/${pathKey}`));
+const t = messagesFor(locale).aiView;
+const authorName = displayNameOf(await getProfile(locale));
 ---
 
 {
@@ -27,18 +32,20 @@ const authorName = displayNameOf(await getProfile());
     <p>Not found</p>
   ) : (
     <BaseLayout
-      title={`${page.title}${TITLE_SEPARATOR}IA${TITLE_SEPARATOR}${authorName}`}
-      description={`Visão IA de ${page.humanPath}`}
+      title={`${page.title}${TITLE_SEPARATOR}${t.titleTag}${TITLE_SEPARATOR}${authorName}`}
+      description={t.viewOf(page.humanPath)}
       noindex
       view="ai"
       canonicalPath={page.humanPath}
       markdownAlternate={page.mdPath}
+      locale={locale}
     >
-      <AiBar slot="top" humanPath={page.humanPath} mdPath={page.mdPath} />
+      <AiBar slot="top" humanPath={page.humanPath} mdPath={page.mdPath} locale={locale} />
       <AiDocument
         title={page.title}
         url={absoluteUrl(site, page.humanPath)}
         markdown={page.markdown}
+        locale={locale}
       />
     </BaseLayout>
   )

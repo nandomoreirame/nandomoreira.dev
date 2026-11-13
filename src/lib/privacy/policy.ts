@@ -1,6 +1,9 @@
 import { absoluteUrl } from '../aeo/urls';
 import type { Locale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
+import { routeFor } from '../i18n/routes';
 import { toLongDate } from '../format/date';
+import { policyFor } from './policy-en';
 
 /**
  * The privacy policy as data: one source for the page and for its markdown.
@@ -177,21 +180,31 @@ export const formatPolicyDate = (iso: string, locale: Locale = 'pt-BR'): string 
  * The markdown version is a machine surface, so it never prints the e-mail
  * (tests/aeo/no-leak.test.ts); it points at the contact page instead.
  */
-export const privacyMarkdown = ({ site }: { site: URL }): string => {
+export const privacyMarkdown = ({
+  site,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  locale?: Locale;
+}): string => {
+  const { lead, sections } = policyFor(locale);
+  const t = messagesFor(locale);
+  const privacyPath = routeFor('/privacidade', locale);
+  const contactPath = routeFor('/contato', locale);
   const lines = [
     '---',
-    'title: Política de privacidade',
-    `url: ${absoluteUrl(site, '/privacidade')}`,
+    `title: ${t.privacyPage.title}`,
+    `url: ${absoluteUrl(site, privacyPath)}`,
     `updated: ${POLICY_UPDATED_AT}`,
     '---',
     '',
-    '# Política de privacidade',
+    `# ${t.privacyPage.heading}`,
     '',
-    POLICY_LEAD,
+    lead,
     '',
   ];
 
-  for (const section of privacySections) {
+  for (const section of sections) {
     lines.push(
       `## ${section.title}`,
       '',
@@ -199,7 +212,12 @@ export const privacyMarkdown = ({ site }: { site: URL }): string => {
     );
   }
 
-  lines.push('## Contato', '', `Pedidos sobre seus dados: pelo formulário em ${absoluteUrl(site, '/contato')}.`, '');
+  lines.push(
+    `## ${t.privacyPage.contactHeading}`,
+    '',
+    t.aiView.privacyContact(absoluteUrl(site, contactPath)),
+    '',
+  );
 
   return lines.join('\n');
 };
