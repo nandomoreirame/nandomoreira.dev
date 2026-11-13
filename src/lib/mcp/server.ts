@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { version } from '../../../package.json';
 import { buildResume } from '../aeo/resume';
-import { getAllProjects, getProfile, getProject } from '../content';
+import { getMachineProjects, getProfile } from '../content';
 import { toolMeta } from './catalog';
 import { toAvailabilityAnswer, toProfileAnswer } from './tools/profile';
 import { toProjectDetail, toProjectSummaries } from './tools/projects';
@@ -45,10 +45,12 @@ const toolError = (message: string) => ({
 export const createMcpServer = async (): Promise<McpServer> => {
   const server = new McpServer(MCP_SERVER_INFO);
 
-  server.registerTool('get_profile', toolMeta('get_profile'), async () => answer(toProfileAnswer(await getProfile())));
+  server.registerTool('get_profile', toolMeta('get_profile'), async () =>
+    answer(toProfileAnswer(await getProfile('en'))),
+  );
 
   server.registerTool('check_availability', toolMeta('check_availability'), async () =>
-    answer(toAvailabilityAnswer(await getProfile())),
+    answer(toAvailabilityAnswer(await getProfile('en'))),
   );
 
   server.registerTool(
@@ -63,7 +65,7 @@ export const createMcpServer = async (): Promise<McpServer> => {
       },
     },
     async ({ collection }) => {
-      const projects = toProjectSummaries(await getAllProjects(), collection);
+      const projects = toProjectSummaries(await getMachineProjects(), collection);
 
       // Wrapped in an object because the protocol requires structuredContent to
       // be a record; a bare array is rejected by the client at -32602.
@@ -80,7 +82,7 @@ export const createMcpServer = async (): Promise<McpServer> => {
       },
     },
     async ({ slug }) => {
-      const project = await getProject(slug);
+      const project = (await getMachineProjects()).find(item => item.slug === slug);
 
       if (!project) {
         // A tool error, not a throw: an unknown slug is a normal outcome of a
@@ -93,7 +95,7 @@ export const createMcpServer = async (): Promise<McpServer> => {
   );
 
   server.registerTool('get_resume', toolMeta('get_resume'), async () => {
-    const [profile, projects] = await Promise.all([getProfile(), getAllProjects()]);
+    const [profile, projects] = await Promise.all([getProfile('en'), getMachineProjects()]);
 
     return answer(buildResume({ site: SITE, profile, projects }));
   });

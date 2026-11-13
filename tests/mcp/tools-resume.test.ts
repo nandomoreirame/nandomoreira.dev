@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildResume } from '../../src/lib/aeo/resume';
-import { getAllProjects, getProfile } from '../../src/lib/content';
+import { getMachineProjects, getProfile } from '../../src/lib/content';
 import { callTool } from './client';
 
 describe('get_resume', () => {
@@ -8,8 +8,8 @@ describe('get_resume', () => {
     const viaTool = await callTool('get_resume');
     const viaRoute = buildResume({
       site: new URL('https://nandomoreira.dev'),
-      profile: await getProfile(),
-      projects: await getAllProjects(),
+      profile: await getProfile('en'),
+      projects: await getMachineProjects(),
     });
 
     // Two implementations of the resume would diverge on the first change.

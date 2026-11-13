@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getAllProjects } from '../../src/lib/content';
+import { getMachineProjects } from '../../src/lib/content';
 import type { ProjectDetailAnswer, ProjectSummaryAnswer } from '../../src/lib/mcp/tools/projects';
 import { clientPattern, confidentialClientNames } from '../helpers/confidential-clients';
 import { callTool, callToolRaw } from './client';
@@ -13,7 +13,7 @@ describe('list_projects', () => {
   it('lists every published case when no filter is given', async () => {
     const result = await callTool<ProjectList>('list_projects');
 
-    expect(result.projects).toHaveLength((await getAllProjects()).length);
+    expect(result.projects).toHaveLength((await getMachineProjects()).length);
     expect(result.total).toBe(result.projects.length);
   });
 
@@ -57,7 +57,7 @@ describe('list_projects', () => {
 
 describe('get_project', () => {
   it('returns the full case for a known slug', async () => {
-    const [first] = await getAllProjects();
+    const [first] = await getMachineProjects();
     const result = await callTool<ProjectDetailAnswer>('get_project', { slug: first.slug });
 
     expect(result.title).toBe(first.title);

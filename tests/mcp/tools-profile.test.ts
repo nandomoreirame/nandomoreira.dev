@@ -6,7 +6,7 @@ import { callTool } from './client';
 describe('get_profile', () => {
   it('returns the same profile the site publishes', async () => {
     const result = await callTool<ProfileAnswer>('get_profile');
-    const profile = await getProfile();
+    const profile = await getProfile('en');
 
     expect(result.headline).toBe(profile.headline);
     expect(result.name).toBe(profile.name);
@@ -26,7 +26,7 @@ describe('get_profile', () => {
 
   it('carries the services with the case that proves each one', async () => {
     const result = await callTool<ProfileAnswer>('get_profile');
-    const profile = await getProfile();
+    const profile = await getProfile('en');
 
     expect(result.services).toHaveLength(profile.services.length);
     for (const service of result.services) {
@@ -38,7 +38,7 @@ describe('get_profile', () => {
 describe('check_availability', () => {
   it('returns availability with the date that lets an agent calibrate it', async () => {
     const result = await callTool<AvailabilityAnswer>('check_availability');
-    const profile = await getProfile();
+    const profile = await getProfile('en');
 
     expect(result.status).toBe(profile.availability.status);
     expect(result.updatedAt).toBe(profile.availability.updatedAt);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildResume } from '../../src/lib/aeo/resume';
-import { getAllProjects, getProfile } from '../../src/lib/content';
+import { getMachineProjects, getProfile } from '../../src/lib/content';
 import type { ProjectSummaryAnswer } from '../../src/lib/mcp/tools/projects';
 import { callTool } from './client';
 
@@ -9,13 +9,13 @@ import { callTool } from './client';
  * something the site does not say is worse than no tool at all, because the
  * agent repeats it with confidence.
  *
- * This runs against the REAL archive, not a fixture, so it fails when the
- * content drifts away from what the tools report — which a fixture-based test
- * by construction cannot notice.
+ * Machine surfaces (MCP included) prefer English per item (i18n-content
+ * REQ-015). This runs against the REAL archive, not a fixture, so it fails
+ * when the content drifts away from what the tools report.
  */
 describe('no tool diverges from what the site publishes', () => {
   it('get_profile matches the access layer field by field', async () => {
-    const profile = await getProfile();
+    const profile = await getProfile('en');
     const answer = await callTool<Record<string, unknown>>('get_profile');
 
     expect(answer).toMatchObject({
@@ -28,7 +28,7 @@ describe('no tool diverges from what the site publishes', () => {
   });
 
   it('check_availability matches the access layer', async () => {
-    const { availability } = await getProfile();
+    const { availability } = await getProfile('en');
 
     expect(await callTool('check_availability')).toEqual({
       status: availability.status,
@@ -38,14 +38,14 @@ describe('no tool diverges from what the site publishes', () => {
   });
 
   it('list_projects reports every case the catalog has, and no other', async () => {
-    const projects = await getAllProjects();
+    const projects = await getMachineProjects();
     const answer = await callTool<{ projects: ProjectSummaryAnswer[] }>('list_projects');
 
     expect(answer.projects.map(project => project.slug).sort()).toEqual(projects.map(project => project.slug).sort());
   });
 
   it('list_projects repeats the catalog title and summary verbatim', async () => {
-    const projects = await getAllProjects();
+    const projects = await getMachineProjects();
     const answer = await callTool<{ projects: ProjectSummaryAnswer[] }>('list_projects');
     const bySlug = new Map(answer.projects.map(project => [project.slug, project]));
 
@@ -56,7 +56,7 @@ describe('no tool diverges from what the site publishes', () => {
   });
 
   it('get_project matches the catalog for every published slug', async () => {
-    const projects = await getAllProjects();
+    const projects = await getMachineProjects();
 
     for (const project of projects) {
       const answer = await callTool<{ outcome: string }>('get_project', {
@@ -70,8 +70,8 @@ describe('no tool diverges from what the site publishes', () => {
   it('get_resume matches what the resume route serves', async () => {
     const expected = buildResume({
       site: new URL('https://nandomoreira.dev'),
-      profile: await getProfile(),
-      projects: await getAllProjects(),
+      profile: await getProfile('en'),
+      projects: await getMachineProjects(),
     });
 
     expect(await callTool('get_resume')).toEqual(expected);
