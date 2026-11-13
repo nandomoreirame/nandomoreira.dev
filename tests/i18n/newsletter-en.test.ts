@@ -25,4 +25,21 @@ describe('newsletter in English', () => {
     expect(html).toContain('origem=%2Fen%2Fposts');
     expect(ptLeftovers(html)).toEqual([]);
   });
+
+  it('passes locale to Turnstile when the public key is set', async () => {
+    const previous = process.env.TURNSTILE_SITE_KEY;
+    process.env.TURNSTILE_SITE_KEY = 'fake-public-key';
+    try {
+      const html = await (
+        await AstroContainer.create()
+      ).renderToString(NewsletterCard, {
+        props: { locale: 'en', returnTo: '/en/posts' },
+      });
+      expect(html).toContain('data-language="en"');
+      expect(html).not.toContain('data-language="pt-br"');
+    } finally {
+      if (previous === undefined) delete process.env.TURNSTILE_SITE_KEY;
+      else process.env.TURNSTILE_SITE_KEY = previous;
+    }
+  });
 });

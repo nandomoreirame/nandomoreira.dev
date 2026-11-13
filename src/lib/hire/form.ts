@@ -50,10 +50,10 @@ export const formToPayload = (params: URLSearchParams): Record<string, unknown> 
 export type FormOutcome = 'ok' | 'invalido' | 'limite' | 'erro' | 'captcha';
 
 /** Return pages of the contact form, by its ?origem; anything else is /contato (never an open redirect). */
-const CONTACT_ORIGINS: Record<string, string> = { 'contact-en': '/en/contact' };
+const CONTACT_ORIGINS = new Map<string, string>([['contact-en', '/en/contact']]);
 
 export const contactOriginOf = (url: URL): string =>
-  CONTACT_ORIGINS[url.searchParams.get('origem') ?? ''] ?? '/contato';
+  CONTACT_ORIGINS.get(url.searchParams.get('origem') ?? '') ?? '/contato';
 
 /**
  * Where the form lands after a submission; the page reads `envio`. `base` is

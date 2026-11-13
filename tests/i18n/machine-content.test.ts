@@ -40,4 +40,10 @@ describe('machine content', () => {
     const fallback = items.find(item => item.path === `/${withoutPair!.slug}`);
     expect(fallback?.title).toBe(withoutPair!.title);
   });
+
+  it('publishes no English search index while the flag is off (D8)', async () => {
+    const { enSearchIndexPaths, englishSearchResponse } = await import('../../src/pages/en/search.json');
+    expect(await enSearchIndexPaths(false)).toEqual([]);
+    expect((await englishSearchResponse(false)).status).toBe(404);
+  });
 });

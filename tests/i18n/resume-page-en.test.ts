@@ -24,6 +24,19 @@ describe('ResumePage', () => {
     await expect(html).toMatchFileSnapshot('../__snapshots__/resume.pt.html');
   });
 
+  it('emits reciprocal hreflang and og:locale on both resume heads (REQ-011/012)', async () => {
+    const [pt, en] = await Promise.all([render('pt-BR'), render('en')]);
+    for (const html of [pt, en]) {
+      expect(html).toContain('rel="alternate" hreflang="pt-BR" href="https://nandomoreira.dev/curriculo"');
+      expect(html).toContain('rel="alternate" hreflang="en" href="https://nandomoreira.dev/en/resume"');
+      expect(html).toContain('rel="alternate" hreflang="x-default" href="https://nandomoreira.dev/curriculo"');
+    }
+    expect(pt).toContain('property="og:locale" content="pt_BR"');
+    expect(pt).toContain('property="og:locale:alternate" content="en_US"');
+    expect(en).toContain('property="og:locale" content="en_US"');
+    expect(en).toContain('property="og:locale:alternate" content="pt_BR"');
+  });
+
   it('renders the English resume chrome', async () => {
     const html = await render('en');
     expect(html).toContain('<html lang="en"');
@@ -54,6 +67,12 @@ describe('CV form return path', () => {
   it('never redirects to an arbitrary origin', () => {
     expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=https://evil.example'))).toBe('/curriculo');
     expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=/en/resume'))).toBe('/curriculo');
+  });
+
+  it('ignores inherited Object keys as origem', () => {
+    for (const key of ['__proto__', 'constructor', 'toString']) {
+      expect(resumeOriginOf(new URL(`https://nandomoreira.dev/api/cv?origem=${key}`))).toBe('/curriculo');
+    }
   });
 
   it('redirects the English form outcome to /en/resume', async () => {

@@ -49,7 +49,9 @@ const publishedCount = (await getAllPosts(locale)).filter((post) => !post.draft)
 const authorName = displayNameOf(await getProfile(locale));
 const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
 const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const archiveHref = withLocale('/posts/arquivo', locale);
+// D12: the archive has no English side; omit the link on /en/posts.
+const showArchive = locale === 'pt-BR';
+const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
 // RSS and the archive share one shape beside the post count.
 const headerLink =
   'inline-flex min-h-11 items-center gap-xs rounded-sm border border-border-strong px-sm text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -71,13 +73,14 @@ const headerLink =
 
     <div data-listing-bar class="-mt-md mb-xl flex flex-wrap items-center justify-between gap-sm font-mono text-small">
       <div class="flex flex-wrap items-center gap-sm">
-        <a
-          href={archiveHref}
-          class={headerLink}
-        >
-          <Icon name="lucide:archive" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-          {t.archiveByYear}
-        </a>
+        {
+          showArchive && (
+            <a href="/posts/arquivo" class={headerLink}>
+              <Icon name="lucide:archive" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+              {t.archiveByYear}
+            </a>
+          )
+        }
         <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
           {t.articleCount(publishedCount)}
         </span>
@@ -95,7 +98,7 @@ const headerLink =
           </button>
         </form>
         <a
-          href="/rss.xml"
+          href={rssHref}
           class={headerLink}
         >
           <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />

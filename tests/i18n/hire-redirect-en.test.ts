@@ -12,6 +12,12 @@ describe('contact form return path', () => {
     expect(contactOriginOf(new URL('https://nandomoreira.dev/api/hire?origem=/en/contact'))).toBe('/contato');
   });
 
+  it('ignores inherited Object keys as origem', () => {
+    for (const key of ['__proto__', 'constructor', 'toString']) {
+      expect(contactOriginOf(new URL(`https://nandomoreira.dev/api/hire?origem=${key}`))).toBe('/contato');
+    }
+  });
+
   it('keeps the outcome values as the machine contract', () => {
     expect(formRedirect('ok', '/en/contact').headers.get('location')).toBe('/en/contact?envio=ok#envio');
   });

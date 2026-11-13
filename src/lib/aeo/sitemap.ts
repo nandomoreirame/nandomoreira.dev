@@ -40,11 +40,15 @@ export interface SitemapEntry {
  * and the per-case `.md` mirrors are agent alternates, so listing them adds
  * noise.
  *
- * The two résumé routes DO belong here (REQ-012 of structured-resume). They are
- * indexable content, not protocol files: an agent that never renders a page
- * still gets a route to the same facts. `/api/health` and `/api/hire` remain
- * absent, being a probe and a write endpoint.
+ * The machine résumé routes (`/api/resume.json`, `/api/resume.txt`) belong
+ * here (REQ-012 of structured-resume). The HTML pair `/curriculo` and
+ * `/en/resume` stays out: ResumeLayout marks them noindex. `/api/health` and
+ * `/api/hire` remain absent, being a probe and a write endpoint.
  */
+
+/** Static English routes that enter the sitemap; the noindex résumé pair stays out. */
+const SITEMAP_STATIC_ROUTES = STATIC_ROUTES.filter(route => route.en !== '/en/resume');
+
 export const sitemapEntries = ({
   projects,
   posts = [],
@@ -106,7 +110,7 @@ export const sitemapEntries = ({
   }
 
   if (enLive) {
-    for (const route of STATIC_ROUTES) {
+    for (const route of SITEMAP_STATIC_ROUTES) {
       entries.push({ path: route.en });
     }
     for (const pair of pairs) {
@@ -121,7 +125,7 @@ const pairIndex = (enLive: boolean, pairs: readonly TranslationPair[]): Map<stri
   const index = new Map<string, TranslationPair>();
   if (!enLive) return index;
 
-  for (const route of STATIC_ROUTES) {
+  for (const route of SITEMAP_STATIC_ROUTES) {
     index.set(route['pt-BR'], route);
     index.set(route.en, route);
   }

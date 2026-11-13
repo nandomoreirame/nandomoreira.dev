@@ -92,9 +92,9 @@ type Outcome = 'ok' | 'invalido' | 'limite';
 type Field = 'nome' | 'empresa' | 'email';
 
 /** Return pages of the CV form, by its ?origem; anything else is /curriculo (never an open redirect). */
-const RESUME_ORIGINS: Record<string, string> = { 'resume-en': '/en/resume' };
+const RESUME_ORIGINS = new Map<string, string>([['resume-en', '/en/resume']]);
 
-export const resumeOriginOf = (url: URL): string => RESUME_ORIGINS[url.searchParams.get('origem') ?? ''] ?? CV_PAGE;
+export const resumeOriginOf = (url: URL): string => RESUME_ORIGINS.get(url.searchParams.get('origem') ?? '') ?? CV_PAGE;
 
 const redirect = (location: string): Response =>
   new Response(null, { status: 303, headers: { location, 'cache-control': 'no-store' } });

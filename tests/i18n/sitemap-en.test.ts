@@ -19,4 +19,13 @@ describe('bilingual sitemap', () => {
     expect(buildSitemap({ site, projects: [], posts: [], enLive: false, pairs })).toBe(before);
     expect(before).not.toContain('/en');
   });
+
+  it('keeps the HTML resume pair out (noindex; /curriculo was never listed)', () => {
+    const xml = buildSitemap({ site, projects: [], posts: [], enLive: true, pairs });
+    expect(xml).not.toContain('/en/resume');
+    expect(xml).not.toContain('/curriculo');
+    // Machine résumé routes stay (REQ-012 of structured-resume).
+    expect(xml).toContain('/api/resume.json');
+    expect(xml).toContain('/api/resume.txt');
+  });
 });

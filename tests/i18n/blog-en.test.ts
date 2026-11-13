@@ -38,6 +38,16 @@ describe('English blog', () => {
     expect(ptLeftovers(withoutPortugueseContent(html))).toEqual([]);
   });
 
+  it('omits the archive link and points RSS at the English feed (D12, REQ-014)', async () => {
+    const html = await renderListing('en');
+    // D12: no English archive; omit the link rather than send visitors to a 404.
+    expect(html).not.toContain('href="/posts/arquivo"');
+    expect(html).not.toContain('href="/en/posts/arquivo"');
+    // Listing button (after the view toggle), not only the head alternate.
+    expect(html).toMatch(/data-view-toggle[\s\S]*?href="\/en\/rss\.xml"/);
+    expect(html).not.toMatch(/data-view-toggle[\s\S]*?href="\/rss\.xml"/);
+  });
+
   it('copy resolves by locale', () => {
     expect(blogCopy('pt-BR').title).toBe('Meu caderno aberto');
     expect(blogCopy('en').title).not.toBe('Meu caderno aberto');

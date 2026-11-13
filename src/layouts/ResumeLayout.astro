@@ -1,7 +1,9 @@
 ---
+import { absoluteUrl, requireSite } from '../lib/aeo/urls';
 import { metaDescription } from '../lib/seo/meta';
 import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
-import type { Locale } from '../lib/i18n/locale';
+import { ogLocale, type Locale } from '../lib/i18n/locale';
+import { routeFor } from '../lib/i18n/routes';
 import '../styles/global.css';
 
 interface Props {
@@ -11,6 +13,11 @@ interface Props {
 }
 
 const { title, description, locale = 'pt-BR' } = Astro.props;
+// Container tests may omit Astro.site; production always has config.site.
+const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
+const ptPath = routeFor('/curriculo', 'pt-BR');
+const enPath = routeFor('/curriculo', 'en');
+const alternateLocale = locale === 'en' ? 'pt-BR' : 'en';
 ---
 
 <!doctype html>
@@ -27,6 +34,11 @@ const { title, description, locale = 'pt-BR' } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={metaDescription(description)} />
     <meta name="robots" content="noindex" />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    <meta property="og:locale:alternate" content={ogLocale(alternateLocale)} />
+    <link rel="alternate" hreflang="pt-BR" href={absoluteUrl(site, ptPath)} />
+    <link rel="alternate" hreflang="en" href={absoluteUrl(site, enPath)} />
+    <link rel="alternate" hreflang="x-default" href={absoluteUrl(site, ptPath)} />
     <link rel="preload" href={sansBodyFont} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
