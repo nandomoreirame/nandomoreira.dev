@@ -1,13 +1,23 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
+import { salesWhatsappPath } from '../../lib/sales/contact';
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
-import { BUDGET_OPTIONS } from '../../lib/contact/form-options';
+import { budgetOptions } from '../../lib/contact/form-options';
 import { FORM_HONEYPOT } from '../../lib/hire/form';
-import { SALES_COPY } from '../../lib/sales/copy';
+import { salesCopy } from '../../lib/sales/copy';
 import { salesOutcomeMessage } from '../../lib/sales/outcome';
-import { SERVICE_OPTIONS, type Service } from '../../lib/sales/service-labels';
+import { serviceOptionsFor, type Service } from '../../lib/sales/service-labels';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const BUDGET_OPTIONS = budgetOptions(locale);
+const SERVICE_OPTIONS = serviceOptionsFor(locale);
+const SALES_COPY = salesCopy(locale);
 
 interface Props {
+  locale?: Locale;
   /** `landing` or a detail slug; goes in the action so the handler can send the visitor back. */
   origin: string;
   /** The `envio` query value, if any. */
@@ -18,7 +28,7 @@ interface Props {
 
 const { origin, outcome, preselect, title = SALES_COPY.contact.title } = Astro.props;
 const { contact } = SALES_COPY;
-const message = salesOutcomeMessage(outcome);
+const message = salesOutcomeMessage(outcome, locale);
 const sent = message?.role === 'status';
 const field =
   'min-h-11 w-full rounded-md border border-border-strong bg-background px-md py-sm text-body text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -34,7 +44,7 @@ const label = 'mb-xs block font-mono text-small text-muted-foreground';
       <p class="inline-flex items-center gap-xs font-mono text-small text-muted-foreground">
         <Icon name="lucide:user-round-check" class="size-4 text-primary" aria-hidden="true" />{contact.note}
       </p>
-      <a href={contactGoPath('whatsapp')} target="_blank" rel="noopener" class="inline-flex min-h-11 w-fit items-center gap-sm rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      <a href={salesWhatsappPath(locale)} target="_blank" rel="noopener" class="inline-flex min-h-11 w-fit items-center gap-sm rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         <Icon name="simple-icons:whatsapp" class="size-4" aria-hidden="true" />{contact.whatsapp}
       </a>
     </div>
@@ -48,15 +58,15 @@ const label = 'mb-xs block font-mono text-small text-muted-foreground';
       {!sent && (
         <form action={`/api/hire?origem=${origin}`} method="post" class="flex flex-col gap-md">
           <div>
-            <label for="vendas-nome" class={label}>Seu nome</label>
-            <input id="vendas-nome" name="nome" type="text" autocomplete="name" maxlength="200" required class={field} placeholder="Como posso te chamar?" />
+            <label for="vendas-nome" class={label}>{t.name}</label>
+            <input id="vendas-nome" name="nome" type="text" autocomplete="name" maxlength="200" required class={field} placeholder={t.namePlaceholder} />
           </div>
           <div>
-            <label for="vendas-contato" class={label}>E-mail ou WhatsApp</label>
-            <input id="vendas-contato" name="contato" type="text" inputmode="email" autocomplete="email" maxlength="320" required class={field} placeholder="Por onde prefere conversar?" />
+            <label for="vendas-contato" class={label}>{t.contact}</label>
+            <input id="vendas-contato" name="contato" type="text" inputmode="email" autocomplete="email" maxlength="320" required class={field} placeholder={t.contactPlaceholder} />
           </div>
           <div>
-            <label for="vendas-servico" class={label}>O que você precisa?</label>
+            <label for="vendas-servico" class={label}>{t.need}</label>
             <select id="vendas-servico" name="servico" class={field}>
               {SERVICE_OPTIONS.map((option) => (
                 <option value={option.value} selected={option.value === (preselect ?? 'undecided')}>{option.label}</option>
@@ -64,23 +74,23 @@ const label = 'mb-xs block font-mono text-small text-muted-foreground';
             </select>
           </div>
           <div>
-            <label for="vendas-orcamento" class={label}>Orçamento</label>
+            <label for="vendas-orcamento" class={label}>{t.budget}</label>
             <select id="vendas-orcamento" name="orcamento" class={field}>
-              <option value="">Prefiro não dizer agora</option>
+              <option value="">{t.budgetUndisclosed}</option>
               {BUDGET_OPTIONS.map((option) => (
                 <option value={option.value}>{option.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label for="vendas-mensagem" class={label}>Conte um pouco sobre o seu projeto (opcional)</label>
-            <textarea id="vendas-mensagem" name="mensagem" rows="4" maxlength="8000" class={field} placeholder="Qual é o seu negócio e o que você quer agora?"></textarea>
+            <label for="vendas-mensagem" class={label}>{t.message}</label>
+            <textarea id="vendas-mensagem" name="mensagem" rows="4" maxlength="8000" class={field} placeholder={t.messagePlaceholder}></textarea>
           </div>
           {/* Honeypot: display:none, so people, screen readers and password
               managers skip it, while bots reading the HTML still fill it. The
               name is meaningless on purpose (see FORM_HONEYPOT). */}
           <div hidden aria-hidden="true">
-            <label for="vendas-hp">Não preencha este campo</label>
+            <label for="vendas-hp">{t.honeypot}</label>
             <input id="vendas-hp" name={FORM_HONEYPOT} type="text" tabindex="-1" autocomplete="off" />
           </div>
           <button type="submit" class="inline-flex min-h-11 items-center justify-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

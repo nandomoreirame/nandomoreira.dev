@@ -1,6 +1,11 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
 import HeroScenery from './HeroScenery.astro';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
 
 /**
  * Decorative: three stacked browser windows (site, store, panel), no figures,
@@ -14,10 +19,12 @@ const PRODUCTS = [
   { title: 'w-2/3', line: 'w-3/4' },
   { title: 'w-5/6', line: 'w-2/3' },
 ];
+
+interface Props { locale?: Locale; }
 ---
 
 <div class="relative hidden lg:block">
-<HeroScenery />
+<HeroScenery locale={locale} />
 <div data-hero-art data-parallax data-tilt style="--depth: 0.02" aria-hidden="true" class="relative rounded-lg border border-border bg-surface p-lg">
   <div data-parallax style="--depth: 0.035" class="rounded-md border border-border bg-surface-elevated shadow-window transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
     <div class={bar}><span class={dot}></span><span class={dot}></span><span class={dot}></span></div>
@@ -28,7 +35,7 @@ const PRODUCTS = [
     </div>
   </div>
   <div data-parallax style="--depth: 0.055" class="relative z-10 -mt-md ml-xl rounded-md border border-border bg-surface-elevated shadow-window transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
-    <div class={bar}><span class="font-mono text-micro text-muted-foreground">loja / vitrine</span></div>
+    <div class={bar}><span class="font-mono text-micro text-muted-foreground">{t.storefront}</span></div>
     <div class="grid grid-cols-3 gap-sm p-md">
       {PRODUCTS.map((product) => (
         <div class="flex flex-col gap-xs rounded-sm bg-surface p-xs">
@@ -46,7 +53,7 @@ const PRODUCTS = [
     </div>
   </div>
   <div data-parallax style="--depth: 0.08" class="-mt-sm rounded-md border border-border bg-surface-elevated p-md shadow-window transition-[border-color] duration-(--duration-base) ease-out hover:border-primary">
-    <p class="font-mono text-micro text-muted-foreground">painel</p>
+    <p class="font-mono text-micro text-muted-foreground">{t.panel}</p>
     <div class="mt-sm flex items-end gap-sm">
       <span class="h-4 flex-1 rounded-sm bg-border"></span>
       <span class="h-6 flex-1 rounded-sm bg-border"></span>

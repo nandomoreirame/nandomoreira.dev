@@ -1,11 +1,18 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import AboutProfile from './AboutProfile.astro';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+
+interface Props { locale?: Locale; }
 ---
 
 <section aria-labelledby="sobre-title" class="border-t border-border">
   <div class="mx-auto w-full max-w-page px-lg py-2xl lg:py-3xl">
     <div class="rounded-lg border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
-      <AboutProfile eyebrow="Quem vai construir" headingId="sobre-title" aboutHref="https://nandomoreira.dev/sobre" />
+      <AboutProfile locale={locale} eyebrow={t.builder} headingId="sobre-title" aboutHref={locale === 'en' ? 'https://nandomoreira.dev/en/about' : 'https://nandomoreira.dev/sobre'} />
     </div>
   </div>
 </section>

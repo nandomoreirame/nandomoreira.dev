@@ -1,12 +1,20 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
-import { TESTIMONIALS } from '../../lib/sales/proof';
+import { testimonialsFor } from '../../lib/sales/proof';
 import SectionIntro from './SectionIntro.astro';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const TESTIMONIALS = testimonialsFor(locale);
+
+interface Props { locale?: Locale; }
 ---
 
 <section aria-labelledby="depoimentos-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro id="depoimentos-title" eyebrow="Quem já contratou" title="O que dizem" />
+    <SectionIntro locale={locale} id="depoimentos-title" eyebrow={t.testimonialsEyebrow} title={t.testimonialsTitle} />
     <div class="grid gap-md md:grid-cols-2">
       {TESTIMONIALS.map((item) => (
         <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">

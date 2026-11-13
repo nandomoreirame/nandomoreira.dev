@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/locale';
 
 const PT = {
+  visit: 'Visitar',
   skipToContent: 'Pular para o conteúdo',
   sections: 'Seções',
   services: 'Serviços',
@@ -64,6 +65,7 @@ const PT = {
   detailFaqLead: 'Respostas práticas para as perguntas mais comuns de quem contrata pela primeira vez.',
 } as const;
 const EN: Record<keyof typeof PT, string> = {
+  visit: 'Visit',
   skipToContent: 'Skip to content',
   sections: 'Sections',
   services: 'Services',

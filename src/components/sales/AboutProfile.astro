@@ -1,9 +1,16 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
 import { withCareerYears } from '../../lib/format/career-years';
-import { SALES_COPY } from '../../lib/sales/copy';
+import { salesCopy } from '../../lib/sales/copy';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const SALES_COPY = salesCopy(locale);
 
 interface Props {
+  locale?: Locale;
   /** Small label above the name: "Quem vai construir" on the landing, "O autor" on a post. */
   eyebrow: string;
   /** Id of the name heading, for the parent's aria-labelledby. */
@@ -27,7 +34,7 @@ const {
   compact = false,
   points = true,
   role,
-  ctaLabel = 'Saiba mais sobre mim',
+  ctaLabel = t.aboutLink,
 } = Astro.props;
 const { about } = SALES_COPY;
 const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy'];
@@ -47,7 +54,7 @@ const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy
           {about.points.map((point, index) => (
             <li class="flex items-start gap-sm text-small text-muted-foreground">
               <Icon name={ICONS[index]!} class="mt-xs size-4 shrink-0 text-primary" aria-hidden="true" />
-              <span><strong class="font-semibold text-foreground">{withCareerYears(point.title)}</strong> {point.text}</span>
+              <span><strong class="font-semibold text-foreground">{withCareerYears(point.title, undefined, locale)}</strong> {point.text}</span>
             </li>
           ))}
         </ul>

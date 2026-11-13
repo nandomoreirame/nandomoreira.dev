@@ -1,7 +1,8 @@
+import type { Locale } from '../i18n/locale';
 import { caseGoPath } from '../analytics/outbound';
 import { collectionOfBlock } from '../catalog/groups';
 import { getAllProjects } from '../content';
-import { SALES_COPY } from './copy';
+import { salesCopy } from './copy';
 
 export interface SalesProject {
   slug: string;
@@ -19,10 +20,10 @@ export interface SalesProject {
  * line comes from the sales copy, because the case summaries speak to engineers.
  * A project missing from the collection or without a live URL fails the build.
  */
-export const salesProjects = async (): Promise<SalesProject[]> => {
-  const projects = await getAllProjects();
+export const salesProjects = async (locale: Locale = 'pt-BR'): Promise<SalesProject[]> => {
+  const projects = await getAllProjects(locale);
 
-  return SALES_COPY.projects.map(entry => {
+  return salesCopy(locale).projects.map(entry => {
     const project = projects.find(candidate => candidate.slug === entry.slug);
     if (!project?.liveUrl) throw new Error(`Sales project ${entry.slug} needs a live URL in the collection.`);
 

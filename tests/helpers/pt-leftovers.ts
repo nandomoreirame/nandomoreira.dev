@@ -49,6 +49,8 @@ const MARKERS = [
 
 /** Proper names that legitimately carry those words. */
 const ALLOWED = [
+  // Client project name in the sales gallery; proper names are never translated.
+  /Canto das Emoções/gi,
   /São Paulo/g,
   /Fernando Moreira Costa/g,
   /Embu das Artes/g,

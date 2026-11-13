@@ -1,8 +1,15 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
-import { SALES_COPY } from '../../lib/sales/copy';
+import { salesCopy } from '../../lib/sales/copy';
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const SALES_COPY = salesCopy(locale);
 
 interface Props {
+  locale?: Locale;
   /** Position in SALES_COPY.ctas, so each call on the page has its own copy. */
   index: number;
 }
@@ -18,7 +25,7 @@ const contact = '#contato';
   <div class="mx-auto w-full max-w-page px-lg py-xl lg:py-2xl">
     <div class="flex flex-col gap-lg rounded-lg border border-border-strong bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-primary sm:p-xl lg:flex-row lg:items-center lg:justify-between">
       <div class="flex flex-col gap-sm">
-        <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">Orçamento sem compromisso</p>
+        <p class="font-mono text-micro uppercase tracking-eyebrow text-primary">{SALES_COPY.contact.eyebrow}</p>
         <h2 id={id} class="font-serif text-h1 font-normal text-pretty text-foreground">{copy.title}</h2>
         <p class="max-w-measure text-body text-muted-foreground">{copy.text}</p>
       </div>

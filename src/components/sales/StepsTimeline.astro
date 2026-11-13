@@ -1,9 +1,16 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
-import { SALES_COPY } from '../../lib/sales/copy';
+import { salesCopy } from '../../lib/sales/copy';
 import SectionIntro from './SectionIntro.astro';
 
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const SALES_COPY = salesCopy(locale);
+
 interface Props {
+  locale?: Locale;
   variant?: 'full' | 'compact';
 }
 
@@ -15,9 +22,9 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
 <section id={variant === 'full' ? 'como-trabalho' : undefined} aria-labelledby={`etapas-${variant}`} class="scroll-mt-2xl border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
     {variant === 'full' ? (
-      <SectionIntro id={`etapas-${variant}`} {...stepsHeader} centered />
+      <SectionIntro locale={locale} id={`etapas-${variant}`} {...stepsHeader} centered />
     ) : (
-      <SectionIntro id={`etapas-${variant}`} eyebrow="Metodologia transparente" title="Como vamos fazer, em 7 etapas" />
+      <SectionIntro locale={locale} id={`etapas-${variant}`} eyebrow="Metodologia transparente" title="Como vamos fazer, em 7 etapas" />
     )}
     {variant === 'full' ? (
       <ol class="mx-auto flex w-full max-w-narrow flex-col gap-md">
@@ -31,7 +38,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
               </h3>
               <p class="text-small text-muted-foreground">{step.text}</p>
               <p class="w-fit rounded-sm bg-surface-elevated px-sm py-xs text-small text-foreground">
-                <span class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">O que você faz: </span>{step.youDo}
+                <span class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">{t.youDo}</span>{step.youDo}
               </p>
             </div>
           </li>

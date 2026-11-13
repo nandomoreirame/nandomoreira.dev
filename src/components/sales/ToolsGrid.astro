@@ -1,16 +1,24 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
-import { SALES_COPY } from '../../lib/sales/copy';
+import { salesCopy } from '../../lib/sales/copy';
 import SectionIntro from './SectionIntro.astro';
 
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+const SALES_COPY = salesCopy(locale);
+
 const { tools, toolBenefits, toolsDetails, toolsDetailsLead, toolsHeader, toolsNote } = SALES_COPY;
+
+interface Props { locale?: Locale; }
 ---
 
 {/* What the infrastructure does comes first, in plain words; the product names
     stay one click away, in a native <details> (no client script). */}
 <section aria-labelledby="ferramentas-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro id="ferramentas-title" {...toolsHeader} />
+    <SectionIntro locale={locale} id="ferramentas-title" {...toolsHeader} />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {toolBenefits.map((benefit) => (
         <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">

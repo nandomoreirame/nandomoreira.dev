@@ -1,8 +1,14 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import type { ServiceDetail } from '../../lib/sales/catalog';
 import SectionIntro from './SectionIntro.astro';
 
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+
 interface Props {
+  locale?: Locale;
   comparison: ServiceDetail['comparison'];
 }
 
@@ -11,13 +17,13 @@ const { comparison } = Astro.props;
 
 <section aria-labelledby="comparando-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro id="comparando-title" eyebrow="Orientação" title="Comparando: qual escolher?" />
+    <SectionIntro locale={locale} id="comparando-title" eyebrow={t.comparisonEyebrow} title={t.comparisonTitle} />
     {/* Stacks into one block per criterion on phones, so the page never scrolls sideways (REQ-018). */}
     <table class="w-full text-left text-small">
       <caption class="sr-only">{comparison.caption}</caption>
       <thead class="hidden md:table-header-group">
         <tr>
-          <th scope="col" class="p-md font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Critério</th>
+          <th scope="col" class="p-md font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">{t.criterion}</th>
           {comparison.columns.map((column, index) => (
             <th scope="col" class:list={['p-md font-mono text-micro uppercase tracking-eyebrow', index === 0 ? 'text-primary' : 'text-muted-foreground']}>{column}</th>
           ))}

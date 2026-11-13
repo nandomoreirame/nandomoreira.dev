@@ -1,5 +1,9 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+const { locale = 'pt-BR' } = Astro.props;
+
 interface Props {
+  locale?: Locale;
   id: string;
   eyebrow: string;
   title: string;

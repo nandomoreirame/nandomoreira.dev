@@ -1,10 +1,16 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
 import type { SalesService, ServiceDetail } from '../../lib/sales/catalog';
 import { salesPath } from '../../lib/sales/host';
 import SectionIntro from './SectionIntro.astro';
 
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
+
 interface Props {
+  locale?: Locale;
   service: SalesService & { detail: ServiceDetail };
 }
 
@@ -15,20 +21,20 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 
 <section aria-labelledby="detalhe-title" class="mx-auto flex w-full max-w-page flex-col gap-lg px-lg py-2xl lg:py-3xl">
   <nav aria-label="Trilha" class="font-mono text-small text-muted-foreground">
-    <a href={`${salesPath()}#servicos`} class="hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary">Serviços</a>
+    <a href={`${salesPath(undefined, undefined, locale)}#servicos`} class="hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary">{t.services}</a>
     <span aria-hidden="true"> / </span><span aria-current="page" class="text-foreground">{service.title}</span>
   </nav>
   <h1 id="detalhe-title" class="max-w-narrow font-serif text-display font-normal text-foreground">{detail.hero.title}</h1>
   <p class="max-w-measure text-lead text-muted-foreground">{detail.hero.lead}</p>
   <div class="flex flex-wrap gap-md">
     <a href="#contato" class="inline-flex min-h-11 items-center gap-xs rounded-md bg-primary px-lg text-body font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{detail.hero.cta}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
-    <a href="#incluso" class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver o que está incluso</a>
+    <a href="#incluso" class="inline-flex min-h-11 items-center rounded-md border border-border-strong px-lg text-body text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.showIncluded}</a>
   </div>
 </section>
 
 <section aria-labelledby="anatomia-title" class="border-t border-border">
   <div class={wrap}>
-    <SectionIntro id="anatomia-title" eyebrow="Anatomia do projeto" title="O que é, na prática" lead="Um site institucional organiza a sua presença em quatro partes, cada uma com um trabalho a fazer pelo seu negócio." />
+    <SectionIntro locale={locale} id="anatomia-title" eyebrow={t.anatomyEyebrow} title={t.anatomyTitle} lead={t.anatomyLead} />
     <ol class="grid gap-md sm:grid-cols-2 lg:grid-cols-4">
       {detail.anatomy.map((part, index) => (
         <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
@@ -44,7 +50,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 
 <section aria-labelledby="para-voce-title" class="border-t border-border">
   <div class={wrap}>
-    <SectionIntro id="para-voce-title" eyebrow="Diagnóstico" title="É para você se..." />
+    <SectionIntro locale={locale} id="para-voce-title" eyebrow={t.fitEyebrow} title={t.fitTitle} />
     <ul class="grid gap-md md:grid-cols-2">
       {detail.fit.map((item) => (
         <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
@@ -58,7 +64,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 
 <section id="incluso" aria-labelledby="incluso-title" class="scroll-mt-2xl border-t border-border">
   <div class={wrap}>
-    <SectionIntro id="incluso-title" eyebrow="Escopo do serviço" title="O que está incluso" />
+    <SectionIntro locale={locale} id="incluso-title" eyebrow={t.includedEyebrow} title={t.includedTitle} />
     <ul class="grid gap-md md:grid-cols-2">
       {detail.included.map((item) => (
         <li class="flex items-start gap-sm rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
@@ -72,13 +78,13 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 
 <section aria-labelledby="extras-title" class="border-t border-border">
   <div class={wrap}>
-    <SectionIntro id="extras-title" eyebrow="Módulos extras" title="O que pode ser adicionado" lead="Opcionais combinados conforme o momento do seu negócio, sempre sob consulta." />
+    <SectionIntro locale={locale} id="extras-title" eyebrow={t.addonsEyebrow} title={t.addonsTitle} lead={t.addonsLead} />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {detail.addons.map((item) => (
         <li class="flex flex-col gap-xs rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">
           <h3 class="text-body font-semibold text-foreground">{item.title}</h3>
           <p class="text-small text-muted-foreground">{item.text}</p>
-          <p class="mt-auto pt-sm font-mono text-micro text-muted-foreground">Sob consulta</p>
+          <p class="mt-auto pt-sm font-mono text-micro text-muted-foreground">{t.onRequest}</p>
         </li>
       ))}
     </ul>
@@ -87,7 +93,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 
 <section aria-labelledby="por-baixo-title" class="border-t border-border">
   <div class={wrap}>
-    <SectionIntro id="por-baixo-title" eyebrow="Infraestrutura descomplicada" title="Como funciona por baixo: sem sustos no fim do mês" />
+    <SectionIntro locale={locale} id="por-baixo-title" eyebrow={t.infrastructureEyebrow} title={t.infrastructureTitle} />
     <div class="flex max-w-measure flex-col gap-md">
       {detail.underTheHood.map((paragraph) => <p class="text-body text-muted-foreground">{paragraph}</p>)}
     </div>
