@@ -1,8 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { sitemapEntries } from '../../src/lib/aeo/sitemap';
+import { buildSitemap, sitemapEntries } from '../../src/lib/aeo/sitemap';
 import { ogPages } from '../../src/lib/og/pages';
 
 describe('sales pages in the sitemap', () => {
+  it('keeps English sales URLs outside the main-host sitemap (REQ-010)', () => {
+    const xml = buildSitemap({
+      site: new URL('https://nandomoreira.dev'),
+      projects: [],
+      posts: [],
+      enLive: true,
+      pairs: [],
+      salesLive: true,
+    });
+    expect(xml).not.toContain('/en/services');
+    expect(xml).not.toContain('contrate.nandomoreira.dev');
+  });
   it('lists the landing and the detail page while they live on the main host', () => {
     const paths = sitemapEntries({ projects: [], salesLive: false }).map(entry => entry.path);
     expect(paths).toContain('/servicos');

@@ -34,4 +34,5 @@ Checkpoint após tarefa 3: tier2 não executa cobertura porque `@vitest/coverage
 | 6. Componentes por idioma | validada | 899 testes sales/i18n; 19 snapshots pt-BR intactos; check sem erros | 6f03ce8 |
 | 7. Páginas inglesas | validada | 904 testes sales/i18n; snapshot pt-BR intacto; 404 verificado nas cascas HTTP; check sem erros | 8cceef9 |
 | 8. Retorno do formulário | validada | 1019 testes sales/i18n/api; handler real rejeita entrada inválida com redirect inglês; check sem erros | 3570002 |
-| 9. OG inglesa | validada | 914 testes sales/i18n; check sem erros; landing e detalhe com cards em /og/en/services | neste commit |
+| 9. OG inglesa | validada | 914 testes sales/i18n; check sem erros; landing e detalhe com cards em /og/en/services | 59521de |
+| 10. Sitemap sem vendas | validada | 915 testes sales/i18n; mutação /en/services reprovou como esperado; fonte restaurada; check sem erros | neste commit |
