@@ -18,10 +18,14 @@ import serifHeadingFont from '../assets/fonts/newsreader-latin-variable.woff2?ur
 import sansBodyFont from '../assets/fonts/inter-latin-variable.woff2?url';
 import { webPageLd, type PageType } from '../lib/aeo/webpage-ld';
 import { displayNameOf } from '../lib/content/display-name';
+import type { TranslationPair } from '../lib/content';
 import { websiteLd } from '../lib/aeo/website-ld';
 import { showsPixel } from '../lib/analytics/pixel-placement';
 import { getAllPosts, getProfile } from '../lib/content';
 import { profileUrls } from '../lib/home/person-ld';
+import { alternatesFor } from '../lib/i18n/alternates';
+import { htmlLang, localeOfPath, ogLocale } from '../lib/i18n/locale';
+import { messagesFor } from '../lib/i18n/messages';
 import { THEME_BOOT_SCRIPT } from '../lib/theme/boot';
 import '../styles/global.css';
 
@@ -41,6 +45,8 @@ interface Props {
   pageItems?: string[];
   /** Main-menu item this page belongs to when its path does not say so (a post lives at the root). */
   section?: string;
+  /** Explicit language pair for hreflang; falls back to alternatesFor(current). */
+  alternates?: TranslationPair;
 }
 
 const {
@@ -58,11 +64,23 @@ const current = Astro.url?.pathname ? pagePath(Astro.url.pathname) : undefined;
 // Container tests may omit Astro.site; production always has config.site.
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
 const canonical = canonicalUrl(site, canonicalPath ?? current ?? '/');
+const locale = localeOfPath(current ?? '/');
+const t = messagesFor(locale);
+const alternates = Astro.props.alternates ?? (await alternatesFor(current ?? '/'));
+const alternateLocale = locale === 'en' ? 'pt-BR' : 'en';
 // Noindex pages (the AI view, the 404) share the home card.
 const ogImage = absoluteUrl(site, ogImagePath(noindex ? '/' : new URL(canonical).pathname));
-const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev'));
+const websiteJsonLd = serialiseJsonLd(websiteLd(site, 'nandomoreira.dev', locale));
 const webPageJsonLd = serialiseJsonLd(
-  webPageLd({ site, path: new URL(canonical).pathname, title, description, type: pageType, items: pageItems }),
+  webPageLd({
+    site,
+    path: new URL(canonical).pathname,
+    title,
+    description,
+    type: pageType,
+    items: pageItems,
+    locale,
+  }),
 );
 const [profile, posts] = await Promise.all([getProfile(), getAllPosts()]);
 // Year is fixed at build time so the footer stays reproducible across deploys.
@@ -73,10 +91,11 @@ const hasPosts = posts.length > 0;
 const showSwitcher = !(noindex && view === undefined);
 const switcherHumanPath = canonicalPath ? pagePath(canonicalPath) : (current ?? '/');
 const switcherView = view ?? 'human';
+const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang={htmlLang(locale)}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -100,6 +119,8 @@ const switcherView = view ?? 'human';
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    {alternates && <meta property="og:locale:alternate" content={ogLocale(alternateLocale)} />}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -108,7 +129,16 @@ const switcherView = view ?? 'human';
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Blog de Fernando Moreira" />
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang="pt-BR" href={absoluteUrl(site, alternates['pt-BR'])} />
+          <link rel="alternate" hreflang="en" href={absoluteUrl(site, alternates.en)} />
+          <link rel="alternate" hreflang="x-default" href={absoluteUrl(site, alternates['pt-BR'])} />
+        </>
+      )
+    }
+    <link rel="alternate" type="application/rss+xml" href={rssHref} title={t.layout.rssTitle} />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary" />
     <link
       rel="alternate"
@@ -154,7 +184,7 @@ const switcherView = view ?? 'human';
       href="#main"
       class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-md focus-visible:left-md focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-md focus-visible:py-sm focus-visible:text-primary-foreground"
     >
-      Pular para o conteúdo
+      {t.layout.skipToContent}
     </a>
 
     {/* The AI view swaps the human header for its own bar (docs/specs/ai-view). */}
@@ -171,6 +201,7 @@ const switcherView = view ?? 'human';
             section={section}
             hasPosts={hasPosts}
             availability={profile.availability}
+            locale={locale}
           />
         </>
       )

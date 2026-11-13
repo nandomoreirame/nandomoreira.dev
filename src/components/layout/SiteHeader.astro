@@ -2,6 +2,7 @@
 import SiteNav from './SiteNav.astro';
 import Wordmark from './Wordmark.astro';
 import type { Availability } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
 import AvailabilityPill from './AvailabilityPill.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
@@ -14,6 +15,8 @@ interface Props {
   hasPosts?: boolean;
   /** Tones the brand dot, and shows as a pill on the right edge: one word below lg, the full label from it. */
   availability?: Availability;
+  /** Page language; consumed by the nav in a later task. */
+  locale?: Locale;
 }
 
 const {

@@ -1,3 +1,4 @@
+import type { Locale } from '../i18n/locale';
 import { personId } from '../home/person-ld';
 import { absoluteUrl } from './urls';
 
@@ -13,7 +14,7 @@ export interface WebPageLd {
   name: string;
   description: string;
   url: string;
-  inLanguage: 'pt-BR';
+  inLanguage: Locale;
   isPartOf: { '@type': 'WebSite'; url: string };
   mainEntity?: MainEntity;
 }
@@ -30,6 +31,7 @@ export const webPageLd = ({
   description,
   type = 'WebPage',
   items = [],
+  locale = 'pt-BR',
 }: {
   site: URL;
   path: string;
@@ -38,6 +40,7 @@ export const webPageLd = ({
   type?: PageType;
   /** Root-relative paths listed by a CollectionPage. */
   items?: readonly string[];
+  locale?: Locale;
 }): WebPageLd => {
   const mainEntity: MainEntity | undefined =
     type === 'ProfilePage'
@@ -59,7 +62,7 @@ export const webPageLd = ({
     name: title,
     description,
     url: absoluteUrl(site, path),
-    inLanguage: 'pt-BR',
+    inLanguage: locale,
     isPartOf: { '@type': 'WebSite', url: site.toString() },
     ...(mainEntity ? { mainEntity } : {}),
   };
