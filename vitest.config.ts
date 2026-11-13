@@ -11,6 +11,12 @@ import { getViteConfig } from 'astro/config';
 export default getViteConfig({
   test: {
     environment: 'node',
+    coverage: {
+      provider: 'v8',
+      include: ['src/lib/**/*.ts'],
+      reporter: ['text', 'json-summary'],
+      thresholds: { lines: 80 },
+    },
     // Half the cores: unset, Vitest pinned the CPU at 100% and froze the
     // desktop while the suite ran (tests/config/vitest-workers.test.ts).
     maxWorkers: '50%',

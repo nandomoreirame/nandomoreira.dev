@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Acceptance criteria of i18n-foundation / i18n-content against the real build.
+# Acceptance criteria of i18n-foundation / i18n-content / i18n-sales against the real build.
 # No `set -u`: the Bash tool's shell snapshot references unbound vars
 # and would abort the script.
 set -eo pipefail
@@ -29,7 +29,13 @@ stop_server() {
 
 start_server() {
   stop_server
-  HOST=0.0.0.0 PORT="$PORT" node ./dist/server/entry.mjs &
+  # Isolated verification identity: API tests use only the local Firestore emulator.
+  FIREBASE_SERVICE_ACCOUNT= GOOGLE_CLOUD_PROJECT=demo-i18n-sales GCLOUD_PROJECT=demo-i18n-sales \
+    FIRESTORE_EMULATOR_HOST="${FIRESTORE_EMULATOR_HOST:-127.0.0.1:9499}" \
+    RESEND_API_KEY=re_local_verification HIRE_NOTIFY_TO=verify@example.invalid \
+    HIRE_NOTIFY_FROM=verify@example.invalid TURNSTILE_SECRET_KEY= TURNSTILE_SITE_KEY= \
+    ALLOWED_ORIGINS=https://contrate.nandomoreira.dev \
+    HOST=0.0.0.0 PORT="$PORT" node ./dist/server/entry.mjs &
   SERVER_PID=$!
 
   sleep 1
@@ -137,12 +143,36 @@ check_en_published() {
   expect_content_type /en/about.md 'text/markdown' 'title:'
 }
 
+# Real middleware rewrites and form return paths on the sales host.
+check_sales_en() {
+  local path status headers
+  headers=/tmp/i18n-sales-headers
+  for path in /en /en/website; do
+    status=$(curl -s -H 'Host: contrate.nandomoreira.dev' -o "$BODY_FILE" -w '%{http_code}' "${BASE}${path}")
+    [ "$status" = 200 ] || fail "sales ${path} answered ${status}, expected 200"
+    grep -q '<html lang="en"' "$BODY_FILE" || fail "sales ${path} is not English"
+    echo "OK sales ${path} → 200 English"
+  done
+  status=$(curl -s -H 'Host: contrate.nandomoreira.dev' -o /dev/null -w '%{http_code}' "${BASE}/en/nope")
+  [ "$status" = 404 ] || fail "unknown sales detail answered ${status}"
+  status=$(curl -s -H 'Host: nandomoreira.dev' -D "$headers" -o /dev/null -w '%{http_code}' "${BASE}/en/services/website?envio=ok")
+  [ "$status" = 301 ] || fail "main English sales path answered ${status}"
+  grep -qi '^location: https://contrate.nandomoreira.dev/en/website?envio=ok' "$headers" || fail 'wrong sales redirect'
+  status=$(curl -s -H 'Host: contrate.nandomoreira.dev' -H 'X-Forwarded-Proto: https' \
+    -H 'Origin: https://contrate.nandomoreira.dev' -H 'Content-Type: application/x-www-form-urlencoded' \
+    -D "$headers" -o "$BODY_FILE" -w '%{http_code}' --data 'nome=&contato=invalid' "${BASE}/api/hire?origem=landing-en")
+  [ "$status" = 303 ] || fail "invalid English form answered ${status}"
+  grep -qi '^location: /en?envio=invalido#envio' "$headers" || fail 'invalid English form returned to the wrong page'
+  echo 'OK sales unknown detail, main-host redirect and invalid form'
+}
+
 # --- production build: EN_LIVE=true, /en must serve ---
 echo "== production build (EN_LIVE=true) =="
 npm run build
 start_server
 
 check_en_published
+check_sales_en
 count_en_case_links
 assert_en_posts_omit_draft_hrefs
 expect_body /sitemap.xml 'xmlns:xhtml'
@@ -154,5 +184,6 @@ npm run build -- --mode staging
 start_server
 
 check_en_published
+check_sales_en
 
 echo "I18N ROUTES PASSED"

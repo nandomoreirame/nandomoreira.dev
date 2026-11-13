@@ -35,3 +35,28 @@ domínios do backend do App Hosting só existe o `*.hosted.app`.
 6. O sitemap do domínio principal deixa de listar `/servicos` sozinho. Um sitemap próprio do subdomínio fica para depois, se o Search Console pedir.
 
 Para voltar atrás: `SALES_HOST_LIVE = false` e push. O 301 some, e `/servicos` volta a responder no domínio principal.
+
+## Versão inglesa
+
+O subdomínio atende a landing em `/en`, com par em `/`. O caminho interno é `/en/services`; no host principal, ele responde 301 para o subdomínio e preserva a query. Os hosts local e de staging usam o mesmo mapa.
+
+| pt-BR | Inglês |
+|---|---|
+| `/site-institucional` | `/en/website` |
+| `/landing-page` | `/en/landing-page` |
+| `/blog` | `/en/blog` |
+| `/loja-virtual` | `/en/online-store` |
+| `/produto-web` | `/en/web-product` |
+| `/automacao-ia` | `/en/ai-automation` |
+
+O catálogo contém os seis serviços. Uma rota de detalhe só existe quando o serviço tem `detail` escrito nos dois idiomas; atualmente, apenas `website`/`site-institucional`. Os demais continuam como cards e âncoras da landing. O seletor mantém o visitante no mesmo host.
+
+Os formulários usam `landing-en` e o slug inglês como origem. Quando os slugs coincidem (`blog` e `landing-page`), a origem inglesa recebe `-en`; origens de detalhes ainda não publicados são rejeitadas. O interesse automático salvo no lead continua em pt-BR.
+
+Rollback: `EN_LIVE = false` desliga as rotas inglesas, a reescrita `/en` do subdomínio e os alternados/seletor das vendas. As páginas pt-BR continuam no endereço atual.
+
+### Verificação local
+
+`npm run verify` valida tipos, testes e build. O script `scripts/verify-i18n-routes.sh` também confere os hosts de vendas e um formulário inválido por HTTP. Essa prova usa um projeto de demonstração no emulador Firestore, nunca o banco de produção.
+
+Inicie o emulador com projeto `demo-i18n-sales`, host `127.0.0.1` e porta `9499` (ou passe `FIRESTORE_EMULATOR_HOST` para outra porta local), depois rode `bash scripts/verify-i18n-routes.sh`. O servidor de prova usa credenciais fictícias de e-mail e desabilita o captcha; a entrada inválida não envia mensagem nem grava lead. A marca final é `I18N ROUTES PASSED`.

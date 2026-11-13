@@ -145,6 +145,9 @@ No `astro dev`, a Dev Toolbar tem o app "Revisar texto": grife um trecho de um p
 
 ### Idiomas (`docs/specs/i18n-foundation`, `docs/specs/i18n-content`)
 
+A landing inglesa vive em `/en` no subdomínio de vendas; pares em `src/lib/sales/i18n.ts`, catálogo em `catalog-en.ts` e copy em `copy-en.ts`. Só serviços com detalhe escrito ganham rota própria.
+
+
 pt-BR na raiz e inglês em `/en`. Mapa de rotas em `src/lib/i18n/routes.ts`; pares
 `hreflang` em `alternates.ts`. Corpo das páginas em `src/components/pages/`, com cascas
 em `src/pages/` e `src/pages/en/`. A bandeira `EN_LIVE` vive em `src/lib/i18n/live.ts`.

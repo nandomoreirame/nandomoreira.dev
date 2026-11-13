@@ -9,3 +9,4 @@ dist/
 *.log
 tools/stats/target/
 docs/post-reviews/
+coverage/
