@@ -50,4 +50,9 @@ export const en: Messages = {
     explorePortfolio: 'Explore portfolio',
     viewLab: 'View lab',
   },
+  chrome: {
+    backToTop: 'Back to top',
+    backToTopShort: 'Top',
+    opensInNewTab: (label: string) => `${label}. Opens in a new tab`,
+  },
 };

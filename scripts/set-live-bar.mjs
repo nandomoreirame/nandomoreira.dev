@@ -1,7 +1,7 @@
 // Manages the announcement bar items (Firestore site_config/live_bar).
 //
 //   node scripts/set-live-bar.mjs list
-//   node scripts/set-live-bar.mjs add "Texto" [--badge "Novo"] [--href https://... | --channel youtube|twitch]
+//   node scripts/set-live-bar.mjs add "Texto" [--badge "Novo"] [--text-en "Text"] [--badge-en "New"] [--href https://... | --channel youtube|twitch]
 //   node scripts/set-live-bar.mjs remove <number>      (number as shown by list)
 //   node scripts/set-live-bar.mjs clear                (back to the default items)
 //   node scripts/set-live-bar.mjs on | off             (show or hide the whole bar)
@@ -33,7 +33,7 @@ const show = items =>
     ? console.log('(no items: the site shows its default)')
     : items.forEach((item, i) =>
         console.log(
-          `${i + 1}. ${item.badge ? `[${item.badge}] ` : ''}${item.text}${item.href ? ` -> ${item.href}` : item.channel ? ` -> ${item.channel}` : ''}`,
+          `${i + 1}. ${item.badge ? `[${item.badge}] ` : ''}${item.text}${item.textEn ? ` | en: ${item.badgeEn ? `[${item.badgeEn}] ` : ''}${item.textEn}` : ''}${item.href ? ` -> ${item.href}` : item.channel ? ` -> ${item.channel}` : ''}`,
         ),
       );
 
@@ -44,9 +44,15 @@ if (command === 'list') {
   show(items);
 } else if (command === 'add') {
   const text = rest[0];
-  if (!text || text.startsWith('--')) fail('Usage: add "<text>" [--badge X] [--href URL | --channel youtube|twitch]');
+  if (!text || text.startsWith('--'))
+    fail(
+      'Usage: add "<text>" [--badge X] [--text-en Y] [--badge-en Z] [--href URL | --channel youtube|twitch]',
+    );
+  /** @type {Record<string, string>} */
   const item = { text };
   for (const key of ['badge', 'href', 'channel']) if (flag(key)) item[key] = flag(key);
+  if (flag('text-en')) item.textEn = flag('text-en');
+  if (flag('badge-en')) item.badgeEn = flag('badge-en');
   items.push(item);
   await ref.set({ items, enabled: true, schedule: FieldValue.delete() }, { merge: true });
   show(items);

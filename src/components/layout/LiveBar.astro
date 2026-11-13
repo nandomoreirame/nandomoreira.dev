@@ -1,6 +1,16 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
 import { DEFAULT_LIVE_BAR } from '../../lib/live-bar/config';
 import { liveBarHtml } from '../../lib/live-bar/render';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const html = liveBarHtml(DEFAULT_LIVE_BAR.items, locale);
+const hasCopy = locale !== 'en' || DEFAULT_LIVE_BAR.items.some(item => item.textEn);
+const apiUrl = locale === 'en' ? '/api/live-bar?locale=en' : '/api/live-bar';
 ---
 
 {/* Announcement strip above the header. It scrolls away with the page, so the
@@ -10,20 +20,30 @@ import { liveBarHtml } from '../../lib/live-bar/render';
     shows the first copy only. The rule sits on the wrapper to span the viewport.
     The markup is the default items; the script below swaps the track for the
     ones in Firestore (site_config/live_bar), built by the same function. */}
-<div data-live-bar data-live-bar-sync data-reader-hide class="overflow-hidden border-b border-border bg-surface">
-  <div class="live-bar-track flex w-max" set:html={liveBarHtml(DEFAULT_LIVE_BAR.items)} />
+<div
+  data-live-bar
+  data-live-bar-sync
+  data-live-bar-api={apiUrl}
+  data-reader-hide
+  class="overflow-hidden border-b border-border bg-surface"
+  hidden={!hasCopy}
+>
+  <div class="live-bar-track flex w-max" set:html={html} />
 </div>
 
 <script>
   // Announcement items from Firestore through /api/live-bar, so they change
   // without a deploy, also on prerendered pages. Without JS or on a failed
-  // fetch the default items stay.
+  // fetch the default items stay. The URL (with ?locale=en on English pages)
+  // comes from data-live-bar-api so the AstroContainer HTML carries it.
   const bar = document.querySelector<HTMLElement>('[data-live-bar-sync]');
+  const url = bar?.getAttribute('data-live-bar-api') || '/api/live-bar';
   bar &&
-    fetch('/api/live-bar')
+    fetch(url)
       .then((response) => response.json())
       .then(({ enabled, html }) => {
         if (!enabled) return void (bar.hidden = true);
+        bar.hidden = false;
         bar.firstElementChild!.innerHTML = html;
       })
       .catch(() => {});

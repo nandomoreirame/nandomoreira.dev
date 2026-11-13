@@ -1,5 +1,6 @@
 import { contactGoPath } from '../analytics/outbound';
 import { getFirestoreClient } from '../hire/firestore';
+import type { Locale } from '../i18n/locale';
 import { liveBarHtml } from './render';
 
 export const LIVE_BAR_COLLECTION = 'site_config';
@@ -14,7 +15,10 @@ const CHANNELS = ['youtube', 'twitch'] as const;
 
 export interface LiveBarItem {
   text: string;
+  /** English copy; without it the item is dropped on /en. */
+  textEn?: string;
   badge?: string;
+  badgeEn?: string;
   /** A site path or an https URL; without it the item is plain text. */
   href?: string;
   /** Opens in a new tab (set for channels). */
@@ -26,36 +30,53 @@ export interface LiveBarConfig {
   items: LiveBarItem[];
 }
 
-const channelItems = (schedule: string): LiveBarItem[] =>
+const channelItems = (schedule: string, scheduleEn?: string): LiveBarItem[] =>
   [
     ['youtube', 'YouTube'],
     ['twitch', 'Twitch'],
   ].map(([kind, name]) => ({
     text: `${schedule}, no ${name}.`,
+    ...(scheduleEn && { textEn: `${scheduleEn}, on ${name}.` }),
     badge: 'Ao vivo',
+    ...(scheduleEn && { badgeEn: 'Live' }),
     href: contactGoPath(kind!),
     external: true,
   }));
 
 export const DEFAULT_LIVE_BAR: LiveBarConfig = {
   enabled: true,
-  items: channelItems('Live todos os dias, das 9h00 às 12h00'),
+  items: channelItems(
+    'Live todos os dias, das 9h00 às 12h00',
+    'Live every day, 9:00 AM to 12:00 PM (Brasília time)',
+  ),
 };
 
 const safeHref = (value: unknown): string | undefined =>
   typeof value === 'string' && (/^\/(?!\/)/.test(value) || value.startsWith('https://')) ? value : undefined;
 
+const optionalText = (value: unknown, max: number): string =>
+  typeof value === 'string' ? value.trim().slice(0, max) : '';
+
 const parseItem = (raw: unknown): LiveBarItem | undefined => {
   if (typeof raw !== 'object' || raw === null) return undefined;
   const data = raw as Record<string, unknown>;
-  const text = typeof data.text === 'string' ? data.text.trim().slice(0, MAX_TEXT) : '';
+  const text = optionalText(data.text, MAX_TEXT);
   if (!text) return undefined;
 
-  const badge = typeof data.badge === 'string' ? data.badge.trim().slice(0, MAX_BADGE) : '';
+  const textEn = optionalText(data.textEn, MAX_TEXT);
+  const badge = optionalText(data.badge, MAX_BADGE);
+  const badgeEn = optionalText(data.badgeEn, MAX_BADGE);
   const channel = CHANNELS.find(kind => kind === data.channel);
   const href = channel ? contactGoPath(channel) : safeHref(data.href);
 
-  return { text, ...(badge && { badge }), ...(href && { href }), ...(channel && { external: true }) };
+  return {
+    text,
+    ...(textEn && { textEn }),
+    ...(badge && { badge }),
+    ...(badgeEn && { badgeEn }),
+    ...(href && { href }),
+    ...(channel && { external: true }),
+  };
 };
 
 type Reader = () => Promise<Record<string, unknown> | undefined>;
@@ -89,10 +110,12 @@ export const loadLiveBar = async (read: Reader = readFromFirestore): Promise<Liv
   }
 };
 
-export const liveBarResponse = async (read?: Reader): Promise<Response> => {
+export const liveBarResponse = async (read?: Reader, locale: Locale = 'pt-BR'): Promise<Response> => {
   const { enabled, items } = await loadLiveBar(read);
+  const forLocale =
+    locale === 'en' ? { enabled: enabled && items.some(item => item.textEn), items } : { enabled, items };
 
-  return new Response(JSON.stringify({ enabled, html: liveBarHtml(items) }), {
+  return new Response(JSON.stringify({ enabled: forLocale.enabled, html: liveBarHtml(forLocale.items, locale) }), {
     status: 200,
     headers: {
       'content-type': 'application/json; charset=utf-8',

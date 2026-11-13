@@ -1,9 +1,17 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
-// Same reveal as the AI switcher's label: icon at rest, "Topo" opens on hover
-// or keyboard focus by growing max-width. The button is fixed, so nothing
-// reflows; the accessible name never depends on the label.
+// Same reveal as the AI switcher's label: icon at rest, the short label opens
+// on hover or keyboard focus by growing max-width. The button is fixed, so
+// nothing reflows; the accessible name never depends on the label.
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).chrome;
 const labelClass =
   'text-trim-cap max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-(--duration-base) ease-out group-hover/top:ml-xs group-hover/top:max-w-20 group-hover/top:opacity-100 group-focus-visible/top:ml-xs group-focus-visible/top:max-w-20 group-focus-visible/top:opacity-100';
 ---
@@ -11,9 +19,9 @@ const labelClass =
 <a
   href="#main"
   data-back-to-top
-  aria-label="Voltar ao topo"
+  aria-label={t.backToTop}
   class="group/top box-content inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong bg-surface/90 px-md font-mono text-micro uppercase tracking-wide text-muted-foreground backdrop-blur-md transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
   <Icon name="lucide:arrow-up" class="size-3.5 shrink-0" aria-hidden="true" />
-  <span aria-hidden="true" class={labelClass}>Topo</span>
+  <span aria-hidden="true" class={labelClass}>{t.backToTopShort}</span>
 </a>

@@ -196,7 +196,7 @@ const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
         <slot name="top" />
       ) : (
         <>
-          <LiveBar />
+          <LiveBar locale={locale} />
           <SiteHeader
             name={profile.wordmark ?? profile.name}
             accent="moreira"
@@ -223,7 +223,7 @@ const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
     <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm max-md:hidden">
       <PaletteTrigger locale={locale} />
       {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} locale={locale} />}
-      <BackToTop />
+      <BackToTop locale={locale} />
     </div>
     <CommandPalette
       locale={locale}

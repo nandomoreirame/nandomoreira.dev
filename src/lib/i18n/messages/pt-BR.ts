@@ -54,4 +54,10 @@ export const ptBR = {
     explorePortfolio: 'Explorar portfólio',
     viewLab: 'Ver laboratório',
   },
+  chrome: {
+    backToTop: 'Voltar ao topo',
+    backToTopShort: 'Topo',
+    /** Aria-label of a live-bar link that opens in a new tab. */
+    opensInNewTab: (label: string) => `${label}. Abre em nova aba`,
+  },
 } as const;
