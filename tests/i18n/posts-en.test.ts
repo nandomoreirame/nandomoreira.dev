@@ -26,6 +26,9 @@ const TRANSLATED: [string, string][] = [
   ['meus-scripts-de-gitflow-de-31-linhas-a-uma-skill', 'gitflow-scripts-to-a-skill'],
   ['seu-sistema-tem-memoria-por-que-manter-um-dotfiles', 'dotfiles-from-symlink-to-reinstall'],
   ['scripts-que-automatizam-meu-linux', 'automate-your-own-problems'],
+  ['terminal-noir-o-tema-do-meu-site-no-sistema-inteiro', 'terminal-noir-theme-across-my-system'],
+  ['tiling-dinamico-ou-janelas-sobrepostas', 'dynamic-tiling-or-stacked-windows'],
+  ['paleta-de-comandos-ctrl-k-no-meu-site', 'command-palette-ctrl-k'],
 ];
 
 const bodiesBySlug = new Map(
