@@ -234,4 +234,13 @@ export const en: Messages = {
       get_resume: 'The full resume in the JSON Resume standard, the same as /api/resume.json.',
     },
   },
+  setupPage: {
+    title: 'Setup',
+    description:
+      'The hardware, the system, the terminal, the AI agents, the apps and the homelab I use every day, and what I tried and dropped.',
+    heading: 'What I use',
+    seeAlso: 'See also:',
+    shortcut: 'Shortcut',
+    shortcuts: 'Shortcuts',
+  },
 };

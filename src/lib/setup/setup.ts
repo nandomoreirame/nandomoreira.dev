@@ -1,4 +1,7 @@
 import { absoluteUrl } from '../aeo/urls';
+import type { Locale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
+import { setupFor } from './setup-en';
 
 /**
  * The /setup page: what I use every day, in the spirit of a /uses page.
@@ -413,21 +416,30 @@ export const SETUP_SECTIONS: SetupSection[] = [
 ];
 
 /** The same content as the page, for the AI view (/setup.md). */
-export const setupMarkdown = ({ site }: { site: URL }): string => {
+export const setupMarkdown = ({
+  site,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  locale?: Locale;
+}): string => {
+  const { lead, sections } = setupFor(locale);
+  const t = messagesFor(locale).setupPage;
+  const path = locale === 'en' ? '/en/setup' : SETUP_PATH;
   const lines: string[] = [
     '---',
-    'title: Setup',
-    `url: ${absoluteUrl(site, SETUP_PATH)}`,
+    `title: ${t.title}`,
+    `url: ${absoluteUrl(site, path)}`,
     `updated: ${SETUP_UPDATED_AT}`,
     '---',
     '',
-    '# O que eu uso',
+    `# ${t.heading}`,
     '',
-    SETUP_LEAD,
+    lead,
     '',
   ];
 
-  for (const section of SETUP_SECTIONS) {
+  for (const section of sections) {
     lines.push(`## ${section.title}`, '');
     if (section.intro) {
       const link = section.introLink;
@@ -441,12 +453,12 @@ export const setupMarkdown = ({ site }: { site: URL }): string => {
       const keys = (item.shortcuts ?? [])
         .map(shortcut => (shortcut.label ? `\`${shortcut.keys}\` (${shortcut.label})` : `\`${shortcut.keys}\``))
         .join(', ');
-      const label = (item.shortcuts?.length ?? 0) > 1 ? 'Atalhos' : 'Atalho';
+      const label = (item.shortcuts?.length ?? 0) > 1 ? t.shortcuts : t.shortcut;
       lines.push(`- ${name}: ${item.why}${keys ? ` ${label}: ${keys}.` : ''}`);
     }
     lines.push('');
     if (section.related?.length) {
-      lines.push('Veja também:', '');
+      lines.push(t.seeAlso, '');
       for (const link of section.related) lines.push(`- [${link.title}](${absoluteUrl(site, link.href)})`);
       lines.push('');
     }

@@ -1,0 +1,113 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import PageHeader from '../ui/PageHeader.astro';
+import Prose from '../ui/Prose.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import TocColumns from '../ui/TocColumns.astro';
+import NewsletterCard from '../posts/NewsletterCard.astro';
+import PostTocToggle from '../posts/PostTocToggle.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { outcomeOf } from '../../lib/newsletter/copy';
+import { SETUP_UPDATED_AT } from '../../lib/setup/setup';
+import { setupFor } from '../../lib/setup/setup-en';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).setupPage;
+const { lead, sections } = setupFor(locale);
+
+const profile = await getProfile(locale);
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
+const toc = sections.map((section) => ({ depth: 2 as const, slug: section.id, text: section.title }));
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${displayNameOf(profile)}`}
+  description={t.description}
+  locale={locale}
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader title={t.heading} description={lead} updatedAt={SETUP_UPDATED_AT} />
+
+    <TocColumns items={toc}>
+      {
+        sections.map((section, index) => (
+          <section aria-labelledby={section.id}>
+            <SectionHeader id={section.id} title={section.title} step={index + 1} />
+            <Prose>
+              {section.intro && (
+                <p>
+                  {section.introLink && section.intro.includes(section.introLink.text) ? (
+                    <Fragment>
+                      {section.intro.slice(0, section.intro.indexOf(section.introLink.text))}
+                      <a href={section.introLink.href}>{section.introLink.text}</a>
+                      {section.intro.slice(section.intro.indexOf(section.introLink.text) + section.introLink.text.length)}
+                    </Fragment>
+                  ) : (
+                    section.intro
+                  )}
+                </p>
+              )}
+              <ul>
+                {section.items.map((item) => (
+                  <li>
+                    {item.url ? (
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel={item.affiliate ? 'sponsored nofollow noopener noreferrer' : 'nofollow noopener noreferrer'}
+                      >
+                        <strong>{item.name}</strong>
+                      </a>
+                    ) : (
+                      <strong>{item.name}</strong>
+                    )}
+                    : {item.why}
+                    {item.shortcuts && item.shortcuts.length > 0 && (
+                      <span class="mt-xs flex flex-wrap gap-x-md gap-y-xs font-mono text-small text-muted-foreground">
+                        {item.shortcuts.map((shortcut) => (
+                          <span>
+                            {shortcut.keys.split('+').map((key, index) => (
+                              <Fragment>
+                                {index > 0 && ' + '}
+                                <kbd class="rounded-md border border-border-strong bg-surface px-xs text-foreground">{key}</kbd>
+                              </Fragment>
+                            ))}
+                            {shortcut.label && ` ${shortcut.label}`}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {section.related && section.related.length > 0 && (
+                <p>
+                  {t.seeAlso}{' '}
+                  {section.related.map((link, index) => (
+                    <Fragment>
+                      {index > 0 && ', '}
+                      <a href={link.href}>{link.title}</a>
+                    </Fragment>
+                  ))}
+                  .
+                </p>
+              )}
+            </Prose>
+          </section>
+        ))
+      }
+    </TocColumns>
+
+    <NewsletterCard outcome={outcome} returnTo="/setup" locale={locale} />
+
+    <PostTocToggle />
+  </article>
+</BaseLayout>

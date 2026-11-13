@@ -239,4 +239,13 @@ export const ptBR = {
       get_resume: 'O currículo completo no padrão JSON Resume, o mesmo de /api/resume.json.',
     },
   },
+  setupPage: {
+    title: 'Setup',
+    description:
+      'O hardware, o sistema, o terminal, os agentes de IA, os apps e o homelab que eu uso todo dia, e o que testei e deixei de lado.',
+    heading: 'O que eu uso',
+    seeAlso: 'Veja também:',
+    shortcut: 'Atalho',
+    shortcuts: 'Atalhos',
+  },
 } as const;

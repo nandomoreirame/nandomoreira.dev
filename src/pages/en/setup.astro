@@ -1,0 +1,8 @@
+---
+import SetupPage from '../../components/pages/SetupPage.astro';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+---
+
+<SetupPage locale="en" />

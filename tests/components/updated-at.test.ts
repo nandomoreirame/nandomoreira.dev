@@ -26,13 +26,14 @@ describe('UpdatedAt', () => {
     );
   });
 
-  it.each(['src/pages/setup.astro', 'src/pages/now.astro', 'src/pages/privacidade.astro'])(
-    '%s uses it through PageHeader',
-    file => {
-      const source = readFileSync(file, 'utf8');
-      expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);
-      expect(source).not.toContain('Atualizada em <time');
-      expect(readFileSync('src/components/ui/PageHeader.astro', 'utf8')).toContain('<UpdatedAt');
-    },
-  );
+  it.each([
+    'src/components/pages/SetupPage.astro',
+    'src/pages/now.astro',
+    'src/pages/privacidade.astro',
+  ])('%s uses it through PageHeader', file => {
+    const source = readFileSync(file, 'utf8');
+    expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);
+    expect(source).not.toContain('Atualizada em <time');
+    expect(readFileSync('src/components/ui/PageHeader.astro', 'utf8')).toContain('<UpdatedAt');
+  });
 });
