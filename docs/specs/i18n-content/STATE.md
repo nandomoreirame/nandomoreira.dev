@@ -1,6 +1,6 @@
 ---
 slug: i18n-content
-phase: plan-complete
+phase: implement
 spec_path: docs/specs/i18n-content/SPEC.md
 plan_path: docs/plans/2026-10-19-i18n-content.md
 depends_on: [i18n-foundation]

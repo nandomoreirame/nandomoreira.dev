@@ -5,8 +5,10 @@ import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { assertUniqueMarkdownSlugs } from './lib/content/validate';
 import { postSchema } from './content/schemas/post';
+import { postTranslationSchema } from './content/schemas/post-translation';
 import { profileSchema } from './content/schemas/profile';
 import { projectSchema } from './content/schemas/project';
+import { projectTranslationSchema } from './content/schemas/project-translation';
 
 const listMarkdownFiles = async (dir: string): Promise<string[]> => {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -70,4 +72,14 @@ const profileEn = defineCollection({
   schema: profileSchema,
 });
 
-export const collections = { projects, posts, profile, profileEn };
+const postsEn = defineCollection({
+  loader: glob({ base: './src/content/posts-en', pattern: '**/*.md' }),
+  schema: postTranslationSchema,
+});
+
+const projectsEn = defineCollection({
+  loader: glob({ base: './src/content/projects-en', pattern: '**/*.md' }),
+  schema: projectTranslationSchema,
+});
+
+export const collections = { projects, posts, profile, profileEn, postsEn, projectsEn };
