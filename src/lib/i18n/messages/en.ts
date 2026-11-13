@@ -211,6 +211,21 @@ export const en: Messages = {
     backToTop: 'Back to top',
     backToTopShort: 'Top',
     opensInNewTab: (label: string) => `${label}. Opens in a new tab`,
+    updatedAtPrefix: 'Updated on',
+  },
+  availability: {
+    label: {
+      open: 'Available for new projects',
+      limited: 'Limited availability',
+      closed: 'Unavailable right now',
+    },
+    short: {
+      open: 'Available',
+      limited: 'Limited',
+      closed: 'Unavailable',
+    },
+    // Avoid the marker word "do" (ptLeftovers); keep the invite short and direct.
+    cta: 'See what I can help with',
   },
   resume: {
     title: 'Resume',

@@ -1,7 +1,9 @@
 ---
 import { Icon } from 'astro-icon/components';
 import type { Availability } from '../../lib/content';
-import { AVAILABILITY_LABEL } from '../../lib/layout/availability';
+import type { Locale } from '../../lib/i18n/locale';
+import { availabilityCta, availabilityLabel } from '../../lib/layout/availability';
+import { routeFor } from '../../lib/i18n/routes';
 import StatusDot from './StatusDot.astro';
 
 /** The availability box shared by /contato and /now: status eyebrow, then the detail.
@@ -13,19 +15,23 @@ interface Props {
   hook?: string;
   /** A smaller detail line, for a narrow column (/contato). */
   compact?: boolean;
+  locale?: Locale;
 }
 
-const { status, detail, hook, compact = false } = Astro.props;
+const { status, detail, hook, compact = false, locale = 'pt-BR' } = Astro.props;
 const extra = hook ? { [`data-${hook}`]: '' } : {};
 const linked = status !== 'closed';
 const Tag = linked ? 'a' : 'div';
+const label = availabilityLabel(status, locale);
+const cta = availabilityCta(locale);
+const href = routeFor('/contato', locale);
 // no-underline! and text-foreground! beat the [&_a] rules of a Prose parent (/now).
 const interactive =
   'group no-underline! text-foreground! transition-[border-color,background-color] duration-(--duration-fast) ease-out border-border-strong hover:border-primary hover:bg-surface-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 <Tag
-  {...(linked ? { href: '/contato' } : {})}
+  {...(linked ? { href } : {})}
   data-availability-card
   {...extra}
   class={`not-prose flex items-center justify-between gap-lg rounded-md border bg-surface p-lg ${linked ? interactive : 'border-border'}`}
@@ -36,11 +42,11 @@ const interactive =
       class="flex items-center gap-sm font-mono text-caption uppercase tracking-eyebrow text-muted-foreground"
     >
       <StatusDot status={status} />
-      <span>{AVAILABILITY_LABEL[status]}</span>
+      <span>{label}</span>
     </span>
     {
       linked && (
-        <span class="text-h3 font-medium leading-snug text-pretty text-foreground">Veja o que posso fazer por você</span>
+        <span class="text-h3 font-medium leading-snug text-pretty text-foreground">{cta}</span>
       )
     }
     <span class={`max-w-[60ch] text-muted-foreground ${compact ? 'text-caption' : 'text-small'}`}>{detail}</span>

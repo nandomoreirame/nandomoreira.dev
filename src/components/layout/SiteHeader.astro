@@ -52,12 +52,12 @@ const homeHref = routeFor('/', locale);
     <SiteNav current={current} section={section} hasPosts={hasPosts} locale={locale}>
       <Wordmark slot="wordmark" name={name} accent={accent} href={homeHref} />
       <LanguageSwitch slot="language" locale={locale} alternates={alternates} />
-      {availability && <AvailabilityPill slot="availability" status={availability.status} data-menu-availability class="ml-auto" />}
+      {availability && <AvailabilityPill slot="availability" status={availability.status} locale={locale} data-menu-availability class="ml-auto" />}
     </SiteNav>
 
     <LanguageSwitch locale={locale} alternates={alternates} />
 
-    {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
+    {availability && <AvailabilityPill status={availability.status} locale={locale} data-header-availability class="max-md:ml-auto" />}
 
     {/* The theme switch (theme-modes, REQ-004), right of the pill. */}
     <ThemeToggle locale={locale} class={availability ? '-ml-sm' : 'max-md:ml-auto'} />

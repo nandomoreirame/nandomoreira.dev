@@ -29,7 +29,7 @@ const email = profile.contacts.find((contact) => contact.kind === 'email');
   locale={locale}
 >
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader title={t.heading} description={lead} updatedAt={POLICY_UPDATED_AT} />
+    <PageHeader title={t.heading} description={lead} updatedAt={POLICY_UPDATED_AT} locale={locale} />
 
     <Prose>
       {

@@ -51,6 +51,14 @@ const ALLOWED = [
   /Seu Ateliê Aqui/gi,
   /Irmão do Jorel/gi,
   /sextafeirachegou\.com\.br/gi,
+  // School name in the English about/resume education line.
+  /Colégio Estadual do Paraná/g,
+  // Setup product names keep Portuguese particles by design (shape parity).
+  /Mesa ErgoDesk com regulagem de altura/g,
+  /Zsh com Oh My Zsh/g,
+  /Gemini no fluxo de implementação/g,
+  // Hostnames are not Portuguese; the splitter turns "site.com" into the marker "com".
+  /\b[\w-]+\.(?:com|com\.br|dev|io|app|org|net)\b/gi,
 ];
 
 export const visibleText = (html: string): string => {

@@ -1,4 +1,5 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
 import { terminalPath } from '../../lib/layout/terminal-path';
 import UpdatedAt from './UpdatedAt.astro';
 
@@ -11,9 +12,10 @@ interface Props {
   description: string;
   /** ISO date the page was last updated, shown between the title and the lead. */
   updatedAt?: string;
+  locale?: Locale;
 }
 
-const { path, title, description, updatedAt } = Astro.props;
+const { path, title, description, updatedAt, locale = 'pt-BR' } = Astro.props;
 // A page can put its own strip where the date goes (/releases: the version tag).
 const hasMeta = Astro.slots.has('meta');
 const shown = terminalPath(path ?? Astro.url.pathname);
@@ -28,7 +30,7 @@ const shown = terminalPath(path ?? Astro.url.pathname);
   {
     updatedAt && (
       <div data-page-updated class="mt-lg">
-        <UpdatedAt date={updatedAt} />
+        <UpdatedAt date={updatedAt} locale={locale} />
       </div>
     )
   }

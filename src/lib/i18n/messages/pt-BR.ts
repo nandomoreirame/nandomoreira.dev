@@ -216,6 +216,21 @@ export const ptBR = {
     backToTopShort: 'Topo',
     /** Aria-label of a live-bar link that opens in a new tab. */
     opensInNewTab: (label: string) => `${label}. Abre em nova aba`,
+    /** Prefix of the date strip under a page title ("Atualizada em …."). */
+    updatedAtPrefix: 'Atualizada em',
+  },
+  availability: {
+    label: {
+      open: 'Disponível para novos projetos',
+      limited: 'Disponibilidade limitada',
+      closed: 'Indisponível no momento',
+    },
+    short: {
+      open: 'Disponível',
+      limited: 'Limitado',
+      closed: 'Indisponível',
+    },
+    cta: 'Veja o que posso fazer por você',
   },
   resume: {
     title: 'Currículo',

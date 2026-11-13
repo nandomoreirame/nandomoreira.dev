@@ -1,16 +1,20 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { formatPolicyDate } from '../../lib/privacy/policy';
 
 interface Props {
   /** ISO date, YYYY-MM-DD. */
   date: string;
+  locale?: Locale;
 }
 
-const { date } = Astro.props;
+const { date, locale = 'pt-BR' } = Astro.props;
+const prefix = messagesFor(locale).chrome.updatedAtPrefix;
 ---
 
 <p class="flex items-center gap-sm border-l-2 border-primary pl-md font-mono text-small text-muted-foreground">
   <Icon name="lucide:clock" aria-hidden="true" class="size-4 shrink-0" />
-  <span>Atualizada em <time datetime={date}>{formatPolicyDate(date)}</time>.</span>
+  <span>{prefix} <time datetime={date}>{formatPolicyDate(date, locale)}</time>.</span>
 </p>

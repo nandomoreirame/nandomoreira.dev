@@ -50,7 +50,7 @@ const markdownAlternate = withLocale(`/${collection}/${project.slug}.md`, locale
   {
     collection === 'portfolio' && (
       <div class="my-3xl">
-        <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
+        <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} locale={locale} />
       </div>
     )
   }

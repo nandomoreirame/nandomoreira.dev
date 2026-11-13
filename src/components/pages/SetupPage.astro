@@ -34,7 +34,7 @@ const toc = sections.map((section) => ({ depth: 2 as const, slug: section.id, te
   locale={locale}
 >
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader title={t.heading} description={lead} updatedAt={SETUP_UPDATED_AT} />
+    <PageHeader title={t.heading} description={lead} updatedAt={SETUP_UPDATED_AT} locale={locale} />
 
     <TocColumns items={toc}>
       {

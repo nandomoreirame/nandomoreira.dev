@@ -288,7 +288,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
         <a href={routeFor('/mcp', locale)} class="font-mono text-small text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.mcpHowTo}</a>
       </Card>
       {/* Availability closes the machine-contact column, below the MCP card (moved on 2026-10-19). */}
-      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" compact />
+      <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} hook="contact-availability" compact locale={locale} />
     </div>
       )
     }

@@ -52,11 +52,11 @@ const writing = locale === 'en' ? { latest: undefined, drafts: [] as string[] } 
   locale={locale}
 >
   <article class="mb-3xl flex flex-col gap-xl">
-    <PageHeader title={t.heading} description={t.description} updatedAt={data.updatedAt} />
+    <PageHeader title={t.heading} description={t.description} updatedAt={data.updatedAt} locale={locale} />
 
     <TocColumns items={toc}>
       <NowSection id="foco" title={t.sections.focus} step={1}>
-        <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
+        <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} locale={locale} />
         <ul>
           {data.focus.items.map((item) => <li>{item}</li>)}
         </ul>
