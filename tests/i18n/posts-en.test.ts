@@ -29,6 +29,15 @@ const TRANSLATED: [string, string][] = [
   ['terminal-noir-o-tema-do-meu-site-no-sistema-inteiro', 'terminal-noir-theme-across-my-system'],
   ['tiling-dinamico-ou-janelas-sobrepostas', 'dynamic-tiling-or-stacked-windows'],
   ['paleta-de-comandos-ctrl-k-no-meu-site', 'command-palette-ctrl-k'],
+  ['meu-harness-de-ia-com-rpi', 'ai-harness-with-rpi'],
+  ['aeo-vs-seo-sera-que-o-seo-morreu', 'aeo-vs-seo-is-seo-dead'],
+  ['comentarios-no-blog-sem-pesar-a-pagina', 'blog-comments-without-page-weight'],
+  ['gravar-a-tela-e-virar-gif-com-um-atalho', 'screen-recording-to-gif-shortcut'],
+  ['meu-site-esta-na-versao-17', 'site-is-on-version-17'],
+  ['noctalia-v4-para-v5-com-os-dois-shells-ligados', 'noctalia-v4-to-v5-both-shells'],
+  ['o-designer-de-ia-pos-a-regra-de-negocio-no-texto', 'ai-designer-put-rules-in-copy'],
+  ['sete-rodadas-de-revisao-quando-parar', 'seven-review-rounds-when-to-stop'],
+  ['um-repositorio-de-skills-para-quatro-agentes', 'skills-repo-for-four-agents'],
 ];
 
 const bodiesBySlug = new Map(
