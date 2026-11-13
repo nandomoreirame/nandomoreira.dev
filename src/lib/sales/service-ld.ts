@@ -1,13 +1,17 @@
+import type { Locale } from '../i18n/locale';
+
 interface Input {
+  locale?: Locale;
   name: string;
   description: string;
   url: string;
 }
 
 /** schema.org Service for a sales page; serialised by serialiseJsonLd, never by hand. */
-export const serviceLd = ({ name, description, url }: Input) => ({
+export const serviceLd = ({ name, description, url, locale = 'pt-BR' }: Input) => ({
   '@context': 'https://schema.org',
   '@type': 'Service',
+  inLanguage: locale,
   name,
   description,
   url,

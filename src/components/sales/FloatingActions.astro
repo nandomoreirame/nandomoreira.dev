@@ -1,28 +1,34 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
+import type { Locale } from '../../lib/i18n/locale';
+import { salesLabelsFor } from '../../lib/sales/ui';
+import { salesWhatsappPath } from '../../lib/sales/contact';
 import ThemeToggle from '../layout/ThemeToggle.astro';
 
+interface Props { locale?: Locale; }
+const { locale = 'pt-BR' } = Astro.props;
+const t = salesLabelsFor(locale);
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 ---
 
 {/* Fixed bottom-right, no script: the hint shows on hover and on keyboard focus. */}
 <div class="fixed right-md bottom-md z-40 flex flex-col items-end gap-sm">
   <a
-    href={contactGoPath('whatsapp')}
+    href={salesWhatsappPath(locale)}
     target="_blank"
     rel="noopener"
-    aria-label="Fale comigo no WhatsApp"
+    aria-label={t.whatsapp}
     class={`group relative inline-flex size-11 items-center justify-center rounded-full bg-whatsapp text-whatsapp-foreground transition-transform duration-(--duration-fast) ease-out hover:scale-105 ${focusRing}`}
   >
     <Icon name="simple-icons:whatsapp" class="size-5" aria-hidden="true" />
-    <span aria-hidden="true" class="pointer-events-none absolute right-full mr-sm whitespace-nowrap rounded-sm bg-primary px-sm py-xs text-small font-medium text-primary-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 group-focus-visible:opacity-100">Fale comigo no WhatsApp</span>
+    <span aria-hidden="true" class="pointer-events-none absolute right-full mr-sm whitespace-nowrap rounded-sm bg-primary px-sm py-xs text-small font-medium text-primary-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 group-focus-visible:opacity-100">{t.whatsapp}</span>
   </a>
   {/* The theme switch (theme-modes, REQ-004), right before the way back to the top. */}
-  <ThemeToggle class="rounded-full border border-border-strong bg-surface-elevated" />
+  <ThemeToggle locale={locale} class="rounded-full border border-border-strong bg-surface-elevated" />
   <a
     href="#topo"
-    aria-label="Voltar ao topo"
+    aria-label={t.backToTop}
     class={`inline-flex size-11 items-center justify-center rounded-full border border-border-strong bg-surface-elevated text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary ${focusRing}`}
   >
     <Icon name="lucide:chevron-up" class="size-5" aria-hidden="true" />
