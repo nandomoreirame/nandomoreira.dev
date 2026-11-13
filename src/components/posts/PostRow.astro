@@ -1,6 +1,8 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { toShortDate } from '../../lib/format/date';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   href: string;
@@ -11,9 +13,21 @@ interface Props {
   markers?: string[];
   extras?: string[];
   draft?: boolean;
+  locale?: Locale;
 }
 
-const { href, title, summary, date, readingMinutes, markers = [], extras, draft = false } = Astro.props;
+const {
+  href,
+  title,
+  summary,
+  date,
+  readingMinutes,
+  markers = [],
+  extras,
+  draft = false,
+  locale = 'pt-BR',
+} = Astro.props;
+const t = messagesFor(locale).posts;
 const chip = 'inline-flex items-center rounded-sm border border-border bg-surface px-sm py-xs font-mono text-micro leading-none text-muted-foreground';
 ---
 
@@ -26,13 +40,13 @@ const chip = 'inline-flex items-center rounded-sm border border-border bg-surfac
   <span class="flex flex-wrap items-center justify-between gap-sm">
     <span data-post-meta class="flex flex-wrap items-center gap-sm font-mono text-small text-muted-foreground">
       {draft && (
-        <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">Rascunho</span>
+        <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">{t.draft}</span>
       )}
-      <time datetime={date}>{toShortDate(date)}</time>
+      <time datetime={date}>{toShortDate(date, locale)}</time>
       <span aria-hidden="true">/</span>
       <span class="inline-flex items-center gap-xs">
         <Icon name="lucide:clock" aria-hidden="true" class="size-4 shrink-0" />
-        {readingMinutes} min de leitura
+        {t.readingTime(readingMinutes)}
       </span>
     </span>
     {markers.length > 0 && (

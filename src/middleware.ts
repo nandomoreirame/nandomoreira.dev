@@ -7,8 +7,11 @@ import { robotsTagFor } from './lib/seo/backend-host';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // The listing view is a preference, not a page. The form posts here so the
-  // address bar stays /posts; the origin check already ran ahead of this.
-  if (context.request.method === 'POST' && context.url.pathname === '/posts') {
+  // address bar stays on the listing; the origin check already ran ahead of this.
+  if (
+    context.request.method === 'POST' &&
+    (context.url.pathname === '/posts' || context.url.pathname === '/en/posts')
+  ) {
     return handleListingView(context.request, context.url);
   }
 

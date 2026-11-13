@@ -1,0 +1,20 @@
+---
+import PostsPage from '../../../components/pages/PostsPage.astro';
+import { SESSION_COOKIE } from '../../../lib/http/session-cookie';
+import { EN_PUBLISHED } from '../../../lib/i18n/live';
+import { listingHref, parseListingView } from '../../../lib/posts/listing-view';
+import { parsePage } from '../../../lib/posts/paginate';
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+
+const requestedPage = parsePage(Astro.url.searchParams.get('pagina'));
+if (Astro.url.searchParams.has('visao')) {
+  return Astro.redirect(listingHref(requestedPage, '/en/posts'));
+}
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
+const view = parseListingView(Astro.cookies.get(SESSION_COOKIE)?.value);
+---
+
+<PostsPage locale="en" view={view} />

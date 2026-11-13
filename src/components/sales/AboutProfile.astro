@@ -16,9 +16,19 @@ interface Props {
   points?: boolean;
   /** The line under the name; the landing's client-facing one by default. */
   role?: string;
+  /** Visible label of the about link; defaults to the Portuguese sales CTA. */
+  ctaLabel?: string;
 }
 
-const { eyebrow, headingId, aboutHref, compact = false, points = true, role } = Astro.props;
+const {
+  eyebrow,
+  headingId,
+  aboutHref,
+  compact = false,
+  points = true,
+  role,
+  ctaLabel = 'Saiba mais sobre mim',
+} = Astro.props;
 const { about } = SALES_COPY;
 const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy'];
 ---
@@ -45,6 +55,6 @@ const ICONS = ['lucide:badge-check', 'lucide:messages-square', 'lucide:life-buoy
     }
     {/* On the post card the 44px target left a gap under the text; there it
         sits flush with the card's padding (24px tall, still above WCAG 2.5.8). */}
-    <a href={aboutHref} class:list={['mt-auto inline-flex w-fit items-center', compact ? 'min-h-6' : 'min-h-11', 'gap-xs font-mono text-small text-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary']}>Saiba mais sobre mim<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
+    <a href={aboutHref} class:list={['mt-auto inline-flex w-fit items-center', compact ? 'min-h-6' : 'min-h-11', 'gap-xs font-mono text-small text-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary']}>{ctaLabel}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" /></a>
   </div>
 </div>

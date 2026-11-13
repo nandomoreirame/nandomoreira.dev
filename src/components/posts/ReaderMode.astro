@@ -1,6 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { READER_SETTINGS, READER_SWITCH_ID, readerInputId } from '../../lib/posts/reader';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { READER_SWITCH_ID, readerInputId, readerSettings } from '../../lib/posts/reader';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
+const settings = readerSettings(locale);
 
 // Off, this is one switch under the post title. On, the stylesheet pins it to
 // the top corner with the settings beside it (global.css, "Reading mode").
@@ -17,19 +27,19 @@ const step =
     <input type="checkbox" role="switch" id={READER_SWITCH_ID} class="sr-only" />
     <Icon name="lucide:book-open" class="reader-icon-enter size-3.5 shrink-0" aria-hidden="true" />
     <Icon name="lucide:x" class="reader-icon-leave size-3.5 shrink-0" aria-hidden="true" />
-    <span>Modo leitura</span>
+    <span>{t.readerMode}</span>
   </label>
 
   <details class="reader-settings relative">
     <summary class={`${control} list-none`}>
       <Icon name="lucide:a-large-small" class="size-3.5 shrink-0" aria-hidden="true" />
-      <span class="sr-only">Ajustes de leitura</span>
+      <span class="sr-only">{t.readerSettings}</span>
     </summary>
     <div
       class="reader-panel absolute top-full right-0 z-10 mt-sm flex w-72 flex-col gap-md rounded-md border border-border-strong bg-surface-elevated p-md"
     >
       {
-        READER_SETTINGS.map((setting) => (
+        settings.map((setting) => (
           <fieldset class="m-0 flex flex-col gap-xs border-0 p-0">
             <legend class="mb-xs font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">
               {setting.legend}

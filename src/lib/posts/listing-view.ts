@@ -19,8 +19,9 @@ export type ListingView = 'list' | 'grid';
 /** `grid` and `self.grid` are the grid. The author mark alone stays on the list. */
 export const parseListingView = (raw: string | null | undefined): ListingView => parseSession(raw).view;
 
-/** Page 1 is `/posts` itself, never `?pagina=1`. The view is not part of the URL. */
-export const listingHref = (page: number): string => (page > 1 ? `/posts?pagina=${page}` : '/posts');
+/** Page 1 is the listing itself, never `?pagina=1`. The view is not part of the URL. */
+export const listingHref = (page: number, base = '/posts'): string =>
+  page > 1 ? `${base}?pagina=${page}` : base;
 
 export const listingViewSetCookie = (
   view: ListingView,
@@ -62,7 +63,7 @@ export const handleListingView = async (request: Request, url = new URL(request.
   return new Response(null, {
     status: 303,
     headers: {
-      location: listingHref(parsePage(url.searchParams.get('pagina'))),
+      location: listingHref(parsePage(url.searchParams.get('pagina')), url.pathname),
       'cache-control': 'no-store',
       'set-cookie': listingViewSetCookie(view, {
         secure: url.protocol === 'https:',

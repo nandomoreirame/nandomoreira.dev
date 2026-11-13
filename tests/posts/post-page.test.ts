@@ -6,6 +6,7 @@ import { isCommentsPost } from '../../src/lib/posts/giscus-config';
 import PostPage, { getStaticPaths } from '../../src/pages/[slug].astro';
 
 const source = readFileSync('src/pages/[slug].astro', 'utf8');
+const pageSource = readFileSync('src/components/pages/PostPage.astro', 'utf8');
 
 const renderEntry = async (entry: Awaited<ReturnType<typeof getAllPostEntries>>[number]) => {
   const container = await AstroContainer.create();
@@ -261,7 +262,7 @@ describe('/[slug] post page', () => {
     // Coverless posts are drafts or use generated art. Drafts
     // are excluded from getStaticPaths, so this asserts the markup contract:
     // the page only emits <img> for posts that declare cover.
-    expect(source).toMatch(/post\.cover\s*&&/);
+    expect(pageSource).toMatch(/post\.cover\s*&&/);
 
     const entries = await getAllPostEntries();
     const withoutCover = entries.filter(e => !e.data.cover);

@@ -1,0 +1,158 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import { Icon } from 'astro-icon/components';
+import NewsletterCard from '../posts/NewsletterCard.astro';
+import Pagination from '../posts/Pagination.astro';
+import PostCard from '../posts/PostCard.astro';
+import RelatedPostCard from '../posts/RelatedPostCard.astro';
+import PageHeader from '../ui/PageHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpcomingPosts from '../posts/UpcomingPosts.astro';
+import { getAllPosts, getCurrentPosts, getUpcomingPosts, getProfile } from '../../lib/content';
+import { showDrafts } from '../../lib/content/posts';
+import { outcomeOf } from '../../lib/newsletter/copy';
+import { blogCopy } from '../../lib/posts/blog-copy';
+import { listingHref, type ListingView } from '../../lib/posts/listing-view';
+import { pageSizeFor, paginate, parsePage } from '../../lib/posts/paginate';
+import { displayNameOf } from '../../lib/content/display-name';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+
+interface Props {
+  locale?: Locale;
+  view?: ListingView;
+}
+
+const { locale = 'pt-BR', view = 'list' } = Astro.props;
+const t = messagesFor(locale).posts;
+const copy = blogCopy(locale);
+const listingBase = withLocale('/posts', locale);
+
+// A leftover ?visao= from the first version of the toggle must not stay in the
+// address bar. The cookie, not the query, decides the view.
+const requestedPage = parsePage(Astro.url.searchParams.get('pagina'));
+if (Astro.url.searchParams.has('visao')) {
+  return Astro.redirect(listingHref(requestedPage, listingBase));
+}
+
+// Personalized by the cookie, so a shared or browser cache must not reuse it.
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
+const posts = await getCurrentPosts(locale);
+// Drafts stay out of the list in every mode; in dev they are linked from the drafts card below.
+const listed = posts.filter((post) => !post.draft);
+const page = paginate(listed, requestedPage, pageSizeFor(view));
+const upcoming = await getUpcomingPosts(locale);
+// The whole blog, archive included, not just the current posts listed here.
+const publishedCount = (await getAllPosts(locale)).filter((post) => !post.draft).length;
+
+const authorName = displayNameOf(await getProfile(locale));
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const archiveHref = withLocale('/posts/arquivo', locale);
+// RSS and the archive share one shape beside the post count.
+const headerLink =
+  'inline-flex min-h-11 items-center gap-xs rounded-sm border border-border-strong px-sm text-foreground transition-[border-color,color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+---
+
+<BaseLayout
+  title={`Blog${TITLE_SEPARATOR}${authorName}`}
+  description={copy.metaDescription}
+  pageType="CollectionPage"
+  pageItems={page.items.filter((post) => !post.draft).map((post) => withLocale(`/${post.slug}`, locale))}
+  locale={locale}
+>
+  <div>
+    <PageHeader
+      path="/blog"
+      title={copy.title}
+      description={copy.description}
+    />
+
+    <div data-listing-bar class="-mt-md mb-xl flex flex-wrap items-center justify-between gap-sm font-mono text-small">
+      <div class="flex flex-wrap items-center gap-sm">
+        <a
+          href={archiveHref}
+          class={headerLink}
+        >
+          <Icon name="lucide:archive" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+          {t.archiveByYear}
+        </a>
+        <span data-post-count class="inline-flex min-h-11 items-center rounded-sm bg-surface px-sm text-muted-foreground">
+          {t.articleCount(publishedCount)}
+        </span>
+      </div>
+      <div class="flex flex-wrap items-center gap-sm">
+        <form data-view-form method="post" action={listingHref(page.page, listingBase)} class="inline-flex">
+          <input type="hidden" name="visao" value={view === 'list' ? 'grade' : 'lista'} />
+          <button type="submit" data-view-toggle class={headerLink}>
+            <Icon
+              name={view === 'list' ? 'lucide:layout-grid' : 'lucide:layout-list'}
+              aria-hidden="true"
+              class="size-4 shrink-0 text-primary"
+            />
+            {view === 'list' ? t.viewGrid : t.viewList}
+          </button>
+        </form>
+        <a
+          href="/rss.xml"
+          class={headerLink}
+        >
+          <Icon name="lucide:rss" aria-hidden="true" class="size-4 shrink-0 text-primary" />
+          {t.rssFeed}
+        </a>
+      </div>
+    </div>
+
+    {
+      listed.length === 0 ? (
+        <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
+          {t.empty}
+        </p>
+      ) : (
+        view === 'grid' ? (
+          <ul class="grid list-none grid-cols-1 gap-md p-0 md:grid-cols-3">
+            {page.items.map((post) => (
+              <li>
+                <RelatedPostCard post={post} locale={locale} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul class="flex list-none flex-col gap-md p-0">
+            {page.items.map((post) => (
+              <li>
+                <PostCard post={post} site={site} locale={locale} />
+              </li>
+            ))}
+          </ul>
+        )
+      )
+    }
+
+    {
+      listed.length > 0 && (
+        <Pagination
+          page={page.page}
+          totalPages={page.totalPages}
+          first={page.first}
+          last={page.last}
+          total={page.total}
+          locale={locale}
+          base={listingBase}
+        />
+      )
+    }
+
+    <UpcomingPosts
+      posts={upcoming.map((post) => ({ title: post.title, slug: post.slug }))}
+      linked={showDrafts(import.meta.env)}
+      all={showDrafts(import.meta.env)}
+      locale={locale}
+    />
+
+    <div class="mt-2xl mb-3xl">
+      <NewsletterCard outcome={outcome} locale={locale} />
+    </div>
+  </div>
+</BaseLayout>

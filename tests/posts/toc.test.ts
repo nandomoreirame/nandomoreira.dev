@@ -6,7 +6,7 @@ import PostTocToggle from '../../src/components/posts/PostTocToggle.astro';
 import { POST_TOC_ID, tocFrom } from '../../src/lib/posts/toc';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
-const page = readFileSync('src/pages/[slug].astro', 'utf8');
+const page = readFileSync('src/components/pages/PostPage.astro', 'utf8');
 const script = readFileSync('src/components/art/PointerField.astro', 'utf8');
 
 const heading = (depth: number, slug: string, text = slug) => ({ depth, slug, text });
@@ -85,7 +85,7 @@ describe('PostTocToggle', () => {
 
 describe('post page', () => {
   it('builds the index from the rendered headings', () => {
-    expect(page).toMatch(/const \{ Content, headings \} = await render\(live\)/);
+    expect(page).toMatch(/const \{ Content, headings \} = await render\(entry\)/);
     expect(page).toContain('tocFrom(headings)');
   });
 
@@ -101,7 +101,7 @@ describe('post page', () => {
   it('keeps the phone toggle a direct child of the article, outside the animated blocks', () => {
     // An animated ancestor becomes the containing block of a fixed element
     // (measured on the reading mode controls), which would pin the toggle to it.
-    expect(page).toMatch(/<\/div>\s*\{toc\.length > 0 && <PostTocToggle \/>\}\s*<\/article>/);
+    expect(page).toMatch(/<\/div>\s*\{toc\.length > 0 && <PostTocToggle locale=\{locale\} \/>\}\s*<\/article>/);
   });
 });
 

@@ -6,7 +6,7 @@ import { contrastRatio } from '../../src/lib/contrast';
 import { READER_SETTINGS, READER_SWITCH_ID, readerInputId } from '../../src/lib/posts/reader';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
-const page = readFileSync('src/pages/[slug].astro', 'utf8');
+const page = readFileSync('src/components/pages/PostPage.astro', 'utf8');
 const script = readFileSync('src/components/art/PointerField.astro', 'utf8');
 
 const render = async () => (await AstroContainer.create()).renderToString(ReaderMode);

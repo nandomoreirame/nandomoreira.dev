@@ -1,4 +1,6 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { listingHref } from '../../lib/posts/listing-view';
 
 interface Props {
@@ -7,15 +9,18 @@ interface Props {
   first: number;
   last: number;
   total: number;
+  locale?: Locale;
+  base?: string;
 }
 
-const { page, totalPages, first, last, total } = Astro.props;
-// Page 1 is /posts itself, never /posts?pagina=1: one URL per page.
+const { page, totalPages, first, last, total, locale = 'pt-BR', base = '/posts' } = Astro.props;
+const t = messagesFor(locale).posts;
+// Page 1 is the listing itself, never ?pagina=1: one URL per page.
 // The grid or list choice is a cookie, so the links do not carry it.
-const hrefOf = (target: number) => listingHref(target);
+const hrefOf = (target: number) => listingHref(target, base);
 const prev = page > 1 ? hrefOf(page - 1) : undefined;
 const next = page < totalPages ? hrefOf(page + 1) : undefined;
-const range = first === last ? `artigo ${first}` : `artigos ${first}-${last}`;
+const range = t.articleRange(first, last);
 
 const step =
   'inline-flex min-h-11 items-center rounded-sm border px-md font-mono text-small transition-[border-color,color] duration-(--duration-fast) ease-out';
@@ -26,7 +31,7 @@ const inactive = `${step} border-border text-muted-foreground opacity-60`;
 {/* Older and newer pages of the current posts, as in the Stitch listing:
     the steps on the left, where the reader is on the right. */}
 <nav
-  aria-label="Paginação"
+  aria-label={t.pagination}
   data-pagination
   class="mt-2xl flex flex-wrap items-center justify-between gap-md border-t border-border pt-xl"
 >
@@ -34,27 +39,27 @@ const inactive = `${step} border-border text-muted-foreground opacity-60`;
     {
       prev ? (
         <a href={prev} rel="prev" class={active}>
-          ← Mais recentes
+          {t.newer}
         </a>
       ) : (
         <span aria-disabled="true" class={inactive}>
-          ← Mais recentes
+          {t.newer}
         </span>
       )
     }
     {
       next ? (
         <a href={next} rel="next" class={active}>
-          Mais antigos →
+          {t.older}
         </a>
       ) : (
         <span aria-disabled="true" class={inactive}>
-          Mais antigos →
+          {t.older}
         </span>
       )
     }
   </div>
   <p class="font-mono text-small text-muted-foreground">
-    Página <span class="text-primary">{page}</span> de {totalPages} ({range} de {total})
+    {t.pageWord} <span class="text-primary">{page}</span> {t.pageRest(totalPages, range, total)}
   </p>
 </nav>

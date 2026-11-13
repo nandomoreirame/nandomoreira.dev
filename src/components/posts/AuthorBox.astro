@@ -1,5 +1,15 @@
 ---
 import AboutProfile from '../sales/AboutProfile.astro';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
 ---
 
 {/* The post's closing card: who wrote it, the landing's about card (asked on
@@ -10,8 +20,13 @@ import AboutProfile from '../sales/AboutProfile.astro';
   aria-labelledby="author-about-title"
   class="mt-2xl rounded-lg border border-border bg-surface p-lg"
 >
-  <AboutProfile eyebrow="O autor" headingId="author-about-title" aboutHref="/sobre" compact
+  <AboutProfile
+    eyebrow={t.authorEyebrow}
+    headingId="author-about-title"
+    aboutHref={routeFor('/sobre', locale)}
+    ctaLabel={t.authorCta}
+    compact
     points={false}
-    role="Sou desenvolvedor de software sênior em São Paulo. Escrevo aqui sobre meus estudos e experimentos pra mim mesmo; se você está lendo, é um bônus :)"
+    role={t.authorRole}
   />
 </aside>

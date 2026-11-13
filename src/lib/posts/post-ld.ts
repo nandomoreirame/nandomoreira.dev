@@ -1,6 +1,8 @@
 import type { Post } from '../../content/schemas/post';
 import { serialiseJsonLd as sharedSerialise } from '../aeo/json-ld';
 import { personId } from '../home/person-ld';
+import type { Locale } from '../i18n/locale';
+import { htmlLang, withLocale } from '../i18n/locale';
 import { ogImagePath } from '../og/pages';
 
 interface PersonRef {
@@ -19,7 +21,7 @@ export interface PostJsonLd {
   url: string;
   mainEntityOfPage: string;
   image: string;
-  inLanguage: 'pt-BR';
+  inLanguage: string;
   datePublished: string;
   dateModified: string;
   author?: PersonRef;
@@ -32,9 +34,15 @@ export interface PostJsonLd {
  * points at the home page Person by @id, which ties each text to the person
  * (SEO audit 2026-10-13, item 14).
  */
-export const jsonLdForPost = (post: Post, site: string, author?: { name: string }): PostJsonLd => {
+export const jsonLdForPost = (
+  post: Post,
+  site: string,
+  author?: { name: string },
+  locale: Locale = 'pt-BR',
+): PostJsonLd => {
   const root = site.replace(/\/+$/, '');
-  const url = `${root}/${post.slug}`;
+  const path = withLocale(`/${post.slug}`, locale);
+  const url = `${root}${path}`;
   const published = post.publishedAt ?? post.date;
   const person: PersonRef | undefined = author
     ? { '@type': 'Person', '@id': personId(root), name: author.name, url: `${root}/` }
@@ -48,8 +56,8 @@ export const jsonLdForPost = (post: Post, site: string, author?: { name: string 
     description: post.summary,
     url,
     mainEntityOfPage: url,
-    image: `${root}${ogImagePath(`/${post.slug}`)}`,
-    inLanguage: 'pt-BR',
+    image: `${root}${ogImagePath(withLocale(`/${post.slug}`, locale))}`,
+    inLanguage: htmlLang(locale),
     datePublished: published,
     // Posts carry no edit date yet; Google accepts it equal to the publication.
     dateModified: published,

@@ -1,5 +1,8 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { withLocale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { UPCOMING_LIMIT } from './upcoming-limit';
 
 interface Props {
@@ -9,9 +12,11 @@ interface Props {
   linked?: boolean;
   /** List every draft instead of the newest few; true where the author reviews them (dev, staging). */
   all?: boolean;
+  locale?: Locale;
 }
 
-const { linked = false, all = false } = Astro.props;
+const { linked = false, all = false, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
 const posts = all ? Astro.props.posts : Astro.props.posts.slice(0, UPCOMING_LIMIT);
 ---
 
@@ -25,14 +30,14 @@ const posts = all ? Astro.props.posts : Astro.props.posts.slice(0, UPCOMING_LIMI
     >
       <h2 id="upcoming-heading" class="flex items-center gap-sm font-mono text-small uppercase tracking-eyebrow text-primary">
         <Icon name="lucide:file" aria-hidden="true" class="size-4 shrink-0" />
-        Rascunhos em andamento
+        {t.upcomingDrafts}
       </h2>
       <ul class="mt-sm list-disc pl-lg text-body text-foreground marker:text-muted-foreground">
         {posts.map((post) => (
           <li class="mt-xs">
             {linked ? (
               <a
-                href={`/${post.slug}`}
+                href={withLocale(`/${post.slug}`, locale)}
                 class="text-foreground underline decoration-border-strong underline-offset-4 transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >{post.title}</a>
             ) : (

@@ -5,7 +5,7 @@ import { getAllPosts, getArchivedPosts, getCurrentPosts } from '../../src/lib/co
 import { toShortDate } from '../../src/lib/format/date';
 import PostsPage from '../../src/pages/posts/index.astro';
 
-const source = readFileSync('src/pages/posts/index.astro', 'utf8');
+const source = readFileSync('src/components/pages/PostsPage.astro', 'utf8');
 
 const render = async (search = '') => {
   const container = await AstroContainer.create();

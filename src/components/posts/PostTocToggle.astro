@@ -1,6 +1,15 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { POST_TOC_ID } from '../../lib/posts/toc';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
 ---
 
 {/* Below 768px only: the index popover's switch, fixed bottom left, mirroring the
@@ -8,7 +17,7 @@ import { POST_TOC_ID } from '../../lib/posts/toc';
 <button
   type="button"
   popovertarget={POST_TOC_ID}
-  aria-label="Índice do post"
+  aria-label={t.tocToggle}
   data-reader-hide
   class="fixed bottom-lg left-lg z-10 inline-flex size-11 items-center justify-center rounded-md border border-border-strong bg-surface/90 text-muted-foreground backdrop-blur-md transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden"
 >

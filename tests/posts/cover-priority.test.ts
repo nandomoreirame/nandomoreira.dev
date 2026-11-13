@@ -21,7 +21,9 @@ const render = async (entry: Awaited<ReturnType<typeof getAllPostEntries>>[numbe
 
 const withCover = async () => (await getAllPostEntries()).filter(entry => entry.data.cover);
 
-const coverTag = (html: string): string | undefined => /<img[^>]*>/.exec(html)?.[0];
+/** The cover is the eager LCP image; the site logo and author photo come first in the DOM. */
+const coverTag = (html: string): string | undefined =>
+  [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]).find((tag) => tag.includes('fetchpriority="high"'));
 
 describe('the post cover is loaded as the LCP element', () => {
   it('finds published posts with a cover, or this gate proves nothing', async () => {

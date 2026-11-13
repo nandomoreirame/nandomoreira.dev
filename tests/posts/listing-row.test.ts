@@ -25,8 +25,8 @@ describe('/posts listing', () => {
     expect(html).toMatch(new RegExp(`data-post-count[^>]*>\\s*${total} artigos?\\s*<`));
   });
 
-  it('src/pages/posts/index.astro uses PostCard, not PostRow', () => {
-    const source = readFileSync('src/pages/posts/index.astro', 'utf8');
+  it('PostsPage uses PostCard, not PostRow', () => {
+    const source = readFileSync('src/components/pages/PostsPage.astro', 'utf8');
     expect(source).toContain('<PostCard');
     expect(source).not.toContain('<PostRow');
   });

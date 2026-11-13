@@ -48,7 +48,7 @@ describe('UpcomingPosts', () => {
   });
 
   it('lists every draft only where draft pages exist', () => {
-    const page = readFileSync('src/pages/posts/index.astro', 'utf8');
+    const page = readFileSync('src/components/pages/PostsPage.astro', 'utf8');
     expect(page).toContain('all={showDrafts(import.meta.env)}');
   });
 
@@ -62,14 +62,14 @@ describe('UpcomingPosts', () => {
   });
 
   it('links the drafts only where draft pages exist, and keeps them out of the main list', () => {
-    const page = readFileSync('src/pages/posts/index.astro', 'utf8');
+    const page = readFileSync('src/components/pages/PostsPage.astro', 'utf8');
     expect(page).toContain('linked={showDrafts(import.meta.env)}');
     expect(page).toContain('const listed = posts.filter((post) => !post.draft);');
     expect(page).toContain('paginate(listed,');
   });
 
   it('closes the posts list, before the newsletter', () => {
-    const page = readFileSync('src/pages/posts/index.astro', 'utf8');
+    const page = readFileSync('src/components/pages/PostsPage.astro', 'utf8');
     expect(page).toContain('<UpcomingPosts');
     expect(page.indexOf('<UpcomingPosts')).toBeLessThan(page.indexOf('<NewsletterCard'));
   });
@@ -77,7 +77,7 @@ describe('UpcomingPosts', () => {
 
 describe('draft badge', () => {
   it('marks a draft on its page and in the posts list while in dev', () => {
-    expect(readFileSync('src/pages/[slug].astro', 'utf8')).toContain('post.draft');
-    expect(readFileSync('src/pages/posts/index.astro', 'utf8')).toContain('post.draft');
+    expect(readFileSync('src/components/pages/PostPage.astro', 'utf8')).toContain('post.draft');
+    expect(readFileSync('src/components/pages/PostsPage.astro', 'utf8')).toContain('post.draft');
   });
 });

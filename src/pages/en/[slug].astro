@@ -1,0 +1,31 @@
+---
+import PostPage from '../../components/pages/PostPage.astro';
+import type { PostEntry } from '../../lib/content';
+import { getAllPostEntries, getPostEntry } from '../../lib/content';
+import { enStaticPaths } from '../../lib/i18n/guard';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return enStaticPaths(async () => {
+    const entries = await getAllPostEntries('en');
+    return entries.map((entry) => ({
+      params: { slug: entry.data.slug },
+      props: { entry },
+    }));
+  });
+}
+
+interface Props {
+  entry: PostEntry;
+}
+
+const { entry } = Astro.props as Props;
+const live = await getPostEntry(entry.data.slug, 'en');
+
+if (!live) {
+  return Astro.redirect('/404');
+}
+---
+
+<PostPage entry={live} locale="en" />

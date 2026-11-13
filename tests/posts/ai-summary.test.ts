@@ -117,7 +117,9 @@ describe('AiSummaryLink', () => {
 
 describe('post page', () => {
   it('puts the labelled links in the toolbar, beside the reading mode switch, with the post markdown', () => {
-    const page = readFileSync('src/pages/[slug].astro', 'utf8');
-    expect(page).toMatch(/<ReaderMode \/>[\s\S]*?<AiSummaryLink labelled markdownUrl=\{markdownUrl\} \/>/);
+    const page = readFileSync('src/components/pages/PostPage.astro', 'utf8');
+    expect(page).toMatch(
+      /<ReaderMode locale=\{locale\} \/>[\s\S]*?<AiSummaryLink labelled markdownUrl=\{markdownUrl\} locale=\{locale\} \/>/,
+    );
   });
 });

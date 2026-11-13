@@ -1,5 +1,13 @@
 ---
-import { giscusConfig } from '../../lib/posts/giscus-config';
+import type { Locale } from '../../lib/i18n/locale';
+import { giscusConfig, giscusCopy } from '../../lib/posts/giscus-config';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const copy = giscusCopy(locale);
 ---
 
 <section
@@ -13,20 +21,20 @@ import { giscusConfig } from '../../lib/posts/giscus-config';
   data-mapping={giscusConfig.mapping}
   data-strict={giscusConfig.strict}
   data-reactions-enabled={giscusConfig.reactionsEnabled}
-  data-lang={giscusConfig.lang}
+  data-lang={copy.lang}
   class="mt-3xl border-t border-border pt-2xl"
 >
   <p class="font-mono text-small uppercase tracking-eyebrow text-primary">
-    <span aria-hidden="true">{'// '}</span>DISCUSSÃO
+    <span aria-hidden="true">{'// '}</span>{copy.eyebrow}
   </p>
   <h2 id="giscus-heading" class="mt-xs font-serif text-h2 font-normal text-foreground">
-    Deixe seu comentário e vamos discutir sobre esse artigo
+    {copy.heading}
   </h2>
   <p data-giscus-fallback role="status" hidden class="mt-md text-small text-muted-foreground">
-    {giscusConfig.failureMessage}
+    {copy.failureMessage}
   </p>
   <p data-giscus-empty role="status" hidden class="mt-md text-small italic text-muted-foreground">
-    {giscusConfig.emptyMessage}
+    {copy.emptyMessage}
   </p>
   <div data-giscus-slot class="mt-lg"></div>
 </section>

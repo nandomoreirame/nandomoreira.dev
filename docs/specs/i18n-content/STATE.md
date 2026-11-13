@@ -14,3 +14,7 @@ Spec aprovada pelo Fernando em 2026-10-19. Plano revisado em 2026-11-12, com 28 
 Contagem na aprovação: 22 posts não arquivados (16 publicados e 6 rascunhos), não 23. Revisão de 2026-10-23: 28 cases e 25 posts não arquivados (18 publicados e 7 rascunhos). Entraram `camilla-saboia`, `terminal-noir`, dois posts publicados e o rascunho da paleta.
 
 Revisão de 2026-11-12: 28 cases e 33 posts não arquivados (23 publicados e 10 rascunhos). Entraram nove posts (tarefa 19c); a série de dotfiles virou dois posts publicados (commit `89f9fd4`).
+
+## Run rule (2026-11-13, Fernando)
+
+Unattended run: do NOT create git commits. Commit signing goes through 1Password and needs his approval, and he is away. Each finished task is recorded as a tree object under `refs/rpi/NNN-<task>` plus a line in `.git/rpi-ledger.txt` (id, tree, files, commit message). When he is back, turn the snapshots into one signed commit per task (`git commit-tree` per ref, in order), then run the review. Never push.

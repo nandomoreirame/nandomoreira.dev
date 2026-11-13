@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { aiViewLabels } from '../../lib/ai-view/labels';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface Props {
   /** id of the element whose text is copied. */
@@ -13,9 +14,12 @@ interface Props {
   text?: string;
   /** 32px high, caption text: a toolbar beside the reading mode switch. */
   compact?: boolean;
+  locale?: Locale;
 }
 
-const { target, label, iconOnly = false, text = AI_VIEW_LABELS.copy, compact = false } = Astro.props;
+const { target, label, iconOnly = false, compact = false, locale = 'pt-BR' } = Astro.props;
+const labels = aiViewLabels(locale);
+const text = Astro.props.text ?? labels.copy;
 
 const shape = iconOnly
   ? 'size-11 justify-center text-small'
@@ -30,7 +34,7 @@ const shape = iconOnly
 <button
   type="button"
   data-copy={target}
-  data-label-copied={AI_VIEW_LABELS.copied}
+  data-label-copied={labels.copied}
   aria-label={label}
   aria-live="polite"
   hidden

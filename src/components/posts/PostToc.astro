@@ -1,21 +1,25 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { POST_TOC_ID, type TocItem } from '../../lib/posts/toc';
 
 interface Props {
   items: TocItem[];
+  locale?: Locale;
 }
 
-const { items } = Astro.props;
+const { items, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
 ---
 
 {/* A native popover below 768px, opened by PostTocToggle; from md the stylesheet
     turns the same element into a card in the side column ("Post index" in global.css). */}
-<nav id={POST_TOC_ID} popover aria-label="Índice" data-toc data-reader-hide>
+<nav id={POST_TOC_ID} popover aria-label={t.toc} data-toc data-reader-hide>
   <div class="border-b border-border pb-sm">
     <p class="flex items-center gap-xs font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">
       <Icon name="lucide:list" class="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-      Índice
+      {t.toc}
     </p>
   </div>
   <ul class="mt-sm flex list-none flex-col gap-xs p-0">

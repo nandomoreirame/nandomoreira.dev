@@ -1,11 +1,15 @@
 ---
 import type { Post } from '../../content/schemas/post';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   snapshot: NonNullable<Post['snapshot']>;
+  locale?: Locale;
 }
 
-const { snapshot } = Astro.props;
+const { snapshot, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
 ---
 
 {/* What the post ran on (post-detail-redesign REQ-005), under the index from md
@@ -13,7 +17,7 @@ const { snapshot } = Astro.props;
 <section
   data-post-snapshot
   data-reader-hide
-  aria-label="Stack do post"
+  aria-label={t.stackSnapshot}
   class="flex flex-col gap-sm rounded-lg border border-border bg-surface p-md font-mono text-caption"
 >
   <div class="flex items-center justify-between gap-sm border-b border-border pb-sm">

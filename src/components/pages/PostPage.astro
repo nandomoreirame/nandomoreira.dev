@@ -1,0 +1,228 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import AiSummaryLink from '../posts/AiSummaryLink.astro';
+import AuthorBox from '../posts/AuthorBox.astro';
+import GiscusComments from '../posts/GiscusComments.astro';
+import NewsletterCard from '../posts/NewsletterCard.astro';
+import PostSnapshot from '../posts/PostSnapshot.astro';
+import PostToc from '../posts/PostToc.astro';
+import PostTocToggle from '../posts/PostTocToggle.astro';
+import ReaderMode from '../posts/ReaderMode.astro';
+import RelatedPostCard from '../posts/RelatedPostCard.astro';
+import CopyButton from '../ui/CopyButton.astro';
+import Prose from '../ui/Prose.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { generateArt } from '../../lib/art';
+import type { PostEntry } from '../../lib/content';
+import { getAllPosts, getProfile } from '../../lib/content';
+import { displayNameOf } from '../../lib/content/display-name';
+import { toLongDate } from '../../lib/format/date';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { outcomeOf } from '../../lib/newsletter/copy';
+import { isCommentsPost } from '../../lib/posts/giscus-config';
+import { jsonLdForPost, serialiseJsonLd } from '../../lib/posts/post-ld';
+import { readingMinutes } from '../../lib/posts/reading-time';
+import { relatedPosts } from '../../lib/posts/related';
+import { toHashtag } from '../../lib/posts/tags';
+import { tocFrom } from '../../lib/posts/toc';
+import { pageTitle } from '../../lib/seo/meta';
+
+interface Props {
+  entry: PostEntry;
+  locale?: Locale;
+}
+
+const { entry, locale = 'pt-BR' } = Astro.props as Props;
+const t = messagesFor(locale).posts;
+const outcome = outcomeOf(Astro.url.searchParams.get('assinatura'));
+
+const post = entry.data;
+const { Content, headings } = await render(entry);
+const toc = tocFrom(headings);
+const hasAside = toc.length > 0 || Boolean(post.snapshot);
+// A side column left of the text from md (index, snapshot), wider from lg;
+// below md the column comes after the text. Without either, the text keeps the width.
+const layout = hasAside
+  ? 'flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl'
+  : '';
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const profile = await getProfile(locale);
+const minutes = readingMinutes(entry.body ?? '');
+const markdownPath = withLocale(`/${post.slug}.md`, locale);
+const markdownUrl = `${site}${markdownPath}`;
+const canonicalPath = withLocale(`/${post.slug}`, locale);
+const canonical = `${site}${canonicalPath}`;
+const jsonLd = serialiseJsonLd(jsonLdForPost(post, site, profile, locale));
+const related = relatedPosts(post, await getAllPosts(locale));
+// Same generated drawing as the case pages, in the cover's place.
+const art = !post.cover && post.art ? generateArt({ slug: post.slug, art: post.art, aspect: 'banner' }) : undefined;
+
+const authorName = displayNameOf(profile);
+const postsHref = withLocale('/posts', locale);
+---
+
+<BaseLayout
+  title={pageTitle(post.seoTitle ?? post.title, authorName)}
+  description={post.summary}
+  section="/posts"
+  markdownAlternate={markdownPath}
+  locale={locale}
+>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+  <article class="mt-2xl flex flex-col gap-xl" data-reader-article data-post-slug={post.slug}>
+    <header class="flex flex-col gap-md">
+      {
+        post.draft && (
+          <span class="inline-flex w-fit items-center rounded-sm bg-muted-foreground px-sm py-xs font-mono text-micro uppercase leading-none text-trim-cap text-primary-foreground">
+            {t.draft}
+          </span>
+        )
+      }
+      {
+        post.archived && (
+          <span class="inline-flex w-fit items-center rounded-sm border border-border-strong px-sm py-xs font-mono text-micro uppercase tracking-wide text-muted-foreground">
+            {t.archived}
+          </span>
+        )
+      }
+      <p data-post-meta class="flex flex-wrap items-center gap-x-sm gap-y-xs font-mono text-small text-muted-foreground">
+        <time datetime={post.date}>{toLongDate(post.date, locale)}</time>
+        {
+          post.markers.length > 0 && (
+            <Fragment>
+              <span aria-hidden="true">•</span>
+              {post.markers.map((marker) => (
+                <span>{toHashtag(marker)}</span>
+              ))}
+            </Fragment>
+          )
+        }
+        <span aria-hidden="true">•</span>
+        <span class="inline-flex items-center gap-xs">
+          <Icon name="lucide:clock" class="size-3.5 shrink-0" aria-hidden="true" />
+          {t.readingTime(minutes)}
+        </span>
+      </p>
+      <h1 class="font-serif text-h1 font-normal tracking-tight text-pretty text-foreground sm:text-display">{post.title}</h1>
+      <p data-post-lead class="text-h3 text-muted-foreground">{post.summary}</p>
+
+      <div
+        data-post-toolbar
+        class="mt-md flex flex-col gap-md rounded-lg border border-border bg-surface p-md md:flex-row md:items-start md:justify-between md:p-lg"
+      >
+        <ReaderMode locale={locale} />
+        <div data-reader-hide class="flex flex-wrap items-center gap-sm md:border-l md:border-border md:pl-lg">
+          <AiSummaryLink labelled markdownUrl={markdownUrl} locale={locale} />
+          <div data-reader-hide class="flex flex-wrap gap-xs">
+            <span id="post-url" hidden>{canonical}</span>
+            <CopyButton target="post-url" text={t.copyLink} locale={locale} compact />
+            <a
+              href={markdownPath}
+              class="inline-flex min-h-8 items-center rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              .md
+            </a>
+          </div>
+        </div>
+      </div>
+      <span data-post-toolbar-end hidden></span>
+      <hr class="m-0 border-border" data-reader-hide />
+
+      {
+        post.cover && (
+          <figure class="m-0 mt-md overflow-hidden rounded-md border border-border" data-reader-hide>
+            {/*
+              The cover sits under the title, still above the fold, and is the
+              LCP element. Astro defaults an Image to loading="lazy", which
+              defers exactly what the page is waiting on: one post measured
+              13.2s LCP because of it.
+            */}
+            <Image
+              src={post.cover.src}
+              alt={post.cover.alt}
+              widths={[720, 1080]}
+              sizes="(min-width: 62.5rem) 59.5rem, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full"
+            />
+          </figure>
+        )
+      }
+      {
+        art && (
+          <div
+            data-art
+            data-reader-hide
+            class="art-banner mt-md w-full overflow-hidden rounded-md border border-border bg-surface"
+            set:html={art}
+          />
+        )
+      }
+    </header>
+    <div data-toc-layout class={layout}>
+      {
+        hasAside && (
+          <aside
+            data-post-aside
+            data-reader-hide
+            class={`md:sticky md:top-3xl md:self-start ${
+              post.snapshot
+                ? 'order-last flex flex-col gap-md md:order-none'
+                : 'contents md:flex md:flex-col md:gap-md'
+            }`}
+          >
+            {toc.length > 0 && <PostToc items={toc} locale={locale} />}
+            {post.snapshot && <PostSnapshot snapshot={post.snapshot} locale={locale} />}
+          </aside>
+        )
+      }
+      <div>
+        <Prose ruled>
+          <Content />
+        </Prose>
+        <AuthorBox locale={locale} />
+        {isCommentsPost(post) && <GiscusComments locale={locale} />}
+      </div>
+    </div>
+    {toc.length > 0 && <PostTocToggle locale={locale} />}
+  </article>
+
+  {
+    related.length > 0 && (
+      <section aria-labelledby="related-heading" class="mt-3xl mb-3xl border-t border-border pt-2xl" data-reader-hide>
+        <div class="flex flex-wrap items-end justify-between gap-md">
+          <div>
+            <p class="font-mono text-small uppercase tracking-eyebrow text-primary">
+              <span aria-hidden="true">{'// '}</span>{t.furtherReading}
+            </p>
+            <h2 id="related-heading" class="mt-xs font-serif text-h2 font-normal text-foreground">{t.relatedPosts}</h2>
+          </div>
+          <a
+            href={postsHref}
+            class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            {t.seeAllOnBlog}
+            <Icon name="lucide:arrow-right" aria-hidden="true" class="size-4 shrink-0" />
+          </a>
+        </div>
+        <ul class="mt-lg grid list-none grid-cols-1 gap-md p-0 md:grid-cols-3">
+          {related.map((item) => (
+            <li>
+              <RelatedPostCard post={item} locale={locale} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <div class="mt-2xl mb-3xl">
+    <NewsletterCard outcome={outcome} locale={locale} />
+  </div>
+</BaseLayout>

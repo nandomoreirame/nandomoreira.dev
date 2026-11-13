@@ -127,7 +127,7 @@ describe('BaseLayout section', () => {
 
   it('is declared by the post page', async () => {
     const { readFileSync } = await import('node:fs');
-    expect(readFileSync('src/pages/[slug].astro', 'utf8')).toMatch(/<BaseLayout\b[^>]*section="\/posts"/);
+    expect(readFileSync('src/components/pages/PostPage.astro', 'utf8')).toMatch(/<BaseLayout\b[^>]*section="\/posts"/);
   });
 });
 
