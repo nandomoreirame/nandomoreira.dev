@@ -1,10 +1,13 @@
 import type { ArtMotif } from '../../content/motifs';
 import type { Block } from '../../content/blocks';
 import { collectionOfBlock } from '../catalog/groups';
-import { COLLECTION_COPY } from '../catalog/collection-copy';
+import { COLLECTION_COPY, collectionCopy } from '../catalog/collection-copy';
 import { getAllPosts, getAllProjects, getProfile } from '../content';
 import { toLongDate } from '../format/date';
-import { BLOG_COPY } from '../posts/blog-copy';
+import { EN_PUBLISHED } from '../i18n/live';
+import { messagesFor } from '../i18n/messages';
+import { withLocale } from '../i18n/locale';
+import { BLOG_COPY, blogCopy } from '../posts/blog-copy';
 import { detailFor, detailSlugs } from '../sales/catalog';
 
 /** What the share card of one page shows. */
@@ -34,6 +37,52 @@ const staticPage = (path: string, title: string, eyebrow: string, art: ArtMotif)
 });
 
 /**
+ * English share cards for static pages, cases and posts. Empty while English
+ * is not live so production builds skip the PNGs until the flag flips.
+ */
+export const englishOgPages = async (live: boolean = EN_PUBLISHED): Promise<OgPage[]> => {
+  if (!live) return [];
+
+  const [profile, projects, posts] = await Promise.all([
+    getProfile('en'),
+    getAllProjects('en'),
+    getAllPosts('en'),
+  ]);
+  const t = messagesFor('en');
+  const contactTitle = t.contactPage.description.replace(/\.\s.*$/, '');
+
+  return [
+    staticPage('/en', profile.headline, 'Portfolio, lab and blog', 'orbit'),
+    staticPage('/en/portfolio', collectionCopy('portfolio', 'en').title, t.nav.portfolio, 'storefront'),
+    staticPage('/en/lab', collectionCopy('lab', 'en').title, t.nav.lab, 'wireframe'),
+    staticPage('/en/about', profile.headline, t.nav.about, 'mosaic'),
+    staticPage('/en/contact', contactTitle, t.nav.contact, 'wave'),
+    staticPage('/en/mcp', t.mcpPage.heading, t.nav.mcp, 'terminal'),
+    staticPage('/en/setup', t.setupPage.heading, t.nav.setup, 'windows'),
+    staticPage('/en/now', t.nowPage.heading, t.nav.now, 'timeline'),
+    staticPage('/en/privacy', t.privacyPage.title, t.footer.privacy, 'panels'),
+    staticPage('/en/resume', t.resume.title, t.resume.title, 'timeline'),
+    staticPage('/en/posts', blogCopy('en').title, t.nav.blog, 'calendar'),
+    ...projects.map(project => {
+      const collection = collectionOfBlock(project.block);
+      const path = withLocale(`/${collection}/${project.slug}`, 'en');
+      return {
+        key: ogKey(path),
+        title: project.title,
+        eyebrow: collection === 'lab' ? t.nav.lab : t.nav.portfolio,
+        art: { slug: project.slug, block: project.block, art: project.art },
+      };
+    }),
+    ...posts.map(post => ({
+      key: ogKey(withLocale(`/${post.slug}`, 'en')),
+      title: post.title,
+      eyebrow: `${post.archived ? t.posts.archived : t.nav.blog} · ${toLongDate(post.date, 'en')}`,
+      art: { slug: post.slug, art: post.art ?? motifFor(post.slug) },
+    })),
+  ];
+};
+
+/**
  * Every page that gets a share card: each HTML page of the sitemap plus the
  * résumé. Noindex pages (the AI view, the 404) reuse the home card.
  */
@@ -41,7 +90,7 @@ export const ogPages = async (): Promise<OgPage[]> => {
   const [profile, projects, posts] = await Promise.all([getProfile(), getAllProjects(), getAllPosts()]);
   const years = [...new Set(posts.filter(post => post.archived).map(post => post.date.slice(0, 4)))];
 
-  return [
+  const pt: OgPage[] = [
     staticPage('/', profile.headline, 'Portfólio, lab e blog', 'orbit'),
     staticPage('/portfolio', COLLECTION_COPY.portfolio.title, 'Portfólio', 'storefront'),
     staticPage('/lab', COLLECTION_COPY.lab.title, 'Lab', 'wireframe'),
@@ -81,4 +130,6 @@ export const ogPages = async (): Promise<OgPage[]> => {
       art: { slug: post.slug, art: post.art ?? motifFor(post.slug) },
     })),
   ];
+
+  return [...pt, ...(await englishOgPages())];
 };
