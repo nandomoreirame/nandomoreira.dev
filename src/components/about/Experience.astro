@@ -2,16 +2,20 @@
 import SectionHeader from '../ui/SectionHeader.astro';
 import { formatPeriod } from '../../lib/about/period';
 import type { Profile } from '../../content/schemas/profile';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   work: NonNullable<Profile['work']>;
+  locale?: Locale;
 }
 
-const { work } = Astro.props;
+const { work, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).about.experience;
 ---
 
 <section id="experiencia" class="mt-2xl" aria-labelledby="experiencia-heading">
-  <SectionHeader id="experiencia-heading" title="Experiência" level={2} count={work.length} />
+  <SectionHeader id="experiencia-heading" title={t.title} level={2} count={work.length} />
   <ol class="ml-xs flex flex-col gap-xl border-l border-border pl-lg">
     {
       work.map((job) => (
@@ -24,7 +28,7 @@ const { work } = Astro.props;
           ></span>
           <div class="flex flex-wrap items-center gap-sm">
             <span data-period class="inline-flex items-center font-mono rounded-sm border border-border bg-surface px-sm py-xs text-small leading-none text-muted-foreground">
-              {formatPeriod(job.startDate, job.endDate)}
+              {formatPeriod(job.startDate, job.endDate, locale)}
             </span>
             <h3 class="text-h3 font-semibold text-foreground">{job.position}</h3>
           </div>

@@ -101,6 +101,33 @@ export const ptBR = {
     versionLabel: (version: string) => `Versão ${version}: os lançamentos desta versão`,
     pageView: 'Visão da página',
   },
+  about: {
+    title: 'Sobre',
+    pagePath: '~/sobre',
+    buildingSince: (year: number) => `Construindo software desde ${year}`,
+    contactCta: 'Entrar em contato',
+    resumeCta: 'Baixar currículo (PDF)',
+    results: {
+      title: 'Resultados',
+      description:
+        'O que mudou, medido nas operações em que trabalhei. O que é aproximado vem dito no contexto.',
+    },
+    help: {
+      title: 'Como posso ajudar',
+      description: 'Três frentes, cada uma com um case que a comprova.',
+    },
+    experience: {
+      title: 'Experiência',
+    },
+    education: {
+      title: 'Formação',
+      line: (studyType: string, area: string, institution: string) =>
+        `${studyType} em ${area}, ${institution}`,
+    },
+    stack: 'Stack',
+    portraitAlt: (name: string) =>
+      `Ilustração de ${name}: retrato de óculos e barba sobre fundo escuro com linhas âmbar`,
+  },
   notFound: {
     title: 'Página não encontrada',
     description: 'A página solicitada não existe.',

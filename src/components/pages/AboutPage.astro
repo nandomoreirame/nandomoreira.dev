@@ -1,0 +1,200 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import { Icon } from 'astro-icon/components';
+import { contactGoPath } from '../../lib/analytics/outbound';
+import { contactIconFor } from '../../lib/ui/contact-icons';
+import Experience from '../about/Experience.astro';
+import ClosingCta from '../catalog/ClosingCta.astro';
+import Button from '../ui/Button.astro';
+import Card from '../ui/Card.astro';
+import Portrait from '../ui/Portrait.astro';
+import Prose from '../ui/Prose.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import ServiceCards from '../ui/ServiceCards.astro';
+import StatItem from '../ui/StatItem.astro';
+import TechBadge from '../ui/TechBadge.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import { colophon } from '../../lib/about/colophon';
+import { careerStartYear, formatPeriod } from '../../lib/about/period';
+import { getAllProjects, getProfile } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).about;
+const siteColophon = colophon(locale);
+
+// Projects stay on the pt-BR catalog until i18n-content overlays English cases;
+// getAllProjects('en') is still an empty stub, and service case slugs match.
+const [profile, projects] = await Promise.all([getProfile(locale), getAllProjects()]);
+const profiles = profile.contacts.filter(
+  (contact) => contact.kind === 'github' || contact.kind === 'linkedin',
+);
+const PROFILE_LABELS = { github: 'GitHub', linkedin: 'LinkedIn' } as const;
+const since = careerStartYear(profile.work);
+const serviceProjects = projects.map((project) => ({
+  slug: project.slug,
+  block: project.block,
+}));
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${displayNameOf(profile)}`}
+  description={profile.headline}
+  pageType="ProfilePage"
+  locale={locale}
+>
+  <article class="relative isolate mt-2xl mb-3xl">
+    <div class="flex flex-col gap-lg">
+      <div class="lg:w-2/3">
+        {
+          /* Eyebrow, then the claim. The name is already the wordmark on every
+             page, so spending the display size on it again says nothing. No rule
+             under the eyebrow: two horizontal lines that close read as a box. */
+        }
+        <p data-page-path class="font-mono text-small text-muted-foreground">{t.pagePath}</p>
+
+        <h1 class="mt-sm font-serif text-h1 font-normal tracking-tight text-pretty text-foreground sm:text-display lg:w-4/5">
+          {profile.headline}
+        </h1>
+
+        {
+          since && (
+            <p class="mt-md font-mono text-small uppercase tracking-eyebrow text-primary">
+              {t.buildingSince(since)}
+            </p>
+          )
+        }
+
+        <div class="mt-lg">
+          <Prose>
+            <p>{profile.bio}</p>
+            <p>{profile.positioning}</p>
+          </Prose>
+        </div>
+
+        <div class="mt-lg flex flex-wrap items-center gap-md">
+          <Button href={routeFor('/contato', locale)} variant="primary">
+            <Icon name="lucide:mail" class="size-4 shrink-0" aria-hidden="true" />
+            {t.contactCta}
+          </Button>
+          <Button href={routeFor('/curriculo', locale)} variant="secondary">
+            <Icon name="lucide:file-down" class="size-4 shrink-0" aria-hidden="true" />
+            {t.resumeCta}
+          </Button>
+          {
+            profiles.map((contact) => (
+              <Button href={contactGoPath(contact.kind)} variant="ghost" target="_blank" rel="noopener">
+                <Icon name={contactIconFor(contact.kind)!} class="size-4 shrink-0" aria-hidden="true" />
+                {PROFILE_LABELS[contact.kind as keyof typeof PROFILE_LABELS]}
+              </Button>
+            ))
+          }
+        </div>
+      </div>
+
+      <Portrait name={displayNameOf(profile)} locale={locale} />
+    </div>
+
+    <section id="resultados" class="mt-2xl" aria-labelledby="resultados-heading">
+      <SectionHeader
+        id="resultados-heading"
+        title={t.results.title}
+        level={2}
+        description={t.results.description}
+      />
+      <ul class="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        {
+          profile.trajectory.map((stat) => (
+            <Card as="li">
+              <StatItem value={stat.value} label={stat.label} context={stat.context} />
+            </Card>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section id="frentes" class="mt-2xl" aria-labelledby="frentes-heading">
+      <SectionHeader
+        id="frentes-heading"
+        title={t.help.title}
+        level={2}
+        description={t.help.description}
+      />
+      <ServiceCards services={profile.services} projects={serviceProjects} locale={locale} />
+    </section>
+
+    {profile.work && profile.work.length > 0 && <Experience work={profile.work} locale={locale} />}
+
+    {
+      profile.education && profile.education.length > 0 && (
+        <section id="formacao" class="mt-2xl" aria-labelledby="formacao-heading">
+          <SectionHeader id="formacao-heading" title={t.education.title} level={2} />
+          <ul class="flex flex-col gap-md">
+            {profile.education.map((entry) => (
+              <li class="grid grid-cols-1 gap-sm md:grid-cols-4 md:gap-lg">
+                <p class="font-mono text-small text-muted-foreground">
+                  {formatPeriod(entry.startDate, entry.endDate, locale)}
+                </p>
+                <p class="text-body text-foreground md:col-span-3">
+                  {t.education.line(entry.studyType, entry.area, entry.institution)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="mt-2xl" aria-labelledby="stack-heading">
+      <h2 id="stack-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        {t.stack}
+      </h2>
+      <ul class="mt-md flex flex-wrap gap-sm">
+        {profile.stack.map((item) => (
+          <li>
+            <TechBadge name={item} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="mt-2xl" aria-labelledby="colophon-heading">
+      <h2 id="colophon-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+        {siteColophon.title}
+      </h2>
+      <p class="mt-md max-w-[68ch] text-body text-muted-foreground">{siteColophon.intro}</p>
+      <dl class="mt-lg grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+        {
+          siteColophon.items.map((item) => (
+            <>
+              <dt class="font-mono text-small text-foreground">{item.label}</dt>
+              <dd class="text-body text-muted-foreground">
+                {item.text}
+                {item.link && (
+                  <>
+                    {' '}
+                    <a
+                      href={item.link.href}
+                      class="text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {item.link.label}
+                    </a>
+                  </>
+                )}
+              </dd>
+            </>
+          ))
+        }
+      </dl>
+    </section>
+
+    <ClosingCta page="sobre" />
+  </article>
+</BaseLayout>

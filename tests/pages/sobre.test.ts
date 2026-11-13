@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import SobrePage from '../../src/pages/sobre.astro';
 import { getProfile } from '../../src/lib/content';
 
-const source = readFileSync('src/pages/sobre.astro', 'utf8');
+const source = readFileSync('src/components/pages/AboutPage.astro', 'utf8');
 
 describe('/sobre', () => {
   it('reads the profile through the access layer, never through getCollection', () => {

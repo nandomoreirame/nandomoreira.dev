@@ -1,5 +1,7 @@
 ---
 import { PORTRAIT } from '../../lib/about/portrait';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import PortraitBackdrop from './PortraitBackdrop.astro';
 
 interface Props {
@@ -7,9 +9,11 @@ interface Props {
   name: string;
   /** Extra positioning from the page; it already starts at `top-0`. */
   class?: string;
+  locale?: Locale;
 }
 
-const { name, class: className } = Astro.props;
+const { name, class: className, locale = 'pt-BR' } = Astro.props;
+const alt = messagesFor(locale).about.portraitAlt(name);
 ---
 
 {
@@ -47,7 +51,7 @@ const { name, class: className } = Astro.props;
       src={PORTRAIT.fallback}
       width={PORTRAIT.width}
       height={PORTRAIT.height}
-      alt={`Ilustração de ${name}: retrato de óculos e barba sobre fundo escuro com linhas âmbar`}
+      alt={alt}
       fetchpriority="high"
       decoding="async"
       class="h-auto w-full"

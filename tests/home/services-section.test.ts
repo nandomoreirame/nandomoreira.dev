@@ -57,7 +57,7 @@ describe('Services', () => {
 describe('shared ServiceCards', () => {
   it('is the card list used by both the home Services section and /sobre', () => {
     const home = readFileSync('src/components/home/Services.astro', 'utf8');
-    const sobre = readFileSync('src/pages/sobre.astro', 'utf8');
+    const sobre = readFileSync('src/components/pages/AboutPage.astro', 'utf8');
 
     expect(home).toContain('ServiceCards');
     expect(sobre).toContain('ServiceCards');

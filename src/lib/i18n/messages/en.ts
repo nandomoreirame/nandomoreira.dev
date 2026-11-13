@@ -97,6 +97,33 @@ export const en: Messages = {
     versionLabel: (version: string) => `Version ${version}: the releases of this version`,
     pageView: 'Page view',
   },
+  about: {
+    title: 'About',
+    pagePath: '~/about',
+    buildingSince: (year: number) => `Building software since ${year}`,
+    contactCta: 'Get in touch',
+    resumeCta: 'Download resume (PDF)',
+    results: {
+      title: 'Results',
+      description:
+        'What changed, measured in the operations I worked on. Approximations are stated in the context.',
+    },
+    help: {
+      title: 'How I can help',
+      description: 'Three offerings, each with a case that proves it.',
+    },
+    experience: {
+      title: 'Experience',
+    },
+    education: {
+      title: 'Education',
+      line: (studyType: string, area: string, institution: string) =>
+        `${studyType} in ${area}, ${institution}`,
+    },
+    stack: 'Stack',
+    portraitAlt: (name: string) =>
+      `Illustration of ${name}: portrait with glasses and a beard on a dark background with amber lines`,
+  },
   notFound: {
     title: 'Page not found',
     description: 'The requested page does not exist.',
