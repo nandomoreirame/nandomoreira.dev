@@ -94,8 +94,6 @@ export const buildAiIndex = ({ site, profile, projects, posts = [] }: Input): Ai
       const collection = collectionOfBlock(project.block);
       const locale = project.locale ?? 'pt-BR';
       const path = casePath({ slug: project.slug, block: project.block, locale });
-      // Machine markdown mirrors stay at the unprefixed collection path.
-      const markdownPath = `/${collection}/${project.slug}.md`;
 
       return {
         type: 'case',
@@ -104,7 +102,7 @@ export const buildAiIndex = ({ site, profile, projects, posts = [] }: Input): Ai
         summary: project.summary,
         collection,
         tech: [...project.tech],
-        markdown: absoluteUrl(site, markdownPath),
+        markdown: absoluteUrl(site, `${path}.md`),
       };
     }),
     ...posts.map((post): PostEntry => ({

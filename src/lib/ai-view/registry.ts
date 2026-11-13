@@ -122,11 +122,7 @@ export const markdownForPathIn = async (site: URL, path: string, live: boolean):
   const { lookupKey, humanPath, mdPath } = paths;
 
   if (lookupKey === '') {
-    // Home: English profile, Portuguese cases until i18n-content (same as HomePage).
-    const [profile, projects] = await Promise.all([
-      getProfile(locale),
-      getAllProjects(locale === 'en' ? 'pt-BR' : locale),
-    ]);
+    const [profile, projects] = await Promise.all([getProfile(locale), getAllProjects(locale)]);
     const portfolio = projects.filter(project => collectionOfBlock(project.block) === 'portfolio');
     const lab = projects.filter(project => collectionOfBlock(project.block) === 'lab');
     const markdown = homeMarkdown({ site, profile, portfolio, lab, locale });
@@ -134,11 +130,7 @@ export const markdownForPathIn = async (site: URL, path: string, live: boolean):
   }
 
   if (lookupKey === 'sobre') {
-    const [profile, projects] = await Promise.all([
-      getProfile(locale),
-      // Cases stay pt-BR until i18n-content; service caseSlug matches.
-      getAllProjects(locale === 'en' ? 'pt-BR' : locale),
-    ]);
+    const [profile, projects] = await Promise.all([getProfile(locale), getAllProjects(locale)]);
     const markdown = aboutMarkdown({ site, profile, projects, locale });
     return page(
       titleFromFrontmatter(markdown, `${messagesFor(locale).about.title} | ${profile.name}`),
@@ -172,7 +164,7 @@ export const markdownForPathIn = async (site: URL, path: string, live: boolean):
     if (!project || collectionOfBlock(project.block) !== collection) {
       return undefined;
     }
-    const markdown = buildCaseMarkdown({ site, project });
+    const markdown = buildCaseMarkdown({ site, project, locale });
     return page(project.title, humanPath, mdPath, markdown);
   }
 

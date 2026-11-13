@@ -64,4 +64,23 @@ describe('machine routes in English', async () => {
     }
     expect(cases.get(ptFallbackUrl)?.summary).toBe(ptFallback.summary);
   });
+
+  it('ai-index points English cases at the English markdown view, with pt-BR fallback', () => {
+    const index = buildAiIndex({ site, profile, projects: projectsWithFallback, posts });
+    const cases = new Map(index.entries.filter(entry => entry.type === 'case').map(entry => [entry.url, entry]));
+
+    for (const project of enProjects) {
+      const url = absoluteUrl(site, casePath({ slug: project.slug, block: project.block, locale: 'en' }));
+      const markdown = absoluteUrl(site, `${casePath({ slug: project.slug, block: project.block, locale: 'en' })}.md`);
+      expect(cases.get(url)?.markdown, project.slug).toBe(markdown);
+      expect(markdown, project.slug).toContain('/en/');
+    }
+
+    const ptMarkdown = absoluteUrl(
+      site,
+      `${casePath({ slug: ptFallback.slug, block: ptFallback.block, locale: 'pt-BR' })}.md`,
+    );
+    expect(cases.get(ptFallbackUrl)?.markdown).toBe(ptMarkdown);
+    expect(ptMarkdown).not.toContain('/en/');
+  });
 });
