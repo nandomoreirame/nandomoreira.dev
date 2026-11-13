@@ -1,10 +1,13 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Post } from '../../content/schemas/post';
+import { collectionOfBlock } from '../catalog/groups';
 import type { Locale } from '../i18n/locale';
 import { readingMinutes } from '../posts/reading-time';
+import { assertPostTranslations, mergePost } from './translations';
 import { assertUniqueSlugs } from './validate';
 
-export type PostEntry = CollectionEntry<'posts'>;
+/** Collection entry with merged Post data (pt-BR source or English overlay). */
+export type PostEntry = (CollectionEntry<'posts'> | CollectionEntry<'postsEn'>) & { data: Post };
 
 /** A loaded post plus the minutes it takes to read (REQ-008). */
 export type PostSummary = Post & { readingMinutes: number };
@@ -90,11 +93,32 @@ const loadAllEntries = async (): Promise<PostEntry[]> => {
     entries.map(entry => entry.data),
     'post',
   );
-  return entries;
+  return entries as PostEntry[];
 };
 
-const loadEntries = async (): Promise<PostEntry[]> => {
-  const visible = (await loadAllEntries()).filter(entry => SHOW_DRAFTS || entry.data.draft !== true);
+/** English overlays merged onto pt-BR sources (drafts included for validation). */
+const loadAllEntriesEn = async (): Promise<PostEntry[]> => {
+  const [sourceEntries, overlayEntries] = await Promise.all([
+    getCollection('posts'),
+    getCollection('postsEn'),
+  ]);
+  const sources = sourceEntries.map(entry => entry.data);
+  const overlays = overlayEntries.map(entry => entry.data);
+
+  assertUniqueSlugs(sources, 'post');
+  assertPostTranslations(sources, overlays);
+
+  const bySlug = new Map(sources.map(post => [post.slug, post]));
+
+  return overlayEntries.map(entry => {
+    const merged = mergePost(bySlug.get(entry.data.translationOf)!, entry.data);
+    return { ...entry, data: merged } as PostEntry;
+  });
+};
+
+const loadEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> => {
+  const all = locale === 'en' ? await loadAllEntriesEn() : await loadAllEntries();
+  const visible = all.filter(entry => SHOW_DRAFTS || entry.data.draft !== true);
   const order = new Map(sortPosts(visible.map(entry => entry.data)).map((post, index) => [post.slug, index]));
 
   return [...visible].sort((a, b) => (order.get(a.data.slug) ?? 0) - (order.get(b.data.slug) ?? 0));
@@ -105,26 +129,17 @@ const toSummary = (entry: PostEntry): PostSummary => ({
   readingMinutes: readingMinutes(entry.body ?? ''),
 });
 
-const load = async (): Promise<PostSummary[]> => (await loadEntries()).map(toSummary);
+const load = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> =>
+  (await loadEntries(locale)).map(toSummary);
 
 /** All visible posts (current + archived; drafts only in dev). Used by sitemap, RSS, detail routes. */
-export const getAllPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return [];
-  return load();
-};
+export const getAllPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => load(locale);
 
-export const getCurrentPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return [];
-  return draftsFirst(sortPosts(currentOf(await load(), SHOW_DRAFTS)));
-};
+export const getCurrentPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> =>
+  draftsFirst(sortPosts(currentOf(await load(locale), SHOW_DRAFTS)));
 
-export const getArchivedPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return [];
-  return draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS)));
-};
+export const getArchivedPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> =>
+  draftsFirst(sortPosts(archivedOf(await load(locale), SHOW_DRAFTS)));
 
 export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveYears(await load(), SHOW_DRAFTS);
 
@@ -133,35 +148,58 @@ export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveY
  * coming without linking it, because the draft pages exist only in dev.
  */
 export const getUpcomingPosts = async (locale: Locale = 'pt-BR'): Promise<Post[]> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return [];
-  return draftsOf((await loadAllEntries()).map(entry => entry.data));
+  const entries = locale === 'en' ? await loadAllEntriesEn() : await loadAllEntries();
+  return draftsOf(entries.map(entry => entry.data));
 };
 
 export const getArchivedPostsByYear = async (year: string): Promise<PostSummary[]> =>
   draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS).filter(post => post.date.startsWith(year))));
 
-export const getPost = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostSummary | undefined> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return undefined;
-  return (await load()).find(post => post.slug === slug);
-};
+export const getPost = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostSummary | undefined> =>
+  (await load(locale)).find(post => post.slug === slug);
 
 /** Full collection entry for body rendering; drafts only in dev. */
-export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return [];
-  return loadEntries();
-};
+export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> =>
+  loadEntries(locale);
 
-export const getPostEntry = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostEntry | undefined> => {
-  // i18n-content replaces these early returns with the overlay
-  if (locale === 'en') return undefined;
-  return (await loadEntries()).find(entry => entry.data.slug === slug);
-};
+export const getPostEntry = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostEntry | undefined> =>
+  (await loadEntries(locale)).find(entry => entry.data.slug === slug);
 
 /**
- * Content pages paired through their translations (posts and cases). Empty
- * until i18n-content adds the English collections; alternates.ts reads it.
+ * Content pages paired through their translations (posts and cases).
+ * Posts use the English slug on `/en/<slug>`; cases keep the source slug.
  */
-export const translationPairs = async (): Promise<TranslationPair[]> => [];
+export const translationPairs = async (): Promise<TranslationPair[]> => {
+  const pairs: TranslationPair[] = [];
+
+  const [postSources, postOverlays, projectSources, projectOverlays] = await Promise.all([
+    getCollection('posts'),
+    getCollection('postsEn'),
+    getCollection('projects'),
+    getCollection('projectsEn'),
+  ]);
+
+  const postsBySlug = new Map(postSources.map(entry => [entry.data.slug, entry.data]));
+  for (const entry of postOverlays) {
+    const source = postsBySlug.get(entry.data.translationOf);
+    if (!source) continue;
+    if (!SHOW_DRAFTS && source.draft === true) continue;
+    pairs.push({
+      'pt-BR': `/${entry.data.translationOf}`,
+      en: `/en/${entry.data.slug}`,
+    });
+  }
+
+  const projectsBySlug = new Map(projectSources.map(entry => [entry.data.slug, entry.data]));
+  for (const entry of projectOverlays) {
+    const source = projectsBySlug.get(entry.data.translationOf);
+    if (!source) continue;
+    const collection = collectionOfBlock(source.block);
+    pairs.push({
+      'pt-BR': `/${collection}/${source.slug}`,
+      en: `/en/${collection}/${source.slug}`,
+    });
+  }
+
+  return pairs;
+};
