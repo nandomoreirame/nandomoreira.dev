@@ -27,9 +27,9 @@ export const englishSearchResponse = async (live: boolean = EN_PUBLISHED): Promi
     services: SALES_SERVICES_EN.map(service => ({
       title: service.title,
       summary: service.summary,
-      url: `https://contrate.nandomoreira.dev/en/${service.slug}`,
+      url: salesUrl(service.slug, undefined, 'en'),
     })),
-    landingUrl: 'https://contrate.nandomoreira.dev/en',
+    landingUrl: salesUrl(undefined, undefined, 'en'),
   });
   return new Response(JSON.stringify(index), { headers: { 'content-type': 'application/json; charset=utf-8' } });
 };

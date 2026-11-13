@@ -25,4 +25,7 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 |---|---|---|---|
 | 1. Slugs e pares | validada | 846 testes sales/i18n; check sem erros; vermelho registrado | d6f32a3 |
 | 2. Catálogo inglês | validada | 849 testes sales/i18n; check sem erros; schema compartilhado extraído para evitar ciclo de imports | b1e6bae |
-| 3. Copy e mensagens | validada | 862 testes sales/i18n/outbound; check sem erros; WhatsApp conserva destino e tracking | neste commit |
+| 3. Copy e mensagens | validada | 862 testes sales/i18n/outbound; check sem erros; WhatsApp conserva destino e tracking | 453ec6b |
+| 4. Roteamento inglês | validada | 859 testes sales/i18n; check sem erros; três hosts e rollback cobertos | neste commit |
+
+Checkpoint após tarefa 3: tier2 não executa cobertura porque `@vitest/coverage-v8` não está instalado. Instrumentação de validação será tratada antes do fechamento.
