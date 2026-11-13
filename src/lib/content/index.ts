@@ -9,8 +9,9 @@ export {
   getPost,
   getPostEntry,
   getUpcomingPosts,
+  translationPairs,
 } from './posts';
-export type { ArchiveYear, PostEntry, PostSummary } from './posts';
+export type { ArchiveYear, PostEntry, PostSummary, TranslationPair } from './posts';
 export { getAvailability, getProfile } from './profile';
 export type { BlockGroup } from './projects';
 export type { Availability } from './profile';

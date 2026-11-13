@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Post } from '../../content/schemas/post';
+import type { Locale } from '../i18n/locale';
 import { readingMinutes } from '../posts/reading-time';
 import { assertUniqueSlugs } from './validate';
 
@@ -12,6 +13,9 @@ export type ArchiveYear = {
   year: string;
   count: number;
 };
+
+/** A page that exists in both languages: [pt-BR path, en path]. */
+export type TranslationPair = { 'pt-BR': string; en: string };
 
 /**
  * Drafts show on the local dev server (`astro dev`, mode development) and on
@@ -104,13 +108,23 @@ const toSummary = (entry: PostEntry): PostSummary => ({
 const load = async (): Promise<PostSummary[]> => (await loadEntries()).map(toSummary);
 
 /** All visible posts (current + archived; drafts only in dev). Used by sitemap, RSS, detail routes. */
-export const getAllPosts = async (): Promise<PostSummary[]> => load();
+export const getAllPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return load();
+};
 
-export const getCurrentPosts = async (): Promise<PostSummary[]> =>
-  draftsFirst(sortPosts(currentOf(await load(), SHOW_DRAFTS)));
+export const getCurrentPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return draftsFirst(sortPosts(currentOf(await load(), SHOW_DRAFTS)));
+};
 
-export const getArchivedPosts = async (): Promise<PostSummary[]> =>
-  draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS)));
+export const getArchivedPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS)));
+};
 
 export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveYears(await load(), SHOW_DRAFTS);
 
@@ -118,17 +132,36 @@ export const getArchiveYears = async (): Promise<ArchiveYear[]> => groupArchiveY
  * Drafts by title for the teaser, in every mode: production names what is
  * coming without linking it, because the draft pages exist only in dev.
  */
-export const getUpcomingPosts = async (): Promise<Post[]> =>
-  draftsOf((await loadAllEntries()).map(entry => entry.data));
+export const getUpcomingPosts = async (locale: Locale = 'pt-BR'): Promise<Post[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return draftsOf((await loadAllEntries()).map(entry => entry.data));
+};
 
 export const getArchivedPostsByYear = async (year: string): Promise<PostSummary[]> =>
   draftsFirst(sortPosts(archivedOf(await load(), SHOW_DRAFTS).filter(post => post.date.startsWith(year))));
 
-export const getPost = async (slug: string): Promise<PostSummary | undefined> =>
-  (await load()).find(post => post.slug === slug);
+export const getPost = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostSummary | undefined> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return undefined;
+  return (await load()).find(post => post.slug === slug);
+};
 
 /** Full collection entry for body rendering; drafts only in dev. */
-export const getAllPostEntries = async (): Promise<PostEntry[]> => loadEntries();
+export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return loadEntries();
+};
 
-export const getPostEntry = async (slug: string): Promise<PostEntry | undefined> =>
-  (await loadEntries()).find(entry => entry.data.slug === slug);
+export const getPostEntry = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostEntry | undefined> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return undefined;
+  return (await loadEntries()).find(entry => entry.data.slug === slug);
+};
+
+/**
+ * Content pages paired through their translations (posts and cases). Empty
+ * until i18n-content adds the English collections; alternates.ts reads it.
+ */
+export const translationPairs = async (): Promise<TranslationPair[]> => [];

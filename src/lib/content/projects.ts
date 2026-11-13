@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import { BLOCKS, type Block } from '../../content/blocks';
 import type { Project } from '../../content/schemas/project';
+import type { Locale } from '../i18n/locale';
 import { redactConfidential } from './confidential';
 import { assertUniqueSlugs } from './validate';
 
@@ -31,11 +32,26 @@ const load = async (): Promise<Project[]> => {
   return projects.map(redactConfidential);
 };
 
-export const getAllProjects = async (): Promise<Project[]> => sortProjects(await load());
+export const getAllProjects = async (locale: Locale = 'pt-BR'): Promise<Project[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return sortProjects(await load());
+};
 
-export const getFeaturedProjects = async (): Promise<Project[]> => featured(await load());
+export const getFeaturedProjects = async (locale: Locale = 'pt-BR'): Promise<Project[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return [];
+  return featured(await load());
+};
 
-export const getProjectsByBlock = async (): Promise<BlockGroup[]> => groupByBlock(await load());
+export const getProjectsByBlock = async (locale: Locale = 'pt-BR'): Promise<BlockGroup[]> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return groupByBlock([]);
+  return groupByBlock(await load());
+};
 
-export const getProject = async (slug: string): Promise<Project | undefined> =>
-  (await load()).find(project => project.slug === slug);
+export const getProject = async (slug: string, locale: Locale = 'pt-BR'): Promise<Project | undefined> => {
+  // i18n-content replaces these early returns with the overlay
+  if (locale === 'en') return undefined;
+  return (await load()).find(project => project.slug === slug);
+};
