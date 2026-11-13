@@ -1,0 +1,8 @@
+---
+import CollectionPage from '../../../components/pages/CollectionPage.astro';
+import { EN_PUBLISHED } from '../../../lib/i18n/live';
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+---
+
+<CollectionPage collection="lab" locale="en" />

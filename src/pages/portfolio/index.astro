@@ -1,29 +1,5 @@
 ---
-import { TITLE_SEPARATOR } from '../../lib/seo/meta';
-import ClosingCta from '../../components/catalog/ClosingCta.astro';
-import PageHeader from '../../components/ui/PageHeader.astro';
-import CollectionListing from '../../components/catalog/CollectionListing.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { collectionOfBlock } from '../../lib/catalog/groups';
-import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
-import { getAllProjects, getProfile } from '../../lib/content';
-import { displayNameOf } from '../../lib/content/display-name';
-
-const projects = await getAllProjects();
-
-const authorName = displayNameOf(await getProfile());
+import CollectionPage from '../../components/pages/CollectionPage.astro';
 ---
 
-<BaseLayout
-  title={`Portfólio${TITLE_SEPARATOR}${authorName}`}
-  description={COLLECTION_COPY.portfolio.metaDescription}
-  pageType="CollectionPage"
-  pageItems={projects.filter((project) => collectionOfBlock(project.block) === 'portfolio').map((project) => `/portfolio/${project.slug}`)}
->
-  <PageHeader
-    title={COLLECTION_COPY.portfolio.title}
-    description={COLLECTION_COPY.portfolio.description}
-  />
-  <CollectionListing collection="portfolio" projects={projects} />
-  <ClosingCta page="portfolio" />
-</BaseLayout>
+<CollectionPage collection="portfolio" />

@@ -1,0 +1,29 @@
+---
+import CasePage from '../../../components/pages/CasePage.astro';
+import { collectionOfBlock } from '../../../lib/catalog/groups';
+import { getAllProjects } from '../../../lib/content';
+import { enStaticPaths } from '../../../lib/i18n/guard';
+import type { Project } from '../../../content/schemas/project';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return enStaticPaths(async () => {
+    const projects = await getAllProjects('en');
+    return projects
+      .filter((project) => collectionOfBlock(project.block) === 'lab')
+      .map((project) => ({
+        params: { slug: project.slug },
+        props: { project },
+      }));
+  });
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props as Props;
+---
+
+<CasePage project={project} collection="lab" locale="en" />

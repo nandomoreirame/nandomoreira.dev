@@ -64,9 +64,13 @@ describe('new case routes', () => {
       expect(source).toContain('getAllProjects');
       expect(source).toContain('collectionOfBlock');
       expect(source).not.toContain('getCollection(');
-      expect(source).toContain('CaseArticle');
+      expect(source).toContain('CasePage');
     },
   );
+
+  it('CasePage renders the article', () => {
+    expect(read('src/components/pages/CasePage.astro')).toContain('CaseArticle');
+  });
 });
 
 describe('/conectar moved to /mcp', () => {

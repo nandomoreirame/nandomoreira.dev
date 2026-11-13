@@ -94,7 +94,7 @@ describe('OpenSourceList', () => {
 
 describe('/lab page', () => {
   it('renders the open-source list after the cases', () => {
-    const source = readFileSync('src/pages/lab/index.astro', 'utf8');
+    const source = readFileSync('src/components/pages/CollectionPage.astro', 'utf8');
     expect(source).toContain('<OpenSourceList');
     expect(source.indexOf('<OpenSourceList')).toBeGreaterThan(source.indexOf('<CollectionListing'));
   });

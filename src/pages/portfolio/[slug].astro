@@ -1,13 +1,8 @@
 ---
-import CaseArticle from '../../components/catalog/CaseArticle.astro';
-import AvailabilityCard from '../../components/ui/AvailabilityCard.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { jsonLdForProject, serialiseJsonLd } from '../../lib/catalog/json-ld';
+import CasePage from '../../components/pages/CasePage.astro';
 import { collectionOfBlock } from '../../lib/catalog/groups';
-import { getAllProjects, getProfile } from '../../lib/content';
+import { getAllProjects } from '../../lib/content';
 import type { Project } from '../../content/schemas/project';
-import { displayNameOf } from '../../lib/content/display-name';
-import { pageTitle } from '../../lib/seo/meta';
 
 export const prerender = true;
 
@@ -27,33 +22,6 @@ interface Props {
 }
 
 const { project } = Astro.props as Props;
-const profile = await getProfile();
-const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
-const jsonLd = serialiseJsonLd(jsonLdForProject(project, site));
-
-const authorName = displayNameOf(await getProfile());
 ---
 
-<BaseLayout
-  title={pageTitle(project.title, authorName)}
-  description={project.summary}
-  markdownAlternate={`/portfolio/${project.slug}.md`}
->
-  <script type="application/ld+json" is:inline set:html={jsonLd} />
-
-  <nav class="mt-lg" aria-label="Trilha de navegação">
-    <a
-      href="/portfolio"
-      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      <span aria-hidden="true">←</span>
-      Voltar para portfólio
-    </a>
-  </nav>
-
-  <CaseArticle project={project} />
-
-  <div class="my-3xl">
-    <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
-  </div>
-</BaseLayout>
+<CasePage project={project} collection="portfolio" />

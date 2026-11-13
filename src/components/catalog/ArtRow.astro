@@ -1,6 +1,7 @@
 ---
 import StatusDot from '../ui/StatusDot.astro';
 import TechBadge from '../ui/TechBadge.astro';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface Props {
   href: string;
@@ -17,9 +18,23 @@ interface Props {
   flip?: boolean;
   /** Host the case is live on, shown as "No ar · host". */
   live?: string;
+  /** Builds the live line; defaults to the pt-BR phrasing. */
+  liveLabel?: (host: string) => string;
+  locale?: Locale;
 }
 
-const { href, title, stamp, summary, art, tags = [], status = [], flip = false, live } = Astro.props;
+const {
+  href,
+  title,
+  stamp,
+  summary,
+  art,
+  tags = [],
+  status = [],
+  flip = false,
+  live,
+  liveLabel = (host: string) => `No ar · ${host}`,
+} = Astro.props;
 
 // A flipped row pushes its text towards the art: the title, with the date
 // still to its right, and the summary and tags align right. Below sm the row
@@ -52,7 +67,7 @@ const mirror = flip
     {live && (
       <span data-live class={`inline-flex items-center gap-sm font-mono text-small text-success ${mirror.heading}`}>
         <StatusDot status="open" />
-        <span>No ar · {live}</span>
+        <span>{liveLabel(live)}</span>
       </span>
     )}
     <span class="text-body text-muted-foreground">{summary}</span>

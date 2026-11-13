@@ -49,6 +49,8 @@ const ALLOWED = [
   /Ateliê Eh Pique/gi,
   /Encantos Brincantes/gi,
   /Seu Ateliê Aqui/gi,
+  /Irmão do Jorel/gi,
+  /sextafeirachegou\.com\.br/gi,
 ];
 
 export const visibleText = (html: string): string => {

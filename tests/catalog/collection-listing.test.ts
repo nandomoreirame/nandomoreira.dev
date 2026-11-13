@@ -178,14 +178,11 @@ describe('CollectionListing', () => {
 });
 
 describe('/portfolio and /lab pages', () => {
-  it.each(['src/pages/portfolio/index.astro', 'src/pages/lab/index.astro'])(
-    '%s reads through the access layer, never through getCollection',
-    path => {
-      const source = pageSource(path);
+  it('CollectionPage reads through the access layer, never through getCollection', () => {
+    const source = pageSource('src/components/pages/CollectionPage.astro');
 
-      expect(source).toContain('getAllProjects');
-      expect(source).toContain('CollectionListing');
-      expect(source).not.toContain('getCollection(');
-    },
-  );
+    expect(source).toContain('getAllProjects');
+    expect(source).toContain('CollectionListing');
+    expect(source).not.toContain('getCollection(');
+  });
 });

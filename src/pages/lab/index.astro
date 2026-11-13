@@ -1,31 +1,5 @@
 ---
-import { TITLE_SEPARATOR } from '../../lib/seo/meta';
-import ClosingCta from '../../components/catalog/ClosingCta.astro';
-import PageHeader from '../../components/ui/PageHeader.astro';
-import CollectionListing from '../../components/catalog/CollectionListing.astro';
-import OpenSourceList from '../../components/catalog/OpenSourceList.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { collectionOfBlock } from '../../lib/catalog/groups';
-import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
-import { getAllProjects, getProfile } from '../../lib/content';
-import { displayNameOf } from '../../lib/content/display-name';
-
-const projects = await getAllProjects();
-
-const authorName = displayNameOf(await getProfile());
+import CollectionPage from '../../components/pages/CollectionPage.astro';
 ---
 
-<BaseLayout
-  title={`Laboratório${TITLE_SEPARATOR}${authorName}`}
-  description={COLLECTION_COPY.lab.metaDescription}
-  pageType="CollectionPage"
-  pageItems={projects.filter((project) => collectionOfBlock(project.block) === 'lab').map((project) => `/lab/${project.slug}`)}
->
-  <PageHeader
-    title={COLLECTION_COPY.lab.title}
-    description={COLLECTION_COPY.lab.description}
-  />
-  <CollectionListing collection="lab" projects={projects} />
-  <OpenSourceList />
-  <ClosingCta page="lab" />
-</BaseLayout>
+<CollectionPage collection="lab" />

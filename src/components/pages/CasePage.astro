@@ -1,0 +1,57 @@
+---
+import CaseArticle from '../catalog/CaseArticle.astro';
+import AvailabilityCard from '../ui/AvailabilityCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { jsonLdForProject, serialiseJsonLd } from '../../lib/catalog/json-ld';
+import type { CatalogCollection } from '../../lib/catalog/groups';
+import { getProfile } from '../../lib/content';
+import type { Project } from '../../content/schemas/project';
+import { displayNameOf } from '../../lib/content/display-name';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { pageTitle } from '../../lib/seo/meta';
+
+interface Props {
+  project: Project;
+  collection: CatalogCollection;
+  locale?: Locale;
+}
+
+const { project, collection, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).catalog;
+const profile = await getProfile(locale);
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const jsonLd = serialiseJsonLd(jsonLdForProject(project, site, locale));
+const authorName = displayNameOf(profile);
+const collectionHref = withLocale(`/${collection}`, locale);
+const markdownAlternate = withLocale(`/${collection}/${project.slug}.md`, locale);
+---
+
+<BaseLayout
+  title={pageTitle(project.title, authorName)}
+  description={project.summary}
+  markdownAlternate={markdownAlternate}
+  locale={locale}
+>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+  <nav class="mt-lg" aria-label={t.breadcrumb}>
+    <a
+      href={collectionHref}
+      class="inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    >
+      <span aria-hidden="true">←</span>
+      {t.backTo[collection]}
+    </a>
+  </nav>
+
+  <CaseArticle project={project} locale={locale} />
+
+  {
+    collection === 'portfolio' && (
+      <div class="my-3xl">
+        <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} />
+      </div>
+    )
+  }
+</BaseLayout>

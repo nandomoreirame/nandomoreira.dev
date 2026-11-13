@@ -1,15 +1,19 @@
 ---
 import Button from '../ui/Button.astro';
 import Card from '../ui/Card.astro';
-import { CLOSING_CTA, type ClosingCtaPage } from '../../lib/catalog/closing-cta';
+import { closingCta, type ClosingCtaPage } from '../../lib/catalog/closing-cta';
+import type { Locale } from '../../lib/i18n/locale';
+import { routeFor } from '../../lib/i18n/routes';
 import { salesLink } from '../../lib/sales/host';
 
 interface Props {
   page: ClosingCtaPage;
+  locale?: Locale;
 }
 
-const { page } = Astro.props;
-const copy = CLOSING_CTA[page];
+const { page, locale = 'pt-BR' } = Astro.props;
+const copy = closingCta(page, locale);
+const href = copy.toServices ? salesLink(Astro.url) : routeFor('/contato', locale);
 ---
 
 <Card as="section" class="my-3xl flex flex-col gap-lg p-xl lg:flex-row lg:items-center lg:justify-between">
@@ -18,5 +22,5 @@ const copy = CLOSING_CTA[page];
     <h2 class="font-serif text-h1 font-normal tracking-tight text-pretty text-foreground">{copy.title}</h2>
     <p class="max-w-[60ch] text-body text-muted-foreground">{copy.text}</p>
   </div>
-  <Button href={copy.toServices ? salesLink(Astro.url) : '/contato'} variant="primary" arrow>{copy.button}</Button>
+  <Button href={href} variant="primary" arrow>{copy.button}</Button>
 </Card>

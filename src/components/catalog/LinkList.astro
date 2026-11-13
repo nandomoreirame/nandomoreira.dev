@@ -1,15 +1,18 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { visibleLinks } from '../../lib/catalog/links';
+import type { Locale } from '../../lib/i18n/locale';
 import Button from '../ui/Button.astro';
 
 interface Props {
   repoUrl?: string | null;
   liveUrl?: string | null;
   goBase?: string;
+  locale?: Locale;
 }
 
-const links = visibleLinks(Astro.props);
+const { locale = 'pt-BR', ...rest } = Astro.props;
+const links = visibleLinks({ ...rest, locale });
 // Through /go the referrer stays: it is same-site, and it ties the click to
 // this case page. A direct external link keeps noreferrer.
 const rel = Astro.props.goBase ? 'noopener' : 'noopener noreferrer';

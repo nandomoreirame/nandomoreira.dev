@@ -1,5 +1,6 @@
 ---
 import TechBadge from '../ui/TechBadge.astro';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface Props {
   href: string;
@@ -9,6 +10,7 @@ interface Props {
   art: string;
   /** The case stack; only the first four show, so a long list never stretches the card. */
   tags?: string[];
+  locale?: Locale;
 }
 
 const { href, title, stamp, art, tags = [] } = Astro.props;

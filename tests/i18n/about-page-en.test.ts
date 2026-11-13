@@ -24,14 +24,9 @@ describe('AboutPage', () => {
     expect(html).toContain('"inLanguage":"en"');
     // Chrome still ships AvailabilityPill and the language suggestion in the
     // other language; this task owns the about body inside <main>.
-    // ClosingCta stays pt-BR until the catalog i18n task.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
-    const withoutCta = main.replace(
-      /<section\b[^>]*class="[^"]*\bmy-3xl\b[^"]*"[^>]*>[\s\S]*?<\/section>/i,
-      '',
-    );
     // Proper names that legitimately carry Portuguese particles or a .com TLD.
-    const cleaned = withoutCta
+    const cleaned = main
       .replace(/Colégio Estadual do Paraná/g, ' ')
       .replace(/MalaPronta\.com/gi, ' ');
     expect(ptLeftovers(cleaned)).toEqual([]);

@@ -1,0 +1,41 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import ClosingCta from '../catalog/ClosingCta.astro';
+import PageHeader from '../ui/PageHeader.astro';
+import CollectionListing from '../catalog/CollectionListing.astro';
+import OpenSourceList from '../catalog/OpenSourceList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { collectionOfBlock, type CatalogCollection } from '../../lib/catalog/groups';
+import { collectionCopy } from '../../lib/catalog/collection-copy';
+import { getAllProjects, getProfile } from '../../lib/content';
+import { displayNameOf } from '../../lib/content/display-name';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+
+interface Props {
+  collection: CatalogCollection;
+  locale?: Locale;
+}
+
+const { collection, locale = 'pt-BR' } = Astro.props;
+const copy = collectionCopy(collection, locale);
+const t = messagesFor(locale).catalog;
+const projects = await getAllProjects(locale);
+const authorName = displayNameOf(await getProfile(locale));
+const pageItems = projects
+  .filter((project) => collectionOfBlock(project.block) === collection)
+  .map((project) => withLocale(`/${collection}/${project.slug}`, locale));
+---
+
+<BaseLayout
+  title={`${t.pageTitle[collection]}${TITLE_SEPARATOR}${authorName}`}
+  description={copy.metaDescription}
+  pageType="CollectionPage"
+  pageItems={pageItems}
+  locale={locale}
+>
+  <PageHeader title={copy.title} description={copy.description} />
+  <CollectionListing collection={collection} projects={projects} locale={locale} />
+  {collection === 'lab' && <OpenSourceList locale={locale} />}
+  <ClosingCta page={collection} locale={locale} />
+</BaseLayout>

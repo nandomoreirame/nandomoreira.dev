@@ -23,13 +23,11 @@ describe('collection copy', () => {
     expect(COLLECTION_COPY.portfolio.title).not.toMatch(/^Trabalho de cliente/);
   });
 
-  it.each([
-    ['src/pages/lab/index.astro', 'lab'],
-    ['src/pages/portfolio/index.astro', 'portfolio'],
-  ])('%s reads its copy from the single source', (file, collection) => {
-    const source = readFileSync(file, 'utf8');
-    expect(source).toContain('COLLECTION_COPY');
-    expect(source).not.toContain(COLLECTION_COPY[collection as 'lab'].description);
+  it('CollectionPage reads its copy from the single source', () => {
+    const source = readFileSync('src/components/pages/CollectionPage.astro', 'utf8');
+    expect(source).toContain('collectionCopy');
+    expect(source).not.toContain(COLLECTION_COPY.lab.description);
+    expect(source).not.toContain(COLLECTION_COPY.portfolio.description);
   });
 
   it('feeds the AI view from the same source', () => {

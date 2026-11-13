@@ -3,31 +3,34 @@ import ArtRow from './ArtRow.astro';
 import type { Project } from '../../content/schemas/project';
 import { generateArt } from '../../lib/art';
 import {
-  COLLECTION_LABELS,
   blocksOf,
   collectionOfBlock,
   type CatalogCollection,
 } from '../../lib/catalog/groups';
 import { liveHost } from '../../lib/catalog/live-host';
 import { toCompactStamp } from '../../lib/format/date';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   collection: CatalogCollection;
   projects: Project[];
+  locale?: Locale;
 }
 
-const { collection, projects } = Astro.props;
+const { collection, projects, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).catalog;
 
 const allowed = new Set(blocksOf(collection));
 const items = projects
   .filter((project) => allowed.has(project.block))
   .sort((a, b) => b.date.localeCompare(a.date));
 
-const label = COLLECTION_LABELS[collection];
+const label = t.collectionLabel[collection];
 
 const statusOf = (project: Project): string[] => [
-  ...(project.discontinued ? ['Descontinuado'] : []),
-  ...(project.confidential ? ['Confidencial'] : []),
+  ...(project.discontinued ? [t.discontinued] : []),
+  ...(project.confidential ? [t.confidential] : []),
 ];
 ---
 
@@ -37,14 +40,14 @@ const statusOf = (project: Project): string[] => [
   {
     items.length === 0 ? (
       <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
-        Nenhum case publicado nesta coleção ainda.
+        {t.empty}
       </p>
     ) : (
       <ul class="list-none p-0">
         {items.map((project, index) => (
           <li>
             <ArtRow
-              href={`/${collectionOfBlock(project.block)}/${project.slug}`}
+              href={withLocale(`/${collectionOfBlock(project.block)}/${project.slug}`, locale)}
               title={project.title}
               stamp={toCompactStamp(project.date)}
               summary={project.summary}
@@ -52,6 +55,7 @@ const statusOf = (project: Project): string[] => [
               status={statusOf(project)}
               art={generateArt({ slug: project.slug, block: project.block, art: project.art, aspect: 'card' })}
               live={project.discontinued ? undefined : liveHost(project.liveUrl)}
+              liveLabel={t.liveOn}
               flip={index % 2 === 1}
             />
           </li>

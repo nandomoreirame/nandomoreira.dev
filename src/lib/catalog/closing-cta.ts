@@ -1,3 +1,4 @@
+import type { Locale } from '../i18n/locale';
 import type { CatalogCollection } from './groups';
 
 /** Pages that close with a call to action in the page's own context. */
@@ -44,3 +45,38 @@ export const CLOSING_CTA: Record<ClosingCtaPage, ClosingCtaCopy> = {
     button: 'Vamos conversar',
   },
 };
+
+const SERVICES_CTA_EN: ClosingCtaCopy = {
+  eyebrow: 'Next step',
+  title: 'Need a site, store or system?',
+  text: 'Each service says what it is, who it is for and what you get. Pick by what you want to solve and ask for your quote.',
+  button: 'See the services',
+  toServices: true,
+};
+
+const CLOSING_CTA_EN: Record<ClosingCtaPage, ClosingCtaCopy> = {
+  portfolio: SERVICES_CTA_EN,
+  lab: {
+    eyebrow: 'Next step',
+    title: 'Got a similar problem in your flow?',
+    text: 'Most of these tools came from a pain of my own. If yours is similar, tell me.',
+    button: "Let's talk",
+  },
+  sobre: SERVICES_CTA_EN,
+  mcp: {
+    eyebrow: 'Next step',
+    title: 'Want your product talking to AI agents?',
+    text: 'I built this MCP server for my site. If you want something like it in your product, tell me what it needs to expose.',
+    button: "Let's talk",
+  },
+  now: {
+    eyebrow: 'Next step',
+    title: 'Does something here relate to you?',
+    text: 'If what I am doing now speaks to a project of yours, reach out.',
+    button: "Let's talk",
+  },
+};
+
+/** Closing CTA copy for a page, by locale. */
+export const closingCta = (page: ClosingCtaPage, locale: Locale = 'pt-BR'): ClosingCtaCopy =>
+  (locale === 'en' ? CLOSING_CTA_EN : CLOSING_CTA)[page];

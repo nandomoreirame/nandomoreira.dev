@@ -1,18 +1,21 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { BLOCK_LABELS } from '../../content/blocks';
 import type { Project } from '../../content/schemas/project';
 import Prose from '../ui/Prose.astro';
 import TechBadge from '../ui/TechBadge.astro';
 import LinkList from './LinkList.astro';
 import { generateArt } from '../../lib/art';
 import { collectionOfBlock } from '../../lib/catalog/groups';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   project: Project;
+  locale?: Locale;
 }
 
-const { project } = Astro.props;
+const { project, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).catalog;
 const evidenceIsPrivate =
   project.confidential && !project.repoUrl && !project.liveUrl;
 // The flag wins over the fields: a URL left behind in the frontmatter must not
@@ -29,7 +32,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
     />
   <header>
     <p class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
-      {BLOCK_LABELS[project.block]}
+      {t.blocks[project.block]}
     </p>
 
     <div class="mt-sm flex flex-wrap items-center gap-md">
@@ -37,7 +40,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
       {
         isDiscontinued && (
           <span class="inline-flex items-center rounded-md border border-border-strong px-md py-sm font-mono text-small uppercase tracking-wide text-muted-foreground">
-            Descontinuado
+            {t.discontinued}
           </span>
         )
       }
@@ -47,21 +50,21 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
   </header>
 
   <section>
-    <h2 class="mb-md text-h2 font-semibold text-foreground">O problema</h2>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">{t.problem}</h2>
     <Prose>
       <p class="whitespace-pre-wrap">{project.problem}</p>
     </Prose>
   </section>
 
   <section>
-    <h2 class="mb-md text-h2 font-semibold text-foreground">Decisões técnicas</h2>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">{t.decisions}</h2>
     <Prose>
       <p class="whitespace-pre-wrap">{project.decisions}</p>
     </Prose>
   </section>
 
   <section>
-    <h2 class="mb-md text-h2 font-semibold text-foreground">Resultado</h2>
+    <h2 class="mb-md text-h2 font-semibold text-foreground">{t.outcome}</h2>
     <Prose>
       <p class="whitespace-pre-wrap">{project.outcome}</p>
     </Prose>
@@ -70,7 +73,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
   {
     project.shortcuts && project.shortcuts.length > 0 && (
       <section>
-        <h2 class="mb-md text-h2 font-semibold text-foreground">Atalhos</h2>
+        <h2 class="mb-md text-h2 font-semibold text-foreground">{t.shortcuts}</h2>
         <dl class="flex flex-col gap-sm text-body text-muted-foreground">
           {project.shortcuts.map(({ keys, action }) => (
             <div class="flex flex-wrap items-baseline gap-x-md gap-y-xs">
@@ -93,7 +96,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
   {
     project.images && project.images.length > 0 && (
       <section>
-        <h2 class="mb-md text-h2 font-semibold text-foreground">Imagens</h2>
+        <h2 class="mb-md text-h2 font-semibold text-foreground">{t.images}</h2>
         <div class="flex flex-col gap-lg">
           {/* Lightbox through the Popover API: no script, Esc and a click
               outside close it, and the hidden copy only loads when opened. */}
@@ -104,7 +107,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
                 <button
                   type="button"
                   popovertarget={id}
-                  aria-label={`Ampliar imagem: ${image.alt}`}
+                  aria-label={t.enlargeImage(image.alt)}
                   class="block w-full cursor-zoom-in rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   <img
@@ -131,7 +134,7 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
                     type="button"
                     popovertarget={id}
                     popovertargetaction="hide"
-                    aria-label="Fechar"
+                    aria-label={t.close}
                     class="lightbox-close inline-flex size-11 items-center justify-center rounded-md border border-border-strong bg-background text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <Icon name="lucide:x" aria-hidden="true" class="size-5" />
@@ -159,13 +162,14 @@ const art = generateArt({ slug: project.slug, block: project.block, art: project
         <div class="flex items-center">
           {evidenceIsPrivate ? (
             <p class="font-mono text-small text-muted-foreground">
-              Trabalho sob confidencialidade: o código e a URL não são públicos.
+              {t.confidentialNotice}
             </p>
           ) : (
             <LinkList
               repoUrl={project.repoUrl}
               liveUrl={project.liveUrl}
               goBase={`/go/${collectionOfBlock(project.block)}/${project.slug}`}
+              locale={locale}
             />
           )}
         </div>

@@ -25,12 +25,7 @@ describe('McpPage', () => {
     expect(html).toContain('"inLanguage":"en"');
     // Chrome still ships AvailabilityPill and the language suggestion in the
     // other language; this task owns the mcp body inside <main>.
-    // ClosingCta stays pt-BR until the catalog i18n task.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
-    const withoutCta = main.replace(
-      /<section\b[^>]*class="[^"]*\bmy-3xl\b[^"]*"[^>]*>[\s\S]*?<\/section>/i,
-      '',
-    );
-    expect(ptLeftovers(withoutCta)).toEqual([]);
+    expect(ptLeftovers(main)).toEqual([]);
   });
 });

@@ -1,3 +1,6 @@
+import type { Locale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
+
 export interface ProjectLink {
   kind: 'repo' | 'live';
   href: string;
@@ -11,6 +14,7 @@ interface LinkSource {
   liveUrl?: string | null;
   /** When set, human links go through /go instead of the destination itself. */
   goBase?: string;
+  locale?: Locale;
 }
 
 /**
@@ -22,15 +26,21 @@ interface LinkSource {
  * an outline. A repo-only case keeps the outline rather than being promoted,
  * so no page ever grows a second primary.
  */
-export const visibleLinks = ({ repoUrl, liveUrl, goBase }: LinkSource): ProjectLink[] => {
+export const visibleLinks = ({
+  repoUrl,
+  liveUrl,
+  goBase,
+  locale = 'pt-BR',
+}: LinkSource): ProjectLink[] => {
   const hrefFor = (kind: 'live' | 'repo', url: string): string => (goBase ? `${goBase}/${kind}` : url);
+  const t = messagesFor(locale).catalog;
   const links: ProjectLink[] = [];
 
   if (liveUrl) {
-    links.push({ kind: 'live', href: hrefFor('live', liveUrl), label: 'Ver projeto', variant: 'primary' });
+    links.push({ kind: 'live', href: hrefFor('live', liveUrl), label: t.viewProject, variant: 'primary' });
   }
   if (repoUrl) {
-    links.push({ kind: 'repo', href: hrefFor('repo', repoUrl), label: 'Código fonte', variant: 'secondary' });
+    links.push({ kind: 'repo', href: hrefFor('repo', repoUrl), label: t.sourceCode, variant: 'secondary' });
   }
 
   return links;
