@@ -133,9 +133,7 @@ export const goTargets = (locale: Locale = 'pt-BR'): readonly GoTarget[] =>
 export const GO_TARGETS: readonly GoTarget[] = goTargets('pt-BR');
 
 /** Site pages that enter the search index (REQ-005). */
-export const palettePages = (
-  locale: Locale = 'pt-BR',
-): ReadonlyArray<{ path: string; title: string }> => [
+export const palettePages = (locale: Locale = 'pt-BR'): ReadonlyArray<{ path: string; title: string }> => [
   // Only this site's pages: the sales landing enters as a service (build-index).
   ...goTargets(locale)
     .filter(({ path }) => path.startsWith('/'))

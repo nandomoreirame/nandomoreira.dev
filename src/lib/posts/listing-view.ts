@@ -20,8 +20,7 @@ export type ListingView = 'list' | 'grid';
 export const parseListingView = (raw: string | null | undefined): ListingView => parseSession(raw).view;
 
 /** Page 1 is the listing itself, never `?pagina=1`. The view is not part of the URL. */
-export const listingHref = (page: number, base = '/posts'): string =>
-  page > 1 ? `${base}?pagina=${page}` : base;
+export const listingHref = (page: number, base = '/posts'): string => (page > 1 ? `${base}?pagina=${page}` : base);
 
 export const listingViewSetCookie = (
   view: ListingView,

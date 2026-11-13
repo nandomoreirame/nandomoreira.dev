@@ -6,9 +6,7 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 const render = async (locale: string) =>
   (await AstroContainer.create()).renderToString(McpPage, {
     props: { locale },
-    request: new Request(
-      locale === 'en' ? 'https://nandomoreira.dev/en/mcp' : 'https://nandomoreira.dev/mcp',
-    ),
+    request: new Request(locale === 'en' ? 'https://nandomoreira.dev/en/mcp' : 'https://nandomoreira.dev/mcp'),
   });
 
 describe('McpPage', () => {

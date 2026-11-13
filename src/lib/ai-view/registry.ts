@@ -110,11 +110,7 @@ const pathsFor = (
   return undefined;
 };
 
-export const markdownForPathIn = async (
-  site: URL,
-  path: string,
-  live: boolean,
-): Promise<AiPage | undefined> => {
+export const markdownForPathIn = async (site: URL, path: string, live: boolean): Promise<AiPage | undefined> => {
   const key = normalise(path);
   const locale = localeOfPath(key === '' ? '/' : `/${key}`);
 
@@ -154,9 +150,7 @@ export const markdownForPathIn = async (
 
   if (lookupKey === 'portfolio' || lookupKey === 'lab') {
     const collection = lookupKey as CatalogCollection;
-    const projects = (await getAllProjects(locale)).filter(
-      project => collectionOfBlock(project.block) === collection,
-    );
+    const projects = (await getAllProjects(locale)).filter(project => collectionOfBlock(project.block) === collection);
     const copy = collectionCopy(collection, locale);
     const markdown = collectionMarkdown({
       site,
@@ -203,12 +197,7 @@ export const markdownForPathIn = async (
     const posts = await getArchivedPostsByYear(year);
     if (posts.length === 0) return undefined;
     const markdown = archiveYearMarkdown({ site, year, posts, locale });
-    return page(
-      `${messagesFor(locale).aiView.archiveTitle} ${year}`,
-      humanPath,
-      mdPath,
-      markdown,
-    );
+    return page(`${messagesFor(locale).aiView.archiveTitle} ${year}`, humanPath, mdPath, markdown);
   }
 
   if (lookupKey === 'contato') {

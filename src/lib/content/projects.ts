@@ -40,10 +40,7 @@ const load = async (): Promise<Project[]> => {
 };
 
 const loadEn = async (): Promise<Project[]> => {
-  const [sourceEntries, overlayEntries] = await Promise.all([
-    getCollection('projects'),
-    getCollection('projectsEn'),
-  ]);
+  const [sourceEntries, overlayEntries] = await Promise.all([getCollection('projects'), getCollection('projectsEn')]);
   const sources = sourceEntries.map(entry => entry.data);
   const overlays = overlayEntries.map(entry => entry.data);
 
@@ -52,13 +49,10 @@ const loadEn = async (): Promise<Project[]> => {
 
   const bySlug = new Map(sources.map(project => [project.slug, project]));
 
-  return overlays.map(overlay =>
-    redactConfidential(mergeProject(bySlug.get(overlay.translationOf)!, overlay)),
-  );
+  return overlays.map(overlay => redactConfidential(mergeProject(bySlug.get(overlay.translationOf)!, overlay)));
 };
 
-const forLocale = async (locale: Locale): Promise<Project[]> =>
-  locale === 'en' ? await loadEn() : await load();
+const forLocale = async (locale: Locale): Promise<Project[]> => (locale === 'en' ? await loadEn() : await load());
 
 export const getAllProjects = async (locale: Locale = 'pt-BR'): Promise<Project[]> =>
   sortProjects(await forLocale(locale), locale);
@@ -85,8 +79,6 @@ export const getMachineProjects = async (): Promise<Localized<Project>[]> => {
 
   return pt.map(project => {
     const translated = enBySlug.get(project.slug);
-    return translated
-      ? { ...translated, locale: 'en' as const }
-      : { ...project, locale: 'pt-BR' as const };
+    return translated ? { ...translated, locale: 'en' as const } : { ...project, locale: 'pt-BR' as const };
   });
 };

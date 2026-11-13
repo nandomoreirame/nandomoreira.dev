@@ -43,8 +43,7 @@ const GISCUS_COPY_EN: GiscusCopy = {
 };
 
 /** Visible Giscus chrome and the widget language, by locale. */
-export const giscusCopy = (locale: Locale = 'pt-BR'): GiscusCopy =>
-  locale === 'en' ? GISCUS_COPY_EN : GISCUS_COPY_PT;
+export const giscusCopy = (locale: Locale = 'pt-BR'): GiscusCopy => (locale === 'en' ? GISCUS_COPY_EN : GISCUS_COPY_PT);
 
 export const giscusConfig = {
   repo: 'nandomoreirame/nandomoreira.dev',

@@ -18,10 +18,7 @@ const frontmatter = (title: string, url: string): string[] => ['---', `title: ${
 
 const situationOf = (project: Project, locale: Locale): string[] => {
   const t = messagesFor(locale).catalog;
-  return [
-    ...(project.discontinued ? [t.discontinued] : []),
-    ...(project.confidential ? [t.confidential] : []),
-  ];
+  return [...(project.discontinued ? [t.discontinued] : []), ...(project.confidential ? [t.confidential] : [])];
 };
 
 const caseHref = (project: Project, locale: Locale): string =>
@@ -115,10 +112,7 @@ export const aboutMarkdown = ({
     lines.push(`### ${service.title}`, '', service.description.trim());
     const project = bySlug.get(service.caseSlug);
     if (project) {
-      lines.push(
-        '',
-        `- ${t.aiView.caseLabel}: [${project.title}](${absoluteUrl(site, caseHref(project, locale))})`,
-      );
+      lines.push('', `- ${t.aiView.caseLabel}: [${project.title}](${absoluteUrl(site, caseHref(project, locale))})`);
     }
     lines.push('');
   }
@@ -126,11 +120,7 @@ export const aboutMarkdown = ({
   if (profile.work && profile.work.length > 0) {
     lines.push(`## ${t.about.experience.title}`, '');
     for (const job of profile.work) {
-      lines.push(
-        `### ${job.position}`,
-        '',
-        `- ${formatPeriod(job.startDate, job.endDate, locale)} · ${job.name}`,
-      );
+      lines.push(`### ${job.position}`, '', `- ${formatPeriod(job.startDate, job.endDate, locale)} · ${job.name}`);
       if (job.summary) lines.push(`- ${job.summary}`);
       if (job.highlights) {
         for (const highlight of job.highlights) {
@@ -204,10 +194,7 @@ export const collectionMarkdown = ({
     if (situation.length > 0) {
       lines.push(`- ${t.aiView.situationLabel}: ${situation.join(', ')}`);
     }
-    lines.push(
-      `- ${t.aiView.markdownLabel}: [${project.slug}.md](${absoluteUrl(site, mdHref)})`,
-      '',
-    );
+    lines.push(`- ${t.aiView.markdownLabel}: [${project.slug}.md](${absoluteUrl(site, mdHref)})`, '');
   }
 
   if (openSource.length > 0) {
@@ -339,13 +326,7 @@ export const contactMarkdown = ({
   return lines.join('\n');
 };
 
-export const connectMarkdown = ({
-  site,
-  locale = 'pt-BR',
-}: {
-  site: URL;
-  locale?: Locale;
-}): string => {
+export const connectMarkdown = ({ site, locale = 'pt-BR' }: { site: URL; locale?: Locale }): string => {
   const t = messagesFor(locale).mcpPage;
   const ai = messagesFor(locale).aiView;
   const mcpPath = routeFor('/mcp', locale);
@@ -378,13 +359,7 @@ export const connectMarkdown = ({
     lines.push(`- \`${tool.name}\`: ${t.tools[tool.name]}`);
   }
 
-  lines.push(
-    '',
-    `## ${t.briefingHeading}`,
-    '',
-    `${t.briefingBeforeCode} \`POST /api/hire\`.`,
-    '',
-  );
+  lines.push('', `## ${t.briefingHeading}`, '', `${t.briefingBeforeCode} \`POST /api/hire\`.`, '');
 
   return lines.join('\n');
 };

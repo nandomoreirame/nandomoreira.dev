@@ -24,10 +24,7 @@ const projectBySlug = (projects: readonly LocalizedProject[], slug: string): Loc
   projects.find(project => project.slug === slug);
 
 const projectUrl = (site: URL, project: LocalizedProject): string =>
-  absoluteUrl(
-    site,
-    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
-  );
+  absoluteUrl(site, casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }));
 
 const itemPostUrl = (site: URL, post: LocalizedPost): string =>
   absoluteUrl(site, postPath({ slug: post.slug, locale: post.locale ?? 'pt-BR' }));
@@ -73,9 +70,7 @@ export const buildLlmsFullTxt = ({ site, profile, projects, posts = [] }: Input)
 
   for (const service of profile.services) {
     const proof = projectBySlug(projects, service.caseSlug);
-    const caseUrl = proof
-      ? projectUrl(site, proof)
-      : absoluteUrl(site, `/portfolio/${service.caseSlug}`);
+    const caseUrl = proof ? projectUrl(site, proof) : absoluteUrl(site, `/portfolio/${service.caseSlug}`);
     lines.push(`- **${service.title}**: ${singleLine(service.description)}`);
     lines.push(`  Proof: ${caseUrl}`);
   }

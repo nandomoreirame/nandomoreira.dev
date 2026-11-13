@@ -114,10 +114,7 @@ const OUTCOMES_EN: Record<string, OutcomeMessage> = {
 };
 
 /** Reads the `envio` query value; anything unknown shows nothing. */
-export const outcomeMessage = (
-  value: string | null,
-  locale: Locale = 'pt-BR',
-): OutcomeMessage | undefined => {
+export const outcomeMessage = (value: string | null, locale: Locale = 'pt-BR'): OutcomeMessage | undefined => {
   const outcomes = locale === 'en' ? OUTCOMES_EN : OUTCOMES;
   return value !== null && Object.hasOwn(outcomes, value) ? outcomes[value] : undefined;
 };

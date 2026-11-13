@@ -339,7 +339,7 @@ export const SETUP_SECTIONS_EN: SetupSection[] = [
       {
         name: 'Omarchy',
         url: 'https://omarchy.org',
-        why: 'DHH\'s distro, with Hyprland. I used it for a few months before landing on CachyOS.',
+        why: "DHH's distro, with Hyprland. I used it for a few months before landing on CachyOS.",
       },
       {
         name: 'Model Usage',

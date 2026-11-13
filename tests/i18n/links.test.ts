@@ -18,7 +18,8 @@ describe('englishHref', () => {
 
 describe('internalLinks', () => {
   it('lists root-relative and own-domain markdown links, not images or code', () => {
-    const body = 'See [a](/sobre) and [b](https://nandomoreira.dev/now), ![i](/img.png), `[c](/x)` and [d](https://x.dev).';
+    const body =
+      'See [a](/sobre) and [b](https://nandomoreira.dev/now), ![i](/img.png), `[c](/x)` and [d](https://x.dev).';
     expect(internalLinks(body)).toEqual(['/sobre', 'https://nandomoreira.dev/now']);
   });
 });

@@ -21,5 +21,4 @@ const BLOG_COPY_EN: BlogCopy = {
 };
 
 /** Header and meta copy of the blog listing, by locale. */
-export const blogCopy = (locale: Locale = 'pt-BR'): BlogCopy =>
-  locale === 'en' ? BLOG_COPY_EN : BLOG_COPY;
+export const blogCopy = (locale: Locale = 'pt-BR'): BlogCopy => (locale === 'en' ? BLOG_COPY_EN : BLOG_COPY);

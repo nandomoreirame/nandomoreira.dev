@@ -13,7 +13,7 @@ describe('English content through the overlays', () => {
   it('serves only translated items, with the pt-BR structure', async () => {
     const [ptProjects, enProjects] = await Promise.all([getAllProjects(), getAllProjects('en')]);
     for (const project of enProjects) {
-      const source = ptProjects.find((item) => item.slug === project.slug)!;
+      const source = ptProjects.find(item => item.slug === project.slug)!;
       expect(project.tech).toEqual(source.tech);
       expect(project.repoUrl ?? null).toEqual(source.repoUrl ?? null);
     }
@@ -23,7 +23,7 @@ describe('English content through the overlays', () => {
     const [ptProjects, enProjects] = await Promise.all([getAllProjects(), getAllProjects('en')]);
     for (const project of enProjects) {
       if (project.confidential) {
-        const source = ptProjects.find((item) => item.slug === project.slug)!;
+        const source = ptProjects.find(item => item.slug === project.slug)!;
         expect(project.clientName).toBe(source.clientName);
         expect(project.confidentialMetrics).toBeUndefined();
       }

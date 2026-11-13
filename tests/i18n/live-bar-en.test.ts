@@ -36,7 +36,9 @@ describe('live bar and back-to-top in English', () => {
   });
 
   it('LiveBar with locale en renders the English default and fetches the English API', async () => {
-    const html = await (await AstroContainer.create()).renderToString(LiveBar, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(LiveBar, {
       props: { locale: 'en' },
     });
 
@@ -46,7 +48,9 @@ describe('live bar and back-to-top in English', () => {
   });
 
   it('BackToTop in English names the control Back to top', async () => {
-    const html = await (await AstroContainer.create()).renderToString(BackToTop, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(BackToTop, {
       props: { locale: 'en' },
     });
 

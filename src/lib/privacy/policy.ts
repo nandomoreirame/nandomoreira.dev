@@ -173,20 +173,13 @@ export const POLICY_LEAD =
   'Versão curta: este site não usa cookies nem analytics de terceiros. Ele conta visitas no próprio servidor, sem guardar seu IP, e guarda o que você envia de propósito por até 12 meses. Comentários nos textos atuais pedem uma conta do GitHub e ficam públicos no GitHub Discussions.';
 
 /** "8 de outubro de 2026", parsed as a calendar date so no timezone shifts it. */
-export const formatPolicyDate = (iso: string, locale: Locale = 'pt-BR'): string =>
-  toLongDate(iso, locale);
+export const formatPolicyDate = (iso: string, locale: Locale = 'pt-BR'): string => toLongDate(iso, locale);
 
 /**
  * The markdown version is a machine surface, so it never prints the e-mail
  * (tests/aeo/no-leak.test.ts); it points at the contact page instead.
  */
-export const privacyMarkdown = ({
-  site,
-  locale = 'pt-BR',
-}: {
-  site: URL;
-  locale?: Locale;
-}): string => {
+export const privacyMarkdown = ({ site, locale = 'pt-BR' }: { site: URL; locale?: Locale }): string => {
   const { lead, sections } = policyFor(locale);
   const t = messagesFor(locale);
   const privacyPath = routeFor('/privacidade', locale);
@@ -212,12 +205,7 @@ export const privacyMarkdown = ({
     );
   }
 
-  lines.push(
-    `## ${t.privacyPage.contactHeading}`,
-    '',
-    t.aiView.privacyContact(absoluteUrl(site, contactPath)),
-    '',
-  );
+  lines.push(`## ${t.privacyPage.contactHeading}`, '', t.aiView.privacyContact(absoluteUrl(site, contactPath)), '');
 
   return lines.join('\n');
 };

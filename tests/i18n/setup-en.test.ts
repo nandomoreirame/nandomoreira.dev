@@ -8,20 +8,18 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 const render = async (locale: string) =>
   (await AstroContainer.create()).renderToString(SetupPage, {
     props: { locale },
-    request: new Request(
-      locale === 'en' ? 'https://nandomoreira.dev/en/setup' : 'https://nandomoreira.dev/setup',
-    ),
+    request: new Request(locale === 'en' ? 'https://nandomoreira.dev/en/setup' : 'https://nandomoreira.dev/setup'),
   });
 
 describe('English setup', () => {
   it('has the same sections, items, URLs and shortcuts in the same order', () => {
     const shape = (sections: typeof SETUP_SECTIONS) =>
-      sections.map((section) => ({
+      sections.map(section => ({
         id: section.id,
-        items: section.items.map((item) => ({
+        items: section.items.map(item => ({
           name: item.name,
           url: item.url,
-          keys: item.shortcuts?.map((shortcut) => shortcut.keys),
+          keys: item.shortcuts?.map(shortcut => shortcut.keys),
         })),
       }));
     expect(shape(SETUP_SECTIONS_EN)).toEqual(shape(SETUP_SECTIONS));

@@ -39,7 +39,7 @@ describe('English AI view', () => {
     'en/now',
     'en/privacy',
     'en/mcp',
-  ])('%s has an English markdown mirror', async (path) => {
+  ])('%s has an English markdown mirror', async path => {
     const page = await markdownForPathIn(site, path, true);
     expect(page?.humanPath).toBe(`/${path}`);
     expect(page?.mdPath).toBe(`/${path}.md`);

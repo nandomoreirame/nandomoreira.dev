@@ -11,9 +11,7 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 const renderListing = async (locale: string, view: 'list' | 'grid' = 'list') =>
   (await AstroContainer.create()).renderToString(PostsPage, {
     props: { locale, view },
-    request: new Request(
-      locale === 'en' ? 'https://nandomoreira.dev/en/posts' : 'https://nandomoreira.dev/posts',
-    ),
+    request: new Request(locale === 'en' ? 'https://nandomoreira.dev/en/posts' : 'https://nandomoreira.dev/posts'),
   });
 
 /** Body of the page; chrome outside <main> is owned by other tasks. */
@@ -86,11 +84,13 @@ describe('English blog', () => {
   it('PostPage chrome is English when locale is en, even with a pt-BR entry', async () => {
     const entries = await getAllPostEntries();
     const entry =
-      entries.find((item) => item.data.slug === 'fluxo-rpi-claude-code-grok-codex') ??
-      entries.find((item) => !item.data.draft);
+      entries.find(item => item.data.slug === 'fluxo-rpi-claude-code-grok-codex') ??
+      entries.find(item => !item.data.draft);
     expect(entry).toBeDefined();
 
-    const html = await (await AstroContainer.create()).renderToString(PostPage, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(PostPage, {
       props: { entry, locale: 'en' },
       request: new Request(`https://nandomoreira.dev/en/${entry!.data.slug}`),
     });
@@ -113,12 +113,14 @@ describe('PostPage', () => {
   it('keeps a pt-BR post with cover and index byte for byte', async () => {
     const entries = await getAllPostEntries();
     const entry =
-      entries.find((item) => item.data.slug === 'fluxo-rpi-claude-code-grok-codex') ??
-      entries.find((item) => item.data.cover && !item.data.draft);
+      entries.find(item => item.data.slug === 'fluxo-rpi-claude-code-grok-codex') ??
+      entries.find(item => item.data.cover && !item.data.draft);
     expect(entry).toBeDefined();
 
     const html = (
-      await (await AstroContainer.create()).renderToString(PostPage, {
+      await (
+        await AstroContainer.create()
+      ).renderToString(PostPage, {
         props: { entry, locale: 'pt-BR' },
         request: new Request(`https://nandomoreira.dev/${entry!.data.slug}`),
       })

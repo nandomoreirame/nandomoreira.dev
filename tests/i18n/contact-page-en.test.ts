@@ -7,9 +7,7 @@ const render = async (locale: string, query = '') =>
   (await AstroContainer.create()).renderToString(ContactPage, {
     props: { locale },
     request: new Request(
-      locale === 'en'
-        ? `https://nandomoreira.dev/en/contact${query}`
-        : `https://nandomoreira.dev/contato${query}`,
+      locale === 'en' ? `https://nandomoreira.dev/en/contact${query}` : `https://nandomoreira.dev/contato${query}`,
     ),
   });
 
@@ -36,7 +34,9 @@ describe('ContactPage', () => {
   });
 
   it('posts the English form with its own origin and shows outcomes in English', async () => {
-    const html = await (await AstroContainer.create()).renderToString(ContactPage, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(ContactPage, {
       props: { locale: 'en' },
       request: new Request('https://nandomoreira.dev/en/contact?envio=invalido'),
     });

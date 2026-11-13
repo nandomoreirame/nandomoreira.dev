@@ -117,10 +117,7 @@ export const sitemapEntries = ({
   return entries;
 };
 
-const pairIndex = (
-  enLive: boolean,
-  pairs: readonly TranslationPair[],
-): Map<string, TranslationPair> => {
+const pairIndex = (enLive: boolean, pairs: readonly TranslationPair[]): Map<string, TranslationPair> => {
   const index = new Map<string, TranslationPair>();
   if (!enLive) return index;
 

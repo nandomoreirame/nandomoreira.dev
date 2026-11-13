@@ -6,11 +6,7 @@ import { getMachinePosts, getMachineProjects, getProfile } from '../lib/content'
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const [profile, projects, posts] = await Promise.all([
-    getProfile('en'),
-    getMachineProjects(),
-    getMachinePosts(),
-  ]);
+  const [profile, projects, posts] = await Promise.all([getProfile('en'), getMachineProjects(), getMachinePosts()]);
 
   return new Response(buildLlmsFullTxt({ site: requireSite(site), profile, projects, posts }), {
     status: 200,

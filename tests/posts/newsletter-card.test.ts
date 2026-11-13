@@ -65,9 +65,7 @@ describe('NewsletterCard', () => {
   );
 
   it('posts back to the page it sits on when told to, the home included', async () => {
-    expect(await render({ returnTo: '/' })).toMatch(
-      /<form[^>]*action="\/api\/subscribe\?origem=%2F"/,
-    );
+    expect(await render({ returnTo: '/' })).toMatch(/<form[^>]*action="\/api\/subscribe\?origem=%2F"/);
     expect(await render()).toMatch(/<form[^>]*action="\/api\/subscribe"/);
   });
 

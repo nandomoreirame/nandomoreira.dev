@@ -21,17 +21,10 @@ export interface ProjectJsonLd {
  * application, everything else is a creative work. Deterministic, derived from
  * data that already exists, no extra schema field.
  */
-export const jsonLdForProject = (
-  project: Project,
-  site: string,
-  locale: Locale = 'pt-BR',
-): ProjectJsonLd => {
+export const jsonLdForProject = (project: Project, site: string, locale: Locale = 'pt-BR'): ProjectJsonLd => {
   const isApplication = Boolean(project.liveUrl);
   const collection = collectionOfBlock(project.block);
-  const path =
-    locale === 'en'
-      ? withLocale(`/${collection}/${project.slug}`, locale)
-      : `/projetos/${project.slug}`;
+  const path = locale === 'en' ? withLocale(`/${collection}/${project.slug}`, locale) : `/projetos/${project.slug}`;
 
   return {
     '@context': 'https://schema.org',

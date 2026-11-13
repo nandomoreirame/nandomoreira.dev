@@ -16,11 +16,7 @@ export interface ConfirmStore {
   localeOf: (tokenHash: string) => Promise<Locale>;
 }
 
-export const confirmSubscription = (
-  token: string,
-  now: Date,
-  store: ConfirmStore,
-): Promise<ConfirmClaim | null> =>
+export const confirmSubscription = (token: string, now: Date, store: ConfirmStore): Promise<ConfirmClaim | null> =>
   store.claim(createHash('sha256').update(token).digest('hex'), now);
 
 export const localeOfToken = (token: string, store: ConfirmStore): Promise<Locale> =>

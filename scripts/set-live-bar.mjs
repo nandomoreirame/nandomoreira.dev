@@ -45,9 +45,7 @@ if (command === 'list') {
 } else if (command === 'add') {
   const text = rest[0];
   if (!text || text.startsWith('--'))
-    fail(
-      'Usage: add "<text>" [--badge X] [--text-en Y] [--badge-en Z] [--href URL | --channel youtube|twitch]',
-    );
+    fail('Usage: add "<text>" [--badge X] [--text-en Y] [--badge-en Z] [--href URL | --channel youtube|twitch]');
   /** @type {Record<string, string>} */
   const item = { text };
   for (const key of ['badge', 'href', 'channel']) if (flag(key)) item[key] = flag(key);

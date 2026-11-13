@@ -17,7 +17,9 @@ describe('newsletter in English', () => {
 
   it('card copy and outcomes', async () => {
     expect(newsletterCopy('en').button).toBe('Subscribe');
-    const html = await (await AstroContainer.create()).renderToString(NewsletterCard, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(NewsletterCard, {
       props: { locale: 'en', returnTo: '/en/posts', outcome: 'ok' },
     });
     expect(html).toContain('origem=%2Fen%2Fposts');

@@ -26,12 +26,7 @@ interface LinkSource {
  * an outline. A repo-only case keeps the outline rather than being promoted,
  * so no page ever grows a second primary.
  */
-export const visibleLinks = ({
-  repoUrl,
-  liveUrl,
-  goBase,
-  locale = 'pt-BR',
-}: LinkSource): ProjectLink[] => {
+export const visibleLinks = ({ repoUrl, liveUrl, goBase, locale = 'pt-BR' }: LinkSource): ProjectLink[] => {
   const hrefFor = (kind: 'live' | 'repo', url: string): string => (goBase ? `${goBase}/${kind}` : url);
   const t = messagesFor(locale).catalog;
   const links: ProjectLink[] = [];

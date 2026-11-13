@@ -41,10 +41,7 @@ const TRANSLATED: [string, string][] = [
 ];
 
 const bodiesBySlug = new Map(
-  postPairs().flatMap(({ pt, en }) => [
-    [pt.field('slug')!, pt.body] as const,
-    [en.field('slug')!, en.body] as const,
-  ]),
+  postPairs().flatMap(({ pt, en }) => [[pt.field('slug')!, pt.body] as const, [en.field('slug')!, en.body] as const]),
 );
 
 describe('translated posts', () => {
@@ -55,8 +52,8 @@ describe('translated posts', () => {
     // draft from the source, keep them out of public listings, still check length.
     if (!pt && !en) {
       const [upcomingPt, upcomingEn] = await Promise.all([getUpcomingPosts(), getUpcomingPosts('en')]);
-      const src = upcomingPt.find((post) => post.slug === ptSlug);
-      const overlay = upcomingEn.find((post) => post.slug === enSlug);
+      const src = upcomingPt.find(post => post.slug === ptSlug);
+      const overlay = upcomingEn.find(post => post.slug === enSlug);
       expect(src).toBeDefined();
       expect(overlay).toBeDefined();
       expect(overlay!.draft).toBe(true);

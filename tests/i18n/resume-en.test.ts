@@ -15,12 +15,9 @@ describe('English résumé', () => {
     expect(ptLeftovers(`<p>${JSON.stringify(resume.basics)} ${JSON.stringify(resume.work)}</p>`)).toEqual([]);
   });
 
-  it.each(['src/pages/api/resume.json.ts', 'src/pages/api/resume.txt.ts'])(
-    '%s reads the English profile',
-    (file) => {
-      const source = readFileSync(file, 'utf8');
-      expect(source).toContain("getProfile('en')");
-      expect(source).toContain('getMachineProjects()');
-    },
-  );
+  it.each(['src/pages/api/resume.json.ts', 'src/pages/api/resume.txt.ts'])('%s reads the English profile', file => {
+    const source = readFileSync(file, 'utf8');
+    expect(source).toContain("getProfile('en')");
+    expect(source).toContain('getMachineProjects()');
+  });
 });

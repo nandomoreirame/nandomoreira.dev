@@ -56,10 +56,8 @@ export const ptBR = {
     newer: '← Mais recentes',
     older: 'Mais antigos →',
     pageWord: 'Página',
-    pageRest: (totalPages: number, range: string, total: number) =>
-      `de ${totalPages} (${range} de ${total})`,
-    articleRange: (first: number, last: number) =>
-      first === last ? `artigo ${first}` : `artigos ${first}-${last}`,
+    pageRest: (totalPages: number, range: string, total: number) => `de ${totalPages} (${range} de ${total})`,
+    articleRange: (first: number, last: number) => (first === last ? `artigo ${first}` : `artigos ${first}-${last}`),
     upcomingDrafts: 'Rascunhos em andamento',
     toc: 'Índice',
     tocToggle: 'Índice do post',
@@ -149,8 +147,7 @@ export const ptBR = {
     resumeCta: 'Baixar currículo (PDF)',
     results: {
       title: 'Resultados',
-      description:
-        'O que mudou, medido nas operações em que trabalhei. O que é aproximado vem dito no contexto.',
+      description: 'O que mudou, medido nas operações em que trabalhei. O que é aproximado vem dito no contexto.',
     },
     help: {
       title: 'Como posso ajudar',
@@ -161,8 +158,7 @@ export const ptBR = {
     },
     education: {
       title: 'Formação',
-      line: (studyType: string, area: string, institution: string) =>
-        `${studyType} em ${area}, ${institution}`,
+      line: (studyType: string, area: string, institution: string) => `${studyType} em ${area}, ${institution}`,
     },
     stack: 'Stack',
     portraitAlt: (name: string) =>
@@ -198,8 +194,7 @@ export const ptBR = {
     budgetPreferNot: 'Prefiro não dizer agora',
     interestLegend: 'Tenho interesse em',
     message: 'Mensagem',
-    messagePlaceholder:
-      'O que você está construindo, como é o sucesso para você e para quando precisa?',
+    messagePlaceholder: 'O que você está construindo, como é o sucesso para você e para quando precisa?',
     honeypot: 'Não preencha este campo',
     submit: 'Enviar mensagem',
     preferEmail: 'Prefiro e-mail',
@@ -278,19 +273,15 @@ export const ptBR = {
     copyCommandFor: (name: string) => `Copiar o comando para ${name}`,
     toolsHeading: 'O que o agente pode consultar',
     briefingHeading: 'Para propor um projeto',
-    briefingBeforeCode:
-      'As tools são só de leitura. Para mandar um briefing, o agente faz um',
+    briefingBeforeCode: 'As tools são só de leitura. Para mandar um briefing, o agente faz um',
     briefingBetweenCodeAndAgents: ', descrito no',
     briefingAgentsGuide: 'guia para agentes',
     briefingBetweenAgentsAndLlms: '. O resumo do site para modelos está em',
     tools: {
-      get_profile:
-        'Quem eu sou: título, bio, posicionamento, stack, frentes de trabalho e disponibilidade.',
-      check_availability:
-        'Se estou aberto a trabalho novo, com o detalhe e a data da última atualização.',
+      get_profile: 'Quem eu sou: título, bio, posicionamento, stack, frentes de trabalho e disponibilidade.',
+      check_availability: 'Se estou aberto a trabalho novo, com o detalhe e a data da última atualização.',
       list_projects: 'Os cases publicados, com filtro opcional por coleção: portfolio ou lab.',
-      get_project:
-        'Um case completo: o problema, as decisões, o resultado e os links que o comprovam.',
+      get_project: 'Um case completo: o problema, as decisões, o resultado e os links que o comprovam.',
       get_resume: 'O currículo completo no padrão JSON Resume, o mesmo de /api/resume.json.',
     },
   },
@@ -305,8 +296,7 @@ export const ptBR = {
   },
   privacyPage: {
     title: 'Política de privacidade',
-    description:
-      'O que este site coleta, por quanto tempo guarda e como pedir a exclusão dos seus dados.',
+    description: 'O que este site coleta, por quanto tempo guarda e como pedir a exclusão dos seus dados.',
     heading: 'Política de privacidade',
     turnstileHeading: 'Verificação anti-robô',
     turnstileBody:

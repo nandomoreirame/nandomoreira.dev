@@ -22,7 +22,7 @@ const assertUnique = (values: readonly string[], what: (value: string) => string
 };
 
 export const assertPostTranslations = (sources: readonly Post[], overlays: readonly PostTranslation[]): void => {
-  const bySlug = new Map(sources.map((post) => [post.slug, post]));
+  const bySlug = new Map(sources.map(post => [post.slug, post]));
 
   for (const overlay of overlays) {
     const source = bySlug.get(overlay.translationOf);
@@ -32,8 +32,14 @@ export const assertPostTranslations = (sources: readonly Post[], overlays: reado
     if (bySlug.has(overlay.slug)) fail(`post slug ${overlay.slug} collides with a pt-BR post`);
   }
 
-  assertUnique(overlays.map((overlay) => overlay.translationOf), (slug) => `post ${slug} is translated twice`);
-  assertUnique(overlays.map((overlay) => overlay.slug), (slug) => `English post slug ${slug} is used twice`);
+  assertUnique(
+    overlays.map(overlay => overlay.translationOf),
+    slug => `post ${slug} is translated twice`,
+  );
+  assertUnique(
+    overlays.map(overlay => overlay.slug),
+    slug => `English post slug ${slug} is used twice`,
+  );
 };
 
 export const mergePost = (source: Post, overlay: PostTranslation): Post => ({
@@ -53,7 +59,7 @@ export const assertProjectTranslations = (
   sources: readonly Project[],
   overlays: readonly ProjectTranslation[],
 ): void => {
-  const bySlug = new Map(sources.map((project) => [project.slug, project]));
+  const bySlug = new Map(sources.map(project => [project.slug, project]));
 
   for (const overlay of overlays) {
     const source = bySlug.get(overlay.translationOf);
@@ -66,7 +72,10 @@ export const assertProjectTranslations = (
     }
   }
 
-  assertUnique(overlays.map((overlay) => overlay.translationOf), (slug) => `case ${slug} is translated twice`);
+  assertUnique(
+    overlays.map(overlay => overlay.translationOf),
+    slug => `case ${slug} is translated twice`,
+  );
 };
 
 export const mergeProject = (source: Project, overlay: ProjectTranslation): Project => ({
@@ -81,5 +90,7 @@ export const mergeProject = (source: Project, overlay: ProjectTranslation): Proj
     ...shortcut,
     action: overlay.shortcutActions?.[index] ?? shortcut.action,
   })),
-  confidentialMetrics: source.confidentialMetrics ? overlay.confidentialMetrics ?? source.confidentialMetrics : undefined,
+  confidentialMetrics: source.confidentialMetrics
+    ? (overlay.confidentialMetrics ?? source.confidentialMetrics)
+    : undefined,
 });

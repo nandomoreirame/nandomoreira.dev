@@ -34,9 +34,7 @@ export const buildAgentsMd = ({ site, profile, projects = [] }: Input): string =
     const proofPath = proof
       ? casePath({ slug: proof.slug, block: proof.block, locale: proof.locale ?? 'pt-BR' })
       : `/portfolio/${service.caseSlug}`;
-    lines.push(
-      `- **${service.title}** — ${service.description} Proof: ${absoluteUrl(site, proofPath)}`,
-    );
+    lines.push(`- **${service.title}** — ${service.description} Proof: ${absoluteUrl(site, proofPath)}`);
   }
 
   lines.push(

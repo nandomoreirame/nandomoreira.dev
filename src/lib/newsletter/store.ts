@@ -41,12 +41,7 @@ export const newConfirmation = (now: Date) => {
  * A new address stays pending until the confirmation link is opened (REQ-001).
  * Locale is optional and omitted for pt-BR (a language code, not visitor PII).
  */
-export const toSubscriber = (
-  email: string,
-  now: Date,
-  confirmation = newConfirmation(now),
-  locale?: Locale,
-) => ({
+export const toSubscriber = (email: string, now: Date, confirmation = newConfirmation(now), locale?: Locale) => ({
   email: normalise(email),
   status: 'pending' as const,
   subscribedAt: now.toISOString(),

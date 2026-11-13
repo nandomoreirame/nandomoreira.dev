@@ -45,10 +45,7 @@ const channelItems = (schedule: string, scheduleEn?: string): LiveBarItem[] =>
 
 export const DEFAULT_LIVE_BAR: LiveBarConfig = {
   enabled: true,
-  items: channelItems(
-    'Live todos os dias, das 9h00 às 12h00',
-    'Live every day, 9:00 AM to 12:00 PM (Brasília time)',
-  ),
+  items: channelItems('Live todos os dias, das 9h00 às 12h00', 'Live every day, 9:00 AM to 12:00 PM (Brasília time)'),
 };
 
 const safeHref = (value: unknown): string | undefined =>

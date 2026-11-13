@@ -13,8 +13,7 @@ export const availabilityShort = (status: Status, locale: Locale = 'pt-BR'): str
   messagesFor(locale).availability.short[status];
 
 /** Invitation under the status when the card links to contact. */
-export const availabilityCta = (locale: Locale = 'pt-BR'): string =>
-  messagesFor(locale).availability.cta;
+export const availabilityCta = (locale: Locale = 'pt-BR'): string => messagesFor(locale).availability.cta;
 
 /** pt-BR labels kept as constants for call sites that have not taken a locale yet. */
 export const AVAILABILITY_LABEL: Record<Status, string> = {

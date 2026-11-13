@@ -8,9 +8,7 @@ const render = async (locale: string, query = '') =>
   (await AstroContainer.create()).renderToString(ResumePage, {
     props: { locale },
     request: new Request(
-      locale === 'en'
-        ? `https://nandomoreira.dev/en/resume${query}`
-        : `https://nandomoreira.dev/curriculo${query}`,
+      locale === 'en' ? `https://nandomoreira.dev/en/resume${query}` : `https://nandomoreira.dev/curriculo${query}`,
     ),
   });
 
@@ -49,19 +47,13 @@ describe('ResumePage', () => {
 
 describe('CV form return path', () => {
   it('goes back to the English resume page only for the English form', () => {
-    expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=resume-en'))).toBe(
-      '/en/resume',
-    );
+    expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=resume-en'))).toBe('/en/resume');
     expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv'))).toBe('/curriculo');
   });
 
   it('never redirects to an arbitrary origin', () => {
-    expect(
-      resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=https://evil.example')),
-    ).toBe('/curriculo');
-    expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=/en/resume'))).toBe(
-      '/curriculo',
-    );
+    expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=https://evil.example'))).toBe('/curriculo');
+    expect(resumeOriginOf(new URL('https://nandomoreira.dev/api/cv?origem=/en/resume'))).toBe('/curriculo');
   });
 
   it('redirects the English form outcome to /en/resume', async () => {

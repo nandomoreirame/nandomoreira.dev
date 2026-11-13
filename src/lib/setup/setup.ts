@@ -416,13 +416,7 @@ export const SETUP_SECTIONS: SetupSection[] = [
 ];
 
 /** The same content as the page, for the AI view (/setup.md). */
-export const setupMarkdown = ({
-  site,
-  locale = 'pt-BR',
-}: {
-  site: URL;
-  locale?: Locale;
-}): string => {
+export const setupMarkdown = ({ site, locale = 'pt-BR' }: { site: URL; locale?: Locale }): string => {
   const { lead, sections } = setupFor(locale);
   const t = messagesFor(locale).setupPage;
   const path = locale === 'en' ? '/en/setup' : SETUP_PATH;

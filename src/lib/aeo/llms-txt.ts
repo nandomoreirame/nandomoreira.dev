@@ -36,10 +36,7 @@ export const formatMachineRoute = (site: URL, route: string, description: string
 };
 
 const projectUrl = (site: URL, project: LocalizedProject): string =>
-  absoluteUrl(
-    site,
-    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
-  );
+  absoluteUrl(site, casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }));
 
 const itemPostUrl = (site: URL, post: LocalizedPost): string =>
   absoluteUrl(site, postPath({ slug: post.slug, locale: post.locale ?? 'pt-BR' }));

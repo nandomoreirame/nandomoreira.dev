@@ -5,9 +5,9 @@ import { casePath, postPath } from '../../src/lib/i18n/paths';
 describe('machine content', () => {
   it('serves each case in English when translated, else pt-BR, never both', async () => {
     const [pt, en, machine] = await Promise.all([getAllProjects(), getAllProjects('en'), getMachineProjects()]);
-    expect(machine.map((item) => item.slug).sort()).toEqual(pt.map((item) => item.slug).sort());
+    expect(machine.map(item => item.slug).sort()).toEqual(pt.map(item => item.slug).sort());
     for (const item of machine) {
-      const translated = en.find((project) => project.slug === item.slug);
+      const translated = en.find(project => project.slug === item.slug);
       expect(item.locale).toBe(translated ? 'en' : 'pt-BR');
       if (translated) expect(item.summary).toBe(translated.summary);
     }
@@ -30,14 +30,14 @@ describe('machine content', () => {
     const response = await GET({} as never);
     const items = (await response.json()) as Array<{ path: string; title: string; kind: string }>;
 
-    const translated = items.find((item) => item.path === '/en/the-false-green');
+    const translated = items.find(item => item.path === '/en/the-false-green');
     expect(translated?.kind).toBe('post');
     expect(translated?.title).toBe('The false green: when the gate says PASS and nothing ran');
 
     const [pt] = await Promise.all([getAllPosts()]);
-    const withoutPair = pt.find((post) => post.archived);
+    const withoutPair = pt.find(post => post.archived);
     expect(withoutPair).toBeDefined();
-    const fallback = items.find((item) => item.path === `/${withoutPair!.slug}`);
+    const fallback = items.find(item => item.path === `/${withoutPair!.slug}`);
     expect(fallback?.title).toBe(withoutPair!.title);
   });
 });

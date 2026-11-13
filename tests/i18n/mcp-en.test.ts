@@ -12,19 +12,13 @@ interface ProjectList {
 
 describe('MCP tools in English', () => {
   it('get_profile returns the English headline', async () => {
-    const [answer, profile] = await Promise.all([
-      callTool<ProfileAnswer>('get_profile'),
-      getProfile('en'),
-    ]);
+    const [answer, profile] = await Promise.all([callTool<ProfileAnswer>('get_profile'), getProfile('en')]);
 
     expect(answer.headline).toBe(profile.headline);
   });
 
   it('list_projects returns English summary and /en URL for each translated case', async () => {
-    const [list, machine] = await Promise.all([
-      callTool<ProjectList>('list_projects'),
-      getMachineProjects(),
-    ]);
+    const [list, machine] = await Promise.all([callTool<ProjectList>('list_projects'), getMachineProjects()]);
     const bySlug = new Map(list.projects.map(project => [project.slug, project]));
 
     for (const project of machine.filter(item => item.locale === 'en')) {
@@ -46,9 +40,7 @@ describe('MCP tools in English', () => {
 
     expect(answer.summary).toBe(translated!.summary);
     expect(answer.url).toContain('/en/');
-    expect(answer.url).toBe(
-      casePath({ slug: translated!.slug, block: translated!.block, locale: translated!.locale }),
-    );
+    expect(answer.url).toBe(casePath({ slug: translated!.slug, block: translated!.block, locale: translated!.locale }));
   });
 
   it('never returns clientName for a confidential case', async () => {

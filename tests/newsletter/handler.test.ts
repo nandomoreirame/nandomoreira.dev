@@ -24,11 +24,7 @@ describe('handleSubscribe', () => {
     const response = await handleSubscribe(form({ email: 'fulano@exemplo.com' }), d);
     expect(response.status).toBe(303);
     expect(location(response)).toBe('/posts?assinatura=ok#novidades');
-    expect(d.store.save).toHaveBeenCalledWith(
-      'fulano@exemplo.com',
-      new Date('2026-10-17T12:00:00Z'),
-      'pt-BR',
-    );
+    expect(d.store.save).toHaveBeenCalledWith('fulano@exemplo.com', new Date('2026-10-17T12:00:00Z'), 'pt-BR');
   });
 
   it('rejects an invalid email without storing', async () => {

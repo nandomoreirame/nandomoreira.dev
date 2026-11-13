@@ -43,11 +43,7 @@ const staticPage = (path: string, title: string, eyebrow: string, art: ArtMotif)
 export const englishOgPages = async (live: boolean = EN_PUBLISHED): Promise<OgPage[]> => {
   if (!live) return [];
 
-  const [profile, projects, posts] = await Promise.all([
-    getProfile('en'),
-    getAllProjects('en'),
-    getAllPosts('en'),
-  ]);
+  const [profile, projects, posts] = await Promise.all([getProfile('en'), getAllProjects('en'), getAllPosts('en')]);
   const t = messagesFor('en');
   const contactTitle = t.contactPage.description.replace(/\.\s.*$/, '');
 

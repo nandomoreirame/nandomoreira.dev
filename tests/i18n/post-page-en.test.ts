@@ -10,7 +10,9 @@ describe('English post page', () => {
   it('renders the English body with English chrome and a reciprocal pair', async () => {
     const entry = await getPostEntry(EN_SLUG, 'en');
     expect(entry).toBeDefined();
-    const html = await (await AstroContainer.create()).renderToString(PostPage, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(PostPage, {
       props: { entry, locale: 'en' },
       request: new Request(`https://nandomoreira.dev/en/${EN_SLUG}`),
     });

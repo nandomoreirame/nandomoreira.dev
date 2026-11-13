@@ -14,8 +14,7 @@ type NewsletterCopy = {
 };
 
 /** Confirm-page and confirmation-mail copy from the dictionary (REQ-008). */
-export const newsletterConfirmCopy = (locale: Locale = 'pt-BR') =>
-  messagesFor(locale).newsletterConfirm;
+export const newsletterConfirmCopy = (locale: Locale = 'pt-BR') => messagesFor(locale).newsletterConfirm;
 
 type NewsletterOutcome = { role: 'status' | 'alert'; text: string };
 
@@ -73,9 +72,7 @@ const NEWSLETTER_OUTCOMES_EN: Record<SubscribeOutcome, NewsletterOutcome> = {
 export const newsletterCopy = (locale: Locale = 'pt-BR'): NewsletterCopy =>
   locale === 'en' ? NEWSLETTER_COPY_EN : NEWSLETTER_COPY_PT;
 
-export const newsletterOutcomes = (
-  locale: Locale = 'pt-BR',
-): Record<SubscribeOutcome, NewsletterOutcome> =>
+export const newsletterOutcomes = (locale: Locale = 'pt-BR'): Record<SubscribeOutcome, NewsletterOutcome> =>
   locale === 'en' ? NEWSLETTER_OUTCOMES_EN : NEWSLETTER_OUTCOMES_PT;
 
 /** pt-BR card copy kept for callers that do not pass a locale yet. */

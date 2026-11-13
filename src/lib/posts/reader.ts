@@ -53,7 +53,7 @@ export const readerSettings = (locale: Locale = 'pt-BR'): ReaderSetting[] => {
       legend: t.sizeLegend,
       kind: 'stepper',
       initial: '18',
-      choices: range(14, 28, 2).map((px) => ({ value: String(px), label: `${px}px` })),
+      choices: range(14, 28, 2).map(px => ({ value: String(px), label: `${px}px` })),
     },
     {
       // Tenths of the text size; the panel shows the result in px (global.css).
@@ -61,7 +61,7 @@ export const readerSettings = (locale: Locale = 'pt-BR'): ReaderSetting[] => {
       legend: t.leadingLegend,
       kind: 'stepper',
       initial: '17',
-      choices: range(13, 21, 1).map((tenths) => ({
+      choices: range(13, 21, 1).map(tenths => ({
         value: String(tenths),
         label: leadingLabel(tenths, locale),
       })),
@@ -71,7 +71,7 @@ export const readerSettings = (locale: Locale = 'pt-BR'): ReaderSetting[] => {
       legend: t.widthLegend,
       kind: 'stepper',
       initial: '640',
-      choices: range(480, 960, 80).map((px) => ({ value: String(px), label: `${px}px` })),
+      choices: range(480, 960, 80).map(px => ({ value: String(px), label: `${px}px` })),
     },
   ];
 };

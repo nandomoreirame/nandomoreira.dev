@@ -66,7 +66,9 @@ describe('English pages carry no Portuguese interface text', () => {
   });
 
   it.each(PAGES)('%s', async (url, component, props) => {
-    const html = await (await AstroContainer.create()).renderToString(component as never, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(component as never, {
       props: { ...props, locale: 'en' },
       request: new Request(`https://nandomoreira.dev${url}`),
     });

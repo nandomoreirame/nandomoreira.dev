@@ -125,16 +125,12 @@ const toProfiles = (profile: Profile): ResumeProfile[] =>
  * link first keeps the strongest evidence at the top without hiding the rest
  * (REQ-010).
  */
-const evidenceRank = (project: LocalizedProject): number =>
-  project.liveUrl ? 0 : project.repoUrl ? 1 : 2;
+const evidenceRank = (project: LocalizedProject): number => (project.liveUrl ? 0 : project.repoUrl ? 1 : 2);
 
 const projectUrl = (site: URL, project: LocalizedProject): string =>
   project.liveUrl ??
   project.repoUrl ??
-  absoluteUrl(
-    site,
-    casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }),
-  );
+  absoluteUrl(site, casePath({ slug: project.slug, block: project.block, locale: project.locale ?? 'pt-BR' }));
 
 const toProject = (site: URL, project: LocalizedProject): ResumeProject => ({
   name: project.title,

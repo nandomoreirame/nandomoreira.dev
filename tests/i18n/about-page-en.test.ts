@@ -6,9 +6,7 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 const render = async (locale: string) =>
   (await AstroContainer.create()).renderToString(AboutPage, {
     props: { locale },
-    request: new Request(
-      locale === 'en' ? 'https://nandomoreira.dev/en/about' : 'https://nandomoreira.dev/sobre',
-    ),
+    request: new Request(locale === 'en' ? 'https://nandomoreira.dev/en/about' : 'https://nandomoreira.dev/sobre'),
   });
 
 describe('AboutPage', () => {
@@ -26,9 +24,7 @@ describe('AboutPage', () => {
     // other language; this task owns the about body inside <main>.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
     // Proper names that legitimately carry Portuguese particles or a .com TLD.
-    const cleaned = main
-      .replace(/Colégio Estadual do Paraná/g, ' ')
-      .replace(/MalaPronta\.com/gi, ' ');
+    const cleaned = main.replace(/Colégio Estadual do Paraná/g, ' ').replace(/MalaPronta\.com/gi, ' ');
     expect(ptLeftovers(cleaned)).toEqual([]);
   });
 

@@ -49,10 +49,10 @@ const clientNameFromDisk = (slug: string): string | undefined => {
 };
 
 describe('translated cases', () => {
-  it.each(BATCHES)('%s is served in English with its pt-BR structure', async (slug) => {
+  it.each(BATCHES)('%s is served in English with its pt-BR structure', async slug => {
     const [pt, en] = await Promise.all([getAllProjects(), getAllProjects('en')]);
-    const source = pt.find((project) => project.slug === slug)!;
-    const translated = en.find((project) => project.slug === slug);
+    const source = pt.find(project => project.slug === slug)!;
+    const translated = en.find(project => project.slug === slug);
     expect(translated).toBeDefined();
     expect(translated!.summary).not.toBe(source.summary);
     expect(translated!.problem).not.toBe(source.problem);
@@ -61,30 +61,27 @@ describe('translated cases', () => {
 });
 
 describe('confidential English case pages (REQ-017)', () => {
-  it.each(CONFIDENTIAL_BATCH)(
-    'English CasePage for %s never shows the source clientName',
-    async (slug) => {
-      const clientName = clientNameFromDisk(slug);
-      const [ptProjects, enProjects] = await Promise.all([getAllProjects(), getAllProjects('en')]);
-      const project = enProjects.find((entry) => entry.slug === slug);
-      const pt = ptProjects.find((entry) => entry.slug === slug);
-      expect(project).toBeDefined();
-      expect(pt).toBeDefined();
-      // Redaction replaces the name with a placeholder; English must match pt-BR.
-      expect(project!.clientName).toBe(pt!.clientName);
-      expect(project!.confidentialMetrics).toBeUndefined();
+  it.each(CONFIDENTIAL_BATCH)('English CasePage for %s never shows the source clientName', async slug => {
+    const clientName = clientNameFromDisk(slug);
+    const [ptProjects, enProjects] = await Promise.all([getAllProjects(), getAllProjects('en')]);
+    const project = enProjects.find(entry => entry.slug === slug);
+    const pt = ptProjects.find(entry => entry.slug === slug);
+    expect(project).toBeDefined();
+    expect(pt).toBeDefined();
+    // Redaction replaces the name with a placeholder; English must match pt-BR.
+    expect(project!.clientName).toBe(pt!.clientName);
+    expect(project!.confidentialMetrics).toBeUndefined();
 
-      const collection = collectionOfBlock(project!.block);
-      const html = await (
-        await AstroContainer.create()
-      ).renderToString(CasePage, {
-        props: { project, collection, locale: 'en' },
-        request: new Request(`https://nandomoreira.dev/en/${collection}/${slug}`),
-      });
+    const collection = collectionOfBlock(project!.block);
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(CasePage, {
+      props: { project, collection, locale: 'en' },
+      request: new Request(`https://nandomoreira.dev/en/${collection}/${slug}`),
+    });
 
-      if (clientName) {
-        expect(html).not.toMatch(clientPattern(clientName));
-      }
-    },
-  );
+    if (clientName) {
+      expect(html).not.toMatch(clientPattern(clientName));
+    }
+  });
 });

@@ -10,20 +10,22 @@ describe('palette copy by locale (REQ-024)', () => {
   it('keeps the pt-BR strings on the current export', () => {
     expect(paletteCopy('pt-BR').groups.general).toBe('Geral');
     expect(PALETTE_COPY.groups.general).toBe('Geral');
-    expect(GO_TARGETS.map((target) => target.path)).toContain('/sobre');
+    expect(GO_TARGETS.map(target => target.path)).toContain('/sobre');
   });
 
   it('translates the chrome and keeps paths', () => {
     const copy = paletteCopy('en');
     expect(ptLeftovers(`<p>${JSON.stringify(copy)}</p>`)).toEqual([]);
     expect(copy.groups.general).not.toBe('Geral');
-    expect(GO_TARGETS.map((target) => target.key).sort()).toEqual(
+    expect(GO_TARGETS.map(target => target.key).sort()).toEqual(
       ['b', 'c', 'h', 'l', 'm', 'n', 'p', 's', 'u', 'v'].sort(),
     );
   });
 
   it('renders the dialog in English', async () => {
-    const html = await (await AstroContainer.create()).renderToString(CommandPalette, {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(CommandPalette, {
       props: { locale: 'en' },
     });
     expect(ptLeftovers(html)).toEqual([]);
@@ -38,7 +40,7 @@ describe('palette copy by locale (REQ-024)', () => {
       services: [],
       landingUrl: 'https://contrate.nandomoreira.dev/',
     });
-    const about = index.find((item) => item.path === '/sobre');
+    const about = index.find(item => item.path === '/sobre');
     expect(about?.title).toBe('About');
     expect(about?.path).toBe('/sobre');
   });

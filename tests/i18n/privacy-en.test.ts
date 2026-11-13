@@ -15,9 +15,7 @@ const render = async (locale: string) =>
 
 describe('English privacy policy', () => {
   it('has the same sections and ids in the same order', () => {
-    expect(privacySectionsEn.map((section) => section.id)).toEqual(
-      privacySections.map((section) => section.id),
-    );
+    expect(privacySectionsEn.map(section => section.id)).toEqual(privacySections.map(section => section.id));
     expect(privacySectionsEn).toHaveLength(privacySections.length);
   });
 
@@ -30,9 +28,7 @@ describe('English privacy policy', () => {
     expect(POLICY_UPDATED_AT).toBe('2026-11-04');
     for (let i = 0; i < privacySections.length; i++) {
       expect(privacySectionsEn[i]!.title).not.toBe(privacySections[i]!.title);
-      expect(privacySectionsEn[i]!.paragraphs.join('\n')).not.toBe(
-        privacySections[i]!.paragraphs.join('\n'),
-      );
+      expect(privacySectionsEn[i]!.paragraphs.join('\n')).not.toBe(privacySections[i]!.paragraphs.join('\n'));
     }
   });
 
@@ -56,10 +52,7 @@ describe('PrivacyPage', () => {
     // other language; this task owns the privacy body inside <main>.
     // UpdatedAt date copy is still pt-BR until a later pass.
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
-    const withoutChrome = main.replace(
-      /<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i,
-      '',
-    );
+    const withoutChrome = main.replace(/<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i, '');
     // Domain examples keep a .com TLD that is not Portuguese.
     const cleaned = withoutChrome.replace(/linkedin\.com/gi, ' ');
     expect(ptLeftovers(cleaned)).toEqual([]);

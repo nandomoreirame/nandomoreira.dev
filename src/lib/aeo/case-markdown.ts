@@ -32,10 +32,7 @@ export const buildCaseMarkdown = ({ site, project, locale }: Input): string => {
   const resolvedLocale = locale ?? project.locale ?? 'pt-BR';
   const labels = LABELS[resolvedLocale];
   const collection = collectionOfBlock(project.block);
-  const url = absoluteUrl(
-    site,
-    casePath({ slug: project.slug, block: project.block, locale: resolvedLocale }),
-  );
+  const url = absoluteUrl(site, casePath({ slug: project.slug, block: project.block, locale: resolvedLocale }));
 
   const lines: string[] = [
     '---',

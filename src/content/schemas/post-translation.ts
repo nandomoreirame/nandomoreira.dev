@@ -12,7 +12,7 @@ export const postTranslationSchema = z
       .string()
       .min(1)
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug must be kebab-case')
-      .refine((slug) => slug !== 'ia' && slug !== 'en', 'slug "ia" and "en" are reserved'),
+      .refine(slug => slug !== 'ia' && slug !== 'en', 'slug "ia" and "en" are reserved'),
     /** pt-BR slug of the source post. */
     translationOf: z.string().min(1),
     title: z.string().min(1),

@@ -43,7 +43,5 @@ const COLLECTION_COPY_EN: Record<CatalogCollection, CollectionCopy> = {
 };
 
 /** Header and meta copy of a collection listing, by locale. */
-export const collectionCopy = (
-  collection: CatalogCollection,
-  locale: Locale = 'pt-BR',
-): CollectionCopy => (locale === 'en' ? COLLECTION_COPY_EN : COLLECTION_COPY)[collection];
+export const collectionCopy = (collection: CatalogCollection, locale: Locale = 'pt-BR'): CollectionCopy =>
+  (locale === 'en' ? COLLECTION_COPY_EN : COLLECTION_COPY)[collection];

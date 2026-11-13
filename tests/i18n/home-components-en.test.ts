@@ -132,9 +132,7 @@ describe('home components keep pt-BR HTML (REQ-002)', () => {
   });
 
   it('Contact', async () => {
-    await expect(await render(Contact, { contacts })).toMatchFileSnapshot(
-      '../__snapshots__/home-contact.pt.html',
-    );
+    await expect(await render(Contact, { contacts })).toMatchFileSnapshot('../__snapshots__/home-contact.pt.html');
   });
 
   it('About', async () => {
@@ -160,9 +158,7 @@ describe('home components keep pt-BR HTML (REQ-002)', () => {
   });
 
   it('AgentBrief', async () => {
-    await expect(await render(AgentBrief, { brief })).toMatchFileSnapshot(
-      '../__snapshots__/home-agent-brief.pt.html',
-    );
+    await expect(await render(AgentBrief, { brief })).toMatchFileSnapshot('../__snapshots__/home-agent-brief.pt.html');
   });
 
   it('AgentBriefWindow', async () => {
@@ -180,7 +176,7 @@ describe('home components in English (REQ-003, REQ-008)', () => {
 
   it('Services', async () => {
     const profile = await getProfile('en');
-    const projects = (await getAllProjects()).map((p) => ({ slug: p.slug, block: p.block }));
+    const projects = (await getAllProjects()).map(p => ({ slug: p.slug, block: p.block }));
     const html = await render(Services, {
       locale: 'en',
       services: profile.services,

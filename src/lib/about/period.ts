@@ -20,11 +20,7 @@ const monthYear = (isoDate: string, locale: Locale): string => {
 };
 
 /** An absent end date means the position is current, and the page says so. */
-export const formatPeriod = (
-  startDate: string,
-  endDate?: string,
-  locale: Locale = 'pt-BR',
-): string =>
+export const formatPeriod = (startDate: string, endDate?: string, locale: Locale = 'pt-BR'): string =>
   `${monthYear(startDate, locale)} – ${endDate ? monthYear(endDate, locale) : CURRENT[locale]}`;
 
 /** Earliest start year in the history, or undefined when there is none. */

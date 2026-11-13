@@ -14,9 +14,7 @@ const fetchImpl = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(a
 const render = async (locale: string) =>
   (await AstroContainer.create()).renderToString(NowPage, {
     props: { locale },
-    request: new Request(
-      locale === 'en' ? 'https://nandomoreira.dev/en/now' : 'https://nandomoreira.dev/now',
-    ),
+    request: new Request(locale === 'en' ? 'https://nandomoreira.dev/en/now' : 'https://nandomoreira.dev/now'),
   });
 
 describe('NowPage', () => {
@@ -48,10 +46,7 @@ describe('NowPage', () => {
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
     const cleaned = main
       .replace(/<section\b[^>]*class="[^"]*\bmy-3xl\b[^"]*"[^>]*>[\s\S]*?<\/section>/i, '')
-      .replace(
-        /<a\b[^>]*data-availability-card[\s\S]*?<\/a>|<div\b[^>]*data-availability-card[\s\S]*?<\/div>/i,
-        '',
-      )
+      .replace(/<a\b[^>]*data-availability-card[\s\S]*?<\/a>|<div\b[^>]*data-availability-card[\s\S]*?<\/div>/i, '')
       .replace(/<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i, '')
       .replace(/<div\b[^>]*\bdata-github-card\b[^>]*>[\s\S]*?<\/div>/i, '')
       .replace(/<section\b[^>]*aria-labelledby="foco"[^>]*>[\s\S]*?<\/section>/i, '')

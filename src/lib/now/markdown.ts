@@ -88,16 +88,12 @@ export const nowMarkdown = ({
         });
   const work: string[] = [];
   if (data.contributions.state === 'ok') {
-    work.push(
-      t.contributionsYear(data.contributions.items.total.toLocaleString(locale === 'en' ? 'en-US' : 'pt-BR')),
-    );
+    work.push(t.contributionsYear(data.contributions.items.total.toLocaleString(locale === 'en' ? 'en-US' : 'pt-BR')));
   }
   const commit = data.lastCommit;
   if (commit && !leaksToMachine(commit.message) && !leaksToMachine(commit.repo)) {
     const day = toLongDate(saoPauloDay(new Date(commit.committedAt)), locale);
-    work.push(
-      t.lastCommit(machineText(commit.message), commit.url, machineText(commit.repo), day),
-    );
+    work.push(t.lastCommit(machineText(commit.message), commit.url, machineText(commit.repo), day));
   }
   if (work.length > 0 && projects.length > 0) work.push('');
   pushSection(lines, t.sections.working, [...work, ...projects], t.empty);

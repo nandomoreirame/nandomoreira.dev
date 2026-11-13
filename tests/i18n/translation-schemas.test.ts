@@ -21,7 +21,7 @@ describe('postTranslationSchema', () => {
     expect(postTranslationSchema.safeParse({ ...post, art: 'wave' }).success).toBe(false);
   });
 
-  it.each(['ia', 'en', 'Not-Kebab', ''])('rejects the slug %j (REQ-006)', (slug) => {
+  it.each(['ia', 'en', 'Not-Kebab', ''])('rejects the slug %j (REQ-006)', slug => {
     expect(postTranslationSchema.safeParse({ ...post, slug }).success).toBe(false);
   });
 
@@ -37,7 +37,9 @@ describe('projectTranslationSchema', () => {
   const project = { translationOf: 'forja', summary: 's', problem: 'p', decisions: 'd', outcome: 'o' };
 
   it('accepts text fields, ordered alts and shortcut actions', () => {
-    expect(projectTranslationSchema.parse({ ...project, imageAlts: ['a'], shortcutActions: ['b'] })).toMatchObject(project);
+    expect(projectTranslationSchema.parse({ ...project, imageAlts: ['a'], shortcutActions: ['b'] })).toMatchObject(
+      project,
+    );
   });
 
   it('rejects structural and confidential-identity fields', () => {

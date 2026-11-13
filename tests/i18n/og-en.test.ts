@@ -5,7 +5,7 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 describe('English share cards', () => {
   it('has one card per English static page, keyed under en/', async () => {
     const pages = await englishOgPages(true);
-    const keys = pages.map((page) => page.key);
+    const keys = pages.map(page => page.key);
     expect(keys).toEqual(
       expect.arrayContaining([
         'en',

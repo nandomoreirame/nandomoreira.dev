@@ -98,10 +98,7 @@ const loadAllEntries = async (): Promise<PostEntry[]> => {
 
 /** English overlays merged onto pt-BR sources (drafts included for validation). */
 const loadAllEntriesEn = async (): Promise<PostEntry[]> => {
-  const [sourceEntries, overlayEntries] = await Promise.all([
-    getCollection('posts'),
-    getCollection('postsEn'),
-  ]);
+  const [sourceEntries, overlayEntries] = await Promise.all([getCollection('posts'), getCollection('postsEn')]);
   const sources = sourceEntries.map(entry => entry.data);
   const overlays = overlayEntries.map(entry => entry.data);
 
@@ -129,8 +126,7 @@ const toSummary = (entry: PostEntry): PostSummary => ({
   readingMinutes: readingMinutes(entry.body ?? ''),
 });
 
-const load = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> =>
-  (await loadEntries(locale)).map(toSummary);
+const load = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => (await loadEntries(locale)).map(toSummary);
 
 /** All visible posts (current + archived; drafts only in dev). Used by sitemap, RSS, detail routes. */
 export const getAllPosts = async (locale: Locale = 'pt-BR'): Promise<PostSummary[]> => load(locale);
@@ -159,8 +155,7 @@ export const getPost = async (slug: string, locale: Locale = 'pt-BR'): Promise<P
   (await load(locale)).find(post => post.slug === slug);
 
 /** Full collection entry for body rendering; drafts only in dev. */
-export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> =>
-  loadEntries(locale);
+export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostEntry[]> => loadEntries(locale);
 
 export const getPostEntry = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostEntry | undefined> =>
   (await loadEntries(locale)).find(entry => entry.data.slug === slug);

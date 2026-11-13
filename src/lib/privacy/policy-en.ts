@@ -27,7 +27,7 @@ export const privacySectionsEn: PolicySection[] = [
     paragraphs: [
       'To know which posts and channels bring readers, the server counts visits with no script and no cookie. On pages built on each request, the count happens in the request itself; on posts and cases, which are static files, a transparent 1×1 pixel image served by this domain does the same count.',
       'For each visit I store the page, the time, the site you came from (domain only, such as linkedin.com), the utm_source, utm_medium, and utm_campaign parameters when the link carries them, the country reported by Cloudflare, the approximate city and state it derives from your IP (those two only in each visit record, deleted in 30 days, never in the totals), and the visitor type (person, AI agent, or bot).',
-      'To tie the pages of the same visit without a cookie, I compute a code from your IP and your browser, mixed with a secret key that changes every day. The IP is not stored, and one day\'s code does not link to the next day\'s. If you submit the form or download the résumé, the notice I receive includes the pages you saw that day.',
+      "To tie the pages of the same visit without a cookie, I compute a code from your IP and your browser, mixed with a secret key that changes every day. The IP is not stored, and one day's code does not link to the next day's. If you submit the form or download the résumé, the notice I receive includes the pages you saw that day.",
       'Clicks on my contacts and on project links, and the résumé download, go through a /go/ address on this site before reaching the destination, so I know which ones are used.',
       'Each visit record is deleted in 30 days. After that only daily totals remain, with no visitor code, for 24 months. Everything lives in Firestore, on Google Cloud, in the United States. Legal basis: legitimate interest (art. 7º, IX of the LGPD).',
     ],
@@ -57,7 +57,7 @@ export const privacySectionsEn: PolicySection[] = [
     title: 'Name, company, and e-mail before downloading the résumé',
     paragraphs: [
       'Before downloading the résumé, the /curriculo page opens a dialog that asks for name, company, and e-mail, all optional. They only let me know who downloaded it and follow up if it makes sense (legitimate interest, art. 7º, IX of the LGPD). Nothing joins a list, and nothing receives a newsletter.',
-      'Every download, with or without those details, goes through /go/curriculo and enters the visit counting described above as a download, tied to that day\'s code, with no name or e-mail. If you skip, that is all that remains.',
+      "Every download, with or without those details, goes through /go/curriculo and enters the visit counting described above as a download, tied to that day's code, with no name or e-mail. If you skip, that is all that remains.",
       'If you leave a name, company, or e-mail, they live in Firestore, with the date, and a copy reaches my e-mail through Resend. I never store the IP or the user agent of that submission. The record is deleted automatically 12 months later, and the copy in my e-mail follows the same period.',
       'If you leave an e-mail, it gets an automatic confirmation through Resend, thanking you for the download. It does not repeat anything you typed beyond the first name, and the e-mail does not join any list.',
     ],
@@ -83,7 +83,7 @@ export const privacySectionsEn: PolicySection[] = [
     id: 'comentarios',
     title: 'Comments on posts',
     paragraphs: [
-      'On current blog posts, the comments section is Giscus. To comment, you sign in with your GitHub account. The comment stays public on GitHub Discussions, in that post\'s thread, in the nandomoreirame/nandomoreira.dev repository.',
+      "On current blog posts, the comments section is Giscus. To comment, you sign in with your GitHub account. The comment stays public on GitHub Discussions, in that post's thread, in the nandomoreirame/nandomoreira.dev repository.",
       'Who processes the published comment is GitHub, under the terms of the GitHub privacy statement. I moderate the threads there. The post text stays on this site and can be read without GitHub.',
     ],
     links: [
@@ -98,7 +98,7 @@ export const privacySectionsEn: PolicySection[] = [
     title: 'Who the data is shared with',
     paragraphs: [
       'Nobody buys, receives, or uses your data for marketing. Those who process data on my behalf are Google Cloud (hosting, database, and logs) and Resend (sending the notification e-mail). Comments use two external services, both in the United States: Giscus (giscus.app), which draws the section, and GitHub, which stores the public threads.',
-      'Google Cloud and Resend operate in the United States. That transfer follows the request you made when contacting me or downloading the résumé (art. 33 of the LGPD). When the comments section nears the screen, the browser requests the script at https://giscus.app/client.js. That request sends Giscus the connection metadata, such as the IP address, the browser, and the open page. The comment you publish goes to GitHub Discussions and stays public in that post\'s thread.',
+      "Google Cloud and Resend operate in the United States. That transfer follows the request you made when contacting me or downloading the résumé (art. 33 of the LGPD). When the comments section nears the screen, the browser requests the script at https://giscus.app/client.js. That request sends Giscus the connection metadata, such as the IP address, the browser, and the open page. The comment you publish goes to GitHub Discussions and stays public in that post's thread.",
     ],
   },
   {

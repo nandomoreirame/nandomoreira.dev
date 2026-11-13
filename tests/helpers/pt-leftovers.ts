@@ -76,5 +76,5 @@ export const ptLeftovers = (html: string): string[] => {
   const words = visibleText(html)
     .toLowerCase()
     .split(/[^\p{L}]+/u);
-  return [...new Set(words.filter((word) => MARKERS.includes(word)))];
+  return [...new Set(words.filter(word => MARKERS.includes(word)))];
 };

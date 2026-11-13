@@ -52,10 +52,8 @@ export const en: Messages = {
     newer: '← Newer',
     older: 'Older →',
     pageWord: 'Page',
-    pageRest: (totalPages: number, range: string, total: number) =>
-      `of ${totalPages} (${range} of ${total})`,
-    articleRange: (first: number, last: number) =>
-      first === last ? `article ${first}` : `articles ${first}-${last}`,
+    pageRest: (totalPages: number, range: string, total: number) => `of ${totalPages} (${range} of ${total})`,
+    articleRange: (first: number, last: number) => (first === last ? `article ${first}` : `articles ${first}-${last}`),
     upcomingDrafts: 'Drafts in progress',
     toc: 'Table of contents',
     tocToggle: 'Post table of contents',
@@ -145,8 +143,7 @@ export const en: Messages = {
     resumeCta: 'Download resume (PDF)',
     results: {
       title: 'Results',
-      description:
-        'What changed, measured in the operations I worked on. Approximations are stated in the context.',
+      description: 'What changed, measured in the operations I worked on. Approximations are stated in the context.',
     },
     help: {
       title: 'How I can help',
@@ -157,8 +154,7 @@ export const en: Messages = {
     },
     education: {
       title: 'Education',
-      line: (studyType: string, area: string, institution: string) =>
-        `${studyType} in ${area}, ${institution}`,
+      line: (studyType: string, area: string, institution: string) => `${studyType} in ${area}, ${institution}`,
     },
     stack: 'Stack',
     portraitAlt: (name: string) =>
@@ -194,8 +190,7 @@ export const en: Messages = {
     budgetPreferNot: 'Prefer not to say for now',
     interestLegend: 'I am interested in',
     message: 'Message',
-    messagePlaceholder:
-      'What you are building, what success looks like for you and when you need it.',
+    messagePlaceholder: 'What you are building, what success looks like for you and when you need it.',
     honeypot: 'Leave this field empty',
     submit: 'Send message',
     preferEmail: 'I prefer email',
@@ -273,19 +268,15 @@ export const en: Messages = {
     copyCommandFor: (name: string) => `Copy the command for ${name}`,
     toolsHeading: 'What the agent can look up',
     briefingHeading: 'To propose a project',
-    briefingBeforeCode:
-      'The tools are read only. To send a briefing, the agent makes a',
+    briefingBeforeCode: 'The tools are read only. To send a briefing, the agent makes a',
     briefingBetweenCodeAndAgents: ', described in the',
     briefingAgentsGuide: 'agent guide',
     briefingBetweenAgentsAndLlms: '. The site summary for models is in',
     tools: {
-      get_profile:
-        'Who I am: title, bio, positioning, stack, work fronts and availability.',
-      check_availability:
-        'Whether I am open to new work, with the detail and the date of the last update.',
+      get_profile: 'Who I am: title, bio, positioning, stack, work fronts and availability.',
+      check_availability: 'Whether I am open to new work, with the detail and the date of the last update.',
       list_projects: 'The published cases, with an optional filter by collection: portfolio or lab.',
-      get_project:
-        'A full case: the problem, the decisions, the outcome and the links that prove it.',
+      get_project: 'A full case: the problem, the decisions, the outcome and the links that prove it.',
       get_resume: 'The full resume in the JSON Resume standard, the same as /api/resume.json.',
     },
   },
@@ -300,8 +291,7 @@ export const en: Messages = {
   },
   privacyPage: {
     title: 'Privacy policy',
-    description:
-      'What this site collects, how long it keeps it, and how to ask for your data to be deleted.',
+    description: 'What this site collects, how long it keeps it, and how to ask for your data to be deleted.',
     heading: 'Privacy policy',
     turnstileHeading: 'Anti-bot verification',
     turnstileBody:
@@ -333,7 +323,7 @@ export const en: Messages = {
     progressIn: (name: string) => `Progress in ${name}`,
     whatIsHeading: 'What is a Now page?',
     whatIsBefore:
-      'A Now page says what the person is focused on right now, and not everything they have already done. The idea is Derek Sivers\', and ',
+      "A Now page says what the person is focused on right now, and not everything they have already done. The idea is Derek Sivers', and ",
     whatIsLink: 'nownownow.com',
     whatIsAfter: ' gathers the ones that exist.',
     availability: (detail: string) => `Availability: ${detail}`,

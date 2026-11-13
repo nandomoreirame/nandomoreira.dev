@@ -5,12 +5,15 @@ import { ptLeftovers } from '../helpers/pt-leftovers';
 
 const fences = (body: string) => body.match(/(```|~~~)[\s\S]*?\1/g) ?? [];
 const headings = (body: string) =>
-  body.replace(/(```|~~~)[\s\S]*?\1/g, '').match(/^#{2,3} /gm)?.map((mark) => mark.trim()) ?? [];
-const images = (body: string) => [...body.matchAll(/!\[[^\]]*\]\(([^)\s]+)/g)].map((match) => match[1]);
+  body
+    .replace(/(```|~~~)[\s\S]*?\1/g, '')
+    .match(/^#{2,3} /gm)
+    ?.map(mark => mark.trim()) ?? [];
+const images = (body: string) => [...body.matchAll(/!\[[^\]]*\]\(([^)\s]+)/g)].map(match => match[1]);
 const externalLinks = (body: string) =>
   [...body.replace(/(```|~~~)[\s\S]*?\1/g, '').matchAll(/(?<!!)\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/g)]
-    .map((match) => match[1]!)
-    .filter((href) => !/nandomoreira\.dev/.test(href))
+    .map(match => match[1]!)
+    .filter(href => !/nandomoreira\.dev/.test(href))
     .sort();
 const prose = (text: string) => text.replace(/(```|~~~)[\s\S]*?\1/g, ' ').replace(/`[^`]*`/g, ' ');
 
@@ -18,7 +21,7 @@ const pairs = postPairs();
 // Pairs known at test time, for the internal-link rule (REQ-010).
 const linkPairs = pairs.map(({ pt, en }) => ({ 'pt-BR': `/${pt.field('slug')}`, en: `/en/${en.field('slug')}` }));
 
-describe.each(pairs.map((pair) => [pair.en.file, pair] as const))('%s', (_file, { pt, en }) => {
+describe.each(pairs.map(pair => [pair.en.file, pair] as const))('%s', (_file, { pt, en }) => {
   it('has the same headings (REQ-007)', () => {
     expect(headings(en.body)).toEqual(headings(pt.body));
   });
@@ -58,13 +61,10 @@ describe('English case files', () => {
       expect(files).toHaveLength(0);
     });
   } else {
-    it.each(files.map((file) => [file.file, file] as const))(
-      '%s has no dash and no Portuguese left',
-      (_file, file) => {
-        expect(file.frontmatter).not.toMatch(/[–—]/);
-        expect(ptLeftovers(`<p>${file.frontmatter}</p>`).length).toBeLessThanOrEqual(3);
-      },
-    );
+    it.each(files.map(file => [file.file, file] as const))('%s has no dash and no Portuguese left', (_file, file) => {
+      expect(file.frontmatter).not.toMatch(/[–—]/);
+      expect(ptLeftovers(`<p>${file.frontmatter}</p>`).length).toBeLessThanOrEqual(3);
+    });
   }
 });
 

@@ -23,11 +23,11 @@ export const STATIC_ROUTES: readonly RoutePair[] = [
 ];
 
 export const staticCounterpart = (path: string): RoutePair | undefined =>
-  STATIC_ROUTES.find((route) => route['pt-BR'] === path || route.en === path);
+  STATIC_ROUTES.find(route => route['pt-BR'] === path || route.en === path);
 
 /** The path of a static page in `locale`, from its pt-BR path. Throws on a typo. */
 export const routeFor = (ptPath: string, locale: Locale): string => {
-  const pair = STATIC_ROUTES.find((route) => route['pt-BR'] === ptPath);
+  const pair = STATIC_ROUTES.find(route => route['pt-BR'] === ptPath);
   if (!pair) throw new Error(`No static route for ${ptPath}`);
   return pair[locale];
 };

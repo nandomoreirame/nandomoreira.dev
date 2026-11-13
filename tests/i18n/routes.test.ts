@@ -19,8 +19,8 @@ describe('STATIC_ROUTES', () => {
   });
 
   it('has no duplicate path on either side', () => {
-    const pt = STATIC_ROUTES.map((route) => route['pt-BR']);
-    const en = STATIC_ROUTES.map((route) => route.en);
+    const pt = STATIC_ROUTES.map(route => route['pt-BR']);
+    const en = STATIC_ROUTES.map(route => route.en);
     expect(new Set(pt).size).toBe(pt.length);
     expect(new Set(en).size).toBe(en.length);
   });
