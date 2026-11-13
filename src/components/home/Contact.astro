@@ -1,14 +1,18 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { contactIconFor } from '../../lib/ui/contact-icons';
 import SectionHeader from '../ui/SectionHeader.astro';
 
 interface Props {
   contacts: Array<{ kind: string; value: string }>;
+  locale?: Locale;
 }
 
-const { contacts } = Astro.props;
+const { contacts, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.contact;
 
 if (contacts.length === 0) {
   throw new Error(
@@ -17,7 +21,7 @@ if (contacts.length === 0) {
 }
 
 const LABELS: Record<string, string> = {
-  email: 'E-mail',
+  email: t.email,
   github: 'GitHub',
   linkedin: 'LinkedIn',
   site: 'Site',
@@ -34,10 +38,10 @@ const LABELS: Record<string, string> = {
   {/* The direct channels stay first here: the PRD requires at least one direct
       contact with no mandatory form. /contato offers the form as an option. */}
   <SectionHeader
-    title="Contato"
+    title={t.title}
     level={2}
     index={5}
-    description="Escreva direto, ou use o formulário em /contato."
+    description={t.description}
   />
 
   <ul class="flex flex-wrap gap-md">

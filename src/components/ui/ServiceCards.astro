@@ -2,14 +2,19 @@
 import { Icon } from 'astro-icon/components';
 import Card from './Card.astro';
 import type { Block } from '../../content/blocks';
+import type { Locale } from '../../lib/i18n/locale';
+import { withLocale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { assertServicesHaveCases, serviceCaseHref } from '../../lib/home/services';
 
 interface Props {
   services: Array<{ title: string; description: string; caseSlug: string }>;
   projects: Array<{ slug: string; block: Block }>;
+  locale?: Locale;
 }
 
-const { services, projects } = Astro.props;
+const { services, projects, locale = 'pt-BR' } = Astro.props;
+const proofLink = messagesFor(locale).home.services.proofLink;
 
 // Glyphs from the Stitch home, keyed by the proving case. A service without a
 // mapping stays text-only rather than wearing a glyph that does not match it.
@@ -28,7 +33,8 @@ assertServicesHaveCases(
 <ul class="grid grid-cols-1 gap-lg lg:grid-cols-3">
   {
     services.map((service) => {
-      const href = serviceCaseHref(service.caseSlug, projects);
+      const caseHref = serviceCaseHref(service.caseSlug, projects);
+      const href = caseHref ? withLocale(caseHref, locale) : null;
       const icon = SERVICE_ICONS[service.caseSlug];
       return (
         <Card as="li" interactive class="flex flex-col gap-sm">
@@ -44,7 +50,7 @@ assertServicesHaveCases(
               href={href}
               class="group/proof mt-auto inline-flex min-h-11 items-center gap-xs border-t border-border pt-md font-mono text-small text-primary transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Ver o case que comprova
+              {proofLink}
               <Icon
                 name="lucide:arrow-right"
                 aria-hidden="true"

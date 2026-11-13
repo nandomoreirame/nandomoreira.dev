@@ -2,15 +2,22 @@
 import { Icon } from 'astro-icon/components';
 import type { PostSummary } from '../../lib/content';
 import { toShortDate } from '../../lib/format/date';
+import type { Locale } from '../../lib/i18n/locale';
+import { withLocale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import AiSummaryLink from './AiSummaryLink.astro';
 
 interface Props {
   post: PostSummary;
   /** Site origin, for the markdown view the AI summary links read. */
   site: string;
+  locale?: Locale;
 }
 
-const { post, site } = Astro.props;
+const { post, site, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
+const href = withLocale(`/${post.slug}`, locale);
+const markdownUrl = `${site}${withLocale(`/${post.slug}.md`, locale)}`;
 ---
 
 {/* The title link is stretched over the card by ::after, so the whole
@@ -22,11 +29,11 @@ const { post, site } = Astro.props;
 >
   <p data-post-meta class="flex flex-wrap items-center gap-sm font-mono text-small text-muted-foreground">
     {post.draft && (
-      <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">Rascunho</span>
+      <span class="inline-flex items-center rounded-sm bg-muted-foreground px-sm py-xs uppercase leading-none text-primary-foreground">{t.draft}</span>
     )}
-    <time datetime={post.date}>{toShortDate(post.date)}</time>
+    <time datetime={post.date}>{toShortDate(post.date, locale)}</time>
     <span aria-hidden="true">·</span>
-    <span>{post.readingMinutes} min de leitura</span>
+    <span>{t.readingTime(post.readingMinutes)}</span>
     {post.extras?.[0] && (
       <>
         <span aria-hidden="true" class="text-border-strong">|</span>
@@ -40,7 +47,7 @@ const { post, site } = Astro.props;
 
   <h3 class="mt-md font-serif text-h2 font-normal tracking-tight text-pretty text-foreground transition-colors group-hover:text-primary sm:text-h1">
     <a
-      href={`/${post.slug}`}
+      href={href}
       class="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-primary"
     >
       {post.title}
@@ -80,11 +87,11 @@ const { post, site } = Astro.props;
             class="relative z-10 inline-flex h-8 cursor-pointer items-center gap-xs rounded-sm border border-border bg-surface-elevated px-sm font-mono text-caption text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-border-strong hover:text-foreground group-has-checked/footer:border-primary group-has-checked/footer:text-foreground group-has-focus-visible/toggle:outline-2 group-has-focus-visible/toggle:outline-offset-2 group-has-focus-visible/toggle:outline-primary"
           >
             <Icon name="lucide:terminal" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-            Preview rápido
+            {t.quickPreview}
           </label>
         )}
         <span data-read-cue aria-hidden="true" class="inline-flex items-center gap-xs font-mono text-small text-primary">
-          Ler artigo completo
+          {t.readFull}
           <Icon
             name="lucide:arrow-right"
             class="size-4 shrink-0 transition-transform duration-(--duration-fast) ease-out group-hover:translate-x-xs"
@@ -101,7 +108,7 @@ const { post, site } = Astro.props;
       >
         <p class="flex items-center gap-sm text-micro uppercase tracking-eyebrow text-primary">
           <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full bg-current" />
-          TL;DR // PONTOS-CHAVE
+          {t.keyPoints}
         </p>
         <ul class="flex list-none flex-col gap-xs p-0 text-muted-foreground">
           {post.keyPoints.map((point) => (
@@ -114,9 +121,9 @@ const { post, site } = Astro.props;
         <div class="flex flex-wrap items-center justify-between gap-sm border-t border-border pt-sm">
           <span class="inline-flex items-center gap-xs text-muted-foreground">
             <Icon name="lucide:sparkles" aria-hidden="true" class="size-4 shrink-0 text-primary" />
-            Resumir com IA:
+            {t.summarizeWithAi}
           </span>
-          <AiSummaryLink markdownUrl={`${site}/${post.slug}.md`} />
+          <AiSummaryLink markdownUrl={markdownUrl} locale={locale} />
         </div>
       </div>
     )}

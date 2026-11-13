@@ -1,5 +1,7 @@
 ---
 import type { Block } from '../../content/blocks';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { salesLink } from '../../lib/sales/host';
 import SectionHeader from '../ui/SectionHeader.astro';
 import ServiceCards from '../ui/ServiceCards.astro';
@@ -7,23 +9,25 @@ import ServiceCards from '../ui/ServiceCards.astro';
 interface Props {
   services: Array<{ title: string; description: string; caseSlug: string }>;
   projects: Array<{ slug: string; block: Block }>;
+  locale?: Locale;
 }
 
-const { services, projects } = Astro.props;
+const { services, projects, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.services;
 ---
 
 <section id="servicos" class="pt-2xl lg:pt-3xl">
   <SectionHeader
-    title="O que eu faço por você"
+    title={t.title}
     level={2}
     index={3}
-    description="Cada frente com um case que a comprova."
+    description={t.description}
   />
 
-  <ServiceCards services={services} projects={projects} />
+  <ServiceCards services={services} projects={projects} locale={locale} />
 
   <p class="mt-lg text-small text-muted-foreground">
-    Para o seu negócio: site, loja virtual ou sistema, explicados sem jargão.{' '}
-    <a href={salesLink(Astro.url)} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Ver os serviços</a>
+    {t.salesLead}{' '}
+    <a href={salesLink(Astro.url)} class="text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.salesLink}</a>
   </p>
 </section>

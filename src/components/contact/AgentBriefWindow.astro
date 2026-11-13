@@ -1,4 +1,6 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import CopyButton from '../ui/CopyButton.astro';
 import TerminalWindow from '../ui/TerminalWindow.astro';
 import { BRIEF_TONE_CLASS, highlightBrief } from '../../lib/aeo/brief-highlight';
@@ -6,14 +8,16 @@ import { BRIEF_TONE_CLASS, highlightBrief } from '../../lib/aeo/brief-highlight'
 interface Props {
   /** Machine text from buildHireBrief; English on purpose. */
   brief: string;
+  locale?: Locale;
 }
 
-const { brief } = Astro.props;
+const { brief, locale = 'pt-BR' } = Astro.props;
 const tokens = highlightBrief(brief);
+const t = messagesFor(locale).home.agentBrief;
 ---
 
 <TerminalWindow filename="AGENTS.md">
-  <CopyButton slot="actions" target="agent-brief" label="Copiar o brief AGENTS.md" />
+  <CopyButton slot="actions" target="agent-brief" label={t.copyLabel} />
   <pre
     class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-foreground"><code id="agent-brief">{tokens.map((token) => <span class={BRIEF_TONE_CLASS[token.tone]}>{token.text}</span>)}</code></pre>
 </TerminalWindow>

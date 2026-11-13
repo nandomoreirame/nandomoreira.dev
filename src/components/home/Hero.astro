@@ -1,5 +1,7 @@
 ---
 import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
 import { paletteCopy } from '../../lib/search/copy';
 import Button from '../ui/Button.astro';
 import Portrait from '../ui/Portrait.astro';
@@ -14,6 +16,8 @@ interface Props {
 
 const { name, headline, positioning, locale = 'pt-BR' } = Astro.props;
 const copy = paletteCopy(locale);
+const t = messagesFor(locale).home.hero;
+const aboutHref = routeFor('/sobre', locale);
 ---
 
 <section id="inicio" class="relative isolate py-2xl lg:pt-hero-top lg:pb-hero-bottom">
@@ -46,7 +50,7 @@ const copy = paletteCopy(locale);
         wrapper carries the display rule (global.css, next to the hint's): the
         Button's own inline-flex utility would beat it. */}
     <div data-hero-about>
-      <Button href="/sobre" variant="ghost" arrow>Saiba mais sobre mim</Button>
+      <Button href={aboutHref} variant="ghost" arrow>{t.aboutCta}</Button>
     </div>
   </div>
 

@@ -2,12 +2,12 @@
 import { Icon } from 'astro-icon/components';
 import type { Project } from '../../content/schemas/project';
 import {
-  COLLECTION_LABELS,
   collectionOfBlock,
   type CatalogCollection,
 } from '../../lib/catalog/groups';
-import { COLLECTION_COPY } from '../../lib/catalog/collection-copy';
 import { toCompactStamp } from '../../lib/format/date';
+import { withLocale, type Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import ListRow from '../ui/ListRow.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
 
@@ -16,14 +16,17 @@ interface Props {
   projects: Project[];
   totalCount: number;
   index?: number;
+  locale?: Locale;
 }
 
-const { collection, projects, totalCount, index } = Astro.props;
+const { collection, projects, totalCount, index, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.collection;
+const copy = t[collection];
 
 // Title and destination both derive from the collection, so the section can
 // never advertise one grouping and link to the other.
-const title = COLLECTION_LABELS[collection];
-const href = `/${collection}`;
+const title = copy.title;
+const href = withLocale(`/${collection}`, locale);
 
 // Because the row href is built from the section, a case from the other
 // grouping would render a link to a route that does not exist: /portfolio/forja
@@ -37,11 +40,6 @@ if (foreign) {
   );
 }
 
-const EMPTY: Record<CatalogCollection, string> = {
-  portfolio: 'Nenhum case de portfólio publicado ainda.',
-  lab: 'Nenhum experimento publicado ainda.',
-};
-
 const shown = projects.slice(0, 5);
 const hasMore = totalCount > shown.length;
 ---
@@ -51,13 +49,13 @@ const hasMore = totalCount > shown.length;
     title={title}
     level={2}
     index={index}
-    description={COLLECTION_COPY[collection].description}
+    description={copy.description}
   />
 
   {
     shown.length === 0 ? (
       <p class="rounded-md border border-border bg-surface p-lg text-body text-muted-foreground">
-        {EMPTY[collection]}
+        {copy.empty}
       </p>
     ) : (
       <ul class="list-none p-0">
@@ -83,7 +81,7 @@ const hasMore = totalCount > shown.length;
           href={href}
           class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          Ver todos
+          {t.seeAll}
           <Icon
             name="lucide:arrow-right"
             aria-hidden="true"

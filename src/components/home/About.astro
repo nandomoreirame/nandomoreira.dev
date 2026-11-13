@@ -1,22 +1,28 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
 import SectionHeader from '../ui/SectionHeader.astro';
 
 interface Props {
   summary: string;
+  locale?: Locale;
 }
 
-const { summary } = Astro.props;
+const { summary, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.about;
+const aboutHref = routeFor('/sobre', locale);
 ---
 
 <section id="sobre" class="py-2xl lg:py-3xl">
-  <SectionHeader title="Sobre" level={2} />
+  <SectionHeader title={t.title} level={2} />
   <p class="max-w-[68ch] text-body text-foreground">{summary}</p>
   <p class="mt-md">
     <a
-      href="/sobre"
+      href={aboutHref}
       class="inline-flex min-h-11 items-center text-body text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
-      Ler mais sobre mim
+      {t.readMore}
     </a>
   </p>
 </section>

@@ -1,4 +1,6 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import Card from '../ui/Card.astro';
 import SectionHeader from '../ui/SectionHeader.astro';
 import StatItem from '../ui/StatItem.astro';
@@ -6,13 +8,15 @@ import StatItem from '../ui/StatItem.astro';
 interface Props {
   stats: Array<{ value: string; label: string; context: string }>;
   narrative: string;
+  locale?: Locale;
 }
 
-const { stats, narrative } = Astro.props;
+const { stats, narrative, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.trajectory;
 ---
 
 <section id="trajetoria" class="pt-2xl lg:pt-3xl">
-  <SectionHeader title="Trajetória e números" level={2} index={2} />
+  <SectionHeader title={t.title} level={2} index={2} />
 
   <p class="mb-xl max-w-[68ch] text-body text-muted-foreground">{narrative}</p>
 

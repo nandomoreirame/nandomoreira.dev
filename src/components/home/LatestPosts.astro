@@ -1,6 +1,9 @@
 ---
 import { Icon } from 'astro-icon/components';
 import type { PostSummary } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
 import PostCard from '../posts/PostCard.astro';
 
 interface Props {
@@ -8,9 +11,12 @@ interface Props {
   posts: PostSummary[];
   /** Site origin, for the markdown view the AI summary links read. */
   site: string;
+  locale?: Locale;
 }
 
-const { posts, site } = Astro.props;
+const { posts, site, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.latestPosts;
+const postsHref = routeFor('/posts', locale);
 ---
 
 {
@@ -21,13 +27,13 @@ const { posts, site } = Astro.props;
       <div class="mb-lg flex flex-wrap items-center justify-between gap-md">
         <h2 id="blog-title" class="flex items-center gap-sm font-mono text-small uppercase tracking-eyebrow text-primary">
           <span aria-hidden="true" class="size-2 shrink-0 rounded-full bg-current" />
-          <span><span aria-hidden="true">{'// '}</span>POSTS RECENTES</span>
+          <span><span aria-hidden="true">{'// '}</span>{t.title}</span>
         </h2>
         <a
-          href="/posts"
+          href={postsHref}
           class="group/more inline-flex min-h-11 items-center gap-xs font-mono text-small text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          Ver todos os posts no blog
+          {t.seeAll}
           <Icon
             name="lucide:arrow-right"
             aria-hidden="true"
@@ -39,7 +45,7 @@ const { posts, site } = Astro.props;
       <ul class="flex list-none flex-col gap-md p-0">
         {posts.map((post) => (
           <li>
-            <PostCard post={post} site={site} />
+            <PostCard post={post} site={site} locale={locale} />
           </li>
         ))}
       </ul>

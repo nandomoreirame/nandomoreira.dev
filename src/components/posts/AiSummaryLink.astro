@@ -1,5 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { AI_SUMMARY_TARGETS, aiSummaryUrl } from '../../lib/posts/ai-summary';
 
 interface Props {
@@ -7,9 +9,24 @@ interface Props {
   markdownUrl: string;
   /** Text buttons (post toolbar) instead of icons with a tooltip (cards). */
   labelled?: boolean;
+  locale?: Locale;
 }
 
-const { markdownUrl, labelled = false } = Astro.props;
+const { markdownUrl, labelled = false, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).posts;
+
+/** Visible names stay English when the page is English; the prompt URL is unchanged. */
+const LABELS_EN: Record<(typeof AI_SUMMARY_TARGETS)[number]['id'], { label: string; short: string }> = {
+  claude: { label: 'Summarize with Claude', short: 'Summarize with Claude' },
+  gemini: { label: 'Summarize with Google AI', short: 'Google AI' },
+  chatgpt: { label: 'Summarize with ChatGPT', short: 'ChatGPT' },
+};
+
+const targets = AI_SUMMARY_TARGETS.map((target) => {
+  if (locale !== 'en') return target;
+  const en = LABELS_EN[target.id];
+  return { ...target, label: en.label, short: en.short };
+});
 ---
 
 {/* Icon only by default, same height as the reading mode switch, the label as a
@@ -17,7 +34,7 @@ const { markdownUrl, labelled = false } = Astro.props;
     Hidden in reading mode either way. */}
 <div data-reader-hide class="flex flex-wrap gap-xs">
   {
-    AI_SUMMARY_TARGETS.map((target) =>
+    targets.map((target) =>
       labelled ? (
         <a
           href={aiSummaryUrl(target, markdownUrl)}
@@ -27,14 +44,14 @@ const { markdownUrl, labelled = false } = Astro.props;
         >
           <span aria-hidden="true">✨</span>
           {target.short}
-          <span class="sr-only">, abre em nova aba</span>
+          <span class="sr-only">, {t.opensInNewTabHint}</span>
         </a>
       ) : (
         <a
           href={aiSummaryUrl(target, markdownUrl)}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${target.label}, abre em nova aba`}
+          aria-label={t.opensInNewTab(target.label)}
           class="group/ai relative inline-flex size-8 items-center justify-center rounded-md border border-border-strong bg-surface text-muted-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Icon name={target.icon} class="size-3.5" aria-hidden="true" />

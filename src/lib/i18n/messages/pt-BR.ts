@@ -33,7 +33,64 @@ export const ptBR = {
   },
   posts: {
     readingTime: (minutes: number) => `${minutes} min de leitura`,
+    draft: 'Rascunho',
+    quickPreview: 'Preview rápido',
+    readFull: 'Ler artigo completo',
+    keyPoints: 'TL;DR // PONTOS-CHAVE',
+    summarizeWithAi: 'Resumir com IA:',
+    opensInNewTab: (label: string) => `${label}, abre em nova aba`,
+    opensInNewTabHint: 'abre em nova aba',
   },
+  home: {
+    hero: {
+      aboutCta: 'Saiba mais sobre mim',
+    },
+    services: {
+      title: 'O que eu faço por você',
+      description: 'Cada frente com um case que a comprova.',
+      salesLead: 'Para o seu negócio: site, loja virtual ou sistema, explicados sem jargão.',
+      salesLink: 'Ver os serviços',
+      proofLink: 'Ver o case que comprova',
+    },
+    trajectory: {
+      title: 'Trajetória e números',
+    },
+    latestPosts: {
+      title: 'POSTS RECENTES',
+      seeAll: 'Ver todos os posts no blog',
+    },
+    about: {
+      title: 'Sobre',
+      readMore: 'Ler mais sobre mim',
+    },
+    contact: {
+      title: 'Contato',
+      description: 'Escreva direto, ou use o formulário em /contato.',
+      email: 'E-mail',
+    },
+    collection: {
+      seeAll: 'Ver todos',
+      portfolio: {
+        title: 'Portfólio',
+        description:
+          'Produtos SaaS próprios com IA e trabalho entregue para empresas e organizações: plataformas de dados com IA, loja virtual e sites institucionais. Cada case mostra o problema, as decisões técnicas e o resultado.',
+        empty: 'Nenhum case de portfólio publicado ainda.',
+      },
+      lab: {
+        title: 'Laboratório',
+        description:
+          'Ferramentas open source que eu fiz para resolver problemas meus: apps e plugins para o meu desktop Linux, CLIs, automações e ferramental para agentes de IA, boa parte escrita junto com os próprios agentes.',
+        empty: 'Nenhum experimento publicado ainda.',
+      },
+    },
+    agentBrief: {
+      heading: 'Me contrate pelo seu agent.',
+      body: 'Cole este brief no ChatGPT, no Claude ou no seu próprio harness. Qualquer agent consegue ler e começar a conversa por você, pela API.',
+      contractBefore: 'O contrato completo está em',
+      copyLabel: 'Copiar o brief AGENTS.md',
+    },
+  },
+
   footer: {
     privacy: 'Privacidade',
     channels: 'Canais',

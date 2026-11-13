@@ -1,4 +1,6 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import AgentBriefWindow from './AgentBriefWindow.astro';
 
 interface Props {
@@ -6,13 +8,15 @@ interface Props {
   brief: string;
   /** `panel` is the terminal alone, for the contact page's side column. */
   variant?: 'section' | 'panel';
+  locale?: Locale;
 }
 
-const { brief, variant = 'section' } = Astro.props;
+const { brief, variant = 'section', locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).home.agentBrief;
 ---
 
 {variant === 'panel' ? (
-  <AgentBriefWindow brief={brief} />
+  <AgentBriefWindow brief={brief} locale={locale} />
 ) : (
   <section
     aria-labelledby="agents-heading"
@@ -23,14 +27,13 @@ const { brief, variant = 'section' } = Astro.props;
         AGENTS.md
       </p>
       <h2 id="agents-heading" class="font-serif text-h1 font-normal tracking-tight text-foreground">
-        Me contrate pelo seu agent.
+        {t.heading}
       </h2>
       <p class="text-body text-muted-foreground">
-        Cole este brief no ChatGPT, no Claude ou no seu próprio harness. Qualquer agent
-        consegue ler e começar a conversa por você, pela API.
+        {t.body}
       </p>
       <p class="text-small text-muted-foreground">
-        O contrato completo está em{' '}
+        {t.contractBefore}{' '}
         <a
           href="/AGENTS.md"
           class="text-foreground underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -39,6 +42,6 @@ const { brief, variant = 'section' } = Astro.props;
       </p>
     </div>
 
-    <AgentBriefWindow brief={brief} />
+    <AgentBriefWindow brief={brief} locale={locale} />
   </section>
 )}
