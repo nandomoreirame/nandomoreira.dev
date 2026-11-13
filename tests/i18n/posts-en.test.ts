@@ -9,6 +9,8 @@ const TRANSLATED: [string, string][] = [
   ['memoria-para-agentes-em-4-camadas', 'four-layer-memory-for-agents'],
   ['como-construi-meu-site-que-conversa-com-ia-via-mcp', 'site-that-talks-to-ai-via-mcp'],
   ['fluxo-rpi-claude-code-grok-codex', 'rpi-flow-with-three-agents'],
+  ['rdo-solo-red-dead-online-sozinho-pelo-gateway', 'rdo-solo-alone-via-home-gateway'],
+  ['sessoes-do-red-dead-online-p2p-relays-e-nat-duplo', 'red-dead-online-sessions-p2p-double-nat'],
 ];
 
 describe('translated posts', () => {
