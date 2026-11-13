@@ -1,6 +1,8 @@
 import type { Post } from '../../content/schemas/post';
 import type { Project } from '../../content/schemas/project';
+import type { TranslationPair } from '../content';
 import { collectionOfBlock } from '../catalog/groups';
+import { STATIC_ROUTES } from '../i18n/routes';
 import { detailSlugs } from '../sales/catalog';
 import { SALES_HOST_LIVE, salesPath } from '../sales/host';
 import { absoluteUrl } from './urls';
@@ -13,6 +15,10 @@ interface Input {
   setupUpdatedAt?: string;
   /** When true, /servicos is omitted (main host 301s to the subdomain). */
   salesLive?: boolean;
+  /** When true, English static routes and translation pairs enter the sitemap. */
+  enLive?: boolean;
+  /** Content translation pairs (posts/cases) for xhtml:link alternates. */
+  pairs?: readonly TranslationPair[];
 }
 
 const escapeXml = (value: string): string =>
@@ -44,6 +50,8 @@ export const sitemapEntries = ({
   posts = [],
   setupUpdatedAt,
   salesLive = SALES_HOST_LIVE,
+  enLive = false,
+  pairs = [],
 }: Omit<Input, 'site'>): SitemapEntry[] => {
   const entries: SitemapEntry[] = [
     { path: '/' },
@@ -97,26 +105,62 @@ export const sitemapEntries = ({
     }
   }
 
+  if (enLive) {
+    for (const route of STATIC_ROUTES) {
+      entries.push({ path: route.en });
+    }
+    for (const pair of pairs) {
+      entries.push({ path: pair.en });
+    }
+  }
+
   return entries;
 };
 
-export const buildSitemap = ({ site, ...rest }: Input): string => {
-  const entries = sitemapEntries(rest);
+const pairIndex = (
+  enLive: boolean,
+  pairs: readonly TranslationPair[],
+): Map<string, TranslationPair> => {
+  const index = new Map<string, TranslationPair>();
+  if (!enLive) return index;
+
+  for (const route of STATIC_ROUTES) {
+    index.set(route['pt-BR'], route);
+    index.set(route.en, route);
+  }
+  for (const pair of pairs) {
+    index.set(pair['pt-BR'], pair);
+    index.set(pair.en, pair);
+  }
+  return index;
+};
+
+const xhtmlLinks = (site: URL, pair: TranslationPair): string =>
+  [
+    `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(absoluteUrl(site, pair.en))}"/>`,
+    `    <xhtml:link rel="alternate" hreflang="pt-BR" href="${escapeXml(absoluteUrl(site, pair['pt-BR']))}"/>`,
+  ].join('\n');
+
+export const buildSitemap = ({ site, enLive = false, pairs = [], ...rest }: Input): string => {
+  const entries = sitemapEntries({ ...rest, enLive, pairs });
+  const pairsByPath = pairIndex(enLive, pairs);
+  let hasXhtml = false;
 
   const urls = entries
     .map(({ path, lastmod }) => {
       const loc = `    <loc>${escapeXml(absoluteUrl(site, path))}</loc>`;
       const modified = lastmod ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>` : '';
+      const pair = pairsByPath.get(path);
+      const alternates = pair ? `\n${xhtmlLinks(site, pair)}` : '';
+      if (pair) hasXhtml = true;
 
-      return `  <url>\n${loc}${modified}\n  </url>`;
+      return `  <url>\n${loc}${modified}${alternates}\n  </url>`;
     })
     .join('\n');
 
-  return [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    urls,
-    '</urlset>',
-    '',
-  ].join('\n');
+  const urlset = hasXhtml
+    ? '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">'
+    : '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+  return ['<?xml version="1.0" encoding="UTF-8"?>', urlset, urls, '</urlset>', ''].join('\n');
 };
