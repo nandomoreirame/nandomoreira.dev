@@ -9,3 +9,5 @@ package-lock.json
 *.yaml
 # Copied byte for byte from Terminal Noir (theme-modes, REQ-013): shiki-themes.test.ts compares them.
 src/lib/code/themes/*.json
+# Rendered HTML fixtures (i18n): the pt-BR pages must stay byte for byte, so they are never reformatted.
+tests/__snapshots__/
