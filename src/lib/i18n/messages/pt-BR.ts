@@ -15,6 +15,22 @@ export const ptBR = {
     suggestionLink: 'Ler em português',
     dismiss: 'Dispensar',
   },
+  nav: {
+    blog: 'Blog',
+    portfolio: 'Portfólio',
+    lab: 'Lab',
+    setup: 'Setup',
+    now: 'Agora',
+    about: 'Sobre',
+    mcp: 'MCP',
+    contact: 'Contato',
+    openMenu: 'Abrir menu',
+    closeMenu: 'Fechar menu',
+    mainNavigation: 'Navegação principal',
+    menu: 'Menu',
+    /** Fifth aria-label in SiteNav; the plan named four, this keeps the mobile landmark distinct. */
+    mobileNavigation: 'Menu principal (mobile)',
+  },
   posts: {
     readingTime: (minutes: number) => `${minutes} min de leitura`,
   },

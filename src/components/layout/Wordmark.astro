@@ -5,14 +5,16 @@ interface Props {
   name: string;
   /** Part of the brand painted in the primary colour. */
   accent?: string;
+  /** Home of the current locale; defaults to the pt-BR root. */
+  href?: string;
 }
 
-const { name, accent } = Astro.props;
+const { name, accent, href = '/' } = Astro.props;
 const brand = splitWordmark(name, accent);
 ---
 
 <a
-  href="/"
+  href={href}
   class="inline-flex shrink-0 items-center gap-sm font-mono text-small font-medium text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
   <img src="/brand-mark.png" alt="" width="40" height="40" class="size-10 shrink-0" />

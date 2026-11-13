@@ -1,5 +1,8 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { messagesFor } from '../../lib/i18n/messages';
+import type { Locale } from '../../lib/i18n/locale';
+import { routeFor } from '../../lib/i18n/routes';
 import { navCurrent } from '../../lib/layout/nav-current';
 
 interface Props {
@@ -7,19 +10,21 @@ interface Props {
   /** Menu item a page belongs to when its path does not say so (a post). */
   section?: string;
   hasPosts?: boolean;
+  locale?: Locale;
 }
 
-const { current, section, hasPosts = false } = Astro.props;
+const { current, section, hasPosts = false, locale = 'pt-BR' } = Astro.props;
 
+const t = messagesFor(locale).nav;
 const items = [
-  ...(hasPosts ? [{ href: '/posts', label: 'Blog' }] : []),
-  { href: '/portfolio', label: 'Portfólio' },
-  { href: '/lab', label: 'Lab' },
-  { href: '/setup', label: 'Setup' },
-  { href: '/now', label: 'Agora' },
-  { href: '/sobre', label: 'Sobre' },
-  { href: '/mcp', label: 'MCP' },
-  { href: '/contato', label: 'Contato' },
+  ...(hasPosts ? [{ href: routeFor('/posts', locale), label: t.blog }] : []),
+  { href: routeFor('/portfolio', locale), label: t.portfolio },
+  { href: routeFor('/lab', locale), label: t.lab },
+  { href: routeFor('/setup', locale), label: t.setup },
+  { href: routeFor('/now', locale), label: t.now },
+  { href: routeFor('/sobre', locale), label: t.about },
+  { href: routeFor('/mcp', locale), label: t.mcp },
+  { href: routeFor('/contato', locale), label: t.contact },
 ];
 
 const linkFocus =
@@ -32,13 +37,13 @@ const iconButton =
   <button
     type="button"
     popovertarget="site-menu"
-    aria-label="Abrir menu"
+    aria-label={t.openMenu}
     class={`md:hidden ${iconButton}`}
   >
     <Icon name="lucide:menu" aria-hidden="true" class="size-6" />
   </button>
 
-  <nav aria-label="Navegação principal" class="hidden w-full md:block md:w-auto">
+  <nav aria-label={t.mainNavigation} class="hidden w-full md:block md:w-auto">
     <ul class="hidden items-center gap-md md:flex lg:gap-lg">
       {items.map((item) => (
         <li class="flex">
@@ -54,15 +59,16 @@ const iconButton =
     </ul>
   </nav>
 
-  <div id="site-menu" popover role="dialog" aria-label="Menu" class="site-menu">
+  <div id="site-menu" popover role="dialog" aria-label={t.menu} class="site-menu">
     <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm">
       <slot name="wordmark" />
+      <slot name="language" />
       <slot name="availability" />
       <button
         type="button"
         popovertarget="site-menu"
         popovertargetaction="hide"
-        aria-label="Fechar menu"
+        aria-label={t.closeMenu}
         class={`site-menu-close ${iconButton}`}
       >
         <Icon name="lucide:x" aria-hidden="true" class="size-6" />
@@ -70,7 +76,7 @@ const iconButton =
     </div>
 
     <nav
-      aria-label="Menu principal (mobile)"
+      aria-label={t.mobileNavigation}
       class="flex flex-1 flex-col items-center px-lg pb-lg"
     >
       <ul class="flex w-full max-w-page flex-1 flex-col">

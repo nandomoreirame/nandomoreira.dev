@@ -1,9 +1,11 @@
 ---
 import SiteNav from './SiteNav.astro';
 import Wordmark from './Wordmark.astro';
-import type { Availability } from '../../lib/content';
+import type { Availability, TranslationPair } from '../../lib/content';
 import type { Locale } from '../../lib/i18n/locale';
+import { routeFor } from '../../lib/i18n/routes';
 import AvailabilityPill from './AvailabilityPill.astro';
+import LanguageSwitch from './LanguageSwitch.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
@@ -15,8 +17,10 @@ interface Props {
   hasPosts?: boolean;
   /** Tones the brand dot, and shows as a pill on the right edge: one word below lg, the full label from it. */
   availability?: Availability;
-  /** Page language; consumed by the nav in a later task. */
+  /** Page language; drives nav labels and the language switch. */
   locale?: Locale;
+  /** Reciprocal language pair for the switcher; falls back to the other home. */
+  alternates?: TranslationPair;
 }
 
 const {
@@ -26,8 +30,11 @@ const {
   section,
   hasPosts = false,
   availability,
+  locale = 'pt-BR',
+  alternates,
 } = Astro.props;
 
+const homeHref = routeFor('/', locale);
 ---
 
 {/* The rule sits on <header> so it spans the viewport; the container is the row
@@ -40,12 +47,15 @@ const {
   class="sticky top-0 z-40 border-b border-border transition-[background-color] duration-(--duration-base) ease-out data-scrolled:bg-background/40 data-scrolled:backdrop-blur-lg"
 >
   <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm xl:gap-xl">
-    <Wordmark name={name} accent={accent} />
+    <Wordmark name={name} accent={accent} href={homeHref} />
 
-    <SiteNav current={current} section={section} hasPosts={hasPosts}>
-      <Wordmark slot="wordmark" name={name} accent={accent} />
+    <SiteNav current={current} section={section} hasPosts={hasPosts} locale={locale}>
+      <Wordmark slot="wordmark" name={name} accent={accent} href={homeHref} />
+      <LanguageSwitch slot="language" locale={locale} alternates={alternates} />
       {availability && <AvailabilityPill slot="availability" status={availability.status} data-menu-availability class="ml-auto" />}
     </SiteNav>
+
+    <LanguageSwitch locale={locale} alternates={alternates} />
 
     {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
 
