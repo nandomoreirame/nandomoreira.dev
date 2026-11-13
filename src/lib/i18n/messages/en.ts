@@ -205,4 +205,33 @@ export const en: Messages = {
     privacyLink: 'privacy policy',
     privacyAfter: '.',
   },
+  mcpPage: {
+    title: 'Connect via MCP',
+    description: 'How to connect this portfolio to an AI agent through the Model Context Protocol.',
+    heading: 'This site talks to AI agents',
+    lead: 'Add this portfolio as a connector and your agent reads my profile, the cases and the resume, and checks my availability. No account, no key and no signup.',
+    endpointHeading: 'MCP endpoint',
+    endpointHint: 'Streamable HTTP, protocol 2025-11-25, read only.',
+    copyEndpoint: 'Copy the MCP endpoint',
+    connectHeading: 'How to connect',
+    copyAddressFor: (name: string) => `Copy the address for ${name}`,
+    copyCommandFor: (name: string) => `Copy the command for ${name}`,
+    toolsHeading: 'What the agent can look up',
+    briefingHeading: 'To propose a project',
+    briefingBeforeCode:
+      'The tools are read only. To send a briefing, the agent makes a',
+    briefingBetweenCodeAndAgents: ', described in the',
+    briefingAgentsGuide: 'agent guide',
+    briefingBetweenAgentsAndLlms: '. The site summary for models is in',
+    tools: {
+      get_profile:
+        'Who I am: title, bio, positioning, stack, work fronts and availability.',
+      check_availability:
+        'Whether I am open to new work, with the detail and the date of the last update.',
+      list_projects: 'The published cases, with an optional filter by collection: portfolio or lab.',
+      get_project:
+        'A full case: the problem, the decisions, the outcome and the links that prove it.',
+      get_resume: 'The full resume in the JSON Resume standard, the same as /api/resume.json.',
+    },
+  },
 };

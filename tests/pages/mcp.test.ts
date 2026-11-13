@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { MCP_TOOLS } from '../../src/lib/mcp/catalog';
 import Conectar from '../../src/pages/mcp.astro';
 
-const source = readFileSync('src/pages/mcp.astro', 'utf8');
+const source = readFileSync('src/components/pages/McpPage.astro', 'utf8');
 
 const render = async () => {
   const container = await AstroContainer.create();

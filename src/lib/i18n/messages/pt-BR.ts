@@ -210,4 +210,33 @@ export const ptBR = {
     privacyLink: 'política de privacidade',
     privacyAfter: '.',
   },
+  mcpPage: {
+    title: 'Conectar via MCP',
+    description: 'Como conectar este portfólio a um agente de IA pelo Model Context Protocol.',
+    heading: 'Este site fala com Agentes de IA',
+    lead: 'Adicione este portfólio como conector e o seu agente lê o meu perfil, os cases e o currículo, e confere a minha disponibilidade. Sem conta, sem chave e sem cadastro.',
+    endpointHeading: 'Endpoint MCP',
+    endpointHint: 'Streamable HTTP, protocolo 2025-11-25, só leitura.',
+    copyEndpoint: 'Copiar o endpoint MCP',
+    connectHeading: 'Como conectar',
+    copyAddressFor: (name: string) => `Copiar o endereço para ${name}`,
+    copyCommandFor: (name: string) => `Copiar o comando para ${name}`,
+    toolsHeading: 'O que o agente pode consultar',
+    briefingHeading: 'Para propor um projeto',
+    briefingBeforeCode:
+      'As tools são só de leitura. Para mandar um briefing, o agente faz um',
+    briefingBetweenCodeAndAgents: ', descrito no',
+    briefingAgentsGuide: 'guia para agentes',
+    briefingBetweenAgentsAndLlms: '. O resumo do site para modelos está em',
+    tools: {
+      get_profile:
+        'Quem eu sou: título, bio, posicionamento, stack, frentes de trabalho e disponibilidade.',
+      check_availability:
+        'Se estou aberto a trabalho novo, com o detalhe e a data da última atualização.',
+      list_projects: 'Os cases publicados, com filtro opcional por coleção: portfolio ou lab.',
+      get_project:
+        'Um case completo: o problema, as decisões, o resultado e os links que o comprovam.',
+      get_resume: 'O currículo completo no padrão JSON Resume, o mesmo de /api/resume.json.',
+    },
+  },
 } as const;

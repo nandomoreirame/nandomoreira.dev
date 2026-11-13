@@ -46,8 +46,9 @@ describe('copy feedback in the single site script', () => {
 
 describe('/mcp code rows', () => {
   it('uses icon-only buttons and code boxes at least as tall as them', () => {
-    const page = readFileSync('src/pages/mcp.astro', 'utf8');
-    expect(page.match(/<CopyButton[^>]*iconOnly/g) ?? []).toHaveLength(2);
+    const page = readFileSync('src/components/pages/McpPage.astro', 'utf8');
+    // Endpoint button plus the per-client button inside the map.
+    expect(page.match(/\biconOnly\b/g) ?? []).toHaveLength(2);
     expect(page).toMatch(/const codeClass =\s*'[^']*\bmin-h-11\b/);
   });
 });

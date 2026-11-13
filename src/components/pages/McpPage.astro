@@ -1,0 +1,141 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import ClosingCta from '../catalog/ClosingCta.astro';
+import AgentBrief from '../contact/AgentBrief.astro';
+import CopyButton from '../ui/CopyButton.astro';
+import PageHeader from '../ui/PageHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildHireBrief } from '../../lib/aeo/hire-brief';
+import { requireSite } from '../../lib/aeo/urls';
+import { getProfile } from '../../lib/content';
+import { serialiseJsonLd } from '../../lib/aeo/json-ld';
+import { MCP_TOOLS } from '../../lib/mcp/catalog';
+import { mcpClients, mcpHowToLd } from '../../lib/mcp/clients';
+import { displayNameOf } from '../../lib/content/display-name';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).mcpPage;
+
+const site = Astro.site?.origin ?? 'https://nandomoreira.dev';
+const endpoint = `${site}/api/mcp`;
+
+const CLIENTS = mcpClients(endpoint, locale);
+const howToJsonLd = serialiseJsonLd(
+  mcpHowToLd(requireSite(Astro.site ?? new URL('https://nandomoreira.dev')), locale),
+);
+
+const codeClass =
+  'flex min-h-11 min-w-0 flex-1 items-center select-all break-all rounded-md border border-border bg-background px-sm py-xs font-mono text-small text-primary';
+
+const hireBrief = buildHireBrief({
+  site: requireSite(Astro.site ?? new URL('https://nandomoreira.dev')),
+  profile: await getProfile(locale),
+});
+
+const authorName = displayNameOf(await getProfile(locale));
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${authorName}`}
+  description={t.description}
+  locale={locale}
+>
+  <script type="application/ld+json" is:inline set:html={howToJsonLd} />
+  <PageHeader
+    title={t.heading}
+    description={t.lead}
+  />
+
+  {/* Copy rides the site's single script (PointerField); select-all stays as
+      the fallback when JavaScript is off and the button never appears. */}
+  <section aria-labelledby="endpoint-heading" class="rounded-md border border-border-strong bg-surface p-lg">
+    <h2 id="endpoint-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      {t.endpointHeading}
+    </h2>
+    <div class="mt-sm flex items-start gap-sm">
+      <code id="mcp-endpoint" class={`${codeClass} text-body`}>{endpoint}</code>
+      <CopyButton target="mcp-endpoint" label={t.copyEndpoint} iconOnly />
+    </div>
+    <p class="mt-sm text-small text-muted-foreground">
+      {t.endpointHint}
+    </p>
+  </section>
+
+  <section aria-labelledby="clientes-heading" class="mt-2xl">
+    <h2 id="clientes-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      {t.connectHeading}
+    </h2>
+    <ol class="mt-md grid list-none grid-cols-1 gap-lg p-0 sm:grid-cols-2">
+      {
+        CLIENTS.map((client, index) => (
+          <li class="flex flex-col gap-sm rounded-md border border-border bg-surface p-lg">
+            <span class="font-mono text-small text-muted-foreground">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 class="text-h3 font-semibold text-foreground">{client.name}</h3>
+            {client.steps.map((step) => (
+              <p class="text-body text-muted-foreground">{step}</p>
+            ))}
+            <div class="flex items-start gap-sm">
+              <code id={`mcp-client-${index + 1}`} class={codeClass}>{client.code}</code>
+              <CopyButton
+                target={`mcp-client-${index + 1}`}
+                label={
+                  client.code === endpoint
+                    ? t.copyAddressFor(client.name)
+                    : t.copyCommandFor(client.name)
+                }
+                iconOnly
+              />
+            </div>
+            <p class="text-body text-muted-foreground">{client.after}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="tools-heading" class="mt-2xl">
+    <h2 id="tools-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      {t.toolsHeading}
+    </h2>
+    <ul class="mt-md list-none p-0">
+      {
+        MCP_TOOLS.map((tool) => (
+          <li class="grid grid-cols-1 gap-xs border-b border-border py-md sm:grid-cols-3 sm:gap-lg">
+            <code class="font-mono text-small text-primary">{tool.name}</code>
+            <span class="text-body text-muted-foreground sm:col-span-2">{t.tools[tool.name]}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="briefing-heading" class="mt-2xl">
+    <h2 id="briefing-heading" class="font-mono text-small uppercase tracking-eyebrow text-muted-foreground">
+      {t.briefingHeading}
+    </h2>
+    <p class="mt-md max-w-[68ch] text-body text-muted-foreground">
+      {t.briefingBeforeCode}{' '}
+      <code class="font-mono text-small text-foreground">POST /api/hire</code>{t.briefingBetweenCodeAndAgents}{' '}
+      <a
+        href="/AGENTS.md"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >{t.briefingAgentsGuide}</a
+      >{t.briefingBetweenAgentsAndLlms}{' '}
+      <a
+        href="/llms.txt"
+        class="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >llms.txt</a
+      >.
+    </p>
+  </section>
+  <AgentBrief brief={hireBrief} locale={locale} />
+  <ClosingCta page="mcp" />
+</BaseLayout>
