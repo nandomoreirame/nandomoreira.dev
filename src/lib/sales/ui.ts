@@ -1,6 +1,7 @@
 import type { Locale } from '../i18n/locale';
 
 const PT = {
+  breadcrumb: 'Trilha',
   visit: 'Visitar',
   skipToContent: 'Pular para o conteúdo',
   sections: 'Seções',
@@ -65,6 +66,7 @@ const PT = {
   detailFaqLead: 'Respostas práticas para as perguntas mais comuns de quem contrata pela primeira vez.',
 } as const;
 const EN: Record<keyof typeof PT, string> = {
+  breadcrumb: 'Breadcrumb',
   visit: 'Visit',
   skipToContent: 'Skip to content',
   sections: 'Sections',
@@ -130,3 +132,8 @@ const EN: Record<keyof typeof PT, string> = {
 
 export const salesLabelsFor = (locale: Locale = 'pt-BR'): Record<keyof typeof PT, string> =>
   locale === 'en' ? EN : PT;
+
+export const salesDetailTitle = (title: string, locale: Locale = 'pt-BR'): string =>
+  locale === 'en'
+    ? `Let’s bring your ${title.toLowerCase()} to life?`
+    : `Vamos tirar seu ${title.toLowerCase()} do papel?`;

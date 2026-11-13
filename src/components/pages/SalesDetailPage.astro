@@ -1,0 +1,40 @@
+---
+import type { Locale } from '../../lib/i18n/locale';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+import { salesLabelsFor, salesDetailTitle } from '../../lib/sales/ui';
+import { salesSlugIn } from '../../lib/sales/i18n';
+
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import FaqList from '../sales/FaqList.astro';
+import SalesContact from '../sales/SalesContact.astro';
+import ServiceComparison from '../sales/ServiceComparison.astro';
+import ServiceDetail from '../sales/ServiceDetail.astro';
+import StepsTimeline from '../sales/StepsTimeline.astro';
+import SalesLayout from '../../layouts/SalesLayout.astro';
+import { detailFor } from '../../lib/sales/catalog';
+
+interface Props { locale?: Locale; live?: boolean; slug?: string; }
+const { locale = 'pt-BR', live = EN_PUBLISHED, slug = '' } = Astro.props;
+const t = salesLabelsFor(locale);
+
+const service = detailFor(slug, locale);
+// Only services with a written detail page exist; the rest stay as landing anchors.
+if (!service) return new Response(null, { status: 404 });
+
+const outcome = Astro.url.searchParams.get('envio');
+
+const origin = locale === 'en' && salesSlugIn(service.slug, 'pt-BR') === service.slug ? `${service.slug}-en` : service.slug;
+---
+
+<SalesLayout locale={locale} live={live}
+  title={`${service.title}${TITLE_SEPARATOR}Fernando Moreira`}
+  description={service.detail.hero.lead}
+  slug={service.slug}
+  serviceName={service.title}
+>
+  <ServiceDetail locale={locale} service={service} />
+  <StepsTimeline locale={locale} variant="compact" />
+  <ServiceComparison locale={locale} comparison={service.detail.comparison} />
+  <FaqList locale={locale} id="duvidas" items={service.detail.faq} lead={t.detailFaqLead} />
+  <SalesContact locale={locale} origin={origin} outcome={outcome} preselect={service.service} title={salesDetailTitle(service.title, locale)} />
+</SalesLayout>

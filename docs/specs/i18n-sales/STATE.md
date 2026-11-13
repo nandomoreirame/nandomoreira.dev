@@ -31,4 +31,5 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 Checkpoint após tarefa 3: tier2 não executa cobertura porque `@vitest/coverage-v8` não está instalado. Instrumentação de validação será tratada antes do fechamento.
 
 | 5. Layout e SEO | validada | 861 testes sales/i18n; check sem erros; alternados condicionados à bandeira | e12873c |
-| 6. Componentes por idioma | validada | 899 testes sales/i18n; 19 snapshots pt-BR intactos; check sem erros | neste commit |
+| 6. Componentes por idioma | validada | 899 testes sales/i18n; 19 snapshots pt-BR intactos; check sem erros | 6f03ce8 |
+| 7. Páginas inglesas | validada | 904 testes sales/i18n; snapshot pt-BR intacto; 404 verificado nas cascas HTTP; check sem erros | neste commit |

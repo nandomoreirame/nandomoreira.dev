@@ -1,0 +1,7 @@
+---
+import SalesLandingPage from '../../../components/pages/SalesLandingPage.astro';
+import { EN_PUBLISHED } from '../../../lib/i18n/live';
+export const prerender = false;
+if (!EN_PUBLISHED) return new Response(null, {status: 404});
+---
+<SalesLandingPage locale="en" />

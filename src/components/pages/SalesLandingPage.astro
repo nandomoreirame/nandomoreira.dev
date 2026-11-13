@@ -1,0 +1,51 @@
+---
+import type { Locale } from '../../lib/i18n/locale';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+import { salesLabelsFor } from '../../lib/sales/ui';
+
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import AboutCard from '../sales/AboutCard.astro';
+import FaqList from '../sales/FaqList.astro';
+import MoreWork from '../sales/MoreWork.astro';
+import ProjectShowcase from '../sales/ProjectShowcase.astro';
+import SalesContact from '../sales/SalesContact.astro';
+import SalesCta from '../sales/SalesCta.astro';
+import SalesHero from '../sales/SalesHero.astro';
+import ServiceBlocks from '../sales/ServiceBlocks.astro';
+import SituationGrid from '../sales/SituationGrid.astro';
+import StepsTimeline from '../sales/StepsTimeline.astro';
+import Testimonials from '../sales/Testimonials.astro';
+import ToolsGrid from '../sales/ToolsGrid.astro';
+import SalesLayout from '../../layouts/SalesLayout.astro';
+import { salesCopy } from '../../lib/sales/copy';
+
+interface Props { locale?: Locale; live?: boolean; slug?: string; }
+const { locale = 'pt-BR', live = EN_PUBLISHED } = Astro.props;
+const t = salesLabelsFor(locale);
+
+const outcome = Astro.url.searchParams.get('envio');
+
+const SALES_COPY = salesCopy(locale);
+---
+
+<SalesLayout locale={locale} live={live}
+  title={`${t.landingTitle}${TITLE_SEPARATOR}Fernando Moreira`}
+  description={t.landingDescription}
+  serviceName={t.serviceName}
+>
+  <SalesHero locale={locale} />
+  {/* A quote call after every two sections; past the about card, the FAQ comes first and the form closes the page. */}
+  <SituationGrid locale={locale} />
+  <ServiceBlocks locale={locale} />
+  <SalesCta locale={locale} index={0} />
+  <StepsTimeline locale={locale} />
+  <ToolsGrid locale={locale} />
+  <SalesCta locale={locale} index={1} />
+  <ProjectShowcase locale={locale} />
+  <Testimonials locale={locale} />
+  <SalesCta locale={locale} index={2} />
+  <MoreWork locale={locale} />
+  <AboutCard locale={locale} />
+  <FaqList locale={locale} id="duvidas" items={SALES_COPY.faq} {...SALES_COPY.faqHeader} />
+  <SalesContact locale={locale} origin={locale === 'en' ? 'landing-en' : 'landing'} outcome={outcome} />
+</SalesLayout>

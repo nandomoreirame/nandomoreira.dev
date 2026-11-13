@@ -1,13 +1,11 @@
 ---
 import type { Locale } from '../../lib/i18n/locale';
-import { salesLabelsFor } from '../../lib/sales/ui';
 import { Icon } from 'astro-icon/components';
 import { withCareerYears } from '../../lib/format/career-years';
 import { salesCopy } from '../../lib/sales/copy';
 import HeroArt from './HeroArt.astro';
 
 const { locale = 'pt-BR' } = Astro.props;
-const t = salesLabelsFor(locale);
 const SALES_COPY = salesCopy(locale);
 
 const { hero } = SALES_COPY;

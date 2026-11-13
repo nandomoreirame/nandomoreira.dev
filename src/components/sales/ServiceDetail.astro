@@ -20,7 +20,7 @@ const wrap = 'mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-
 ---
 
 <section aria-labelledby="detalhe-title" class="mx-auto flex w-full max-w-page flex-col gap-lg px-lg py-2xl lg:py-3xl">
-  <nav aria-label="Trilha" class="font-mono text-small text-muted-foreground">
+  <nav aria-label={t.breadcrumb} class="font-mono text-small text-muted-foreground">
     <a href={`${salesPath(undefined, undefined, locale)}#servicos`} class="hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary">{t.services}</a>
     <span aria-hidden="true"> / </span><span aria-current="page" class="text-foreground">{service.title}</span>
   </nav>
