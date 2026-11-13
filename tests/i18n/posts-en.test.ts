@@ -13,6 +13,9 @@ const TRANSLATED: [string, string][] = [
   ['sessoes-do-red-dead-online-p2p-relays-e-nat-duplo', 'red-dead-online-sessions-p2p-double-nat'],
   ['criei-quatro-plugins-para-o-noctalia-100-com-ia-no-meu-cachyos', 'four-noctalia-plugins-with-ai'],
   ['analytics-sem-script-medindo-no-servidor-e-lendo-no-terminal', 'analytics-without-browser-javascript'],
+  ['job-radar-radar-de-vagas-em-python-puro', 'job-radar-pure-python'],
+  ['de-cinco-dias-para-trinta-minutos', 'five-days-to-thirty-minutes'],
+  ['scratchpad-no-niri-janelas-que-somem-com-um-atalho', 'niri-scratchpad-windows-vanish'],
 ];
 
 describe('translated posts', () => {
