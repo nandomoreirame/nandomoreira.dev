@@ -71,3 +71,22 @@ export const getProjectsByBlock = async (locale: Locale = 'pt-BR'): Promise<Bloc
 
 export const getProject = async (slug: string, locale: Locale = 'pt-BR'): Promise<Project | undefined> =>
   (await forLocale(locale)).find(project => project.slug === slug);
+
+/** Project or post tagged with the language of the text it carries. */
+export type Localized<T> = T & { locale: Locale };
+
+/**
+ * One entry per case: English when a translation exists, otherwise pt-BR.
+ * Machine routes (llms.txt, MCP, resume) prefer English per item (REQ-014).
+ */
+export const getMachineProjects = async (): Promise<Localized<Project>[]> => {
+  const [pt, en] = await Promise.all([getAllProjects(), getAllProjects('en')]);
+  const enBySlug = new Map(en.map(project => [project.slug, project]));
+
+  return pt.map(project => {
+    const translated = enBySlug.get(project.slug);
+    return translated
+      ? { ...translated, locale: 'en' as const }
+      : { ...project, locale: 'pt-BR' as const };
+  });
+};

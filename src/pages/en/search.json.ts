@@ -1,19 +1,22 @@
 import type { APIRoute } from 'astro';
-import { getAllProjects, getArchivedPosts, getCurrentPosts } from '../../lib/content';
+import { getMachinePosts, getMachineProjects } from '../../lib/content';
+import { casePath, postPath } from '../../lib/i18n/paths';
 import { SALES_SERVICES } from '../../lib/sales/catalog';
 import { salesUrl } from '../../lib/sales/host';
 import { buildSearchIndex } from '../../lib/search/build-index';
 
-/** English command palette index (i18n-foundation REQ-024). Posts and cases stay pt-BR until i18n-content. */
+/** English command palette index (i18n-foundation REQ-024, i18n-content REQ-014). */
 export const prerender = true;
 
 export const GET: APIRoute = async () => {
-  const [current, archived, projects] = await Promise.all([getCurrentPosts(), getArchivedPosts(), getAllProjects()]);
+  const [machinePosts, projects] = await Promise.all([getMachinePosts(), getMachineProjects()]);
+  const current = machinePosts.filter(post => !post.archived);
+  const archived = machinePosts.filter(post => post.archived);
   const index = buildSearchIndex({
     locale: 'en',
-    current,
-    archived,
-    projects,
+    current: current.map(post => ({ ...post, path: postPath(post) })),
+    archived: archived.map(post => ({ ...post, path: postPath(post) })),
+    projects: projects.map(project => ({ ...project, path: casePath(project) })),
     services: SALES_SERVICES.map(service => ({
       title: service.title,
       summary: service.summary,

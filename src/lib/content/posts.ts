@@ -165,6 +165,30 @@ export const getAllPostEntries = async (locale: Locale = 'pt-BR'): Promise<PostE
 export const getPostEntry = async (slug: string, locale: Locale = 'pt-BR'): Promise<PostEntry | undefined> =>
   (await loadEntries(locale)).find(entry => entry.data.slug === slug);
 
+/** Post tagged with the language of the text it carries. */
+export type Localized<T> = T & { locale: Locale };
+
+/**
+ * One entry per visible post: English when a translation exists for a current
+ * post, archive always pt-BR. Machine routes prefer English per item (REQ-014).
+ */
+export const getMachinePosts = async (): Promise<Localized<PostSummary>[]> => {
+  const [pt, en, overlays] = await Promise.all([getAllPosts(), getAllPosts('en'), getCollection('postsEn')]);
+  const enBySlug = new Map(en.map(post => [post.slug, post]));
+  const enBySource = new Map<string, PostSummary>();
+  for (const entry of overlays) {
+    const translated = enBySlug.get(entry.data.slug);
+    if (translated) enBySource.set(entry.data.translationOf, translated);
+  }
+
+  return pt.map(post => {
+    if (post.archived) return { ...post, locale: 'pt-BR' as const };
+    const translated = enBySource.get(post.slug);
+    if (translated) return { ...translated, locale: 'en' as const };
+    return { ...post, locale: 'pt-BR' as const };
+  });
+};
+
 /**
  * Content pages paired through their translations (posts and cases).
  * Posts use the English slug on `/en/<slug>`; cases keep the source slug.

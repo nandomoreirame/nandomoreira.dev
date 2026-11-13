@@ -18,6 +18,8 @@ interface PostLike {
   summary: string;
   markers: string[];
   draft?: boolean;
+  /** When set, used as the index path (mixed-locale English index). */
+  path?: string;
 }
 
 interface Input {
@@ -29,6 +31,7 @@ interface Input {
     summary: string;
     tech: string[];
     block: Parameters<typeof collectionOfBlock>[0];
+    path?: string;
   }>;
   services: ReadonlyArray<{ title: string; summary: string; url: string }>;
   landingUrl: string;
@@ -40,7 +43,7 @@ const postItem =
   (post: PostLike): SearchItem => ({
     kind,
     title: post.title,
-    path: `/${post.slug}`,
+    path: post.path ?? `/${post.slug}`,
     summary: post.summary,
     keywords: post.markers,
   });
@@ -59,7 +62,7 @@ export const buildSearchIndex = ({
   ...projects.map(project => ({
     kind: 'case' as const,
     title: project.title,
-    path: `/${collectionOfBlock(project.block)}/${project.slug}`,
+    path: project.path ?? `/${collectionOfBlock(project.block)}/${project.slug}`,
     summary: project.summary,
     keywords: project.tech,
   })),

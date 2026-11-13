@@ -1,4 +1,4 @@
-export { getAllProjects, getFeaturedProjects, getProject, getProjectsByBlock } from './projects';
+export { getAllProjects, getFeaturedProjects, getMachineProjects, getProject, getProjectsByBlock } from './projects';
 export {
   getAllPosts,
   getAllPostEntries,
@@ -6,6 +6,7 @@ export {
   getArchivedPostsByYear,
   getArchiveYears,
   getCurrentPosts,
+  getMachinePosts,
   getPost,
   getPostEntry,
   getUpcomingPosts,
@@ -13,5 +14,5 @@ export {
 } from './posts';
 export type { ArchiveYear, PostEntry, PostSummary, TranslationPair } from './posts';
 export { getAvailability, getProfile } from './profile';
-export type { BlockGroup } from './projects';
+export type { BlockGroup, Localized } from './projects';
 export type { Availability } from './profile';
