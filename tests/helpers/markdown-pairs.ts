@@ -33,3 +33,13 @@ export const postPairs = (): { pt: MarkdownFile; en: MarkdownFile }[] => {
     return { pt, en };
   });
 };
+
+/** Each English case overlay with its pt-BR source, matched by translationOf -> slug. */
+export const projectPairs = (): { pt: MarkdownFile; en: MarkdownFile }[] => {
+  const sources = new Map(markdownIn('src/content/projects').map(file => [file.field('slug'), file]));
+  return markdownIn('src/content/projects-en').map(en => {
+    const pt = sources.get(en.field('translationOf'));
+    if (!pt) throw new Error(`${en.file}: translationOf has no source`);
+    return { pt, en };
+  });
+};

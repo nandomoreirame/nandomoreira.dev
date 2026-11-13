@@ -4,7 +4,8 @@
  * style, code and pre are dropped first. A word list rather than language
  * detection, so a failure always names the word.
  */
-const MARKERS = [
+/** Markers named by i18n-content REQ-009 (occurrence budget for translated bodies). */
+const CONTENT_MARKERS = [
   'não',
   'você',
   'também',
@@ -18,6 +19,11 @@ const MARKERS = [
   'quando',
   'para',
   'com',
+] as const;
+
+/** Broader list for English page chrome (distinct types via ptLeftovers). */
+const MARKERS = [
+  ...CONTENT_MARKERS,
   'todos',
   'ver',
   'sobre',
@@ -72,9 +78,17 @@ export const visibleText = (html: string): string => {
   return text;
 };
 
-export const ptLeftovers = (html: string): string[] => {
-  const words = visibleText(html)
+const wordsMatching = (html: string, markers: readonly string[]): string[] =>
+  visibleText(html)
     .toLowerCase()
-    .split(/[^\p{L}]+/u);
-  return [...new Set(words.filter(word => MARKERS.includes(word)))];
-};
+    .split(/[^\p{L}]+/u)
+    .filter(word => markers.includes(word));
+
+/** Distinct Portuguese marker types left in visible text (page chrome gates). */
+export const ptLeftovers = (html: string): string[] => [...new Set(wordsMatching(html, MARKERS))];
+
+/**
+ * Occurrence count of the i18n-content REQ-009 markers (not the broader chrome
+ * list: that one includes English words like "do").
+ */
+export const ptMarkerCount = (html: string): number => wordsMatching(html, CONTENT_MARKERS).length;

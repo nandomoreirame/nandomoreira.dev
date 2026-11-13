@@ -89,6 +89,6 @@ Another one that got me was the console losing internet with the code `0x5006019
 
 The next step is to rebuild posse mode the right way, which is already in the code and on the panel as "SESSÃO EM BANDO": one button captures the peers of the current session, and when the mode turns on the gateway drops every P2P outside that list, **always letting Rockstar relays through**. The bet is that I become the host of a clean session. That mode has not been fully tested yet. I tested as far as the capture, which isolates the posse session IPs; what is left to test is turning the mode on for real, with the gateway blocking every external IP that is not on that list. The spec only treats it as done after a real session with a friend surviving activation and a host migration. Until then, the README only talks about solo mode. Further down the wishlist is a block list to ban only the IP of whoever is attacking, without emptying the session.
 
-The code is at [github.com/nandomoreirame/rdo-solo](https://github.com/nandomoreirame/rdo-solo) and the project summary at [/lab/rdo-solo](/lab/rdo-solo). Personal tool, extracted from my dotfiles and shared as-is, with no warranty.
+The code is at [github.com/nandomoreirame/rdo-solo](https://github.com/nandomoreirame/rdo-solo) and the project summary at [/en/lab/rdo-solo](/en/lab/rdo-solo). Personal tool, extracted from my dotfiles and shared as-is, with no warranty.
 
 `rdo-solo off`

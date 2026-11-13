@@ -123,6 +123,6 @@ What I did was decide: that the theme came from my site, that it became a projec
 
 Today each port installs by copying a file from the repository. Nobody discovers a theme that way: we discover it inside the app, in Noctalia's palette picker, in `ghostty +list-themes`, in the editor's extensions tab. The plan is already written: Noctalia's [community-palettes](https://github.com/noctalia-dev/community-palettes), [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes), which feeds Ghostty's built-in themes, and, after the stable version, the VS Code Marketplace, Open VSX (where Cursor pulls themes from) and Obsidian's theme directory.
 
-The code is in the [repository](https://github.com/nandomoreirame/terminalnoir), the site at [terminalnoir.web.app](https://terminalnoir.web.app), and the case in the [lab](/lab/terminal-noir), for anyone who wants to paint their own setup noir.
+The code is in the [repository](https://github.com/nandomoreirame/terminalnoir), the site at [terminalnoir.web.app](https://terminalnoir.web.app), and the case in the [lab](/en/lab/terminal-noir), for anyone who wants to paint their own setup noir.
 
 `make build`

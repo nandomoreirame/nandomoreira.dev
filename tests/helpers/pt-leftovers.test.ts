@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ptLeftovers } from './pt-leftovers';
+import { ptLeftovers, ptMarkerCount } from './pt-leftovers';
 
 describe('ptLeftovers', () => {
   it('finds Portuguese words in visible text', () => {
@@ -18,5 +18,17 @@ describe('ptLeftovers', () => {
 
   it('passes clean English', () => {
     expect(ptLeftovers('<p>See all posts in the blog</p>')).toEqual([]);
+  });
+});
+
+describe('ptMarkerCount', () => {
+  it('counts repeated markers, not distinct types (REQ-009)', () => {
+    expect(ptMarkerCount('<p>para para para para</p>')).toBe(4);
+    expect(ptLeftovers('<p>para para para para</p>')).toEqual(['para']);
+  });
+
+  it('still ignores allowlisted names and non-visible text', () => {
+    expect(ptMarkerCount('<p>Fernando Moreira Costa lives in São Paulo</p>')).toBe(0);
+    expect(ptMarkerCount('<code>para para para para</code>')).toBe(0);
   });
 });

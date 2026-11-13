@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import type { Block } from '../../src/content/blocks';
+import { collectionOfBlock } from '../../src/lib/catalog/groups';
 import { englishHref, internalLinks } from '../../src/lib/i18n/links';
-import { markdownIn, postPairs } from '../helpers/markdown-pairs';
-import { ptLeftovers } from '../helpers/pt-leftovers';
+import { markdownIn, postPairs, projectPairs } from '../helpers/markdown-pairs';
+import { ptLeftovers, ptMarkerCount } from '../helpers/pt-leftovers';
 
 const fences = (body: string) => body.match(/(```|~~~)[\s\S]*?\1/g) ?? [];
 const headings = (body: string) =>
@@ -18,8 +20,15 @@ const externalLinks = (body: string) =>
 const prose = (text: string) => text.replace(/(```|~~~)[\s\S]*?\1/g, ' ').replace(/`[^`]*`/g, ' ');
 
 const pairs = postPairs();
-// Pairs known at test time, for the internal-link rule (REQ-010).
-const linkPairs = pairs.map(({ pt, en }) => ({ 'pt-BR': `/${pt.field('slug')}`, en: `/en/${en.field('slug')}` }));
+// Pairs known at test time, for the internal-link rule (REQ-010): posts and cases.
+const linkPairs = [
+  ...pairs.map(({ pt, en }) => ({ 'pt-BR': `/${pt.field('slug')}`, en: `/en/${en.field('slug')}` })),
+  ...projectPairs().map(({ pt }) => {
+    const slug = pt.field('slug')!;
+    const collection = collectionOfBlock(pt.field('block') as Block);
+    return { 'pt-BR': `/${collection}/${slug}`, en: `/en/${collection}/${slug}` };
+  }),
+];
 
 describe.each(pairs.map(pair => [pair.en.file, pair] as const))('%s', (_file, { pt, en }) => {
   it('has the same headings (REQ-007)', () => {
@@ -43,8 +52,8 @@ describe.each(pairs.map(pair => [pair.en.file, pair] as const))('%s', (_file, { 
   });
 
   it('leaves no Portuguese behind (REQ-009)', () => {
-    const words = ptLeftovers(`<p>${prose(en.body + en.frontmatter)}</p>`);
-    expect(words.length, `Portuguese words: ${words.join(', ')}`).toBeLessThanOrEqual(3);
+    const count = ptMarkerCount(`<p>${prose(en.body + en.frontmatter)}</p>`);
+    expect(count, `Portuguese marker count: ${count}`).toBeLessThanOrEqual(3);
   });
 
   it('points internal links at the English pair when one exists (REQ-010)', () => {
@@ -63,7 +72,7 @@ describe('English case files', () => {
   } else {
     it.each(files.map(file => [file.file, file] as const))('%s has no dash and no Portuguese left', (_file, file) => {
       expect(file.frontmatter).not.toMatch(/[–—]/);
-      expect(ptLeftovers(`<p>${file.frontmatter}</p>`).length).toBeLessThanOrEqual(3);
+      expect(ptMarkerCount(`<p>${file.frontmatter}</p>`)).toBeLessThanOrEqual(3);
     });
   }
 });
@@ -72,5 +81,15 @@ describe('the gate itself', () => {
   it('can fail', () => {
     expect(fences('```a```')).not.toEqual(fences('```b```'));
     expect(ptLeftovers('<p>não você também então porque</p>').length).toBeGreaterThan(3);
+  });
+
+  it('fails on repetition of the same marker (REQ-009)', () => {
+    expect(ptMarkerCount('<p>para para para para</p>')).toBeGreaterThan(3);
+    expect(ptLeftovers('<p>para para para para</p>').length).toBe(1);
+  });
+
+  it('fails a pt-BR case link when an English pair exists (REQ-010)', () => {
+    expect(englishHref('/lab/noctalia-daybar', linkPairs)).toBe('/en/lab/noctalia-daybar');
+    expect('/lab/noctalia-daybar').not.toBe(englishHref('/lab/noctalia-daybar', linkPairs));
   });
 });

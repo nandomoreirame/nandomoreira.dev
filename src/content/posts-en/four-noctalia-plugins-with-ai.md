@@ -56,7 +56,7 @@ The first one, started on June 9. Sticky notes pinned to the desktop as widgets:
 
 ![Yellow sticky note on the desktop with the settings panel open: linked Markdown file, background color, text color and font size](/lab/noctalia-desktop-sticky-notes/settings.webp)
 
-[See Desktop Sticky Notes in the lab](/lab/noctalia-desktop-sticky-notes)
+[See Desktop Sticky Notes in the lab](/en/lab/noctalia-desktop-sticky-notes)
 
 ### Daybar
 
@@ -74,7 +74,7 @@ The clock also leaves the panel. One click opens the countdown in a Niri window 
 
 ![Daybar clock open in its own window: a 01:17 countdown in a large circle, with restart and pause buttons and the Focus tabs below](/lab/noctalia-daybar/clock-window.webp)
 
-[See Daybar in the lab](/lab/noctalia-daybar)
+[See Daybar in the lab](/en/lab/noctalia-daybar)
 
 ### AI Bar
 
@@ -84,7 +84,7 @@ CLI credentials are read only, never written or renewed. The endpoints and gotch
 
 ![Bar showing Claude Code usage at 69% with a reset in 40 minutes, and the panel open with Claude Code session and weekly windows, extra usage and the Grok weekly window, each with percentage, time until reset and pace](/lab/noctalia-aibar/panel.webp)
 
-[See AI Bar in the lab](/lab/noctalia-aibar)
+[See AI Bar in the lab](/en/lab/noctalia-aibar)
 
 ### Gistbar
 
@@ -94,7 +94,7 @@ Every GitHub access goes through `gh`, so the plugin never touches a token.
 
 ![Gistbar panel with the search field, the New gist button, the All (95), Public (70) and Secret (25) filters and the gist list, each with description, files, language badge and how long ago it was updated](/lab/noctalia-gistbar/panel.webp)
 
-[See Gistbar in the lab](/lab/noctalia-gistbar)
+[See Gistbar in the lab](/en/lab/noctalia-gistbar)
 
 ## 100% AI, in the RPI flow
 

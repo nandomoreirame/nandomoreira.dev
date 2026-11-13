@@ -7,9 +7,14 @@ const OWN = /^https:\/\/(www\.)?nandomoreira\.dev/;
 export const englishHref = (href: string, pairs: readonly TranslationPair[]): string => {
   if (/^https?:\/\//.test(href) && !OWN.test(href)) return href;
   const local = href.replace(OWN, '') || '/';
-  const [path, hash = ''] = local.split('#');
-  const pair = staticCounterpart(path!) ?? pairs.find(item => item['pt-BR'] === path);
-  return pair ? `${pair.en}${hash ? `#${hash}` : ''}` : href;
+  const hashIndex = local.indexOf('#');
+  const beforeHash = hashIndex === -1 ? local : local.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : local.slice(hashIndex);
+  const queryIndex = beforeHash.indexOf('?');
+  const path = queryIndex === -1 ? beforeHash : beforeHash.slice(0, queryIndex);
+  const search = queryIndex === -1 ? '' : beforeHash.slice(queryIndex);
+  const pair = staticCounterpart(path) ?? pairs.find(item => item['pt-BR'] === path);
+  return pair ? `${pair.en}${search}${hash}` : href;
 };
 
 /** Internal link targets of a markdown body, outside code and images. */

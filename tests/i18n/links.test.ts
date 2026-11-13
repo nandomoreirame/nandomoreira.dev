@@ -10,6 +10,12 @@ describe('englishHref', () => {
     expect(englishHref('https://nandomoreira.dev/sobre', pairs)).toBe('/en/about');
   });
 
+  it('maps pathname only and preserves query and hash (REQ-010)', () => {
+    expect(englishHref('/sobre?from=blog#bio', pairs)).toBe('/en/about?from=blog#bio');
+    expect(englishHref('/sobre?from=blog', pairs)).toBe('/en/about?from=blog');
+    expect(englishHref('/o-falso-verde?x=1#setup', pairs)).toBe('/en/the-false-green?x=1#setup');
+  });
+
   it('keeps links without a pair and external links', () => {
     expect(englishHref('/posts/arquivo/2017', pairs)).toBe('/posts/arquivo/2017');
     expect(englishHref('https://github.com/x', pairs)).toBe('https://github.com/x');
