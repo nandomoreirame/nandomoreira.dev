@@ -92,6 +92,10 @@ describe('NowPage', () => {
     expect(main).not.toContain('Produto de ponta a ponta');
     expect(main).not.toContain('Último commit');
     expect(main).not.toContain('/en/meu-harness-de-ia-com-rpi');
+    // The page index and its toggle are named in English too (REQ-003, REQ-008).
+    expect(html).toContain('aria-label="Table of contents"');
+    expect(html).toContain('aria-label="Post table of contents"');
+    expect(html).not.toMatch(/aria-label="Índice/);
 
     // Chrome still ships the language suggestion in the other language by design.
     const cleaned = main

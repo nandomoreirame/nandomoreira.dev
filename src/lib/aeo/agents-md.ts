@@ -45,6 +45,7 @@ export const buildAgentsMd = ({ site, profile, projects = [] }: Input): string =
     `- \`GET ${absoluteUrl(site, '/llms-full.txt')}\` — full LLM dump of profile, cases and posts.`,
     `- \`GET ${absoluteUrl(site, '/ai-index.json')}\` — machine-readable index of pages, cases and posts.`,
     `- Case markdown at \`${site.origin}/portfolio/<slug>.md\` and \`${site.origin}/lab/<slug>.md\`.`,
+    `- English case markdown at \`${site.origin}/en/portfolio/<slug>.md\` and \`${site.origin}/en/lab/<slug>.md\` for translated cases; the pt-BR mirrors answer for the rest.`,
     `- \`GET ${absoluteUrl(site, '/api/resume.json')}\` — résumé in JSON Resume schema.`,
     `- \`GET ${absoluteUrl(site, '/api/resume.txt')}\` — plain-text résumé.`,
     `- \`${absoluteUrl(site, '/api/mcp')}\` — MCP server, Streamable HTTP, stateless.`,

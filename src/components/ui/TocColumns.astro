@@ -1,13 +1,15 @@
 ---
 import PostToc from '../posts/PostToc.astro';
+import type { Locale } from '../../lib/i18n/locale';
 import type { TocItem } from '../../lib/posts/toc';
 
 interface Props {
   /** The page sections, linked by the ids of their headings. */
   items: TocItem[];
+  locale?: Locale;
 }
 
-const { items } = Astro.props;
+const { items, locale = 'pt-BR' } = Astro.props;
 ---
 
 {/* The post index, on a page made of sections (/now, /setup): a sticky card
@@ -17,7 +19,7 @@ const { items } = Astro.props;
     <PostTocToggle /> that is a direct child of the page's <article>. */}
 <div data-toc-layout class="flex flex-col gap-xl md:grid md:grid-cols-[12rem_minmax(0,1fr)] md:gap-xl lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-2xl">
   <aside data-toc-aside class="contents md:sticky md:top-3xl md:flex md:flex-col md:self-start">
-    <PostToc items={items} />
+    <PostToc items={items} locale={locale} />
   </aside>
   <div class="flex min-w-0 flex-col gap-3xl">
     <slot />

@@ -19,6 +19,8 @@ export const MACHINE_ROUTES = [
   ['/ai-index.json', 'Machine-readable index of pages, cases and posts'],
   ['/portfolio/<slug>.md', 'Markdown mirror of a portfolio case'],
   ['/lab/<slug>.md', 'Markdown mirror of a lab case'],
+  ['/en/portfolio/<slug>.md', 'English markdown mirror of a translated portfolio case (pt-BR mirror above otherwise)'],
+  ['/en/lab/<slug>.md', 'English markdown mirror of a translated lab case (pt-BR mirror above otherwise)'],
   ['/api/resume.json', 'Résumé in JSON Resume schema, with an extension block'],
   ['/api/resume.txt', 'Plain-text résumé, LLM friendly'],
   ['/api/mcp', 'MCP server: get_profile, list_projects, get_project, get_resume, check_availability'],

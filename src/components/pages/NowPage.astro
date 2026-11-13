@@ -55,7 +55,7 @@ const writing = data.writing;
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title={t.heading} description={t.description} updatedAt={data.updatedAt} locale={locale} />
 
-    <TocColumns items={toc}>
+    <TocColumns items={toc} locale={locale}>
       <NowSection id="foco" title={t.sections.focus} step={1}>
         <AvailabilityCard status={profile.availability.status} detail={profile.availability.detail} locale={locale} />
         <ul>
@@ -130,6 +130,6 @@ const writing = data.writing;
 
     <ClosingCta page="now" locale={locale} />
 
-    <PostTocToggle />
+    <PostTocToggle locale={locale} />
   </article>
 </BaseLayout>

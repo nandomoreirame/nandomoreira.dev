@@ -36,7 +36,7 @@ const toc = sections.map((section) => ({ depth: 2 as const, slug: section.id, te
   <article class="mb-3xl flex flex-col gap-xl">
     <PageHeader title={t.heading} description={lead} updatedAt={SETUP_UPDATED_AT} locale={locale} />
 
-    <TocColumns items={toc}>
+    <TocColumns items={toc} locale={locale}>
       {
         sections.map((section, index) => (
           <section aria-labelledby={section.id}>
@@ -108,6 +108,6 @@ const toc = sections.map((section) => ({ depth: 2 as const, slug: section.id, te
 
     <NewsletterCard outcome={outcome} returnTo="/setup" locale={locale} />
 
-    <PostTocToggle />
+    <PostTocToggle locale={locale} />
   </article>
 </BaseLayout>

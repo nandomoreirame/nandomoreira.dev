@@ -56,6 +56,8 @@ describe('buildAgentsMd', () => {
     expect(text).toContain('/ai-index.json');
     expect(text).toContain('/portfolio/<slug>.md');
     expect(text).toContain('/lab/<slug>.md');
+    expect(text).toContain('/en/portfolio/<slug>.md');
+    expect(text).toContain('/en/lab/<slug>.md');
     expect(text).toContain('/api/hire');
     expect(text).toContain('/api/mcp');
   });

@@ -54,6 +54,8 @@ describe('buildLlmsTxt', () => {
       '/ai-index.json',
       '/portfolio/<slug>.md',
       '/lab/<slug>.md',
+      '/en/portfolio/<slug>.md',
+      '/en/lab/<slug>.md',
       '/api/resume.json',
       '/api/resume.txt',
       '/api/mcp',

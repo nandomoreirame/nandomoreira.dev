@@ -1,5 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import ResumePage from '../../src/components/pages/ResumePage.astro';
 import { handleCvDownload, resumeOriginOf } from '../../src/lib/cv/download';
 import { ptLeftovers } from '../helpers/pt-leftovers';
@@ -35,6 +35,29 @@ describe('ResumePage', () => {
     expect(pt).toContain('property="og:locale:alternate" content="en_US"');
     expect(en).toContain('property="og:locale" content="en_US"');
     expect(en).toContain('property="og:locale:alternate" content="pt_BR"');
+  });
+
+  it('announces no English pair while English is unpublished (REQ-005, D8)', async () => {
+    vi.resetModules();
+    vi.doMock('../../src/lib/i18n/live', async importOriginal => ({
+      ...(await importOriginal<typeof import('../../src/lib/i18n/live')>()),
+      EN_PUBLISHED: false,
+    }));
+    try {
+      const { default: OffResumePage } = await import('../../src/components/pages/ResumePage.astro');
+      const html = await (
+        await AstroContainer.create()
+      ).renderToString(OffResumePage, {
+        props: { locale: 'pt-BR' },
+        request: new Request('https://nandomoreira.dev/curriculo'),
+      });
+      expect(html).not.toContain('hreflang=');
+      expect(html).not.toContain('og:locale:alternate');
+      expect(html).toContain('property="og:locale" content="pt_BR"');
+    } finally {
+      vi.doUnmock('../../src/lib/i18n/live');
+      vi.resetModules();
+    }
   });
 
   it('renders the English resume body, with only the PDF labeled Portuguese', async () => {
