@@ -1,4 +1,6 @@
 import { absoluteUrl } from '../aeo/urls';
+import type { Locale } from '../i18n/locale';
+import { toLongDate } from '../format/date';
 
 /**
  * The privacy policy as data: one source for the page and for its markdown.
@@ -168,15 +170,8 @@ export const POLICY_LEAD =
   'Versão curta: este site não usa cookies nem analytics de terceiros. Ele conta visitas no próprio servidor, sem guardar seu IP, e guarda o que você envia de propósito por até 12 meses. Comentários nos textos atuais pedem uma conta do GitHub e ficam públicos no GitHub Discussions.';
 
 /** "8 de outubro de 2026", parsed as a calendar date so no timezone shifts it. */
-export const formatPolicyDate = (iso: string): string => {
-  const [year, month, day] = iso.split('-').map(Number);
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, month - 1, day)));
-};
+export const formatPolicyDate = (iso: string, locale: Locale = 'pt-BR'): string =>
+  toLongDate(iso, locale);
 
 /**
  * The markdown version is a machine surface, so it never prints the e-mail

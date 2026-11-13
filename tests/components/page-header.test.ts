@@ -74,7 +74,7 @@ describe('pages with an update date', () => {
   it.each([
     'src/components/pages/NowPage.astro',
     'src/components/pages/SetupPage.astro',
-    'src/pages/privacidade.astro',
+    'src/components/pages/PrivacyPage.astro',
   ])('%s hands the date to PageHeader instead of a loose UpdatedAt', async file => {
     const source = (await import('node:fs')).readFileSync(file, 'utf8');
     expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);

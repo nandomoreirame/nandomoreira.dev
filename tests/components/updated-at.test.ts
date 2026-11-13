@@ -29,7 +29,7 @@ describe('UpdatedAt', () => {
   it.each([
     'src/components/pages/SetupPage.astro',
     'src/components/pages/NowPage.astro',
-    'src/pages/privacidade.astro',
+    'src/components/pages/PrivacyPage.astro',
   ])('%s uses it through PageHeader', file => {
     const source = readFileSync(file, 'utf8');
     expect(source).toMatch(/<PageHeader[^>]*updatedAt=\{/);

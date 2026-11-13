@@ -248,6 +248,17 @@ export const ptBR = {
     shortcut: 'Atalho',
     shortcuts: 'Atalhos',
   },
+  privacyPage: {
+    title: 'Política de privacidade',
+    description:
+      'O que este site coleta, por quanto tempo guarda e como pedir a exclusão dos seus dados.',
+    heading: 'Política de privacidade',
+    turnstileHeading: 'Verificação anti-robô',
+    turnstileBody:
+      'Os formulários de contato e de novidades usam o Cloudflare Turnstile para distinguir uma pessoa de um robô. O endereço IP desse envio não fica em claro: guardo só o hash SHA-256, por 30 dias, para limitar tentativas repetidas. A newsletter envia um e-mail de confirmação antes de incluir o endereço na lista.',
+    contactHeading: 'Contato',
+    contactBody: 'Para qualquer pedido sobre seus dados, escreva para mim.',
+  },
   nowPage: {
     title: 'Agora',
     description:

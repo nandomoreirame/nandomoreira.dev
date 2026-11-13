@@ -243,6 +243,17 @@ export const en: Messages = {
     shortcut: 'Shortcut',
     shortcuts: 'Shortcuts',
   },
+  privacyPage: {
+    title: 'Privacy policy',
+    description:
+      'What this site collects, how long it keeps it, and how to ask for your data to be deleted.',
+    heading: 'Privacy policy',
+    turnstileHeading: 'Anti-bot verification',
+    turnstileBody:
+      'The contact and newsletter forms use Cloudflare Turnstile to tell a person from a bot. The IP address of that submission is not kept in cleartext: I store only the SHA-256 hash, for 30 days, to limit repeated attempts. The newsletter sends a confirmation e-mail before adding the address to the list.',
+    contactHeading: 'Contact',
+    contactBody: 'For any request about your data, write to me.',
+  },
   nowPage: {
     title: 'Now',
     description:

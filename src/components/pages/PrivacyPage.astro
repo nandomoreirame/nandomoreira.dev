@@ -1,0 +1,71 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import Button from '../ui/Button.astro';
+import PageHeader from '../ui/PageHeader.astro';
+import Prose from '../ui/Prose.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { POLICY_UPDATED_AT, paragraphRuns } from '../../lib/privacy/policy';
+import { policyFor } from '../../lib/privacy/policy-en';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).privacyPage;
+const { lead, sections } = policyFor(locale);
+
+const profile = await getProfile(locale);
+const email = profile.contacts.find((contact) => contact.kind === 'email');
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${displayNameOf(profile)}`}
+  description={t.description}
+  locale={locale}
+>
+  <article class="mb-3xl flex flex-col gap-xl">
+    <PageHeader title={t.heading} description={lead} updatedAt={POLICY_UPDATED_AT} />
+
+    <Prose>
+      {
+        sections.map((section) => (
+          <section aria-labelledby={section.id}>
+            <h2 id={section.id}>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p>
+                {paragraphRuns(paragraph, section.links).map((run) =>
+                  typeof run === 'string' ? run : <a href={run.href}>{run.label}</a>,
+                )}
+              </p>
+            ))}
+          </section>
+        ))
+      }
+
+      <section aria-labelledby="turnstile">
+        <h2 id="turnstile">{t.turnstileHeading}</h2>
+        <p>{t.turnstileBody}</p>
+      </section>
+
+      <section aria-labelledby="contato-privacidade">
+        <h2 id="contato-privacidade">{t.contactHeading}</h2>
+        <p>{t.contactBody}</p>
+      </section>
+    </Prose>
+
+    {
+      email && (
+        <div>
+          <Button href={`mailto:${email.value}`} variant="secondary">
+            {email.value}
+          </Button>
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>
