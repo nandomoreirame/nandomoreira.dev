@@ -1,11 +1,13 @@
 import type { Post } from '../../content/schemas/post';
 import { absoluteUrl } from '../aeo/urls';
+import { htmlLang, withLocale, type Locale } from '../i18n/locale';
 
 interface Input {
   site: URL;
   posts: readonly Post[];
   title: string;
   description: string;
+  locale?: Locale;
 }
 
 const escapeXml = (value: string): string =>
@@ -29,11 +31,11 @@ const toRfc822 = (iso: string): string => {
   return date.toUTCString();
 };
 
-export const buildRss = ({ site, posts, title, description }: Input): string => {
-  const channelLink = absoluteUrl(site, '/posts');
+export const buildRss = ({ site, posts, title, description, locale = 'pt-BR' }: Input): string => {
+  const channelLink = absoluteUrl(site, withLocale('/posts', locale));
   const items = posts
     .map(post => {
-      const link = absoluteUrl(site, `/${post.slug}`);
+      const link = absoluteUrl(site, withLocale(`/${post.slug}`, locale));
 
       return [
         '    <item>',
@@ -54,7 +56,7 @@ export const buildRss = ({ site, posts, title, description }: Input): string => 
     `    <title>${escapeXml(title)}</title>`,
     `    <link>${escapeXml(channelLink)}</link>`,
     `    <description>${escapeXml(description)}</description>`,
-    '    <language>pt-BR</language>',
+    `    <language>${escapeXml(htmlLang(locale))}</language>`,
     items,
     '  </channel>',
     '</rss>',
