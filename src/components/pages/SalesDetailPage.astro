@@ -2,7 +2,7 @@
 import type { Locale } from '../../lib/i18n/locale';
 import { EN_PUBLISHED } from '../../lib/i18n/live';
 import { salesLabelsFor, salesDetailTitle } from '../../lib/sales/ui';
-import { salesSlugIn } from '../../lib/sales/i18n';
+import { salesFormOrigin } from '../../lib/sales/form';
 
 import { TITLE_SEPARATOR } from '../../lib/seo/meta';
 import FaqList from '../sales/FaqList.astro';
@@ -23,7 +23,7 @@ if (!service) return new Response(null, { status: 404 });
 
 const outcome = Astro.url.searchParams.get('envio');
 
-const origin = locale === 'en' && salesSlugIn(service.slug, 'pt-BR') === service.slug ? `${service.slug}-en` : service.slug;
+const origin = salesFormOrigin(service.slug, locale)!;
 ---
 
 <SalesLayout locale={locale} live={live}

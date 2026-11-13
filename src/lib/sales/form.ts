@@ -1,3 +1,6 @@
+import type { Locale } from '../i18n/locale';
+import { EN_PUBLISHED } from '../i18n/live';
+import { salesSlugIn } from './i18n';
 import { formToPayload } from '../hire/form';
 import { detailSlugs } from './catalog';
 import { salesPath } from './host';
@@ -8,11 +11,22 @@ import { SERVICE_LABELS, type Service, isService } from './service-labels';
  * in the URL, so even a failure before the body is read (rate limit) can go
  * back to the right page. Only known values map to a path.
  */
-export const salesOriginOf = (url: URL): string | undefined => {
+/** Coinciding public slugs need a distinct English form origin. */
+export const salesFormOrigin = (slug: string, locale: Locale): string | undefined => {
+  const pt = salesSlugIn(slug, 'pt-BR');
+  const en = salesSlugIn(slug, 'en');
+  if (!pt || !en) return undefined;
+  return locale === 'pt-BR' ? pt : pt === en ? `${en}-en` : en;
+};
+
+export const salesOriginOf = (url: URL, en: boolean = EN_PUBLISHED): string | undefined => {
   const origin = url.searchParams.get('origem');
   if (origin === 'landing') return salesPath();
   if (origin && detailSlugs().includes(origin)) return salesPath(origin);
-  return undefined;
+  if (!en) return undefined;
+  if (origin === 'landing-en') return salesPath(undefined, undefined, 'en');
+  const slug = detailSlugs('en').find(candidate => salesFormOrigin(candidate, 'en') === origin);
+  return slug ? salesPath(slug, undefined, 'en') : undefined;
 };
 
 /** The message is optional on the sales form, but `brief` is required by the schema. */
