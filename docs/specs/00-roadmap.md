@@ -89,7 +89,7 @@ Permanecem no PRD e entram depois do lançamento, sem sprint alocada neste roadm
 | `catalog-filter` | F11 | P1 | v1.2 (primeira ilha interativa) |
 | `i18n-foundation` | F15 | P1 | 2026-10 |
 | `i18n-content` | F15 | P1 | 2026-10 |
-| `i18n-sales` | F15 | P1 | 2026-10 |
+| `i18n-sales` | F15 | P1 | em implementação (2026-11-13) |
 | `interactive-demos` | F13 | P2 | v2.0 |
 
 ## Riscos que atravessam o roadmap
