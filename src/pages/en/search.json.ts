@@ -3,7 +3,7 @@ import { getMachinePosts, getMachineProjects } from '../../lib/content';
 import { enStaticPaths } from '../../lib/i18n/guard';
 import { EN_PUBLISHED } from '../../lib/i18n/live';
 import { casePath, postPath } from '../../lib/i18n/paths';
-import { SALES_SERVICES } from '../../lib/sales/catalog';
+import { SALES_SERVICES_EN } from '../../lib/sales/catalog-en';
 import { salesUrl } from '../../lib/sales/host';
 import { buildSearchIndex } from '../../lib/search/build-index';
 
@@ -24,12 +24,12 @@ export const englishSearchResponse = async (live: boolean = EN_PUBLISHED): Promi
     current: current.map(post => ({ ...post, path: postPath(post) })),
     archived: archived.map(post => ({ ...post, path: postPath(post) })),
     projects: projects.map(project => ({ ...project, path: casePath(project) })),
-    services: SALES_SERVICES.map(service => ({
+    services: SALES_SERVICES_EN.map(service => ({
       title: service.title,
       summary: service.summary,
-      url: salesUrl(service.slug),
+      url: `https://contrate.nandomoreira.dev/en/${service.slug}`,
     })),
-    landingUrl: salesUrl(),
+    landingUrl: 'https://contrate.nandomoreira.dev/en',
   });
   return new Response(JSON.stringify(index), { headers: { 'content-type': 'application/json; charset=utf-8' } });
 };

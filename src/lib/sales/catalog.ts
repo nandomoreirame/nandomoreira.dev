@@ -1,36 +1,9 @@
 import { z } from 'zod';
-import { SERVICES } from '../hire/schema';
-
-const item = z.object({ title: z.string().min(1), text: z.string().min(1) });
-
-const detailSchema = z.object({
-  hero: z.object({ title: z.string().min(1), lead: z.string().min(1), cta: z.string().min(1) }),
-  anatomy: z.array(item.extend({ note: z.string().min(1) })).length(4),
-  fit: z.array(item).length(4),
-  included: z.array(item).min(1),
-  addons: z.array(item).min(1),
-  underTheHood: z.array(z.string().min(1)).min(1),
-  comparison: z.object({
-    caption: z.string().min(1),
-    columns: z.array(z.string()).length(3),
-    rows: z.array(z.object({ criterion: z.string(), values: z.array(z.string()).length(3) })).min(1),
-  }),
-  faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).min(1),
-});
-
-const serviceSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  service: z.enum(SERVICES),
-  icon: z.string().min(1),
-  title: z.string().min(1),
-  summary: z.string().min(1),
-  audience: z.string().min(1),
-  receives: z.array(z.string().min(1)).min(3).max(4),
-  detail: detailSchema.optional(),
-});
-
-export type SalesService = z.infer<typeof serviceSchema>;
-export type ServiceDetail = z.infer<typeof detailSchema>;
+import type { Locale } from '../i18n/locale';
+import { serviceSchema, type SalesService, type ServiceDetail } from './catalog-schema';
+import { SALES_SERVICES_EN } from './catalog-en';
+export { serviceSchema } from './catalog-schema';
+export type { SalesService, ServiceDetail } from './catalog-schema';
 
 const SITE_INSTITUCIONAL: ServiceDetail = {
   hero: {
@@ -254,10 +227,18 @@ export const SHOW_DETAIL_LINKS = false;
 
 export const serviceAnchor = (slug: string): string => `servico-${slug}`;
 
-export const detailFor = (slug: string): (SalesService & { detail: ServiceDetail }) | undefined => {
-  const found = SALES_SERVICES.find(service => service.slug === slug);
+export const servicesFor = (locale: Locale = 'pt-BR'): readonly SalesService[] =>
+  locale === 'en' ? SALES_SERVICES_EN : SALES_SERVICES;
+
+export const detailFor = (
+  slug: string,
+  locale: Locale = 'pt-BR',
+): (SalesService & { detail: ServiceDetail }) | undefined => {
+  const found = servicesFor(locale).find(service => service.slug === slug);
   return found?.detail ? (found as SalesService & { detail: ServiceDetail }) : undefined;
 };
 
-export const detailSlugs = (): string[] =>
-  SALES_SERVICES.filter(service => service.detail).map(service => service.slug);
+export const detailSlugs = (locale: Locale = 'pt-BR'): string[] =>
+  servicesFor(locale)
+    .filter(service => service.detail)
+    .map(service => service.slug);

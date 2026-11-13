@@ -66,7 +66,13 @@ export const buildSearchIndex = ({
     summary: project.summary,
     keywords: project.tech,
   })),
-  { kind: 'service', title: 'Serviços', path: landingUrl, summary: 'Sites, lojas e sistemas para o seu negócio' },
+  {
+    kind: 'service',
+    title: locale === 'en' ? 'Services' : 'Serviços',
+    path: landingUrl,
+    summary:
+      locale === 'en' ? 'Websites, stores and systems for your business' : 'Sites, lojas e sistemas para o seu negócio',
+  },
   ...services.map(service => ({
     kind: 'service' as const,
     title: service.title,
