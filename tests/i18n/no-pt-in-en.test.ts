@@ -74,16 +74,9 @@ const PAGES = [
 ] as const;
 
 /** Drop intentional Portuguese that is not interface copy (REQ-008). */
-const withoutIntentionalContent = (url: string, html: string): string => {
-  let out = html;
+const withoutIntentionalContent = (_url: string, html: string): string => {
   // When EN_LIVE is on, the suggestion is written in the other language by design (REQ-018).
-  out = out.replace(/<aside\b[^>]*\bdata-lang-suggest\b[^>]*>[\s\S]*?<\/aside>/gi, ' ');
-  if (url === '/en/resume') {
-    // Sheet body matches the Portuguese PDF (see resume-page-en). Nested
-    // <article> tags inside each job make a single-article strip miss the sheet.
-    out = out.replace(/<main\b[^>]*>[\s\S]*?<\/main>/i, ' ');
-  }
-  return out;
+  return html.replace(/<aside\b[^>]*\bdata-lang-suggest\b[^>]*>[\s\S]*?<\/aside>/gi, ' ');
 };
 
 describe('English pages carry no Portuguese interface text', () => {

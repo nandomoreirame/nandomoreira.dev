@@ -37,15 +37,15 @@ describe('ResumePage', () => {
     expect(en).toContain('property="og:locale:alternate" content="pt_BR"');
   });
 
-  it('renders the English resume chrome', async () => {
+  it('renders the English resume body, with only the PDF labeled Portuguese', async () => {
     const html = await render('en');
     expect(html).toContain('<html lang="en"');
-    // The sheet body stays Portuguese (same content as the PDF); this task owns
-    // the download bar and the dialog. The English download label names the
-    // language of the file so it does not promise an English PDF.
-    const bar = html.slice(html.indexOf('data-download-bar'), html.indexOf('<dialog'));
-    const dialog = html.match(/<dialog[\s\S]*?<\/dialog>/)?.[0] ?? '';
-    expect(ptLeftovers(bar + dialog)).toEqual([]);
+    // The sheet itself is localized; the download still points at the
+    // Portuguese PDF, and the CTA says so (no English PDF exists).
+    expect(ptLeftovers(html)).toEqual([]);
+    expect(html).toMatch(/Software engineer with \d{2} years of career/);
+    expect(html).not.toContain('Engenheiro de software');
+    expect(html).not.toContain('Atuei');
     expect(html).toContain('Download résumé (Portuguese, PDF)');
   });
 

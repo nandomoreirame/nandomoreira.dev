@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CAREER_START_YEAR, RESUME, careerYears, summaryOf } from '../../src/lib/cv/resume';
+import { CAREER_START_YEAR, RESUME, careerYears, resumeFor, summaryOf } from '../../src/lib/cv/resume';
 
 describe('careerYears', () => {
   it('counts from 2011 and moves with the clock, never a typed number', () => {
@@ -63,5 +63,30 @@ describe('RESUME parity with the PDF', () => {
     expect(summary).toMatch(/^Engenheiro de software com 15 anos de carreira, atuando de dados a interface\./);
     expect(summary).toContain('Mantenedor open source desde 2012.');
     expect(summaryOf(16)).toContain('com 16 anos de carreira');
+  });
+});
+
+describe('English resume data', () => {
+  it('keeps the same shape as the Portuguese sheet', () => {
+    const en = resumeFor('en');
+    expect(en.experience.map(job => [job.company, job.highlights.length])).toEqual(
+      RESUME.experience.map(job => [job.company, job.highlights.length]),
+    );
+    expect(en.earlier).toHaveLength(RESUME.earlier.length);
+    expect(en.projects).toHaveLength(RESUME.projects.length);
+    expect(en.stack).toHaveLength(RESUME.stack.length);
+    expect(en.education).toHaveLength(RESUME.education.length);
+  });
+
+  it('opens with an English summary whose career count comes from the clock', () => {
+    expect(summaryOf(15, 'en')).toMatch(/^Software engineer with 15 years of career, from data to interface\./);
+    expect(summaryOf(15, 'en')).toContain('Open source maintainer since 2012.');
+    expect(summaryOf(16, 'en')).toContain('with 16 years of career');
+    expect(summaryOf(15, 'en')).not.toContain('Engenheiro');
+  });
+
+  it('never uses em or en dashes in English prose', () => {
+    expect(JSON.stringify(resumeFor('en'))).not.toMatch(/[—–]/);
+    expect(summaryOf(15, 'en')).not.toMatch(/[—–]/);
   });
 });

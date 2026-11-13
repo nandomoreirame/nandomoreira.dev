@@ -1,9 +1,13 @@
 /**
- * The content of /curriculo, taken from the maintained AI Engineer variant of the CV
- * (the same one the PDF is built from). Human layer, so pt-BR. No e-mail here
- * on purpose: reaching for the PDF goes through the dialog on /curriculo, which asks who is
- * downloading.
+ * The content of /curriculo and /en/resume, taken from the maintained AI Engineer
+ * variant of the CV (the same one the PDF is built from). Human layer: pt-BR at
+ * the root, English under /en. No e-mail here on purpose: reaching for the PDF
+ * goes through the dialog, which asks who is downloading. The PDF itself stays
+ * Portuguese; only the on-page sheet is localized.
  */
+
+import type { Locale } from '../i18n/locale';
+import { RESUME_EN, summaryOfEn } from './resume-en';
 
 /** The career count starts in 2011 and is always computed, never typed. */
 export const CAREER_START_YEAR = 2011;
@@ -33,8 +37,13 @@ export interface ResumeProject {
 }
 
 /** The opening paragraph; the career count is the only part that moves. */
-export const summaryOf = (years: number): string =>
-  `Engenheiro de software com ${years} anos de carreira, atuando de dados a interface. Na Liquid AI, construí e operei a esteira de dados de financiamento imobiliário de mais de 20 incorporadoras, onde reduzi de cinco dias para até 30 minutos o tempo de preparar uma base e entregá-la na pipeline, automatizando com IA o que antes era manual. Sustentei essa operação com um framework próprio de desenvolvimento assistido por IA, com guard-rails de segurança e portões de qualidade obrigatórios. Antes disso, seis anos em produtos de alta escala: Itaú Unibanco, Pipefy e Skyone. Mantenedor open source desde 2012.`;
+export const summaryOf = (years: number, locale: Locale = 'pt-BR'): string =>
+  locale === 'en'
+    ? summaryOfEn(years)
+    : `Engenheiro de software com ${years} anos de carreira, atuando de dados a interface. Na Liquid AI, construí e operei a esteira de dados de financiamento imobiliário de mais de 20 incorporadoras, onde reduzi de cinco dias para até 30 minutos o tempo de preparar uma base e entregá-la na pipeline, automatizando com IA o que antes era manual. Sustentei essa operação com um framework próprio de desenvolvimento assistido por IA, com guard-rails de segurança e portões de qualidade obrigatórios. Antes disso, seis anos em produtos de alta escala: Itaú Unibanco, Pipefy e Skyone. Mantenedor open source desde 2012.`;
+
+/** Sheet content for the given locale. The PDF download stays Portuguese. */
+export const resumeFor = (locale: Locale = 'pt-BR') => (locale === 'en' ? RESUME_EN : RESUME);
 
 export const RESUME = {
   name: 'Fernando Moreira Costa',
