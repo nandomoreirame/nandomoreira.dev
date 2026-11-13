@@ -9,6 +9,7 @@ import { messagesFor } from '../i18n/messages';
 import { withLocale } from '../i18n/locale';
 import { BLOG_COPY, blogCopy } from '../posts/blog-copy';
 import { detailFor, detailSlugs } from '../sales/catalog';
+import { salesCopy } from '../sales/copy';
 
 /** What the share card of one page shows. */
 export interface OgPage {
@@ -59,6 +60,10 @@ export const englishOgPages = async (live: boolean = EN_PUBLISHED): Promise<OgPa
     staticPage('/en/privacy', t.privacyPage.title, t.footer.privacy, 'panels'),
     staticPage('/en/resume', t.resume.title, t.resume.title, 'timeline'),
     staticPage('/en/posts', blogCopy('en').title, t.nav.blog, 'calendar'),
+    staticPage('/en/services', salesCopy('en').hero.title, 'Services', 'wireframe'),
+    ...detailSlugs('en').map(slug =>
+      staticPage(`/en/services/${slug}`, detailFor(slug, 'en')!.detail.hero.title, 'Services', 'wireframe'),
+    ),
     ...projects.map(project => {
       const collection = collectionOfBlock(project.block);
       const path = withLocale(`/${collection}/${project.slug}`, 'en');
