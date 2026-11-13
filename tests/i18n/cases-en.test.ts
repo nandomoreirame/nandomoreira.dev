@@ -24,6 +24,12 @@ const BATCHES: string[] = [
   'financial-normalization',
   'seu-atelie-aqui',
   'sudadhara',
+  'coachbot-cli',
+  'flipclock-app',
+  'flipclock-screensaver-ascii',
+  'grab-sh',
+  'hypr-switcher',
+  'job-radar',
 ];
 
 /** Professional-batch cases with confidential: true (REQ-017). */
