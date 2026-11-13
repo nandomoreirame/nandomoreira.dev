@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { getAllPostEntries, getPostEntry } from '../../src/lib/content';
+import { getAllPostEntries, getPostEntry, getUpcomingPosts } from '../../src/lib/content';
 import { readingMinutes } from '../../src/lib/posts/reading-time';
+import { postPairs } from '../helpers/markdown-pairs';
 
 /** [pt-BR slug, English slug], appended by each translation task. */
 const TRANSLATED: [string, string][] = [
@@ -19,11 +20,39 @@ const TRANSLATED: [string, string][] = [
   ['espanso-substituicao-de-texto-no-linux', 'espanso-text-replacement-on-linux'],
   ['game-mode-congelando-o-trabalho-com-o-cgroup-freezer', 'game-mode-freezing-work-with-cgroup'],
   ['revisao-cruzada-entre-modelos', 'cross-model-review'],
+  ['meu-homelab-num-mac-mini-de-2018', 'homelab-on-a-2018-mac-mini'],
+  ['sessao-de-agente-que-voltava-zerada', 'agent-session-that-came-back-empty'],
 ];
+
+const bodiesBySlug = new Map(
+  postPairs().flatMap(({ pt, en }) => [
+    [pt.field('slug')!, pt.body] as const,
+    [en.field('slug')!, en.body] as const,
+  ]),
+);
 
 describe('translated posts', () => {
   it.each(TRANSLATED)('%s is served as /en/%s with the source structure', async (ptSlug, enSlug) => {
     const [pt, en] = await Promise.all([getPostEntry(ptSlug), getPostEntry(enSlug, 'en')]);
+
+    // Drafts are hidden in Vitest/production (SHOW_DRAFTS=false). C2: inherit
+    // draft from the source, keep them out of public listings, still check length.
+    if (!pt && !en) {
+      const [upcomingPt, upcomingEn] = await Promise.all([getUpcomingPosts(), getUpcomingPosts('en')]);
+      const src = upcomingPt.find((post) => post.slug === ptSlug);
+      const overlay = upcomingEn.find((post) => post.slug === enSlug);
+      expect(src).toBeDefined();
+      expect(overlay).toBeDefined();
+      expect(overlay!.draft).toBe(true);
+      expect(overlay!.draft).toBe(src!.draft);
+      expect(overlay!.date).toBe(src!.date);
+      expect(overlay!.art).toBe(src!.art);
+      const ratio = readingMinutes(bodiesBySlug.get(enSlug) ?? '') / readingMinutes(bodiesBySlug.get(ptSlug) ?? '');
+      expect(ratio).toBeGreaterThan(0.7);
+      expect(ratio).toBeLessThan(1.4);
+      return;
+    }
+
     expect(en).toBeDefined();
     expect(en!.data.date).toBe(pt!.data.date);
     expect(en!.data.draft).toBe(pt!.data.draft);
