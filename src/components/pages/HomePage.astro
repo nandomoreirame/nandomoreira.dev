@@ -24,11 +24,9 @@ interface Props {
 
 const { locale = 'pt-BR' } = Astro.props;
 
-// Projects stay on the pt-BR catalog until i18n-content overlays English cases;
-// getAllProjects('en') is still an empty stub, and service case slugs match.
 const [profile, allProjects, allPosts] = await Promise.all([
   getProfile(locale),
-  getAllProjects(),
+  getAllProjects(locale),
   getAllPosts(locale),
 ]);
 

@@ -16,6 +16,7 @@ import { getAllProjects, getProfile } from '../../lib/content';
 import { displayNameOf } from '../../lib/content/display-name';
 import { toLongDate } from '../../lib/format/date';
 import type { Locale } from '../../lib/i18n/locale';
+import { withLocale } from '../../lib/i18n/locale';
 import { messagesFor } from '../../lib/i18n/messages';
 import { postPath } from '../../lib/i18n/paths';
 import { saoPauloDay } from '../../lib/now/day';
@@ -31,7 +32,7 @@ const { locale = 'pt-BR' } = Astro.props;
 const t = messagesFor(locale).nowPage;
 
 const profile = await getProfile(locale);
-const cases = await getAllProjects();
+const cases = await getAllProjects(locale);
 const data = await loadNow(locale);
 // Mirrors the NowSection ids and titles below, in order.
 const toc = [
@@ -69,7 +70,8 @@ const writing = data.writing;
             ) : (
               <ul>
                 {data.projects.items.map((repo) => {
-                  const href = linkForRepo(repo, cases);
+                  const matched = linkForRepo(repo, cases);
+                  const href = matched.startsWith('http') ? matched : withLocale(matched, locale);
                   const day = saoPauloDay(new Date(repo.pushedAt));
                   const lead = repo.description ? `: ${endSentence(repo.description)} ` : '. ';
                   return (

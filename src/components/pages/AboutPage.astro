@@ -30,9 +30,7 @@ const { locale = 'pt-BR' } = Astro.props;
 const t = messagesFor(locale).about;
 const siteColophon = colophon(locale);
 
-// Projects stay on the pt-BR catalog until i18n-content overlays English cases;
-// getAllProjects('en') is still an empty stub, and service case slugs match.
-const [profile, projects] = await Promise.all([getProfile(locale), getAllProjects()]);
+const [profile, projects] = await Promise.all([getProfile(locale), getAllProjects(locale)]);
 const profiles = profile.contacts.filter(
   (contact) => contact.kind === 'github' || contact.kind === 'linkedin',
 );
