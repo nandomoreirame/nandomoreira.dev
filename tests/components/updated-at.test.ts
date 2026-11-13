@@ -28,7 +28,7 @@ describe('UpdatedAt', () => {
 
   it.each([
     'src/components/pages/SetupPage.astro',
-    'src/pages/now.astro',
+    'src/components/pages/NowPage.astro',
     'src/pages/privacidade.astro',
   ])('%s uses it through PageHeader', file => {
     const source = readFileSync(file, 'utf8');

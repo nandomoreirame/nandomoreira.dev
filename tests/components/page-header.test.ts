@@ -72,7 +72,7 @@ describe('PageHeader', () => {
 
 describe('pages with an update date', () => {
   it.each([
-    'src/pages/now.astro',
+    'src/components/pages/NowPage.astro',
     'src/components/pages/SetupPage.astro',
     'src/pages/privacidade.astro',
   ])('%s hands the date to PageHeader instead of a loose UpdatedAt', async file => {

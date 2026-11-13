@@ -1,13 +1,17 @@
 ---
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import type { GameProgress as GameProgressValue } from '../../lib/now/xbox';
 
 interface Props {
   progress?: GameProgressValue;
   name: string;
   size: 'lg' | 'sm';
+  locale?: Locale;
 }
 
-const { progress, name, size } = Astro.props;
+const { progress, name, size, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).nowPage;
 const height = size === 'lg' ? 'h-2.5' : 'h-1';
 // The large bar sits at the bottom of the featured card, level with the cover.
 const placement = size === 'lg' ? 'mt-auto' : '';
@@ -22,7 +26,7 @@ const placement = size === 'lg' ? 'mt-auto' : '';
         aria-valuenow={progress.percent}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`Progresso em ${name}`}
+        aria-label={t.progressIn(name)}
       >
         <div class="h-full rounded-full bg-primary" style={`width: ${progress.percent}%`} />
       </div>

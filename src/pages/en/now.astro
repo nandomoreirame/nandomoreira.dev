@@ -1,0 +1,9 @@
+---
+Astro.response.headers.set('cache-control', 'public, max-age=60, s-maxage=300');
+import NowPage from '../../components/pages/NowPage.astro';
+import { EN_PUBLISHED } from '../../lib/i18n/live';
+
+if (!EN_PUBLISHED) return new Response(null, { status: 404 });
+---
+
+<NowPage locale="en" />

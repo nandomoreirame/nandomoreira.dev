@@ -1,12 +1,15 @@
 ---
 import GameProgress from './GameProgress.astro';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import type { GamesSection } from '../../lib/now/load';
 import type { GameProgress as GameProgressValue } from '../../lib/now/xbox';
-import { formatPolicyDate } from '../../lib/privacy/policy';
+import { toLongDate } from '../../lib/format/date';
 import { isAllowedUrl } from '../../lib/now/safe';
 
 interface Props {
   games: GamesSection;
+  locale?: Locale;
 }
 
 interface Featured {
@@ -15,10 +18,11 @@ interface Featured {
   platforms: string[];
   cover?: string;
   progress?: GameProgressValue;
-  eyebrow: 'Jogando agora' | 'Último jogado';
+  kind: 'playing' | 'last';
 }
 
-const { games } = Astro.props;
+const { games, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).nowPage;
 const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 const cardLink = `transition-[border-color] duration-(--duration-fast) ease-out hover:border-primary ${focus}`;
@@ -42,7 +46,7 @@ const view = (() => {
         platforms: playingNow.platforms,
         cover: playingNow.cover,
         progress: playingNow.progress,
-        eyebrow: 'Jogando agora',
+        kind: 'playing',
       }
     : recent[0]
       ? {
@@ -51,7 +55,7 @@ const view = (() => {
           platforms: recent[0].platforms,
           cover: recent[0].cover,
           progress: recent[0].progress,
-          eyebrow: 'Último jogado',
+          kind: 'last',
         }
       : undefined;
   if (!featured) return undefined;
@@ -63,11 +67,12 @@ const view = (() => {
 
 const featuredCard = card(view?.featured.url);
 const FeaturedTag = featuredCard.Tag;
+const featuredEyebrow = view?.featured.kind === 'playing' ? t.playingNow : t.lastPlayed;
 ---
 
 {
   games.state === 'empty' ? (
-    <p class="text-muted-foreground">Sem dados no momento.</p>
+    <p class="text-muted-foreground">{t.empty}</p>
   ) : games.state === 'fallback' ? (
     <ul>
       {games.items.map((game) => (
@@ -101,10 +106,10 @@ const FeaturedTag = featuredCard.Tag;
             <p
               class:list={[
                 'font-mono text-micro uppercase tracking-eyebrow',
-                view.featured.eyebrow === 'Jogando agora' ? 'text-primary' : 'text-muted-foreground',
+                view.featured.kind === 'playing' ? 'text-primary' : 'text-muted-foreground',
               ]}
             >
-              {view.featured.eyebrow}
+              {featuredEyebrow}
             </p>
             <h3 class="font-serif text-h3 font-semibold">{view.featured.name}</h3>
             {view.featured.platforms.length > 0 && (
@@ -114,7 +119,7 @@ const FeaturedTag = featuredCard.Tag;
                 ))}
               </ul>
             )}
-            <GameProgress progress={view.featured.progress} name={view.featured.name} size="lg" />
+            <GameProgress progress={view.featured.progress} name={view.featured.name} size="lg" locale={locale} />
           </div>
         </FeaturedTag>
         {view.rest.length > 0 && (
@@ -142,9 +147,9 @@ const FeaturedTag = featuredCard.Tag;
                   )}
                   <p class="line-clamp-2 text-small">{game.name}</p>
                   <p class="font-mono text-caption text-muted-foreground">
-                    <time datetime={game.lastPlayed}>{formatPolicyDate(game.lastPlayed)}</time>
+                    <time datetime={game.lastPlayed}>{toLongDate(game.lastPlayed, locale)}</time>
                   </p>
-                  <GameProgress progress={game.progress} name={game.name} size="sm" />
+                  <GameProgress progress={game.progress} name={game.name} size="sm" locale={locale} />
                 </Tag>
               </li>
               );

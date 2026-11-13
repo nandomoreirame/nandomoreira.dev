@@ -1,15 +1,18 @@
 import { absoluteUrl } from '../aeo/urls';
-import { formatPolicyDate } from '../privacy/policy';
+import { toLongDate } from '../format/date';
+import { type Locale, withLocale } from '../i18n/locale';
+import { messagesFor } from '../i18n/messages';
+import { routeFor } from '../i18n/routes';
 import { saoPauloDay } from './day';
 import type { NowSnapshot } from './load';
 import { endSentence } from './sentence';
-import { NOW_LEAD, NOW_PATH } from './now';
+import { NOW_PATH } from './now';
 import { isAllowedUrl, leaksToMachine, machineText } from './safe';
 
-const pushSection = (lines: string[], title: string, body: string[]): void => {
+const pushSection = (lines: string[], title: string, body: string[], empty: string): void => {
   lines.push(`## ${title}`, '');
   if (body.length === 0) {
-    lines.push('Sem dados no momento.', '');
+    lines.push(empty, '');
     return;
   }
   lines.push(...body, '');
@@ -39,26 +42,36 @@ const mediaClause = (
 };
 
 /** Machine view of /now. Same sections as the page, no address, no secret (REQ-015). */
-export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): string => {
+export const nowMarkdown = ({
+  site,
+  data,
+  locale = 'pt-BR',
+}: {
+  site: URL;
+  data: NowSnapshot;
+  locale?: Locale;
+}): string => {
+  const t = messagesFor(locale).nowPage;
+  const path = routeFor(NOW_PATH, locale);
   const lines = [
     '---',
-    'title: Agora',
-    `url: ${absoluteUrl(site, NOW_PATH)}`,
+    `title: ${t.title}`,
+    `url: ${absoluteUrl(site, path)}`,
     `updated: ${data.updatedAt}`,
     '---',
     '',
-    '# O que estou fazendo agora',
+    `# ${t.heading}`,
     '',
-    NOW_LEAD,
+    t.description,
     '',
   ];
 
   const availability = leaksToMachine(data.focus.availability) ? '' : machineText(data.focus.availability);
   const focus = [
     ...data.focus.items.map(item => `- ${item}`),
-    ...(availability ? ['', `Disponibilidade: ${availability}`] : []),
+    ...(availability ? ['', t.availability(availability)] : []),
   ];
-  pushSection(lines, 'Foco', focus);
+  pushSection(lines, t.sections.focus, focus, t.empty);
 
   const projects =
     data.projects.state === 'empty'
@@ -70,34 +83,38 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
               ? `${machineText(endSentence(repo.description))} `
               : '';
           const language = repo.language && !leaksToMachine(repo.language) ? `${machineText(repo.language)}. ` : '';
-          const pushed = formatPolicyDate(repo.pushedAt.slice(0, 10));
-          return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}Último push em ${pushed}.`];
+          const pushed = toLongDate(repo.pushedAt.slice(0, 10), locale);
+          return [`- [${machineText(repo.name)}](${repo.url}): ${description}${language}${t.lastPush(pushed)}`];
         });
   const work: string[] = [];
   if (data.contributions.state === 'ok') {
-    work.push(`${data.contributions.items.total.toLocaleString('pt-BR')} contribuições no GitHub no último ano.`);
+    work.push(
+      t.contributionsYear(data.contributions.items.total.toLocaleString(locale === 'en' ? 'en-US' : 'pt-BR')),
+    );
   }
   const commit = data.lastCommit;
   if (commit && !leaksToMachine(commit.message) && !leaksToMachine(commit.repo)) {
-    const day = formatPolicyDate(saoPauloDay(new Date(commit.committedAt)));
-    work.push(`Último commit: [${machineText(commit.message)}](${commit.url}) em ${machineText(commit.repo)}, ${day}.`);
+    const day = toLongDate(saoPauloDay(new Date(commit.committedAt)), locale);
+    work.push(
+      t.lastCommit(machineText(commit.message), commit.url, machineText(commit.repo), day),
+    );
   }
   if (work.length > 0 && projects.length > 0) work.push('');
-  pushSection(lines, 'Trabalhando', [...work, ...projects]);
+  pushSection(lines, t.sections.working, [...work, ...projects], t.empty);
 
   const writing: string[] = [];
   if (data.writing.latest) {
     const post = data.writing.latest;
-    writing.push(`- [${post.title}](${absoluteUrl(site, `/${post.slug}`)})`);
+    writing.push(`- [${post.title}](${absoluteUrl(site, withLocale(`/${post.slug}`, locale))})`);
   }
   for (const title of data.writing.drafts) writing.push(`- ${title}`);
-  pushSection(lines, 'Escrevendo', writing);
+  pushSection(lines, t.sections.writing, writing, t.empty);
 
   const studying = data.studying.flatMap(study => {
     if (leaksToMachine(study.topic) || leaksToMachine(study.note) || leaksToMachine(study.url)) return [];
     return [`- [${machineText(study.topic)}](${study.url}): ${machineText(study.note)}`];
   });
-  pushSection(lines, 'Estudando', studying);
+  pushSection(lines, t.sections.studying, studying, t.empty);
 
   const music: string[] = [];
   if (data.music.topArtists.state === 'ok') {
@@ -105,7 +122,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
       if (leaksToMachine(artist.name)) return [];
       return [`- [${machineText(artist.name)}](${artist.url})`];
     });
-    if (artists.length > 0) music.push('### Artistas do mês', '', ...artists);
+    if (artists.length > 0) music.push(`### ${t.artistsOfMonth}`, '', ...artists);
   }
   if (data.music.recent.state !== 'empty') {
     const tracks = data.music.recent.items.flatMap(track => {
@@ -117,14 +134,17 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
     if (music.length > 0 && tracks.length > 0) music.push('');
     music.push(...tracks);
   }
-  pushSection(lines, 'Ouvindo', music);
+  pushSection(lines, t.sections.listening, music, t.empty);
 
   const games: string[] = [];
   if (data.games.state === 'ok') {
     const playingNow = data.games.items.playingNow;
     if (playingNow && !leaksToMachine(playingNow.title)) {
       games.push(
-        `Jogando agora: ${linkedName(playingNow.title, playingNow.url)}${mediaClause(playingNow.platforms, playingNow.progress)}`,
+        t.playingNowLine(
+          linkedName(playingNow.title, playingNow.url),
+          mediaClause(playingNow.platforms, playingNow.progress),
+        ),
       );
     }
     for (const game of data.games.items.recent) {
@@ -138,7 +158,7 @@ export const nowMarkdown = ({ site, data }: { site: URL; data: NowSnapshot }): s
       games.push(game.note ? `- ${game.name}: ${game.note}` : `- ${game.name}`);
     }
   }
-  pushSection(lines, 'Jogando', games);
+  pushSection(lines, t.sections.playing, games, t.empty);
 
   return lines.join('\n');
 };

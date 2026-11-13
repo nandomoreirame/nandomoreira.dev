@@ -27,9 +27,10 @@ export const executableScripts = (html: string, readSrc?: (src: string) => strin
       return src && readSrc ? readSrc(src) : body.trim();
     });
 
-/** Second named exception: the audio preview, on /now only (docs/specs/now-page, REQ-027). */
+/** Second named exception: the audio preview, on /now and /en/now only (docs/specs/now-page, REQ-027). */
 export const NOW_PREVIEW_MARKER = 'data-now-preview';
 export const NOW_PREVIEW_ROUTE = '/now';
+export const NOW_PREVIEW_ROUTES = new Set(['/now', '/en/now']);
 export const NOW_PREVIEW_BUDGET_BYTES = 1024;
 
 /** The site-wide exceptions (generative-case-art REQ-012, theme-modes REQ-010) plus the /now one. */
@@ -63,7 +64,7 @@ export const scriptViolations = (pages: PageScripts[]): string[] =>
           : [];
       }
       if (script.includes(NOW_PREVIEW_MARKER)) {
-        if (route !== NOW_PREVIEW_ROUTE) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
+        if (!NOW_PREVIEW_ROUTES.has(route)) return [`${route}: audio preview outside ${NOW_PREVIEW_ROUTE}`];
         const size = gzipSync(script).length;
         return size > NOW_PREVIEW_BUDGET_BYTES
           ? [`${route}: audio preview is ${size} B gzip, budget ${NOW_PREVIEW_BUDGET_BYTES}`]

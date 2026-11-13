@@ -72,8 +72,9 @@ describe('scriptViolations', () => {
     expect(scriptViolations([{ route: '/lab', scripts: [loaded] }])).toEqual([]);
   });
 
-  it('accepts the audio preview script on /now, beside the pointer effect', () => {
+  it('accepts the audio preview script on /now and /en/now, beside the pointer effect', () => {
     expect(scriptViolations([{ route: '/now', scripts: [POINTER, PREVIEW] }])).toEqual([]);
+    expect(scriptViolations([{ route: '/en/now', scripts: [POINTER, PREVIEW] }])).toEqual([]);
   });
 
   it('rejects the audio preview script on any other page', () => {

@@ -1,12 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import type { NowSnapshot } from '../../lib/now/load';
 
 interface Props {
   music: NowSnapshot['music'];
+  locale?: Locale;
 }
 
-const { music } = Astro.props;
+const { music, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).nowPage;
 const externalAttrs = { target: '_blank', rel: 'nofollow noopener noreferrer' };
 const focus =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -32,7 +36,7 @@ const previewToggle = [
 {
   music.topArtists.state === 'ok' && (
     <div class="flex flex-col gap-md">
-      <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">Artistas do mês</p>
+      <p class="font-mono text-micro uppercase tracking-eyebrow text-muted-foreground">{t.artistsOfMonth}</p>
       <ul class="grid grid-cols-3 gap-md sm:grid-cols-6">
         {music.topArtists.items.map((artist, index) => {
           // Two full rows of three on a phone; the rest appears from sm.
@@ -64,7 +68,7 @@ const previewToggle = [
                   type="button"
                   data-now-preview={preview}
                   aria-pressed="false"
-                  aria-label={`Ouvir ${artist.previewTitle ?? 'uma prévia'}, de ${artist.name}`}
+                  aria-label={t.listenPreview(artist.previewTitle ?? t.listenPreviewFallback, artist.name)}
                   hidden
                   class:list={[previewToggle, 'rounded-full']}
                 >
@@ -95,7 +99,7 @@ const previewToggle = [
 }
 
 {/* Only the six artists since 2026-10-16 (author): the recent tracks left the page. */}
-{music.topArtists.state !== 'ok' && <p class="text-muted-foreground">Sem dados no momento.</p>}
+{music.topArtists.state !== 'ok' && <p class="text-muted-foreground">{t.empty}</p>}
 
 <script>
   // Audio preview, /now only (docs/specs/now-page, REQ-027): the one script
