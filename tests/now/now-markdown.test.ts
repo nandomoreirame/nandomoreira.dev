@@ -199,4 +199,25 @@ describe('nowMarkdown', () => {
     expect(markdown).toContain('Charlie Brown Jr. Album. hoje');
     expect(markdown).toContain('CLI de dados. TypeScript.');
   });
+
+  it('links the English writing post by its translated slug', () => {
+    const data = snapshot('Open to projects.');
+    data.focus = { items: ['End-to-end product'], availability: 'Open to projects.' };
+    data.studying = [
+      {
+        topic: 'RAG and vector search',
+        note: 'embeddings, hybrid search and pgvector.',
+        url: 'https://www.anthropic.com/news/contextual-retrieval',
+      },
+    ];
+    data.writing = {
+      latest: { title: 'My AI harness with RPI', slug: 'ai-harness-with-rpi' } as Post,
+      drafts: [],
+    };
+    const markdown = nowMarkdown({ site, data, locale: 'en' });
+    expect(markdown).toContain('](https://nandomoreira.dev/en/ai-harness-with-rpi)');
+    expect(markdown).not.toContain('meu-harness-de-ia-com-rpi');
+    expect(markdown).toContain('## Focus');
+    expect(markdown).toContain('End-to-end product');
+  });
 });

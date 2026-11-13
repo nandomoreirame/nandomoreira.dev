@@ -1,15 +1,50 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import NowPage from '../../src/components/pages/NowPage.astro';
+import { resetLoadNowForTests } from '../../src/lib/now/load';
 import { ptLeftovers } from '../helpers/pt-leftovers';
 
 process.env.SPOTIFY_CLIENT_ID ??= 'cid';
 process.env.SPOTIFY_CLIENT_SECRET ??= 'sec';
 process.env.SPOTIFY_REFRESH_TOKEN ??= 'ref';
+process.env.GITHUB_TOKEN ??= 'ghp_test';
 
-const fetchImpl = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(async () => {
-  throw new Error('offline');
-});
+const repos = JSON.parse(readFileSync(new URL('../now/fixtures/github-repos.json', import.meta.url), 'utf8'));
+
+const calendar = {
+  data: {
+    user: {
+      contributionsCollection: {
+        contributionCalendar: {
+          totalContributions: 12,
+          weeks: [
+            {
+              contributionDays: [{ date: '2026-10-10', contributionCount: 12, contributionLevel: 'FOURTH_QUARTILE' }],
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
+const commitBody = [
+  {
+    html_url: 'https://github.com/nandomoreirame/alpha/commit/1',
+    commit: { message: 'feat: one thing\n\nbody', committer: { date: '2026-10-10T12:00:00Z' } },
+  },
+];
+
+const githubFetch = async (url: string) => {
+  const target = String(url);
+  if (target.endsWith('/graphql')) return { ok: true, status: 200, json: async () => calendar };
+  if (target.includes('/commits?per_page=1')) return { ok: true, status: 200, json: async () => commitBody };
+  if (target.includes('/users/nandomoreirame/repos')) return { ok: true, status: 200, json: async () => repos };
+  throw new Error(`offline:${target}`);
+};
+
+const fetchImpl = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(githubFetch);
 
 const render = async (locale: string) =>
   (await AstroContainer.create()).renderToString(NowPage, {
@@ -19,6 +54,7 @@ const render = async (locale: string) =>
 
 describe('NowPage', () => {
   beforeEach(() => {
+    resetLoadNowForTests();
     fetchImpl.mockReset();
     fetchImpl.mockRejectedValue(new Error('offline'));
     vi.stubGlobal('fetch', fetchImpl);
@@ -26,6 +62,8 @@ describe('NowPage', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
+    resetLoadNowForTests();
   });
 
   it('keeps the pt-BR now page byte for byte', async () => {
@@ -34,25 +72,30 @@ describe('NowPage', () => {
     await expect(html).toMatchFileSnapshot('../__snapshots__/now.pt.html');
   });
 
-  it('renders the English now page', async () => {
+  it('renders the whole English now page, including curated copy, writing and GitHub', async () => {
+    resetLoadNowForTests();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-11T15:00:00Z'));
+    fetchImpl.mockReset();
+    fetchImpl.mockImplementation(githubFetch);
     const html = await render('en');
     expect(html).toContain('<html lang="en"');
     expect(html).toContain('"inLanguage":"en"');
-    // Chrome still ships AvailabilityPill and the language suggestion in the
-    // other language; this task owns the now body inside <main>.
-    // ClosingCta and UpdatedAt stay pt-BR until later i18n passes.
-    // Curated focus/studying copy, Portuguese posts and the GitHub card
-    // (NowContributions / NowLastCommit) are out of this task's file list.
+
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    expect(main).toContain('End-to-end product');
+    expect(main).toContain('hybrid search');
+    expect(main).toContain('Last commit');
+    expect(main).toMatch(/<time datetime="2026-10-10">October 10, 2026<\/time>/);
+    expect(main).toContain('href="/en/ai-harness-with-rpi"');
+    expect(main).toContain('My AI harness with RPI');
+    expect(main).not.toContain('Produto de ponta a ponta');
+    expect(main).not.toContain('Último commit');
+    expect(main).not.toContain('/en/meu-harness-de-ia-com-rpi');
+
+    // Chrome still ships the language suggestion in the other language by design.
     const cleaned = main
-      .replace(/<section\b[^>]*class="[^"]*\bmy-3xl\b[^"]*"[^>]*>[\s\S]*?<\/section>/i, '')
-      .replace(/<a\b[^>]*data-availability-card[\s\S]*?<\/a>|<div\b[^>]*data-availability-card[\s\S]*?<\/div>/i, '')
-      .replace(/<div\b[^>]*\bdata-page-updated\b[^>]*>[\s\S]*?<\/div>/i, '')
-      .replace(/<div\b[^>]*\bdata-github-card\b[^>]*>[\s\S]*?<\/div>/i, '')
-      .replace(/<section\b[^>]*aria-labelledby="foco"[^>]*>[\s\S]*?<\/section>/i, '')
-      .replace(/<section\b[^>]*aria-labelledby="escrevendo"[^>]*>[\s\S]*?<\/section>/i, '')
-      .replace(/<section\b[^>]*aria-labelledby="estudando"[^>]*>[\s\S]*?<\/section>/i, '')
-      // The .com TLD of nownownow.com is not Portuguese.
+      .replace(/<aside\b[^>]*\bdata-lang-suggest\b[^>]*>[\s\S]*?<\/aside>/gi, ' ')
       .replace(/nownownow\.com/gi, ' ');
     expect(ptLeftovers(cleaned)).toEqual([]);
   });

@@ -40,4 +40,15 @@ describe('NowContributions', () => {
   it('renders nothing without a calendar', async () => {
     expect((await render({})).trim()).toBe('');
   });
+
+  it('summarises the year in English when locale is en', async () => {
+    const html = await render({ calendar, locale: 'en' });
+    expect(html).toContain('9,497 contributions on GitHub in the last year');
+    expect(html).toMatch(/<title>40 contributions on October 18, 2026<\/title>/);
+    expect(html).toContain('Less');
+    expect(html).toContain('More');
+    expect(html).toContain('Mon');
+    expect(html).not.toContain('contribuições');
+    expect(html).not.toContain('Menos');
+  });
 });

@@ -2,14 +2,18 @@
 import { Icon } from 'astro-icon/components';
 import type { LastCommit } from '../../lib/now/github';
 import { saoPauloDay } from '../../lib/now/day';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 import { formatPolicyDate } from '../../lib/privacy/policy';
 
 /** The last commit on GitHub: a row inside the GitHub card (NowGithub). */
 interface Props {
   commit: LastCommit;
+  locale?: Locale;
 }
 
-const { commit } = Astro.props;
+const { commit, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).nowPage;
 const day = saoPauloDay(new Date(commit.committedAt));
 ---
 
@@ -24,11 +28,11 @@ const day = saoPauloDay(new Date(commit.committedAt));
   <span class="flex min-w-0 flex-col gap-xs">
     <span class="flex items-center gap-sm font-mono text-caption uppercase tracking-eyebrow text-muted-foreground">
       <Icon name="lucide:git-commit-horizontal" class="size-4 shrink-0 text-primary" aria-hidden="true" />
-      Último commit
+      {t.lastCommitLabel}
     </span>
     <span class="font-mono text-body break-words text-foreground">{commit.message}</span>
     <span class="text-small text-muted-foreground">
-      {commit.repo} · <time datetime={day}>{formatPolicyDate(day)}</time>
+      {commit.repo} · <time datetime={day}>{formatPolicyDate(day, locale)}</time>
     </span>
   </span>
   <span

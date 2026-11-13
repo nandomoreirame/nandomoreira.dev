@@ -1,7 +1,7 @@
 import { getSecret } from 'astro:env/server';
 import { UPCOMING_LIMIT } from '../../components/posts/upcoming-limit';
 import { getAvailability, getCurrentPosts, getUpcomingPosts } from '../content';
-import type { Post } from '../../content/schemas/post';
+import type { Locale } from '../i18n/locale';
 import { createCachedSource } from './cache';
 import { readNowConfig, type NowConfig } from './config';
 import { dayLabel } from './day';
@@ -10,12 +10,13 @@ import { fetchActiveRepos, fetchLastCommit, type ActiveRepo, type LastCommit } f
 import { logSourceError } from './http';
 import {
   NOW_FAILURE_TTL_MS,
-  NOW_FOCUS,
   NOW_GAMES,
   NOW_REPO_EXCLUDE,
-  NOW_STUDYING,
   NOW_TTL,
   NOW_UPDATED_AT,
+  focusFor,
+  studyingFor,
+  type NowStudy,
 } from './now';
 import { fetchRecentTracks, fetchTopArtists, type RecentTrack, type TopArtist } from './spotify';
 import { nowUpdatedAt } from './updated';
@@ -43,13 +44,19 @@ export interface NowMusic {
   topArtists: Section<TopArtist[]>;
 }
 
+export interface NowWritingPost {
+  title: string;
+  slug: string;
+  draft?: boolean;
+}
+
 export interface NowSnapshot {
   projects: Section<ActiveRepo[]>;
   music: NowMusic;
   games: GamesSection;
-  writing: { latest: Post | undefined; drafts: string[] };
+  writing: { latest: NowWritingPost | undefined; drafts: string[] };
   focus: { items: readonly string[]; availability: string };
-  studying: typeof NOW_STUDYING;
+  studying: ReadonlyArray<NowStudy>;
   /** The year on GitHub; empty without a token (GraphQL needs one) or on failure. */
   contributions: Section<ContributionCalendar>;
   /** Latest commit of the most recently pushed repo, when GitHub answered. */
@@ -86,13 +93,17 @@ export const createNowLoader = ({
   logger = console,
   fallbackGames = NOW_GAMES,
   currentPosts = getCurrentPosts,
+  upcomingPosts = getUpcomingPosts,
+  availability = getAvailability,
 }: {
   config: NowConfig;
   fetch: typeof fetch;
   now?: () => number;
   logger?: Pick<Console, 'warn'>;
   fallbackGames?: readonly { name: string; note?: string }[];
-  currentPosts?: () => Promise<Post[]>;
+  currentPosts?: (locale?: Locale) => Promise<NowWritingPost[]>;
+  upcomingPosts?: (locale?: Locale) => Promise<Array<{ title: string }>>;
+  availability?: (locale?: Locale) => Promise<{ detail: string }>;
 }) => {
   const clock = () => new Date(now());
   const spotifyConfig = config.spotify;
@@ -157,8 +168,8 @@ export const createNowLoader = ({
       })
     : undefined;
 
-  return async (): Promise<NowSnapshot> => {
-    const [[projectsResult, musicResult, gamesResult, topResult, calendarResult], posts, drafts, availability] =
+  return async (locale: Locale = 'pt-BR'): Promise<NowSnapshot> => {
+    const [[projectsResult, musicResult, gamesResult, topResult, calendarResult], posts, drafts, availabilityDetail] =
       await Promise.all([
         Promise.allSettled([
           github(),
@@ -167,9 +178,9 @@ export const createNowLoader = ({
           spotifyTop ? spotifyTop() : Promise.resolve('unconfigured' as const),
           contributions ? contributions() : Promise.resolve('unconfigured' as const),
         ]),
-        currentPosts(),
-        getUpcomingPosts(),
-        getAvailability(),
+        currentPosts(locale),
+        upcomingPosts(locale),
+        availability(locale),
       ]);
 
     const projects =
@@ -190,7 +201,9 @@ export const createNowLoader = ({
         ? (logSourceError('spotify', musicResult.reason, logger), { state: 'empty' as const })
         : musicResult.value === 'unconfigured'
           ? { state: 'empty' as const }
-          : arraySection(musicResult.value.map(track => ({ ...track, day: dayLabel(track.playedAt, clock()) })));
+          : arraySection(
+              musicResult.value.map(track => ({ ...track, day: dayLabel(track.playedAt, clock(), locale) })),
+            );
 
     const topArtists =
       topResult.status === 'rejected'
@@ -218,10 +231,10 @@ export const createNowLoader = ({
         drafts: drafts.slice(0, UPCOMING_LIMIT).map(post => post.title),
       },
       focus: {
-        items: NOW_FOCUS,
-        availability: availability.detail,
+        items: focusFor(locale),
+        availability: availabilityDetail.detail,
       },
-      studying: NOW_STUDYING,
+      studying: studyingFor(locale),
       updatedAt,
       contributions: calendar,
       ...(lastCommit ? { lastCommit } : {}),
@@ -245,12 +258,17 @@ const runtimeEnv = (): Record<string, string | undefined> => ({
 });
 
 /** Bound on first call so a test can stub `fetch` before the sources run. */
-export const loadNow = (): Promise<NowSnapshot> => {
+export const loadNow = (locale: Locale = 'pt-BR'): Promise<NowSnapshot> => {
   cached ??= createNowLoader({
     config: readNowConfig(runtimeEnv()),
     fetch: globalThis.fetch.bind(globalThis),
     now: () => Date.now(),
     logger: console,
   });
-  return cached();
+  return cached(locale);
+};
+
+/** Clears the process-wide loader so a test can rebuild it with a fresh fetch stub. */
+export const resetLoadNowForTests = (): void => {
+  cached = undefined;
 };

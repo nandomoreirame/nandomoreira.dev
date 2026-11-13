@@ -1,6 +1,7 @@
 ---
 import type { ContributionCalendar } from '../../lib/now/contributions';
 import type { LastCommit } from '../../lib/now/github';
+import type { Locale } from '../../lib/i18n/locale';
 import NowContributions from './NowContributions.astro';
 import NowLastCommit from './NowLastCommit.astro';
 
@@ -8,18 +9,19 @@ import NowLastCommit from './NowLastCommit.astro';
 interface Props {
   calendar?: ContributionCalendar;
   commit?: LastCommit;
+  locale?: Locale;
 }
 
-const { calendar, commit } = Astro.props;
+const { calendar, commit, locale = 'pt-BR' } = Astro.props;
 ---
 
 {
   (calendar || commit) && (
     <div data-github-card class="not-prose mt-xl flex flex-col rounded-md border border-border-strong bg-surface p-lg">
-      {calendar && <NowContributions calendar={calendar} />}
+      {calendar && <NowContributions calendar={calendar} locale={locale} />}
       {commit && (
         <div class={calendar ? 'mt-lg border-t border-border pt-lg' : ''}>
-          <NowLastCommit commit={commit} />
+          <NowLastCommit commit={commit} locale={locale} />
         </div>
       )}
     </div>

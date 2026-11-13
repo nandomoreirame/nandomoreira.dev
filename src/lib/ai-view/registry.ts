@@ -233,7 +233,7 @@ export const markdownForPathIn = async (site: URL, path: string, live: boolean):
   }
 
   if (lookupKey === 'now') {
-    const data = await loadNow();
+    const data = await loadNow(locale);
     const markdown = nowMarkdown({ site, data, locale });
     return page(messagesFor(locale).nowPage.title, humanPath, mdPath, markdown);
   }

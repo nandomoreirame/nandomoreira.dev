@@ -335,6 +335,16 @@ export const ptBR = {
     contributionsYear: (total: string) => `${total} contribuições no GitHub no último ano.`,
     lastCommit: (message: string, url: string, repo: string, day: string) =>
       `Último commit: [${message}](${url}) em ${repo}, ${day}.`,
+    lastCommitLabel: 'Último commit',
+    contributionOne: '1 contribuição',
+    contributionMany: (count: string) => `${count} contribuições`,
+    contributionOn: (count: string, day: string) => `${count} em ${day}`,
+    contributionsSummary: (total: string, busiest: string) =>
+      `${total} contribuições no GitHub no último ano${busiest}.`,
+    contributionsBusiest: (day: string, count: string) => `, com o dia mais movimentado em ${day} (${count})`,
+    contribLess: 'Menos',
+    contribMore: 'Mais',
+    contribWeekdays: ['Seg', 'Qua', 'Sex'] as const,
     playingNowLine: (name: string, media: string) => `Jogando agora: ${name}${media}`,
     today: 'hoje',
     yesterday: 'ontem',

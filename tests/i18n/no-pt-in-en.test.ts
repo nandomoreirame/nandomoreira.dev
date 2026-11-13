@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AboutPage from '../../src/components/pages/AboutPage.astro';
@@ -11,11 +12,47 @@ import PostsPage from '../../src/components/pages/PostsPage.astro';
 import PrivacyPage from '../../src/components/pages/PrivacyPage.astro';
 import ResumePage from '../../src/components/pages/ResumePage.astro';
 import SetupPage from '../../src/components/pages/SetupPage.astro';
+import { resetLoadNowForTests } from '../../src/lib/now/load';
 import { ptLeftovers } from '../helpers/pt-leftovers';
 
 process.env.SPOTIFY_CLIENT_ID ??= 'cid';
 process.env.SPOTIFY_CLIENT_SECRET ??= 'sec';
 process.env.SPOTIFY_REFRESH_TOKEN ??= 'ref';
+process.env.GITHUB_TOKEN ??= 'ghp_test';
+
+const repos = JSON.parse(readFileSync(new URL('../now/fixtures/github-repos.json', import.meta.url), 'utf8'));
+
+const calendar = {
+  data: {
+    user: {
+      contributionsCollection: {
+        contributionCalendar: {
+          totalContributions: 12,
+          weeks: [
+            {
+              contributionDays: [{ date: '2026-10-10', contributionCount: 12, contributionLevel: 'FOURTH_QUARTILE' }],
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
+const commitBody = [
+  {
+    html_url: 'https://github.com/nandomoreirame/alpha/commit/1',
+    commit: { message: 'feat: one thing\n\nbody', committer: { date: '2026-10-10T12:00:00Z' } },
+  },
+];
+
+const nowFetch = async (url: string) => {
+  const target = String(url);
+  if (target.endsWith('/graphql')) return { ok: true, status: 200, json: async () => calendar };
+  if (target.includes('/commits?per_page=1')) return { ok: true, status: 200, json: async () => commitBody };
+  if (target.includes('/users/nandomoreirame/repos')) return { ok: true, status: 200, json: async () => repos };
+  throw new Error('offline');
+};
 
 const fetchImpl = vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>(async () => {
   throw new Error('offline');
@@ -46,23 +83,26 @@ const withoutIntentionalContent = (url: string, html: string): string => {
     // <article> tags inside each job make a single-article strip miss the sheet.
     out = out.replace(/<main\b[^>]*>[\s\S]*?<\/main>/i, ' ');
   }
-  if (url === '/en/now') {
-    // Curated focus/studying copy stays Portuguese until a content pass.
-    out = out.replace(/<section\b[^>]*aria-labelledby="foco"[^>]*>[\s\S]*?<\/section>/i, ' ');
-    out = out.replace(/<section\b[^>]*aria-labelledby="estudando"[^>]*>[\s\S]*?<\/section>/i, ' ');
-  }
   return out;
 };
 
 describe('English pages carry no Portuguese interface text', () => {
   beforeEach(() => {
+    resetLoadNowForTests();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-11T15:00:00Z'));
     fetchImpl.mockReset();
-    fetchImpl.mockRejectedValue(new Error('offline'));
+    fetchImpl.mockImplementation(async url => {
+      if (String(url).includes('github.com') || String(url).endsWith('/graphql')) return nowFetch(url);
+      throw new Error('offline');
+    });
     vi.stubGlobal('fetch', fetchImpl);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
+    resetLoadNowForTests();
   });
 
   it.each(PAGES)('%s', async (url, component, props) => {

@@ -9,7 +9,8 @@ const commit = {
   committedAt: '2026-10-19T12:00:00Z',
 };
 
-const render = async () => (await AstroContainer.create()).renderToString(NowLastCommit, { props: { commit } });
+const render = async (locale?: string) =>
+  (await AstroContainer.create()).renderToString(NowLastCommit, { props: { commit, locale } });
 
 describe('NowLastCommit', () => {
   it('is a row linking to the commit on GitHub, in a new tab, free of the Prose underline', async () => {
@@ -29,5 +30,12 @@ describe('NowLastCommit', () => {
     expect(html).toContain('noctalia-aibar');
     expect(html).toMatch(/<time datetime="2026-10-19">19 de outubro de 2026<\/time>/);
     expect(html.indexOf('Último commit')).toBeLessThan(html.indexOf('feat: &lt;b&gt;'));
+  });
+
+  it('labels and dates the row in English when locale is en', async () => {
+    const html = await render('en');
+    expect(html).toContain('Last commit');
+    expect(html).not.toContain('Último commit');
+    expect(html).toMatch(/<time datetime="2026-10-19">October 19, 2026<\/time>/);
   });
 });

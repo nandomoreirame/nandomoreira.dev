@@ -330,6 +330,16 @@ export const en: Messages = {
     contributionsYear: (total: string) => `${total} contributions on GitHub in the last year.`,
     lastCommit: (message: string, url: string, repo: string, day: string) =>
       `Last commit: [${message}](${url}) in ${repo}, ${day}.`,
+    lastCommitLabel: 'Last commit',
+    contributionOne: '1 contribution',
+    contributionMany: (count: string) => `${count} contributions`,
+    contributionOn: (count: string, day: string) => `${count} on ${day}`,
+    contributionsSummary: (total: string, busiest: string) =>
+      `${total} contributions on GitHub in the last year${busiest}.`,
+    contributionsBusiest: (day: string, count: string) => `, with the busiest day on ${day} (${count})`,
+    contribLess: 'Less',
+    contribMore: 'More',
+    contribWeekdays: ['Mon', 'Wed', 'Fri'] as const,
     playingNowLine: (name: string, media: string) => `Playing now: ${name}${media}`,
     today: 'today',
     yesterday: 'yesterday',

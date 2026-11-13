@@ -1,21 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import {
   NOW_FOCUS,
+  NOW_FOCUS_EN,
   NOW_GAME_EXCLUDE,
   NOW_GAMES,
   NOW_LEAD,
   NOW_PATH,
   NOW_REPO_EXCLUDE,
   NOW_STUDYING,
+  NOW_STUDYING_EN,
   NOW_TTL,
   NOW_UPDATED_AT,
+  focusFor,
+  studyingFor,
 } from '../../src/lib/now/now';
 
 const curated = [
   NOW_LEAD,
   ...NOW_FOCUS,
+  ...NOW_FOCUS_EN,
   ...NOW_GAMES.flatMap(game => [game.name, game.note ?? '']),
   ...NOW_STUDYING.flatMap(study => [study.topic, study.note]),
+  ...NOW_STUDYING_EN.flatMap(study => [study.topic, study.note]),
 ];
 
 describe('now curated data', () => {
@@ -52,6 +58,17 @@ describe('now curated data', () => {
       // estudos.home lives on the homelab: a link to it would 404 for everyone else.
       expect(study.url).not.toContain('.home');
     }
+  });
+
+  it('keeps English curated copy aligned with the Portuguese source', () => {
+    expect(NOW_FOCUS_EN).toHaveLength(NOW_FOCUS.length);
+    expect(NOW_STUDYING_EN).toHaveLength(NOW_STUDYING.length);
+    expect(focusFor('en')).toEqual(NOW_FOCUS_EN);
+    expect(focusFor('pt-BR')).toEqual(NOW_FOCUS);
+    expect(studyingFor('en')).toEqual(NOW_STUDYING_EN);
+    expect(NOW_STUDYING_EN.map(study => study.url)).toEqual(NOW_STUDYING.map(study => study.url));
+    expect(NOW_FOCUS_EN.join(' ')).toContain('End-to-end product');
+    expect(NOW_STUDYING_EN.map(study => study.note).join(' ')).toContain('hybrid search');
   });
 
   it('matches the source TTLs and the exclusion lists from the spec', () => {

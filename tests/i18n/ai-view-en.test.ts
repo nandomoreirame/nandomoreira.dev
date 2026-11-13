@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { markdownForPathIn } from '../../src/lib/ai-view/registry';
+import { resetLoadNowForTests } from '../../src/lib/now/load';
 import { ptLeftovers } from '../helpers/pt-leftovers';
 
 const site = new URL('https://nandomoreira.dev');
@@ -22,6 +23,23 @@ const withoutFalsePositives = (markdown: string): string =>
     .replace(/Encantos Brincantes/gi, ' ');
 
 describe('English AI view', () => {
+  beforeEach(() => {
+    // GitHub repo descriptions are author-written Portuguese; keep this suite
+    // offline so the gate owns curated /now copy and the writing slug, not the API.
+    resetLoadNowForTests();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('offline');
+      }),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    resetLoadNowForTests();
+  });
+
   // cases are translated in i18n-content
   it('en has an English markdown mirror', async () => {
     const page = await markdownForPathIn(site, 'en', true);
@@ -43,17 +61,14 @@ describe('English AI view', () => {
     const page = await markdownForPathIn(site, path, true);
     expect(page?.humanPath).toBe(`/${path}`);
     expect(page?.mdPath).toBe(`/${path}.md`);
-    // Curated /now focus and writing stay pt-BR until a later pass; strip
-    // those sections so this task owns the English chrome of the mirror.
-    const cleaned =
-      path === 'en/now'
-        ? withoutFalsePositives(page!.markdown)
-            .replace(/## Focus[\s\S]*?(?=## |$)/, '')
-            .replace(/## Writing[\s\S]*?(?=## |$)/, '')
-            .replace(/## Studying[\s\S]*?(?=## |$)/, '')
-            .replace(/## Working[\s\S]*?(?=## |$)/, '')
-        : withoutFalsePositives(page!.markdown);
+    const cleaned = withoutFalsePositives(page!.markdown);
     expect(ptLeftovers(cleaned)).toEqual([]);
+    if (path === 'en/now') {
+      expect(page!.markdown).toContain('https://nandomoreira.dev/en/ai-harness-with-rpi');
+      expect(page!.markdown).not.toContain('/en/meu-harness-de-ia-com-rpi');
+      expect(page!.markdown).toContain('End-to-end product');
+      expect(page!.markdown).toContain('hybrid search');
+    }
   });
 
   it('has no English archive and nothing while not live', async () => {
