@@ -34,4 +34,24 @@ export const ptBR = {
   posts: {
     readingTime: (minutes: number) => `${minutes} min de leitura`,
   },
+  footer: {
+    privacy: 'Privacidade',
+    channels: 'Canais',
+    links: 'Links',
+    rss: 'RSS',
+    agents: 'AGENTS.md',
+    opensInNewTab: (label: string) => `${label}, abre em nova aba`,
+    versionLabel: (version: string) => `Versão ${version}: os lançamentos desta versão`,
+    pageView: 'Visão da página',
+  },
+  notFound: {
+    title: 'Página não encontrada',
+    description: 'A página solicitada não existe.',
+    heading: 'Página não encontrada',
+    body: 'O endereço acessado não corresponde a nenhuma página deste site.',
+    copyCurl: 'Copiar o comando curl',
+    backHome: 'Voltar para a home',
+    explorePortfolio: 'Explorar portfólio',
+    viewLab: 'Ver laboratório',
+  },
 } as const;

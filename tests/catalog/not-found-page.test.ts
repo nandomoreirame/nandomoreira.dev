@@ -68,8 +68,7 @@ describe('404 page', () => {
   });
 
   it('keeps the 404 status and the noindex', () => {
-    const source = readFileSync('src/pages/404.astro', 'utf8');
-    expect(source).toContain('Astro.response.status = 404');
-    expect(source).toContain('noindex');
+    expect(readFileSync('src/pages/404.astro', 'utf8')).toContain('Astro.response.status = 404');
+    expect(readFileSync('src/components/pages/NotFoundPage.astro', 'utf8')).toContain('noindex');
   });
 });

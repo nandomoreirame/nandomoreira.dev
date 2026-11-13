@@ -30,4 +30,24 @@ export const en: Messages = {
   posts: {
     readingTime: (minutes: number) => `${minutes} min read`,
   },
+  footer: {
+    privacy: 'Privacy',
+    channels: 'Channels',
+    links: 'Links',
+    rss: 'RSS',
+    agents: 'AGENTS.md',
+    opensInNewTab: (label: string) => `${label}, opens in a new tab`,
+    versionLabel: (version: string) => `Version ${version}: the releases of this version`,
+    pageView: 'Page view',
+  },
+  notFound: {
+    title: 'Page not found',
+    description: 'The requested page does not exist.',
+    heading: 'Page not found',
+    body: 'The address you opened does not match any page on this site.',
+    copyCurl: 'Copy the curl command',
+    backHome: 'Back to home',
+    explorePortfolio: 'Explore portfolio',
+    viewLab: 'View lab',
+  },
 };

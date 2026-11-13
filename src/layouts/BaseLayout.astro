@@ -24,7 +24,7 @@ import { showsPixel } from '../lib/analytics/pixel-placement';
 import { getAllPosts, getProfile } from '../lib/content';
 import { profileUrls } from '../lib/home/person-ld';
 import { alternatesFor } from '../lib/i18n/alternates';
-import { htmlLang, localeOfPath, ogLocale } from '../lib/i18n/locale';
+import { htmlLang, localeOfPath, ogLocale, type Locale } from '../lib/i18n/locale';
 import { messagesFor } from '../lib/i18n/messages';
 import { THEME_BOOT_SCRIPT } from '../lib/theme/boot';
 import '../styles/global.css';
@@ -47,6 +47,8 @@ interface Props {
   section?: string;
   /** Explicit language pair for hreflang; falls back to alternatesFor(current). */
   alternates?: TranslationPair;
+  /** Wins over the path when set (404 under /en/... needs English chrome). */
+  locale?: Locale;
 }
 
 const {
@@ -64,7 +66,7 @@ const current = Astro.url?.pathname ? pagePath(Astro.url.pathname) : undefined;
 // Container tests may omit Astro.site; production always has config.site.
 const site = Astro.site ? requireSite(Astro.site) : new URL('https://nandomoreira.dev');
 const canonical = canonicalUrl(site, canonicalPath ?? current ?? '/');
-const locale = localeOfPath(current ?? '/');
+const locale = Astro.props.locale ?? localeOfPath(current ?? '/');
 const t = messagesFor(locale);
 const alternates = Astro.props.alternates ?? (await alternatesFor(current ?? '/'));
 const alternateLocale = locale === 'en' ? 'pt-BR' : 'en';
@@ -214,11 +216,11 @@ const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
       </main>
     </div>
 
-    <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} />
+    <SiteFooter name={displayNameOf(profile)} year={year} contacts={profile.contacts} version={version} locale={locale} />
     {/* Bottom-right corner stack: the palette trigger, the AI switcher and the way back to the top. Not on phones. */}
     <div data-corner-actions data-reader-hide class="fixed right-lg bottom-lg z-10 flex flex-col items-end gap-sm max-md:hidden">
       <PaletteTrigger />
-      {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} />}
+      {showSwitcher && <AiSwitcher humanPath={switcherHumanPath} view={switcherView} locale={locale} />}
       <BackToTop />
     </div>
     <CommandPalette

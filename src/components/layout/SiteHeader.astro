@@ -60,6 +60,6 @@ const homeHref = routeFor('/', locale);
     {availability && <AvailabilityPill status={availability.status} data-header-availability class="max-md:ml-auto" />}
 
     {/* The theme switch (theme-modes, REQ-004), right of the pill. */}
-    <ThemeToggle class={availability ? '-ml-sm' : 'max-md:ml-auto'} />
+    <ThemeToggle locale={locale} class={availability ? '-ml-sm' : 'max-md:ml-auto'} />
   </div>
 </header>

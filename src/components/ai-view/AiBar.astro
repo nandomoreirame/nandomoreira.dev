@@ -1,13 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { aiViewLabels } from '../../lib/ai-view/labels';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface Props {
   humanPath: string;
   mdPath: string;
+  locale?: Locale;
 }
 
-const { humanPath, mdPath } = Astro.props;
+const { humanPath, mdPath, locale = 'pt-BR' } = Astro.props;
+const labels = aiViewLabels(locale);
 
 // One base for every control in the bar: fixed height (border included), same
 // font and padding, so pill, path, tabs and actions line up as one row.
@@ -28,7 +31,7 @@ const icon = 'size-4 shrink-0';
     <div class="flex flex-wrap items-center gap-sm">
       <p data-ai-control class={`${control} rounded-full border-success/40 uppercase tracking-wide text-success`}>
         <span class="inline-block size-2 shrink-0 rounded-full bg-success" aria-hidden="true"></span>
-        <span>{AI_VIEW_LABELS.ready}</span>
+        <span>{labels.ready}</span>
       </p>
 
       <p data-ai-control class={`${control} rounded-md border-border-strong bg-surface text-foreground`}>
@@ -44,7 +47,7 @@ const icon = 'size-4 shrink-0';
           data-ai-control
           class={`ai-tab-label ${control} cursor-pointer rounded-l-md border-border-strong`}
         >
-          {AI_VIEW_LABELS.rendered}
+          {labels.rendered}
         </label>
         <input type="radio" name="ai-tab" id="ai-tab-source" class="ai-tab-input sr-only" />
         <label
@@ -52,7 +55,7 @@ const icon = 'size-4 shrink-0';
           data-ai-control
           class={`ai-tab-label ${control} cursor-pointer rounded-r-md border-l-0 border-border-strong`}
         >
-          {AI_VIEW_LABELS.source}
+          {labels.source}
         </label>
       </div>
     </div>
@@ -61,22 +64,22 @@ const icon = 'size-4 shrink-0';
       <button
         type="button"
         data-copy="ai-source"
-        data-label-copied={AI_VIEW_LABELS.copied}
+        data-label-copied={labels.copied}
         aria-live="polite"
         hidden
         data-ai-control
         class={action}
       >
         <Icon name="lucide:copy" class={icon} aria-hidden="true" />
-        <span>{AI_VIEW_LABELS.copy}</span>
+        <span>{labels.copy}</span>
       </button>
       <a href={mdPath} download data-ai-control class={action}>
         <Icon name="lucide:download" class={icon} aria-hidden="true" />
-        <span>{AI_VIEW_LABELS.download}</span>
+        <span>{labels.download}</span>
       </a>
       <a href={humanPath} data-ai-control class={action}>
         <Icon name="lucide:x" class={icon} aria-hidden="true" />
-        <span>{AI_VIEW_LABELS.close}</span>
+        <span>{labels.close}</span>
       </a>
     </div>
   </div>

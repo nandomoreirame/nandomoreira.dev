@@ -1,6 +1,9 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { contactGoPath } from '../../lib/analytics/outbound';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
 import { contactIconFor } from '../../lib/ui/contact-icons';
 import { RELEASES_PATH } from '../../lib/releases/releases';
 
@@ -10,9 +13,13 @@ interface Props {
   contacts: Array<{ kind: string; value: string }>;
   /** Version tag, v<versions>.<commits> (BaseLayout reads the commits). */
   version: string;
+  locale?: Locale;
 }
 
-const { name, year, contacts, version } = Astro.props;
+const { name, year, contacts, version, locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).footer;
+const rssHref = locale === 'en' ? '/en/rss.xml' : '/rss.xml';
+const privacyHref = routeFor('/privacidade', locale);
 
 const LABELS: Record<string, string> = {
   github: 'GitHub',
@@ -43,25 +50,25 @@ const link =
     <p class="flex flex-wrap items-center gap-x-sm">
       <span>© {year} {name}.</span>
       <span aria-hidden="true">·</span>
-      <a href="/privacidade" class={link}>Privacidade</a>
+      <a href={privacyHref} class={link}>{t.privacy}</a>
       <span aria-hidden="true">·</span>
       {/* The easter egg: the tag counts every version this site had (/releases/17). */}
-      <a href={RELEASES_PATH} class={link} aria-label={`Versão ${version.slice(1)}: os lançamentos desta versão`}>
+      <a href={RELEASES_PATH} class={link} aria-label={t.versionLabel(version.slice(1))}>
         {version}
       </a>
     </p>
 
-    <nav class="flex flex-wrap items-center gap-x-lg" aria-label="Canais">
-      <a href="https://links.nandomoreira.dev" target="_blank" rel="noopener" class={link}>Links</a>
-      <a href="/rss.xml" class={link}>RSS</a>
-      <a href="/AGENTS.md" class={link}>AGENTS.md</a>
+    <nav class="flex flex-wrap items-center gap-x-lg" aria-label={t.channels}>
+      <a href="https://links.nandomoreira.dev" target="_blank" rel="noopener" class={link}>{t.links}</a>
+      <a href={rssHref} class={link}>{t.rss}</a>
+      <a href="/AGENTS.md" class={link}>{t.agents}</a>
       <span class="flex items-center">
         {social.map((contact) => (
           <a
             href={contactGoPath(contact.kind)}
             target="_blank"
             rel="noopener"
-            aria-label={`${LABELS[contact.kind]}, abre em nova aba`}
+            aria-label={t.opensInNewTab(LABELS[contact.kind]!)}
             class={socialLink}
           >
             <Icon name={contactIconFor(contact.kind)!} class="size-4" aria-hidden="true" />

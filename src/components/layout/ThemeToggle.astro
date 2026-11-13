@@ -1,13 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { THEME_COPY } from '../../lib/theme/copy';
+import type { Locale } from '../../lib/i18n/locale';
+import { themeCopy } from '../../lib/theme/copy';
 
 interface Props {
   /** Layout utilities from the header that places it. */
   class?: string;
+  locale?: Locale;
 }
 
-const { class: extra } = Astro.props;
+const { class: extra, locale = 'pt-BR' } = Astro.props;
+const copy = themeCopy(locale);
 ---
 
 {/* The theme boot script owns the click (src/lib/theme/boot.ts) and global.css
@@ -21,10 +24,10 @@ const { class: extra } = Astro.props;
 >
   <span data-theme-when="noir" class="contents">
     <Icon name="lucide:sun" aria-hidden="true" class="size-5" />
-    <span class="sr-only">{THEME_COPY.toPaper}</span>
+    <span class="sr-only">{copy.toPaper}</span>
   </span>
   <span data-theme-when="paper" class="contents">
     <Icon name="lucide:moon" aria-hidden="true" class="size-5" />
-    <span class="sr-only">{THEME_COPY.toNoir}</span>
+    <span class="sr-only">{copy.toNoir}</span>
   </span>
 </button>

@@ -1,0 +1,51 @@
+---
+import { TITLE_SEPARATOR } from '../../lib/seo/meta';
+import Button from '../ui/Button.astro';
+import CopyButton from '../ui/CopyButton.astro';
+import TerminalWindow from '../ui/TerminalWindow.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayNameOf } from '../../lib/content/display-name';
+import { getProfile } from '../../lib/content';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
+import { routeFor } from '../../lib/i18n/routes';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'pt-BR' } = Astro.props;
+const t = messagesFor(locale).notFound;
+const authorName = displayNameOf(await getProfile());
+// The requested path is caller-controlled: Astro escapes it, and the cap keeps a long probe from stretching the page.
+const requested = (Astro.url?.pathname ?? '/').slice(0, 200);
+const curl = `$ curl -I https://nandomoreira.dev${requested}\nHTTP/2 404 Not Found`;
+---
+
+<BaseLayout
+  title={`${t.title}${TITLE_SEPARATOR}${authorName}`}
+  description={t.description}
+  noindex
+  locale={locale}
+>
+  <section class="mx-auto my-3xl flex w-full max-w-list flex-col items-center gap-lg text-center">
+    <p aria-hidden="true" class="not-found-code font-serif leading-none text-primary">404</p>
+    <p class="inline-flex items-center gap-sm rounded-full border border-primary px-md py-xs font-mono text-caption uppercase tracking-wide text-primary">
+      <span aria-hidden="true" class="inline-block size-2 rounded-full bg-current"></span>
+      STATUS: 404 NOT_FOUND
+    </p>
+    <h1 class="font-serif text-h1 font-normal tracking-tight text-foreground">{t.heading}</h1>
+    <p class="max-w-[60ch] text-body text-muted-foreground">{t.body}</p>
+
+    <TerminalWindow filename="curl" class="w-full text-left">
+      <CopyButton slot="actions" target="not-found-curl" label={t.copyCurl} iconOnly />
+      <pre class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-muted-foreground"><code id="not-found-curl">{curl}</code></pre>
+    </TerminalWindow>
+
+    <div class="flex flex-wrap items-center justify-center gap-md border-t border-border pt-lg">
+      <Button href={routeFor('/', locale)} variant="primary" arrow>{t.backHome}</Button>
+      <Button href={routeFor('/portfolio', locale)} variant="secondary">{t.explorePortfolio}</Button>
+      <a href={routeFor('/lab', locale)} class="inline-flex min-h-11 items-center font-mono text-small text-muted-foreground underline transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.viewLab}</a>
+    </div>
+  </section>
+</BaseLayout>

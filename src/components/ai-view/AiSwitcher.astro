@@ -1,20 +1,25 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { aiViewLabels } from '../../lib/ai-view/labels';
 import { aiPathFor } from '../../lib/ai-view/paths';
+import type { Locale } from '../../lib/i18n/locale';
+import { messagesFor } from '../../lib/i18n/messages';
 
 interface Props {
   humanPath: string;
   view: 'human' | 'ai';
+  locale?: Locale;
 }
 
-const { humanPath, view } = Astro.props;
+const { humanPath, view, locale = 'pt-BR' } = Astro.props;
+const labels = aiViewLabels(locale);
+const pageView = messagesFor(locale).footer.pageView;
 // One button: the way to the other view. On a human page it leads to the AI
 // view, on the AI view it leads back, so it never points at the current page.
 const target =
   view === 'human'
-    ? { href: aiPathFor(humanPath), icon: 'lucide:bot', label: AI_VIEW_LABELS.ai }
-    : { href: humanPath, icon: 'lucide:user', label: AI_VIEW_LABELS.human };
+    ? { href: aiPathFor(humanPath), icon: 'lucide:bot', label: labels.ai }
+    : { href: humanPath, icon: 'lucide:user', label: labels.human };
 // Icon only at rest. The label opens on hover or keyboard focus by growing
 // max-width and fading in. Width is a layout property, an accepted exception
 // here: the switcher is fixed, so nothing else reflows. The label stays in the
@@ -26,7 +31,7 @@ const linkClass =
 ---
 
 <nav
-  aria-label="Visão da página"
+  aria-label={pageView}
   data-reader-hide
   class="flex overflow-hidden rounded-md border border-border-strong bg-surface/90 backdrop-blur-md"
 >

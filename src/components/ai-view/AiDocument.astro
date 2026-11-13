@@ -1,15 +1,18 @@
 ---
 import Prose from '../ui/Prose.astro';
-import { AI_VIEW_LABELS } from '../../lib/ai-view/labels';
+import { aiViewLabels } from '../../lib/ai-view/labels';
 import { renderMarkdown } from '../../lib/ai-view/render';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface Props {
   title: string;
   url: string;
   markdown: string;
+  locale?: Locale;
 }
 
-const { title, url, markdown } = Astro.props;
+const { title, url, markdown, locale = 'pt-BR' } = Astro.props;
+const labels = aiViewLabels(locale);
 const rendered = renderMarkdown(markdown);
 ---
 
@@ -18,11 +21,11 @@ const rendered = renderMarkdown(markdown);
     class="flex flex-wrap items-center gap-x-md gap-y-xs rounded-md border border-border bg-surface px-md py-sm font-mono text-small"
   >
     <div class="flex min-w-0 flex-wrap gap-xs">
-      <dt class="text-muted-foreground">{AI_VIEW_LABELS.title}:</dt>
+      <dt class="text-muted-foreground">{labels.title}:</dt>
       <dd class="min-w-0 text-foreground">{title}</dd>
     </div>
     <div class="flex min-w-0 flex-wrap gap-xs sm:border-l sm:border-border sm:pl-md">
-      <dt class="text-muted-foreground">{AI_VIEW_LABELS.url}:</dt>
+      <dt class="text-muted-foreground">{labels.url}:</dt>
       <dd class="min-w-0">
         <a
           href={url}
