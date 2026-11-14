@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "review_finding:route every visible label through the locale dictionary including compact variants and links hidden behind feature flags",
+      "signal": "review_finding",
+      "text": "Route every visible label through the locale dictionary, including compact variants and links hidden behind feature flags.",
+      "scope": "i18n",
+      "status": "candidate",
+      "features": [
+        "i18n-sales"
+      ],
+      "sources": [
+        "src/components/sales/ServiceDetail.astro:41",
+        "src/components/sales/StepsTimeline.astro:27",
+        "src/components/sales/ServiceBlocks.astro:46"
+      ],
+      "penalties": 0
+    },
+    {
+      "id": "L-002",
+      "key": "weak_test:render every localized component variant and feature flag branch in tests a word marker dictionary alone does not prove that the ui is fully translated",
+      "signal": "weak_test",
+      "text": "Render every localized component variant and feature-flag branch in tests; a word-marker dictionary alone does not prove that the UI is fully translated.",
+      "scope": "i18n",
+      "status": "candidate",
+      "features": [
+        "i18n-sales"
+      ],
+      "sources": [
+        "tests/sales/pages-en.test.ts:46"
+      ],
+      "penalties": 0
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+{"round": 1, "implementer": null, "reviewer": "codex", "identities": ["tests/i18n/translation-parity.test.ts:19", "tests/i18n/translation-parity.test.ts:43", "src/lib/ai-view/registry.ts:132", "src/lib/ai-view/registry.ts:181", "src/lib/aeo/ai-index.ts:97", "src/lib/now/markdown.ts:105", "src/lib/i18n/links.ts:14", "tests/i18n/machine-routes-en.test.ts:14"], "open_count": 8}
+{"round": 2, "implementer": null, "reviewer": "codex", "identities": ["src/lib/aeo/llms-txt.ts:20"], "open_count": 1}

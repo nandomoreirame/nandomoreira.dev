@@ -1,0 +1,5 @@
+{"round": 1, "implementer": "codex", "reviewer": "grok", "identities": ["src/components/sales/ServiceDetail.astro:41", "src/components/sales/StepsTimeline.astro:27", "src/components/sales/ServiceBlocks.astro:46", "tests/sales/pages-en.test.ts:46"], "open_count": 4}
+{"round": 2, "implementer": "codex", "reviewer": "grok", "identities": [], "open_count": 0}
+{"round": 3, "implementer": "codex", "reviewer": "claude", "identities": ["src/lib/sales/host.ts:49", "src/layouts/SalesLayout.astro:38", "src/pages/en/search.json.ts:27", "tests/sales/components-en.test.ts:71", "src/lib/sales/ui.ts:83", "src/components/sales/SectionIntro.astro:3", "tests/sales/host-en.test.ts:14"], "open_count": 7}
+{"round": 4, "implementer": "codex", "reviewer": "claude", "identities": ["tests/sales/components-en.test.ts:77", "tests/sales/components-en.test.ts:77", "tests/sales/search-services.test.ts:12"], "open_count": 3}
+{"round": 5, "implementer": "claude", "reviewer": "grok", "identities": [], "open_count": 0}
