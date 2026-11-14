@@ -22,9 +22,9 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
 <section id={variant === 'full' ? 'como-trabalho' : undefined} aria-labelledby={`etapas-${variant}`} class="scroll-mt-2xl border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
     {variant === 'full' ? (
-      <SectionIntro locale={locale} id={`etapas-${variant}`} {...stepsHeader} centered />
+      <SectionIntro id={`etapas-${variant}`} {...stepsHeader} centered />
     ) : (
-      <SectionIntro locale={locale} id={`etapas-${variant}`} eyebrow={t.stepsCompactEyebrow} title={t.stepsCompactTitle} />
+      <SectionIntro id={`etapas-${variant}`} eyebrow={t.stepsCompactEyebrow} title={t.stepsCompactTitle} />
     )}
     {variant === 'full' ? (
       <ol class="mx-auto flex w-full max-w-narrow flex-col gap-md">

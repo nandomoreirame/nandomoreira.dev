@@ -14,7 +14,7 @@ interface Props { locale?: Locale; }
 
 <section aria-labelledby="depoimentos-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro locale={locale} id="depoimentos-title" eyebrow={t.testimonialsEyebrow} title={t.testimonialsTitle} />
+    <SectionIntro id="depoimentos-title" eyebrow={t.testimonialsEyebrow} title={t.testimonialsTitle} />
     <div class="grid gap-md md:grid-cols-2">
       {TESTIMONIALS.map((item) => (
         <figure class="flex flex-col gap-md rounded-md border border-border bg-surface p-lg transition-[border-color] duration-(--duration-base) ease-out hover:border-border-strong">

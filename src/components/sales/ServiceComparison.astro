@@ -17,7 +17,7 @@ const { comparison } = Astro.props;
 
 <section aria-labelledby="comparando-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro locale={locale} id="comparando-title" eyebrow={t.comparisonEyebrow} title={t.comparisonTitle} />
+    <SectionIntro id="comparando-title" eyebrow={t.comparisonEyebrow} title={t.comparisonTitle} />
     {/* Stacks into one block per criterion on phones, so the page never scrolls sideways (REQ-018). */}
     <table class="w-full text-left text-small">
       <caption class="sr-only">{comparison.caption}</caption>

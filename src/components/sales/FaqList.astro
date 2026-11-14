@@ -20,7 +20,7 @@ const { id, items, eyebrow = salesCopy(locale).faqHeader.eyebrow, title = salesC
 
 <section id={id} aria-labelledby={`${id}-title`} class="scroll-mt-2xl border-t border-border">
   <div class="mx-auto flex w-full max-w-narrow flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro locale={locale} id={`${id}-title`} eyebrow={eyebrow} title={title} lead={lead} centered />
+    <SectionIntro id={`${id}-title`} eyebrow={eyebrow} title={title} lead={lead} centered />
     <div class="flex flex-col gap-sm">
       {items.map((item) => (
         <details class="group rounded-md border border-border-strong bg-surface transition-[border-color] duration-(--duration-base) ease-out hover:border-primary">

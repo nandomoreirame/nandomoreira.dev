@@ -45,6 +45,8 @@ const components = {
   Testimonials,
   ToolsGrid,
 };
+/** No copy of their own: artwork, or text passed in by the caller. */
+const DECORATIVE = new Set(['HeroArt', 'HeroScenery', 'SectionIntro']);
 const render = async (name: keyof typeof components, locale: Locale) => {
   const service = detailFor(locale === 'en' ? 'website' : 'site-institucional', locale)!;
   const props: Record<string, unknown> = { locale };
@@ -71,6 +73,8 @@ describe.each(Object.keys(components) as Array<keyof typeof components>)('%s lan
   it('renders English copy and accessible labels', async () => {
     const html = await render(name, 'en');
     expect(ptLeftovers(html)).toEqual([]);
+    expect(html.trim().length).toBeGreaterThan(0);
+    if (!DECORATIVE.has(name)) expect(html.replace(/<[^>]*>/g, ' ')).toMatch(/[A-Za-z]{4,}/);
     const attributes = [...html.matchAll(/(?:aria-label|placeholder|alt)="([^"]*)"/g)].map(match => match[1]);
     expect(ptLeftovers(`<p>${attributes.join(' ')}</p>`)).toEqual([]);
   });

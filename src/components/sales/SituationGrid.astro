@@ -18,7 +18,7 @@ interface Props { locale?: Locale; }
 
 <section aria-labelledby="situacao-title" class="border-t border-border">
   <div class="mx-auto flex w-full max-w-page flex-col gap-xl px-lg py-2xl lg:py-3xl">
-    <SectionIntro locale={locale} id="situacao-title" {...situationsHeader} />
+    <SectionIntro id="situacao-title" {...situationsHeader} />
     <ul class="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
       {situations.map((situation, index) => (
         <li>
