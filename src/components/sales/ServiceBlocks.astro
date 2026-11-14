@@ -43,7 +43,7 @@ interface Props { locale?: Locale; }
           </ul>
           {SHOW_DETAIL_LINKS && service.detail && (
             <a href={salesPath(service.slug, undefined, locale)} class="mt-auto inline-flex min-h-11 items-center justify-between border-t border-border pt-sm text-small text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              Entender em detalhes<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+              {t.details}<Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
             </a>
           )}
         </li>

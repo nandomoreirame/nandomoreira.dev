@@ -16,6 +16,12 @@ describe('ptLeftovers', () => {
     expect(ptLeftovers('<p>Fernando Moreira Costa lives in São Paulo</p>')).toEqual([]);
   });
 
+  it('detects sales detail labels as Portuguese', () => {
+    expect(ptLeftovers('<p>Parte 01. Metodologia transparente. Como vamos fazer, em 7 etapas.</p>')).toEqual(
+      expect.arrayContaining(['parte', 'metodologia', 'vamos', 'etapas']),
+    );
+  });
+
   it('passes clean English', () => {
     expect(ptLeftovers('<p>See all posts in the blog</p>')).toEqual([]);
   });

@@ -45,6 +45,10 @@ const MARKERS = [
   'próximo',
   'anterior',
   'página',
+  'parte',
+  'metodologia',
+  'vamos',
+  'etapas',
 ];
 
 /** Proper names that legitimately carry those words. */

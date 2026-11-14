@@ -35,7 +35,7 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 | 9. OG inglesa | validada | 914 testes sales/i18n; check sem erros; landing e detalhe com cards em /og/en/services | 59521de |
 | 10. Sitemap sem vendas | validada | 915 testes sales/i18n; mutação /en/services reprovou como esperado; fonte restaurada; check sem erros | 302a66a |
 
-| 11. HTTP e documentação | validada | verify aprovado; HTTP produção/staging aprovado; cobertura 97,66% das linhas | neste commit |
+| 11. HTTP e documentação | validada | verify aprovado; HTTP produção/staging aprovado; cobertura 97,66% das linhas | 1f57187 |
 
 ## Validação final
 
@@ -44,4 +44,6 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 - Correções de validação preexistente em `483d503`: fixtures de confetti, contraste e CLI do autowriter; formatação sem alteração de comportamento. Os 20 testes das três fixtures passaram após o vermelho inicial (9 falhas).
 - Instrumentação de cobertura adicionada com piso de 80% de linhas em `src/lib/**/*.ts`. Medição aprovada: 97,66% de linhas, 94,11% de branches e 96,03% de funções; 4.062 testes aprovados. Portões finais em execução.
 - `npm audit`: base com 13 high e 4 critical, sem aumento nessas severidades; duas moderate adicionais em dependências de desenvolvimento da cobertura. Nenhum deploy solicitado ou realizado.
-- Revisão independente solicitada ao Grok; julgamento ainda pendente.
+- Primeira rodada independente do Grok: 2 High e 2 Medium (rótulos do detalhe, variante compacta, links habilitados e teste de leftovers). Correções com quatro falhas reproduzidas antes da implementação; segunda rodada solicitada, julgamento pendente.
+
+- Tier1 final aprovado antes da correção da revisão: formatter, tipos, testes e build. ESLint indisponível e explicitamente ignorado pelo helper. Tier3 sem portões declarados. Tier1 e tier2 reexecutados após as correções da revisão.

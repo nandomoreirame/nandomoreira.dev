@@ -43,6 +43,8 @@ describe('English sales pages', () => {
     expect(html).toContain(`action="/api/hire?origem=${slug}"`);
     expect(html).toContain('role="alert"');
     expect(html).toContain('aria-label="Breadcrumb"');
+    expect(html).toContain('Part 01');
+    expect(html).not.toMatch(/Parte \d{2}|Metodologia transparente|Como vamos fazer/);
     expect(ptLeftovers(html)).toEqual([]);
   });
   it('rejects an unknown detail', async () => {
