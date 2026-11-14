@@ -30,3 +30,22 @@ describe('SalesLayout language and alternates', () => {
     expect(off).not.toContain('og:locale:alternate');
   });
 });
+
+describe('SalesLayout switch while the sales host is in rollback', () => {
+  it('points the language switch at the internal paths', async () => {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(SalesLayout, {
+      props: {
+        title: 'T',
+        description: 'D',
+        locale: 'pt-BR',
+        live: true,
+        salesLive: false,
+        slug: 'site-institucional',
+      },
+      slots: { default: '<p>x</p>' },
+    });
+    expect(html).toMatch(/<a[^>]*href="\/en\/services\/website"[^>]*hreflang="en"/);
+  });
+});

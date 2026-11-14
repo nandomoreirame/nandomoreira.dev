@@ -22,6 +22,8 @@ import '../styles/global.css';
 interface Props {
   locale?: Locale;
   live?: boolean;
+  /** Sales host state; defaults to the build flag, overridden by tests. */
+  salesLive?: boolean;
   title: string;
   description: string;
   /** Detail page slug; absent on the landing. */
@@ -30,12 +32,12 @@ interface Props {
   serviceName?: string;
 }
 
-const { title, description, slug, serviceName, locale = 'pt-BR', live = EN_PUBLISHED } = Astro.props;
+const { title, description, slug, serviceName, locale = 'pt-BR', live = EN_PUBLISHED, salesLive = SALES_HOST_LIVE } = Astro.props;
 const t = salesLabelsFor(locale);
 const target: Locale = locale === 'en' ? 'pt-BR' : 'en';
 const ptSlug = slug ? salesSlugIn(slug, 'pt-BR') : undefined;
 const enSlug = slug ? salesSlugIn(slug, 'en') : undefined;
-const alternates = live ? { 'pt-BR': salesPath(ptSlug, true), en: salesPath(enSlug, true, 'en') } : undefined;
+const alternates = live ? { 'pt-BR': salesPath(ptSlug, salesLive), en: salesPath(enSlug, salesLive, 'en') } : undefined;
 const canonical = salesUrl(slug, SALES_HOST_LIVE, locale);
 // The share cards live on the main host under the internal path.
 const ogImage = absoluteUrl(new URL('https://nandomoreira.dev'), ogImagePath(salesPath(slug, false, locale)));
