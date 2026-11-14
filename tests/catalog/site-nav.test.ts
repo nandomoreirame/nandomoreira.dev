@@ -160,7 +160,9 @@ describe('SiteNav mobile hamburger menu', () => {
     );
     const open = html.match(/<button\b[^>]*aria-label="Abrir menu"[^>]*>/)?.[0] ?? '';
     expect(open).toMatch(/\bmd:hidden\b/);
-    expect(open).toMatch(/\bsize-11\b/);
+    // 44px tall, 32px wide: above the 24px minimum target (WCAG 2.5.8) and it fits the 320px row.
+    expect(open).toMatch(/\bh-11\b/);
+    expect(open).toMatch(/\bw-8\b/);
 
     expect(html).toMatch(
       /<div\b[^>]*id="site-menu"[^>]*popover[^>]*role="dialog"|<div\b[^>]*id="site-menu"[^>]*role="dialog"[^>]*popover/,
@@ -177,7 +179,8 @@ describe('SiteNav mobile hamburger menu', () => {
 
     expect(close).toContain('popovertarget="site-menu"');
     expect(close).toContain('popovertargetaction="hide"');
-    expect(close).toMatch(/\bsize-11\b/);
+    expect(close).toMatch(/\bh-11\b/);
+    expect(close).toMatch(/\bw-8\b/);
   });
 
   it('marks the close button as the animated one', async () => {
@@ -211,7 +214,7 @@ describe('SiteNav mobile hamburger menu', () => {
     const mobileNav = html.match(/<nav[^>]*aria-label="Menu principal \(mobile\)"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
     const hrefs = [...mobileNav.matchAll(/href="([^"]+)"/g)].map(m => m[1]);
 
-    expect(hrefs).toEqual(['/posts', '/portfolio', '/lab', '/setup', '/now', '/sobre', '/mcp', '/contato']);
+    expect(hrefs).toEqual(['/sobre', '/now', '/setup', '/posts', '/portfolio', '/lab', '/mcp', '/contato']);
   });
 
   it('still ships with no client script', async () => {

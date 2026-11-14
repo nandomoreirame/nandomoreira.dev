@@ -17,20 +17,22 @@ const { current, section, hasPosts = false, locale = 'pt-BR' } = Astro.props;
 
 const t = messagesFor(locale).nav;
 const items = [
+  { href: routeFor('/sobre', locale), label: t.about },
+  { href: routeFor('/now', locale), label: t.now },
+  { href: routeFor('/setup', locale), label: t.setup },
   ...(hasPosts ? [{ href: routeFor('/posts', locale), label: t.blog }] : []),
   { href: routeFor('/portfolio', locale), label: t.portfolio },
   { href: routeFor('/lab', locale), label: t.lab },
-  { href: routeFor('/setup', locale), label: t.setup },
-  { href: routeFor('/now', locale), label: t.now },
-  { href: routeFor('/sobre', locale), label: t.about },
   { href: routeFor('/mcp', locale), label: t.mcp },
   { href: routeFor('/contato', locale), label: t.contact },
 ];
 
 const linkFocus =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+// Both buttons exist only below md, where the bar is tight: 32px wide keeps the
+// row on one line at 320px; the 44px height keeps the touch target tall.
 const iconButton =
-  `inline-flex size-11 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary ${linkFocus}`;
+  `inline-flex h-11 w-8 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary ${linkFocus}`;
 ---
 
 <div class="flex items-center justify-end max-md:order-last md:flex-1 md:justify-start">
@@ -44,9 +46,11 @@ const iconButton =
   </button>
 
   <nav aria-label={t.mainNavigation} class="hidden w-full md:block md:w-auto">
-    <ul class="hidden items-center gap-md md:flex lg:gap-lg">
-      {items.map((item) => (
-        <li class="flex">
+    <ul class="hidden items-center gap-xs md:flex lg:gap-sm">
+      {items.map((item, index) => (
+        <li class="flex items-center gap-xs lg:gap-sm">
+          {/* Decorative separator; screen readers already hear a list. */}
+          {index > 0 && <span aria-hidden="true" class="font-mono text-micro text-muted-foreground">•</span>}
           <a
             href={item.href}
             aria-current={navCurrent(item.href, { current, section })}
@@ -60,16 +64,17 @@ const iconButton =
   </nav>
 
   <div id="site-menu" popover role="dialog" aria-label={t.menu} class="site-menu">
-    <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm">
+    {/* Tight and wrapping: a narrow screen squeezes the row, never hides a control. */}
+    <div class="mx-auto flex w-full max-w-frame flex-wrap items-center justify-between gap-xs px-md py-sm">
       <slot name="wordmark" />
-      <slot name="language" />
       <slot name="availability" />
+      <slot name="theme" />
       <button
         type="button"
         popovertarget="site-menu"
         popovertargetaction="hide"
         aria-label={t.closeMenu}
-        class={`site-menu-close ${iconButton}`}
+        class={`site-menu-close shrink-0 ${iconButton}`}
       >
         <Icon name="lucide:x" aria-hidden="true" class="size-6" />
       </button>

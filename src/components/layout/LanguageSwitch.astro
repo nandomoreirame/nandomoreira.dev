@@ -9,9 +9,16 @@ interface Props {
   alternates?: TranslationPair;
   /** Tests override; the build reads EN_PUBLISHED. */
   live?: boolean;
+  /** Layout utilities from the place that puts it. */
+  class?: string;
+  /**
+   * Visible text in the page's own language ("Versão em inglês"), replacing
+   * the EN/PT code. It is then the link's name, so no aria-label or lang.
+   */
+  text?: string;
 }
 
-const { locale, alternates, live = EN_PUBLISHED } = Astro.props;
+const { locale, alternates, live = EN_PUBLISHED, class: extra, text } = Astro.props;
 const target: Locale = locale === 'en' ? 'pt-BR' : 'en';
 // Without a pair, the other language's home (REQ-017).
 const href = alternates?.[target] ?? (target === 'en' ? '/en' : '/');
@@ -25,12 +32,12 @@ const short = target === 'en' ? 'EN' : 'PT';
     <a
       href={href}
       hreflang={target}
-      lang={target}
-      aria-label={label}
+      lang={text ? undefined : target}
+      aria-label={text ? undefined : label}
       data-language-switch
-      class="inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class={`inline-flex min-h-11 items-center font-mono text-micro uppercase tracking-wide text-muted-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${extra ?? ''}`.trim()}
     >
-      <span class="text-trim-cap">{short}</span>
+      <span class="text-trim-cap">{text ?? short}</span>
     </a>
   )
 }

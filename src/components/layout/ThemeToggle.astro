@@ -6,10 +6,12 @@ import { themeCopy } from '../../lib/theme/copy';
 interface Props {
   /** Layout utilities from the header that places it. */
   class?: string;
+  /** 32px wide instead of 44, for the tight mobile menu row; still 44px tall. */
+  compact?: boolean;
   locale?: Locale;
 }
 
-const { class: extra, locale = 'pt-BR' } = Astro.props;
+const { class: extra, locale = 'pt-BR', compact = false } = Astro.props;
 const copy = themeCopy(locale);
 ---
 
@@ -20,7 +22,7 @@ const copy = themeCopy(locale);
 <button
   type="button"
   data-theme-toggle
-  class={`inline-flex size-11 shrink-0 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${extra ?? ''}`}
+  class={`inline-flex ${compact ? 'h-11 w-8' : 'size-11'} shrink-0 items-center justify-center text-foreground transition-[color] duration-(--duration-fast) ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${extra ?? ''}`}
 >
   <span data-theme-when="noir" class="contents">
     <Icon name="lucide:sun" aria-hidden="true" class="size-5" />

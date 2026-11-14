@@ -46,21 +46,24 @@ const homeHref = routeFor('/', locale);
   data-site-header
   class="sticky top-0 z-40 border-b border-border transition-[background-color] duration-(--duration-base) ease-out data-scrolled:bg-background/40 data-scrolled:backdrop-blur-lg"
 >
-  <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-md px-lg py-sm xl:gap-xl">
+  <div class="mx-auto flex w-full max-w-frame items-center justify-between gap-xs px-md py-sm max-md:flex-wrap md:gap-md md:px-lg xl:gap-xl">
     <Wordmark name={name} accent={accent} href={homeHref} />
 
     <SiteNav current={current} section={section} hasPosts={hasPosts} locale={locale}>
       <Wordmark slot="wordmark" name={name} accent={accent} href={homeHref} />
-      <LanguageSwitch slot="language" locale={locale} alternates={alternates} />
-      {availability && <AvailabilityPill slot="availability" status={availability.status} locale={locale} data-menu-availability class="ml-auto" />}
+      {availability && <AvailabilityPill slot="availability" status={availability.status} locale={locale} data-menu-availability />}
+      <ThemeToggle slot="theme" locale={locale} compact class={availability ? undefined : 'ml-auto'} />
     </SiteNav>
 
-    {availability && <AvailabilityPill status={availability.status} locale={locale} data-header-availability class="max-md:ml-auto" />}
+    {availability && <AvailabilityPill status={availability.status} locale={locale} data-header-availability />}
 
-    {/* The language switch, right of the pill, before the theme switch. */}
-    <LanguageSwitch locale={locale} alternates={alternates} />
+    {/* The language switch, right of the pill; below md it sits just left of
+        the menu button. The theme switch moves into the menu there. */}
+    {/* pl-sm below md: the menu icon sits 8px inside its button, so the same
+        padding here leaves EN equally spaced from the pill and from the icon. */}
+    <LanguageSwitch locale={locale} alternates={alternates} class="max-md:pl-sm" />
 
     {/* The theme switch (theme-modes, REQ-004), right of the pill. */}
-    <ThemeToggle locale={locale} class={availability ? '-ml-sm' : 'max-md:ml-auto'} />
+    <ThemeToggle locale={locale} class="max-md:hidden md:-ml-sm" />
   </div>
 </header>

@@ -9,11 +9,15 @@ const render = async (props: Record<string, unknown> = {}) => {
 };
 
 describe('Agora in the menu', () => {
-  it('sits between Setup and Sobre', async () => {
+  it('follows the menu order Sobre, Agora, Setup, Blog, Portfolio, Lab, MCP, Contato', async () => {
     const html = await render({ hasPosts: true });
     expect(html).toMatch(/<a[^>]*href="\/now"[^>]*>[\s\S]*?Agora/);
-    expect(html.indexOf('href="/setup"')).toBeLessThan(html.indexOf('href="/now"'));
-    expect(html.indexOf('href="/now"')).toBeLessThan(html.indexOf('href="/sobre"'));
+    const desktop = html.slice(0, html.indexOf('id="site-menu"'));
+    const order = ['/sobre', '/now', '/setup', '/posts', '/portfolio', '/lab', '/mcp', '/contato'].map(path =>
+      desktop.indexOf(`href="${path}"`),
+    );
+    expect(order.every(index => index >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
   it('marks /now as the current page', async () => {

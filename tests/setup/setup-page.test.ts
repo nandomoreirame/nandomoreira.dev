@@ -180,13 +180,13 @@ describe('/setup page', () => {
 });
 
 describe('Setup across the site', () => {
-  it('sits in the main menu, after Blog and before Sobre', async () => {
+  it('sits in the main menu, after Agora and before Blog', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(SiteNav, { props: { hasPosts: true } });
     const desktop = html.slice(0, html.indexOf('id="site-menu"'));
     expect(desktop).toMatch(/<a[^>]*href="\/setup"[^>]*>[\s\S]*?Setup/);
-    expect(desktop.indexOf('href="/posts"')).toBeLessThan(desktop.indexOf('href="/setup"'));
-    expect(desktop.indexOf('href="/setup"')).toBeLessThan(desktop.indexOf('href="/sobre"'));
+    expect(desktop.indexOf('href="/now"')).toBeLessThan(desktop.indexOf('href="/setup"'));
+    expect(desktop.indexOf('href="/setup"')).toBeLessThan(desktop.indexOf('href="/posts"'));
   });
 
   it('has an AI view with every section', async () => {

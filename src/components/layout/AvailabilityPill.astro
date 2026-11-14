@@ -25,7 +25,7 @@ const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visi
 <a
   href={href}
   aria-label={label}
-  class={`inline-flex min-h-8 shrink-0 items-center gap-sm rounded-full border border-border bg-surface px-md font-mono text-caption text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong ${focus} ${extra ?? ''}`}
+  class={`inline-flex min-h-8 shrink-0 items-center gap-xs rounded-full border border-border bg-surface px-3 font-mono sm:gap-sm sm:px-md text-caption text-foreground transition-[border-color] duration-(--duration-fast) ease-out hover:border-border-strong ${focus} ${extra ?? ''}`}
   {...rest}
 >
   <StatusDot status={status} />

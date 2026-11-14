@@ -18,3 +18,6 @@ export const splitWordmark = (text: string, accent = ''): WordmarkParts => {
     after: text.slice(at + accent.length),
   };
 };
+
+/** The brand on narrow screens: nandomoreira.dev shortened to ndm.dev, the m in the accent. */
+export const SHORT_WORDMARK: WordmarkParts = { before: 'nd', accent: 'm', after: '.dev' };
