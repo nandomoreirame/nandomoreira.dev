@@ -1,10 +1,10 @@
 ---
 slug: i18n-sales
-phase: implement
+phase: none
 spec_path: docs/specs/i18n-sales/SPEC.md
 plan_path: docs/plans/2026-10-19-i18n-sales.md
 depends_on: [i18n-foundation]
-updated: 2026-11-13
+updated: 2026-11-14
 ---
 
 # STATE: i18n-sales
@@ -47,3 +47,8 @@ A revisão manda traduzir a copy do disco (prazo, pagamento, orçamento e formul
 - Primeira rodada independente do Grok: 2 High e 2 Medium (rótulos do detalhe, variante compacta, links habilitados e teste de leftovers). Correções com quatro falhas reproduzidas antes da implementação; segunda rodada solicitada, julgamento pendente.
 
 - Tier1 final aprovado antes da correção da revisão: formatter, tipos, testes e build. ESLint indisponível e explicitamente ignorado pelo helper. Tier3 sem portões declarados. Tier1 e tier2 reexecutados após as correções da revisão.
+
+## Fechamento de 2026-11-14
+
+- Rodadas de correção do Claude sobre os achados abertos (barra final nos hosts, seletor em rollback, índice de busca só com detalhe, rótulo Budget, prop ociosa, testes com copy concreta, `docs/lessons.json` no `.prettierignore`). `npm run verify` aprovado: 455 arquivos e 4.070 testes, 9 arquivos e 43 testes do build.
+- Revisão independente do Grok: 2 rodadas, 1 Medium (barra final no redirect do host principal) e 1 Low (teste pt-BR), ambos corrigidos com teste vermelho antes. `validate_verification.py` sai 0; revisão registrada em `docs/reviews/i18n-sales.md`.
