@@ -13,7 +13,9 @@ import PrivacyPage from '../../src/components/pages/PrivacyPage.astro';
 import ResumePage from '../../src/components/pages/ResumePage.astro';
 import SetupPage from '../../src/components/pages/SetupPage.astro';
 import { resetLoadNowForTests } from '../../src/lib/now/load';
-import { ptLeftovers } from '../helpers/pt-leftovers';
+import PostPage from '../../src/components/pages/PostPage.astro';
+import { getAllPostEntries } from '../../src/lib/content';
+import { ptHiddenLeftovers, ptLeftovers } from '../helpers/pt-leftovers';
 
 process.env.SPOTIFY_CLIENT_ID ??= 'cid';
 process.env.SPOTIFY_CLIENT_SECRET ??= 'sec';
@@ -106,6 +108,31 @@ describe('English pages carry no Portuguese interface text', () => {
       request: new Request(`https://nandomoreira.dev${url}`),
     });
     expect(ptLeftovers(withoutIntentionalContent(url, html))).toEqual([]);
+    expect(ptHiddenLeftovers(withoutIntentionalContent(url, html))).toEqual([]);
+  });
+
+  it('an English post with code blocks', async () => {
+    const entries = await getAllPostEntries('en');
+    const entry = entries.find(item => item.body?.includes('```'));
+    expect(entry).toBeDefined();
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(PostPage, {
+      props: { entry, locale: 'en' },
+      request: new Request(`https://nandomoreira.dev/en/${entry!.data.slug}`),
+    });
+    const chrome = withoutIntentionalContent('/en/post', html).replace(/<(code|pre)\b[\s\S]*?<\/\1>/gi, ' ');
+    // The body is English prose, where "do" is an English word; check the toolbar words instead.
+    expect(chrome).not.toMatch(/\bCopia(?:r|do)\b|>texto</);
+    expect(ptHiddenLeftovers(chrome)).toEqual([]);
+  });
+
+  it('proves the hidden gate can fail', () => {
+    expect(ptHiddenLeftovers('<img alt="Foto de alguém">')).not.toEqual([]);
+    expect(ptHiddenLeftovers('<a href="https://claude.ai/new?q=Por%20favor%2C%20leia%20o%20artigo">x</a>')).not.toEqual(
+      [],
+    );
+    expect(ptHiddenLeftovers('<a href="/sobre" lang="pt-BR" aria-label="Ler em português">PT</a>')).toEqual([]);
   });
 
   it('proves the gate can fail', () => {

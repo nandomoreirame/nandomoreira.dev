@@ -15,7 +15,7 @@ interface Props {
 const { markdownUrl, labelled = false, locale = 'pt-BR' } = Astro.props;
 const t = messagesFor(locale).posts;
 
-/** Visible names stay English when the page is English; the prompt URL is unchanged. */
+/** Visible names and the prompt follow the page language. */
 const LABELS_EN: Record<(typeof AI_SUMMARY_TARGETS)[number]['id'], { label: string; short: string }> = {
   claude: { label: 'Summarize with Claude', short: 'Summarize with Claude' },
   gemini: { label: 'Summarize with Google AI', short: 'Google AI' },
@@ -37,7 +37,7 @@ const targets = AI_SUMMARY_TARGETS.map((target) => {
     targets.map((target) =>
       labelled ? (
         <a
-          href={aiSummaryUrl(target, markdownUrl)}
+          href={aiSummaryUrl(target, markdownUrl, locale)}
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex min-h-8 items-center gap-xs rounded-md border border-border-strong bg-surface px-sm font-mono text-caption text-foreground transition-[color,border-color] duration-(--duration-fast) ease-out hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -48,7 +48,7 @@ const targets = AI_SUMMARY_TARGETS.map((target) => {
         </a>
       ) : (
         <a
-          href={aiSummaryUrl(target, markdownUrl)}
+          href={aiSummaryUrl(target, markdownUrl, locale)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={t.opensInNewTab(target.label)}

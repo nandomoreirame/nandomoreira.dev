@@ -283,7 +283,7 @@ const mcpUrl = absoluteUrl(site, '/api/mcp');
         <p class="text-small text-muted-foreground">{t.mcpBody}</p>
         <div class="flex items-center justify-between gap-sm rounded-md border border-border bg-background px-md py-sm">
           <code id="mcp-url" class="min-w-0 truncate font-mono text-small text-foreground">{mcpUrl}</code>
-          <CopyButton target="mcp-url" label={t.mcpCopyLabel} iconOnly />
+          <CopyButton target="mcp-url" label={t.mcpCopyLabel} iconOnly locale={locale} />
         </div>
         <a href={routeFor('/mcp', locale)} class="font-mono text-small text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{t.mcpHowTo}</a>
       </Card>

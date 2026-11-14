@@ -123,3 +123,23 @@ describe('post page', () => {
     );
   });
 });
+
+describe('English summary prompt', () => {
+  it('asks in English for the same four things', () => {
+    const prompt = aiSummaryPrompt(MARKDOWN, 'en');
+    expect(prompt).toContain(MARKDOWN);
+    expect(prompt).toMatch(/read the full article/i);
+    expect(prompt).toMatch(/summari[sz]e/i);
+    expect(prompt).toMatch(/missing/i);
+    expect(prompt).toMatch(/follow-up question/i);
+    expect(prompt).not.toMatch(/leia|resuma|pergunta/i);
+  });
+
+  it('goes into every target link of an English post', async () => {
+    const html = await (
+      await AstroContainer.create()
+    ).renderToString(AiSummaryLink, { props: { markdownUrl: MARKDOWN, labelled: true, locale: 'en' } });
+    for (const t of AI_SUMMARY_TARGETS)
+      expect(html).toContain(aiSummaryUrl(t, MARKDOWN, 'en').replaceAll('&', '&amp;'));
+  });
+});

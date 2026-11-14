@@ -21,6 +21,7 @@ const t = messagesFor(locale).posts;
   class="mt-2xl rounded-lg border border-border bg-surface p-lg"
 >
   <AboutProfile
+    locale={locale}
     eyebrow={t.authorEyebrow}
     headingId="author-about-title"
     aboutHref={routeFor('/sobre', locale)}

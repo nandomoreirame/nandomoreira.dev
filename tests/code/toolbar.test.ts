@@ -1,6 +1,6 @@
 import { codeToHtml } from 'shiki';
 import { describe, expect, it } from 'vitest';
-import { CODE_TOOLBAR_LABELS, codeToolbar, svgBody } from '../../src/lib/code/toolbar';
+import { CODE_TOOLBAR_LABELS, codeToolbar, localizeCodeToolbar, svgBody } from '../../src/lib/code/toolbar';
 
 const highlight = (code: string, lang = 'python', meta?: string) =>
   codeToHtml(code, {
@@ -82,5 +82,20 @@ describe('markdown pipeline', () => {
   it('registers the toolbar in the Shiki config', async () => {
     const config = (await import('node:fs')).readFileSync('astro.config.mjs', 'utf8');
     expect(config).toMatch(/transformers:\s*\[codeToolbar\(\)\]/);
+  });
+});
+
+describe('localizeCodeToolbar', () => {
+  const block =
+    '<div class="code-header"><span class="code-title">texto</span><div class="code-actions"><label class="code-action"><input type="checkbox">Raw</label><button type="button" class="code-action" data-copy="code-1" data-label-copied="Copiado" aria-live="polite" hidden><span>Copiar</span></button></div></div><pre><code>Copiar texto</code></pre>';
+  it('translates the bar of an English post and leaves the code alone', () => {
+    const html = localizeCodeToolbar(block, 'en');
+    expect(html).toContain('data-label-copied="Copied"');
+    expect(html).toContain('<span>Copy</span>');
+    expect(html).toContain('<span class="code-title">text</span>');
+    expect(html).toContain('<pre><code>Copiar texto</code></pre>');
+  });
+  it('keeps the Portuguese bar byte for byte', () => {
+    expect(localizeCodeToolbar(block, 'pt-BR')).toBe(block);
   });
 });

@@ -49,6 +49,14 @@ const MARKERS = [
   'metodologia',
   'vamos',
   'etapas',
+  'copiar',
+  'copiado',
+  'foto',
+  'ilustração',
+  'retrato',
+  'resuma',
+  'artigo',
+  'leia',
 ];
 
 /** Proper names that legitimately carry those words. */
@@ -98,3 +106,40 @@ export const ptLeftovers = (html: string): string[] => [...new Set(wordsMatching
  * list: that one includes English words like "do").
  */
 export const ptMarkerCount = (html: string): number => wordsMatching(html, CONTENT_MARKERS).length;
+
+/** Attributes a person or an agent reads even though they are not visible text. */
+const READ_ATTRIBUTES = /\s(alt|title|aria-label|placeholder|data-label-[\w-]+)="([^"]*)"/g;
+
+const decode = (value: string): string =>
+  value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+/**
+ * Portuguese left where visible text never shows it: alt, aria-label, title,
+ * placeholder, data-label-* and the query of every link (a prompt handed to an
+ * agent travels in ?q=). Tags marked lang="pt-BR" are Portuguese on purpose
+ * (the language switch is labelled in its destination language).
+ */
+/** Markers that are also English words, too common in English prompts and alt text to mean anything there. */
+const ENGLISH_HOMOGRAPHS = new Set(['do']);
+
+export const ptHiddenLeftovers = (html: string): string[] => {
+  const found = new Set<string>();
+  for (const tag of html.match(/<[a-z][^>]*>/gi) ?? []) {
+    if (/\slang="pt-BR"/.test(tag)) continue;
+    for (const [, , value] of tag.matchAll(READ_ATTRIBUTES))
+      for (const word of ptLeftovers(`<p>${decode(value)}</p>`)) found.add(word);
+    for (const [, href] of tag.matchAll(/\shref="([^"]*\?[^"]*)"/g)) {
+      let query: URLSearchParams;
+      try {
+        query = new URL(decode(href), 'https://nandomoreira.dev').searchParams;
+      } catch {
+        continue;
+      }
+      for (const value of query.values()) for (const word of ptLeftovers(`<p>${value}</p>`)) found.add(word);
+    }
+  }
+  return [...found].filter(word => !ENGLISH_HOMOGRAPHS.has(word));
+};

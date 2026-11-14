@@ -1,0 +1,11 @@
+---
+import { localizeCodeToolbar } from '../../lib/code/toolbar';
+
+/**
+ * Wraps an English post body: the code bars come out of the shared markdown
+ * render in Portuguese, so the rendered slot is rewritten once here.
+ */
+const html = await Astro.slots.render('default');
+---
+
+<Fragment set:html={localizeCodeToolbar(html, 'en')} />

@@ -60,7 +60,7 @@ const authorName = displayNameOf(await getProfile(locale));
     </h2>
     <div class="mt-sm flex items-start gap-sm">
       <code id="mcp-endpoint" class={`${codeClass} text-body`}>{endpoint}</code>
-      <CopyButton target="mcp-endpoint" label={t.copyEndpoint} iconOnly />
+      <CopyButton target="mcp-endpoint" label={t.copyEndpoint} iconOnly locale={locale} />
     </div>
     <p class="mt-sm text-small text-muted-foreground">
       {t.endpointHint}
@@ -92,6 +92,7 @@ const authorName = displayNameOf(await getProfile(locale));
                     : t.copyCommandFor(client.name)
                 }
                 iconOnly
+                locale={locale}
               />
             </div>
             <p class="text-body text-muted-foreground">{client.after}</p>

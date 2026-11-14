@@ -17,7 +17,7 @@ const t = messagesFor(locale).home.agentBrief;
 ---
 
 <TerminalWindow filename="AGENTS.md">
-  <CopyButton slot="actions" target="agent-brief" label={t.copyLabel} />
+  <CopyButton slot="actions" target="agent-brief" label={t.copyLabel} locale={locale} />
   <pre
     class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-foreground"><code id="agent-brief">{tokens.map((token) => <span class={BRIEF_TONE_CLASS[token.tone]}>{token.text}</span>)}</code></pre>
 </TerminalWindow>

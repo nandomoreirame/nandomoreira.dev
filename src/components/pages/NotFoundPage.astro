@@ -38,7 +38,7 @@ const curl = `$ curl -I https://nandomoreira.dev${requested}\nHTTP/2 404 Not Fou
     <p class="max-w-[60ch] text-body text-muted-foreground">{t.body}</p>
 
     <TerminalWindow filename="curl" class="w-full text-left">
-      <CopyButton slot="actions" target="not-found-curl" label={t.copyCurl} iconOnly />
+      <CopyButton slot="actions" target="not-found-curl" label={t.copyCurl} iconOnly locale={locale} />
       <pre class="p-md font-mono text-small whitespace-pre-wrap wrap-anywhere text-muted-foreground"><code id="not-found-curl">{curl}</code></pre>
     </TerminalWindow>
 

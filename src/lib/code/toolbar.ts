@@ -1,6 +1,7 @@
 import { icons } from '@iconify-json/lucide';
 import type { Element, ElementContent, Properties } from 'hast';
 import type { ShikiTransformer } from 'shiki';
+import type { Locale } from '../i18n/locale';
 
 /**
  * Text actions on a bar above every code block, added at build time by Shiki.
@@ -15,6 +16,29 @@ export const CODE_TOOLBAR_LABELS = {
   /** Header label of a block with neither a title nor a language. */
   plain: 'texto',
 } as const;
+
+/** English labels for the same bar; posts are rendered once, so English pages swap them afterwards. */
+export const CODE_TOOLBAR_LABELS_EN: Record<keyof typeof CODE_TOOLBAR_LABELS, string> = {
+  raw: 'Raw',
+  copy: 'Copy',
+  copied: 'Copied',
+  plain: 'text',
+};
+
+/**
+ * The bar in the page language. The Shiki transformer has no locale (the
+ * markdown is rendered once per file), so an English post rewrites the three
+ * Portuguese strings of its own markup; the code inside <pre> is never touched.
+ */
+export const localizeCodeToolbar = (html: string, locale: Locale): string => {
+  if (locale !== 'en') return html;
+  const pt = CODE_TOOLBAR_LABELS;
+  const en = CODE_TOOLBAR_LABELS_EN;
+  return html
+    .replaceAll(`data-label-copied="${pt.copied}"`, `data-label-copied="${en.copied}"`)
+    .replace(/(<button[^>]*\bdata-copy="code-\d+"[^>]*><span>)Copiar(<\/span>)/g, `$1${en.copy}$2`)
+    .replaceAll(`<span class="code-title">${pt.plain}</span>`, `<span class="code-title">${en.plain}</span>`);
+};
 
 const PLAIN_LANGS = new Set(['text', 'plaintext', 'txt', 'plain']);
 

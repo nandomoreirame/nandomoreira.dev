@@ -1,4 +1,5 @@
 ---
+import EnglishCodeBars from '../posts/EnglishCodeBars.astro';
 import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
@@ -184,7 +185,15 @@ const postsHref = withLocale('/posts', locale);
       }
       <div>
         <Prose ruled>
-          <Content />
+          {
+            locale === 'en' ? (
+              <EnglishCodeBars>
+                <Content />
+              </EnglishCodeBars>
+            ) : (
+              <Content />
+            )
+          }
         </Prose>
         <AuthorBox locale={locale} />
         {isCommentsPost(post) && <GiscusComments locale={locale} />}
