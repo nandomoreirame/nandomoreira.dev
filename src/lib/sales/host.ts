@@ -74,7 +74,8 @@ export const salesLink = (
 export type SalesRoute = { rewrite: string } | { redirect: string } | undefined;
 
 /** Rewrite for a request that arrived on the sales host itself. */
-const subdomainRoute = (path: string, en: boolean): SalesRoute => {
+const subdomainRoute = (rawPath: string, en: boolean): SalesRoute => {
+  const path = rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath;
   if (en && path === '/en') return { rewrite: SALES_BASE_EN };
   if (path.startsWith('/en/')) {
     const slug = /^\/en\/([a-z0-9-]+)$/.exec(path)?.[1];

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { salesLink, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
+import { rewriteTarget, salesLink, salesPath, salesRouting, salesUrl } from '../../src/lib/sales/host';
 
 const at = (url: string) => salesRouting(new URL(url), true, true);
 describe('English sales routing', () => {
@@ -32,5 +32,17 @@ describe('English sales routing', () => {
     expect(salesLink(new URL('http://localhost:4321/en'), 'website', true, 'en')).toBe(
       'http://contrate.nandomoreira.local:4321/en/website',
     );
+  });
+});
+
+describe('English sales routing edge cases', () => {
+  it('rewrites English paths with a trailing slash on the sales host', () => {
+    expect(at('https://contrate.nandomoreira.dev/en/')).toEqual({ rewrite: '/en/services' });
+    expect(at('https://contrate.nandomoreira.dev/en/website/')).toEqual({ rewrite: '/en/services/website' });
+  });
+  it('keeps the form outcome on the English rewrite', () => {
+    const url = new URL('https://contrate.nandomoreira.dev/en?envio=ok');
+    const route = salesRouting(url, true, true) as { rewrite: string };
+    expect(rewriteTarget(route.rewrite, url)).toBe('/en/services?envio=ok');
   });
 });
