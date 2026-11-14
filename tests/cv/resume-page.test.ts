@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import ResumePage from '../../src/pages/curriculo.astro';
 import SobrePage from '../../src/pages/sobre.astro';
 import { CV_GO_PATH } from '../../src/lib/analytics/outbound';
-import { CV_PAGE, CV_PDF_PATH } from '../../src/lib/cv/download';
+import { CV_PAGE, CV_PDF_PATH, CV_PDF_PATH_EN } from '../../src/lib/cv/download';
 
 const render = async (query = '') => {
   const container = await AstroContainer.create();
@@ -12,7 +12,7 @@ const render = async (query = '') => {
 };
 
 const dialogOf = (html: string) => html.match(/<dialog[\s\S]*?<\/dialog>/)?.[0] ?? '';
-const FILE = /download="curriculo-fernando-moreira-senior-ai-engineer-\d{12}\.pdf"/;
+const FILE = /download="CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110\.pdf"/;
 
 describe('/curriculo', () => {
   it('is a resume sheet without the site header, footer or corner actions', async () => {
@@ -40,26 +40,28 @@ describe('/curriculo', () => {
 
     expect(resumo).toBeGreaterThan(-1);
     expect(resumo).toBeLessThan(html.indexOf('id="stack"'));
-    expect(html).toMatch(/Engenheiro de software com \d{2} anos de carreira/);
-    expect(html).not.toMatch(/\+\d{2} anos/);
+    expect(html).toMatch(/Senior Fullstack Software Engineer com mais de \d{2} anos de experiência/);
   });
 
   it('shows every bullet of the PDF, the long ones included', async () => {
     const html = await render();
 
     expect(html.match(/<li>/g)?.length).toBeGreaterThanOrEqual(30);
-    expect(html).toContain('Orquestrei três CLIs de IA com papéis separados');
-    expect(html).toContain('Implantei cultura ágil com Scrum adaptado');
+    expect(html).toContain('Desenvolvi de ponta a ponta o Play Manager');
+    expect(html).toContain('Respondi pela arquitetura das soluções e pelo desenho técnico das entregas');
   });
 
   it('is the address the form and the /sobre button use', async () => {
     const container = await AstroContainer.create();
     const sobre = await container.renderToString(SobrePage);
-    const link = sobre.match(/<a[^>]*>(?:(?!<\/a>)[\s\S])*Baixar currículo[\s\S]*?<\/a>/)?.[0] ?? '';
+    const link = sobre.match(/<a[^>]*href="\/curriculo"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
 
     expect(CV_PAGE).toBe('/curriculo');
-    expect(link).toMatch(/href="\/curriculo"/);
     expect(link).not.toMatch(/\bdownload\b/);
+    // A plain "Currículo" with a document icon: the button opens the page, it does not download.
+    expect(link.replace(/<[^>]+>/g, '').trim()).toBe('Currículo');
+    expect(link).toContain('data-icon="lucide:file-text"');
+    expect(link).not.toContain('lucide:file-down');
   });
 
   it('is the only address, with no /cv alias left behind', () => {
@@ -68,8 +70,21 @@ describe('/curriculo', () => {
   });
 
   it('serves the PDF it links to', () => {
-    expect(CV_PDF_PATH).toBe('/curriculo-fernando-moreira.pdf');
+    expect(CV_PDF_PATH).toBe('/CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110.pdf');
     expect(existsSync(`public${CV_PDF_PATH}`)).toBe(true);
+  });
+
+  it('serves the English PDF under its career-folder name', () => {
+    expect(CV_PDF_PATH_EN).toBe('/CV-senior-fullstack-software-engineer-en-Fernando-Moreira-20261114.pdf');
+    expect(existsSync(`public${CV_PDF_PATH_EN}`)).toBe(true);
+  });
+
+  it('keeps only the full-stack CV: the old files are gone and their address redirects', () => {
+    for (const old of ['curriculo-fernando-moreira.pdf', 'resume-fernando-moreira.pdf'])
+      expect(existsSync(`public/${old}`)).toBe(false);
+    expect(readFileSync('astro.config.mjs', 'utf8')).toContain(
+      "'/curriculo-fernando-moreira.pdf': '/CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110.pdf'",
+    );
   });
 
   it('leaves room under the sheet so the bar never covers the last line', async () => {
@@ -144,7 +159,7 @@ describe('/curriculo dialog', () => {
     expect(skip).toContain(`href="${CV_GO_PATH}"`);
     expect(skip).toMatch(FILE);
     expect(skip).toMatch(/Pular/);
-    expect(dialog).not.toContain('href="/curriculo-fernando-moreira.pdf"');
+    expect(dialog).not.toContain('href="/CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110.pdf"');
   });
 
   it('closes without JavaScript', async () => {
@@ -169,6 +184,54 @@ describe('/curriculo dialog', () => {
       expect(dialog).toMatch(/^<dialog[^>]*\sopen(?=[\s>])/);
       expect(dialog).toMatch(/role="alert"/);
       expect(dialog).toMatch(/<form[^>]*action="\/api\/cv"/);
+    }
+  });
+});
+
+describe('/curriculo matches the PDF', () => {
+  it('names the skills section as the PDF does and prints each job key technologies', async () => {
+    const html = await render();
+    expect(html).toContain('>Competências</h2>');
+    expect(html).toContain('>Experiência anterior (2010 - 2020)</h2>');
+    expect(html).toMatch(/<span class="font-semibold">Tecnologias-chave:<\/span> TypeScript, React 19, Hono, Firebase/);
+  });
+});
+
+describe('/curriculo layout', () => {
+  it('centres the sheet in a 64rem (1024px) container (max-w-container-* resolves to nothing in Tailwind 4)', async () => {
+    const html = await render();
+    expect(html).toMatch(/<main[^>]*class="[^"]*\bmx-auto\b[^"]*\bmax-w-sheet\b/);
+    expect(readFileSync('src/styles/global.css', 'utf8')).toContain('--container-sheet: 64rem;');
+    expect(html).not.toContain('max-w-container-');
+  });
+
+  it('offers the English version of the resume by name, hidden when printing', async () => {
+    const html = await render();
+    const link = html.match(/<a[^>]*data-language-switch[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('href="/en/resume"');
+    expect(link).toContain('hreflang="en"');
+    expect(link.replace(/<[^>]+>/g, '').trim()).toBe('Versão em inglês');
+    expect(html).toMatch(/<div[^>]*data-resume-language[^>]*class="[^"]*\bprint:hidden\b/);
+  });
+
+  it('leads back to the site from the top left, in the same type as the language link', async () => {
+    const html = await render();
+    const bar = html.match(/<div[^>]*data-resume-language[^>]*>[\s\S]*?<\/div>/)?.[0] ?? '';
+    const back = bar.match(/<a[^>]*data-resume-back[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(back).toContain('href="/"');
+    expect(back.replace(/<[^>]+>/g, '').trim()).toMatch(/^←\s*Voltar ao site$/);
+    expect(back).toMatch(/<span aria-hidden="true">←<\/span>/);
+    expect(bar.indexOf('data-resume-back')).toBeLessThan(bar.indexOf('data-language-switch'));
+    expect(back).toContain('font-mono text-micro uppercase tracking-wide');
+  });
+
+  it('lines the download bar up with the sheet', async () => {
+    const html = await render();
+    const bar = html.match(/<div[^>]*data-download-bar[^>]*>\s*<div class="([^"]*)"/)?.[1] ?? '';
+    const main = html.match(/<main[^>]*class="([^"]*)"/)?.[1] ?? '';
+    for (const token of ['mx-auto', 'max-w-sheet', 'px-sm', 'sm:px-lg']) {
+      expect(bar.split(' ')).toContain(token);
+      expect(main.split(' ')).toContain(token);
     }
   });
 });

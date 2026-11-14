@@ -14,33 +14,17 @@ import type { OutgoingMail } from '../mail/outgoing';
 import type { ThankYouSender } from '../mail/thank-you';
 import { thankYouMail } from '../mail/thank-you';
 
-import { CV_PAGE } from './paths';
+import type { Locale } from '../i18n/locale';
+import { CV_PAGE, CV_PDF_PATH, CV_PDF_PATH_EN } from './paths';
 
-export { CV_PAGE, CV_PDF_PATH } from './paths';
+export { CV_PAGE, CV_PDF_PATH, CV_PDF_PATH_EN } from './paths';
 
 /**
- * The name the browser saves the PDF under, stamped with the moment of the
- * download in São Paulo time: curriculo-fernando-moreira-senior-ai-engineer-
- * 202610111532.pdf. A recruiter with several versions in Downloads can tell
- * them apart, and the date says how fresh the copy is.
+ * The name the browser saves the PDF under: the same name the file has in the
+ * career folder, so the copy a recruiter keeps matches the one Fernando sends.
  */
-export const cvFileName = (now: Date): string => {
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'America/Sao_Paulo',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hourCycle: 'h23',
-    })
-      .formatToParts(now)
-      .map(part => [part.type, part.value]),
-  );
-
-  return `curriculo-fernando-moreira-senior-ai-engineer-${parts.year}${parts.month}${parts.day}${parts.hour}${parts.minute}.pdf`;
-};
+export const cvFileName = (locale: Locale = 'pt-BR'): string =>
+  (locale === 'en' ? CV_PDF_PATH_EN : CV_PDF_PATH).slice(1);
 export const CV_COLLECTION = 'cv_downloads';
 
 /**

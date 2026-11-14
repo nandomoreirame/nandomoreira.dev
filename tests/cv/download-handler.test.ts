@@ -157,16 +157,8 @@ describe('handleCvDownload', () => {
 });
 
 describe('cvFileName', () => {
-  it('names the file with the role and the download moment, in São Paulo time', () => {
-    expect(cvFileName(new Date('2026-10-11T18:32:09Z'))).toBe(
-      'curriculo-fernando-moreira-senior-ai-engineer-202610111532.pdf',
-    );
-  });
-
-  it('keeps the local date across midnight UTC', () => {
-    // 01:10 UTC on the 12th is still 22:10 on the 11th in São Paulo.
-    expect(cvFileName(new Date('2026-10-12T01:10:00Z'))).toBe(
-      'curriculo-fernando-moreira-senior-ai-engineer-202610112210.pdf',
-    );
+  it('saves the PDF under the name it has in the career folder, one per language', () => {
+    expect(cvFileName('pt-BR')).toBe('CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110.pdf');
+    expect(cvFileName('en')).toBe('CV-senior-fullstack-software-engineer-en-Fernando-Moreira-20261114.pdf');
   });
 });

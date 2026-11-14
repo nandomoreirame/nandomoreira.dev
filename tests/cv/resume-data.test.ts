@@ -13,7 +13,7 @@ describe('RESUME', () => {
   it('lists Liquid AI first, in the past tense, with an end date', () => {
     const [latest] = RESUME.experience;
     expect(latest?.company).toBe('Liquid AI');
-    expect(latest?.period).toMatch(/set\/2026/);
+    expect(latest?.period).toMatch(/09\/2026/);
     expect(latest?.highlights.length).toBeGreaterThan(0);
   });
 
@@ -26,43 +26,38 @@ describe('RESUME', () => {
   });
 });
 
-/** Held to the PDF offered for download (the AI Engineer variant of the CV). */
+/** Held to the PDF offered for download (the full-stack variant of the CV, since 2026-11-14). */
 describe('RESUME parity with the PDF', () => {
-  it('keeps every bullet of every job, not a digest', () => {
+  it('carries the full-stack title and every bullet of every job', () => {
+    expect(RESUME.title).toBe('Senior Fullstack Software Engineer | React, Node.js, NestJS, TypeScript');
     const counts = Object.fromEntries(RESUME.experience.map(job => [job.company, job.highlights.length]));
-
     expect(counts).toEqual({
-      'Liquid AI': 11,
-      'Norte Marketing': 5,
-      'Skyone Solutions': 4,
-      'Itaú Unibanco': 4,
+      'Liquid AI': 6,
+      'Norte Marketing': 3,
+      'Skyone Solutions': 3,
+      'Itaú Unibanco': 3,
       'Risknow.ai': 3,
     });
-    expect(RESUME.earlier).toHaveLength(5);
+    expect(RESUME.earlier).toHaveLength(8);
     expect(RESUME.projects).toHaveLength(4);
   });
 
-  it('keeps the bullets a digest used to drop', () => {
-    const liquid = RESUME.experience[0]?.highlights.join('\n') ?? '';
-
-    for (const phrase of [
-      'Levei a automação para dentro do produto',
-      'Conduzi a virada da operação',
-      'Blindei esse fluxo',
-      'Orquestrei três CLIs de IA',
-    ]) {
-      expect(liquid).toContain(phrase);
-    }
-    expect(RESUME.experience[1]?.highlights.join('\n')).toContain('Scrum adaptado');
-    expect(JSON.stringify(RESUME.projects)).toContain('11 estrelas');
+  it('keeps the PDF wording, key technologies included', () => {
+    const liquid = RESUME.experience[0];
+    expect(liquid?.highlights[0]).toMatch(/^Desenvolvi de ponta a ponta o Play Manager/);
+    expect(liquid?.keyTech).toMatch(/^TypeScript, React 19, Hono, Firebase/);
+    expect(RESUME.stack.map(row => row.area)).toEqual(['Proficiente', 'Intermediário', 'Básico']);
+    expect(RESUME.stack[2]?.items).toBe('Java (Spring Boot)');
+    expect(JSON.stringify(RESUME.projects)).toContain('Plugins para o Noctalia Shell');
   });
 
-  it('opens with the summary, whose career count comes from the clock', () => {
+  it('opens with the PDF summary, whose career count comes from the clock', () => {
     const summary = summaryOf(15);
-
-    expect(summary).toMatch(/^Engenheiro de software com 15 anos de carreira, atuando de dados a interface\./);
-    expect(summary).toContain('Mantenedor open source desde 2012.');
-    expect(summaryOf(16)).toContain('com 16 anos de carreira');
+    expect(summary).toMatch(
+      /^Senior Fullstack Software Engineer com mais de 15 anos de experiência, do banco de dados à interface:/,
+    );
+    expect(summary).toContain('Antes, Itaú Unibanco, Skyone, Risknow.ai e Pipefy.');
+    expect(summaryOf(16)).toContain('mais de 16 anos');
   });
 });
 
@@ -76,12 +71,16 @@ describe('English resume data', () => {
     expect(en.projects).toHaveLength(RESUME.projects.length);
     expect(en.stack).toHaveLength(RESUME.stack.length);
     expect(en.education).toHaveLength(RESUME.education.length);
+    expect(en.title).toBe(RESUME.title);
+    expect(en.experience.every(job => job.keyTech)).toBe(true);
   });
 
-  it('opens with an English summary whose career count comes from the clock', () => {
-    expect(summaryOf(15, 'en')).toMatch(/^Software engineer with 15 years of career, from data to interface\./);
-    expect(summaryOf(15, 'en')).toContain('Open source maintainer since 2012.');
-    expect(summaryOf(16, 'en')).toContain('with 16 years of career');
+  it('opens with the English PDF summary, whose career count comes from the clock', () => {
+    expect(summaryOf(15, 'en')).toMatch(
+      /^Senior Fullstack Software Engineer with 15\+ years of experience, from the database to the interface:/,
+    );
+    expect(summaryOf(15, 'en')).toContain('Before that: Itaú Unibanco, Skyone, Risknow.ai and Pipefy.');
+    expect(summaryOf(16, 'en')).toContain('with 16+ years');
     expect(summaryOf(15, 'en')).not.toContain('Engenheiro');
   });
 

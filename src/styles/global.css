@@ -154,6 +154,8 @@
      (tests/design-system/no-spacing-max-width.test.ts). */
   --container-measure: 42rem;
   --container-narrow: 48rem;
+  /* The resume sheet (/curriculo, /en/resume): about 1024px. */
+  --container-sheet: 64rem;
 
   /* Amber halo on the primary button hover, the only glow in the system:
      depth comes from tone and hairline, never from drop shadows. */

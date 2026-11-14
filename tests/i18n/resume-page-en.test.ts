@@ -14,13 +14,7 @@ const render = async (locale: string, query = '') =>
 
 describe('ResumePage', () => {
   it('keeps the pt-BR resume page byte for byte', async () => {
-    // The download attribute stamps the minute of the visit; keep the snapshot stable.
-    const html = (await render('pt-BR'))
-      .replaceAll(process.cwd(), '<root>')
-      .replace(
-        /download="curriculo-fernando-moreira-senior-ai-engineer-\d{12}\.pdf"/g,
-        'download="curriculo-fernando-moreira-senior-ai-engineer-<stamp>.pdf"',
-      );
+    const html = (await render('pt-BR')).replaceAll(process.cwd(), '<root>');
     await expect(html).toMatchFileSnapshot('../__snapshots__/resume.pt.html');
   });
 
@@ -60,16 +54,15 @@ describe('ResumePage', () => {
     }
   });
 
-  it('renders the English resume body, with only the PDF labeled Portuguese', async () => {
+  it('renders the English resume body and offers the English PDF', async () => {
     const html = await render('en');
     expect(html).toContain('<html lang="en"');
-    // The sheet itself is localized; the download still points at the
-    // Portuguese PDF, and the CTA says so (no English PDF exists).
     expect(ptLeftovers(html)).toEqual([]);
-    expect(html).toMatch(/Software engineer with \d{2} years of career/);
+    expect(html).toMatch(/Senior Fullstack Software Engineer with \d{2}\+ years of experience/);
     expect(html).not.toContain('Engenheiro de software');
     expect(html).not.toContain('Atuei');
-    expect(html).toContain('Download résumé (Portuguese, PDF)');
+    expect(html).toContain('Download résumé (PDF)');
+    expect(html).not.toContain('Portuguese, PDF');
   });
 
   it('posts the English form with its own origin and shows outcomes in English', async () => {
@@ -114,5 +107,36 @@ describe('CV form return path', () => {
     );
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe('/en/resume?envio=invalido#email');
+  });
+});
+
+describe('English resume download', () => {
+  it('points the download at the English full-stack PDF, saved under its career-folder name', async () => {
+    const html = await render('en', '?envio=ok');
+    expect(html).toContain('href="/go/curriculo?locale=en"');
+    expect(html).toContain('download="CV-senior-fullstack-software-engineer-en-Fernando-Moreira-20261114.pdf"');
+    expect(html).not.toContain('profile=');
+  });
+});
+
+describe('/en/resume matches the English PDF', () => {
+  it('names the sections as the PDF does and prints each job key technologies', async () => {
+    const html = await render('en');
+    expect(html).toContain('>Skills</h2>');
+    expect(html).toContain('>Earlier experience (2010 - 2020)</h2>');
+    expect(html).toMatch(/<span class="font-semibold">Key technologies:<\/span> TypeScript, React 19, Hono, Firebase/);
+  });
+});
+
+describe('/en/resume language switch', () => {
+  it('links to the Portuguese resume by name and back to the English site', async () => {
+    const html = await render('en');
+    const link = html.match(/<a[^>]*data-language-switch[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(link).toContain('href="/curriculo"');
+    expect(link).toContain('hreflang="pt-BR"');
+    expect(link.replace(/<[^>]+>/g, '').trim()).toBe('Portuguese version');
+    const back = html.match(/<a[^>]*data-resume-back[^>]*>[\s\S]*?<\/a>/)?.[0] ?? '';
+    expect(back).toContain('href="/en"');
+    expect(back.replace(/<[^>]+>/g, '').trim()).toMatch(/^←\s*Back to site$/);
   });
 });

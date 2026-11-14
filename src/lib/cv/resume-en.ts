@@ -1,17 +1,17 @@
 /**
- * English sheet for /en/resume. Same shape as the Portuguese RESUME; the PDF
- * download stays Portuguese (labeled as such). US English, first person, no
- * em/en dashes, no number changes. Avoid bare "do" (ptLeftovers marker).
+ * English sheet for /en/resume, word for word the English full-stack CV (the
+ * markdown its PDF is built from). Same shape as the Portuguese RESUME. No
+ * em/en dashes. Avoid bare "do" (ptLeftovers marker).
  */
 
 import type { ResumeEarlier, ResumeJob, ResumeProject } from './resume';
 
 export const summaryOfEn = (years: number): string =>
-  `Software engineer with ${years} years of career, from data to interface. At Liquid AI, I built and operated the mortgage data pipeline for more than 20 real estate developers, where I cut the time to prepare a dataset and deliver it into the pipeline from five days down to as little as 30 minutes, automating with AI what used to be manual. I sustained that operation with my own AI-assisted development framework, with security guardrails and mandatory quality gates. Before that, six years on high-scale products: Itaú Unibanco, Pipefy and Skyone. Open source maintainer since 2012.`;
+  `Senior Fullstack Software Engineer with ${years}+ years of experience, from the database to the interface: APIs, integrations, cloud and front-end in TypeScript, React, Node.js, NestJS and Python, with SaaS platforms in my history. At Liquid AI, I built end to end the internal product that became the source of truth for the operation, and cut the preparation of datasets for more than 20 clients from about 5 days to under 30 minutes. I write unit tests before the code, with Clean Architecture and DDD. Before that: Itaú Unibanco, Skyone, Risknow.ai and Pipefy.`;
 
 export const RESUME_EN = {
   name: 'Fernando Moreira Costa',
-  title: 'AI Engineer • Full Cycle Developer',
+  title: 'Senior Fullstack Software Engineer | React, Node.js, NestJS, TypeScript',
   place: 'São Paulo, SP, Brazil',
   links: [
     { label: 'nandomoreira.dev', href: 'https://nandomoreira.dev' },
@@ -20,159 +20,149 @@ export const RESUME_EN = {
   ],
   stack: [
     {
-      area: 'Applied AI',
+      area: 'Proficient',
       items:
-        'Claude Code (skills, hooks, subagents, MCP), multi-agent orchestration, agent harness, Gemini, Codex, Cursor',
+        'TypeScript, JavaScript, React, Next.js, Node.js, Hono, REST APIs, GraphQL, SQL, MySQL, Firebase, unit testing, Git, Clean Architecture, DDD, Angular, Vue.js and Nuxt, HTML, CSS, Tailwind CSS, PHP (Symfony, Laravel), WordPress, Docker, CI/CD, AWS (Lambda, Step Functions, S3, Glue), GCP (Cloud Run, BigQuery), TDD, Vitest, Playwright, microfrontends, design systems, ETL, Claude Code, generative AI',
     },
     {
-      area: 'Backend',
+      area: 'Intermediate',
       items:
-        'Python 3.12 (FastAPI, Polars, pandas, Pydantic v2, pytest, boto3), TypeScript (Hono, Node.js, Bun), PHP (Symfony, Laravel)',
+        'NestJS, PostgreSQL, Python (FastAPI, Polars, pandas, Pydantic, pytest), DynamoDB, AWS CloudWatch, Rust (ratatui, tokio), Electron, LLMs (Gemini), MCP servers',
     },
-    {
-      area: 'Frontend',
-      items:
-        'React 19, Next.js 16 (App Router), Angular, Vue.js and Nuxt, TypeScript, Tailwind 4, shadcn/ui, Electron, microfrontends, design systems',
-    },
-    {
-      area: 'Data',
-      items: 'ETL in production, BigQuery, S3, DynamoDB, Firebase, data normalization and validation, pt-BR encoding',
-    },
-    {
-      area: 'Cloud',
-      items:
-        'AWS (Lambda, Step Functions, Glue, Batch, S3, CloudWatch), GCP (Cloud Run, Cloud Functions, BigQuery, Secret Manager)',
-    },
-    { area: 'Systems', items: 'Rust (tokio, ratatui), Go (Fyne), Linux' },
-    {
-      area: 'Engineering',
-      items:
-        'TDD, DDD, hexagonal architecture, Feature-Sliced Design, CI/CD, Docker, Git Flow, E2E tests with Playwright, Core Web Vitals, accessibility',
-    },
+    { area: 'Basic', items: 'Java (Spring Boot)' },
   ],
   experience: [
     {
       company: 'Liquid AI',
       role: 'AI Engineer • Full Cycle Developer',
-      period: 'Nov/2025 - Sep/2026',
+      period: '11/2025 - 09/2026',
       place: 'São Paulo, hybrid',
-      intro:
-        "I owned the data pipeline that turns client real estate developers' datasets into metrics inside Liquid's products, and the AI-assisted development framework that sustained software delivery.",
       highlights: [
-        'Cut the interval between receiving a dataset and delivering it pre-normalized into the pipeline from about five days down to as little as 30 minutes, replacing case-by-case manual work with API-driven extraction and pre-normalization assisted by AI. It was the largest gain in the operation since I took over the area.',
-        'Designed and built Play Manager, an internal product that became the source of truth for the operation and replaced control that lived in a third-party tool: phase, owner, deadline and health of every dataset became visible in one place, for the team and for leadership.',
-        'Brought automation into the product: extraction and pre-normalization started firing from the interface itself, with a queue, idempotency and automatic pipeline enqueueing, removing the manual run for every dataset.',
-        'Embedded the delivery deadline as a product rule, with a time budget per stage and automatic classification into on time, at risk and late, which anticipates delay instead of noticing it after the due date.',
-        'Led the cutover to the new product without forcing the team to relearn, by mirroring the interaction patterns they already knew; the full portfolio migrated without a blocking divergence.',
-        'Covered with tests two extraction and integration pipelines that shipped to production with no automated tests: 920 cases written, taking coverage from 0% to 84% and 92%, with a coverage gate in CI on every pull request and deploys blocked when the suite fails.',
-        'Sustained the pre-normalization engine with a suite of more than 4,800 test cases, across unit, integration, regression and parity, which protected every data transformation change against silent breakage in production.',
-        'Built the internal AI-assisted development framework on Claude Code that standardized delivery: 106 reusable automations, 34 commands that expose research, plan, implementation, review and versioning flows, 19 specialized agents and hooks at seven points in the session lifecycle, with persistent memory across four layers and a mechanism that turns every corrected error into a rule, so it is not repeated.',
-        'Hardened that flow with executable guardrails instead of recommendations: hooks that block credential-file edits in real time, commit-pattern validation before the write, and 21 inviolable rules covering OWASP, LLM-specific risks, a ban on autonomous versioning by an agent, and explicit human consent before a destructive action.',
-        'Made TDD mandatory by tooling, not by discipline: no task advances without a failing test before the code, and every delivery crosses a ladder of gates that adapts to the repository language, with ESLint, Prettier, tsc, Vitest and build in TypeScript, Ruff, mypy and pytest in Python, and clippy, fmt and cargo in Rust, plus a minimum coverage floor when closing the feature.',
-        'Orchestrated three AI CLIs with separated roles, under the rule that whoever writes does not judge: one implements each task, another reviews as a second look from a different model, and the orchestrator validates against the gates and is the only one who versions, taking over a step when one of them is unavailable.',
+        'Developed Play Manager end to end (React 19, Hono, Firebase), an internal product that became the source of truth for the operation, with role-based access control, a processing queue, per-stage deadlines and LLM-generated insights (Gemini).',
+        'Cut the preparation of each client dataset from about 5 days to under 30 minutes, automating data extraction and pre-normalization through an API.',
+        'Built the pre-normalization API in Python (FastAPI, Polars, Cloud Run) with DDD and Clean Architecture (hexagonal), serving more than 20 clients and protected by more than 4,800 test cases.',
+        'Integrated the Sienge and UAU ERPs with AWS Lambda, Step Functions, Cloud Run and BigQuery.',
+        'Took two production integration pipelines from 0% to 84% and 92% coverage, with 920 tests and a CI coverage gate that blocks deploys.',
+        'Built an AI-assisted development framework on top of Claude Code, with mandatory TDD and lint, type, test and build gates across TypeScript, Python and Rust repositories.',
       ],
+      keyTech:
+        'TypeScript, React 19, Hono, Firebase, Python, FastAPI, Polars, SQL, AWS (Lambda, Step Functions, S3, Glue), GCP (Cloud Run, BigQuery), Gemini, Claude Code',
     },
     {
       company: 'Norte Marketing',
       role: 'Technology Manager',
-      period: 'Aug/2025 - Oct/2025',
+      period: '08/2025 - 10/2025',
       place: 'São Paulo',
       highlights: [
-        "Led the technology area as the team's main technical reference, owning solution architecture, technical design, documentation and delivery management.",
-        'Rolled out an adapted Scrum agile culture, integrating Jira, Bitbucket and Confluence to give flow and predictability to the team deliveries.',
-        'Automated versioning and deploys in pipelines integrated with AWS, with linters and automated tests as a quality gate.',
-        'Implemented preview environments with temporary links per Pull Request, shortening the QA validation cycle and raising delivery quality.',
-        'Applied AI-assisted development (Cursor) to document and refactor legacy systems in Magento 2 and Venia PWA.',
+        "Owned solution architecture and the technical design of a digital agency's deliveries, with an adapted Scrum in Jira, Bitbucket and Confluence.",
+        'Automated versioning and deployment in Bitbucket Pipelines integrated with AWS, with linters and tests as quality gates, plus per-pull-request preview environments.',
+        'Refactored and documented legacy e-commerce systems in Magento 2 and Venia PWA with AI-assisted development (Cursor).',
       ],
+      keyTech: 'AWS, Bitbucket Pipelines, Magento 2, Venia PWA, React, PHP, Jira',
     },
     {
       company: 'Skyone Solutions',
       role: 'Senior Frontend Developer',
-      period: 'Dec/2024 - Apr/2025',
+      period: '12/2024 - 04/2025',
       place: 'São Paulo',
       highlights: [
-        'Architected and shipped React applications for digital products used daily by thousands of users.',
-        'Built a design system and reusable component library, standardizing the interface across products and cutting rework across squads.',
-        'Optimized web performance with a focus on Core Web Vitals, technical SEO and accessibility.',
-        'Led code review, defined development standards and mentored junior and mid-level developers.',
+        'Architected React applications for digital products used daily by thousands of users.',
+        'Built a design system and component library, standardizing the interface across products.',
+        'Optimized Core Web Vitals, technical SEO and accessibility; ran code reviews and mentored junior and mid-level developers.',
       ],
+      keyTech: 'React, TypeScript, design systems, Core Web Vitals',
     },
     {
       company: 'Itaú Unibanco',
       role: 'Senior Software Engineer',
-      period: 'Apr/2022 - Jun/2024',
+      period: '04/2022 - 06/2024',
       place: 'São Paulo',
       highlights: [
-        "Built products in a microfrontend architecture for the bank's unauthenticated pages, in Angular and TypeScript with Node.js, working at the intersection of Marketing and Technology.",
-        'Implemented personalization and A/B testing with VWO and Salesforce Interaction Studio, delivering segmented experiences for the unauthenticated audience.',
-        "Raised accessibility, performance and clarity of the bank's public journeys, in an environment of very high traffic and strong regulatory demand.",
-        'Took part in solution design alongside the business teams, turning marketing demand into sustainable frontend architecture.',
+        "Developed microfrontends in Angular and TypeScript with Node.js for the bank's public pages, in the Martech (Marketing and Technology) team.",
+        'Implemented personalization and A/B testing with VWO and Salesforce Interaction Studio for unauthenticated visitors.',
+        'Delivered accessibility and performance on very high-traffic journeys with regulatory requirements.',
       ],
+      keyTech: 'Angular, TypeScript, Node.js, microfrontends, VWO, Salesforce Interaction Studio',
     },
     {
       company: 'Risknow.ai',
       role: 'Senior Fullstack Developer',
-      period: 'Jun/2020 - Nov/2021',
+      period: '06/2020 - 11/2021',
       place: 'Curitiba, PR',
       highlights: [
-        'Built interactive dashboards for data intelligence applied to the mortgage credit journey.',
-        'Processed and mapped data from multiple sources, integrating APIs and microservices that turned raw data into actionable insight for the client.',
-        'Built interfaces integrated with WhatsApp bots, shortening the property appraisal and financing cycle.',
+        'Built dashboards in Vue.js, Nuxt and TypeScript for real estate credit data analysis.',
+        'Integrated APIs and microservices in Python and Node.js, mapping data from multiple sources.',
+        'Built interfaces integrated with WhatsApp bots.',
       ],
+      keyTech: 'Vue.js, Nuxt, TypeScript, Python, Node.js, REST APIs',
     },
   ] satisfies ResumeJob[],
   earlier: [
     {
       role: 'Senior Frontend Developer',
-      where: 'MedPrev (Sep/2019 - Feb/2020) and Trackmob (Mar/2019 - Aug/2019), Curitiba',
-      summary:
-        'Reactive interfaces in Vue.js and Nuxt.js consuming REST and GraphQL; Vue.js dashboards on Ruby on Rails for NGOs to track campaign impact in real time.',
+      where: 'MedPrev | 09/2019 - 02/2020',
+      summary: 'Vue.js and Nuxt.js with REST and GraphQL.',
+    },
+    {
+      role: 'Senior Frontend Developer',
+      where: 'Trackmob | 03/2019 - 08/2019',
+      summary: 'Vue.js dashboards on Ruby on Rails for the SaaS platform NGOs used to follow campaigns in real time.',
     },
     {
       role: 'Senior Web Developer',
-      where: 'Nossa Causa (Aug/2018 - Mar/2019) and Workshop Agência & Escola (Oct/2017 - Jul/2018), Curitiba',
-      summary:
-        'Responsive and accessible WordPress sites for NGOs and institutional clients, also acting as UX and analyst in planning and designing the solutions.',
+      where: 'Nossa Causa | 08/2018 - 03/2019',
+      summary: 'accessible WordPress websites.',
+    },
+    {
+      role: 'Senior Web Developer',
+      where: 'Workshop Agência & Escola | 10/2017 - 07/2018',
+      summary: 'WordPress, UX and analytics.',
     },
     {
       role: 'Senior Frontend Developer and UX Designer',
-      where: 'LojasKD Móveis (Sep/2016 - Oct/2017), Pinhais, PR',
-      summary:
-        'Symfony e-commerce consuming microservices in Node.js, Python and PHP. Performance work with Gulp.js and Webpack, internal products in Vue.js, user research and A/B testing after the promotion to UX Designer.',
+      where: 'LojasKD Móveis | 09/2016 - 10/2017',
+      summary: 'Symfony e-commerce with Node.js, Python and PHP microservices; internal products in Vue.js.',
     },
     {
-      role: 'Mid-level Front-end Developer',
-      where: 'Pipefy (Jan/2016 - Aug/2016) and MalaPronta.com (Jan/2015 - Sep/2015), Curitiba',
-      summary:
-        "I started the new interface of Pipefy's process management platform (Ruby on Rails, Bootstrap 4, SASS); at MalaPronta, I modernized a five-year-old layout for responsive and cut server load by minifying and cleaning CSS and JavaScript.",
+      role: 'Front-end Developer',
+      where: 'Pipefy | 01/2016 - 08/2016',
+      summary: 'new SaaS platform interface on Ruby on Rails.',
+    },
+    {
+      role: 'Front-end Developer',
+      where: 'MalaPronta.com | 01/2015 - 09/2015',
+      summary: 'layout modernized to responsive.',
     },
     {
       role: 'Web Developer',
-      where: 'Agência WX, IBPT, Salsa:Mobion, Totalize and Agência CGDW (Nov/2010 - May/2014), Curitiba',
-      summary:
-        'Career start in PHP, MySQL, WordPress and Magento: institutional sites, online stores, proprietary CMSs and a drag-and-drop page builder for WordPress, in the Elementor model.',
+      where: 'Curitiba agencies | 11/2010 - 05/2014',
+      summary: 'PHP, MySQL, WordPress and Magento.',
     },
   ] satisfies ResumeEarlier[],
   projects: [
     {
-      lead: 'forja (github.com/nandomoreirame)',
-      text: 'desktop client in Electron and React for Claude Code, Gemini, Codex and Cursor, with rich visual rendering for AI CLIs. Public beta, 11 stars.',
+      lead: 'nandomoreira.dev',
+      text: 'Astro site with its own MCP server that lets AI agents query my projects and resume; more than 1,400 automated tests.',
     },
     {
-      lead: 'bragstack.app',
-      text: 'PWA in Next.js 16 for developers to log achievements in the STAR format with AI support.',
+      lead: 'Forja',
+      text: 'Electron and React desktop client that brings Claude Code, Codex and Gemini into a single interface (forja.web.app).',
     },
     {
-      lead: 'konfi and hypr-switcher (Rust)',
-      text: 'TUI dotfiles manager and visual window switcher for Wayland, published on crates.io.',
+      lead: 'Noctalia Shell plugins (Daybar, AI Bar, Gistbar)',
+      text: 'Luau and QML, with the logic covered by automated tests.',
     },
     {
-      text: '122 public repositories and 476 followers on GitHub, contributing since 2012.',
+      text: '122 public GitHub repositories since 2012, including Rust CLIs published on crates.io (konfi, hypr-switcher).',
     },
   ] satisfies ResumeProject[],
   education: [
-    { title: 'Technologist in Internet Systems', where: 'Universidade Positivo', period: '2015 - 2016' },
-    { title: 'Technical in Computing', where: 'Colégio Estadual do Paraná (CEP)', period: '2010 - 2011' },
+    { title: 'Associate degree in Internet Systems', where: 'Universidade Positivo', period: '2015 - 2016' },
+    {
+      title: 'Technical diploma in Computer Science',
+      where: 'Colégio Estadual do Paraná (CEP)',
+      period: '2010 - 2011',
+    },
   ],
   languages: 'Portuguese (native), English (professional)',
 } as const;

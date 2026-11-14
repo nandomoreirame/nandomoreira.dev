@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CV_GO_PATH, caseGoPath, contactGoPath, handleOutbound, outboundTable } from '../../src/lib/analytics/outbound';
-import { CV_PDF_PATH } from '../../src/lib/cv/paths';
+import { CV_PDF_PATH, CV_PDF_PATH_EN } from '../../src/lib/cv/paths';
 import type { Hit } from '../../src/lib/analytics/recorder';
 
 const table = outboundTable({
@@ -89,6 +89,12 @@ describe('outbound', () => {
       path: CV_GO_PATH,
       conversion: { type: 'cv', target: 'curriculo' },
     });
+  });
+
+  it('serves the English CV when the visitor comes from /en/resume', async () => {
+    const { response, hits } = await go(`${CV_GO_PATH}?locale=en`);
+    expect(response.headers.get('location')).toBe(CV_PDF_PATH_EN);
+    expect(hits[0]?.conversion).toEqual({ type: 'cv', target: 'curriculo' });
   });
 
   it('keeps the CV out of the profile-built table', () => {

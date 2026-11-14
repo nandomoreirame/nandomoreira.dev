@@ -1,9 +1,9 @@
 /**
- * The content of /curriculo and /en/resume, taken from the maintained AI Engineer
- * variant of the CV (the same one the PDF is built from). Human layer: pt-BR at
- * the root, English under /en. No e-mail here on purpose: reaching for the PDF
- * goes through the dialog, which asks who is downloading. The PDF itself stays
- * Portuguese; only the on-page sheet is localized.
+ * The content of /curriculo and /en/resume, word for word the full-stack variant
+ * of the CV (~/dev/career, the markdown each PDF is built from; since
+ * 2026-11-14). Human layer: pt-BR at the root, English under /en. No e-mail here
+ * on purpose: reaching for the PDF goes through the dialog, which asks who is
+ * downloading.
  */
 
 import type { Locale } from '../i18n/locale';
@@ -19,9 +19,9 @@ export interface ResumeJob {
   role: string;
   period: string;
   place: string;
-  /** One line under the title, for the jobs that need a frame. */
-  intro?: string;
   highlights: string[];
+  /** The "Tecnologias-chave" line under the bullets, as in the PDF. */
+  keyTech?: string;
 }
 
 export interface ResumeEarlier {
@@ -40,14 +40,14 @@ export interface ResumeProject {
 export const summaryOf = (years: number, locale: Locale = 'pt-BR'): string =>
   locale === 'en'
     ? summaryOfEn(years)
-    : `Engenheiro de software com ${years} anos de carreira, atuando de dados a interface. Na Liquid AI, construí e operei a esteira de dados de financiamento imobiliário de mais de 20 incorporadoras, onde reduzi de cinco dias para até 30 minutos o tempo de preparar uma base e entregá-la na pipeline, automatizando com IA o que antes era manual. Sustentei essa operação com um framework próprio de desenvolvimento assistido por IA, com guard-rails de segurança e portões de qualidade obrigatórios. Antes disso, seis anos em produtos de alta escala: Itaú Unibanco, Pipefy e Skyone. Mantenedor open source desde 2012.`;
+    : `Senior Fullstack Software Engineer com mais de ${years} anos de experiência, do banco de dados à interface: APIs, integrações, cloud e front-end em TypeScript, React, Node.js, NestJS e Python, com plataformas SaaS no histórico. Na Liquid AI, construí de ponta a ponta o produto interno que virou a fonte da verdade da operação e reduzi de cerca de 5 dias para até 30 minutos o preparo das bases de dados de mais de 20 clientes. Escrevo teste unitário antes do código, com Clean Architecture e DDD. Antes, Itaú Unibanco, Skyone, Risknow.ai e Pipefy.`;
 
-/** Sheet content for the given locale. The PDF download stays Portuguese. */
+/** Sheet content for the given locale; each language has its own PDF. */
 export const resumeFor = (locale: Locale = 'pt-BR') => (locale === 'en' ? RESUME_EN : RESUME);
 
 export const RESUME = {
   name: 'Fernando Moreira Costa',
-  title: 'AI Engineer • Full Cycle Developer',
+  title: 'Senior Fullstack Software Engineer | React, Node.js, NestJS, TypeScript',
   place: 'São Paulo, SP, Brasil',
   links: [
     { label: 'nandomoreira.dev', href: 'https://nandomoreira.dev' },
@@ -56,154 +56,141 @@ export const RESUME = {
   ],
   stack: [
     {
-      area: 'IA aplicada',
+      area: 'Proficiente',
       items:
-        'Claude Code (skills, hooks, subagentes, MCP), orquestração multi-agente, harness de agentes, Gemini, Codex, Cursor',
+        'TypeScript, JavaScript, React, Next.js, Node.js, Hono, APIs REST, GraphQL, SQL, MySQL, Firebase, testes unitários, Git, Clean Architecture, DDD, Angular, Vue.js e Nuxt, HTML, CSS, Tailwind CSS, PHP (Symfony, Laravel), WordPress, Docker, CI/CD, AWS (Lambda, Step Functions, S3, Glue), GCP (Cloud Run, BigQuery), TDD, Vitest, Playwright, microfrontends, design systems, ETL, Claude Code, IA generativa',
     },
     {
-      area: 'Backend',
+      area: 'Intermediário',
       items:
-        'Python 3.12 (FastAPI, Polars, pandas, Pydantic v2, pytest, boto3), TypeScript (Hono, Node.js, Bun), PHP (Symfony, Laravel)',
+        'NestJS, PostgreSQL, Python (FastAPI, Polars, pandas, Pydantic, pytest), DynamoDB, AWS CloudWatch, Rust (ratatui, tokio), Electron, LLM (Gemini), servidores MCP',
     },
-    {
-      area: 'Frontend',
-      items:
-        'React 19, Next.js 16 (App Router), Angular, Vue.js e Nuxt, TypeScript, Tailwind 4, shadcn/ui, Electron, microfrontends, design systems',
-    },
-    {
-      area: 'Dados',
-      items: 'ETL em produção, BigQuery, S3, DynamoDB, Firebase, normalização e validação de dados, encoding pt-BR',
-    },
-    {
-      area: 'Cloud',
-      items:
-        'AWS (Lambda, Step Functions, Glue, Batch, S3, CloudWatch), GCP (Cloud Run, Cloud Functions, BigQuery, Secret Manager)',
-    },
-    { area: 'Sistemas', items: 'Rust (tokio, ratatui), Go (Fyne), Linux' },
-    {
-      area: 'Engenharia',
-      items:
-        'TDD, DDD, arquitetura hexagonal, Feature-Sliced Design, CI/CD, Docker, Git Flow, testes E2E com Playwright, Core Web Vitals, acessibilidade',
-    },
+    { area: 'Básico', items: 'Java (Spring Boot)' },
   ],
   experience: [
     {
       company: 'Liquid AI',
       role: 'AI Engineer • Full Cycle Developer',
-      period: 'nov/2025 - set/2026',
+      period: '11/2025 - 09/2026',
       place: 'São Paulo, híbrido',
-      intro:
-        'Respondi pela esteira de dados que transforma as bases das incorporadoras clientes em indicadores dentro dos produtos da Liquid, e pelo framework de desenvolvimento assistido por IA que sustentava a entrega de software.',
       highlights: [
-        'Reduzi de cerca de cinco dias para até 30 minutos o intervalo entre receber uma base e entregá-la pré-normalizada na pipeline, substituindo a execução manual caso a caso por extração e pré-normalização automatizadas por API e assistidas por IA. Foi o maior ganho da operação desde que assumi a área.',
-        'Concebi e construí o Play Manager, produto interno que se tornou a fonte da verdade da operação e substituiu o controle que vivia em ferramenta de terceiros: fase, responsável, prazo e saúde de cada base passaram a ficar visíveis em um só lugar, para o time e para a liderança.',
-        'Levei a automação para dentro do produto: extração e pré-normalização passaram a ser disparadas pela própria interface, com fila, idempotência e enfileiramento automático da esteira, eliminando a execução manual a cada base.',
-        'Embuti o prazo de entrega como regra do produto, com orçamento de tempo por etapa e classificação automática entre no prazo, em risco e atrasado, o que antecipa o atraso em vez de constatá-lo depois do vencimento.',
-        'Conduzi a virada da operação para o novo produto sem exigir reaprendizado do time, replicando os padrões de interação que ele já dominava; a carteira inteira migrou sem divergência bloqueante.',
-        'Cobri de testes dois pipelines de extração e integração que rodavam em produção sem nenhum teste automatizado: 920 casos escritos, levando a cobertura de 0% para 84% e 92%, com gate de cobertura no CI a cada pull request e bloqueio de deploy quando a suíte falha.',
-        'Sustentei a engine de pré-normalização com uma suíte de mais de 4.800 casos de teste, entre unitários, integração, regressão e paridade, que protegia cada mudança de transformação de dados contra quebra silenciosa em produção.',
-        'Construí o framework interno de desenvolvimento assistido por IA sobre Claude Code que padronizava a entrega: 106 automações reutilizáveis, 34 comandos que expõem os fluxos de pesquisa, plano, implementação, revisão e versionamento, 19 agentes especializados e hooks em sete pontos do ciclo de vida da sessão, com memória persistente em quatro camadas e um mecanismo que converte cada erro corrigido em regra, para não repeti-lo.',
-        'Blindei esse fluxo com guard-rails executáveis em vez de recomendações: hooks que bloqueiam em tempo real a edição de arquivos de credencial, validação do padrão de commit antes da gravação e 21 regras invioláveis, cobrindo OWASP, os riscos específicos de LLM, proibição de versionamento autônomo por agente e consentimento humano explícito antes de ação destrutiva.',
-        'Tornei o TDD obrigatório por ferramenta, e não por disciplina: nenhuma tarefa avança sem teste falhando antes do código, e cada entrega atravessa uma escada de portões que se adapta à linguagem do repositório, com ESLint, Prettier, tsc, Vitest e build em TypeScript, Ruff, mypy e pytest em Python, e clippy, fmt e cargo em Rust, além de cobertura mínima ao fechar a feature.',
-        'Orquestrei três CLIs de IA com papéis separados, sob a regra de que quem escreve não julga: uma implementa cada tarefa, outra revisa como segundo olhar de um modelo diferente, e o orquestrador valida contra os portões e é o único que versiona, assumindo a etapa quando alguma delas fica indisponível.',
+        'Desenvolvi de ponta a ponta o Play Manager (React 19, Hono, Firebase), produto interno que virou a fonte da verdade da operação, com controle de acesso por papel, fila de processamento, prazo por etapa e insights gerados por LLM (Gemini).',
+        'Reduzi de cerca de 5 dias para até 30 minutos o preparo de cada base de cliente, automatizando por API a extração e a pré-normalização dos dados.',
+        'Construí a API de pré-normalização em Python (FastAPI, Polars, Cloud Run) com DDD e Clean Architecture (hexagonal), atendendo mais de 20 clientes e protegida por mais de 4.800 casos de teste.',
+        'Integrei os ERPs Sienge e UAU com AWS Lambda, Step Functions, Cloud Run e BigQuery.',
+        'Levei dois pipelines de integração em produção de 0% para 84% e 92% de cobertura, com 920 testes e gate de cobertura no CI bloqueando deploy.',
+        'Construí um framework de desenvolvimento assistido por IA sobre Claude Code, com TDD obrigatório e portões de lint, tipos, testes e build em repositórios TypeScript, Python e Rust.',
       ],
+      keyTech:
+        'TypeScript, React 19, Hono, Firebase, Python, FastAPI, Polars, SQL, AWS (Lambda, Step Functions, S3, Glue), GCP (Cloud Run, BigQuery), Gemini, Claude Code',
     },
     {
       company: 'Norte Marketing',
       role: 'Gerente de Tecnologia',
-      period: 'ago/2025 - out/2025',
+      period: '08/2025 - 10/2025',
       place: 'São Paulo',
       highlights: [
-        'Liderei a área de tecnologia como principal referência técnica da equipe, respondendo pela arquitetura de soluções, desenho técnico, documentação e gestão das entregas.',
-        'Implantei cultura ágil com Scrum adaptado, integrando Jira, Bitbucket e Confluence para dar fluxo e previsibilidade às entregas do time.',
-        'Automatizei versionamento e deploys em pipelines integrados à AWS, com linters e testes automatizados como portão de qualidade.',
-        'Implementei preview environments com links temporários por Pull Request, encurtando o ciclo de validação do QA e elevando a qualidade das entregas.',
-        'Apliquei desenvolvimento assistido por IA (Cursor) para documentar e refatorar sistemas legados em Magento 2 e Venia PWA.',
+        'Respondi pela arquitetura das soluções e pelo desenho técnico das entregas de uma agência digital, com Scrum adaptado em Jira, Bitbucket e Confluence.',
+        'Automatizei versionamento e deploy em Bitbucket Pipelines integrados à AWS, com linters e testes como portão de qualidade, e preview environments por pull request.',
+        'Refatorei e documentei sistemas legados de e-commerce em Magento 2 e Venia PWA com desenvolvimento assistido por IA (Cursor).',
       ],
+      keyTech: 'AWS, Bitbucket Pipelines, Magento 2, Venia PWA, React, PHP, Jira',
     },
     {
       company: 'Skyone Solutions',
       role: 'Senior Frontend Developer',
-      period: 'dez/2024 - abr/2025',
+      period: '12/2024 - 04/2025',
       place: 'São Paulo',
       highlights: [
-        'Arquitetei e implementei aplicações React para produtos digitais de uso diário por milhares de usuários.',
-        'Construí design system e biblioteca de componentes reutilizáveis, padronizando a interface entre produtos e reduzindo retrabalho entre squads.',
-        'Otimizei performance web com foco em Core Web Vitals, SEO técnico e acessibilidade.',
-        'Conduzi code review, defini padrões de desenvolvimento e mentorei pessoas desenvolvedoras júnior e pleno.',
+        'Arquitetei aplicações React para produtos digitais de uso diário por milhares de usuários.',
+        'Construí design system e biblioteca de componentes, padronizando a interface entre produtos.',
+        'Otimizei Core Web Vitals, SEO técnico e acessibilidade; conduzi code review e mentoria de pessoas desenvolvedoras júnior e pleno.',
       ],
+      keyTech: 'React, TypeScript, design systems, Core Web Vitals',
     },
     {
       company: 'Itaú Unibanco',
       role: 'Engenheiro de Software Sênior',
-      period: 'abr/2022 - jun/2024',
+      period: '04/2022 - 06/2024',
       place: 'São Paulo',
       highlights: [
-        'Desenvolvi produtos em arquitetura de microfrontends para as páginas não logadas do banco, em Angular e TypeScript com Node.js, atuando na interseção entre Marketing e Tecnologia.',
-        'Implementei personalização e testes A/B com VWO e Salesforce Interaction Studio, entregando experiências segmentadas para o público não autenticado.',
-        'Elevei acessibilidade, performance e clareza das jornadas públicas do banco, em ambiente de altíssimo volume de acesso e forte exigência regulatória.',
-        'Atuei na concepção das soluções junto aos times de negócio, traduzindo demanda de marketing em arquitetura frontend sustentável.',
+        'Desenvolvi microfrontends em Angular e TypeScript com Node.js para as páginas públicas do banco, no time de Martech (Marketing e Tecnologia).',
+        'Implementei personalização e testes A/B com VWO e Salesforce Interaction Studio para o público não autenticado.',
+        'Entreguei acessibilidade e performance em jornadas de altíssimo volume de acesso e com exigência regulatória.',
       ],
+      keyTech: 'Angular, TypeScript, Node.js, microfrontends, VWO, Salesforce Interaction Studio',
     },
     {
       company: 'Risknow.ai',
       role: 'Senior Fullstack Developer',
-      period: 'jun/2020 - nov/2021',
+      period: '06/2020 - 11/2021',
       place: 'Curitiba, PR',
       highlights: [
-        'Desenvolvi dashboards interativos para inteligência de dados aplicada à jornada de crédito imobiliário.',
-        'Processei e mapeei dados de múltiplas fontes, integrando APIs e microserviços que transformavam dado bruto em insight acionável para o cliente.',
-        'Construí interfaces integradas a bots de WhatsApp, encurtando o ciclo de avaliação e financiamento de imóveis.',
+        'Construí dashboards em Vue.js, Nuxt e TypeScript para análise de dados de crédito imobiliário.',
+        'Integrei APIs e microserviços em Python e Node.js, mapeando dados de múltiplas fontes.',
+        'Construí interfaces integradas a bots de WhatsApp.',
       ],
+      keyTech: 'Vue.js, Nuxt, TypeScript, Python, Node.js, APIs REST',
     },
   ] satisfies ResumeJob[],
   earlier: [
     {
       role: 'Senior Frontend Developer',
-      where: 'MedPrev (set/2019 - fev/2020) e Trackmob (mar/2019 - ago/2019), Curitiba',
+      where: 'MedPrev | 09/2019 - 02/2020',
+      summary: 'Vue.js e Nuxt.js com REST e GraphQL.',
+    },
+    {
+      role: 'Senior Frontend Developer',
+      where: 'Trackmob | 03/2019 - 08/2019',
       summary:
-        'Interfaces reativas em Vue.js e Nuxt.js consumindo REST e GraphQL; dashboards em Vue.js sobre Ruby on Rails para ONGs acompanharem o impacto de suas campanhas em tempo real.',
+        'dashboards em Vue.js sobre Ruby on Rails na plataforma SaaS usada por ONGs para acompanhar campanhas em tempo real.',
     },
     {
       role: 'Senior Web Developer',
-      where: 'Nossa Causa (ago/2018 - mar/2019) e Workshop Agência & Escola (out/2017 - jul/2018), Curitiba',
-      summary:
-        'Sites responsivos e acessíveis em WordPress para ONGs e clientes institucionais, atuando também como UX e analista no planejamento e desenho das soluções.',
+      where: 'Nossa Causa | 08/2018 - 03/2019',
+      summary: 'sites acessíveis em WordPress.',
+    },
+    {
+      role: 'Senior Web Developer',
+      where: 'Workshop Agência & Escola | 10/2017 - 07/2018',
+      summary: 'WordPress, UX e análise.',
     },
     {
       role: 'Senior Frontend Developer e UX Designer',
-      where: 'LojasKD Móveis (set/2016 - out/2017), Pinhais, PR',
-      summary:
-        'E-commerce em Symfony consumindo microserviços em Node.js, Python e PHP. Otimização de performance com Gulp.js e Webpack, produtos internos em Vue.js, pesquisa com usuários e testes A/B após promoção para UX Designer.',
+      where: 'LojasKD Móveis | 09/2016 - 10/2017',
+      summary: 'e-commerce em Symfony com microserviços em Node.js, Python e PHP; produtos internos em Vue.js.',
     },
     {
-      role: 'Pleno Front-end Developer',
-      where: 'Pipefy (jan/2016 - ago/2016) e MalaPronta.com (jan/2015 - set/2015), Curitiba',
-      summary:
-        'Iniciei a nova interface da plataforma de gestão de processos da Pipefy (Ruby on Rails, Bootstrap 4, SASS); na MalaPronta, modernizei um layout de cinco anos para responsivo e reduzi a carga do servidor com minificação e limpeza de CSS e JavaScript.',
+      role: 'Front-end Developer',
+      where: 'Pipefy | 01/2016 - 08/2016',
+      summary: 'nova interface da plataforma SaaS em Ruby on Rails.',
+    },
+    {
+      role: 'Front-end Developer',
+      where: 'MalaPronta.com | 01/2015 - 09/2015',
+      summary: 'layout modernizado para responsivo.',
     },
     {
       role: 'Desenvolvedor web',
-      where: 'Agência WX, IBPT, Salsa:Mobion, Totalize e Agência CGDW (nov/2010 - mai/2014), Curitiba',
-      summary:
-        'Início de carreira em PHP, MySQL, WordPress e Magento: sites institucionais, lojas virtuais, CMSs proprietários e um page builder drag-and-drop para WordPress, no modelo do Elementor.',
+      where: 'agências de Curitiba | 11/2010 - 05/2014',
+      summary: 'PHP, MySQL, WordPress e Magento.',
     },
   ] satisfies ResumeEarlier[],
   projects: [
     {
-      lead: 'forja (github.com/nandomoreirame)',
-      text: 'cliente desktop em Electron e React para Claude Code, Gemini, Codex e Cursor, com renderização visual rica para CLIs de IA. Beta público, 11 estrelas.',
+      lead: 'nandomoreira.dev',
+      text: 'site em Astro com servidor MCP próprio, que deixa agentes de IA consultarem projetos e currículo; mais de 1.400 testes automatizados.',
     },
     {
-      lead: 'bragstack.app',
-      text: 'PWA em Next.js 16 para desenvolvedores registrarem conquistas no formato STAR com apoio de IA.',
+      lead: 'Forja',
+      text: 'cliente desktop em Electron e React que reúne Claude Code, Codex e Gemini numa só interface (forja.web.app).',
     },
     {
-      lead: 'konfi e hypr-switcher (Rust)',
-      text: 'gerenciador TUI de dotfiles e alternador visual de janelas para Wayland, publicados no crates.io.',
+      lead: 'Plugins para o Noctalia Shell (Daybar, AI Bar, Gistbar)',
+      text: 'Luau e QML, com a lógica coberta por testes automatizados.',
     },
     {
-      text: '122 repositórios públicos e 476 seguidores no GitHub, contribuindo desde 2012.',
+      text: '122 repositórios públicos no GitHub desde 2012, incluindo CLIs em Rust publicadas no crates.io (konfi, hypr-switcher).',
     },
   ] satisfies ResumeProject[],
   education: [

@@ -56,6 +56,8 @@ export default defineConfig({
   redirects: {
     '/notas': '/posts',
     '/notas/[slug]': '/[slug]',
+    // The CV PDF took its career-folder name on 2026-11-14 (full-stack version).
+    '/curriculo-fernando-moreira.pdf': '/CV-senior-fullstack-software-engineer-Fernando-Moreira-20261110.pdf',
     // The Setup page started at the URL of the 2018 post it replaced.
     '/apps-que-uso': '/setup',
     // Portuguese alias of /now, the canonical address of the directory.
