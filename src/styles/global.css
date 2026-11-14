@@ -80,6 +80,8 @@
   /* Type scale */
   --text-display: 3rem;
   --text-display--line-height: 1.1;
+  --text-hero: 4.2rem;
+  --text-hero--line-height: 1.05;
   --text-h1: 2.25rem;
   --text-h1--line-height: 1.2;
   --text-h2: 1.5rem;
@@ -89,7 +91,7 @@
   --text-body: 1rem;
   --text-body--line-height: 1.625;
   /* Lead paragraph under a hero or page title (Terminal Noir body-lead). */
-  --text-lead: 1.125rem;
+  --text-lead: 1.2rem;
   --text-lead--line-height: 1.65;
   /* Long-form reading size, used only by Prose. */
   --text-prose: 1.125rem;

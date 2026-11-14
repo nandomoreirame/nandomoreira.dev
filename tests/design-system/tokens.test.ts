@@ -84,7 +84,7 @@ const NEW_TOKENS = {
   '--tracking-eyebrow': '0.2em',
   '--text-micro': '0.6875rem',
   // Lead paragraph under a hero or page title (Terminal Noir body-lead).
-  '--text-lead': '1.125rem',
+  '--text-lead': '1.2rem',
   // Since 2026-10-17 the content shares the header frame (Terminal Noir):
   // 69rem / 1104px, so the brand and the page column line up.
   '--container-page': '69rem',
