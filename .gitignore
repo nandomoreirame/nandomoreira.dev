@@ -10,3 +10,4 @@ dist/
 tools/stats/target/
 docs/post-reviews/
 coverage/
+.playwright-mcp/
