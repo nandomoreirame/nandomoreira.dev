@@ -24,7 +24,7 @@ export const englishSearchResponse = async (live: boolean = EN_PUBLISHED): Promi
     current: current.map(post => ({ ...post, path: postPath(post) })),
     archived: archived.map(post => ({ ...post, path: postPath(post) })),
     projects: projects.map(project => ({ ...project, path: casePath(project) })),
-    services: SALES_SERVICES_EN.map(service => ({
+    services: SALES_SERVICES_EN.filter(service => service.detail).map(service => ({
       title: service.title,
       summary: service.summary,
       url: salesUrl(service.slug, undefined, 'en'),

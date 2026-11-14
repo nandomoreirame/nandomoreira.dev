@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
     current,
     archived,
     projects,
-    services: SALES_SERVICES.map(service => ({
+    services: SALES_SERVICES.filter(service => service.detail).map(service => ({
       title: service.title,
       summary: service.summary,
       url: salesUrl(service.slug),
