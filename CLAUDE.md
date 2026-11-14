@@ -156,8 +156,10 @@ O slug `en` é reservado nos schemas.
 Conteúdo traduzido entra por **sobreposição**: coleções `posts-en/` e `projects-en/`
 (`src/content/posts-en/`, `src/content/projects-en/`), cada arquivo com `translationOf`
 e só os campos traduzíveis. A camada de acesso (`src/lib/content/translations.ts`)
-mescla com a fonte pt-BR. Post novo pode sair só em pt-BR; para traduzir, siga
-`docs/specs/i18n-content/TRANSLATION-GUIDE.md`. As rotas de máquina servem o inglês
+mescla com a fonte pt-BR. **Todo post novo sai nos dois idiomas, nesta ordem: o
+pt-BR é escrito e fechado primeiro, e só então traduzido para o inglês** (decisão do
+Fernando, 2026-11-14; o `/post write` aplica). Só um pedido explícito dele dispensa a
+tradução. Para traduzir, siga `docs/specs/i18n-content/TRANSLATION-GUIDE.md`. As rotas de máquina servem o inglês
 por item, com fallback para o pt-BR quando o item não tem tradução.
 
 ### JSON-LD, dividido de propósito
