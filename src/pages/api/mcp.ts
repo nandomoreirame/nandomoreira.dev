@@ -59,5 +59,21 @@ const handle = async (request: Request): Promise<Response> => {
   }
 };
 
-/** Every method the transport understands is forwarded, so a probing client is not broken. */
-export const ALL: APIRoute = ({ request }) => handle(request);
+/**
+ * Stateless mode has no server-initiated messages, so the SSE stream a GET
+ * asks for is refused up front, as the spec allows. Forwarded, the transport
+ * would hold it open until the edge timed out (524 after ~100 s), keeping a
+ * server alive the whole time.
+ */
+const refuseStream = (): Response =>
+  new Response(
+    JSON.stringify({
+      jsonrpc: '2.0',
+      error: { code: -32000, message: 'Method not allowed.' },
+      id: null,
+    }),
+    { status: 405, headers: { 'content-type': 'application/json', allow: 'POST' } },
+  );
+
+/** Every other method the transport understands is forwarded, so a probing client is not broken. */
+export const ALL: APIRoute = ({ request }) => (request.method === 'GET' ? refuseStream() : handle(request));

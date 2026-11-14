@@ -87,3 +87,20 @@ describe('recordMcpUsage', () => {
     expect(batches).toEqual([]);
   });
 });
+
+describe('recordMcpUsage with an oversized body', () => {
+  it('gives up on recording and leaves the whole body for the transport', async () => {
+    const batches: Hit[][] = [];
+    const recorder = {
+      active: () => true,
+      recordAll: async (_request: Request, hits: readonly Hit[]) => void batches.push([...hits]),
+    };
+    const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping', params: { pad: 'a'.repeat(70_000) } });
+    const request = new Request('https://nandomoreira.dev/api/mcp', { method: 'POST', body });
+
+    await recordMcpUsage(request, recorder);
+
+    expect(batches).toEqual([]);
+    expect(await request.text()).toBe(body);
+  });
+});

@@ -61,7 +61,13 @@ export const readLimitedText = async (request: Request, timeoutMs: number = READ
       chunks.push(decoder.decode(value, { stream: true }));
     }
   } finally {
-    await reader.cancel().catch(() => undefined);
+    /**
+     * Not awaited: on a `request.clone()` (the MCP usage recorder reads one) the
+     * cancel of a tee branch settles only once the other branch is cancelled
+     * too, so awaiting it hung every oversized request until the platform
+     * timed it out.
+     */
+    void reader.cancel().catch(() => undefined);
   }
 
   chunks.push(decoder.decode());

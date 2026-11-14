@@ -38,6 +38,19 @@ const readJson = async (response: Response) => {
 
 const source = readFileSync('src/pages/api/mcp.ts', 'utf8');
 
+describe('GET /api/mcp', () => {
+  it('refuses the SSE stream at once instead of holding it open', async () => {
+    // Stateless mode has no server-initiated messages to stream; the SDK would
+    // keep the GET open until the edge timed it out (524 after ~100 s).
+    const response = await ALL({
+      request: new Request('https://nandomoreira.dev/api/mcp', { headers: { accept: 'text/event-stream' } }),
+    } as unknown as APIContext);
+
+    expect(response.status).toBe(405);
+    expect(response.headers.get('allow')).toBe('POST');
+  });
+});
+
 describe('POST /api/mcp', () => {
   it('answers an initialize request', async () => {
     const response = await post(JSON.stringify(initialize));
