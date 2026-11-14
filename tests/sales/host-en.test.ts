@@ -45,4 +45,10 @@ describe('English sales routing edge cases', () => {
     const route = salesRouting(url, true, true) as { rewrite: string };
     expect(rewriteTarget(route.rewrite, url)).toBe('/en/services?envio=ok');
   });
+  it('redirects main-host English sales paths with a trailing slash', () => {
+    expect(at('https://nandomoreira.dev/en/services/')).toEqual({ redirect: 'https://contrate.nandomoreira.dev/en' });
+    expect(at('https://nandomoreira.dev/en/services/website/?envio=ok')).toEqual({
+      redirect: 'https://contrate.nandomoreira.dev/en/website?envio=ok',
+    });
+  });
 });

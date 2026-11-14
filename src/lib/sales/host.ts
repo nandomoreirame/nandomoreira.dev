@@ -74,8 +74,7 @@ export const salesLink = (
 export type SalesRoute = { rewrite: string } | { redirect: string } | undefined;
 
 /** Rewrite for a request that arrived on the sales host itself. */
-const subdomainRoute = (rawPath: string, en: boolean): SalesRoute => {
-  const path = rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath;
+const subdomainRoute = (path: string, en: boolean): SalesRoute => {
   if (en && path === '/en') return { rewrite: SALES_BASE_EN };
   if (path.startsWith('/en/')) {
     const slug = /^\/en\/([a-z0-9-]+)$/.exec(path)?.[1];
@@ -92,12 +91,13 @@ const subdomainRoute = (rawPath: string, en: boolean): SalesRoute => {
  * anything with a dot (assets, the pixel) or a second segment passes through.
  */
 export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE, en: boolean = EN_PUBLISHED): SalesRoute => {
-  const path = url.pathname;
+  // A trailing slash names the same page; strip it once for every branch below.
+  const path = url.pathname.length > 1 ? url.pathname.replace(/\/$/, '') : url.pathname;
   if (PREVIEW_HOSTS.has(url.hostname)) return subdomainRoute(path, en);
 
   // Dev and staging always move /servicos to their own sales host.
   const preview = previewOrigin(url);
-  if (preview) return mainHostRedirect(url, preview, en);
+  if (preview) return mainHostRedirect(url, path, preview, en);
 
   if (!live) return undefined;
   if (url.hostname === SALES_HOST) return subdomainRoute(path, en);
@@ -105,7 +105,7 @@ export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE, en: bool
   // Only the real main host moves to the subdomain; the *.hosted.app
   // backend keeps serving /servicos (REQ-004).
   if (!MAIN_HOSTS.has(url.hostname)) return undefined;
-  return mainHostRedirect(url, `https://${SALES_HOST}`, en);
+  return mainHostRedirect(url, path, `https://${SALES_HOST}`, en);
 };
 
 /**
@@ -116,8 +116,7 @@ export const salesRouting = (url: URL, live: boolean = SALES_HOST_LIVE, en: bool
 export const rewriteTarget = (rewrite: string, url: URL): string => `${rewrite}${url.search}`;
 
 /** 301 from /servicos[/slug] on a main host to the same page on `origin`. */
-const mainHostRedirect = (url: URL, origin: string, en: boolean): SalesRoute => {
-  const path = url.pathname;
+const mainHostRedirect = (url: URL, path: string, origin: string, en: boolean): SalesRoute => {
   if (en && (path === SALES_BASE_EN || path.startsWith(`${SALES_BASE_EN}/`))) {
     const rest = path.slice(SALES_BASE_EN.length);
     return /^(\/[a-z0-9-]+)?$/.test(rest) ? { redirect: `${origin}/en${rest}${url.search}` } : undefined;
