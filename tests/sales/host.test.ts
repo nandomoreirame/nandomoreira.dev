@@ -82,6 +82,15 @@ describe('salesRouting', () => {
     });
   });
 
+  it('treats a trailing slash as the same main-host page', () => {
+    expect(salesRouting(at('https://nandomoreira.dev/servicos/'), true)).toEqual({
+      redirect: 'https://contrate.nandomoreira.dev/',
+    });
+    expect(salesRouting(at('https://nandomoreira.dev/servicos/site-institucional/?envio=ok'), true)).toEqual({
+      redirect: 'https://contrate.nandomoreira.dev/site-institucional?envio=ok',
+    });
+  });
+
   it('keeps the screenshots on the main host reachable', () => {
     expect(salesRouting(at('https://nandomoreira.dev/servicos/projetos/mousai.webp'), true)).toBeUndefined();
   });
