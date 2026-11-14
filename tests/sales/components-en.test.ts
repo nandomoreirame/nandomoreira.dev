@@ -45,8 +45,28 @@ const components = {
   Testimonials,
   ToolsGrid,
 };
-/** No copy of their own: artwork, or text passed in by the caller. */
-const DECORATIVE = new Set(['HeroArt', 'HeroScenery', 'SectionIntro']);
+/** English strings each component must render; the artwork and SectionIntro carry no copy of their own. */
+const EXPECTED: Record<keyof typeof components, string[]> = {
+  AboutCard: ['Who will build it', 'Senior software developer in São Paulo'],
+  AboutProfile: ['Senior software developer in São Paulo', 'Talk directly to the person building it'],
+  FaqList: ['Frequently asked questions', 'How much does it cost?'],
+  FloatingActions: ['Talk to me on WhatsApp', 'Use dark theme'],
+  HeroArt: ['storefront'],
+  HeroScenery: [],
+  MoreWork: ['Other work', 'Online store'],
+  ProjectShowcase: ['Real projects', 'Visit Encantos Brincantes'],
+  SalesContact: ['What are you looking for?', 'I prefer to talk on WhatsApp'],
+  SalesCta: ['Already know what you need?', 'Request a quote'],
+  SalesHero: ['Websites, stores and systems for your business', 'I want a quote'],
+  SectionIntro: [],
+  ServiceBlocks: ['Choose by the problem you want to solve', 'What you receive'],
+  ServiceComparison: ['Comparison: which one fits?', 'Number of pages'],
+  ServiceDetail: ['Project anatomy', 'I want a website like this'],
+  SituationGrid: ['Not sure where to start?', 'Choose the statement closest to where you are today.'],
+  StepsTimeline: ['How I work', 'Interview'],
+  Testimonials: ['What they say', 'translated from Portuguese'],
+  ToolsGrid: ['What technology does for your business', 'Fast anywhere'],
+};
 const render = async (name: keyof typeof components, locale: Locale) => {
   const service = detailFor(locale === 'en' ? 'website' : 'site-institucional', locale)!;
   const props: Record<string, unknown> = { locale };
@@ -73,9 +93,17 @@ describe.each(Object.keys(components) as Array<keyof typeof components>)('%s lan
   it('renders English copy and accessible labels', async () => {
     const html = await render(name, 'en');
     expect(ptLeftovers(html)).toEqual([]);
-    expect(html.trim().length).toBeGreaterThan(0);
-    if (!DECORATIVE.has(name)) expect(html.replace(/<[^>]*>/g, ' ')).toMatch(/[A-Za-z]{4,}/);
+    const text = html.replace(/<[^>]*>/g, ' ');
+    for (const expected of EXPECTED[name]) expect(text).toContain(expected);
     const attributes = [...html.matchAll(/(?:aria-label|placeholder|alt)="([^"]*)"/g)].map(match => match[1]);
     expect(ptLeftovers(`<p>${attributes.join(' ')}</p>`)).toEqual([]);
+  });
+});
+
+describe('SalesContact budget label', () => {
+  const label = (html: string) => /<label for="vendas-orcamento"[^>]*>([^<]*)<\/label>/.exec(html)?.[1];
+  it('names the field Budget in English and Orçamento in Portuguese', async () => {
+    expect(label(await render('SalesContact', 'en'))).toBe('Budget');
+    expect(label(await render('SalesContact', 'pt-BR'))).toBe('Orçamento');
   });
 });
