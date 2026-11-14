@@ -55,9 +55,10 @@ const homeHref = routeFor('/', locale);
       {availability && <AvailabilityPill slot="availability" status={availability.status} locale={locale} data-menu-availability class="ml-auto" />}
     </SiteNav>
 
-    <LanguageSwitch locale={locale} alternates={alternates} />
-
     {availability && <AvailabilityPill status={availability.status} locale={locale} data-header-availability class="max-md:ml-auto" />}
+
+    {/* The language switch, right of the pill, before the theme switch. */}
+    <LanguageSwitch locale={locale} alternates={alternates} />
 
     {/* The theme switch (theme-modes, REQ-004), right of the pill. */}
     <ThemeToggle locale={locale} class={availability ? '-ml-sm' : 'max-md:ml-auto'} />
